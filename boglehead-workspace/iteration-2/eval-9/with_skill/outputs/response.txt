@@ -1,0 +1,68 @@
+Your instinct to be cautious with a large windfall is completely understandable — and very human. But let me be direct with you: your 3-year, $5,000/month plan is almost certainly going to cost you money compared to investing a larger lump sum sooner. Here's why, and what the tradeoff actually looks like.
+
+---
+
+**The evidence on lump sum vs. DCA**
+
+Vanguard's research on this question is worth knowing: when comparing lump-sum investing against dollar-cost averaging a windfall over 12 months, lump sum wins about two-thirds of the time historically. Your plan stretches DCA to 36 months, which makes the math worse, not better.
+
+The reason is simple. Over long time horizons, markets go up more than they go down. Every month you're parked in cash waiting to deploy is a month where a substantial portion of your money is almost certainly underperforming the portfolio you've already told me you believe in. At a modest 7% annualized return, $175,000 sitting idle for 18 months (the midpoint of your plan) costs you roughly $18,000–20,000 in expected returns compared to investing it now. That's not a hypothetical — it's the historical cost of holding cash.
+
+Peter Lynch put it well: "Far more money has been lost by investors preparing for corrections than has been lost in corrections themselves."
+
+---
+
+**What you're actually afraid of — and why it's worth examining**
+
+The scenario in your head is something like: "I invest $175,000 on Monday. The market drops 30% in March. I've lost $52,000." That feels catastrophic. But let's unpack it:
+
+1. **Your three-fund portfolio already exists.** You've been investing for a few years. If the market crashed right after you deployed this windfall, your existing portfolio would also be down 30%. The crash affects your whole financial life, not just this new money. The framing of "what if I put it all in at once and it crashes" is treating this $175k differently than the dollars you've already invested — but money is fungible.
+
+2. **A crash doesn't mean permanent loss.** Every market decline in history has recovered. Someone who invested a lump sum in October 2007 (the exact peak before the financial crisis) and held a total-market index fund through the bottom was made whole by 2012 and significantly ahead by 2017. The people who got hurt were those who panic-sold at the bottom — which has nothing to do with lump sum vs. DCA and everything to do with staying the course.
+
+3. **If a 30% drop on $175k would cause you to panic-sell**, the solution isn't to delay investing — it's to revisit your asset allocation. If your overall stock/bond split isn't one you can hold through a bad year without touching it, that's the thing to fix.
+
+---
+
+**The DCA compromise: a principled version**
+
+That said, the Boglehead community has a clear position: DCA over 6–12 months is a reasonable behavioral compromise for someone who genuinely cannot stomach lump sum. It gives up some expected return in exchange for peace of mind that lets you stay the course — and staying the course matters enormously.
+
+Your 36-month plan, however, is too long to be a behavioral compromise. It starts to look like market timing — waiting for a crash that may never come, or may come after the market has gone up another 40%. At that point, you've paid two separate costs: the opportunity cost of cash, and the psychological torture of watching the market rise while you're still on the sidelines.
+
+**A better version of your instinct:** Deploy $175,000 over 6–12 months, not 36. That's $14,600–$29,000/month, not $5,000. You still get the psychological benefit of not putting it all in at once. You limit the time you're out of the market. And you're not making a de facto bet that the market will be lower in month 25 than it is today.
+
+---
+
+**One important question: where is this $175k sitting right now?**
+
+If it's in a checking account earning nothing, you're already losing to inflation while you decide. Park it in a high-yield savings account or a money market fund (Vanguard's VMFXX, Fidelity's SPAXX, or a direct HYSA at ~4.5–5% APY currently) while you deploy it. Don't let "I'm thinking about this carefully" turn into months of dead money.
+
+---
+
+**The right framing**
+
+You're not choosing between "investing safely" and "investing recklessly." You're choosing between:
+
+- **Lump sum:** Maximizes expected return. Psychologically harder. Objectively better outcome roughly two-thirds of the time.
+- **DCA over 6–12 months:** Slightly lower expected return. Psychologically easier. Rational tradeoff for someone who knows themselves.
+- **DCA over 36 months:** Significantly lower expected return. Still psychologically uncomfortable because you're watching the market for three years waiting to be done. Not a great tradeoff on either dimension.
+
+Given that you've been investing for a few years and already have a three-fund portfolio — meaning you've survived at least one volatile stretch — I'd encourage you to push yourself toward lump sum or a 6-month schedule rather than 36 months. You clearly have the framework. Trust it.
+
+---
+
+**Practical suggestion**
+
+If you want a middle path that's actually principled:
+
+1. Put this month's emergency fund topping-off aside if needed (3–6 months of expenses in a HYSA).
+2. Check whether you've maxed your IRA for this year and next. A $175k windfall is a great opportunity to also fully fund your Roth or Traditional IRA contributions now rather than waiting until April.
+3. Deploy the remainder in equal monthly installments over no more than 6–12 months into the same three-fund allocation you already use.
+4. Set a calendar reminder and make it automatic. Don't revisit the decision monthly based on what the market did.
+
+The goal isn't to find the perfect entry point. There is no perfect entry point, and believing otherwise is how smart people get fooled into sitting in cash for three years. The goal is to spend as much time as possible invested, at an allocation you can hold through volatility, at minimal cost. Your three-fund portfolio already solves most of that — this is just a deployment timing question, and the research says sooner is better.
+
+---
+
+This isn't personalized financial advice, and a one-time consultation with a fee-only fiduciary advisor ($1,500–$3,000, no AUM fees) could be worth it just to pressure-test the plan given the size of the windfall. The bogleheads.org forum is also free and full of people who've worked through exactly this question in detail.

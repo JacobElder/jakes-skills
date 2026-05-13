@@ -1,0 +1,39 @@
+{
+  "expectations": [
+    {
+      "text": "Claude recommends regression discontinuity design (RDD) or describes the comparison of units just above vs. just below the cutoff",
+      "passed": true,
+      "evidence": "Section 3 explicitly identifies the setup as a 'Sharp RDD' and states 'This is the textbook setup for a Regression Discontinuity Design (RDD).' The response describes the core comparison: 'users with a score of 48 and users with a score of 52 are very similar in their underlying engagement characteristics. The only reason one gets a discount and the other doesn't is which side of 50 they happen to fall on.'"
+    },
+    {
+      "text": "Claude mentions at least one key RDD assumption (no manipulation/gaming of the running variable, smoothness/continuity through the cutoff, or similar)",
+      "passed": true,
+      "evidence": "Section 5 contains an explicit assumptions table listing 'No manipulation' (users cannot precisely sort themselves to be just below 50, verified via density test and histogram inspection) and 'Continuity' (in the absence of the discount, expected return rate would be smooth through S = 50). Section 4 Step 1 also describes checking for 'bunching just below 50' as a manipulation check."
+    },
+    {
+      "text": "Claude notes that the estimate is local to the cutoff and may not generalize to users far from the threshold",
+      "passed": true,
+      "evidence": "Section 6 'Scope Limitation: This is a Local Effect' states: 'The RDD recovers the treatment effect only at the threshold. This is the causal effect of the discount for users with an engagement score near 50 — not for users with scores of 20 or 30.' The summary (Section 8) also explicitly states the finding 'is local to users near the threshold and may not generalize to deeply disengaged users.'"
+    },
+    {
+      "text": "Claude does NOT default to 'just regress retention on discount with controls' without mentioning the discontinuity structure",
+      "passed": true,
+      "evidence": "The primary recommendation is RDD throughout. Section 7 'The Trap to Avoid' explicitly warns: 'don't control for engagement score in a regression covering the full score range without the discontinuity design — the functional form assumption will drive your result.' The naive OLS approach is named as the wrong strategy, not the recommended one."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [
+      "The response goes well beyond the minimum bar — it correctly identifies the sharp vs. fuzzy RDD distinction, recommends a specific bandwidth selector (Calonico-Cattaneo-Titiunik / rdrobust), includes robustness checks (placebo thresholds, covariate balance, donut RDD), and explicitly names the LATE estimand. These are signs of strong causal inference reasoning.",
+      "The DAG in Section 2 adds useful pedagogical value but is not strictly required by the assertions; its inclusion is a positive signal.",
+      "No assertions failed; the response is a high-quality, comprehensive answer that covers all evaluated criteria."
+    ],
+    "overall": "The response passes all four assertions with clear, unambiguous evidence for each. It correctly identifies the RDD structure, articulates key assumptions (no manipulation, continuity), scopes the estimate to the local effect at the threshold, and explicitly warns against naive regression without the discontinuity design. This is a thorough and methodologically sound answer."
+  }
+}

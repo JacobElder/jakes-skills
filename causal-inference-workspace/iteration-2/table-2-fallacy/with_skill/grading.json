@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Claude names or describes the Table 2 Fallacy — that control variable coefficients in a regression designed to identify the focal treatment effect are not themselves causally identified",
+      "passed": true,
+      "evidence": "The response explicitly names the Table 2 Fallacy in the opening paragraph and devotes an entire section (Step 4) to it, citing Westreich and Greenland (2013). It states: 'in a causal regression, only the targeted coefficient deserves a causal interpretation. The rest describe model fit.' The summary table and conclusion reinforce this framing."
+    },
+    {
+      "text": "Claude explains structurally why: the adjustment set was chosen to block back-door paths from treatment to conversion, not from country to conversion — these are different back-door sets requiring potentially different controls",
+      "passed": true,
+      "evidence": "Step 2 explains the controls were chosen to 'close back-door paths for treatment.' Step 3 states explicitly: 'Identifying the treatment → conversion effect requires blocking back-doors for treatment. Identifying the country → conversion effect would require blocking back-doors for country. Those are different sets of requirements, and your regression was not designed to satisfy the second one.' The back-door criterion framing is used throughout."
+    },
+    {
+      "text": "Claude notes that some controls in the model (e.g., browser) could be mediators on the country → conversion path, meaning the country coefficient might be partial (not total) and would be biased by conditioning on its own mediators",
+      "passed": true,
+      "evidence": "Step 3 explicitly identifies browser and time-of-day as 'plausibly caused by country' and states: 'conditioning on them in your regression blocks part of the causal effect of country, biasing its coefficient. This is overcontrol bias — conditioning on a mediator.' A DAG diagram is included showing country → browser → conversion paths. The response explains this yields only the 'direct effect' of country, not the total effect."
+    },
+    {
+      "text": "Claude does NOT confirm that the country coefficient measures country's causal effect on conversion",
+      "passed": true,
+      "evidence": "The response clearly rejects this interpretation throughout. The opening answer is 'No.' The summary table marks country's causal effect as 'Not identified — likely biased due to mediators in model, missing confounders, back-door criterion not satisfied for country.' The conclusion states: 'Reporting country has a big causal effect on conversion based on this coefficient is the Table 2 Fallacy.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 100.7
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "The response is exceptionally thorough — it could be slightly condensed for practitioners who need a quick answer, but the depth is appropriate for a teaching context.",
+      "The explicit citation of Westreich and Greenland (2013) and Hünermund and Louw (2024) adds credibility and helps users find primary sources."
+    ],
+    "overall": "Perfect score. The response is a strong, structured answer that correctly identifies the Table 2 Fallacy by name, explains the structural back-door criterion argument for why the treatment and country adjustment sets differ, identifies browser and time-of-day as likely mediators that bias the country coefficient via overcontrol, and never incorrectly endorses a causal interpretation of the country coefficient. The use of DAG notation and a summary table makes the reasoning especially clear."
+  }
+}

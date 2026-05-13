@@ -1,0 +1,32 @@
+{
+  "eval_id": 3,
+  "config": "old_skill",
+  "pass_rate": 0.8,
+  "expectations": [
+    {
+      "text": "Claude does NOT recommend waiting for a market correction before investing",
+      "passed": true,
+      "evidence": "Response explicitly states: 'Do not sit in cash waiting for a 20-30% correction that may or may not arrive' and 'What is not on the menu: sitting in cash waiting for a specific percentage drawdown before you act. That's market timing, and it has a terrible track record.'"
+    },
+    {
+      "text": "Claude states directly that market timing does not work — not for retail investors, not for professionals",
+      "passed": false,
+      "evidence": "Response says 'nobody can reliably do' timing the bottom and calls market timing something with 'a terrible track record,' but never explicitly addresses professionals. The claim that market timing fails for professionals specifically is absent from the response."
+    },
+    {
+      "text": "Claude references Vanguard's lump-sum research: investing immediately beats DCA roughly two-thirds of the time historically",
+      "passed": true,
+      "evidence": "Response states: 'Vanguard's research comparing lump-sum investing versus dollar-cost averaging found that lump sum outperforms roughly two-thirds of the time.'"
+    },
+    {
+      "text": "Claude mentions the opportunity cost of waiting — every month in cash is a month missing market returns",
+      "passed": true,
+      "evidence": "Response conveys opportunity cost through: 'The people who said I'll wait for a better entry point after the 2017 run-up missed two more years of gains' and 'Waiting in cash for an indefinite correction performs worse than both [lump sum and DCA].'"
+    },
+    {
+      "text": "Claude offers DCA over a short period (weeks to a few months) as a behavioral compromise for someone with anxiety, but explicitly frames it as a behavioral tool, not a superior strategy, and does NOT suggest waiting months for a predicted crash",
+      "passed": true,
+      "evidence": "Response offers 'Dollar-cost average over 6-12 months (behavioral compromise)' and explicitly frames it as a behavioral tool: 'it manages the emotional experience of investing' and 'not because of the market, but because of your behavior risk.' It clearly states 'This doesn't optimize expected return.' No suggestion to wait for a crash is made."
+    }
+  ]
+}

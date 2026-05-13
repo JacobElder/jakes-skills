@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude cites Vanguard's research that lump-sum investing beats DCA roughly two-thirds of the time historically",
+      "passed": true,
+      "evidence": "\"Vanguard studied this directly. In their paper 'Dollar-cost averaging just means taking risk later,' they analyzed rolling historical windows across US, UK, and Australian markets and found that lump-sum investing outperformed dollar-cost averaging roughly two-thirds of the time.\""
+    },
+    {
+      "text": "Claude explicitly pushes back on the 3-year DCA plan as an unnecessarily long window with significant expected opportunity cost",
+      "passed": true,
+      "evidence": "\"A 36-month deployment schedule also means that for the first year and a half, more than half your inheritance is sitting in cash, earning money-market rates while the rest of your three-fund portfolio compounds at full equity weights. If the market returns 8% annually over those three years (roughly its long-run average), you'd give up tens of thousands of dollars in opportunity cost. That's a real cost — it's just less emotionally salient than watching a balance drop.\""
+    },
+    {
+      "text": "Claude acknowledges the emotional difficulty of lump-sum investing and validates the anxiety without endorsing the 3-year plan",
+      "passed": true,
+      "evidence": "\"The fear you're describing is completely understandable — $175,000 is meaningful money, and watching it drop 20% in the first six months because of bad timing would be genuinely painful. That emotional reaction is normal and doesn't mean you're doing anything wrong.\" Anxiety is validated in the opening paragraph and again in the compromise section (\"lump-sum investing is psychologically very hard with a large windfall\"), but the 3-year plan is never endorsed."
+    },
+    {
+      "text": "Claude recommends either lump-sum investing immediately or a compressed DCA schedule of 3-6 months (not 3 years) if anxiety is the primary concern",
+      "passed": true,
+      "evidence": "Section titled 'The right behavioral compromise: 3 to 6 months' states: \"A 3-to-6 month schedule accomplishes what you actually need\" and the response closes with: \"Three to six months. Automate it. Stay the course.\" The response also mentions 12 months as an absolute outer edge, explicitly contrasting with the user's 3-year plan."
+    },
+    {
+      "text": "Claude frames the 3-year DCA plan as a form of market timing — waiting and hoping the market will be lower — rather than a sound financial strategy",
+      "passed": true,
+      "evidence": "Section header reads \"Your 3-year plan is market timing\" and the body states: \"a plan to invest $5,000/month for 36 months is not a conservative strategy — it is a form of market timing. You are implicitly predicting that the market is more likely to fall than to rise over the next three years, and you are allocating capital based on that prediction.\""
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

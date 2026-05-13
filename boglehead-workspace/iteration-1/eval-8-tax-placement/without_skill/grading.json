@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude places bonds (BND) in the Traditional 401k, explaining that bond interest is taxed as ordinary income and sheltering it in a tax-deferred account is the primary benefit",
+      "passed": true,
+      "evidence": "The response clearly places BND in the Traditional 401(k) and explains: 'Bonds generate ordinary income (interest), which is taxed at your highest marginal rate when distributed. In a Traditional 401(k), that income compounds tax-deferred.' This directly matches the assertion."
+    },
+    {
+      "text": "Claude places international stocks (VXUS) in the taxable account to capture the foreign tax credit, which is lost when international funds are held in tax-advantaged accounts",
+      "passed": true,
+      "evidence": "The response states under the taxable brokerage section: 'VXUS has a key advantage in taxable: the Foreign Tax Credit. When you hold international funds in a taxable account, you can claim a credit on your US tax return for foreign taxes withheld on dividends. This credit is lost inside tax-advantaged accounts. This makes VXUS slightly preferred in taxable over the Roth if you have to choose.' The Priority Order also lists 'VXUS → Taxable brokerage (to capture foreign tax credit)'."
+    },
+    {
+      "text": "Claude places US stocks (VTI) in the Roth IRA as the highest-expected-growth asset that benefits most from never being taxed",
+      "passed": true,
+      "evidence": "The response recommends VTI for the Roth IRA, explaining: 'Put your highest-expected-return assets here. US stocks (VTI) have historically outperformed bonds, so tax-free compounding of stock growth is extremely valuable.' The priority order also lists 'VTI → Roth IRA (to maximize tax-free compounding of highest-return asset)'."
+    },
+    {
+      "text": "Claude notes the caveat: asset allocation (the right ratio of stocks to bonds) comes first; tax placement is a secondary optimization that only matters if the allocation is already correct",
+      "passed": true,
+      "evidence": "Under 'IMPORTANT CAVEATS', the response states: 'Maintain your TARGET overall asset allocation across all accounts combined. Don't let tax location decisions distort your stock/bond ratio.' While the response doesn't explicitly say 'asset allocation comes first' or 'tax placement is secondary', it clearly warns that maintaining the correct overall allocation takes precedence over tax placement decisions."
+    },
+    {
+      "text": "Claude does NOT recommend putting bonds in the Roth IRA or international stocks in the 401k without explaining the tradeoff",
+      "passed": true,
+      "evidence": "The response does not recommend putting bonds in the Roth IRA or international stocks in the 401k. In fact, it explains why bonds in the Roth IRA would be suboptimal ('Holding bonds in a Roth is wasting the Roth's tax-free growth potential on an asset class with lower expected returns') and why VXUS in taxable is preferred over the Roth (to capture the foreign tax credit, which is lost in tax-advantaged accounts). No such placements are recommended without explanation."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

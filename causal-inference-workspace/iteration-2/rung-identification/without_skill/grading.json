@@ -1,0 +1,46 @@
+{
+  "expectations": [
+    {
+      "text": "Claude explicitly names or describes the Rung 2 / interventional nature of the question — distinguishing 'the numbers look better' (Rung 1 correlation) from 'the flow caused the improvement' (Rung 2 causal effect)",
+      "passed": true,
+      "evidence": "The response opens by framing the core challenge as 'distinguishing correlation from causation' and explicitly states: 'The numbers looking better is a promising signal. But \"promising signal\" and \"the flow is doing it\" are different claims.' The summary table also labels raw before/after comparison as 'Low (correlational)' vs. A/B test as 'High (causal).' While Rung 2 terminology is not used, the interventional vs. associational distinction is clearly drawn."
+    },
+    {
+      "text": "Claude identifies at least one specific confounding mechanism with a direction — e.g., users who saw the new flow came from a different acquisition channel, cohort, or time period that would have improved retention anyway",
+      "passed": true,
+      "evidence": "The response identifies multiple directional confounders: 'Users in different cohorts differ in: When they heard about your product (different channels, campaigns), What stage of the market you're in, What other product changes landed in the same release, Seasonal effects (e.g., January signups vs. summer signups behave differently).' It also notes: 'If you scaled up acquisition around the same time you launched the flow, your cohorts may be larger and potentially composed of different user types (e.g., broader targeting).' These are specific mechanisms with implied directionality."
+    },
+    {
+      "text": "Claude does NOT treat 'run a regression with controls for user characteristics' as a sufficient identification strategy for estimating this causal effect",
+      "passed": true,
+      "evidence": "The response never mentions regression with controls as an identification strategy. All recommended strategies are experimental or quasi-experimental: A/B test, Interrupted Time Series, Difference-in-Differences, and Regression Discontinuity."
+    },
+    {
+      "text": "Claude recommends a specific identification strategy — A/B test, holdout group, DiD using pre-period data, RDD at rollout date, or synthetic control — and explains why it addresses the identification problem",
+      "passed": true,
+      "evidence": "The response recommends four strategies with explanations: (1) A/B test — 'Because assignment is random, the two groups are identical in expectation on every confound — so any difference in retention is attributable to the flow'; (2) Interrupted Time Series — 'you're using the historical trend as your counterfactual'; (3) DiD — requires a comparison group and invokes the 'parallel trends assumption'; (4) RDD — 'Users on either side of the cutoff are essentially random (no one chose which flow they'd see based on their sign-up date).'"
+    },
+    {
+      "text": "Claude does NOT treat the observed post-rollout improvement as evidence of causation without an explicit counterfactual or control group",
+      "passed": true,
+      "evidence": "The response explicitly states: 'A raw before/after comparison (\"retention was 20%, now it's 28%\") doesn't tell you the flow caused the improvement. It tells you something changed.' The summary table assigns 'Low (correlational)' confidence to 'Only before/after averages.' The response consistently frames the observed improvement as a 'promising signal' that requires identification strategies to establish causation."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 77.8
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "The response could be strengthened by explicitly naming the Pearl Ladder of Causation / Rungs framework to give users a more formal vocabulary for these distinctions.",
+      "The DiD section could more explicitly state the pre-period parallel trends assumption as a testable empirical check, not just an assumption to invoke.",
+      "The response could note that ITS and DiD are not interchangeable — ITS is a within-unit design while DiD requires a valid comparison group."
+    ],
+    "overall": "The response is excellent: it clearly distinguishes correlation from causation, identifies specific confounders with directionality, avoids the regression-with-controls trap, recommends four named identification strategies with mechanistic explanations, and never treats the raw post-rollout improvement as causal evidence. All five assertions pass. The response is practical, well-structured, and appropriately calibrated about the confidence levels each strategy yields."
+  }
+}

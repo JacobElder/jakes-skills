@@ -1,0 +1,88 @@
+This is one of the most common "improvements" Bogleheads see people make — and it's worth slowing down on, because the framing is the problem.
+
+The short answer: no, this is not more diversified in any meaningful sense, and it almost certainly won't improve your returns. Here's why.
+
+---
+
+**VTI already owns all of this**
+
+VTI (Vanguard Total Stock Market ETF) holds approximately 3,600–4,000 US stocks weighted by market capitalization. That means it already owns:
+
+- Every small-cap value company in VIOV (Vanguard S&P Small-Cap 600 Value). VIOV just overweights them relative to their market-cap share.
+- Every REIT in VNQ. REITs are publicly traded stocks and are fully included in VTI at their market-cap weight (~3–4% of the fund).
+- Every dividend-growing company in VIG. VIG is a subset of VTI's holdings filtered by dividend history. Buying VIG on top of VTI doesn't add new exposure — it re-owns companies you already own, while skipping others.
+
+VXUS already owns international small-caps, including what VSS tracks. Again, VSS would simply overweight them.
+
+So what you'd actually be building is not a "more diversified" seven-fund portfolio — it's a three-fund portfolio with four deliberate overweights bolted on. Each addition is a bet that the overweighted segment will outperform its market-cap share. That's fine to do consciously; it's not fine to mistake it for diversification.
+
+---
+
+**Let's take each addition seriously**
+
+**VIOV (small-cap value tilt)**
+
+This is the most defensible addition of the four, and there's actually a real Boglehead debate here. Larry Swedroe and Rick Ferri have both written about small-cap value as a factor with a long historical premium — and it has academic backing (Fama-French three-factor model). The reasoning: small-cap value stocks have historically compensated investors for taking on extra risk (illiquidity, distress risk) with higher returns over long periods.
+
+The case against, which Bogle himself made: you don't know in advance whether the factor premium will persist. Factor premiums have compressed as more capital chases them. And the higher volatility of small-cap value means you need a long time horizon and the stomach to underperform the total market for potentially years at a stretch (which it did throughout the 1990s and much of the 2010s).
+
+Verdict: this is the one item on your list where a Boglehead could legitimately say "okay, this is a reasoned tilt, not a mistake." But it's a bet, not free diversification, and it comes with real tracking error risk. If you add it, make it a deliberate allocation (say, 10–15% of equities) and hold it for 20+ years regardless of whether it outperforms.
+
+**VNQ (REIT fund)**
+
+VTI already holds REITs. VNQ concentrates your real estate exposure — it doesn't add a new asset class. The "REITs as a separate asset class" argument was more compelling when REITs were classified under financials in the S&P; since GICS reclassified REITs as their own sector in 2016, most total-market funds give them appropriate weight.
+
+Adding VNQ means you're explicitly betting that publicly-traded real estate will outperform the rest of the US equity market going forward. That might happen. But it's not diversification; it's concentration.
+
+Also worth noting: if any of your investments are in a taxable account, REITs are tax-inefficient (high dividend distributions taxed as ordinary income). They belong in a tax-deferred account (Traditional IRA, 401(k)) if you hold them at all.
+
+**VIG (dividend growth)**
+
+This one I'd push back on most directly. VIG is not its own asset class — it's a filtered subset of US stocks that have grown their dividends for 10+ consecutive years. That filter skews heavily toward large-cap, profitable, established companies (the "quality" factor) and away from growth and small-cap stocks.
+
+The problem: a dividend is not free money. When a stock pays a $1 dividend, the share price drops by approximately $1. Total return — price appreciation plus dividends — is what matters, not just the yield portion. Dividend growth strategies feel intuitive ("I'm getting paid to hold these!") but they carry tax drag (dividends are taxable annually even if reinvested) and they underperform the total market in periods when growth stocks lead.
+
+VTI already includes all of VIG's holdings. Layering VIG on top of VTI means you're overweighting dividend-paying stocks and underweighting growth companies. That's a value tilt with extra tax inefficiency. If you want a value tilt, a dedicated value fund (like VIOV or VTV) is more direct. VIG specifically is solving a problem that doesn't exist.
+
+**VSS (international small-cap)**
+
+VXUS already holds international small-caps. MSCI ACWI ex-US (which VXUS tracks) includes small-cap stocks in its index. VSS adds a deliberate overweight to international small — the same logic as VIOV on the US side, but without as strong a factor premium argument behind it (international small-cap value has a weaker consensus than US small-cap value in the academic literature).
+
+If you're drawn to international small because you've read about Fama-French international factor premia, that's a more serious argument — but it's still a tilt, not diversification.
+
+---
+
+**The complexity cost**
+
+Going from 3 funds to 7 funds doesn't just add four line items. It adds:
+
+- Four more funds to rebalance when markets shift (how will you decide when to rebalance and back toward what target?)
+- Four more sources of taxable events in a taxable account
+- Four more sources of behavioral noise — you'll inevitably watch VIOV underperform VTI for two years and wonder if you should sell it
+- No meaningful improvement in expected return — because all of these are already embedded in your three-fund portfolio at market weight
+
+Bogle put it plainly: "When there are multiple solutions to a problem, choose the simplest one." The three-fund portfolio isn't a starting point you graduate from. It's a complete solution.
+
+---
+
+**What you should actually do**
+
+Ask yourself what you're trying to solve.
+
+If the honest answer is "I want more control and I've been reading about factor investing" — then the small-cap value tilt (VIOV or something like AVUV, which is factor-tilted more deliberately) is the one addition with an actual evidence base. Keep it modest (10–15% of equities), hold it for decades, and don't touch it when it lags.
+
+If the answer is "I feel like three funds can't be enough" — that feeling is the problem to address, not the portfolio. Three broad index funds covering the entire US market, the entire international market, and the entire US investment-grade bond market is genuinely complete global diversification at near-zero cost. The goal isn't having more funds; it's having the right exposure.
+
+If the answer is "I've been reading a lot and want to optimize" — be careful. Reading about investing is great, but there's a well-documented pattern where the more a retail investor tinkers with their portfolio, the worse their returns get. The three-fund portfolio produces excellent results precisely because it's boring enough to hold through bad markets.
+
+---
+
+**One practical note**
+
+If any of these accounts are in taxable, don't add funds there — tax-location matters a lot, and adding funds to taxable creates more rebalancing headaches and taxable events. Changes like this are easier to implement cleanly in a new IRA or by redirecting contributions going forward.
+
+---
+
+Your three-fund portfolio is not broken. It doesn't need improving — it needs time and consistent contributions. If you want to read more on this, the bogleheads.org wiki article on "Three-fund portfolio" and Taylor Larimore's book of the same name make the case better than I can in a response.
+
+(This isn't personalized financial advice — if your situation involves significant complexity like a large taxable account with embedded gains, it's worth a one-time consultation with a fee-only fiduciary advisor.)

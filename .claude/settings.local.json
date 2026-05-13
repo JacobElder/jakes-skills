@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/jacobelder/.agents/skills/skill-creator/**)",
+      "Bash(python -m scripts.aggregate_benchmark /Users/jacobelder/Documents/GitHub/jakes-skills/causal-inference-workspace/iteration-1 --skill-name causal-inference)",
+      "Bash(python3 *)",
+      "Bash(nohup python *)",
+      "Read(//tmp/**)",
+      "Bash(python /Users/jacobelder/.claude/skills/skill-creator/eval-viewer/generate_review.py /Users/jacobelder/Documents/GitHub/jakes-skills/causal-inference-workspace/iteration-1 --skill-name causal-inference --benchmark /Users/jacobelder/Documents/GitHub/jakes-skills/causal-inference-workspace/iteration-1/benchmark.json)",
+      "Bash(curl -s http://localhost:8080)",
+      "Bash(curl -s http://localhost:5000)",
+      "Bash(curl -s http://localhost:3117)",
+      "Bash(open http://localhost:3117)",
+      "Bash(echo \"Viewer PID: $!\")",
+      "Bash(kill 36708)",
+      "Bash(python /Users/jacobelder/.claude/skills/skill-creator/eval-viewer/generate_review.py /Users/jacobelder/Documents/GitHub/jakes-skills/causal-inference-workspace/iteration-3 --skill-name causal-inference --benchmark /Users/jacobelder/Documents/GitHub/jakes-skills/causal-inference-workspace/iteration-3/benchmark.json --previous-workspace /Users/jacobelder/Documents/GitHub/jakes-skills/causal-inference-workspace/iteration-2)",
+      "Bash(jobs -l)",
+      "Bash(python build_benchmark.py)",
+      "Bash(kill 86601)",
+      "Bash(python -m scripts.run_loop --skill-path /Users/jacobelder/Documents/GitHub/jakes-skills/causal-inference --eval-set /Users/jacobelder/Documents/GitHub/jakes-skills/causal-inference/evals/trigger_evals.json --max-iterations 5 --runs-per-query 2 --model claude-sonnet-4-6 --verbose --report none --results-dir /Users/jacobelder/Documents/GitHub/jakes-skills/causal-inference-workspace/description-opt)",
+      "Bash(echo \"Exit: $?\")"
+    ]
+  }
+}

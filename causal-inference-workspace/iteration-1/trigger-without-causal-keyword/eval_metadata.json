@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "trigger-without-causal-keyword",
+  "prompt": "I'm trying to figure out whether our new onboarding flow is actually improving 30-day retention. The numbers look better since we shipped it but I'm not sure how to be confident it's the flow doing it.",
+  "assertions": [
+    "Claude explicitly identifies this as a causal question (e.g., names the rung, frames it as treatment effect estimation, or distinguishes correlation from causation)",
+    "Claude flags the core identification problem — that pre/post comparison alone confounds the flow change with other temporal changes, or that self-selection into the new flow creates confounding",
+    "Claude recommends a specific identification strategy — A/B test, randomized rollout, difference-in-differences, regression discontinuity at rollout date, or similar",
+    "Claude does NOT just suggest 'control for confounders in a regression' as the primary answer without addressing identification",
+    "Claude flags at least one specific trap or alternative explanation (seasonality, marketing changes, user composition shift, etc.)"
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude does NOT recommend waiting for a market correction before investing",
+      "passed": true,
+      "evidence": "The response opens with 'The short answer: invest the $60,000 now. Waiting for a crash is market timing, and market timing doesn't work.' It explicitly advises against waiting and under 'What to actually do with $60,000' says 'Lump sum, invested now.' It also states 'What you should *not* do is wait indefinitely for a specific entry price.'"
+    },
+    {
+      "text": "Claude states directly that market timing does not work — not for retail investors, not for professionals",
+      "passed": true,
+      "evidence": "The opening line states: 'market timing doesn't work — not for you, not for the hedge fund manager on CNBC predicting a 30% correction, not for anyone doing it consistently.' This covers both retail investors and professionals."
+    },
+    {
+      "text": "Claude references Vanguard's lump-sum research: investing immediately beats DCA roughly two-thirds of the time historically",
+      "passed": true,
+      "evidence": "The response states: 'Vanguard's research on lump sum vs. dollar-cost averaging found that lump sum beats DCA about two-thirds of the time historically, across multiple countries and time periods.'"
+    },
+    {
+      "text": "Claude mentions the opportunity cost of waiting — every month in cash is a month missing market returns",
+      "passed": true,
+      "evidence": "The response states 'cash sitting on the sideline has a negative expected value relative to being invested' and 'cash drag compounds against you every month.' It also gives historical examples of investors who 'missed enormous bull runs while sitting in cash earning money-market rates.'"
+    },
+    {
+      "text": "Claude offers DCA over a short period (weeks to a few months) as a behavioral compromise for someone with anxiety, but explicitly frames it as a behavioral tool, not a superior strategy, and does NOT suggest waiting months for a predicted crash",
+      "passed": true,
+      "evidence": "The response offers DCA in a section titled 'If you genuinely can't sleep through a crash: DCA as a behavioral compromise' and frames it as 'a reasonable behavioral solution' while noting 'You'll probably leave a little return on the table statistically.' It specifies '6–12 months via automatic monthly investments' as the timeframe and explicitly distinguishes this from waiting: 'What you should *not* do is wait indefinitely for a specific entry price. That's not DCA — that's speculating on a correction.' Note: the 6-12 month window is slightly longer than 'weeks to a few months' but the framing is entirely behavioral, not predictive."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

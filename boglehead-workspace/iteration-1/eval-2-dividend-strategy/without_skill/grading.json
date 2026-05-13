@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude explicitly states that dividends are not free money — the share price drops by the dividend amount on the ex-dividend date, leaving total return unchanged",
+      "passed": true,
+      "evidence": "The response has a section titled 'THE CORE MISCONCEPTION: DIVIDENDS AREN'T FREE MONEY' and states explicitly: 'When a stock pays a $1 dividend, the share price drops by approximately $1 on the ex-dividend date (all else equal). You haven't received something extra; you've had a portion of your holdings converted from unreinvested capital into cash.'"
+    },
+    {
+      "text": "Claude explains that SCHD and JEPI represent a narrower slice of the market than a total-market fund (VTI/VTSAX), reducing diversification without a clear benefit",
+      "passed": false,
+      "evidence": "The response does not explicitly frame SCHD and JEPI as a 'narrower slice of the market' compared to VTI/VTSAX. Diversification concerns are raised in terms of missing bonds and international exposure, and in passing it notes that dividend portfolios exclude growth companies like Amazon and Berkshire. However, the direct comparison of market breadth (dividend fund vs. total-market fund) is never explicitly made. SCHD is even described as 'a legitimate, well-constructed fund' that 'many Bogleheads-style investors hold without controversy.'"
+    },
+    {
+      "text": "Claude explains that selling shares in retirement is mathematically equivalent to receiving dividends — the 'don't sell principal' preference is psychological, not financial",
+      "passed": true,
+      "evidence": "The response states: 'This means living off dividends without selling shares is economically identical to selling a small amount of shares regularly. You are spending down the same underlying wealth either way. The framing feels different, but the math is the same.' The psychological vs. financial distinction is captured in 'The framing feels different, but the math is the same,' and the suggestion that dividend comfort is a 'behavioral' or 'psychological benefit for some people.'"
+    },
+    {
+      "text": "Claude notes the tax inefficiency of dividend strategies in taxable accounts — dividends create taxable events even when the investor doesn't need the cash",
+      "passed": false,
+      "evidence": "The response mentions tax inefficiency only in the context of JEPI's option premium income being 'taxed as ordinary income' and JEPI being 'particularly tax-inefficient' in taxable accounts. It also mentions 'tax inefficiency' in the summary as one flaw of dividend-chasing. However, it never states the general principle that dividend investing broadly forces taxable events even when the investor does not need or want the cash — the specific mechanism (forced realization of income) is not explained for dividend strategies as a whole."
+    },
+    {
+      "text": "Claude does NOT endorse dividend investing as a superior or even equivalent strategy to total-return investing for retirement",
+      "passed": true,
+      "evidence": "The response states: 'Financial research consistently shows that a total return approach...outperforms dividend-focused strategies over long time horizons.' The summary calls dividend-focused mechanical thinking 'suboptimal decisions.' JEPI is recommended to be dropped or minimized, and SCHD is positioned only as a modest tilt (10-20%), not a core strategy. Dividend investing is never described as equivalent or superior to total-return investing."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 2,
+    "total": 5,
+    "pass_rate": 0.60
+  }
+}

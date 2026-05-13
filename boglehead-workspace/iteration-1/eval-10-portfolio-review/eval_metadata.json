@@ -1,0 +1,12 @@
+{
+  "eval_id": 10,
+  "eval_name": "portfolio-review-concentrated-roth",
+  "prompt": "Portfolio review: I'm 41, $420k total. Roth IRA ($110k): 65% in ARKK, 35% in Tesla stock. Traditional 401k ($310k): 100% in Fidelity Freedom 2045 Index Fund. I feel like I should be more aggressive in my Roth because I won't pay taxes on the gains. My advisor agrees. Is this right?",
+  "assertions": [
+    "Claude endorses the principle that high-growth assets belong in the Roth IRA — but clearly distinguishes 'high expected return through diversification' from 'high risk through concentration'",
+    "Claude explicitly calls out ARKK as an inappropriate holding: high expense ratio (0.75%), narrow thematic concentration, and a poor track record relative to total-market index funds",
+    "Claude explicitly calls out Tesla as dangerous concentration risk — 35% of the Roth IRA in a single stock violates basic diversification principles regardless of conviction",
+    "Claude validates the Fidelity Freedom 2045 Index Fund in the 401k as a solid, Boglehead-appropriate holding that does NOT need to be changed",
+    "Claude recommends selling both ARKK and Tesla in the Roth IRA (noting the tax-free nature of the transaction inside a Roth) and replacing with a broad total-market index fund like VTI, FSKAX, or similar"
+  ]
+}

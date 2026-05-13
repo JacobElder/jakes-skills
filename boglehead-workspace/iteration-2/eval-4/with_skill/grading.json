@@ -1,0 +1,32 @@
+{
+  "eval_id": 4,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude identifies paying off the 24% credit card debt as the top priority before investing in anything (no employer match means there's no 'free money' competing for the dollars)",
+      "passed": true,
+      "evidence": "Step 3 is titled 'Destroy the credit card debt — this is your entire investment for now' and Step 2 explicitly notes 'Without a match, your 401(k) is just a tax-advantaged account — valuable, but it does not outcompete paying off 24% APR debt. So we skip directly to the debt.' The response also states: 'Direct the full $1,200/month to credit card paydown.'"
+    },
+    {
+      "text": "Claude explicitly explains that 24% interest is a guaranteed return that no investment reliably beats",
+      "passed": true,
+      "evidence": "'Paying off that credit card debt is a guaranteed, risk-free, tax-free 24% return. There is no investment in the world that reliably beats that. Nothing in stocks, bonds, or index funds comes close on a guaranteed basis.' And again: 'Every dollar you put toward that balance earns you a guaranteed 24% return.'"
+    },
+    {
+      "text": "Claude identifies the HSA as triple-tax-advantaged and notes the user qualifies due to the HDHP — recommending it come after debt payoff",
+      "passed": true,
+      "evidence": "'The HSA is the most tax-advantaged account that exists, full stop. It is triple-tax-advantaged: 1. Contributions are pre-tax... 2. Growth is tax-free 3. Withdrawals for qualified medical expenses are tax-free.' The user's HDHP eligibility is noted and the HSA is placed in Step 4b — after debt payoff and emergency fund completion."
+    },
+    {
+      "text": "Claude follows the canonical waterfall order: debt payoff → emergency fund → HSA → IRA → 401k, and does not recommend investing in taxable accounts while high-interest debt exists",
+      "passed": true,
+      "evidence": "The month-by-month summary explicitly lays out: (1) all $1,200 to credit card through month 18-20, then (2) top off emergency fund, (3) HSA at $346/month, (4) Roth IRA at $583/month, (5) remaining to 401(k). Taxable brokerage (Step 4e) is only mentioned after all tax-advantaged accounts are maxed. The 'What not to do' section explicitly states: 'Do not start investing in index funds while carrying 24% credit card debt.'"
+    },
+    {
+      "text": "Claude does NOT split the $1,200 between debt payoff and investing in the market as if they are comparable uses of capital",
+      "passed": true,
+      "evidence": "'Now through month ~18-20: Every dollar of the $1,200 goes to the credit card. No exceptions.' The response never suggests dividing the $1,200 between debt and investing simultaneously."
+    }
+  ]
+}

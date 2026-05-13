@@ -1,0 +1,30 @@
+{
+  "run_id": "rdd-manipulation-with_skill",
+  "eval_id": 11,
+  "eval_name": "rdd-manipulation",
+  "config": "with_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude identifies the density spike (more users clustering at 41-45 than expected) as a serious threat to RDD validity — specifically, evidence of score manipulation or sorting near the threshold",
+      "passed": true,
+      "evidence": "Step 3 states: 'A spike in the density of units just above the treatment cutoff — specifically on the untreated side — is the direct empirical signature of sorting or manipulation.' The Summary verdict calls it 'a serious problem, not a cosmetic one.'"
+    },
+    {
+      "text": "Claude explains WHY this matters for RDD: if users or CSMs can influence scores near the cutoff, users just above 40 are NOT a valid control group — they've been selectively moved there, making them systematically different from users just below the threshold",
+      "passed": true,
+      "evidence": "Step 4 explicitly states: 'The units just above 40 are no longer a valid counterfactual for the units just below 40.' Step 3 details Mechanism B (support team manipulation) where agents 'may have cherry-picked users they already knew were healthier,' making the groups systematically different."
+    },
+    {
+      "text": "Claude rejects the 'only communicated internally' argument as insufficient to rule out manipulation — internal knowledge of the threshold is exactly what enables CSM sorting",
+      "passed": true,
+      "evidence": "Step 3 Mechanism B: 'The lead's reasoning — \"users didn't know, so they couldn't have gamed it\" — eliminates Mechanism A but leaves Mechanism B entirely open, and in fact makes Mechanism B the more likely explanation. Internal knowledge of the threshold is a prerequisite for internal manipulation.'"
+    },
+    {
+      "text": "Claude recommends a formal density test (McCrary test or equivalent) at the threshold and pre-treatment covariate balance tests near the cutoff to assess severity, before concluding the RDD is valid",
+      "passed": true,
+      "evidence": "Step 5 recommends: 'Run the formal density test first. Compute the McCrary or Cattaneo-Jansson-Ma test statistic.' and 'Look for covariate discontinuities at the threshold...pre-treatment covariates (tenure, plan type, historical usage) should also be discontinuous at the cutoff.'"
+    }
+  ]
+}

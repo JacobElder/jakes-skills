@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude identifies the density spike (more users clustering at 41-45 than expected) as a serious threat to RDD validity — specifically, evidence of score manipulation or sorting near the threshold",
+      "passed": true,
+      "evidence": "The response opens: 'The density spike you've observed is called \"sorting\" or \"manipulation\" of the running variable, and it is one of the most serious threats to the validity of a regression discontinuity design.' The 'Why the Spike Is a Red Flag' section explicitly notes 'more users have health scores of 41–45 than a smooth distribution would predict' and catalogs manipulation mechanisms."
+    },
+    {
+      "text": "Claude explains WHY this matters for RDD: if users or CSMs can influence scores near the cutoff, users just above 40 are NOT a valid control group — they've been selectively moved there, making them systematically different from users just below the threshold",
+      "passed": true,
+      "evidence": "The 'What the Spike Does to Your Estimates' section states: 'If users near 41–45 are systematically different from users near 35–39 — not just because of the outreach, but because who ends up on each side is non-random — then your estimated treatment effect is confounded.' It also explicitly flags that 'The control group (41–45) is contaminated — it likely includes users who received some form of intervention...even though they are nominally \"untreated.\"'"
+    },
+    {
+      "text": "Claude rejects the 'only communicated internally' argument as insufficient to rule out manipulation — internal knowledge of the threshold is exactly what enables CSM sorting",
+      "passed": true,
+      "evidence": "The section 'Why Your Data Science Lead's Argument Is Wrong' directly addresses this: 'This argument is too narrow.' It identifies agent-side manipulation as the primary counter-example: 'If support agents knew the threshold and — even with good intentions — subtly adjusted health scores for near-threshold users, the RDD is broken.' The summary table labels the internal-only argument 'Partially true, but irrelevant — agent-side and algorithmic manipulation are still possible.'"
+    },
+    {
+      "text": "Claude recommends a formal density test (McCrary test or equivalent) at the threshold and pre-treatment covariate balance tests near the cutoff to assess severity, before concluding the RDD is valid",
+      "passed": true,
+      "evidence": "A dedicated section 'The McCrary Density Test' recommends the McCrary (2008) test and the Cattaneo et al. (2020) rddensity package, with working R and Python code. Step 1 of 'What You Should Do' is 'Run the formal density test.' Step 4 explicitly includes 'Covariate balance test: Check whether observable pre-treatment covariates (e.g., account age, product tier, historical engagement) are smooth at the threshold.' Both are presented as prerequisites before trusting RDD estimates."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "The response fully satisfies all four assertions. It correctly identifies the density spike as evidence of sorting/manipulation, explains precisely why this invalidates the RDD control group, directly dismantles the 'internal-only' dismissal by focusing on agent-side manipulation, and recommends both the McCrary density test (with code) and pre-treatment covariate balance checks as required next steps. The response is unusually thorough and well-structured for a without-skill run."
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "eval_id": 2,
+  "eval_name": "should-i-control-for-collider",
+  "prompt": "I'm running a regression to estimate the effect of years of experience on salary. I have a dataset of people who got hired at tech companies. Should I include 'got hired at a top-tier company' as a control variable since it's correlated with both experience and salary?",
+  "assertions": [
+    "Claude identifies 'got hired at a top-tier company' as a collider (or selection variable, or notes it's downstream of both experience and salary potential)",
+    "Claude recommends NOT controlling for the variable",
+    "Claude explains the mechanism — that conditioning on a common effect creates spurious correlation between its causes",
+    "Claude does NOT recommend controlling for it on the grounds that it correlates with both variables"
+  ]
+}

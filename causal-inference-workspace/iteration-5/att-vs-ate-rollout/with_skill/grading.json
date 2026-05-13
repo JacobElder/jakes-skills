@@ -1,0 +1,30 @@
+{
+  "run_id": "att-vs-ate-rollout-with_skill",
+  "eval_id": 9,
+  "eval_name": "att-vs-ate-rollout",
+  "config": "with_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude identifies the $32 as a LATE estimate — the treatment effect for compliers (users who adopted because of the push notification) — not the ATE for the full user population or the policy-relevant effect for a forced rollout",
+      "passed": true,
+      "evidence": "The response opens by calling $32 a LATE that 'applies to a specific, self-selected subgroup.' Step 3 states 'The LATE of +$32 is the average treatment effect for compliers only' and the Wald estimator derivation shows it is identified from the complier share (18%−3%=15%). The summary table explicitly confirms: 'The causal effect of feature adoption on 6-month revenue, identified for the complier subpopulation.'"
+    },
+    {
+      "text": "Claude explains why LATE ≠ ATE for forced adoption: forced rollout affects never-takers (who actively declined the notification) whose response to forced adoption is unknown and likely much smaller or negative — the LATE tells us nothing about how they would respond",
+      "passed": true,
+      "evidence": "Step 4 explains the force-enable rollout targets never-takers 'who received a notification and still did not adopt' and that 'There is no statistical or structural reason to expect never-takers to respond like compliers — they are defined by the fact that they don't respond to nudges.' Step 6 provides a table showing the defensible range is $0 to negative, calling $32 'a ceiling estimate for a different population, not a floor estimate for this one.' The response explicitly labels this as 'ATE vs. LATE confusion.'"
+    },
+    {
+      "text": "Claude does NOT confirm that $32/user is the right planning figure for a forced adoption rollout",
+      "passed": true,
+      "evidence": "The response opens with 'No.' and states 'The CEO is conflating three different causal estimands.' The summary table answers 'Is the CEO's expectation well-founded? No.' Nowhere in the response does Claude affirm $32 as a valid planning figure; it consistently argues the figure does not apply to the forced-rollout population."
+    },
+    {
+      "text": "Claude recommends a forced-adoption experiment (random assignment to feature enabled vs. disabled regardless of opt-in) to estimate the ATE before committing to the forced rollout decision",
+      "passed": true,
+      "evidence": "Step 7 explicitly states: 'Run a direct A/B test on force-enable. A direct experiment — randomly force-enable the feature for a subset of non-adopters and hold out a control group — would directly measure what the CEO wants to know. This is the clean Rung 2 answer.' The summary table also recommends 'Run a randomized force-enable experiment on a subset of non-adopters before any broad rollout.'"
+    }
+  ]
+}

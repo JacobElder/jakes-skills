@@ -1,0 +1,87 @@
+{
+  "expectations": [
+    {
+      "text": "Claude identifies prior performance as a near-instrument (or near-IV) — a variable that strongly predicts treatment assignment (r ≈ 0.85) and is not itself exogenous",
+      "passed": true,
+      "evidence": "Step 3 explicitly labels prior performance a 'near-instrument': 'This is the defining feature of a near-instrument — a variable that is heavily predictive of treatment but has a weaker direct relationship to the outcome independent of the treatment path.' The table in Step 4 confirms 'Strong predictor of treatment, weaker on outcome — near-instrument? Yes, r = 0.85'. The response also establishes it is not exogenous — it is a confounder causing both mentorship and promotion directly."
+    },
+    {
+      "text": "Claude warns that controlling for a near-IV in the presence of unmeasured confounders can amplify rather than reduce bias — the mechanism being that conditioning concentrates remaining treatment variation onto the part correlated with unmeasured factors",
+      "passed": true,
+      "evidence": "Step 3 provides the full mechanism: 'Conditioning on prior performance removes prior performance's contribution to variation in mentorship. The residual variation in mentorship — the part that remains after controlling for prior performance — is now disproportionately driven by U, those unmeasured confounders. They become stronger confounders in the adjusted regression than they were in the unadjusted one. This is bias amplification.' The response also quantifies the risk: 'The more extreme the correlation between the near-instrument and treatment, the worse the amplification. At r = 0.85, you are conditioning out the dominant source of variation in mentorship assignment.'"
+    },
+    {
+      "text": "Claude does NOT unconditionally endorse 'control for prior performance because it predicts both treatment and outcome'",
+      "passed": true,
+      "evidence": "The response directly pushes back on this advice. From the summary and conclusion: 'Your colleague's structural intuition (prior performance is a confounder, control for it) is correct. The operational advice (just put it in the regression) fails because it ignores bias amplification under near-perfect selection on observables.' The opening framing also sets this up: 'the near-perfect correlation between prior performance and mentorship creates a separate, serious problem that your colleague's advice does not address — and that problem can make your estimate worse, not better.'"
+    },
+    {
+      "text": "Claude explicitly states the conditional: if prior performance is the ONLY confounder and no unmeasured confounders exist, controlling is correct; but given the plausibility of unmeasured confounders like ambition, sponsorship, or political capital, the near-IV amplification risk makes mechanical conditioning dangerous. Claude states which scenario is more realistic and recommends sensitivity analysis or an alternative design rather than leaving the user with an unresolved 'it depends.'",
+      "passed": true,
+      "evidence": "The conditional is stated in Step 5: 'Controlling for prior performance is the right move if and only if prior performance fully captures all the confounding.' Unmeasured confounders are enumerated: 'visibility to senior leadership, social capital and network, likability or cultural fit, volunteering for high-profile projects, having a sponsor who advocates informally.' The response clearly signals which scenario is more realistic — 'which is highly plausible at r = 0.85' and 'which is probably false' (that residual factors are uncorrelated with promotion). Step 6 provides five concrete alternatives: IV, formal program exploitation, DiD, sensitivity analysis, and bounding — resolving the question rather than leaving it open."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 6005,
+    "transcript_chars": null,
+    "note": "No metrics.json found; output_chars estimated from response.md character count"
+  },
+  "timing": {
+    "executor_duration_seconds": 73.4,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 73.4
+  },
+  "claims": [
+    {
+      "claim": "Prior performance is both a genuine confounder and a near-instrument simultaneously",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The Step 4 table explicitly classifies it as both: 'Confounder (fork)? Yes — should control' and 'near-instrument? Yes, r = 0.85'. The response correctly explains this creates genuine tension rather than a clean answer."
+    },
+    {
+      "claim": "At r = 0.85, conditioning on prior performance leaves almost no clean variation in mentorship to identify the effect",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 5 states: 'The residual variation in mentorship after conditioning on prior performance is tiny, and the employees who received mentorship despite lower prior performance, or who didn't receive it despite high prior performance, are almost certainly a non-representative group selected on exactly the unmeasured factors you cannot control.'"
+    },
+    {
+      "claim": "The bias amplification mechanism is structurally sound and correctly explained",
+      "type": "quality",
+      "verified": true,
+      "evidence": "The DAG-level explanation is correct: conditioning on a near-IV reduces the variance of the treatment attributable to the observed covariate, making unmeasured confounders relatively more influential in the residual variation. This matches the academic literature on bias amplification (e.g., Bhattacharya & Vogt 2007, Myers et al. 2011)."
+    },
+    {
+      "claim": "All five proposed alternatives (IV, formal program, DiD, sensitivity, bounds) are appropriate responses to the near-IV problem",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Each alternative addresses the core identification problem (lack of clean exogenous variation in mentorship) through a different mechanism. The IV and natural experiment approaches are the most direct solutions; sensitivity analysis and bounding are appropriate fallbacks when those aren't available."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": [],
+    "note": "No user_notes.md found in outputs_dir"
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "reason": "Expectation 4 bundles four distinct sub-claims into one assertion (the conditional, naming specific unmeasured confounders like ambition/sponsorship/political capital, stating which scenario is more realistic, and recommending sensitivity analysis or alternative design). A response could plausibly satisfy three of four and still pass. Splitting into separate assertions — especially isolating 'Claude states which scenario is more realistic' — would make the eval more discriminating. The 'which is more realistic' sub-claim is the hardest to satisfy and the most important: a weak response says 'it depends' without taking a position, while a strong response commits."
+      },
+      {
+        "reason": "No assertion checks whether the response correctly distinguishes the near-IV problem from the standard 'bad control' (collider/mediator) problem. A response that conflated bias amplification with collider bias would satisfy all four expectations as written but would contain a substantive causal reasoning error. An assertion like 'Claude correctly identifies prior performance is not a collider or mediator, and distinguishes near-IV bias amplification from other control variable mistakes' would catch that failure mode."
+      },
+      {
+        "assertion": "Claude does NOT unconditionally endorse 'control for prior performance because it predicts both treatment and outcome'",
+        "reason": "This assertion is necessary but not sufficient — a response that says 'do not control at all' would also pass it, even though that would be wrong (the response correctly explains controlling is right in principle, just dangerous in practice). Consider pairing it with a positive assertion: 'Claude acknowledges that prior performance is structurally a confounder and that the instinct to control is directionally correct, even while warning against naively doing so.'"
+      }
+    ],
+    "overall": "The four expectations collectively cover the key reasoning moves well. The main gap is that Expectation 4 is doing too much work as a single assertion and could be split to be more discriminating. The eval would also benefit from a check that the response takes a clear stance on which scenario is more realistic, since that is the hardest part to get right and is what separates a genuinely strong answer from a sophisticated hedge."
+  }
+}

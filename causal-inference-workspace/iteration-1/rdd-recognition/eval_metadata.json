@@ -1,0 +1,11 @@
+{
+  "eval_id": 3,
+  "eval_name": "rdd-recognition",
+  "prompt": "Our company gives a 20% discount to users whose 'engagement score' falls below 50 (it's an internal metric we compute). I want to know if the discount actually drives those users to come back. What's the cleanest way to estimate this?",
+  "assertions": [
+    "Claude recommends regression discontinuity design (RDD) or describes the comparison of units just above vs. just below the cutoff",
+    "Claude mentions at least one key RDD assumption (no manipulation/gaming of the running variable, smoothness/continuity through the cutoff, or similar)",
+    "Claude notes that the estimate is local to the cutoff and may not generalize to users far from the threshold",
+    "Claude does NOT default to 'just regress retention on discount with controls' without mentioning the discontinuity structure"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "expectations": [
+    {
+      "text": "Claude clearly distinguishes predictive performance from causal effect — feature importance does not imply causation",
+      "passed": true,
+      "evidence": "The response opens with 'Feature importances tell you which variables are the best predictors of churn. They cannot tell you which variables, if changed, would reduce churn. Those are two completely different questions sitting on different rungs of the causal ladder.' This distinction is reinforced throughout via Pearl's Ladder of Causation, the Table 2 Fallacy section, and the bottom-line summary. The response explicitly states the 92% AUC is a rung-1 answer to a rung-2 question."
+    },
+    {
+      "text": "Claude points out that some features may be effects of churn or downstream of churn, not causes (last_login_days is a particularly clear example)",
+      "passed": true,
+      "evidence": "The response dedicates a named subsection to `last_login_days`, labeling it 'most likely an effect of impending churn, not a cause' and 'This is the most dangerous one to act on.' A DAG is provided showing last_login_days as downstream of latent disengagement. It is described as 'a downstream symptom — a highly predictive effect indicator — not a lever.' The summary table also marks it as 'Effect of churn / symptom' with 'No' for actionability."
+    },
+    {
+      "text": "Claude recommends a causal analysis — DAG, identification strategy, or experiment — to decide what to intervene on",
+      "passed": true,
+      "evidence": "The 'What to do instead' section provides a four-step process: Step 1 is drawing a DAG (with reference to dagitty.net and an example DAG), Step 2 is identifying genuine levers using do(X) notation, Step 3 is running causal analysis via A/B test, back-door adjustment, instrumental variables, or differences-in-differences. All three major causal identification strategies are named explicitly."
+    },
+    {
+      "text": "Claude does NOT recommend intervening on the top-importance features just because they predict well",
+      "passed": true,
+      "evidence": "The response opens with 'No.' to the implicit suggestion. The summary table marks last_login_days and account_age as not actionable levers, support_tickets as uncertain pending DAG, and pricing_tier as requiring a proper experiment or back-door adjustment — not direct intervention. The bottom line states: 'acting on it directly risks investing heavily in interventions that address symptoms rather than causes.' Step 4 explicitly repositions the predictive model for targeting, not intervention design."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [
+      "Consider adding an assertion about whether Claude correctly handles the ambiguous case (support_tickets) by acknowledging uncertainty rather than giving a definitive causal verdict.",
+      "A future assertion could test whether Claude explains why high AUC does not imply causal validity — the response does this well (late-stage symptom pattern argument) and it is worth capturing explicitly."
+    ],
+    "overall": "The response is an exceptionally thorough and accurate treatment of the predictive-vs-causal distinction in the churn modeling context. All four assertions pass with clear, direct evidence. The response correctly identifies last_login_days as a downstream effect, recommends DAG-based causal analysis with multiple identification strategies, and explicitly rejects the notion that feature importance justifies intervention. The analysis goes well beyond the minimum requirements, covering Pearl's Ladder, the Table 2 Fallacy, and feature-by-feature causal diagnosis."
+  }
+}

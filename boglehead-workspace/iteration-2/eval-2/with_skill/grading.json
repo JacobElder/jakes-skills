@@ -1,0 +1,32 @@
+{
+  "eval_id": 2,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude explicitly states that dividends are not free money — the share price drops by the dividend amount on the ex-dividend date, leaving total return unchanged",
+      "passed": true,
+      "evidence": "when a company pays a $1 dividend, its share price drops by approximately $1 on the ex-dividend date. You haven't received income in any meaningful sense — you've received some of your own money back. Your total wealth (share value + cash in hand) is unchanged before taxes. Total return — price appreciation plus dividends — is what actually matters"
+    },
+    {
+      "text": "Claude explains that SCHD and JEPI represent a narrower slice of the market than a total-market fund (VTI/VTSAX), reducing diversification without a clear benefit",
+      "passed": true,
+      "evidence": "You're not getting meaningful diversification; you're getting a concentrated value tilt toward dividend-paying companies... You're excluding the high-growth non-dividend payers... VTI already includes every dividend-paying stock in the US market, including all the SCHD names. You haven't excluded dividends; you've included them as part of a total return strategy... You own the whole market, not a filtered slice of it."
+    },
+    {
+      "text": "Claude explains that selling shares in retirement is mathematically equivalent to receiving dividends — the 'don't sell principal' preference is psychological, not financial",
+      "passed": true,
+      "evidence": "there is no meaningful financial difference between receiving a $1 dividend and selling $1 of shares. The math is identical. Your total wealth is the same either way... Operating from a frame ('don't touch principal') that sounds conservative but doesn't reflect how total return actually works"
+    },
+    {
+      "text": "Claude notes the tax inefficiency of dividend strategies in taxable accounts — dividends create taxable events even when the investor doesn't need the cash",
+      "passed": true,
+      "evidence": "In a taxable account, dividends are taxed every year whether you want the cash or not. Unrealized capital gains aren't. This creates tax drag with no corresponding benefit... when you receive dividends, the company decides for you — and you pay tax on that event regardless of whether you needed the cash."
+    },
+    {
+      "text": "Claude does NOT endorse dividend investing as a superior or even equivalent strategy to total-return investing for retirement",
+      "passed": true,
+      "evidence": "concentrating your retirement savings in it and JEPI based on the 'live off dividends' thesis is a strategic mistake. The better approach: broad index funds (VTI/VXUS/BND or a target-date fund), grow total wealth during accumulation, and draw down at a sustainable rate in retirement using planned share sales. This is simpler, cheaper, more tax-efficient, and better diversified."
+    }
+  ]
+}

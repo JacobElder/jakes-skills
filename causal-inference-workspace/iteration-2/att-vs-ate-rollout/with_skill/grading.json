@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Claude identifies the 18% figure as an ATT estimate — the effect among users who chose to opt in — not the ATE for the full user population",
+      "passed": true,
+      "evidence": "Step 3 explicitly labels the estimate: 'Your opt-in experiment estimates the ATT — Average Treatment Effect on the Treated' with the formula ATT = E[Y(1) − Y(0) | D = 1], and distinguishes it from the ATE = E[Y(1) − Y(0)] needed for the rollout decision."
+    },
+    {
+      "text": "Claude explains why ATT ≠ ATE here: opt-in users are self-selected and likely differ from the average user in engagement level, openness to change, or technical comfort",
+      "passed": true,
+      "evidence": "The DAG in Step 2 shows U → D where U captures 'motivation to engage, tech-savviness, willingness to try new products, existing frustration.' Step 3 elaborates: 'The 12% who opted in are likely the most motivated, most engaged, and most change-receptive users' while 'The 88% who didn't opt in include users who are happy enough with the current dashboard, lower-engagement users who may not notice the change at all, and users who actively resist change.'"
+    },
+    {
+      "text": "Claude does NOT simply say 'expect approximately 18% improvement' from making the redesign the default",
+      "passed": true,
+      "evidence": "The response opens with 'No. The 18% is almost certainly an overestimate for a full rollout' and the Practical Recommendation section explicitly states 'Do not project 18% onto the full rollout.' A forecast range of '2–10% improvement for the full population' is offered as a more defensible alternative."
+    },
+    {
+      "text": "Claude recommends running a forced experiment (random assignment to new vs. old dashboard) to get an unbiased ATE estimate before committing to a full rollout",
+      "passed": true,
+      "evidence": "Step 6 recommends 'A proper A/B test with random assignment (not opt-in). Randomly force some users into the new dashboard, force others to stay on the old one. The difference in means is an unbiased ATE.' The Practical Recommendation section repeats: 'Run a proper A/B test before full rollout. Randomly assign some percentage of users (ideally users who never opted in) to the new dashboard.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 60.1
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "The response is thorough and well-structured. One minor enhancement could be a brief quantitative illustration of how ATT and ATE can diverge (e.g., a simple weighted average example), which might make the gap more intuitive for non-technical stakeholders.",
+      "The response mentions matching as a partial remedy for observed confounders but correctly notes unobserved variables remain a threat — this nuance is valuable but could be slightly condensed for executive audiences."
+    ],
+    "overall": "All four assertions pass. The response correctly identifies the ATT/ATE distinction, explains the self-selection mechanism with a DAG and concrete user-type examples, explicitly rejects the 18% projection for a full rollout, and recommends a randomized A/B test as the proper path to an unbiased ATE. The answer is technically rigorous, well-organized, and actionable."
+  }
+}

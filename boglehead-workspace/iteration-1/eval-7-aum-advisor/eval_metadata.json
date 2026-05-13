@@ -1,0 +1,12 @@
+{
+  "eval_id": 7,
+  "eval_name": "one-percent-aum-advisor",
+  "prompt": "I've been with a financial advisor for 6 years. They charge 1% of assets under management. I have $350,000 with them. They've done a solid job — my portfolio is in low-cost Vanguard index funds. Is this a good deal?",
+  "assertions": [
+    "Claude calculates the explicit dollar cost: 1% of $350k = $3,500/year, and projects how this compounds over a long time horizon",
+    "Claude identifies the core problem: if the advisor is just holding low-cost Vanguard index funds, this is something the user can do themselves for free",
+    "Claude recommends self-managing (three-fund portfolio at Vanguard/Fidelity/Schwab) or switching to a fee-only/advice-only fiduciary who charges a flat fee",
+    "Claude does NOT validate the 1% AUM as a reasonable or fair fee for the described service of holding index funds",
+    "Claude notes the bogleheads.org forum and/or advice-only advisor alternatives as resources"
+  ]
+}

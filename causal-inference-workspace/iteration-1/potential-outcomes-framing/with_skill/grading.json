@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude correctly defines ATE as the average treatment effect across the full population and ATT as the effect among those actually treated",
+      "passed": true,
+      "evidence": "ATE is defined as E[Y_i(1) − Y_i(0)] with 'The expectation is taken over the full population — everyone, treated and untreated alike.' ATT is defined as E[Y_i(1) − Y_i(0) | T_i = 1] with 'The expectation is taken only over the subpopulation that actually received treatment.' Both definitions are precise and correct."
+    },
+    {
+      "text": "Claude explains that the difference matters when treatment effects are heterogeneous and the treated population is not representative of the full population",
+      "passed": true,
+      "evidence": "The 'When ATE and ATT Diverge' section states they diverge 'whenever treatment selection is correlated with treatment effect — that is, when the people who choose (or are assigned) to be treated are systematically different from the overall population in how much they benefit.' Common Errors point 3 further clarifies: 'If effects are homogeneous (every unit responds the same way), ATE = ATT = ATU. The distinction only becomes operationally important when there is heterogeneity.'"
+    },
+    {
+      "text": "Claude connects the choice to the policy question — ATT for 'did it help the people who used it', ATE for 'should we roll it out to everyone'",
+      "passed": true,
+      "evidence": "Policy Question 1 ('Should we mandate this treatment / roll this feature out to all users?') is labelled 'This is an ATE question.' Policy Question 2 ('Did this training program benefit the workers who took it?') is labelled 'This is an ATT question.' The summary table also maps ATE to 'What if we gave this to everyone?' and ATT to 'Did this work for the people who got it?'"
+    },
+    {
+      "text": "Claude does NOT conflate the two or describe them as interchangeable",
+      "passed": true,
+      "evidence": "The response treats equality of ATE and ATT as a special case limited to well-executed RCTs, not as a general rule. The 'Common Errors' section explicitly flags 'Estimating ATT but claiming ATE' as the most common mistake in program evaluation. Throughout the response, the two estimands are consistently distinguished by population, identification requirements, and policy relevance."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "The response is a thorough, technically precise treatment of ATE vs ATT. It satisfies all four assertions fully. Definitions are mathematically exact, the heterogeneity condition is explicitly identified, policy questions are cleanly mapped to each estimand, and the two concepts are never conflated. The response also goes beyond the minimum by covering identification assumptions, matching procedure differences, and common misuse errors."
+  }
+}

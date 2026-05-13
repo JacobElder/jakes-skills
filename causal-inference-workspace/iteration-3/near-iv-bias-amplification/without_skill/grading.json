@@ -1,0 +1,90 @@
+{
+  "expectations": [
+    {
+      "text": "Claude identifies prior performance as a near-instrument (or near-IV) — a variable that strongly predicts treatment assignment (r ≈ 0.85) and is not itself exogenous",
+      "passed": true,
+      "evidence": "The response explicitly uses the term 'near-instrument' multiple times: 'it is nearly an instrument for treatment', 'if X is a near-instrument (strong treatment predictor, weaker direct outcome predictor)', and 'the near-instrument structure (r = 0.85)'. It also acknowledges r = 0.85 and notes that prior performance is a confounder — simultaneously predicting treatment and outcome — which establishes its endogenous character."
+    },
+    {
+      "text": "Claude warns that controlling for a near-IV in the presence of unmeasured confounders can amplify rather than reduce bias — the mechanism being that conditioning concentrates remaining treatment variation onto the part correlated with unmeasured factors",
+      "passed": true,
+      "evidence": "The 'Why Controlling for Prior Performance Is Complicated' section lays out the mechanism step-by-step: 'When you condition on prior performance, you partial out a large chunk of the variance in mentorship. The residual variation in mentorship — the part your model is now using to estimate the effect — is disproportionately driven by U. The ratio of bias-from-U to signal-from-mentorship grows after conditioning, not shrinks.' This matches the expected mechanism precisely."
+    },
+    {
+      "text": "Claude does NOT unconditionally endorse 'control for prior performance because it predicts both treatment and outcome'",
+      "passed": true,
+      "evidence": "The response opens by acknowledging the colleague's point but immediately flags a 'second, less obvious hazard: bias amplification.' The entire response is structured as a caution against the naive control-for-everything approach. The Bottom Line reiterates: 'conditioning on it may amplify bias from unmeasured confounders rather than reduce overall bias' and 'regression adjustment alone is unlikely to give you a credible causal estimate.'"
+    },
+    {
+      "text": "Claude explicitly states the conditional: if prior performance is the ONLY confounder and no unmeasured confounders exist, controlling is correct; but given the plausibility of unmeasured confounders like ambition, sponsorship, or political capital, the near-IV amplification risk makes mechanical conditioning dangerous. Claude states which scenario is more realistic and recommends sensitivity analysis or an alternative design rather than leaving the user with an unresolved 'it depends.'",
+      "passed": false,
+      "evidence": "The response does satisfy parts of this expectation: it states the conditional ('some adjustment is better than none if it is the only confounder'), names plausible unmeasured confounders ('social capital, manager favoritism, networking skill'), and recommends both sensitivity analysis (E-value) and alternative designs (RDD). However, it never explicitly declares which scenario is more realistic — i.e., it does not say 'unmeasured confounders are likely in this setting, so the amplification scenario is the operative one.' The response's stance is that the problem is hard and adjustment is 'unlikely to give a credible estimate,' which implicitly favors the confounded scenario, but the expectation requires an explicit declaration. This omission means the response partially evades the discriminating requirement of the assertion."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  },
+  "execution_metrics": {
+    "tool_calls": null,
+    "total_tool_calls": null,
+    "total_steps": null,
+    "errors_encountered": 0,
+    "output_chars": 3657,
+    "transcript_chars": 3657
+  },
+  "timing": {
+    "executor_duration_seconds": 44.1,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 44.1
+  },
+  "claims": [
+    {
+      "claim": "Bias amplification was formalized by Bhattacharya and Vogt (2007) and Pearl (2010)",
+      "type": "factual",
+      "verified": false,
+      "evidence": "Bhattacharya & Vogt (2007) and Pearl (2010) are plausible citations for bias amplification in observational studies, but cannot be verified against a live reference database here. The core result is well-established in the econometrics/causal inference literature and the attribution is plausible."
+    },
+    {
+      "claim": "At r = 0.85, R² ≈ 0.72, meaning ~72% of treatment variance is explained by prior performance",
+      "type": "factual",
+      "verified": true,
+      "evidence": "0.85² = 0.7225, which rounds to 0.72. The arithmetic is correct."
+    },
+    {
+      "claim": "The E-value (VanderWeele & Ding, 2017) is an appropriate tool for sensitivity analysis here",
+      "type": "quality",
+      "verified": true,
+      "evidence": "The E-value is a standard, well-accepted tool for quantifying how strong unmeasured confounding would need to be to explain away a point estimate. Its recommendation here is methodologically sound."
+    },
+    {
+      "claim": "A regression discontinuity design around a performance threshold would be more credible than regression adjustment",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Given that mentorship is 'nearly deterministic above some performance threshold' (as stated in the response), an RDD is a natural and well-supported alternative. The recommendation is methodologically appropriate."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Claude identifies prior performance as a near-instrument (or near-IV) — a variable that strongly predicts treatment assignment (r ≈ 0.85) and is not itself exogenous",
+        "reason": "The phrase 'not itself exogenous' is ambiguous. In IV parlance, a valid instrument must be exogenous (exclusion restriction). A near-IV may nearly satisfy exogeneity but fail the exclusion restriction because it directly affects the outcome. Here, prior performance is explicitly a confounder — it directly affects both treatment and outcome — which means it clearly fails the exclusion restriction, not just 'is not exogenous' in the treatment-equation sense. The assertion would be sharper if it specified 'fails the exclusion restriction (direct effect on outcome)' rather than 'not itself exogenous,' since a model-naive reader could confuse this with the treatment equation."
+      },
+      {
+        "assertion": "Claude explicitly states the conditional: if prior performance is the ONLY confounder...",
+        "reason": "This is the hardest and most discriminating assertion in the set — it requires Claude to commit to which scenario is realistic rather than hedging. The response almost does this but stops short. Consider splitting this into two sub-assertions: (a) Claude states the two-scenario conditional, and (b) Claude explicitly favors the confounded scenario as more realistic given institutional context. The current compound assertion passed three of four sub-requirements but fails on the most important one (committing to a scenario), which could obscure that gap in a pass/fail reading."
+      },
+      {
+        "reason": "No assertion checks whether Claude correctly identifies the direction of bias amplification — i.e., that the OLS estimate of the treatment effect becomes MORE biased (not just noisier or differently biased) when conditioning on the near-IV. A response that correctly flags 'bias amplification' but misidentifies the direction (e.g., claims it biases toward zero instead of away from zero, or is ambiguous about direction) would pass all four assertions without actually getting the mechanism right."
+      }
+    ],
+    "overall": "The four assertions cover the key intellectual content well and together form a meaningful gauntlet. The main gaps are: (1) ambiguous language in assertion 1 around 'exogenous'; (2) the compound structure of assertion 4 allows a partial pass to look like full compliance; (3) no assertion verifies directional correctness of the amplification bias, which is a load-bearing technical claim."
+  }
+}

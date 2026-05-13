@@ -1,0 +1,12 @@
+{
+  "eval_id": 5,
+  "eval_name": "complexity-creep-three-fund",
+  "prompt": "I have a three-fund portfolio (VTI, VXUS, BND) but I've been reading a lot and want to improve it. I'm thinking of adding: a small-cap value fund (VIOV), a REIT fund (VNQ), a dividend growth fund (VIG), and international small-cap (VSS). My spreadsheet would have 7 funds. Is this more diversified and will it give better returns?",
+  "assertions": [
+    "Claude pushes back on the premise that more funds equals better diversification — explains that VTI already holds small-cap and REITs at market weight",
+    "Claude does NOT recommend adding all or most of the proposed funds without strong justification",
+    "Claude explains the real costs of portfolio complexity: harder to rebalance, more behavioral risk, potential tax drag in taxable accounts",
+    "Claude explicitly defends the three-fund portfolio as already providing complete, broad market exposure — not a starting point for improvement",
+    "Claude does NOT split the difference by saying 'maybe just add small-cap value' without explaining this is an active bet and a contested Boglehead topic, not an obvious upgrade"
+  ]
+}

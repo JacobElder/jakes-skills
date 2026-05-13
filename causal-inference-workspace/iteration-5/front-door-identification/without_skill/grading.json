@@ -1,0 +1,35 @@
+{
+  "run_id": "front-door-identification-without_skill",
+  "eval_id": 7,
+  "eval_name": "front-door-identification",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Claude does NOT just conclude 'not identifiable because of unmeasured confounder'",
+      "passed": true,
+      "evidence": "The very first line reads: 'Short answer: No. The effect is still identifiable.' Claude explicitly rejects unidentifiability and proceeds to explain the identification strategy."
+    },
+    {
+      "text": "Claude recognizes the potential for front-door identification via the observed mediator 'skills applied on the job'",
+      "passed": true,
+      "evidence": "Claude immediately names 'skills applied on the job' as the key variable and invokes the front-door criterion: 'The variable you described — \"skills applied on the job\" — gives you exactly what you need to apply the front-door criterion.'"
+    },
+    {
+      "text": "Claude describes the front-door criterion or the logic behind it: estimate the effect of training on skills-applied (unconfounded), then estimate the effect of skills-applied on performance (adjusting for training as a back-door block), then combine",
+      "passed": true,
+      "evidence": "The 'Front-Door Adjustment Formula' section walks through four explicit steps: (1) estimate P(M|T) — unconfounded T→M effect; (2) estimate P(Y|M,T) — conditioning on T blocks the backdoor from M to Y; (3) average over the distribution of T; (4) compose to get the total causal effect. The intuition section also restates this two-step logic in plain language."
+    },
+    {
+      "text": "Claude notes the key assumption: ambition (the unmeasured confounder) must not directly cause skills-applied independent of the training — i.e., ambition affects performance only through the training → skills-applied path or through paths that can be blocked",
+      "passed": true,
+      "evidence": "Condition 2 states 'there are no unblocked backdoor paths from T to M' and explicitly says 'U (ambition) affects T, but U does not have a direct arrow into M.' The 'Assumptions to Scrutinize' section further flags 'The No U → M Assumption' with a concrete example: ambitious employees developing skills through self-study would violate this condition."
+    },
+    {
+      "text": "Claude notes the complete mediation condition: all causal paths from training to performance must pass through 'skills applied on the job' — if training has a direct effect on performance ratings independent of skills-applied (e.g., being seen attending training boosts ratings), the front-door formula is biased. Claude flags this as an assumption to verify, not just accept.",
+      "passed": true,
+      "evidence": "Condition 1 ('M intercepts all causal paths from T to Y') directly states this requirement and labels it 'often the most demanding condition to defend in organizational contexts.' Claude enumerates specific direct-path scenarios (managers rewarding attendance, credential effects, social capital) and explicitly instructs: 'Think carefully about whether...' The 'Assumptions to Scrutinize' section further identifies the exclusion restriction as 'the hard one' and specifies that if a direct T→Y effect exists the front-door formula fails."
+    }
+  ]
+}

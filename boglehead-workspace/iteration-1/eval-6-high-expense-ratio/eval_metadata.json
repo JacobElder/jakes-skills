@@ -1,0 +1,12 @@
+{
+  "eval_id": 6,
+  "eval_name": "high-expense-ratio-active-fund",
+  "prompt": "I've had $120,000 sitting in the American Funds Growth Fund of America (AGTHX) in my 401k for 8 years. It has a 0.63% expense ratio. My HR told me we also have a Vanguard 500 Index option with a 0.03% expense ratio. Should I stay in American Funds because it has a strong track record?",
+  "assertions": [
+    "Claude explicitly recommends switching to the Vanguard 500 Index fund (0.03% ER) from AGTHX (0.63% ER)",
+    "Claude calculates or estimates the concrete dollar cost of the expense ratio difference on $120k (approximately $720/year currently, compounding over time)",
+    "Claude cites or references SPIVA data showing that 80%+ of active large-cap funds underperform their benchmark over 15-year periods",
+    "Claude explicitly rejects the 'strong track record' argument — past active fund performance does not reliably predict future outperformance",
+    "Claude does NOT recommend a 'split approach' or staying in AGTHX for any portion without a very strong justification"
+  ]
+}

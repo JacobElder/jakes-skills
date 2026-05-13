@@ -1,0 +1,11 @@
+{
+  "eval_id": 2,
+  "eval_name": "selection-bias-power-users",
+  "prompt": "We want to understand what drives long-term retention. Our analysis team filtered the dataset to users who were still active at the 90-day mark — these are our most engaged, highest-quality users. Within this group, completing the onboarding checklist correlates strongly with 6-month retention (r = 0.42, p < 0.001). Should we invest in improving onboarding completion as a lever for long-term retention?",
+  "assertions": [
+    "Claude flags that restricting the analysis to '90-day active users' conditions on a downstream variable — users who survived to 90 days are already a selected, high-retention population",
+    "Claude explains the collider mechanism specifically: being active at 90 days is a common effect of both onboarding engagement and baseline retention tendency, so conditioning on it induces spurious correlation between those two causes even if they are independent in the full population — this means the r = 0.42 could exist even if onboarding completion has zero causal effect",
+    "Claude does NOT take the r = 0.42 correlation at face value as evidence that improving onboarding completion will causally improve retention",
+    "Claude recommends analyzing the full user population (including churned users) rather than the 90-day survivors, or using an approach that corrects for selection (e.g., IPW)"
+  ]
+}

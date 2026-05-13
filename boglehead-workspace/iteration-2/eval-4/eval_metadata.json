@@ -1,0 +1,12 @@
+{
+  "eval_id": 4,
+  "eval_name": "investment-waterfall-with-high-interest-debt",
+  "prompt": "I have $1,200/month to invest. My employer offers no 401k match. I have $18,000 in credit card debt at 24% interest, $3,000 in savings, and I'm enrolled in a high-deductible health plan. What should I do with the $1,200?",
+  "assertions": [
+    "Claude identifies paying off the 24% credit card debt as the top priority before investing in anything (no employer match means there's no 'free money' competing for the dollars)",
+    "Claude explicitly explains that 24% interest is a guaranteed return that no investment reliably beats",
+    "Claude identifies the HSA as triple-tax-advantaged and notes the user qualifies due to the HDHP — recommending it come after debt payoff",
+    "Claude follows the canonical waterfall order: debt payoff → emergency fund → HSA → IRA → 401k, and does not recommend investing in taxable accounts while high-interest debt exists",
+    "Claude does NOT split the $1,200 between debt payoff and investing in the market as if they are comparable uses of capital"
+  ]
+}

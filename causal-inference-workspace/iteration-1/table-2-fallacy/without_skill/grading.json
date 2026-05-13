@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude explicitly identifies this as the Table 2 Fallacy (or describes the same concept by another name — 'each coefficient requires its own identification', 'controls aren't causally identified', etc.)",
+      "passed": true,
+      "evidence": "The response explicitly names the Table 2 Fallacy in the opening short answer ('This mistake even has a name: the Table 2 Fallacy') and dedicates a full section to it titled '## The Table 2 Fallacy', citing Westreich & Greenland (2013)."
+    },
+    {
+      "text": "Claude explains that the regression was set up to identify the treatment effect specifically, and other coefficients describe model fit rather than causal effects",
+      "passed": true,
+      "evidence": "The response states: 'the model was not designed to give country a causal interpretation. It was designed to give Treatment a causal interpretation, and country was included as a control to soak up confounding variance.' The Key Takeaway reinforces this: 'The model was specified to identify the causal effect of treatment, and the adjustment set that serves that goal does not automatically serve the goal of identifying country's causal effect.'"
+    },
+    {
+      "text": "Claude notes that to estimate country's causal effect on conversion, a separate analysis with its own adjustment set would be needed",
+      "passed": true,
+      "evidence": "Section 3.1 states: 'the causal effect of Country on Conversion requires its own, potentially different, adjustment set.' The Practical Guidance table explicitly advises: 'Draw a new DAG with Country as the exposure; derive the correct adjustment set; fit a separate model.'"
+    },
+    {
+      "text": "Claude does NOT confirm that country has a 'big causal effect' based on the coefficient magnitude alone",
+      "passed": true,
+      "evidence": "The response explicitly refutes this throughout. The Key Takeaway states: 'A large, statistically significant country coefficient means country is a strong predictor of conversion, conditional on your other controls. It does not mean country has a large causal effect on conversion.' The entire response is structured to argue against this misinterpretation."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "The response passes all four assertions with high quality. It explicitly names the Table 2 Fallacy, clearly distinguishes the treatment-focused adjustment set from what would be needed to identify country's causal effect, recommends a separate analysis for country, and never endorses interpreting the country coefficient magnitude as evidence of a causal effect."
+  }
+}

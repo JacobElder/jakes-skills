@@ -1,0 +1,73 @@
+Great question — and you're asking the right questions, which means you're close to the right answer. Let me address each part directly.
+
+---
+
+## The 5-year outperformance argument
+
+AGTHX has beaten the S&P 500 by 1.5% per year for the past five years. That's true and worth acknowledging — but five years of outperformance is genuinely weak evidence that AGTHX will continue to outperform.
+
+Here's why this matters:
+
+SPIVA (S&P's semiannual scorecard) consistently shows that 80–90% of actively managed US funds underperform their benchmark over 15-year periods. But in any given five-year window, some percentage of active funds will beat the index — purely by chance. The problem is that past 5-year outperformance has essentially zero predictive power for the next 5 years. The SPIVA persistence scorecards show this directly: funds that land in the top quartile over one period do not persistently land there in the next period at rates above chance.
+
+So the question isn't "has AGTHX beaten the market for 5 years?" The question is: "Is there a durable reason to believe it will continue doing so after costs?" For the overwhelming majority of active funds, the answer is no — and American Funds specifically does not have structural advantages that would change this calculus.
+
+---
+
+## The cost drag you're already paying
+
+Let's actually run the numbers, because Bogleheads always do.
+
+- AGTHX expense ratio: 0.63%
+- Vanguard 500 Index expense ratio: 0.03%
+- Difference: 0.60% per year
+
+On a $120,000 portfolio, that's $720/year in additional costs right now. But it compounds.
+
+If we assume both funds earn the same gross return going forward (let's say 7% pre-cost), over 20 years:
+- Vanguard 500 at 0.03%: ~$120,000 grows to approximately $458,000
+- AGTHX at 0.63%: ~$120,000 grows to approximately $405,000
+
+That's roughly $53,000 less — not because of bad stock picks, but purely from the cost differential, assuming identical gross performance. If AGTHX actually underperforms (which is the base-rate expectation), the gap widens further.
+
+The 1.5%/year outperformance you've observed for the past five years amounts to about 0.90%/year net of the fee disadvantage. Even granting all of that as genuine alpha rather than luck, you're banking on a highly uncertain continuation of past skill to overcome a certain, compounding cost headwind.
+
+Bogle put it this way: "In investing, you get what you don't pay for." The cost is the one thing you can control with certainty. Everything else is speculation.
+
+---
+
+## The "diversifying management styles" argument
+
+This is a real anti-pattern — and one the investment industry loves because it slows down investors who are considering leaving active funds.
+
+"Diversifying management styles" between active and passive sounds sophisticated. It isn't. Here's why:
+
+1. **It doesn't reduce risk.** AGTHX and the Vanguard 500 Index hold largely the same underlying stocks — they're both US large-cap focused. You're not getting diversification across uncorrelated assets; you're getting the same pool of stocks with different fee structures applied to each half.
+
+2. **You get a blended return that's still likely to trail.** If the index fund returns 8% and AGTHX returns 7% (a conservative assumption over the long run after accounting for reversion to mean), a 50/50 split earns you 7.5% — less than just holding the index. You're paying extra fees to reduce your expected return.
+
+3. **"Keeping half" is not a principled position.** If you genuinely believe AGTHX will continue to outperform net of fees, make the case and go all-in. If the evidence says the index is better — and it does — move everything. The 50/50 split is a psychological compromise, not an investment thesis.
+
+The right question isn't "how do I hold both?" It's "which one do I actually expect to deliver a better net return over 15+ years?" The Boglehead answer to that question, backed by decades of data, is the low-cost index fund.
+
+---
+
+## What you should actually do
+
+The good news: you're in a 401(k), so there's no tax event when you switch funds. This is the cleanest possible situation to make the move — no capital gains, no paperwork beyond a fund-to-fund transfer within the plan.
+
+Move the $120,000 from AGTHX to the Vanguard 500 Index fund, and direct all future contributions to the index fund as well. If the Vanguard 500 is the best option in the plan (you might also look for a US Total Stock Market fund if one's available at similarly low cost), that's your fund.
+
+If the plan also has a total bond market or international index fund at low cost, you might consider whether you want to build a simple 2- or 3-fund portfolio inside the 401(k). That's worth thinking about based on your overall asset allocation and time horizon.
+
+---
+
+## One more thing on American Funds specifically
+
+American Funds are typically sold by commissioned financial advisors and often carry front-end sales loads (as high as 5.75% on initial purchases). The expense ratios are also high relative to index alternatives. The AGTHX share class available in your 401(k) may have reduced or waived loads, which is common in plan settings — but you're still paying 0.63% annually for active management when you have a 0.03% alternative sitting right next to it.
+
+---
+
+You're clearly thinking about this carefully, and the fact that you're asking the question means you're already most of the way there. The switch is simple, costs nothing in taxes, and puts the math on your side going forward.
+
+(This isn't personalized financial advice — for a specific tax situation or retirement income plan, a fee-only fiduciary advisor is worth a one-time consultation. But for this specific question, the evidence points clearly in one direction.)

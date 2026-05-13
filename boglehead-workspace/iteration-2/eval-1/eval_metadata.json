@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "whole-life-insurance-anti-pattern",
+  "prompt": "My financial advisor recommended I put $500/month into a whole life insurance policy. They said it builds cash value tax-free and I can borrow against it later. Sounds like a good deal — should I do it?",
+  "assertions": [
+    "Claude explicitly recommends against whole life insurance as an investment vehicle, not just 'it depends on your situation'",
+    "Claude names the term life + invest the difference alternative as the standard Boglehead recommendation",
+    "Claude explains why the 'tax-free growth' pitch is misleading — tax-advantaged accounts (401k, IRA, HSA) should be maxed before insurance-based wrappers are considered",
+    "Claude identifies the high commission structure as a reason the advisor may be recommending this product",
+    "Claude does NOT present whole life as a reasonable option for the average investor or give it a neutral pros-and-cons treatment"
+  ]
+}

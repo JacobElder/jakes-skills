@@ -1,0 +1,37 @@
+{
+  "expectations": [
+    {
+      "text": "Claude explicitly flags that the 25% faster pre-rollout growth in treatment markets violates the parallel trends assumption that DiD requires",
+      "passed": true,
+      "evidence": "Step 3 states: 'Your setup directly violates this assumption: Treatment markets were growing 25% faster than control markets in the pre-period... When pre-trends are non-parallel, this assumption fails.' The opening also calls it 'a near-textbook case of a parallel-trends violation.'"
+    },
+    {
+      "text": "Claude explains that the observed convergence after rollout is consistent with trend mean-reversion, not necessarily a causal effect of the pricing page",
+      "passed": true,
+      "evidence": "Step 3 Explanation A explicitly states: 'The treatment markets were simply in a high-growth phase that was unsustainable. They would have converged back toward control-market growth rates with or without the new pricing page. DiD attributes some of that reversion to the pricing page and misreads mean reversion as treatment effect.' Step 6 also reinforces this as one of the leading explanations for the convergence pattern."
+    },
+    {
+      "text": "Claude does NOT accept the +8% DiD estimate as valid without addressing the pre-trend differential",
+      "passed": true,
+      "evidence": "The opening states 'No — not without serious qualification' and the Bottom Line section says 'The +8% estimate should not be trusted as stated.' The response consistently treats the estimate as unreliable throughout, and ends with: 'Claiming +8% in a board deck or product review without addressing the pre-trend violation is a meaningful analytic error.'"
+    },
+    {
+      "text": "Claude recommends visualizing and testing pre-period trends as a prerequisite, and notes that the current evidence does not support a causal interpretation of the +8% estimate",
+      "passed": true,
+      "evidence": "Step 4 prescribes: 'Plot each market's conversion growth rate quarterly (or monthly) for 2 years before rollout' as the primary diagnostic. Step 7 Option 4 recommends: 'Run a formal test for pre-trends (e.g., regress outcomes on treatment × pre-period time dummies; test joint significance).' The Bottom Line actionable steps list 'Plot quarterly pre-trends for all 8 markets' as item 1. The conclusion explicitly says the honest answer is 'preliminary signal, assumptions not yet validated.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 94.2
+  },
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "The response fully satisfies all four assertions. It correctly identifies the parallel trends violation, explains mean-reversion as an alternative explanation for the post-rollout convergence, refuses to accept the +8% estimate at face value, and prescribes both visualization (pre-trend plots) and formal statistical testing of pre-period trends as prerequisites for any causal interpretation. The response is thorough, well-structured, and causally rigorous throughout."
+  }
+}

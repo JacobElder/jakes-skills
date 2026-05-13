@@ -1,0 +1,34 @@
+The "living off dividends" idea is appealing, but it's built on a misconception — and it's worth correcting before this costs you real money.
+
+**Dividends are not free money.**
+
+When a company pays a $1 dividend, its share price drops by $1 on the ex-dividend date. You haven't received income from the market; you've received a return of your own capital in a different form. Total return is price appreciation plus dividends. Focusing on one piece of that equation doesn't increase it.
+
+So "I want passive income without selling shares" is a false distinction. Receiving a dividend and selling a share are economically identical — you end up with the same amount of cash and the same (reduced) portfolio value either way. The difference is that dividends are less flexible: you get whatever the company decides to distribute, on their schedule, whether you need it or not.
+
+**Now let's look at SCHD and JEPI specifically.**
+
+SCHD is a dividend-focused ETF with a 0.06% expense ratio. It's not a terrible fund — but it's a concentrated bet on a slice of the market (large-cap value/dividend payers) rather than the whole market. It's roughly 90% correlated to the S&P 500, so you're not really diversifying; you're just excluding the high-growth non-dividend payers that have driven a lot of market returns over the past two decades. VTI already holds all the dividend aristocrats in it, plus everything else.
+
+JEPI is a different problem entirely. It's a covered-call income fund — it caps your upside to generate yield, and distributes that yield as ordinary income rather than qualified dividends. In a strong bull market, JEPI systematically lags because it has sold away the upside. It's been marketed to retirees hungry for yield, but "high yield now, underperform over time" is a bad trade-off for a 20-30 year retirement. The income feels great; the total return often doesn't justify it.
+
+**What Bogleheads actually do for retirement income.**
+
+The standard approach: sell shares to fund living expenses. In retirement, you're drawing down a portfolio, not trying to avoid touching it. "Sell shares" sounds scary, but a total-market fund in a taxable account generates long-term capital gains taxed at 0-20% — often lower than the ordinary income rate you'd pay on JEPI's distributions.
+
+The three-fund portfolio (VTI + VXUS + BND) gives you the whole market at rock-bottom cost, and you take money out by selling whatever you need, whenever you need it. You're not dependent on dividend decisions made by corporate boards.
+
+**The practical concern about your current holdings.**
+
+If SCHD and JEPI are in a taxable account and you have significant unrealized gains, selling just to simplify isn't obviously the right move — you'd owe capital gains taxes on the difference. If they're in a tax-advantaged account (IRA, 401k), there's no tax cost to exchange them for VTI and VT or a target-date fund.
+
+Either way, before making changes, clarify a few things for yourself:
+- What account types are these in?
+- How far from retirement are you?
+- Do you have a full emergency fund (3-6 months expenses, in cash or a high-yield savings account)?
+- Have you maxed out tax-advantaged accounts (401k up to the match, then IRA, then HSA if eligible) before going heavy in taxable?
+
+**The bottom line:** dividend strategies don't generate extra return; they just deliver return in a less tax-efficient form and create the illusion of "not touching principal." Replace the mental model of "living off dividends" with "maintaining a total-return portfolio and withdrawing what I need." You'll almost certainly come out ahead.
+
+---
+This isn't personalized financial advice. For a retirement that's close or complex, a fee-only fiduciary advisor (or the bogleheads.org forum, which is free) is worth consulting.

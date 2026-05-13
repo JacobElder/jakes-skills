@@ -1,0 +1,163 @@
+{
+  "skill_name": "causal-inference",
+  "description": "Apply Pearl's framework for causal reasoning — the Ladder of Causation, causal diagrams (DAGs), and the structural distinction between good and bad controls — when the user is asking a cause-and-effect question. Use whenever the user asks \"does X cause Y\", interprets a study or A/B test, asks \"should I control for [variable]\" or which covariates to include, encounters Simpson's paradox or a sign reversal, evaluates observational data, considers a natural experiment or instrumental variable, works with regression discontinuity, differences-in-differences, panel/longitudinal data, or asks about heterogeneous treatment effects across user segments — even if they don't say \"causal.\" Common cases include experiment design, regression interpretation, policy evaluation, and questions about confounding or selection bias.",
+  "results": [
+    {
+      "query": "We ran a regression and got p<0.001. Does that prove our feature caused the improvement?",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": false
+    },
+    {
+      "query": "Our A/B test shows +8% conversion but when I split by device type the effect reverses. What's going on?",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": false
+    },
+    {
+      "query": "We filtered to power users before analyzing. Is that a problem?",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": false
+    },
+    {
+      "query": "Should I control for income in my regression of education on wages?",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": false
+    },
+    {
+      "query": "Our DiD estimate is +12% but the treatment group was growing faster before rollout. Can we trust it?",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": false
+    },
+    {
+      "query": "I have an unmeasured confounder. Does that mean I can't identify the causal effect?",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": false
+    },
+    {
+      "query": "The country coefficient in my regression is huge — does country have a big causal effect on conversion?",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": false
+    },
+    {
+      "query": "My churn model has 90% AUC. Which features should we intervene on?",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": false
+    },
+    {
+      "query": "Our opt-in experiment shows +18% retention. Should we expect the same from a full rollout?",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": false
+    },
+    {
+      "query": "There's a suspicious spike in scores just above our RDD threshold. Should I be worried?",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": false
+    },
+    {
+      "query": "We used distance to a gym as an instrument — my colleague says the exclusion restriction is violated.",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": false
+    },
+    {
+      "query": "We randomized users for an A/B test on a social feature. My colleague says there's interference. What does that mean?",
+      "should_trigger": true,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": false
+    },
+    {
+      "query": "How do I center variables in a linear regression in Python?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": true
+    },
+    {
+      "query": "What's the fastest sorting algorithm for a large dataset?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": true
+    },
+    {
+      "query": "Help me write a SQL query to count active users per day.",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": true
+    },
+    {
+      "query": "What's the difference between a list and a tuple in Python?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": true
+    },
+    {
+      "query": "How do I set up a CI/CD pipeline in GitHub Actions?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": true
+    },
+    {
+      "query": "How do I write a unit test for this function?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": true
+    },
+    {
+      "query": "Our model has high precision but low recall. How do I improve recall?",
+      "should_trigger": false,
+      "trigger_rate": 0.0,
+      "triggers": 0,
+      "runs": 2,
+      "pass": true
+    }
+  ],
+  "summary": {
+    "total": 19,
+    "passed": 7,
+    "failed": 12
+  }
+}

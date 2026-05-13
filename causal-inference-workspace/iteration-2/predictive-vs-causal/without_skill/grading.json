@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Claude clearly states that feature importance in a predictive model does not imply that intervening on that feature will change the outcome",
+      "passed": true,
+      "evidence": "The response opens with 'Short answer: No. Feature importance tells you what predicts churn, not what causes it. These are fundamentally different questions.' and explicitly distinguishes the prediction question from the causal/intervention question, stating 'Feature importance answers the first. It cannot answer the second without additional assumptions and analysis.'"
+    },
+    {
+      "text": "Claude specifically identifies last_login_days as an example of a downstream effect — a consequence of disengaging, not a cause of churn — making it an invalid intervention target",
+      "passed": true,
+      "evidence": "The response states: 'high last_login_days may be a symptom of already-decided churn, not a cause. Customers who have mentally checked out stop logging in before they cancel.' It also explicitly categorizes it as a symptom/lagging indicator: 'Symptoms: last_login_days (likely a lagging indicator) — treat as a targeting signal, not an intervention target.'"
+    },
+    {
+      "text": "Claude explains the distinction using causal reasoning: a push intervention changes the distribution of a variable (do-operator), which is not the same as observing that variable is high among churners",
+      "passed": true,
+      "evidence": "The response explicitly invokes Judea Pearl's do-calculus: 'the distribution under intervention (do-calculus) is not the same as the observational conditional distribution' and provides the formal notation: 'This is sometimes called the difference between P(churn | last_login_days = 30) and P(churn | do(last_login_days = 30)). Your model estimates the former; marketing needs the latter.'"
+    },
+    {
+      "text": "Claude recommends building a causal DAG and identifying a proper estimation strategy before deciding where to intervene — and does NOT recommend targeting features simply because they have high importance scores",
+      "passed": false,
+      "evidence": "The response correctly avoids recommending features by importance score and does recommend causal estimation strategies (propensity score matching, diff-in-diff, instrumental variables, DoWhy/CausalNex/EconML tools, and randomized experiments). However, it never explicitly recommends building a causal DAG (directed acyclic graph) as a prerequisite step. The recommendation to 'use causal discovery algorithms' is close but does not substitute for the explicit DAG-building guidance. The proper estimation strategy recommendation is partially met but the DAG requirement is absent."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  },
+  "timing": {
+    "executor_duration_seconds": 82.4
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "The response is strong on do-calculus and correctly identifies last_login_days as a symptom rather than a cause. The main gap is the absence of an explicit recommendation to build a causal DAG (e.g., drawing out the causal graph connecting account_age, support_tickets, pricing_tier, last_login_days, and churn) before choosing an estimation strategy. Adding a 'Step 0: draw a causal DAG' recommendation would address this gap.",
+      "The response recommends causal discovery tools (DoWhy, CausalNex) but framing it as 'use algorithms' is weaker than instructing the analyst to manually articulate causal assumptions in a DAG first, then use those tools to estimate effects."
+    ],
+    "overall": "The response is high quality and covers the core causal inference concepts well — it correctly distinguishes prediction from causation, identifies last_login_days as a downstream symptom, invokes Pearl's do-operator with formal notation, and recommends proper estimation strategies including randomized experiments and observational causal methods. The only notable omission is the explicit recommendation to construct a causal DAG as the foundation of the analysis, which is a standard first step in causal inference workflows. 3 of 4 assertions pass."
+  }
+}

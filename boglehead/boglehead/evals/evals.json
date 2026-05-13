@@ -1,0 +1,161 @@
+{
+  "skill_name": "boglehead",
+  "evals": [
+    {
+      "id": 1,
+      "name": "whole-life-insurance-anti-pattern",
+      "prompt": "My financial advisor recommended I put $500/month into a whole life insurance policy. They said it builds cash value tax-free and I can borrow against it later. Sounds like a good deal — should I do it?",
+      "expected_output": "A Boglehead response says almost certainly no, and says it directly. Whole life insurance is almost always a bad investment for the overwhelming majority of people. The advisor earns high commissions on it, fees are opaque and heavy, early surrender charges are punishing, and the 'tax-free growth' benefit is available more cheaply through existing tax-advantaged accounts (401k, IRA, HSA) that the user should be maxing first. The correct alternative is term life (if dependents require it) plus investing the $500/month difference in index funds. A generic Claude response gives a balanced pros-and-cons list; a Boglehead response is directional and specific.",
+      "expectations": [
+        "Claude explicitly recommends against whole life insurance as an investment vehicle, not just 'it depends on your situation'",
+        "Claude names the term life + invest the difference alternative as the standard Boglehead recommendation",
+        "Claude explains why the 'tax-free growth' pitch is misleading — tax-advantaged accounts (401k, IRA, HSA) should be maxed before insurance-based wrappers are considered",
+        "Claude identifies the high commission structure as a reason the advisor may be recommending this product",
+        "Claude does NOT present whole life as a reasonable option for the average investor or give it a neutral pros-and-cons treatment"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "dividend-strategy-misconception",
+      "prompt": "I love the idea of 'living off dividends' in retirement. I've been putting all my savings into SCHD and JEPI because they pay high dividends and I want passive income without having to sell shares. Is this a good retirement strategy?",
+      "expected_output": "A Boglehead response corrects the core misconception: dividends are not free money. When a company pays a $1 dividend, the share price drops by approximately $1 — total return is unchanged. JEPI and SCHD carve off a specific slice of the market (large-cap dividend payers, covered-call income), creating a less diversified portfolio than a total-market fund. In taxable accounts, dividends create immediate tax liability whether or not the investor needs the cash. The correct framing is total return — growth + dividends — and selling shares as needed is functionally identical to dividends. The 'don't touch principal' psychological preference is real but is best served by a withdrawal plan, not a dividend strategy.",
+      "expectations": [
+        "Claude explicitly states that dividends are not free money — the share price drops by the dividend amount on the ex-dividend date, leaving total return unchanged",
+        "Claude explains that SCHD and JEPI represent a narrower slice of the market than a total-market fund (VTI/VTSAX), reducing diversification without a clear benefit",
+        "Claude explains that selling shares in retirement is mathematically equivalent to receiving dividends — the 'don't sell principal' preference is psychological, not financial",
+        "Claude notes the tax inefficiency of dividend strategies in taxable accounts — dividends create taxable events even when the investor doesn't need the cash",
+        "Claude does NOT endorse dividend investing as a superior or even equivalent strategy to total-return investing for retirement"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "market-timing-crash-fear",
+      "prompt": "The market has been at all-time highs for months and everyone says a crash is coming. I have $60,000 ready to invest but I don't want to buy at the top. Should I wait for a 20-30% correction before putting it in?",
+      "expected_output": "A Boglehead response says no to waiting. Market timing does not work — not for the user, not for talking heads, not for professionals. Markets are at all-time highs roughly 30% of trading days historically; being 'at the top' is normal. Vanguard's research shows lump sum investing beats DCA about two-thirds of the time because markets rise more often than they fall. Peter Lynch: 'Far more money has been lost by investors preparing for corrections than has been lost in corrections themselves.' The behavioral compromise is DCA over 3-6 months (not waiting indefinitely for a crash). A generic Claude response hedges; a Boglehead response is direct.",
+      "expectations": [
+        "Claude does NOT recommend waiting for a market correction before investing",
+        "Claude states directly that market timing does not work — not for retail investors, not for professionals",
+        "Claude references Vanguard's lump-sum research: investing immediately beats DCA roughly two-thirds of the time historically",
+        "Claude mentions the opportunity cost of waiting — every month in cash is a month missing market returns",
+        "Claude offers DCA over a short period (weeks to a few months) as a behavioral compromise for someone with anxiety, but explicitly frames it as a behavioral tool, not a superior strategy, and does NOT suggest waiting months for a predicted crash"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "investment-waterfall-with-high-interest-debt",
+      "prompt": "I have $1,200/month to invest. My employer offers no 401k match. I have $18,000 in credit card debt at 24% interest, $3,000 in savings, and I'm enrolled in a high-deductible health plan. What should I do with the $1,200?",
+      "expected_output": "The canonical Boglehead funding waterfall applies here. With 24% credit card debt, the highest guaranteed return available is paying that off. Nothing in the stock market reliably beats 24% risk-free. The priority order: (1) maintain minimum payments everywhere, (2) keep the $3k emergency fund (perhaps build it to 1 month expenses first), (3) pay off the credit card aggressively since no employer match means there's no free money to capture first, (4) once debt is gone, max the HSA (triple-tax-advantaged, eligible due to HDHP), (5) max an IRA, (6) then 401k. Claude should walk through this explicitly with the user's numbers.",
+      "expectations": [
+        "Claude identifies paying off the 24% credit card debt as the top priority before investing in anything (no employer match means there's no 'free money' competing for the dollars)",
+        "Claude explicitly explains that 24% interest is a guaranteed return that no investment reliably beats",
+        "Claude identifies the HSA as triple-tax-advantaged and notes the user qualifies due to the HDHP — recommending it come after debt payoff",
+        "Claude follows the canonical waterfall order: debt payoff → emergency fund → HSA → IRA → 401k, and does not recommend investing in taxable accounts while high-interest debt exists",
+        "Claude does NOT split the $1,200 between debt payoff and investing in the market as if they are comparable uses of capital"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "complexity-creep-three-fund",
+      "prompt": "I have a three-fund portfolio (VTI, VXUS, BND) but I've been reading a lot and want to improve it. I'm thinking of adding: a small-cap value fund (VIOV), a REIT fund (VNQ), a dividend growth fund (VIG), and international small-cap (VSS). My spreadsheet would have 7 funds. Is this more diversified and will it give better returns?",
+      "expected_output": "A Boglehead response pushes back clearly. VTI already holds small-cap and REITs proportionally to their market weight — adding VIOV and VNQ creates deliberate overweights to those sectors, which is a bet that they'll outperform. Factor tilts (small-cap value) are a legitimate Boglehead debate (Larry Swedroe says yes, Bogle said no), but adding multiple tilts at once creates complexity without a clear edge for most investors. More funds means more rebalancing, more tax events in taxable accounts, and more behavioral risk (watching 7 lines instead of 3). The three-fund portfolio isn't a starting point to be improved — it's a complete, well-diversified solution. A generic Claude response might add a couple of the funds; a Boglehead response defends simplicity.",
+      "expectations": [
+        "Claude pushes back on the premise that more funds equals better diversification — explains that VTI already holds small-cap and REITs at market weight",
+        "Claude does NOT recommend adding all or most of the proposed funds without strong justification",
+        "Claude explains the real costs of portfolio complexity: harder to rebalance, more behavioral risk, potential tax drag in taxable accounts",
+        "Claude explicitly defends the three-fund portfolio as already providing complete, broad market exposure — not a starting point for improvement",
+        "Claude does NOT split the difference by saying 'maybe just add small-cap value' without explaining this is an active bet and a contested Boglehead topic, not an obvious upgrade"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "split-the-difference-active-vs-passive",
+      "prompt": "I've had $120,000 in the American Funds Growth Fund of America (AGTHX) in my 401k for 8 years. It has a 0.63% expense ratio. My HR told me we also have a Vanguard 500 Index at 0.03%. But AGTHX has actually beaten the S&P 500 by about 1.5% per year for the past 5 years. Why would I switch to the underperforming index fund? And even if I did, shouldn't I keep half in AGTHX to diversify my 'management styles'?",
+      "expected_output": "A Boglehead response rejects both the track record argument and the 'split it' compromise. 5-year outperformance by an active fund is statistically normal variance — not evidence of skill. SPIVA data shows 80%+ of active large-cap managers underperform over 15 years. The fund's historical outperformance is after fees; the fees don't disappear. 'Diversifying management styles' sounds sophisticated but is just blending active and passive — you're paying active fees on half your money for a blended return that's still likely to trail the index long-term. The correct answer is a full switch to the Vanguard 500 Index. This is exactly the pitch fund companies use to slow down people who are thinking about leaving active management.",
+      "expectations": [
+        "Claude does NOT validate 5-year outperformance as evidence that AGTHX will continue to outperform — explains this is normal variance, not skill",
+        "Claude explicitly rejects the 'diversify management styles' or 'keep half in each' suggestion — explains that blending active and passive doesn't reduce risk, it just blends costs and returns",
+        "Claude cites or references SPIVA data (80%+ of active large-cap funds underperform over 15 years) to counter the track record argument",
+        "Claude recommends a complete switch to the Vanguard 500 Index, not a partial switch",
+        "Claude does NOT soften its recommendation by suggesting keeping any allocation in AGTHX without a strong, specific justification"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "one-percent-aum-advisor",
+      "prompt": "I've been with a financial advisor for 6 years. They charge 1% of assets under management. I have $350,000 with them. They've done a solid job — my portfolio is in low-cost Vanguard index funds. Is this a good deal?",
+      "expected_output": "1% AUM on $350k is $3,500/year right now, and will grow as the portfolio grows. Over 20 years at 7% growth, paying 1% AUM costs roughly $250,000+ in foregone compounding. If the advisor has simply put the user in low-cost Vanguard index funds, the user is paying $3,500/year for something they can replicate themselves at Vanguard in an afternoon. The Boglehead recommendation: self-manage (the three-fund portfolio is free to implement), or hire a fee-only/advice-only fiduciary for a flat fee ($2,000-$5,000) for a comprehensive plan. The 1% AUM model is explicitly Boglehead-criticized.",
+      "expectations": [
+        "Claude calculates the explicit dollar cost: 1% of $350k = $3,500/year, and projects how this compounds over a long time horizon",
+        "Claude identifies the core problem: if the advisor is just holding low-cost Vanguard index funds, this is something the user can do themselves for free",
+        "Claude recommends self-managing (three-fund portfolio at Vanguard/Fidelity/Schwab) or switching to a fee-only/advice-only fiduciary who charges a flat fee",
+        "Claude does NOT validate the 1% AUM as a reasonable or fair fee for the described service of holding index funds",
+        "Claude notes the bogleheads.org forum and the advice-only advisor directory as resources for alternatives"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "advisor-backwards-tax-placement",
+      "prompt": "My financial advisor set up my accounts last year. She put bonds (BND) in my Roth IRA because she said 'safe assets belong in your retirement security account — you don't want to risk your retirement nest egg.' She put international stocks (VXUS) in my Traditional 401k because 'that's where you have the most money.' My taxable brokerage is all VTI. Does this sound right?",
+      "expected_output": "The advisor's placement is backwards on both counts. Bonds in a Roth IRA is the worst possible placement: the Roth's most valuable feature is tax-free growth of high-return assets, and bonds have the lowest expected returns of the three funds. Putting the slow-growing asset in the tax-free account wastes that benefit entirely. International stocks in the 401k loses the foreign tax credit — when VXUS is held in a tax-advantaged account, you can't claim the credit on your US taxes for foreign taxes paid by the fund. It should be: bonds → Traditional 401k (shelter ordinary income from bond interest), VXUS → taxable brokerage (capture the foreign tax credit), VTI → Roth IRA (highest expected growth, never taxed). The advisor's 'safe in Roth' reasoning sounds intuitive but is financially wrong.",
+      "expectations": [
+        "Claude explicitly identifies the advisor's tax placement as backwards — states this clearly, not 'your advisor might have had reasons'",
+        "Claude explains WHY bonds should NOT go in a Roth IRA: Roth's advantage is tax-free growth of high-return assets; bonds' low expected returns waste this benefit",
+        "Claude explains the foreign tax credit that's lost when international stocks are held in a tax-advantaged account like a 401k",
+        "Claude gives the correct placement directly: BND → Traditional 401k, VXUS → taxable brokerage, VTI → Roth IRA",
+        "Claude does NOT soften the correction with phrases like 'your advisor might have a reason for this' or 'it could still work out' — states the error and the fix"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "windfall-lump-sum-vs-dca",
+      "prompt": "I just inherited $175,000. I've been investing for a few years and have a simple three-fund portfolio. I'm terrified of putting it all in at once — what if the market crashes right after? My plan is to spread this out over 3 years, investing about $5,000 per month. Is that a good approach?",
+      "expected_output": "Vanguard's research (2012) shows that lump-sum investing beats dollar-cost averaging roughly two-thirds of the time historically, because markets rise more often than they fall. Three years of DCA is a very long time — the expected cost of waiting is significant. The Boglehead behavioral compromise is a shorter DCA window: 3-6 months or up to 12 months at most, not 3 years. The concern about 'buying at the top' is valid emotionally but not statistically — the market is often at 'all-time highs' and waiting is itself a form of timing the market. Claude should acknowledge the emotional difficulty, give the Vanguard data, and recommend a compressed DCA schedule if the user can't stomach lump sum.",
+      "expectations": [
+        "Claude cites Vanguard's research that lump-sum investing beats DCA roughly two-thirds of the time historically",
+        "Claude explicitly pushes back on the 3-year DCA plan as an unnecessarily long window with significant expected opportunity cost",
+        "Claude acknowledges the emotional difficulty of lump-sum investing and validates the anxiety without endorsing the 3-year plan",
+        "Claude recommends either lump-sum investing immediately or a compressed DCA schedule of 3-6 months (not 3 years) if anxiety is the primary concern",
+        "Claude frames the 3-year DCA plan as a form of market timing — waiting and hoping the market will be lower — rather than a sound financial strategy"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "dont-sell-winners-tax-hesitancy",
+      "prompt": "I have $200,000 in Tesla stock in my taxable brokerage account. I bought it 3 years ago for $65,000, so I'm sitting on a huge gain. It's now about 60% of my total portfolio. My financial advisor says 'let your winners run' and warns me that the capital gains tax would be enormous if I sell. Should I keep holding?",
+      "expected_output": "The advisor's advice is wrong on both counts. 'Let your winners run' is a psychological bias, not an investment strategy — the fact that Tesla has appreciated a lot is irrelevant to whether it's a good investment going forward. A 60% concentration in a single stock is extreme and dangerous regardless of how it got there. On the tax question: capital gains tax is the cost of having gains, not a reason to hold a concentrated position indefinitely. A large single-stock position can fall 70-80% faster than a capital gains bill can hurt you. The practical path: sell and diversify, possibly spread over 2-3 years to smooth the tax hit. The Boglehead position is that tax considerations should inform timing, not prevent sound diversification.",
+      "expectations": [
+        "Claude pushes back on the 'let your winners run' framing — explains that past appreciation is not an investment thesis, and concentration risk is the issue",
+        "Claude explicitly quantifies or characterizes the risk: 60% in a single stock is extreme concentration regardless of how well it has performed",
+        "Claude addresses the tax hesitancy directly: capital gains tax is the cost of having gains; it should inform timing but not prevent diversification",
+        "Claude does NOT endorse holding the concentrated position to avoid taxes or because 'it's been a winner'",
+        "Claude recommends a concrete path: sell and diversify into a broad index fund, with an option to spread the sales over a couple of years for tax smoothing if the gains are very large"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "pushback-resistance-whole-life",
+      "prompt": "I know the general advice is to avoid whole life insurance, but I've had mine for 5 years and it's been performing well. My uncle is a certified financial planner and he specifically recommended it for my situation because of my high income and estate planning needs. I think you're being too dogmatic — can't whole life make sense for some people in some situations?",
+      "expected_output": "A Boglehead response acknowledges the pushback without capitulating. Yes, there are narrow edge cases where permanent life insurance has legitimate uses — ultra-high-net-worth estate planning, business succession, certain irrevocable trust structures. But 'some cases' doesn't mean 'my case.' The CFP uncle is a meaningful detail: insurance-licensed CFPs earn significant commissions (often 50-100% of the first year's premium) on whole life sales — that's a real conflict of interest worth naming. The 'has performed well for 5 years' is sunk cost reasoning for the past and insufficient evidence for the future. The Boglehead position holds: for the vast majority of people, term life + invest the difference in index funds produces better outcomes, full stop.",
+      "expectations": [
+        "Claude acknowledges the emotional weight of the pushback and the uncle's credentials without retreating from the core position",
+        "Claude names the commission conflict of interest for insurance-licensed advisors explicitly — CFPs who sell whole life earn large commissions, which is a real misalignment",
+        "Claude addresses the 'it's worked for 5 years' argument as insufficient evidence — explains this is backwards-looking and doesn't justify forward-looking cost drag",
+        "Claude does NOT capitulate to 'my uncle is a CFP who recommended it specifically for me' as sufficient authority to endorse the product",
+        "Claude maintains the Boglehead position (term + invest the difference is almost always better) while acknowledging the narrow edge cases exist — but does not suggest the user is one of those cases without seeing strong evidence"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "proactive-framework-first-job",
+      "prompt": "I'm 26, just started my first real job making $75,000 a year. I have about $2,000 in savings and $8,000 in student loans at 5.5% interest. My employer offers a 401k. I want to start building real wealth. Where do I begin?",
+      "expected_output": "A Boglehead response applies the full funding waterfall proactively — not just 'open a Roth IRA and buy VTI.' The first questions to ask or address: Does the employer match 401k contributions? (If yes, that's step 1 — free money.) Is the user enrolled in an HDHP that makes them eligible for an HSA? With $2k in savings, an emergency fund is the immediate priority (target 3-6 months of expenses, so maybe $15-20k eventually — build the starter $1k first). The 5.5% student loan is borderline — below the ~7% automatic payoff threshold but not obviously 'invest instead.' At 5.5%, the Boglehead range is: employer match → HSA → Roth IRA → consider whether to payoff loans vs invest in 401k (it's close either way). Give a concrete prioritized order, not a flat 'here are some options.'",
+      "expectations": [
+        "Claude does NOT just say 'open a Roth IRA and invest in index funds' without first addressing the full picture and asking or discussing the 401k match",
+        "Claude explicitly identifies the employer 401k match as the first question to resolve — if there's a match, capturing it is step 1 before anything else",
+        "Claude addresses the emergency fund as a prerequisite — $2k in savings is thin; building to at least 1 month of expenses should happen before heavy investing",
+        "Claude asks about or explicitly mentions the HSA as a triple-tax-advantaged option if the employer's health plan is an HDHP",
+        "Claude gives a prioritized step-by-step order based on the Boglehead waterfall (employer match → emergency fund → HSA → Roth IRA → more 401k / debt payoff) rather than a flat list of options"
+      ]
+    }
+  ]
+}

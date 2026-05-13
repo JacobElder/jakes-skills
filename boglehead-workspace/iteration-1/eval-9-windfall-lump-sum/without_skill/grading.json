@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude cites Vanguard's research that lump-sum investing beats DCA roughly two-thirds of the time historically",
+      "passed": true,
+      "evidence": "\"Vanguard conducted a well-known study on this exact question using historical US, UK, and Australian market data. Their finding: lump sum investing (LSI) outperforms dollar-cost averaging (DCA) about two-thirds of the time — by an average of roughly 2-3% over a 12-month horizon.\""
+    },
+    {
+      "text": "Claude explicitly pushes back on the 3-year DCA plan as an unnecessarily long window with significant expected opportunity cost",
+      "passed": true,
+      "evidence": "\"Spreading $175,000 over 36 months at $5,000/month is unusually extended.\" Details specific drawbacks: only 3% deployed after month 1, majority in cash for 24 months. \"What is not recommended is 36 months. The drag is substantial.\" Bottom line: \"36 months of DCA is excessive.\""
+    },
+    {
+      "text": "Claude acknowledges the emotional difficulty of lump-sum investing and validates the anxiety without endorsing the 3-year plan",
+      "passed": true,
+      "evidence": "\"Your concern is completely understandable — fear of putting a large sum in at exactly the wrong moment is one of the most emotionally powerful forces in investing.\" Also: \"The most important factor isn't which approach maximizes expected return — it's which approach you'll actually stick with.\" Validates anxiety throughout while consistently rejecting the 3-year plan."
+    },
+    {
+      "text": "Claude recommends either lump-sum investing immediately or a compressed DCA schedule of 3-6 months (not 3 years) if anxiety is the primary concern",
+      "passed": false,
+      "evidence": "Claude recommends lump sum (Option A) or a '6-12 month schedule' as the compressed alternative (Option B: \"a 6-12 month schedule is a reasonable behavioral compromise. Something like $14,500/month for 12 months\"). The assertion specifies '3-6 months' but the response recommends '6-12 months.' The 3-6 month range is never mentioned."
+    },
+    {
+      "text": "Claude frames the 3-year DCA plan as a form of market timing — waiting and hoping the market will be lower — rather than a sound financial strategy",
+      "passed": false,
+      "evidence": "The response never uses the phrase 'market timing' and never characterizes the 3-year DCA as waiting or hoping for lower prices. Criticism focuses on cash drag and opportunity cost: \"Every day cash sits on the sidelines waiting to be invested, it's earning a lower expected return\" and \"DCA doesn't eliminate the risk of buying before a crash; it just spreads it out.\" The market-timing framing required by the assertion is absent."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 2,
+    "total": 5,
+    "pass_rate": 0.60
+  }
+}

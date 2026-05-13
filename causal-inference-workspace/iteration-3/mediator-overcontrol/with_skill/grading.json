@@ -1,0 +1,101 @@
+{
+  "expectations": [
+    {
+      "text": "Claude identifies that manager motivation was measured after the treatment and therefore may be a mediator on the training → motivation → performance causal path",
+      "passed": true,
+      "evidence": "Step 2 explicitly states: 'The critical structural fact: M is measured **after** the treatment. The first question to ask about any post-treatment variable is: could treatment have caused this variable? The answer here is almost certainly yes — that is the explicit logic of the training program.' The DAG drawn in Step 2 shows X → M → Y with M labeled as 'Manager Motivation, t+1 month.' Step 3's classification table explicitly labels M as 'Mediator (X → M → Y)' with verdict 'Do not control.'"
+    },
+    {
+      "text": "Claude warns that controlling for a post-treatment mediator blocks the causal mechanism you're trying to measure, biasing the estimated training effect toward zero",
+      "passed": true,
+      "evidence": "Step 3 states: 'When you include M in a regression of Y on X, you are asking: Among managers with the *same* motivation level 1 month after training, what is the effect of training on performance? You have held constant the very mechanism through which training was supposed to work.' It explicitly warns: 'This is overcontrol bias. The result: The coefficient on X (training) will be attenuated toward zero / In the extreme case where motivation is the *only* mechanism, the training coefficient goes to zero — meaning you'd conclude the training had no effect, even if it worked perfectly through motivation / The bias is systematic and structural, not sampling error; larger samples make it worse, not better.'"
+    },
+    {
+      "text": "Claude distinguishes the total effect of training (including the motivation pathway) from the direct effect (net of motivation) — AND specifies which estimand is policy-relevant for the question at hand: if the goal is evaluating whether to scale the training program, the total effect is what matters; the direct effect is only relevant if you're trying to isolate mechanisms beyond the motivation pathway",
+      "passed": true,
+      "evidence": "Step 2 names both paths: 'X → M → Y (the indirect/motivational pathway)' and 'X → Y directly (any residual direct pathway not mediated by motivation).' Step 7 designates the total effect as the primary policy-relevant estimand: 'For estimating the total effect of training (what you almost certainly want)' and frames the direct effect as only relevant for mechanism-isolation: 'If you want to understand the motivational mechanism: This is a mediation analysis question.' The response does not use the phrase 'scale the program' verbatim, but it clearly positions the total effect as the correct estimand for program evaluation and the direct effect as appropriate only when studying causal pathways — which aligns with the expectation's logic."
+    },
+    {
+      "text": "Claude does NOT recommend including post-treatment motivation as a control without raising this structural concern",
+      "passed": true,
+      "evidence": "The very first sentence of the response reads: 'Short answer: No. Controlling for manager motivation level — measured 1 month after the training ended — is a structural mistake.' The structural concern is raised before any other analysis. The summary table at the end reiterates: 'Is post-training manager motivation a good control variable? No.' Step 7 instructs to 'Leave post-training motivation out of the main outcome model entirely.' There is no point in the response where controlling for post-treatment motivation is recommended or implicitly endorsed."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": null,
+    "total_tool_calls": null,
+    "total_steps": null,
+    "errors_encountered": 0,
+    "output_chars": 6811,
+    "transcript_chars": null
+  },
+  "timing": {
+    "executor_duration_seconds": 80.5,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 80.5
+  },
+  "claims": [
+    {
+      "claim": "Manager motivation measured 1 month post-training is a mediator on the X → M → Y causal path",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Correct. The timing (post-treatment) and the theory of change (training raises motivation, motivation drives performance) are both cited as grounds for the mediator classification. This is standard causal inference reasoning."
+    },
+    {
+      "claim": "Controlling for a mediator produces overcontrol bias that attenuates the training coefficient toward zero",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Accurate. Conditioning on a mediator in a linear regression blocks the indirect path, leaving only the direct effect. The response correctly notes this can zero out the treatment estimate entirely if the mediator captures all the mechanism."
+    },
+    {
+      "claim": "The same correlation pattern (X correlates with M, M correlates with Y) is structurally ambiguous — consistent with confounder, mediator, collider, or proxy",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Stated in Step 4. Correct causal inference principle — statistical associations do not identify structural roles; DAG structure does."
+    },
+    {
+      "claim": "Pre-training motivation may be a confounder and should be controlled for instead of post-training motivation",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Step 6 correctly identifies pre-training motivation as the legitimate confounding concern and explicitly distinguishes it from the post-training mediator. The prescription (measure and control pre-training motivation) is causally sound."
+    },
+    {
+      "claim": "Mediation analysis (natural direct and indirect effects) is the correct framework for studying the motivational mechanism, not covariate adjustment",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 7 states this correctly and notes mediation analysis has its own identification requirements (unconfounded mediator-outcome relationship after conditioning on treatment). This is the standard reference-level recommendation."
+    },
+    {
+      "claim": "Post-treatment M could also be a collider in some structural configurations, and conditioning on a collider opens spurious paths",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 5 (Alternative C) raises the collider possibility and correctly explains that conditioning on a collider creates bias where none existed. This is an additional structural concern beyond what the expectations required."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Claude distinguishes the total effect of training (including the motivation pathway) from the direct effect (net of motivation) — AND specifies which estimand is policy-relevant for the question at hand: if the goal is evaluating whether to scale the training program, the total effect is what matters; the direct effect is only relevant if you're trying to isolate mechanisms beyond the motivation pathway",
+        "reason": "This assertion bundles two separate checks: (1) the conceptual distinction between total and direct effects, and (2) correctly mapping the total effect to the program-evaluation use case. A response that distinguished the estimands but got the policy mapping wrong, or one that named 'total effect' without explaining it includes the motivation pathway, would pass the letter of this assertion. Splitting it into two targeted assertions would make this harder to satisfy by surface-level compliance."
+      },
+      {
+        "reason": "No assertion checks whether Claude's prescriptive advice is correct — what to actually do instead of controlling for post-treatment motivation. The response gives excellent guidance (control for pre-treatment confounders, use mediation analysis for mechanism questions, run a separate model with M as outcome). A response that correctly diagnosed the problem but recommended, say, instrumental variables without explanation would still pass all four assertions."
+      },
+      {
+        "reason": "No assertion checks whether Claude addresses the collider risk. The response correctly raises it (Step 5, Alternative C), but the evals don't require this. A response that identified M only as a mediator and ignored the collider possibility — which would be incomplete structural reasoning — would still pass all four assertions."
+      }
+    ],
+    "overall": "The evals are well-targeted at the core diagnostic failure (mediator overcontrol) and the response passes all four cleanly. The main gap is that no assertion covers prescriptive advice quality or completeness of structural reasoning. A response that correctly identified the problem but prescribed incorrect remedies, or one that missed the collider risk entirely, would still achieve a perfect score."
+  }
+}

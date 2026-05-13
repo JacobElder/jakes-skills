@@ -1,0 +1,11 @@
+{
+  "eval_id": 4,
+  "eval_name": "table-2-fallacy",
+  "prompt": "I ran a regression of website conversion on a treatment dummy plus controls for age, country, browser, and time-of-day. The treatment coefficient is what I care about. But the country coefficient is huge and significant — does that mean country has a big causal effect on conversion?",
+  "assertions": [
+    "Claude names or describes the Table 2 Fallacy — that control variable coefficients in a regression designed to identify the focal treatment effect are not themselves causally identified",
+    "Claude explains structurally why: the adjustment set was chosen to block back-door paths from treatment to conversion, not from country to conversion — these are different back-door sets requiring potentially different controls",
+    "Claude notes that some controls in the model (e.g., browser) could be mediators on the country → conversion path, meaning the country coefficient might be partial (not total) and would be biased by conditioning on its own mediators",
+    "Claude does NOT confirm that the country coefficient measures country's causal effect on conversion"
+  ]
+}

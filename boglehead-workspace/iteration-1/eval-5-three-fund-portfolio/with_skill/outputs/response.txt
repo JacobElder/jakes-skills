@@ -1,0 +1,61 @@
+You're in an excellent position. A 35+ year horizon is about as good as it gets for a stock-heavy allocation — time smooths out a lot of volatility, and your biggest risk is actually being *too conservative*, not too aggressive.
+
+---
+
+## The Simple Answer: Two Good Options
+
+### Option A: Target-Date Fund (One Fund, Zero Maintenance)
+
+Buy **FFIJX** — Fidelity Freedom Index 2065 Fund (0.12% expense ratio).
+
+That's it. One fund. It holds a diversified mix of US stocks, international stocks, and bonds internally, and automatically glides from stock-heavy to bond-heavy as you approach 2065. You contribute money, the fund does everything else. This is the closest thing to true "set it and forget it" that exists.
+
+- Expense ratio: 0.12%
+- Current allocation (for 2065): roughly 90% stocks / 10% bonds
+- No rebalancing required — ever
+
+If you want to retire closer to 2060, use **FFIKX** (Fidelity Freedom Index 2060, 0.12% ER). Pick the year closest to when you turn 65.
+
+**Use Fidelity Freedom *Index* funds, not plain Fidelity Freedom funds.** The Index versions track passive indexes at 0.12% ER. The non-Index versions use active management and charge around 0.75% ER — a significant drag over 35 years.
+
+---
+
+### Option B: Three-Fund Portfolio (Slightly More Control)
+
+If you'd rather build it yourself and choose your own allocation, here are the Fidelity funds:
+
+| Role | Fund | Ticker | Expense Ratio |
+|---|---|---|---|
+| US Total Stock Market | Fidelity ZERO Total Market Index Fund | FZROX | 0.00% |
+| Total International Stock | Fidelity ZERO International Index Fund | FZILX | 0.00% |
+| US Total Bond Market | Fidelity US Bond Index Fund | FXNAX | 0.025% |
+
+**Suggested allocation for a 28-year-old with 35+ years:**
+
+- 70% FZROX (US Total Stock)
+- 20% FZILX (International Stock)
+- 10% FXNAX (US Bonds)
+
+Or, if you want to keep it dead simple and not think about international allocation at all:
+
+- 90% FZROX
+- 10% FXNAX
+
+Some Bogleheads hold zero bonds until their mid-40s. That's a defensible position. Ten percent bonds is just a small ballast to reduce volatility slightly — it won't meaningfully hurt returns at your age.
+
+**One important caveat on FZROX and FZILX:** These are Fidelity's "ZERO" funds with no expense ratio, but they track proprietary indexes that Fidelity owns. If you ever move this IRA to another brokerage (Vanguard, Schwab), you'd have to sell them first — a taxable event in a taxable account, but in an IRA, it doesn't matter at all. In an IRA, FZROX and FZILX are excellent choices.
+
+---
+
+## What to Do Right Now
+
+1. Log into Fidelity, go to your IRA, and invest the $6,500.
+2. Pick Option A or Option B above.
+3. Set up automatic annual contributions (the 2025 IRA limit is $7,000; you're eligible to contribute the full amount if you have earned income).
+4. Then stop looking at it.
+
+Bogle said it simply: "Time is your friend; impulse is your enemy." A 35-year horizon with low-cost index funds is one of the most reliable wealth-building setups that exists. The main way people ruin it is by tinkering.
+
+---
+
+*This isn't personalized financial advice — I don't know your full situation. But for a simple IRA setup question with a long horizon, the Boglehead answer is pretty consistent. The bogleheads.org forum is a great free resource if you want a second opinion from the community.*

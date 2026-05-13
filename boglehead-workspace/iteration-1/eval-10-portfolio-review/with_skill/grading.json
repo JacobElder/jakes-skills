@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude endorses the principle that high-growth assets belong in the Roth IRA — but clearly distinguishes 'high expected return through diversification' from 'high risk through concentration'",
+      "passed": true,
+      "evidence": "Response states 'You and your advisor are right about one thing: the Roth IRA is the correct place to put your highest-growth assets.' and then clearly distinguishes: 'Highest-growth does not mean highest-risk or most speculative. It means the asset class with the best expected long-run return. That's broad equities — not a concentrated thematic fund and not a single stock.' This is a precise and explicit distinction between diversified high expected return vs. speculative concentration."
+    },
+    {
+      "text": "Claude explicitly calls out ARKK as an inappropriate holding: high expense ratio (0.75%), narrow thematic concentration, and a poor track record relative to total-market index funds",
+      "passed": true,
+      "evidence": "Response directly addresses all three dimensions: (1) Expense ratio — 'ARKK's expense ratio is 0.75%. That's 15x the cost of a total-market index fund (VTI: 0.03%)'; (2) Narrow thematic concentration — 'ARKK is a concentrated bet on a narrow set of disruptive technology companies. It is not diversified.'; (3) Poor track record — documents -75% drawdown 2021-2023 and cites 'significantly underperforming, with far more volatility' vs. a broad index, plus quotes the anti-patterns data: '-19% annualized through 2024.'"
+    },
+    {
+      "text": "Claude explicitly calls out Tesla as dangerous concentration risk — 35% of the Roth IRA in a single stock violates basic diversification principles regardless of conviction",
+      "passed": true,
+      "evidence": "Response states '35% of your Roth IRA is in a single company's stock. That's $38,500 — roughly 9% of your entire net worth — concentrated in one company.' It invokes Bessembinder's research on single stock risk, notes Tesla has already experienced 50-70% drawdowns, and explicitly states 'There is no diversification benefit to owning a single stock.' Also quotes Bogle's haystack maxim and notes Tesla is already included in VTI at market-cap weight."
+    },
+    {
+      "text": "Claude validates the Fidelity Freedom 2045 Index Fund in the 401k as a solid, Boglehead-appropriate holding that does NOT need to be changed",
+      "passed": true,
+      "evidence": "Response has an entire section titled 'OBSERVATION 3: Fidelity Freedom 2045 Index Fund — Leave It Alone.' It describes it as 'a well-constructed holding,' notes it 'uses low-cost index funds internally, is appropriately diversified across US stocks, international stocks, and bonds,' and explicitly states 'The 401k is doing its job. Do not touch it.' The summary reinforces: 'Your 401k: solid, leave it alone.'"
+    },
+    {
+      "text": "Claude recommends selling both ARKK and Tesla in the Roth IRA (noting the tax-free nature of the transaction inside a Roth) and replacing with a broad total-market index fund like VTI, FSKAX, or similar",
+      "passed": true,
+      "evidence": "Response explicitly states: 'selling inside a Roth has no tax consequences whatsoever. You can sell ARKK and Tesla today, in their entirety, and owe exactly $0 in capital gains tax.' The recommended action lists: '1. Sell 100% of ARKK in the Roth IRA. 2. Sell 100% of Tesla in the Roth IRA. 3. Buy a broad total-market US equity index fund with the full $110k.' Specific funds listed include VTI (0.03%), FSKAX (0.015%), and FZROX (0.00%)."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

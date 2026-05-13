@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Claude explicitly flags that the 25% faster pre-rollout growth in treatment markets violates the parallel trends assumption that DiD requires",
+      "passed": true,
+      "evidence": "The response dedicates a full section titled 'What Went Wrong: Parallel Trends Violation' and states directly: 'Your setup directly violates this: Pre-rollout: Treatment markets were growing 25% faster in conversion than control markets.' The summary table also lists 'Parallel trends assumption | Violated — 25% pre-existing growth gap'."
+    },
+    {
+      "text": "Claude explains that the observed convergence after rollout is consistent with trend mean-reversion, not necessarily a causal effect of the pricing page",
+      "passed": true,
+      "evidence": "The response states: 'This pattern — treatment was faster before, then converges after — is the textbook signature of regression to the mean, not a treatment effect.' It further explains: 'The convergence in growth rates post-rollout is consistent with the rollout having no effect — markets simply normalized.' The runner analogy also reinforces this point."
+    },
+    {
+      "text": "Claude does NOT accept the +8% DiD estimate as valid without addressing the pre-trend differential",
+      "passed": true,
+      "evidence": "The response opens with 'No. The +8% Difference-in-Differences (DiD) estimate is likely unreliable and overstated — possibly entirely an artifact of a pre-existing trend difference rather than a real effect of the new pricing page.' The summary table labels the estimate as 'Likely upward-biased or entirely spurious' and concludes 'Do not ship this as evidence that the new pricing page works.'"
+    },
+    {
+      "text": "Claude recommends visualizing and testing pre-period trends as a prerequisite, and notes that the current evidence does not support a causal interpretation of the +8% estimate",
+      "passed": true,
+      "evidence": "The response recommends: 'Pre-trend Test (Placebo Test): Plot conversion growth for both groups across multiple pre-rollout periods. If the trends were non-parallel before rollout, the core DiD assumption is violated and the estimate is invalid.' It also recommends Event Study / Dynamic DiD to detect pre-treatment effects. The conclusion states: 'Run a pre-trend test first. If divergence exists in the pre-period (which your description strongly implies), the +8% number cannot be trusted without further methodological work.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 63.7
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "The response could more explicitly discuss why the specific market selection (3 of 8 markets chosen for early rollout) likely introduces selection bias, which compounds the parallel trends violation.",
+      "The response could quantify the potential magnitude of bias more concretely to help the reader understand how much of the +8% could be spurious."
+    ],
+    "overall": "The response is excellent — it immediately and unambiguously rejects the +8% estimate, correctly identifies the parallel trends violation from the 25% pre-rollout differential, clearly attributes the post-rollout convergence to mean reversion rather than a causal effect, and provides actionable next steps including pre-trend visualization and testing. All four assertions are fully satisfied with strong, well-articulated evidence."
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude recommends a three-fund portfolio or a target-date index fund — not a complex multi-fund strategy, sector funds, or individual stocks",
+      "passed": true,
+      "evidence": "The response explicitly recommends a one-fund (FZROX), two-fund (FZROX+FZILX), or three-fund (FZROX+FZILX+FXNAX) portfolio, plus a Fidelity Freedom Index target-date fund option. No complex multi-fund strategies, sector funds, or individual stocks are recommended anywhere in the response."
+    },
+    {
+      "text": "Claude names specific Fidelity-appropriate funds: FSKAX or FZROX (US total market), FTIHX or FZILX (international), FXNAX (bonds) — or a Fidelity Freedom Index target-date fund",
+      "passed": true,
+      "evidence": "The response names FZROX (US total market), FZILX (international), FXNAX (US Bond Index), and Fidelity Freedom Index 2060 (FDKLX) / 2065 (FFIJX) target-date funds — all Fidelity-appropriate and matching the expected fund list."
+    },
+    {
+      "text": "Claude recommends a stock-heavy allocation appropriate for a 35+ year horizon (e.g., 90/10 or higher equity weight)",
+      "passed": true,
+      "evidence": "The response recommends 100% stocks (FZROX alone), 100% stocks split 80/20 US/International (no bonds), and even the three-fund option is 90% equities / 10% bonds. The response explicitly states 'At 28 with 35+ years, you can afford to be 100% stocks' and 'even 0–10% bonds is very reasonable.'"
+    },
+    {
+      "text": "Claude notes that a target-date fund is a legitimate, fully valid one-fund solution for someone who wants simplicity",
+      "passed": true,
+      "evidence": "The response includes an 'ALTERNATIVE: FIDELITY TARGET DATE FUND (IF YOU WANT ZERO DECISIONS EVER)' section and states 'Target date funds are excellent for people who truly will not think about their portfolio.' It also appears in the final recommendation: 'IF YOU WANT TRUE AUTOPILOT: Fidelity Freedom Index 2060 or 2065 target date fund.' The framing treats it as a fully legitimate option, not a fallback."
+    },
+    {
+      "text": "Claude does NOT recommend actively managed funds, sector ETFs, thematic funds, or a complex portfolio for someone who wants to 'set it and forget it'",
+      "passed": true,
+      "evidence": "The response explicitly warns against these in a 'WHAT TO AVOID' section: 'Actively managed funds (higher fees, worse long-term performance)' and 'Sector funds or thematic ETFs (too concentrated).' No actively managed funds, sector ETFs, or thematic funds are recommended anywhere in the response."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

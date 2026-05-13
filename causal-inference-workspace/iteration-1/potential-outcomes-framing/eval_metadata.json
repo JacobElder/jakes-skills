@@ -1,0 +1,11 @@
+{
+  "eval_id": 9,
+  "eval_name": "potential-outcomes-framing",
+  "prompt": "What's the difference between the average treatment effect (ATE) and the average treatment effect on the treated (ATT)? When does it matter which one you're estimating?",
+  "assertions": [
+    "Claude correctly defines ATE as the average treatment effect across the full population and ATT as the effect among those actually treated",
+    "Claude explains that the difference matters when treatment effects are heterogeneous and the treated population is not representative of the full population",
+    "Claude connects the choice to the policy question — ATT for 'did it help the people who used it', ATE for 'should we roll it out to everyone'",
+    "Claude does NOT conflate the two or describe them as interchangeable"
+  ]
+}

@@ -1,0 +1,76 @@
+QUESTION: My financial advisor recommended I put $500/month into a whole life insurance policy. They said it builds cash value tax-free and I can borrow against it later. Sounds like a good deal — should I do it?
+
+RESPONSE:
+
+This is a common recommendation from financial advisors, but it deserves careful scrutiny. The short answer for most people: whole life insurance is probably not the right choice, and there are almost certainly better ways to deploy $500/month toward your financial goals.
+
+Here's a balanced breakdown:
+
+---
+
+WHAT YOUR ADVISOR SAID IS TECHNICALLY TRUE — BUT INCOMPLETE
+
+Yes, whole life insurance does build cash value on a tax-deferred basis (not technically "tax-free" unless handled carefully). And yes, you can borrow against that cash value. But those facts leave out a lot of important context.
+
+---
+
+THE CORE PROBLEMS WITH WHOLE LIFE AT $500/MONTH
+
+1. HIGH COSTS EAT YOUR RETURNS
+
+Whole life insurance is extremely expensive compared to alternatives. A significant portion of your early premiums go toward agent commissions (often 50-100% of the first year's premiums), administrative fees, and the insurance component itself. The cash value grows slowly — often at 1-3% annually in the early years — while the stock market has historically returned around 7-10% annually over long periods. You may not "break even" on cash value versus premiums paid for 10-15 years.
+
+2. THE "BORROW AGAINST IT" FEATURE IS OVERHYPED
+
+When you borrow against your cash value, you're borrowing your own money and paying interest on it (typically 5-8%). If you don't repay the loan, it reduces your death benefit. This isn't free money — it's a loan secured by your own savings.
+
+3. CONFLICTS OF INTEREST
+
+Whole life insurance is one of the highest-commission products in financial services. A $500/month whole life policy can generate $3,000-$6,000 or more in commissions for the advisor in the first year alone. This doesn't mean your advisor is acting in bad faith, but it's a significant incentive that you should be aware of when evaluating the recommendation. Ask your advisor: are you a fiduciary? Are you compensated on commission for this product?
+
+---
+
+WHAT YOU SHOULD DO INSTEAD (THE SMARTER ALTERNATIVE)
+
+The standard advice from independent financial planners — sometimes called the "buy term and invest the difference" approach — goes like this:
+
+1. If you need life insurance (i.e., you have dependents who rely on your income), buy a term life insurance policy. A healthy adult can often get $500,000-$1,000,000 in 20-year term coverage for $30-$50/month — a fraction of $500/month.
+
+2. Take the remaining $450+ per month and invest it in tax-advantaged accounts in this order:
+   - Max out your 401(k) or 403(b), especially to capture any employer match
+   - Max out a Roth IRA ($7,000/year limit in 2025 if under 50)
+   - If you've maxed those, use a taxable brokerage account with low-cost index funds
+
+These accounts offer genuine tax advantages (Roth IRA growth IS tax-free), much higher expected returns, and full liquidity — you're not locked into a policy.
+
+---
+
+WHEN WHOLE LIFE MIGHT ACTUALLY MAKE SENSE
+
+To be fair, there are narrow circumstances where whole life insurance has legitimate uses:
+- High-net-worth individuals who have maxed out all other tax-advantaged accounts and are looking for additional tax sheltering
+- Estate planning strategies for very large estates
+- Business owners using specific corporate-owned life insurance structures
+- People with certain special-needs dependents who need permanent insurance coverage regardless of health changes
+
+If none of those apply to you, whole life is likely not the right fit.
+
+---
+
+QUESTIONS TO ASK YOUR ADVISOR BEFORE DECIDING
+
+1. Are you a fiduciary, legally required to act in my best interest?
+2. How much commission will you earn if I purchase this policy?
+3. Can you show me a 20-year projection comparing this policy's internal rate of return versus a term + index fund approach?
+4. What is the policy's guaranteed vs. projected cash value, and what assumptions underlie the projections?
+5. What are the surrender charges if I decide to cancel in the first 5-10 years?
+
+If your advisor can't or won't answer these clearly, that's a red flag.
+
+---
+
+BOTTOM LINE
+
+For the vast majority of people, whole life insurance is an expensive, low-return product that benefits the advisor more than the client. The combination of term life insurance (if you need coverage) plus maxing out 401(k) and Roth IRA contributions will almost certainly leave you better off financially over a 20-30 year horizon.
+
+Before committing $500/month ($6,000/year), consider getting a second opinion from a fee-only financial advisor — someone who charges a flat fee or hourly rate and earns no commissions. You can find them at NAPFA.org (National Association of Personal Financial Advisors).

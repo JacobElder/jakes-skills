@@ -1,0 +1,38 @@
+{
+  "expectations": [
+    {
+      "text": "Claude recommends regression discontinuity design (RDD) or describes the comparison of units just above vs. just below the cutoff",
+      "passed": true,
+      "evidence": "The response immediately identifies RDD as the correct approach: 'the setup you've described is actually ideal for one of the cleanest natural experiment designs available: a Regression Discontinuity Design (RDD).' It also explicitly describes comparing units just around the threshold: 'users with a score of 49 and users with a score of 51 are nearly identical in every observable and unobservable way — the only meaningful difference between them is that one group received the discount and the other did not.'"
+    },
+    {
+      "text": "Claude mentions at least one key RDD assumption (no manipulation/gaming of the running variable, smoothness/continuity through the cutoff, or similar)",
+      "passed": true,
+      "evidence": "The response dedicates a full section to 'Check the Key Assumptions', covering: (a) 'No manipulation of the running variable (McCrary density test)' — 'Users shouldn't be able to game their engagement score to get just below 50'; and (b) 'No discontinuities in pre-treatment covariates (covariate balance)'. Both core RDD assumptions are discussed with validation tests."
+    },
+    {
+      "text": "Claude notes that the estimate is local to the cutoff and may not generalize to users far from the threshold",
+      "passed": true,
+      "evidence": "The response explicitly states in the 'Interpreting the Result' section: 'The β coefficient gives you the Local Average Treatment Effect (LATE) — the causal effect of the discount for users whose score is near 50. This is not the average effect for all users with score < 50; it is the effect specifically for the marginal users near the threshold.' The pitfalls table also warns: 'Conflating LATE with ATE | Overgeneralizing findings | Be explicit that the estimate is local to the threshold.'"
+    },
+    {
+      "text": "Claude does NOT default to 'just regress retention on discount with controls' without mentioning the discontinuity structure",
+      "passed": true,
+      "evidence": "The response never suggests a naive OLS regression with controls. It immediately frames the problem as an RDD problem and only discusses RDD-appropriate methods (local linear regression, bandwidth selection, rdrobust). Naive regression is not mentioned as an approach anywhere in the response."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [
+      "Consider adding an assertion about whether Claude correctly identifies the sharp vs. fuzzy RDD distinction, as this is a meaningful design consideration.",
+      "Consider an assertion about whether Claude recommends appropriate bandwidth selection methods (e.g., Imbens-Kalyanaraman or CCT), since over-wide bandwidths are a common pitfall."
+    ],
+    "overall": "The response is an exceptionally strong answer that passes all four assertions with clear, explicit evidence. It correctly identifies RDD as the appropriate design, explains the comparison of units near the cutoff, discusses both core assumptions with validation approaches, and clearly conveys the local nature of the LATE estimate. The response goes well beyond the minimum requirements, including code examples in Python and R, a pitfalls table, and alternative designs if RDD assumptions are violated."
+  }
+}

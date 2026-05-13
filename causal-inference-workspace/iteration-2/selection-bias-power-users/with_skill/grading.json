@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Claude flags that restricting the analysis to '90-day active users' conditions on a downstream variable — users who survived to 90 days are already a selected, high-retention population",
+      "passed": true,
+      "evidence": "The Short Answer explicitly states: 'The dataset was filtered to users still active at day 90, which conditions on a downstream outcome.' Step 3 reinforces: 'The analysis team filtered to S = 1 — users active at day 90. This is precisely conditioning on the collider.' The DAG in Step 2 defines S as 'surviving/active at day 90 (the selection filter)' and notes it is a downstream effect of both O and U."
+    },
+    {
+      "text": "Claude explains this as a form of collider bias or selection bias: being active at 90 days is a common effect of onboarding engagement and baseline retention tendency, so conditioning on it induces a spurious correlation between those two causes",
+      "passed": true,
+      "evidence": "Step 2 explicitly names S as a 'collider on the path O → S ← U' with both O (onboarding) and U (user engagement/motivation) as causes. Step 3 explains the mechanism: conditioning on S = 1 makes O and U 'negatively correlated (or at least informationally dependent) because they are now competing explanations for why someone reached day 90,' which then 'inflates the apparent association between O and R6.' Step 4 names this 'collider stratification bias (also called Berkson's bias or selection bias)' with the exact four-step structural explanation."
+    },
+    {
+      "text": "Claude does NOT take the r = 0.42 correlation at face value as evidence that improving onboarding completion will causally improve retention",
+      "passed": true,
+      "evidence": "The Short Answer immediately says 'The correlation you found (r = 0.42, p < 0.001) is almost certainly an artifact of collider bias.' Step 5 states: 'The r = 0.42 correlation is a rung-1 finding inside a biased sample. It cannot be converted into a causal effect size for an intervention by any amount of regression, matching, or covariate adjustment performed within this sample.' Step 8 explicitly warns: 'p-values and correlation magnitudes do not diagnose structural bias.' The Summary Recommendation begins: 'Do not interpret r = 0.42 as evidence that improving onboarding completion will improve 6-month retention.'"
+    },
+    {
+      "text": "Claude recommends analyzing the full user population (including churned users) rather than the 90-day survivors, or using an approach that corrects for selection (e.g., IPW)",
+      "passed": true,
+      "evidence": "Step 7 Option 2 explicitly states: 'Redo the analysis in the full user population (rung-1, at minimum). Compute the correlation between onboarding completion and 6-month retention without pre-filtering to day-90 survivors.' The Summary Recommendation echoes this: 'recompute the onboarding-retention correlation in the full user population (not filtered to day-90 actives).' An A/B test on the full randomized sample (Step 7 Option 1) is the primary recommendation. IPW specifically is not named, but IV and DiD are offered as additional corrective approaches."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 85.2
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "The response could have explicitly mentioned inverse probability weighting (IPW) as a selection-correction technique, which is listed in the assertion as an example corrective approach. The response covers the spirit of the recommendation (full population analysis, randomized experiments) but omits this specific method.",
+      "The response is exceptionally thorough — it may benefit from a slightly more concise version of the key DAG argument for practitioners who need a quick executive summary."
+    ],
+    "overall": "The response achieves a perfect 4/4 pass rate. It demonstrates rigorous causal reasoning: correctly identifies collider conditioning as the structural problem, sketches the DAG with S as a collider on O → S ← U, explicitly rejects the r = 0.42 correlation as causal evidence, and recommends analyzing the full user population along with randomized experiments and other corrective strategies. The response goes beyond the minimum requirements by naming the bias precisely (Berkson's bias / collider stratification bias), working through alternative DAGs, and providing multiple actionable corrective methodologies."
+  }
+}

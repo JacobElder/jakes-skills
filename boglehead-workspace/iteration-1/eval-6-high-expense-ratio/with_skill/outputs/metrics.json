@@ -1,0 +1,13 @@
+{
+  "tool_calls": {
+    "Read": 3,
+    "Write": 2,
+    "Bash": 1
+  },
+  "total_tool_calls": 6,
+  "total_steps": 4,
+  "files_created": ["response.txt", "metrics.json"],
+  "errors_encountered": 1,
+  "output_chars": 4218,
+  "transcript_chars": 9500
+}

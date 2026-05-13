@@ -1,0 +1,11 @@
+{
+  "eval_id": 10,
+  "eval_name": "predictive-vs-causal",
+  "prompt": "We trained a model that predicts customer churn really well — 92% AUC. The top features by importance are: account_age, last_login_days, support_tickets, and pricing_tier. Marketing wants to know which of these we should actually intervene on to reduce churn. Can I use the feature importances to decide?",
+  "assertions": [
+    "Claude clearly distinguishes predictive performance from causal effect — feature importance does not imply causation",
+    "Claude points out that some features may be effects of churn or downstream of churn, not causes (last_login_days is a particularly clear example)",
+    "Claude recommends a causal analysis — DAG, identification strategy, or experiment — to decide what to intervene on",
+    "Claude does NOT recommend intervening on the top-importance features just because they predict well"
+  ]
+}

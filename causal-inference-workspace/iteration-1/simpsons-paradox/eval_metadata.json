@@ -1,0 +1,11 @@
+{
+  "eval_id": 8,
+  "eval_name": "simpsons-paradox",
+  "prompt": "I'm looking at A/B test data and the new feature looks like it has a positive effect overall (+2.1% conversion). But when I split by user segment (mobile vs desktop), the effect is NEGATIVE in both segments. How is this possible and which result should I trust?",
+  "assertions": [
+    "Claude identifies this as Simpson's paradox (or describes the equivalent phenomenon by name or mechanism)",
+    "Claude explains that the resolution depends on the causal structure, not on which view 'looks right'",
+    "Claude distinguishes the confounder case (use disaggregated) from the mediator case (use aggregated)",
+    "Claude does NOT just recommend trusting one view (aggregate or segment-level) without considering the DAG"
+  ]
+}

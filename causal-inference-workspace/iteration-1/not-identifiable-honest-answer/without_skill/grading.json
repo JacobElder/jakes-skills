@@ -1,0 +1,38 @@
+{
+  "expectations": [
+    {
+      "text": "Claude flags identification challenges — that the available controls are unlikely to close all back-door paths from mentorship to career success",
+      "passed": true,
+      "evidence": "The response explicitly states: 'A regression controlling only for demographics will not close these backdoor paths.' It further explains that 'conditional ignorability...is almost certainly violated in your setting' and that 'No amount of statistical sophistication fixes an omitted variable that is correlated with both mentorship and salary.' The summary table also labels the key assumption for OLS/propensity score methods as 'Probably not' holding."
+    },
+    {
+      "text": "Claude names specific likely unmeasured confounders (motivation, social capital, family background, ability, or similar)",
+      "passed": true,
+      "evidence": "The response names multiple specific unmeasured confounders: 'Higher ambition or motivation', 'Better social capital or access to networks', 'Higher baseline ability or credentials', and 'More proactive career management in general.' It also references 'Motivation, ambition, network quality, and personality traits' again later. Family background is not explicitly named, but motivation, ability, and social capital all appear clearly."
+    },
+    {
+      "text": "Claude does NOT confidently recommend a regression with the available demographics as the primary answer to the causal question",
+      "passed": true,
+      "evidence": "The response explicitly cautions against this: 'You can run these models, and they may be informative about associations, but claiming the result is causal requires arguing that your covariate set captures all relevant confounding — a difficult case to make here.' The conclusion distinguishes association from causal effect and explicitly states the data 'cannot, on its own, definitively answer the causal question.' Regression is mentioned only as producing a credible descriptive association, not a causal answer."
+    },
+    {
+      "text": "Claude offers at least one alternative — sensitivity analysis, an IV strategy, a natural experiment, a twin/sibling design, or honestly reporting the limitation",
+      "passed": true,
+      "evidence": "The response offers multiple alternatives: (1) sensitivity analysis using Rosenbaum bounds or sensemakr/rbounds; (2) an IV strategy with example instruments such as employer-run mentorship programs or cohort-level variation; (3) collecting longitudinal data for a DiD design; (4) partial identification / Manski bounds; and (5) honest framing — reporting results as 'association' rather than 'effect.' All four of the assertion's named alternatives (sensitivity analysis and IV) are explicitly covered."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [
+      "Consider adding an assertion that checks whether Claude explicitly distinguishes descriptive from causal claims in the framing of results, since this is a key pedagogical point the response covers well.",
+      "A future assertion could verify that Claude discusses propensity score methods and correctly notes they do not solve the unobserved confounding problem, as this is a common misconception the response addresses."
+    ],
+    "overall": "The response is a high-quality, thorough treatment of causal identification challenges. It passes all four assertions clearly and with substantial evidence. The response goes beyond the minimum for each assertion — naming five specific unmeasured confounders, offering five distinct alternative strategies, explicitly using the term 'backdoor paths,' and clearly separating association from causation throughout. The assertions are well-calibrated to this response and the grading is unambiguous."
+  }
+}

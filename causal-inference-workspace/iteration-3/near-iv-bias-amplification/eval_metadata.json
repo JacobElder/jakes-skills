@@ -1,0 +1,11 @@
+{
+  "eval_id": 3,
+  "eval_name": "near-iv-bias-amplification",
+  "prompt": "I'm estimating the causal effect of receiving executive mentorship on promotion rates. Mentorship is almost exclusively given to employees who have already demonstrated high performance — the correlation between prior performance and receiving mentorship is around 0.85. Prior performance also predicts promotions directly. A colleague says I should control for prior performance to remove its confounding effect. Is that the right approach?",
+  "assertions": [
+    "Claude identifies prior performance as a near-instrument (or near-IV) — a variable that strongly predicts treatment assignment (r ≈ 0.85) and is not itself exogenous",
+    "Claude warns that controlling for a near-IV in the presence of unmeasured confounders can amplify rather than reduce bias — the mechanism being that conditioning concentrates remaining treatment variation onto the part correlated with unmeasured factors",
+    "Claude does NOT unconditionally endorse 'control for prior performance because it predicts both treatment and outcome'",
+    "Claude explicitly states the conditional: if prior performance is the ONLY confounder and no unmeasured confounders exist, controlling is correct; but given the plausibility of unmeasured confounders like ambition, sponsorship, or political capital, the near-IV amplification risk makes mechanical conditioning dangerous. Claude states which scenario is more realistic and recommends sensitivity analysis or an alternative design rather than leaving the user with an unresolved 'it depends.'"
+  ]
+}

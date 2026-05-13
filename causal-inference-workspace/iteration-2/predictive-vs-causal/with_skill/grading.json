@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Claude clearly states that feature importance in a predictive model does not imply that intervening on that feature will change the outcome",
+      "passed": true,
+      "evidence": "The response opens with 'No. Feature importance from a predictive model cannot tell you what to intervene on.' It further states 'The feature importance ranking tells you what variables are statistically associated with churn, not which ones, if changed, would reduce churn.' and 'Importance scores measure predictive contribution, not causal magnitude.' The distinction is made explicitly and repeatedly."
+    },
+    {
+      "text": "Claude specifically identifies last_login_days as an example of a downstream effect — a consequence of disengaging, not a cause of churn — making it an invalid intervention target",
+      "passed": false,
+      "evidence": "The response discusses last_login_days as 'a mediator or a symptom' and mentions the structure 'Dissatisfaction → last_login_days → churn', which frames it as downstream. However, the response does NOT label it an invalid intervention target — it says it is 'Potentially actionable' with 'Medium' causal plausibility and recommends testing. The assertion requires calling it out as primarily a consequence of disengaging that makes it an invalid target, but the response treats it as ambiguously actionable."
+    },
+    {
+      "text": "Claude explains the distinction using causal reasoning: a push intervention changes the distribution of a variable (do-operator), which is not the same as observing that variable is high among churners",
+      "passed": false,
+      "evidence": "The response uses Pearl's causal hierarchy (rung-1 vs rung-2) and distinguishes observing from doing ('What happens if we *do* something?'). However, it never explicitly mentions the do-operator by name or notation P(Y | do(X)) vs P(Y | X). The conceptual distinction is present but the specific do-operator framing required by the assertion is absent."
+    },
+    {
+      "text": "Claude recommends building a causal DAG and identifying a proper estimation strategy before deciding where to intervene — and does NOT recommend targeting features simply because they have high importance scores",
+      "passed": true,
+      "evidence": "Step 1 of the 'What to do instead' section explicitly states 'Build a DAG before running experiments' and instructs sketching plausible causal structures for each feature. Step 3 calls for randomized experiments as the estimation strategy. The response never recommends targeting features based on importance scores; it explicitly warns against this throughout."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 2,
+    "total": 4,
+    "pass_rate": 0.50
+  },
+  "timing": {
+    "executor_duration_seconds": 71.0
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "Assertion 2: The response should more clearly label last_login_days as an invalid or low-priority intervention target because it is downstream of disengagement. Instead, the response hedges and calls it 'Potentially actionable' — which undermines the causal warning.",
+      "Assertion 3: The response should explicitly invoke the do-operator notation or concept (P(Y|do(X)) vs P(Y|X)) to make the observational-vs-interventional distinction rigorous. The rung-1/rung-2 framing is close but does not satisfy the specific requirement for do-operator reasoning."
+    ],
+    "overall": "The response demonstrates strong conceptual understanding of the predictive vs. causal distinction and correctly recommends DAG construction and experimentation. It earns full marks on assertions 1 and 4. It falls short on assertion 2 by treating last_login_days as potentially actionable rather than flagging it as a downstream symptom that is an invalid target, and on assertion 3 by not explicitly using do-operator language to formalize the observational vs. interventional distinction."
+  }
+}

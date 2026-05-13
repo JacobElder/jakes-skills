@@ -1,0 +1,38 @@
+{
+  "expectations": [
+    {
+      "text": "Claude recommends differences-in-differences (DiD) or describes the equivalent estimator (compare pre-post change in treated markets to pre-post change in control markets)",
+      "passed": true,
+      "evidence": "The response explicitly recommends 'Difference-in-Differences (DiD)' as the go-to framework and provides the estimator formula: 'ATT = (Treated_Post - Treated_Pre) - (Control_Post - Control_Pre)', along with a full panel regression specification."
+    },
+    {
+      "text": "Claude names the parallel-trends assumption (or describes it: in the absence of treatment, the treated and control markets would have followed the same trajectory)",
+      "passed": true,
+      "evidence": "Section 2 explicitly states: 'DiD only works if, absent the treatment, treated and control markets would have followed similar trends. This is the parallel trends assumption — it cannot be proven, only assessed.'"
+    },
+    {
+      "text": "Claude recommends examining pre-treatment trends as a diagnostic for the parallel-trends assumption",
+      "passed": true,
+      "evidence": "Section 2 recommends visual inspection of monthly conversion rates across the 2-year pre-period and an event study specification to check that pre-period coefficients (k < 0) are 'statistically indistinguishable from zero' as a diagnostic for parallel trends."
+    },
+    {
+      "text": "Claude flags at least one DiD failure mode (anticipation effects, differential shocks during the post-period, composition changes, or selection of which markets got the rollout)",
+      "passed": true,
+      "evidence": "Section 6 explicitly flags selection bias: 'If they were selected because they were high-performing, low-performing, or easy wins, there may be regression to the mean or other selection effects that bias your estimate.' Section 4 flags staggered rollout issues (forbidden comparisons in TWFE), and Section 5 flags potential SUTVA violations from spillovers."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [
+      "Consider adding an assertion about staggered DiD / heterogeneity-robust estimators, since the response dedicates a full section to Callaway & Sant'Anna and Sun & Abraham.",
+      "Consider an assertion about synthetic control as a robustness method, which the response recommends as a complementary approach given the small number of treated units."
+    ],
+    "overall": "The response is a thorough, high-quality causal inference guide that satisfies all four evaluated assertions. It correctly identifies DiD as the primary estimator, explicitly names and explains the parallel trends assumption, recommends pre-treatment trend inspection as a diagnostic, and flags multiple DiD failure modes including selection bias in treatment assignment, staggered rollout issues, and SUTVA violations."
+  }
+}

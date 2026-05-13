@@ -1,0 +1,72 @@
+The "live off dividends" strategy is appealing on the surface — passive income, no need to sell shares, a sense of stability. But there are some important misconceptions embedded in this approach that are worth understanding before committing your retirement savings to it.
+
+---
+
+THE CORE MISCONCEPTION: DIVIDENDS AREN'T FREE MONEY
+
+The most important thing to understand is that dividends are not a bonus on top of your investment — they are a return of value from the investment itself. When a stock pays a $1 dividend, the share price drops by approximately $1 on the ex-dividend date (all else equal). You haven't received something extra; you've had a portion of your holdings converted from unreinvested capital into cash.
+
+This means "living off dividends without selling shares" is economically identical to "selling a small amount of shares regularly." You are spending down the same underlying wealth either way. The framing feels different, but the math is the same.
+
+---
+
+ABOUT SCHD AND JEPI SPECIFICALLY
+
+SCHD (Schwab U.S. Dividend Equity ETF) is a legitimate, well-constructed fund. It screens for dividend quality — companies with strong cash flows that have consistently paid dividends. It has solid long-term total return performance. Many Bogleheads-style investors hold SCHD without controversy, though most treat it as a tilt rather than an entire portfolio.
+
+JEPI (JPMorgan Equity Premium Income ETF) is more problematic as a core retirement holding. Here's why:
+
+1. Covered call overlay caps upside. JEPI generates income partly by selling covered calls on its holdings. This systematically limits price appreciation. In strong bull markets, JEPI significantly underperforms a plain equity index. You are trading long-term growth for current income — which is a bad trade if you have a long time horizon.
+
+2. The high "yield" is partly return of capital and option premium. JEPI's headline yield (often 7-10%+) includes income from options premiums, not just underlying dividend income. This makes the yield look attractive but overstates sustainable income from business earnings.
+
+3. Tax inefficiency. Option premium income is taxed as ordinary income, not at the preferential qualified dividend rate. In a taxable account, JEPI is particularly tax-inefficient.
+
+4. Newer fund with limited history through a full market cycle.
+
+---
+
+THE CONCENTRATION RISK PROBLEM
+
+Putting "all your savings" into two funds — even good ones — creates significant concentration risk, particularly since both SCHD and JEPI are equity-heavy and correlated. A diversified retirement portfolio typically includes:
+
+- Broad U.S. total market exposure
+- International equity exposure
+- Fixed income (bonds), especially as you approach and enter retirement
+- Possible inflation protection (TIPS, I-bonds)
+
+Equities — including dividend equities — can drop 40-50% in a severe bear market. If you're retired and drawing income during a prolonged downturn, you face sequence-of-returns risk regardless of whether you're selling shares or receiving dividends (which companies often cut during downturns).
+
+---
+
+THE TOTAL RETURN ALTERNATIVE
+
+Financial research consistently shows that a total return approach — holding low-cost, diversified index funds and withdrawing a sustainable percentage (typically 3.5-4%) annually — outperforms dividend-focused strategies over long time horizons. This is because:
+
+1. You're not constraining your investment universe to dividend payers, many of which are value traps or declining industries.
+2. Growth companies that reinvest earnings (Amazon, Berkshire, Alphabet) are excluded from dividend portfolios but have historically generated strong returns.
+3. You control the timing and amount of your "income" by selling shares strategically, including tax-loss harvesting.
+
+The classic Bogleheads framework: own the whole market (VTI or equivalent), own international (VXUS), own bonds (BND), keep costs low, and withdraw systematically.
+
+---
+
+WHAT YOU COULD DO INSTEAD
+
+If the behavioral comfort of receiving dividends matters to you (and it's a real psychological benefit for some people), a reasonable middle path is:
+
+- Hold a broad low-cost total market fund as your core (VTI, FSKAX, SWTSX)
+- Add SCHD as a modest tilt (10-20%) if dividend-quality exposure appeals to you
+- Drop or minimize JEPI — it underperforms on total return and has structural limitations
+- Add a bond allocation appropriate to your age and risk tolerance
+- Use a sustainable withdrawal rate framework (4% rule or more conservative)
+
+The key principle: focus on total return (price appreciation + dividends together), not yield in isolation. A fund paying 8% yield that grows 0% is worse than a fund paying 1.5% yield that grows 9%.
+
+---
+
+SUMMARY
+
+The "live off dividends" mental model can lead to poor fund selection (chasing yield), under-diversification, tax inefficiency, and false security (dividend cuts happen in exactly the market environments when you need income most). The strategy is not wrong in spirit — generating income from a portfolio is the goal — but the mechanical focus on dividends as distinct from total return leads to suboptimal decisions. A low-cost, diversified, total-return portfolio with a systematic withdrawal plan is a more robust approach backed by decades of financial research.
+
+Consider consulting a fee-only fiduciary financial advisor (not one who earns commissions) to stress-test your retirement plan. The distinction between a 3% and 5% withdrawal rate, for example, has enormous implications for whether your portfolio lasts 30+ years.

@@ -1,0 +1,38 @@
+{
+  "expectations": [
+    {
+      "text": "Claude challenges the 'control any pre-treatment variable that predicts both' rule rather than endorsing it",
+      "passed": true,
+      "evidence": "The response directly states the rule is 'incomplete' in the opening paragraph, devotes an entire section ('Why the Standard Advice Falls Short') to critiquing it, and concludes with 'The mantra 'control for pre-treatment correlates of treatment and outcome' is a useful starting point but an unreliable rule.'"
+    },
+    {
+      "text": "Claude explains that whether to control depends on the structural role of the variable, not on temporal precedence",
+      "passed": true,
+      "evidence": "The response explicitly states 'Whether you should control for 'attended a career fair' depends on the causal structure of the problem, not just the correlations' and provides a full summary table categorizing outcomes by causal role (confounder, collider, mediator, irrelevant). The deeper principle section also states the correct procedure is to draw a DAG and identify causal roles, not rely on correlation."
+    },
+    {
+      "text": "Claude raises the possibility of M-bias — that the variable might be a collider between two unobserved confounders, in which case controlling makes things worse",
+      "passed": true,
+      "evidence": "An entire section titled 'M-Bias: The Key Risk Here' explains that career fair attendance could be a collider between U1 (ambition/motivation) and U2 (job-seeking behavior/network), both unobserved, and that conditioning on the collider 'opens a spurious path' and 'introduces bias rather than remove it.'"
+    },
+    {
+      "text": "Claude recommends sketching a DAG to determine the role before deciding",
+      "passed": true,
+      "evidence": "The response explicitly recommends in the 'How to Diagnose Your Situation' section: 'Draw the DAG explicitly. Write out all variables you believe are causally relevant.' The 'Deeper Principle' section also states step 1 as 'Draw a Directed Acyclic Graph (DAG) encoding your causal assumptions' before deciding what to control for."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [
+      "The response goes well beyond the minimum expectations — it provides DAG diagrams, a scenario comparison, a summary table, and a practical checklist, all of which reinforce the core causal reasoning concepts.",
+      "The M-bias explanation is particularly thorough, including both a verbose DAG and the compact 'M' letter illustration to make the collider structure visually clear."
+    ],
+    "overall": "The response fully satisfies all four assertions. It explicitly challenges the naive pre-treatment heuristic, grounds the decision in structural/causal role rather than temporal ordering, names and explains M-bias as the key risk from collider conditioning, and recommends drawing a DAG as the diagnostic approach. No assertions failed."
+  }
+}

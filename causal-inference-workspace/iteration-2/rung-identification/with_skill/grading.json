@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Claude explicitly names or describes the Rung 2 / interventional nature of the question — distinguishing 'the numbers look better' (Rung 1 correlation) from 'the flow caused the improvement' (Rung 2 causal effect)",
+      "passed": true,
+      "evidence": "Step 1 is titled 'Name the rung' and explicitly states the question is a 'Rung 2 (intervention) question' while labeling the current data as 'Rung 1 (association) data.' The response directly contrasts: 'Retention went up around the time the flow shipped. That is a correlation.' vs. the causal claim the user wants to make. The bottom line repeats: 'You are asking a Rung 2 question with Rung 1 data.'"
+    },
+    {
+      "text": "Claude identifies at least one specific confounding mechanism with a direction — e.g., users who saw the new flow came from a different acquisition channel, cohort, or time period that would have improved retention anyway",
+      "passed": true,
+      "evidence": "The response identifies 'User cohort quality' with a specific directional mechanism: 'If the mix of users acquiring your product changed around launch — you ran a different ad campaign, changed pricing, attracted a higher-intent segment — those users would have had better retention regardless of the flow.' The diagnostic section reinforces this: 'the retention lift could be entirely explained by getting better users, not giving them a better flow.' Multiple additional confounders with directions are provided (seasonality, co-shipped features)."
+    },
+    {
+      "text": "Claude does NOT treat 'run a regression with controls for user characteristics' as a sufficient identification strategy for estimating this causal effect",
+      "passed": true,
+      "evidence": "Regression adjustment is presented as Option C (lowest preference) with an explicit caveat: 'The honest limitation: this only works if you have measured all the important confounders. Any unmeasured confounder that affects both exposure and retention biases the estimate.' The response instructs: 'treat a regression-only estimate as suggestive rather than definitive.' The bottom-line action items place regression as a fallback only when no control group exists."
+    },
+    {
+      "text": "Claude recommends a specific identification strategy — A/B test, holdout group, DiD using pre-period data, RDD at rollout date, or synthetic control — and explains why it addresses the identification problem",
+      "passed": true,
+      "evidence": "Option A (A/B test) is recommended with the explanation: 'Randomization closes all back-door paths by construction — every confounder above is balanced across arms.' Option B (DiD) is detailed with the formula, the parallel-trends assumption, and how to test it: 'This neutralizes time-based confounders and cohort effects shared by both groups.' The bottom line recommends a 30-day holdback as a structural fix for future launches."
+    },
+    {
+      "text": "Claude does NOT treat the observed post-rollout improvement as evidence of causation without an explicit counterfactual or control group",
+      "passed": true,
+      "evidence": "The response explicitly states in the bottom line: 'The numbers looking better is real information — it is evidence consistent with the flow helping. It is not conclusive evidence that the flow caused the improvement.' Step 5 identifies the 'simple before/after comparison with no control group' as 'the most likely trap.' Option D explicitly names the honest acknowledgment: 'If you have a simple before/after number, no comparison group, and limited confounder data, the causal effect is not identifiable from your current data.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 145.9
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "The response could briefly mention regression-to-the-mean as a threat even earlier (it does appear in Step 5, which is good).",
+      "The DAG section could explicitly label the direction of confounding bias (upward vs. downward) for each confounder, making the analysis more actionable."
+    ],
+    "overall": "The response is exemplary. It correctly frames the Rung 1/Rung 2 distinction immediately, provides a DAG with specific directional confounders, explicitly limits regression adjustment to a suggestive-only role, offers multiple ranked identification strategies with mechanistic explanations, and consistently refuses to treat the before/after lift as causal evidence. All five assertions pass with clear textual evidence."
+  }
+}

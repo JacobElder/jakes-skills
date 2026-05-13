@@ -1,0 +1,38 @@
+{
+  "expectations": [
+    {
+      "text": "Claude explicitly identifies this as the Table 2 Fallacy (or describes the same concept by another name — 'each coefficient requires its own identification', 'controls aren't causally identified', etc.)",
+      "passed": true,
+      "evidence": "Line 3 states explicitly: 'You have run into the **Table 2 Fallacy**.' Section 2 is titled 'The Named Trap: The Table 2 Fallacy' and cites Westreich & Greenland, 2013."
+    },
+    {
+      "text": "Claude explains that the regression was set up to identify the treatment effect specifically, and other coefficients describe model fit rather than causal effects",
+      "passed": true,
+      "evidence": "Section 2: 'you are running this regression to identify one focal effect: Treatment → Conversion. Your controls... are included to block back-door paths from Treatment to Conversion... That is *all* those controls are doing in this regression, structurally speaking.' And the closing line: 'The treatment coefficient is the one you set the regression up to identify. Every other coefficient in the table is describing model fit, not causal effects.'"
+    },
+    {
+      "text": "Claude notes that to estimate country's causal effect on conversion, a separate analysis with its own adjustment set would be needed",
+      "passed": true,
+      "evidence": "Section 5 (lines 77-91) states: 'To estimate the causal effect of Country → Conversion, you would need to: 1. Draw a DAG specifically for Country → Conversion — not for Treatment → Conversion. These are different estimands with different valid adjustment sets.' Section 3 also notes: 'The controls were chosen to identify Treatment → Conversion. They were not chosen to identify Country → Conversion. Those are two different estimation problems requiring two different identification strategies.'"
+    },
+    {
+      "text": "Claude does NOT confirm that country has a 'big causal effect' based on the coefficient magnitude alone",
+      "passed": true,
+      "evidence": "Section 4 explicitly reframes the large coefficient as associational only: 'A large, significant country coefficient tells you: After adjusting for treatment assignment, age, browser, and time-of-day, country is strongly associated with conversion in this sample. That is a Rung-1 (associational) statement. It is useful for prediction. It is not a causal claim.' Claude does not endorse a causal interpretation at any point."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [
+      "The response is exceptionally thorough — it may be worth testing whether a more concise version still hits all four criteria, to check that the skill works even with shorter outputs.",
+      "Consider adding an assertion around whether Claude avoids overclaiming about which confounders are present (since it speculates on the DAG structure)."
+    ],
+    "overall": "The response passes all four assertions cleanly. It names the Table 2 Fallacy explicitly, explains the single-estimand design intent of the regression, prescribes a separate identification analysis for the country effect, and consistently refuses to endorse the country coefficient as a causal estimate based on magnitude. The reasoning is well-structured, cites relevant literature (Westreich & Greenland 2013; Hünermund & Louw 2024), and uses DAG-based reasoning appropriately."
+  }
+}

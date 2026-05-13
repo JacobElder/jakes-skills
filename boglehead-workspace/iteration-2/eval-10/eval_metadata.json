@@ -1,0 +1,12 @@
+{
+  "eval_id": 10,
+  "eval_name": "dont-sell-winners-tax-hesitancy",
+  "prompt": "I have $200,000 in Tesla stock in my taxable brokerage account. I bought it 3 years ago for $65,000, so I'm sitting on a huge gain. It's now about 60% of my total portfolio. My financial advisor says 'let your winners run' and warns me that the capital gains tax would be enormous if I sell. Should I keep holding?",
+  "assertions": [
+    "Claude pushes back on the 'let your winners run' framing — explains that past appreciation is not an investment thesis, and concentration risk is the issue",
+    "Claude explicitly quantifies or characterizes the risk: 60% in a single stock is extreme concentration regardless of how well it has performed",
+    "Claude addresses the tax hesitancy directly: capital gains tax is the cost of having gains; it should inform timing but not prevent diversification",
+    "Claude does NOT endorse holding the concentrated position to avoid taxes or because 'it's been a winner'",
+    "Claude recommends a concrete path: sell and diversify into a broad index fund, with an option to spread the sales over a couple of years for tax smoothing if the gains are very large"
+  ]
+}

@@ -1,0 +1,89 @@
+Short answer: no, this is not a good deal — and the math makes it pretty clear why.
+
+---
+
+THE EXPLICIT COST
+
+1% of $350,000 = $3,500 per year. Every year. Regardless of performance.
+
+That's not a small number. That's a car payment. And it doesn't just cost you $3,500 — it costs you the compounding that $3,500 would have generated if it stayed invested.
+
+---
+
+WHAT 1% AUM ACTUALLY COSTS OVER TIME
+
+Let's run the numbers. Assume a 7% annual return before advisor fees, and a net return of 6% after the 1% AUM fee.
+
+Starting with $350,000:
+
+  After 20 years at 7% (no advisor): $350,000 × (1.07^20) = ~$1,352,000
+  After 20 years at 6% (with 1% fee): $350,000 × (1.06^20) = ~$1,122,000
+
+  Cost of the advisor over 20 years: ~$230,000
+
+After 30 years:
+  At 7%: ~$2,664,000
+  At 6%: ~$2,007,000
+
+  Cost of the advisor over 30 years: ~$657,000
+
+You read that right. A 1% annual fee on a $350,000 portfolio compounds into losing roughly $230,000–$657,000 in wealth over a 20–30 year horizon. Bogle called this the "tyranny of compounding costs." It is exactly that.
+
+---
+
+THE REAL PROBLEM: WHAT ARE YOU PAYING FOR?
+
+You said your advisor has you in low-cost Vanguard index funds. This is actually the core of the issue.
+
+Vanguard index funds — VTI, VXUS, BND, or equivalents — are designed to be self-managing. They're diversified. They rebalance (especially target-date funds). They have expense ratios around 0.03%–0.07%. There is no ongoing active management happening. Your advisor is largely serving as a custodian of a simple, passive portfolio.
+
+That service is worth exactly $0 per year in extra fees, because you can replicate it yourself.
+
+Opening a Vanguard, Fidelity, or Schwab account and buying three funds takes about 30 minutes. Rebalancing once a year takes another 30. The total ongoing effort is minimal. You don't need a middleman to hold Vanguard funds for you — Vanguard will hold them for you directly, and charge nothing for the privilege.
+
+---
+
+WHAT WOULD ACTUALLY JUSTIFY A 1% AUM FEE?
+
+Almost nothing, if we're being honest. The legitimate services that advisors provide — tax planning, estate planning, behavioral coaching during crashes, Social Security optimization, Roth conversion strategies — are valuable. But they don't require ongoing 1% AUM. They're one-time or periodic engagements.
+
+An advisor holding index funds is not doing $3,500/year of work. They are being paid $3,500/year to not do anything wrong — and you're bearing that cost forever.
+
+---
+
+WHAT TO DO INSTEAD
+
+Option 1: Self-manage (the Boglehead default)
+Transfer your accounts to Vanguard, Fidelity, or Schwab. Build a simple three-fund portfolio:
+  - US Total Stock Market (VTI / VTSAX / FSKAX)
+  - Total International (VXUS / VTIAX / FTIHX)
+  - US Total Bond Market (BND / VBTLX / FXNAX)
+
+Set an asset allocation appropriate for your age and risk tolerance. Rebalance once a year. That's it. Annual cost: ~$15–25 in expense ratios on a $350k portfolio.
+
+Option 2: One-fund simplicity
+Buy a single Vanguard Target Retirement fund matched to your retirement year. It's a complete portfolio in one fund. Expense ratio: 0.08%. It rebalances and adjusts the glide path automatically.
+
+Option 3: Fee-only / advice-only fiduciary
+If you genuinely want a human to review your plan, consult an advice-only or fee-only fiduciary advisor — someone who charges a flat fee or hourly rate for actual advice, not a percentage of your assets forever. Resources:
+  - NAPFA (napfa.org) — fee-only advisors
+  - Garrett Planning Network — hourly fee-only advisors
+  - XY Planning Network — fee-only, often subscription-based
+
+A one-time or annual review with an advice-only advisor might cost $500–$2,500. That's a very different proposition than $3,500/year, every year, forever.
+
+---
+
+A NOTE ON THE RELATIONSHIP
+
+Six years is a real relationship, and the advisor may be a genuinely good person who has done nothing wrong from their perspective. The problem isn't malfeasance — it's the structural incentive of AUM pricing. An AUM advisor has no financial incentive to simplify your life, because a simpler portfolio doesn't cost less to run. That's the misalignment.
+
+If you feel the advisor has provided meaningful value beyond fund selection — behavioral coaching, tax guidance, comprehensive planning — that's worth something. But quantify it honestly against $3,500/year and rising (as your portfolio grows, so does the fee in dollar terms).
+
+---
+
+BOTTOM LINE
+
+$3,500/year to hold Vanguard index funds is not a good deal. The math over 20–30 years is damning. Self-managing a simple three-fund or target-date portfolio is straightforward, well-documented, and costs nearly nothing. If you want ongoing advice, pay for advice — not a permanent percentage of your wealth.
+
+This isn't personalized financial advice, and your full tax situation, estate needs, and behavioral factors matter. If you have genuine planning complexity, an advice-only fiduciary (not an AUM advisor) is the right call. The bogleheads.org forum is also free and staffed by knowledgeable volunteers who will give you a frank read on your specific situation.

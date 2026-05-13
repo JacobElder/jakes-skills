@@ -1,0 +1,92 @@
+{
+  "expectations": [
+    {
+      "text": "Claude flags that restricting the analysis to '90-day active users' conditions on a downstream variable — users who survived to 90 days are already a selected, high-retention population",
+      "passed": true,
+      "evidence": "Step 2 identifies A90 (still active at 90 days) as a variable in the DAG and Step 3 states explicitly: 'By filtering to A90 = 1, the analysis opens [a spurious path].' The summary verdict reinforces this: 'filtering to 90-day-active users conditions on a common effect of onboarding completion and user quality.' The response also describes the population correctly as a 'selected' sample defined by a collider, not a neutral sample of engaged users."
+    },
+    {
+      "text": "Claude explains the collider mechanism specifically: being active at 90 days is a common effect of both onboarding engagement and baseline retention tendency, so conditioning on it induces spurious correlation between those two causes even if they are independent in the full population — this means the r = 0.42 could exist even if onboarding completion has zero causal effect",
+      "passed": true,
+      "evidence": "Step 3 names A90 as a collider caused by both O and Q, writes out the path 'O → A90 ← Q → R6', and explains the induced correlation: 'Within the 90-day-active sample, O and Q are no longer independent — even if they were independent in the full population.' The table in Step 5 explicitly shows that zero genuine causal effect is consistent with the observed r = 0.42, stating 'The observed correlation is consistent with a large genuine effect, a moderate effect buried in confounding, or essentially zero genuine effect.'"
+    },
+    {
+      "text": "Claude does NOT take the r = 0.42 correlation at face value as evidence that improving onboarding completion will causally improve retention",
+      "passed": true,
+      "evidence": "The response opens by distinguishing the Rung 1 (association) question answered by the data from the Rung 2 (intervention) question the business is asking. It explicitly states: 'A highly significant association in a badly conditioned sample is still a badly conditioned sample' and the summary verdict concludes 'No — you should not invest in improving onboarding completion as a retention lever based on this analysis.' The response treats r = 0.42 as 'a reasonable hypothesis about mechanism' but not 'investment-grade evidence.'"
+    },
+    {
+      "text": "Claude recommends analyzing the full user population (including churned users) rather than the 90-day survivors, or using an approach that corrects for selection (e.g., IPW)",
+      "passed": true,
+      "evidence": "Option 1 in Step 7 states: 'Randomize at the point of signup to an improved onboarding condition vs. control... do not filter to 90-day survivors.' Option 2 states: 'Rerun the analysis without the selection filter. Compute the O–R6 correlation in the full user base (including those who churned before 90 days).' The summary verdict repeats: 'The right next step is an A/B test on the full user population — not the 90-day survivors.' Note: IPW is not mentioned specifically, but the expectation lists it as an example ('e.g., IPW') and the response covers the intent with full-population analysis and IV approaches."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 5832,
+    "transcript_chars": null,
+    "total_tokens": 24345
+  },
+  "timing": {
+    "executor_duration_seconds": 162.8,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 162.8
+  },
+  "claims": [
+    {
+      "claim": "The r = 0.42 correlation is consistent with zero genuine causal effect of onboarding on retention",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 5 table and surrounding text explicitly states the observed correlation is consistent with 'essentially zero genuine effect' due to stacked collider and fork biases."
+    },
+    {
+      "claim": "A90 is a collider in the DAG, caused by both O (onboarding completion) and Q (user quality)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 2 DAG shows 'Q → A90' and 'O → A90', and Step 3 labels A90 explicitly as a collider."
+    },
+    {
+      "claim": "Within the conditioned sample, onboarding completion and user quality are negatively correlated",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 3 provides the intuition: users who reached 90 days without completing onboarding have very high Q; users who needed onboarding to survive have lower Q on average. The response correctly identifies this as the direction of the induced correlation."
+    },
+    {
+      "claim": "Running an A/B test that makes onboarding mechanically easier without changing the substantive experience would diagnose whether O has a real causal effect",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Step 6 describes exactly this diagnostic: 'Run an A/B test in which treatment makes onboarding mechanically easier to complete — fewer steps, pre-filled fields, reminder emails — without changing the substantive product experience.' This is a well-designed diagnostic that discriminates collider/fork bias from genuine causal effect."
+    },
+    {
+      "claim": "Confounding by Q (fork structure) is a separate, additional problem beyond collider conditioning",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 4 explicitly separates the two issues: 'Even setting the collider aside, the correlation faces two more problems' and explains the fork Q → O and Q → R6 independently."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "reason": "No assertion checks whether the response correctly distinguishes P(R6 | O = 1) from P(R6 | do(O = 1)) using the do-operator. The response does this clearly and correctly (Step 4), and it is arguably the most precise causal test. An assertion here would be discriminating: many responses would identify bias qualitatively but fail to use the intervention vs. observation distinction formally."
+      },
+      {
+        "reason": "No assertion checks that the response avoids recommending a superficial fix (e.g., simply controlling for observable covariates) that would not resolve the fundamental collider bias. The response correctly identifies that controlling for observables is insufficient when the collider is the selection filter itself. This is a common error a weaker response would make, and no assertion currently catches it."
+      },
+      {
+        "assertion": "Claude recommends analyzing the full user population (including churned users) rather than the 90-day survivors, or using an approach that corrects for selection (e.g., IPW)",
+        "reason": "The IPW example in the parenthetical creates a mild ambiguity: a response that omits IPW entirely but provides full-population analysis and IV passes correctly. The current assertion wording handles this well with 'or using an approach that corrects for selection (e.g., IPW)' — the 'e.g.' makes it non-exhaustive. No change needed, but worth noting that the response uses IV rather than IPW as the observational correction method, which is equally valid."
+      }
+    ],
+    "overall": "The four assertions are well-targeted and discriminating — they collectively require correctly identifying the selection mechanism, naming the collider structure, applying it to the specific correlation, and recommending a valid correction. The main gap is that no assertion checks use of the do-operator / intervention vs. observation distinction, which is the sharpest test of whether the response goes beyond qualitative bias identification to precise causal reasoning."
+  }
+}

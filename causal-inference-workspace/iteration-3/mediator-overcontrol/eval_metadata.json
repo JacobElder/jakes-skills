@@ -1,0 +1,11 @@
+{
+  "eval_id": 6,
+  "eval_name": "mediator-overcontrol",
+  "prompt": "I'm estimating the effect of a 3-day management training program on team performance scores 6 months later. I want to include 'manager motivation level,' measured 1 month after the training ended, as a control variable — it's a strong predictor of performance outcomes. Is this a good idea?",
+  "assertions": [
+    "Claude identifies that manager motivation was measured after the treatment and therefore may be a mediator on the training → motivation → performance causal path",
+    "Claude warns that controlling for a post-treatment mediator blocks the causal mechanism you're trying to measure, biasing the estimated training effect toward zero",
+    "Claude distinguishes the total effect of training (including the motivation pathway) from the direct effect (net of motivation) — AND specifies which estimand is policy-relevant for the question at hand: if the goal is evaluating whether to scale the training program, the total effect is what matters; the direct effect is only relevant if you're trying to isolate mechanisms beyond the motivation pathway",
+    "Claude does NOT recommend including post-treatment motivation as a control without raising this structural concern"
+  ]
+}

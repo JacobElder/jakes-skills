@@ -1,0 +1,41 @@
+{
+  "expectations": [
+    {
+      "text": "Claude identifies the 18% figure as an ATT estimate — the effect among users who chose to opt in — not the ATE for the full user population",
+      "passed": true,
+      "evidence": "The response explicitly labels the observed effect as the 'Average Treatment Effect on the Treated (ATT)' and contrasts it with the 'Average Treatment Effect (ATE)', stating: 'When you roll out to all users, you're estimating the ATE — not the ATT. Planning as though ATT = ATE is one of the most common errors in product experimentation.'"
+    },
+    {
+      "text": "Claude explains why ATT ≠ ATE here: opt-in users are self-selected and likely differ from the average user in engagement level, openness to change, or technical comfort",
+      "passed": true,
+      "evidence": "A full section titled 'Why the ATT Likely Overstates the ATE Here' explains self-selection bias: 'Only 12% of invited users opted in. That 12% is not a random sample of your user base — they are almost certainly your most engaged, most curious, or most change-tolerant users.' The response also notes they were willing to change their workflow voluntarily and likely explored features more thoroughly."
+    },
+    {
+      "text": "Claude does NOT simply say 'expect approximately 18% improvement' from making the redesign the default",
+      "passed": true,
+      "evidence": "The response opens with 'Short answer: No. The 18% figure almost certainly overstates what you should expect from a full rollout.' It provides a segmented projection table suggesting a more realistic ATE 'possibly in the range of +3% to +8%', explicitly warning against using 18% as the planning figure."
+    },
+    {
+      "text": "Claude recommends running a forced experiment (random assignment to new vs. old dashboard) to get an unbiased ATE estimate before committing to a full rollout",
+      "passed": true,
+      "evidence": "Under 'What You Should Do Before Rolling Out', the response recommends: 'Run a Proper Randomized Experiment — The most reliable path is a standard A/B test: randomly assign users (not opt-in) to the new dashboard vs. the old one. This directly estimates the ATE without self-selection confounds. Even a 2-4 week holdout test on a random 20% of users would give you a far more trustworthy number.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 68.4
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "The response goes beyond the minimum requirements by providing a quantitative projection framework (segmented ATE table with +3% to +8% range), which adds practical value.",
+      "The response also correctly identifies novelty effects and matching limitations as additional reasons ATT overstates ATE, showing depth beyond just self-selection.",
+      "A phased rollout suggestion with monitoring is included as a practical fallback for teams facing business pressure, which is a useful addition."
+    ],
+    "overall": "The response is an exceptionally strong answer — all four assertions pass with clear, explicit evidence for each. It correctly identifies the ATT/ATE distinction, thoroughly explains the self-selection mechanism, firmly rejects the 18% extrapolation, and recommends a randomized A/B test as the path to an unbiased ATE estimate. The response also adds useful depth with novelty effects, matching limitations, segmented projections, and change management considerations."
+  }
+}

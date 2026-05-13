@@ -1,0 +1,35 @@
+{
+  "run_id": "front-door-identification-with_skill",
+  "eval_id": 7,
+  "eval_name": "front-door-identification",
+  "config": "with_skill",
+  "passed": 4,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Claude does NOT just conclude 'not identifiable because of unmeasured confounder'",
+      "passed": true,
+      "evidence": "Section 3 explicitly states 'But ask the front-door question before concluding \"not identifiable.\"' and the summary concludes 'No — the unmeasured confounder (Ambition) does not automatically make this effect unidentifiable.'"
+    },
+    {
+      "text": "Claude recognizes the potential for front-door identification via the observed mediator 'skills applied on the job'",
+      "passed": true,
+      "evidence": "The entire analysis is structured around front-door identification via M = 'Skills Applied on Job'. Section 3 explicitly checks the three front-door conditions using this mediator, and Section 4 derives the front-door estimator using M."
+    },
+    {
+      "text": "Claude describes the front-door criterion or the logic behind it: estimate the effect of training on skills-applied (unconfounded), then estimate the effect of skills-applied on performance (adjusting for training as a back-door block), then combine",
+      "passed": true,
+      "evidence": "Section 4 'The Front-Door Estimator' describes exactly this two-stage procedure: Stage 1 estimates P(M|do(X)) = P(M|X) as unconfounded, Stage 2 estimates P(Y|do(M)) = Σ_x P(Y|M,X=x)·P(X=x) by conditioning on X to block the back-door, then composes them into the full front-door formula."
+    },
+    {
+      "text": "Claude notes the key assumption: ambition (the unmeasured confounder) must not directly cause skills-applied independent of the training — i.e., ambition affects performance only through the training → skills-applied path or through paths that can be blocked",
+      "passed": true,
+      "evidence": "Section 5 is entirely devoted to this assumption: 'The entire identification rests on condition 2: Ambition has no direct effect on Skills Applied on Job that bypasses Training.' It also provides three concrete diagnostic questions to stress-test whether a direct U→M path exists."
+    },
+    {
+      "text": "Claude notes the complete mediation condition: all causal paths from training to performance must pass through 'skills applied on the job' — if training has a direct effect on performance ratings independent of skills-applied (e.g., being seen attending training boosts ratings), the front-door formula is biased. Claude flags this as an assumption to verify, not just accept.",
+      "passed": false,
+      "evidence": "The response does not flag the requirement that training must have no direct effect on performance that bypasses M. It checks condition 1 (M is on the causal path) and condition 3 (back-door paths from M to Y are blockable) but never raises the concern that a direct X→Y path (e.g., being seen attending training boosts ratings) would violate complete mediation and bias the front-door estimate. This critical assumption is entirely absent."
+    }
+  ]
+}

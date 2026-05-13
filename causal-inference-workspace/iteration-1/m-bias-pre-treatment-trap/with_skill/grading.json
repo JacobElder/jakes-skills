@@ -1,0 +1,38 @@
+{
+  "expectations": [
+    {
+      "text": "Claude challenges the 'control any pre-treatment variable that predicts both' rule rather than endorsing it",
+      "passed": true,
+      "evidence": "The response explicitly labels the rule 'folklore' and states: 'The standard advice — control for pre-treatment variables that predict both treatment and outcome — is one of the most persistent errors in applied research. It is wrong as a general rule.' The short answer at the top also preempts the rule: 'Pre-treatment timing is not a license to control. The DAG is.'"
+    },
+    {
+      "text": "Claude explains that whether to control depends on the structural role of the variable, not on temporal precedence",
+      "passed": true,
+      "evidence": "Step 3 states: 'Temporal ordering doesn't help either: M-bias and near-IV structures are both fully pre-treatment by construction. The rule fails because it answers a structural question with a statistical criterion.' The key takeaway reinforces this: 'Use the structural taxonomy: classify by DAG role, not by timing or correlation.'"
+    },
+    {
+      "text": "Claude raises the possibility of M-bias — that the variable might be a collider between two unobserved confounders, in which case controlling makes things worse",
+      "passed": true,
+      "evidence": "DAG B is explicitly labeled 'M-bias (the trap)'. The response explains that CF is a collider between U1 and U2 (two separate unobserved factors), that the path is closed by default, and that conditioning on CF 'opens the path, creating a spurious U1 ↔ U2 association that contaminates the T → E estimate. You manufacture bias from nothing.'"
+    },
+    {
+      "text": "Claude recommends sketching a DAG to determine the role before deciding",
+      "passed": true,
+      "evidence": "Step 5, item 1 explicitly states: 'Draw your DAG explicitly. Write down the substantive causes of career-fair attendance, training enrollment, and earnings separately. Check whether CF sits at a fork (confounder) or a junction between two separate causal streams (collider).' The short answer also says 'The DAG is [the license to control].'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [
+      "The response could further reinforce assertion 2 by explicitly naming the structural types (confounder, mediator, collider, instrument) in the context of the timing vs. structure distinction, though it does cover all four types in the DAG analysis.",
+      "Consider adding a criterion that tests whether the response correctly distinguishes the M-bias collider structure (two separate unobserved causes) from a simple unobserved confounder, since this is a subtle but important distinction that the response handles well."
+    ],
+    "overall": "All four assertions pass convincingly. The response is technically precise and pedagogically clear: it explicitly challenges the folklore rule, grounds the decision in DAG structure rather than temporal precedence, correctly characterizes M-bias as a collider scenario that worsens estimates when controlled, and directly recommends drawing a DAG as the primary diagnostic tool. No assertions were borderline — each was addressed clearly and with substantive detail."
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "eval_id": 9,
+  "eval_name": "att-vs-ate-rollout",
+  "prompt": "We ran an opt-in experiment: users were invited to try our new dashboard redesign, and 12% chose to try it. Among those who opted in, 30-day retention went up +18% compared to a matched control group of users who were invited but chose not to opt in. My team wants to make the new dashboard the default for all users and is expecting roughly an 18% retention improvement. Is that a reasonable expectation?",
+  "assertions": [
+    "Claude identifies the 18% figure as an ATT estimate — the effect among users who chose to opt in — not the ATE for the full user population",
+    "Claude explains why ATT ≠ ATE here: opt-in users are self-selected and likely differ from the average user in engagement level, openness to change, or technical comfort",
+    "Claude does NOT simply say 'expect approximately 18% improvement' from making the redesign the default",
+    "Claude recommends running a forced experiment (random assignment to new vs. old dashboard) to get an unbiased ATE estimate before committing to a full rollout"
+  ]
+}

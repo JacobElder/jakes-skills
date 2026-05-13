@@ -1,0 +1,30 @@
+{
+  "run_id": "att-vs-ate-rollout-without_skill",
+  "eval_id": 9,
+  "eval_name": "att-vs-ate-rollout",
+  "config": "without_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude identifies the $32 as a LATE estimate — the treatment effect for compliers (users who adopted because of the push notification) — not the ATE for the full user population or the policy-relevant effect for a forced rollout",
+      "passed": true,
+      "evidence": "The response explicitly states the IV estimate recovers the 'Local Average Treatment Effect — the average treatment effect specifically for compliers' and that '$32 LATE is the average causal effect for compliers only. It says nothing directly about the never-takers.' The summary table labels LATE as 'Effect for compliers only — the nudgeable users.'"
+    },
+    {
+      "text": "Claude explains why LATE ≠ ATE for forced adoption: forced rollout affects never-takers (who actively declined the notification) whose response to forced adoption is unknown and likely much smaller or negative — the LATE tells us nothing about how they would respond",
+      "passed": true,
+      "evidence": "The 'Core Problem: Never-Takers Are Different' section explains that never-takers received the notification and said no, and gives multiple reasons their effect would be lower or negative: no value fit, psychological reactance/backlash leading to potential negative revenue, and no empirical basis to extrapolate the complier LATE to never-takers. A numerical example shows ATE could be ~$9 vs. $32 under plausible assumptions."
+    },
+    {
+      "text": "Claude does NOT confirm that $32/user is the right planning figure for a forced adoption rollout",
+      "passed": true,
+      "evidence": "The response opens with 'Short answer: No. The $32 LATE almost certainly overstates what you should expect from force-enabling the feature' and concludes that '$32 LATE...is the wrong number to use for projecting the revenue impact of a force-enable rollout.'"
+    },
+    {
+      "text": "Claude recommends a forced-adoption experiment (random assignment to feature enabled vs. disabled regardless of opt-in) to estimate the ATE before committing to the forced rollout decision",
+      "passed": true,
+      "evidence": "Option 1 under 'What You Should Do Before a Full Rollout' explicitly recommends: 'run a small A/B test where you actually force-enable the feature for a random subset of non-adopters and measure the revenue outcome directly. This gives you an unbiased estimate of the ATE for that population, rather than extrapolating from the LATE.' The final sentence of the response repeats this recommendation."
+    }
+  ]
+}

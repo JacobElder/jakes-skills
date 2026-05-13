@@ -1,0 +1,49 @@
+The fear you're describing is completely understandable — $175,000 is meaningful money, and watching it drop 20% in the first six months because of bad timing would be genuinely painful. That emotional reaction is normal and doesn't mean you're doing anything wrong. The problem is that the plan you've built to manage that fear — spreading over 3 years — goes too far in the other direction, and ends up creating a different kind of risk: the risk of staying out of the market while it rises.
+
+## What the research actually says
+
+Vanguard studied this directly. In their paper "Dollar-cost averaging just means taking risk later," they analyzed rolling historical windows across US, UK, and Australian markets and found that lump-sum investing outperformed dollar-cost averaging roughly two-thirds of the time. The reason is straightforward: markets rise more often than they fall, so sitting in cash while waiting to deploy is, on average, a losing bet.
+
+The one-third of cases where DCA won are the scenarios you're imagining — buying right before a major drawdown. Those scenarios are real. They happen. But you don't know in advance which scenario you're in, and betting that you're in the unlucky third means you're making a market-timing call, which is exactly what you're trying to avoid.
+
+## Your 3-year plan is market timing
+
+I want to be direct about this, because it's important: a plan to invest $5,000/month for 36 months is not a conservative strategy — it is a form of market timing. You are implicitly predicting that the market is more likely to fall than to rise over the next three years, and you are allocating capital based on that prediction.
+
+The Boglehead position on market timing is unambiguous: it doesn't work. Not for you, not for your broker, not for the hedge fund managers with Bloomberg terminals and PhD economists. "Far more money has been lost by investors preparing for corrections than has been lost in corrections themselves." — Peter Lynch.
+
+A 36-month deployment schedule also means that for the first year and a half, more than half your inheritance is sitting in cash, earning money-market rates while the rest of your three-fund portfolio compounds at full equity weights. If the market returns 8% annually over those three years (roughly its long-run average), you'd give up tens of thousands of dollars in opportunity cost. That's a real cost — it's just less emotionally salient than watching a balance drop.
+
+## The right behavioral compromise: 3 to 6 months
+
+The Boglehead community does recognize that lump-sum investing is psychologically very hard with a large windfall, and the standard compromise is not "never do DCA" — it's "compress it to a timeframe that actually reflects your uncertainty rather than a multi-year market call."
+
+A 3-to-6 month schedule accomplishes what you actually need:
+- It spreads your entry across different market conditions (you won't buy it all at a single price point)
+- It gives you time to make sure your asset allocation is right before you're fully invested
+- It limits your maximum regret if the market does drop right after you start
+- It does not require you to predict market direction over the next three years
+
+With $175,000, a 6-month schedule is roughly $29,000/month. That's much larger than $5,000/month, and it may feel aggressive — but it reflects the actual time horizon over which your uncertainty is meaningful. You genuinely don't know what the market will do over the next six months. You also don't know what it'll do over the next three years, but the longer you stretch the schedule, the more you're making an implicit directional bet rather than managing genuine uncertainty.
+
+If even 6 months feels too fast, you could go to 12 months — that's at the outer edge of what the Boglehead community would consider a reasonable behavioral compromise, not three times longer than that.
+
+## A practical approach
+
+1. Park the $175,000 in a high-yield savings account or a money market fund (Vanguard's VMFXX, Fidelity's SPAXX, or similar) while you work out the deployment schedule. You'll earn a real yield while you wait, and the money is safe.
+
+2. Decide on your allocation before you deploy a dollar. You said you have a three-fund portfolio — make sure the allocation of the windfall matches your target (same stock/bond/international split you already use). A windfall is not an opportunity to take a different bet than your stated risk tolerance.
+
+3. Set up equal investments at a fixed interval — weekly or monthly — and automate them if your brokerage allows it. The automation matters. The goal is to remove the temptation to pause or accelerate based on what the market does between tranches.
+
+4. If the market drops 20% while you're mid-deployment, fight every instinct to pause. That's the scenario DCA is supposed to help with — you're buying more shares at lower prices, which is exactly what you want.
+
+## One more thing
+
+You already have a three-fund portfolio and you've been investing for a few years. The fact that you're thinking carefully about this rather than panic-buying a hot stock or putting it all in crypto suggests your investing instincts are sound. The goal here is not to second-guess yourself — it's to make sure the deployment plan you set is one you can actually execute without flinching, and that it doesn't inadvertently become a 36-month prediction about where markets are headed.
+
+Three to six months. Automate it. Stay the course.
+
+---
+
+Note: This isn't personalized financial advice — with a sum this size, running the plan by a fee-only fiduciary advisor (NAPFA.org is a good directory) or posting to bogleheads.org for a forum review is worth the hour or two it takes.

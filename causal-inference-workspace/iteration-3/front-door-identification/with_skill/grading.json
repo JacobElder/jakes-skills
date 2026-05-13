@@ -1,0 +1,95 @@
+{
+  "expectations": [
+    {
+      "text": "Claude does NOT just conclude 'not identifiable because of unmeasured confounder'",
+      "passed": true,
+      "evidence": "Section 3 explicitly pivots: 'Is the effect unidentifiable? Not necessarily — enter the front-door criterion.' The summary states: 'No, the unmeasured confounder (ambition) does not automatically make this effect unidentifiable.' The response treats back-door failure as a starting point, not a conclusion."
+    },
+    {
+      "text": "Claude recognizes the potential for front-door identification via the observed mediator 'skills applied on the job'",
+      "passed": true,
+      "evidence": "Section 3 names the mediator directly: 'You have exactly that: Skills Applied on the Job (M). The front-door criterion requires three conditions…' The DAG in Section 2 also places M explicitly between X and Y as the observed mediator."
+    },
+    {
+      "text": "Claude describes the front-door criterion or the logic behind it: estimate the effect of training on skills-applied (unconfounded), then estimate the effect of skills-applied on performance (adjusting for training as a back-door block), then combine",
+      "passed": true,
+      "evidence": "Section 4 ('The Front-Door Estimator') describes exactly this two-stage logic. Stage 1: 'compare rates of skill application between trained and untrained employees' (P(M|X) identifies P(M|do(X))). Stage 2: 'within each training-status group, compare performance ratings between those who applied skills and those who did not' (conditioning on X blocks the back-door M ← U → Y). Pearl's formula is also provided: P(Y|do(X)) = Σ_M P(M|X) · Σ_{X'} P(Y|M,X') P(X')."
+    },
+    {
+      "text": "Claude notes the key assumption: ambition (the unmeasured confounder) must not directly cause skills-applied independent of the training — i.e., ambition affects performance only through the training → skills-applied path or through paths that can be blocked",
+      "passed": true,
+      "evidence": "Section 3 devotes a subsection to 'The pivot point: does ambition directly cause skills applied, independent of training?' Scenario A (ambition affects M only through X → front-door works) and Scenario B (ambition directly causes M → front-door fails) are laid out with separate DAGs. Section 5 reinforces this as the central domain-knowledge assumption: 'Would a highly ambitious employee who was not sent to training still be more likely to apply skills on the job than a low-ambition employee who also wasn't sent?'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": null,
+    "total_tool_calls": null,
+    "total_steps": null,
+    "errors_encountered": 0,
+    "output_chars": 6891,
+    "transcript_chars": null
+  },
+  "timing": {
+    "executor_duration_seconds": 169.5,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 169.5
+  },
+  "claims": [
+    {
+      "claim": "The front-door criterion has three conditions: (1) M blocks all directed paths from X to Y, (2) no unblocked back-door from X to M, (3) all back-door paths from M to Y are blocked by X",
+      "type": "factual",
+      "verified": true,
+      "evidence": "This matches the standard formulation in Pearl's Causality. The response states all three conditions and maps them correctly to the training/skills/performance DAG."
+    },
+    {
+      "claim": "Pearl's front-door formula is P(Y|do(X)) = Σ_M P(M|X) · Σ_{X'} P(Y|M,X') P(X')",
+      "type": "factual",
+      "verified": true,
+      "evidence": "This is the correct formula from Pearl (2000). The response states it verbatim in Section 4."
+    },
+    {
+      "claim": "Conditioning on M in a regression of Y on X causes overcontrol bias by blocking the causal path X → M → Y",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Section 8 ('Most Likely Trap') correctly identifies this: 'If you put M into a regression of Y on X as a control variable, you block the very causal pathway through which training operates — giving you approximately zero effect.' This is the standard mediator-as-covariate error."
+    },
+    {
+      "claim": "The two-stage front-door procedure is structurally similar to mediation analysis but with a distinct causal purpose",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Section 4 distinguishes the two explicitly: 'This is structurally similar to a mediation analysis but with a distinct causal purpose — identifying the total effect despite an unmeasured confounder, not decomposing it into direct and indirect parts.' The distinction is correct and substantively important."
+    },
+    {
+      "claim": "Whether ambition directly causes skills applied is a domain-knowledge question, not a statistical question",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Section 5 states: 'This is not a statistical question. It is a domain-knowledge question. No regression can answer it.' This is a correct and practically important point — the front-door assumption is untestable from observational data alone."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "reason": "No assertion checks whether the front-door formula is stated correctly. A response could pass expectation 3 by describing the two-stage logic in plain language while getting the formula wrong or omitting it entirely. For responses at this technical level, verifying the formula would strengthen the eval."
+      },
+      {
+        "assertion": "Claude notes the key assumption: ambition must not directly cause skills-applied independent of training",
+        "reason": "The assertion conflates two distinct conditions. The response correctly distinguishes: (a) ambition must not directly cause M independent of X (front-door condition 2), and (b) ambition's effect on Y is accounted for by conditioning on X in stage 2 (condition 3). The assertion could be satisfied by a response that only addresses one of these. Consider splitting into two assertions."
+      },
+      {
+        "reason": "No assertion checks whether Claude warns about the mediator-as-covariate (overcontrol) trap. This is one of the most common practical errors in this scenario, and the response handles it well in Section 8. Since a practitioner might naturally control for 'skills applied' in a regression, catching whether Claude flags this would be a discriminating test."
+      }
+    ],
+    "overall": "All four expectations are genuinely satisfied with substantive evidence. The response is thorough and technically accurate. The eval assertions are directionally correct but leave gaps: no check on formula correctness, the assumption assertion conflates two conditions, and the overcontrol-bias warning is unchecked."
+  }
+}

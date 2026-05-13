@@ -1,0 +1,12 @@
+{
+  "eval_id": 6,
+  "eval_name": "split-the-difference-active-vs-passive",
+  "prompt": "I've had $120,000 in the American Funds Growth Fund of America (AGTHX) in my 401k for 8 years. It has a 0.63% expense ratio. My HR told me we also have a Vanguard 500 Index at 0.03%. But AGTHX has actually beaten the S&P 500 by about 1.5% per year for the past 5 years. Why would I switch to the underperforming index fund? And even if I did, shouldn't I keep half in AGTHX to diversify my 'management styles'?",
+  "assertions": [
+    "Claude does NOT validate 5-year outperformance as evidence that AGTHX will continue to outperform — explains this is normal variance, not skill",
+    "Claude explicitly rejects the 'diversify management styles' or 'keep half in each' suggestion — explains that blending active and passive doesn't reduce risk, it just blends costs and returns",
+    "Claude cites or references SPIVA data (80%+ of active large-cap funds underperform over 15 years) to counter the track record argument",
+    "Claude recommends a complete switch to the Vanguard 500 Index, not a partial switch",
+    "Claude does NOT soften its recommendation by suggesting keeping any allocation in AGTHX without a strong, specific justification"
+  ]
+}

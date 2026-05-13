@@ -1,0 +1,40 @@
+{
+  "expectations": [
+    {
+      "text": "Claude flags that restricting the analysis to '90-day active users' conditions on a downstream variable — users who survived to 90 days are already a selected, high-retention population",
+      "passed": true,
+      "evidence": "The response directly addresses this in 'The Core Problem: Survivorship Bias' section: 'By restricting the sample to 90-day survivors before measuring the outcome (6-month retention), the team has conditioned on a variable that sits in the middle of the causal pathway.' It further notes these users 'have already demonstrated higher-than-average engagement, motivation, product-market fit, and likely onboarding completion.'"
+    },
+    {
+      "text": "Claude explains this as a form of collider bias or selection bias: being active at 90 days is a common effect of onboarding engagement and baseline retention tendency, so conditioning on it induces a spurious correlation between those two causes",
+      "passed": true,
+      "evidence": "The response explicitly labels this 'a classic case of survivorship bias (a specific form of collider bias / selection bias)' and explains: 'Conditioning on a collider can induce spurious associations. If active at 90 days is itself influenced by both onboarding completion and other engagement factors, conditioning on it can create or amplify correlations between onboarding and later retention that would not exist (or would be weaker) in the full population.' It also identifies a latent 'engagement propensity' variable that drives both onboarding completion and retention."
+    },
+    {
+      "text": "Claude does NOT take the r = 0.42 correlation at face value as evidence that improving onboarding completion will causally improve retention",
+      "passed": true,
+      "evidence": "The short answer opens with 'No — not yet. The correlation is real, but the study design makes it impossible to conclude that improving onboarding completion will cause better long-term retention.' The summary states the correlation is 'statistically significant but methodologically compromised.' The findings table explicitly marks 'Completing onboarding causes users to be retained longer' as 'Unsupported' and 'Improving onboarding completion will improve long-term retention' as 'Unknown.'"
+    },
+    {
+      "text": "Claude recommends analyzing the full user population (including churned users) rather than the 90-day survivors, or using an approach that corrects for selection (e.g., IPW)",
+      "passed": true,
+      "evidence": "The practical recommendations section states: 'Re-run the correlation on the full user cohort (not filtered to 90-day survivors). If the effect weakens substantially or disappears, it is largely a survivorship artifact.' The 'Better Approach' table also recommends: 'Analyze all users from the cohort start' and 'Apply propensity score matching or regression on the full sample.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 62.8
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "The response could more explicitly name Inverse Probability Weighting (IPW) as a correction technique, though propensity score matching is an acceptable alternative.",
+      "The collider bias explanation could more precisely define the causal structure (e.g., using a DAG notation), but the conceptual explanation is accurate and clear."
+    ],
+    "overall": "Excellent response. All four assertions pass. The model correctly identifies the survivorship/selection bias, names collider bias as the mechanism, refuses to accept the r = 0.42 as causal evidence, and recommends re-analyzing on the full cohort plus additional methods (propensity score matching, A/B test). The explanation is thorough and appropriately skeptical."
+  }
+}

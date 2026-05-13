@@ -1,0 +1,30 @@
+{
+  "run_id": "iv-exclusion-violation-without_skill",
+  "eval_id": 12,
+  "eval_name": "iv-exclusion-violation",
+  "config": "without_skill",
+  "passed": 3,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude confirms the colleague is correct — the exclusion restriction is very likely violated: distance to gym probably affects health through mechanisms other than gym membership (neighborhood walkability, socioeconomic status, park access, food environment, etc.)",
+      "passed": true,
+      "evidence": "Response states 'Your colleague is almost certainly right. The exclusion restriction is highly likely to be violated' and enumerates walkability, neighborhood SES, park/recreational access, food access (food deserts, grocery stores), and environmental quality as direct mechanisms from distance to health that bypass gym membership."
+    },
+    {
+      "text": "Claude explains the exclusion restriction precisely: the instrument (distance) must affect the outcome (health) ONLY through the treatment (gym membership) — any direct path or alternative mechanism from distance to health invalidates the IV estimate",
+      "passed": true,
+      "evidence": "Response explicitly states 'The exclusion restriction requires that distance to a gym affects your health only through whether you join that gym' and lists the formal condition as 'Distance affects Health only through Gym Membership.' It further explains that any correlated pathway (walkability, SES, etc.) contaminates the estimate."
+    },
+    {
+      "text": "Claude explains that a violated exclusion restriction biases the IV estimate in an unknown direction — it is NOT just a statistical power issue; the estimate may be wrong in sign or magnitude",
+      "passed": true,
+      "evidence": "Response provides the formal bias expression (β̂_IV → β + (γ × Cov(Distance, Neighborhood_Quality)) / Cov(Distance, Membership)) and states 'The direction is ambiguous depending on the sign of γ and the correlation structure' and that the violation could 'substantially distort your IV estimate, potentially even reversing its sign or magnitude relative to the true causal effect.' The framing is clearly about directional bias, not statistical power."
+    },
+    {
+      "text": "Claude recommends either finding a stronger instrument that more plausibly satisfies exclusion (e.g., lottery-based gym subsidy assignment), or conducting falsification tests (e.g., does distance predict health outcomes in a population that would never join a gym?)",
+      "passed": false,
+      "evidence": "The response recommends 'lottery-based gym membership programs' as a cleaner instrument, satisfying the first prong. However, it does not suggest the specific falsification test of examining whether distance predicts health in a population that would never join a gym. The sensitivity analysis (Conley et al. 'plausibly exogenous' bounds) is mentioned, but that is a different technique and does not constitute the falsification test described in the assertion."
+    }
+  ]
+}

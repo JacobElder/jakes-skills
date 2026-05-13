@@ -1,0 +1,56 @@
+This is almost certainly not a good deal for you — and the pitch your advisor gave you hits nearly every talking point that Bogleheads have spent decades pushing back on. Let me explain why, and what to do instead.
+
+---
+
+## What whole life insurance actually is
+
+Whole life is a bundled product: a term life insurance policy wrapped around a tax-deferred savings account, sold together at a very high cost. The "tax-free growth" is real in a narrow technical sense, but it comes with several catches the pitch leaves out:
+
+**The first few years are almost entirely fees and commissions.** Insurance agents earn roughly 50–100% of the first year's premium in commission on whole life sales — so on a $500/month policy ($6,000/year), your advisor may be taking home $3,000–$6,000 just for selling it to you. That money comes out of your premium before a dollar goes toward "building cash value." Internal rates of return on whole life policies are typically 0–2% for the first decade or more before they become competitive with anything.
+
+**"Tax-free loans" isn't quite what it sounds like.** Yes, you can borrow against the cash value without triggering a taxable event. But you're paying 5–8% loan interest to the policy on your own money. That interest either gets paid back (with after-tax dollars) or reduces your death benefit. The "tax-free" framing hides the fact that you're paying interest to access your own savings.
+
+**The illustrations are optimistic.** The projected dividends and cash value growth shown in the sales presentation have a long track record of underperforming. They are projections, not guarantees.
+
+**The opportunity cost is enormous.** The real question isn't "is this better than nothing?" It's "is this better than what else I could do with $500/month?" And the answer to that is almost always no.
+
+---
+
+## What to do instead: term life + invest the difference
+
+If you have dependents who rely on your income — a spouse, kids, anyone who would be financially harmed by your death — you do need life insurance. The Boglehead answer is:
+
+1. **Buy a 20- or 30-year level term life policy.** For a healthy adult in their 30s or 40s, a $1 million term policy often costs $30–$60/month. The coverage is comparable to whole life; the cost is a fraction of it.
+
+2. **Invest the difference** (the remaining $440–$470/month) into tax-advantaged accounts in this priority order:
+   - Capture any employer 401(k) match first — that's a 50–100% instant return, nothing beats it.
+   - Then max your IRA ($7,000/year in 2025 if under 50). Roth if you expect to be in a higher bracket in retirement, Traditional if you're in a high bracket now.
+   - Then max your 401(k) ($23,500 in 2025).
+   - Then taxable brokerage with low-cost index funds (VTI for US stocks, VXUS for international, BND for bonds if you want a bond allocation).
+
+3. **Cancel term when you no longer need it** — typically around retirement, once the kids are independent and you've built enough assets.
+
+Let's put numbers on this. $500/month over 30 years at a 7% average annual return (which is roughly the historical long-run real return of a diversified equity index fund) grows to approximately **$567,000**. That's the opportunity cost you're giving up with whole life if you're generating 1–2% returns instead.
+
+---
+
+## A word on your advisor
+
+This doesn't make your advisor a bad person, but it's worth naming directly: an insurance-licensed financial advisor earns significant commissions on whole life policy sales. The incentive to recommend whole life is real, regardless of whether it's the right product for you. Ask your advisor two questions:
+
+1. "How are you compensated if I buy this policy?"
+2. "What's the internal rate of return on this policy at years 5, 10, and 20 — net of all fees and commissions?"
+
+If they can't or won't answer clearly, that tells you something. If you want a second opinion from someone with no financial incentive in the outcome, look for a **fee-only fiduciary advisor** through NAPFA.org or the Garrett Planning Network — you pay a flat fee or hourly rate, they don't earn commissions.
+
+---
+
+## The bottom line
+
+Whole life insurance is the right tool for a narrow set of situations: very high-net-worth individuals managing estate tax exposure, funding buy-sell agreements for business owners, or providing for a disabled dependent who needs lifetime support. For most people — including, in all likelihood, you — the answer is term life + invest the difference in low-cost index funds.
+
+The Boglehead community has looked at this product from every angle for decades. The consensus is clear: whole life policies are not competitive investments for the overwhelming majority of people who buy them.
+
+---
+
+*This isn't personalized financial advice — I don't know your full situation, tax bracket, whether you have dependents, or what other accounts you have. If the numbers here are large or the decision feels complex, a one-time consultation with a fee-only fiduciary advisor is worth the $300–$500 it costs. The bogleheads.org forum (free) is also a remarkably high-quality resource for a second opinion.*

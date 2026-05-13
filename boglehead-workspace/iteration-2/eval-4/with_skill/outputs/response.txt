@@ -1,0 +1,129 @@
+Great — you've given me enough to work through the full picture. Let me walk you through the Boglehead funding waterfall applied to your situation, step by step.
+
+---
+
+## Your situation at a glance
+
+- $1,200/month to invest
+- No employer 401(k) match
+- $18,000 in credit card debt at 24% APR
+- $3,000 in savings
+- Enrolled in an HDHP (eligible for an HSA)
+
+There's one number that should dominate everything else right now: **24% APR**. Paying off that credit card debt is a guaranteed, risk-free, tax-free 24% return. There is no investment in the world that reliably beats that. Nothing in stocks, bonds, or index funds comes close on a guaranteed basis.
+
+Here's how I'd prioritize your $1,200/month.
+
+---
+
+## Step 1: Verify your starter emergency fund (you're already there)
+
+Before investing anything, you need a small cash cushion so that an unexpected expense doesn't send you right back to the credit card. The Boglehead rule of thumb is $1,000–1 month of expenses in a high-yield savings account (HYSA).
+
+Your $3,000 in savings likely covers this already, depending on your monthly expenses. If your monthly essentials (rent, utilities, food, minimums) are under $3,000, you're good. Keep this money in a HYSA — somewhere like Ally, Marcus, or a similar account currently yielding around 4–5%. Don't touch it.
+
+**Action: Keep $1,000–$3,000 in your HYSA as a starter emergency fund. Do not invest it.**
+
+---
+
+## Step 2: No 401(k) match — skip to debt
+
+Normally, capturing the full employer 401(k) match is step one of investing. It's an immediate 50–100% return and nothing competes with it. But you said your employer offers no match. That changes the math entirely.
+
+Without a match, your 401(k) is just a tax-advantaged account — valuable, but it does not outcompete paying off 24% APR debt. So we skip directly to the debt.
+
+---
+
+## Step 3: Destroy the credit card debt — this is your entire "investment" for now
+
+$18,000 at 24% is costing you roughly **$360/month in interest** right now (more at the start). Every dollar you put toward that balance earns you a guaranteed 24% return. No index fund, no target-date fund, no HSA investment — nothing generates a guaranteed 24% return.
+
+With $1,200/month going toward the debt (above minimum payments), here's the rough math:
+
+- Current balance: $18,000
+- At $1,200/month, factoring in interest, you're looking at approximately **18–20 months** to pay this off in full.
+
+That's aggressive and it works. You'll pay somewhere around $2,500–3,000 in total interest (versus paying minimums, which would cost tens of thousands and take many years). This is a massive win.
+
+**Action: Direct the full $1,200/month to credit card paydown. Use the avalanche method — put every dollar above minimums toward the highest-rate card. At 24%, this is almost certainly your only card worth attacking.**
+
+One note: do not close the card when you pay it off. Closing accounts can hurt your credit utilization ratio. Just stop using it for the kind of spending that carries a balance.
+
+---
+
+## Step 4: Once the debt is gone, here's the order for your $1,200/month
+
+When the card is paid off (roughly month 18–20), your situation will look very different. You'll have $1,200/month freed up plus no interest bleeding you. At that point, run through the waterfall in order:
+
+### 4a. Complete your emergency fund
+
+You'll want 3–6 months of essential expenses in cash/HYSA before investing heavily. If your essentials run $2,500/month, that's $7,500–$15,000. You may already have a head start from your current $3,000. Budget 1–2 months of your post-debt cash flow here.
+
+### 4b. Max the HSA — this is the first investment account you should open
+
+You're enrolled in an HDHP, which means you're eligible for a Health Savings Account. The HSA is the most tax-advantaged account that exists, full stop. It is triple-tax-advantaged:
+
+1. Contributions are pre-tax (or above-the-line deductible if you contribute outside of payroll)
+2. Growth is tax-free
+3. Withdrawals for qualified medical expenses are tax-free
+
+The 2025 contribution limit is $4,150 for individual coverage / $8,300 for family coverage (plus a $1,000 catch-up if you're 55+).
+
+**The Boglehead HSA move:** if you can afford to pay current medical expenses out of pocket, do it. Let the HSA sit invested in a low-cost index fund (many HSA custodians now offer Fidelity or Vanguard index funds). Save your receipts. There is no time limit on reimbursing yourself — in 15 years, you can pull out $4,000 tax-free by pointing to a dentist bill from today. And after age 65, any withdrawal for any reason is taxed like a Traditional IRA — worst case, it's just a tax-deferred account.
+
+Open an HSA through Fidelity (their HSA has no fees and offers their index funds) or through your employer's plan if they contribute to it.
+
+At $4,150/year individual limit, this is roughly **$346/month**.
+
+### 4c. Max a Roth IRA
+
+The 2025 IRA contribution limit is $7,000 ($8,000 if 50+). At your income level (you haven't mentioned it, but you're not describing a high earner situation), a **Roth IRA** is almost certainly the right call. You pay taxes now, and all future growth is tax-free forever. This is especially powerful if you're early in your career.
+
+Open a Roth IRA at Vanguard, Fidelity, or Schwab. Invest in:
+- **VTI** (Vanguard Total Stock Market ETF, 0.03% expense ratio) for US stocks
+- **VXUS** (Vanguard Total International ETF, 0.07%) for international
+- Or simply a **target-date retirement fund** (e.g., Vanguard Target Retirement 2055, 0.08% ER) if you want a one-fund solution you never have to think about
+
+At $7,000/year, this is roughly **$583/month**.
+
+### 4d. Max the 401(k) up to the annual limit
+
+After the HSA and IRA are maxed, your 401(k) is next — even without a match, it offers tax-advantaged growth. The 2025 employee contribution limit is $23,500. At this point, you'd be putting in more than $1,200/month in tax-advantaged accounts, so you may not get here right away. That's fine — HSA and IRA first.
+
+### 4e. Taxable brokerage (if anything is left)
+
+After all tax-advantaged accounts are maxed, a regular brokerage account at Vanguard, Fidelity, or Schwab is perfectly fine. Use tax-efficient index funds (VTI/VXUS as ETFs, not mutual funds in taxable).
+
+---
+
+## Month-by-month summary
+
+**Now through month ~18–20:** Every dollar of the $1,200 goes to the credit card. No exceptions. This is your highest-return "investment."
+
+**Month ~18–20 onward (once debt is zero):**
+1. Top off emergency fund to 3–6 months if needed (~1–2 months of cash flow)
+2. Open an HSA if you haven't already — contribute $346/month ($4,150/year)
+3. Open a Roth IRA — contribute $583/month ($7,000/year)
+4. Remaining $271/month → 401(k) contributions (Traditional or Roth depending on your tax bracket)
+
+At that point you'll be investing $1,200/month across three tax-advantaged buckets, entirely in low-cost index funds. That's an excellent position.
+
+---
+
+## What not to do right now
+
+- **Do not start investing in index funds while carrying 24% credit card debt.** Expected stock market returns are roughly 7–10% annually over the long run. Credit card interest at 24% is a guaranteed drag. You cannot invest your way out of that math.
+- **Do not stop contributing to a 401(k) if your employer adds a match later.** If your job situation changes, reconsider immediately — match always comes first.
+- **Do not touch your emergency fund.** Keep it in a HYSA, not stocks. It's not there to grow; it's there so you don't reach for the credit card when the car needs a repair.
+
+---
+
+## One more thought
+
+The sequencing I've described — debt first, then HSA, then Roth IRA, then 401(k) — is the canonical Boglehead priority order for someone in your situation. It's not glamorous. "Pay off your credit card" is less exciting than "build a three-fund portfolio." But the math is unambiguous. Eliminating 24% guaranteed drag before chasing 7–10% expected returns is the highest-leverage move available to you right now.
+
+Once the debt is gone, you'll be in a genuinely strong position: no high-interest obligations, a starter emergency fund, HDHP coverage (with HSA access), and $1,200/month to deploy into tax-advantaged accounts. That's a real foundation.
+
+---
+
+*This isn't personalized financial advice — I don't know your full tax situation, income, state of residence, or other obligations. For pressure-testing this plan, the bogleheads.org forum is free and staffed by experienced investors who do this kind of review all the time. A fee-only fiduciary advisor (not commission-based) is worth consulting if your situation becomes more complex.*

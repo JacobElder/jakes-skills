@@ -1,0 +1,75 @@
+QUESTION: I have $1,200/month to invest. My employer offers no 401k match. I have $18,000 in credit card debt at 24% interest, $3,000 in savings, and I'm enrolled in a high-deductible health plan. What should I do with the $1,200?
+
+---
+
+Here is how the Boglehead funding waterfall applies to your situation, step by step.
+
+---
+
+STEP 0: FOUNDATIONS — CHECK
+
+You have $3,000 in savings. The waterfall requires a starter emergency fund of roughly $1,000 to one month of expenses before anything else. Assuming your essential monthly expenses are under $3,000, you already have this covered. Good. You don't need to divert your $1,200 here right now.
+
+If your monthly essential expenses are higher than $3,000, park enough of your $1,200 to get to one month of expenses first — then proceed below. This is a one-time step, not a permanent allocation.
+
+---
+
+STEP 1: EMPLOYER MATCH — SKIP (YOU HAVE NONE)
+
+Normally the very first investing dollar goes to capture the full employer 401(k) match, because that is an immediate 50-100% return that nothing else can compete with. Your employer offers no match. So this step is a no-op for you. Move on.
+
+---
+
+STEP 2: PAY OFF HIGH-INTEREST DEBT — THIS IS YOUR ENTIRE FOCUS RIGHT NOW
+
+Your $18,000 in credit card debt at 24% APR is the single most important thing to address. There is no investment on earth that reliably returns 24% per year, risk-free. Paying off that balance is a guaranteed, tax-free 24% return. The stock market returns roughly 7-10% nominally over the long run. Putting money into index funds while carrying 24% credit card debt is mathematically indefensible.
+
+All $1,200/month should go toward that credit card debt.
+
+At $1,200/month applied to $18,000 at 24% APR, you will have that balance paid off in approximately 18-19 months (accounting for ongoing interest). Once it is gone, you free up the full $1,200 — plus whatever you were paying as minimums before — for actual investing.
+
+Do not invest in a brokerage account, do not open an IRA, do not touch the 401(k) for non-match contributions while this debt exists. The guaranteed 24% return beats all of it.
+
+---
+
+STEP 3 (CONCURRENT OPPORTUNITY): OPEN AN HSA NOW — EVEN IF YOU CONTRIBUTE LITTLE TO START
+
+You are enrolled in an HDHP, which means you are eligible to contribute to a Health Savings Account. The HSA is the most tax-advantaged account that exists — triple-tax-advantaged:
+  1. Contributions are pre-tax (or above-the-line deductible if you contribute outside payroll)
+  2. Growth is tax-free
+  3. Withdrawals for qualified medical expenses are tax-free
+
+The 2025 contribution limit is $4,300 for individual coverage (or $8,550 for family), with an extra $1,000 catch-up if you are 55 or older.
+
+While you are aggressively paying down credit card debt, you should still consider opening an HSA and contributing at least a small amount — especially if you have any medical expenses coming. Here is why: every dollar of a medical expense you pay out of pocket (rather than from the HSA) while the account is invested is a tax-free dollar of future wealth. The Boglehead HSA move is to pay current medical costs out of pocket, save every receipt, let the HSA invest and compound for years, and then reimburse yourself tax-free later — there is no time limit on reimbursements.
+
+Practically speaking: if your employer offers payroll deduction into an HSA, even contributing $50-100/month is worth it for the tax savings and to establish the account. If cash is truly tight and you need every dollar on the credit card, that is a legitimate tradeoff — but do not let the debt chase cause you to completely miss the HSA window for this year. This is a case where a modest contribution alongside debt payoff can make sense.
+
+---
+
+THE PRIORITY ORDER GOING FORWARD (ONCE THE CREDIT CARD IS PAID OFF):
+
+When that $18,000 is gone — approximately 18-19 months from now — here is the exact sequence for your newly freed $1,200/month:
+
+1. BUILD THE FULL EMERGENCY FUND: Top up your savings to 3-6 months of essential expenses. At $3,000 already saved, you may be partway there. High-yield savings account, money market, or short-term Treasuries — not stocks.
+
+2. MAX THE HSA: $4,300/year individual ($358/month) at 2025 limits. Invest the balance inside the HSA in a low-cost total market index fund (many HSAs offer FSKAX, VIIIX, or similar). This is triple-tax-advantaged — nothing beats it once the credit card is gone.
+
+3. MAX A ROTH IRA (LIKELY): $7,000/year ($583/month) at 2025 limits. Roth is typically the right choice if you are early-career or in a moderate tax bracket — you pay taxes now at a lower rate and never pay them again on that growth. Open at Fidelity, Schwab, or Vanguard. Invest in VTI + VXUS (the Boglehead two-fund equity portfolio), or a single target-date fund if you want zero maintenance.
+
+4. MAX THE 401(k): $23,500/year employee contribution limit in 2025. Since there is no match, this falls below the IRA and HSA in priority — those accounts give you more flexibility. But once the IRA and HSA are maxed, dump the rest here.
+
+5. TAXABLE BROKERAGE: If you still have money left over after maxing all tax-advantaged accounts — put it in a taxable brokerage account in VTI/VXUS. A fine problem to have.
+
+---
+
+SUMMARY OF YOUR IMMEDIATE ALLOCATION ($1,200/MONTH RIGHT NOW):
+
+- ~$1,100-1,200: Aggressive credit card paydown (all surplus above minimum payments)
+- Optional: $50-100/month HSA contribution if available through payroll, for tax efficiency and to start the clock on that account
+
+The credit card is the whole game until it is gone. The math is unambiguous.
+
+---
+
+One note: this is general guidance based on Boglehead principles, not personalized financial advice. Your tax situation, income, and specific HDHP terms affect the exact numbers. The bogleheads.org forum and wiki (bogleheads.org/wiki/Prioritizing_investments) are excellent free resources, and an advice-only (fee-only, no commission) fiduciary advisor is worth consulting if you want a second pair of eyes on the full picture.

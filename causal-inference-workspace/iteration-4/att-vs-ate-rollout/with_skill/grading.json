@@ -1,0 +1,30 @@
+{
+  "run_id": "att-vs-ate-rollout-with_skill",
+  "eval_id": 9,
+  "eval_name": "att-vs-ate-rollout",
+  "config": "with_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude identifies the $32 as a LATE estimate — the treatment effect for compliers (users who adopted because of the push notification) — not the ATE for the full user population or the policy-relevant effect for a forced rollout",
+      "passed": true,
+      "evidence": "Section 2 and Summary table explicitly identify $32 as the LATE for compliers only: 'The LATE of $32 was identified entirely from compliers: users who were on the margin, receptive enough to a nudge to adopt.' The Summary table states: 'Is $32 an unbiased causal estimate? Yes — for compliers (the 15% who adopted because of the nudge).' Section 4 formally contrasts LATE vs. ATE vs. ATT."
+    },
+    {
+      "text": "Claude explains why LATE ≠ ATE for forced adoption: forced rollout affects never-takers (who actively declined the notification) whose response to forced adoption is unknown and likely much smaller or negative — the LATE tells us nothing about how they would respond",
+      "passed": true,
+      "evidence": "Section 3 states: 'When the CEO wants to force-enable the feature for all non-adopters, the target population changes dramatically. The people remaining who have not adopted are overwhelmingly never-takers.' Section 4 adds: 'The IV estimator gives you the LATE; it says nothing directly about never-takers.' Section 3 also notes the effect could be 'potentially negative for some segments (e.g., users who find the feature disruptive or intrusive).'"
+    },
+    {
+      "text": "Claude does NOT confirm that $32/user is the right planning figure for a forced adoption rollout",
+      "passed": true,
+      "evidence": "The opening paragraph explicitly states: 'No, $32 per user is not the right expectation for a forced rollout.' The Summary table confirms: 'Is $32 the right central estimate for rollout revenue uplift? No — it is likely an overestimate, possibly a significant one.' Section 6 calls $32 'an upper bound for the forced rollout, not the central estimate.'"
+    },
+    {
+      "text": "Claude recommends a forced-adoption experiment (random assignment to feature enabled vs. disabled regardless of opt-in) to estimate the ATE before committing to the forced rollout decision",
+      "passed": true,
+      "evidence": "Section 6, point 3 recommends: 'A separate RCT where a random sample of remaining non-adopters is force-enrolled (your actual intervention), measuring 6-month revenue versus a held-out control group of non-adopters.' The Summary table reiterates: 'What would give a more reliable estimate? A dedicated RCT of forced enrollment on a held-out sample of non-adopters.'"
+    }
+  ]
+}

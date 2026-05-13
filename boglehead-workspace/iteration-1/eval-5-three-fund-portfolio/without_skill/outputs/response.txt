@@ -1,0 +1,142 @@
+FINANCIAL ADVICE: IRA Investment Strategy for a 28-Year-Old with a 35+ Year Horizon
+======================================================================================
+
+SUMMARY RECOMMENDATION: Three-Fund Portfolio at Fidelity
+
+For a 28-year-old with $6,500 in a Fidelity IRA and a 35+ year horizon who wants to "set it and forget it," the best approach is a simple, low-cost index fund portfolio. Here is the specific recommendation:
+
+---
+
+OPTION 1: SINGLE FUND (SIMPLEST — TRUE "SET AND FORGET")
+
+Fidelity ZERO Total Market Index Fund (FZROX)
+- Expense ratio: 0.00% (zero fees)
+- What it holds: ~2,700+ U.S. stocks across all sizes (large, mid, small cap)
+- Why: Maximum simplicity, no fees, broad diversification, historically strong long-term returns
+
+At 28 with 35+ years, you can afford to be 100% stocks. You have time to ride out every market downturn. This single fund gives you the entire U.S. stock market for free.
+
+If you want global diversification (slightly more sophisticated but still simple):
+
+---
+
+OPTION 2: TWO-FUND PORTFOLIO (RECOMMENDED BALANCE OF SIMPLICITY + DIVERSIFICATION)
+
+Split your $6,500 as follows:
+
+1. Fidelity ZERO Total Market Index Fund (FZROX) — 80% (~$5,200)
+   - Expense ratio: 0.00%
+   - U.S. total stock market exposure
+
+2. Fidelity ZERO International Index Fund (FZILX) — 20% (~$1,300)
+   - Expense ratio: 0.00%
+   - International developed + emerging markets exposure
+
+This gives you ~3,500–4,000+ stocks across the entire globe for literally zero in fees.
+
+---
+
+OPTION 3: THREE-FUND PORTFOLIO (CLASSIC BOGLEHEAD APPROACH)
+
+The classic "three-fund portfolio" adds a small bond allocation for stability, but at 28, most advisors would say bonds are optional. If you want it:
+
+1. Fidelity ZERO Total Market Index Fund (FZROX) — 70% (~$4,550)
+   - U.S. total stock market
+
+2. Fidelity ZERO International Index Fund (FZILX) — 20% (~$1,300)
+   - International stocks
+
+3. Fidelity U.S. Bond Index Fund (FXNAX) — 10% (~$650)
+   - Expense ratio: 0.025%
+   - Investment-grade U.S. bonds for ballast
+
+Note: Many people your age skip bonds entirely or use a rule of thumb like "age in bonds" (28% bonds), but with a 35+ year horizon, even 0–10% bonds is very reasonable.
+
+---
+
+KEY PRINCIPLES BEHIND THIS ADVICE
+
+1. LOW COSTS ABOVE ALL ELSE
+   Every dollar paid in fees is a dollar not compounding for 35 years. At a 7% average return, $1 today becomes ~$10.68 in 35 years. Fidelity's ZERO funds cost nothing, which is unmatched.
+
+2. BROAD DIVERSIFICATION
+   Owning thousands of stocks eliminates the risk of any single company or sector collapsing your portfolio. You own "the whole haystack."
+
+3. TOTAL MARKET INDEX FUNDS BEAT MOST ACTIVE MANAGERS
+   Over 15-20+ year periods, roughly 90%+ of actively managed funds underperform their benchmark index after fees. You win by not trying to beat the market.
+
+4. STAY THE COURSE
+   The biggest risk is panic-selling during downturns. In a 35-year period you will experience multiple 30–50% market crashes. Do nothing. Keep contributing. This is how wealth is built.
+
+---
+
+WHAT TO DO NEXT
+
+Step 1: Log into Fidelity and select your IRA account.
+
+Step 2: Invest the $6,500. If going with the two-fund option:
+   - Buy $5,200 of FZROX
+   - Buy $1,300 of FZILX
+
+Step 3: Set up automatic annual contributions. The 2024/2025 IRA limit is $7,000/year (for under age 50). Max it out every year if possible. Automate this.
+
+Step 4: Set up automatic dividend reinvestment (usually on by default at Fidelity).
+
+Step 5: Rebalance once per year if your allocation drifts more than 5–10% from your target. At your age and with automatic contributions, this is optional — your new contributions will naturally rebalance.
+
+Step 6: Do nothing else. Ignore market news. Do not check more than once per quarter.
+
+---
+
+ALTERNATIVE: FIDELITY TARGET DATE FUND (IF YOU WANT ZERO DECISIONS EVER)
+
+If you truly want autopilot with no annual rebalancing:
+
+Fidelity Freedom Index 2060 Fund (FDKLX) or Fidelity Freedom Index 2065 Fund (FFIJX)
+- Expense ratio: ~0.12%
+- What it does: Automatically holds U.S. stocks, international stocks, and bonds in an age-appropriate mix, gradually becoming more conservative as you approach retirement
+- Downside: Slightly higher fees than the ZERO funds, and includes bonds now even though you may not need them yet
+
+Target date funds are excellent for people who truly will not think about their portfolio. The slightly higher fee (~0.12%) is a small price for complete autopilot.
+
+---
+
+WHAT TO AVOID
+
+- Actively managed funds (higher fees, worse long-term performance)
+- Sector funds or thematic ETFs (too concentrated)
+- Annuities inside an IRA (unnecessary fees; IRAs already have tax advantages)
+- Market timing or trying to "buy the dip"
+- Checking your balance too frequently (leads to emotional decisions)
+
+---
+
+PROJECTED GROWTH (ILLUSTRATIVE)
+
+Assuming 7% average annual return (historical real return of U.S. stocks is roughly 7% after inflation):
+
+Starting with $6,500 + $7,000/year contributions:
+- Year 10 (age 38): ~$108,000
+- Year 20 (age 48): ~$312,000
+- Year 30 (age 58): ~$718,000
+- Year 35 (age 63): ~$1,020,000+
+
+Starting with $6,500, no additional contributions:
+- Year 35: ~$70,000
+
+The lesson: consistent annual contributions matter enormously. Max out the IRA every year.
+
+---
+
+FINAL RECOMMENDATION
+
+For your situation, the best answer is:
+
+IF YOU WANT MAXIMUM SIMPLICITY: 100% FZROX (one fund, zero fees, done)
+IF YOU WANT GLOBAL DIVERSIFICATION: 80% FZROX / 20% FZILX (two funds, still zero fees)
+IF YOU WANT TRUE AUTOPILOT: Fidelity Freedom Index 2060 or 2065 target date fund
+
+All of these are excellent. The most important thing is to START (you already did — good job), keep contributing, and do not touch it.
+
+---
+Disclaimer: This is general educational information, not personalized financial advice. Consider consulting a fee-only fiduciary financial advisor for advice tailored to your complete financial situation.

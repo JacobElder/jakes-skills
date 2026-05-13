@@ -1,0 +1,35 @@
+{
+  "run_id": "rung-identification-without_skill",
+  "eval_id": 1,
+  "eval_name": "rung-identification",
+  "config": "without_skill",
+  "passed": 4,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Claude rejects the junior analyst's claim that last-digit user ID assignment is 'essentially random' — and explains that arbitrary-looking assignment is NOT the same as independent assignment from potential outcomes",
+      "passed": true,
+      "evidence": "Claude directly addresses this: 'This reasoning conflates distributional uniformity with independence from confounders.' Key Takeaway 1 states: 'Arbitrary labels are not the same as random assignment. Randomness is a property of the assignment mechanism, not the labels themselves.' The response also formalizes this via the ignorability condition T ⊥⊥ Y(0),Y(1) | X and explains why sequential IDs violate it."
+    },
+    {
+      "text": "Claude identifies the specific threat the senior engineer raises: sequentially assigned user IDs create a cohort split, so digit groups 0–4 vs 5–9 differ systematically in account age, product experience, acquisition wave, and anything else that co-varies with signup time",
+      "passed": true,
+      "evidence": "Claude enumerates four specific confounders: (1) Account Tenure — older accounts have higher purchase intent and stored payment info; (2) Cohort Effects — early adopters differ in demographics, tech-savviness, and were acquired differently; (3) Survivorship Bias — older cohorts have survived longer attrition funnels; (4) Temporal Confounds — economy, seasonality, product changes differ across cohorts. Claude also notes that the interleaving means it's not a clean old-vs-new split, but correctly concludes the cohort confounding threat remains valid."
+    },
+    {
+      "text": "Claude states that the +4.2% difference is NOT a valid causal estimate without first verifying that the two groups are balanced on pre-treatment covariates — the assignment mechanism must be interrogated, not assumed benign",
+      "passed": true,
+      "evidence": "The Verdict table explicitly states: '+4.2% is our causal estimate of the checkout effect — Not valid as stated. The raw comparison is confounded by cohort effects, tenure, and acquisition channel differences.' The closing paragraph states: 'Without controlling for cohort and tenure and passing a pre-period balance check, these cannot be disentangled. The estimate should not be used to make product decisions.' The response also frames this through Pearl's Ladder, noting the analyst is reading a Rung 2 answer off Rung 1 data."
+    },
+    {
+      "text": "Claude recommends a concrete diagnostic: run balance tests on pre-treatment covariates (account age, acquisition channel, historical conversion rates) between digit groups — if they differ, the 'natural experiment' is invalid and the estimate is confounded",
+      "passed": false,
+      "evidence": "Claude does not explicitly recommend running a covariate balance test (e.g., comparing means of account age, acquisition channel, and historical conversion rates between digit groups) as the primary concrete diagnostic. Option 2 is a pre-period placebo test on conversion rates, which is related but is not a general covariate balance check. Option 1 mentions conditioning on cohort but frames it as a recovery strategy, not a diagnostic. The specific recommendation to tabulate and compare pre-treatment covariates across the two digit groups to detect imbalance is absent."
+    },
+    {
+      "text": "Claude explains what would actually constitute valid quasi-experimental identification here: either verify empirically that digit groups are balanced (and explain why they would be, given the sequential assignment concern), or use a different identification strategy (e.g., a holdout or time-based DiD)",
+      "passed": true,
+      "evidence": "Claude outlines multiple valid identification paths: Option 1 (stratify by signup cohort and verify within-cohort last-digit balance), Option 2 (pre-period placebo test to empirically check for baseline differences), Option 4 (Difference-in-Differences with parallel trends assumption), and Option 5 (run a properly randomized experiment with cryptographic hashing). DiD is explicitly named. The response explains that within a narrow same-day cohort window, the last digit may do a reasonable job of randomizing — acknowledging the conditions under which the design could be salvaged."
+    }
+  ]
+}

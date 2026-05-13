@@ -1,0 +1,11 @@
+{
+  "eval_id": 5,
+  "eval_name": "did-parallel-trends-violation",
+  "prompt": "We rolled out a new pricing page to 3 of our 8 markets while 5 kept the old page. In the year before the rollout, the 3 treatment markets were growing 25% faster in conversion than the 5 control markets. After rollout, all 8 markets converged to similar growth rates. Our DiD estimate shows the new pricing page boosted conversion by +8%. Should we trust this?",
+  "assertions": [
+    "Claude explicitly flags that the 25% faster pre-rollout growth in treatment markets violates the parallel trends assumption that DiD requires",
+    "Claude explains that the observed convergence after rollout is consistent with trend mean-reversion, not necessarily a causal effect of the pricing page",
+    "Claude does NOT accept the +8% DiD estimate as valid without addressing the pre-trend differential",
+    "Claude recommends visualizing and testing pre-period trends as a prerequisite, and notes that the current evidence does not support a causal interpretation of the +8% estimate"
+  ]
+}

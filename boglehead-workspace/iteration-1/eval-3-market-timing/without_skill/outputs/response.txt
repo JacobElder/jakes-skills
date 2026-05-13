@@ -1,0 +1,67 @@
+QUESTION: "The market has been at all-time highs for months and everyone says a crash is coming. I have $60,000 ready to invest but I don't want to buy at the top. Should I wait for a 20-30% correction before investing?"
+
+---
+
+ANSWER:
+
+This is one of the most common and costly investing mistakes people make: waiting for a correction that may never come — or that comes after you've already missed substantial gains. Let me address this directly.
+
+THE CORE PROBLEM WITH WAITING FOR A CORRECTION
+
+The premise of your plan — waiting for a 20-30% drop — sounds prudent but is almost impossible to execute successfully in practice. Here's why:
+
+1. Markets are at all-time highs frequently.
+   Historically, the S&P 500 has spent roughly 30% of all trading days at or within 5% of an all-time high. If you always waited for a correction from highs, you'd be uninvested most of the time. Buying at all-time highs has, on average, produced returns just as good as buying on any other day.
+
+2. Corrections are unpredictable.
+   Experts, economists, and professional fund managers have been predicting crashes at "all-time highs" for decades — often wrong for years before any pullback occurred. In 2013, 2017, 2019, and 2024, widespread crash predictions failed to materialize for extended periods. An investor who waited in cash during any of those stretches lost out on 15-30%+ gains while waiting for a drop.
+
+3. Even if you time the entry right, you'll probably time the exit wrong.
+   Studies consistently show that individual investors who try to time the market tend to miss the best recovery days. The 10 best trading days in any given decade often occur right after the worst crashes. Missing them dramatically reduces long-term returns.
+
+4. Cash has a real cost.
+   With $60,000 sitting in cash waiting for a 25% correction that takes 2 years to arrive, you've lost opportunity. If the market rises another 20% before correcting 25%, you're still only breaking even on entry price — while having waited two years. Meanwhile, a fully invested investor collected dividends and compounding returns throughout.
+
+WHAT THE DATA ACTUALLY SAYS
+
+A study by Charles Schwab examined lump-sum investing vs. dollar-cost averaging vs. waiting for "the perfect moment" vs. just staying in cash. The results consistently showed:
+
+- Lump-sum investing (invest everything immediately) produced the best returns in roughly 2/3 of historical 20-year periods.
+- Dollar-cost averaging produced slightly lower but very good returns.
+- Waiting for the "perfect" entry point was only marginally better than dollar-cost averaging, and required perfect foresight nobody has.
+- Staying in cash to "wait for a correction" was the worst strategy in nearly every scenario.
+
+THE FEAR IS UNDERSTANDABLE — BUT IT'S BEHAVIORAL, NOT RATIONAL
+
+The fear of "buying at the top" is loss aversion bias in action. Research by Kahneman and Tversky shows humans feel the pain of losses roughly twice as intensely as they feel the pleasure of equivalent gains. This makes sitting in cash feel "safe" — but it's a false sense of safety. You're trading the visible risk of a short-term paper loss for the invisible risk of permanently lower long-term wealth.
+
+WHAT YOU SHOULD ACTUALLY DO
+
+Option 1 — Lump Sum (Best Expected Return)
+Invest all $60,000 today in a diversified, low-cost index fund (e.g., a total market fund or S&P 500 fund). Accept that the market may drop 20-30% in the near term. Understand that if your time horizon is 10+ years, the current entry price will almost certainly look cheap in hindsight.
+
+Option 2 — Dollar-Cost Averaging (Better Psychologically)
+If the idea of investing $60,000 in a single day causes you so much anxiety that you'd panic-sell during a correction, then invest over 6-12 months in equal installments (e.g., $5,000/month). You'll likely earn slightly less than lump-sum investing, but you'll sleep better and are less likely to panic at the worst moment. This trades some expected return for behavioral protection.
+
+Option 3 — A Hybrid Approach
+Invest $30,000 today (lump sum), and deploy the remaining $30,000 in $5,000 monthly installments over 6 months. This balances putting money to work quickly while reducing the psychological discomfort of going all-in at once.
+
+CRITICAL: Do NOT wait for a 20-30% correction.
+Here's the hard math: if you wait for a correction that doesn't come for 3 years, and the market rises 10% annually before finally dropping 25%, the market would need to fall even further than 25% just for your entry point to match where you could have invested today. And even then, you'd need the courage to buy into a falling market — which most people fail to do in practice.
+
+WHAT TO INVEST IN
+
+Once you decide to invest, keep it simple:
+- A total U.S. stock market index fund (e.g., VTI, FSKAX, SWTSX)
+- Or an S&P 500 index fund (e.g., VOO, FXAIX, SWPPX)
+- If you want global diversification, add a total international fund (e.g., VXUS) at 20-30% of the portfolio
+- Use tax-advantaged accounts first: max out IRA ($7,000/year limit for 2025), then taxable brokerage
+
+FINAL ANSWER
+
+Yes, the market could drop 20-30% after you invest. That would be painful in the short term. But the historical evidence is overwhelming: time in the market beats timing the market. The expected cost of waiting is almost certainly higher than the expected benefit of finding a lower entry point.
+
+Invest the money. Diversify. Keep costs low. Don't check it obsessively. Come back in 20 years.
+
+---
+NOTE: This is general financial education, not personalized financial advice. Your specific situation — tax circumstances, risk tolerance, time horizon, and overall financial picture — may warrant different approaches. Consider consulting a fee-only fiduciary financial advisor.

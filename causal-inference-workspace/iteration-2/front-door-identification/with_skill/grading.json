@@ -1,0 +1,37 @@
+{
+  "expectations": [
+    {
+      "text": "Claude does NOT just conclude 'not identifiable because of unmeasured confounder'",
+      "passed": true,
+      "evidence": "The conclusion explicitly states: 'No — the unmeasured confounder does not make this effect unidentifiable, given the structure you described.' The response argues the opposite of this failure mode throughout."
+    },
+    {
+      "text": "Claude recognizes the potential for front-door identification via the observed mediator 'skills applied on the job'",
+      "passed": true,
+      "evidence": "Step 3 is titled 'Can the Effect Be Identified? The Front-Door Criterion' and opens with: 'The structure you have described is almost exactly Pearl's classic front-door scenario. Ask whether Skills Applied satisfies the front-door criterion.' The mediator is central to the entire identification strategy."
+    },
+    {
+      "text": "Claude describes the front-door criterion or the logic behind it: estimate the effect of training on skills-applied (unconfounded), then estimate the effect of skills-applied on performance (adjusting for training as a back-door block), then combine",
+      "passed": true,
+      "evidence": "Step 3 provides the front-door adjustment formula and then states: 'Stage 1: Regress Skills Applied on Training to estimate how training affects skill application. Stage 2: Regress Performance Rating on Skills Applied and Training together to estimate how skill application affects performance, using the variation in Training to block the back-door from Skills Applied to Performance via U. The total effect is the product of the two stages, averaged over the distribution of Training.'"
+    },
+    {
+      "text": "Claude notes the key assumption: ambition (the unmeasured confounder) must not directly cause skills-applied independent of the training",
+      "passed": true,
+      "evidence": "Condition 2 in Step 3 asks: 'Does Ambition independently cause Skills Applied, separately from training?' and explains the assumption that 'Ambition causes who gets training, and trained employees apply the skills — but Ambition's path to Skills Applied runs through Training, not independently around it. In DAG terms: U → Training → Skills Applied, not U → Skills Applied directly.' The Step 6 table also flags: 'Ambition (U) independently causes Skills Applied... Condition 2 violated; back-door from Training to Skills Applied is open through U.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "executor_duration_seconds": 59.7
+  },
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "The response is an exemplary application of front-door identification. It correctly rejects the premature conclusion that an unmeasured confounder makes the effect unidentifiable, identifies 'Skills Applied on the Job' as the qualifying front-door mediator, walks through all three front-door criterion conditions with the formal adjustment formula and a two-stage regression translation, and explicitly flags the critical assumption that ambition must not independently cause skills-applied outside the training path. The response also adds practical value by discussing violations of each condition and their consequences, and warns against the mediator overcontrol trap."
+  }
+}

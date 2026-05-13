@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude explicitly recommends against whole life insurance as an investment vehicle, not just 'it depends on your situation'",
+      "passed": true,
+      "evidence": "The response opens unambiguously: 'No. Do not buy a whole life insurance policy as an investment vehicle. This is one of the clearest \"wrong answer\" scenarios in personal finance.' It never hedges to 'it depends' for average investors."
+    },
+    {
+      "text": "Claude names the term life + invest the difference alternative as the standard Boglehead recommendation",
+      "passed": true,
+      "evidence": "Entire section 'THE MATH ON $500/MONTH' walks through 'term life + invest the difference' with numbers, and the conclusion reiterates: 'Buy term if you need a death benefit, invest the difference in low-cost index funds.' The response calls this 'the \"invest the difference\" argument' and ties it to the Boglehead funding waterfall."
+    },
+    {
+      "text": "Claude explains why the 'tax-free growth' pitch is misleading — tax-advantaged accounts (401k, IRA, HSA) should be maxed before insurance-based wrappers are considered",
+      "passed": true,
+      "evidence": "The 'THE \"TAX-FREE GROWTH\" CLAIM' section calls the framing 'deliberately misleading' and explains policy-loan interest costs. The advisor section states: 'A financial advisor who recommends whole life insurance to someone who has not yet maxed out their 401(k), Roth IRA, and HSA is almost certainly a commissioned insurance salesperson.' The 'WHAT TO DO INSTEAD' waterfall lists 401k match, HSA, and IRA as steps 2-5 before any other investing."
+    },
+    {
+      "text": "Claude identifies the high commission structure as a reason the advisor may be recommending this product",
+      "passed": true,
+      "evidence": "'The commission on a whole life policy is often 50-100% of the first year's premium — in your case, roughly $3,000-$6,000 in year one — paid by the insurance company, funded by your premiums.' Also: 'the early years of premiums are largely consumed by commissions (often 50-100% of year-one premiums go to the agent).'"
+    },
+    {
+      "text": "Claude does NOT present whole life as a reasonable option for the average investor or give it a neutral pros-and-cons treatment",
+      "passed": true,
+      "evidence": "The response gives no pros-and-cons framing. It is consistently negative about whole life for average investors. The only carve-out is explicitly narrow: 'whole life has narrow legitimate uses for very high net worth estate planning' — which by definition excludes average investors putting $500/month into savings."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

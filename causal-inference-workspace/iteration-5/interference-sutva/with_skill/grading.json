@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude confirms the colleague is correct — user-level randomization for a social/network feature violates SUTVA (the Stable Unit Treatment Value Assumption), which requires no interference between units",
+      "passed": true,
+      "evidence": "Response opens with 'Your colleague is right to flag this' and dedicates Step 2 entirely to SUTVA, stating 'Your feature violates Part 1 spectacularly.' The summary reinforces: 'Your colleague is correct that the SUTVA assumption is violated by this feature.'"
+    },
+    {
+      "text": "Claude explains the specific interference mechanism: control users whose friends are in the treatment arm are affected by the treatment (they interact with treated friends), contaminating the control group and making the treatment/control comparison a partial-network-effect estimate, not a pure direct effect",
+      "passed": true,
+      "evidence": "Step 2 explicitly states: 'A control user's behavior is affected by whether their friends are in treatment or control: if a friend is in treatment and is now more active and sending messages, the control user receives more messages and social stimuli, independent of their own assignment.' Step 4 (Scenario B) further discusses 'Control-group contamination deflated the control baseline.' Step 5 concludes the experiment measured 'the individual treatment effect under partial equilibrium, not the total equilibrium effect under full deployment.'"
+    },
+    {
+      "text": "Claude explains why the +15% does NOT directly extrapolate to full rollout: the observed effect is a blend of direct effects and partial spillovers under 50% penetration; at 100% penetration, spillover dynamics are completely different and the total effect is unknown",
+      "passed": true,
+      "evidence": "Step 4 states: 'Your experiment estimated the ATE under a specific network saturation condition: approximately 50% of each user's social graph is treated... When you do a full rollout, you are asking about τ(1.0). The two quantities can differ substantially and in either direction.' Three scenarios are presented showing direction is ambiguous. The key takeaway says: 'You don't know which scenario you're in. The sign of the bias is genuinely ambiguous without understanding the mechanism.' Summary states the +15% 'cannot be cleanly extrapolated without additional assumptions.'"
+    },
+    {
+      "text": "Claude recommends cluster-randomization (randomize by social graph clusters, geographic markets, or another natural grouping) as the correct design to estimate causal effects for network features, and notes this would allow estimation of both direct and spillover effects",
+      "passed": true,
+      "evidence": "Step 7 explicitly recommends: 'run a cluster-randomized experiment: randomize at the level of social clusters (friend groups, communities) rather than individual users. Within a cluster, everyone is either all-treatment or all-control. This eliminates cross-cluster contamination and gives you clean estimates of τ(1.0) vs. τ(0.0).' An extended saturation experiment design is also described which enables estimation of 'τ(s) as a function of saturation — exactly the quantity you need to extrapolate to full launch,' covering both direct and spillover effects."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "The response is an excellent, thorough treatment of SUTVA violation and network interference for A/B testing social features. All four assertions pass clearly. The response correctly identifies the colleague is right, explains the specific mechanism by which control users are contaminated through treated friends, demonstrates rigorously why 50% saturation results don't extrapolate to 100% saturation (with multiple scenarios and formal notation), and recommends cluster-randomized and saturation experiment designs as the appropriate remedies. The formal notation (potential outcomes framework, exposure mapping citation) and the DAG add depth beyond what the assertions require."
+  }
+}

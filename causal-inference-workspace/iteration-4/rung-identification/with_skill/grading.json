@@ -1,0 +1,35 @@
+{
+  "run_id": "rung-identification-with_skill",
+  "eval_id": 1,
+  "eval_name": "rung-identification",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Claude rejects the junior analyst's claim that last-digit user ID assignment is 'essentially random' — and explains that arbitrary-looking assignment is NOT the same as independent assignment from potential outcomes",
+      "passed": true,
+      "evidence": "Step 7 states: 'The trap here is mistaking a deterministic function of a non-random variable for randomization... Uniform distribution of the treatment variable is a necessary but not sufficient condition for unconfoundedness.' Step 4 explicitly labels independence as the 'disputed assumption' that 'fails if last digit correlates with tenure, acquisition cohort, geography, or any other driver of conversion.' The summary table also marks the analyst's claim as 'Likely wrong' because it 'requires last digit to be independent of all conversion drivers.'"
+    },
+    {
+      "text": "Claude identifies the specific threat the senior engineer raises: sequentially assigned user IDs create a cohort split, so digit groups 0–4 vs 5–9 differ systematically in account age, product experience, acquisition wave, and anything else that co-varies with signup time",
+      "passed": true,
+      "evidence": "The DAG in Step 2 explicitly captures U (sequential user ID) as a common cause of X (checkout version via last digit) and T (tenure), opening the back-door path X ← U → T → Y. Step 3 enumerates real-world patterns (gaps from churn/deletion, batch/cohort-based ID ranges, product-region ID blocks) by which last digit correlates with cohort membership. The balance check table in Step 5 lists account age, historical conversion rate, acquisition channel, and geography as the key pre-treatment covariates that may differ between groups."
+    },
+    {
+      "text": "Claude states that the +4.2% difference is NOT a valid causal estimate without first verifying that the two groups are balanced on pre-treatment covariates — the assignment mechanism must be interrogated, not assumed benign",
+      "passed": true,
+      "evidence": "The summary verdict table explicitly marks '+4.2% is a valid causal estimate' as 'Unknown until balance checks are run.' Step 4 states the independence assumption is 'the disputed assumption' and is 'testable.' The closing line reinforces: 'The right next step is not to argue about whether IDs are random enough — it's to run the balance checks and the pre-period conversion comparison.'"
+    },
+    {
+      "text": "Claude recommends a concrete diagnostic: run balance tests on pre-treatment covariates (account age, acquisition channel, historical conversion rates) between digit groups — if they differ, the 'natural experiment' is invalid and the estimate is confounded",
+      "passed": true,
+      "evidence": "Step 5 provides an explicit balance check table comparing digits 0–4 vs 5–9 on: Account age (days), Historical conversion rate (pre-experiment), Number of prior purchases, Acquisition channel, and Geography/market. It states: 'If they're imbalanced — especially on account age or historical conversion rate — the engineer is right and the estimate is confounded.' It also identifies the single most diagnostic check as comparing pre-experiment conversion rates of the two groups."
+    },
+    {
+      "text": "Claude explains what would actually constitute valid quasi-experimental identification here: either verify empirically that digit groups are balanced (and explain why they would be, given the sequential assignment concern), or use a different identification strategy (e.g., a holdout or time-based DiD)",
+      "passed": true,
+      "evidence": "Step 6 outlines three remedies: (1) back-door adjustment by controlling for measured confounders, (2) Differences-in-differences using pre-period conversion data — labeled 'likely your best option here,' and (3) a proper RCT using cryptographic hashing. The summary verdict also states that if balance checks show the groups are balanced, 'the estimate may be defensible,' constituting the empirical-verification path. Both the balance-verification route and the DiD alternative strategy are explicitly covered."
+    }
+  ]
+}

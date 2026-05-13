@@ -1,0 +1,38 @@
+{
+  "expectations": [
+    {
+      "text": "Claude recommends differences-in-differences (DiD) or describes the equivalent estimator (compare pre-post change in treated markets to pre-post change in control markets)",
+      "passed": true,
+      "evidence": "The response explicitly names DiD in multiple places: 'You have the classic setup for Differences-in-Differences (DiD)' and specifies the TWFE estimator Y_{mt} = α_m + γ_t + β · D_{mt} + ε_{mt} which directly captures the double-difference (treated vs. control, pre vs. post). The summary also restates 'Design: Differences-in-differences (panel DiD)'."
+    },
+    {
+      "text": "Claude names the parallel-trends assumption (or describes it: in the absence of treatment, the treated and control markets would have followed the same trajectory)",
+      "passed": true,
+      "evidence": "Under 'Key Assumption: Parallel Trends', the response states verbatim: 'In the absence of the new pricing page, the 3 treated markets would have followed the same conversion trend as the 5 control markets.' This is a precise and complete statement of the parallel-trends assumption."
+    },
+    {
+      "text": "Claude recommends examining pre-treatment trends as a diagnostic for the parallel-trends assumption",
+      "passed": true,
+      "evidence": "Under 'Diagnostics', item 1 is labeled 'Pre-trends plot (mandatory)' and instructs the analyst to 'Plot the monthly conversion rates for treated vs. control markets from month 1 through the last pre-treatment month' and notes 'Any systematic divergence before rollout is direct evidence of violation.' An event-study specification with pre-treatment coefficients that 'Should be near zero and statistically insignificant' is also recommended as a formal test."
+    },
+    {
+      "text": "Claude flags at least one DiD failure mode (anticipation effects, differential shocks during the post-period, composition changes, or selection of which markets got the rollout)",
+      "passed": true,
+      "evidence": "The 'Failure Modes to Watch' table explicitly lists: 'Anticipation effects' (treated markets started optimizing before nominal rollout), 'Differential shocks' (a market-specific event hits only treated or only control markets during post-period), and 'Selection into treatment' (the 3 rollout markets were chosen because they were already improving). Three of the four named failure modes are covered."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [
+      "The assertions are well-matched to the response content and are unambiguous. No changes needed.",
+      "Consider adding an assertion about whether Claude recommends clustered standard errors or addresses the small-sample inference problem, as this is a practically important detail the response handles well."
+    ],
+    "overall": "The response fully satisfies all four assertions. It correctly identifies DiD/TWFE as the estimator, clearly states the parallel-trends assumption in canonical form, mandates a pre-trends plot as the primary diagnostic, and enumerates multiple relevant failure modes including anticipation effects, differential shocks, and selection bias. The response is thorough and technically accurate."
+  }
+}

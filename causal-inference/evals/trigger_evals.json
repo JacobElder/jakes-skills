@@ -1,0 +1,21 @@
+[
+  {"query": "We ran a regression and got p<0.001. Does that prove our feature caused the improvement?", "should_trigger": true},
+  {"query": "Our A/B test shows +8% conversion but when I split by device type the effect reverses. What's going on?", "should_trigger": true},
+  {"query": "Should I control for income in my regression of education on wages?", "should_trigger": true},
+  {"query": "We filtered to power users before analyzing. Is that a problem?", "should_trigger": true},
+  {"query": "Our DiD estimate is +12% but the treatment group was growing faster before rollout. Can we trust it?", "should_trigger": true},
+  {"query": "I have an unmeasured confounder. Does that mean I can't identify the causal effect?", "should_trigger": true},
+  {"query": "The country coefficient in my regression is huge — does country have a big causal effect on conversion?", "should_trigger": true},
+  {"query": "My churn model has 90% AUC. Which features should we intervene on?", "should_trigger": true},
+  {"query": "Our opt-in experiment shows +18% retention. Should we expect the same from a full rollout?", "should_trigger": true},
+  {"query": "We used distance to a gym as an instrument — my colleague says the exclusion restriction is violated.", "should_trigger": true},
+  {"query": "There's a suspicious spike in scores just above our RDD threshold. Should I be worried?", "should_trigger": true},
+  {"query": "We randomized users for an A/B test on a social feature. My colleague says there's interference. What does that mean?", "should_trigger": true},
+  {"query": "How do I center variables in a linear regression in Python?", "should_trigger": false},
+  {"query": "What's the fastest sorting algorithm for a large dataset?", "should_trigger": false},
+  {"query": "Help me write a SQL query to count active users per day.", "should_trigger": false},
+  {"query": "How do I set up a CI/CD pipeline in GitHub Actions?", "should_trigger": false},
+  {"query": "What's the difference between a list and a tuple in Python?", "should_trigger": false},
+  {"query": "Our model has high precision but low recall. How do I improve recall?", "should_trigger": false},
+  {"query": "How do I write a unit test for this function?", "should_trigger": false}
+]

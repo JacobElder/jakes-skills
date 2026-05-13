@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude explicitly recommends against whole life insurance as an investment vehicle, not just 'it depends on your situation'",
+      "passed": true,
+      "evidence": "The response opens with 'whole life insurance is probably not the right choice' and closes with 'For the vast majority of people, whole life insurance is an expensive, low-return product that benefits the advisor more than the client.' While the response includes a section on narrow exceptions, the overall stance is a clear recommendation against it for most people — not a neutral 'it depends.'"
+    },
+    {
+      "text": "Claude names the term life + invest the difference alternative as the standard Boglehead recommendation",
+      "passed": false,
+      "evidence": "The response names the 'buy term and invest the difference' approach but attributes it to 'independent financial planners' rather than the Boglehead community specifically. Quote: 'The standard advice from independent financial planners — sometimes called the \"buy term and invest the difference\" approach.' The Boglehead philosophy or community is never mentioned."
+    },
+    {
+      "text": "Claude explains why the 'tax-free growth' pitch is misleading — tax-advantaged accounts (401k, IRA, HSA) should be maxed before insurance-based wrappers are considered",
+      "passed": true,
+      "evidence": "The response corrects the tax framing ('tax-deferred basis (not technically \"tax-free\" unless handled carefully)') and explicitly prioritizes 401(k)/Roth IRA before insurance wrappers: 'Take the remaining $450+ per month and invest it in tax-advantaged accounts in this order: Max out your 401(k) or 403(b)... Max out a Roth IRA... These accounts offer genuine tax advantages (Roth IRA growth IS tax-free).' HSA is not mentioned, but the core argument is made."
+    },
+    {
+      "text": "Claude identifies the high commission structure as a reason the advisor may be recommending this product",
+      "passed": true,
+      "evidence": "'Whole life insurance is one of the highest-commission products in financial services. A $500/month whole life policy can generate $3,000-$6,000 or more in commissions for the advisor in the first year alone. This doesn't mean your advisor is acting in bad faith, but it's a significant incentive that you should be aware of when evaluating the recommendation.'"
+    },
+    {
+      "text": "Claude does NOT present whole life as a reasonable option for the average investor or give it a neutral pros-and-cons treatment",
+      "passed": false,
+      "evidence": "The response includes a dedicated section titled 'WHEN WHOLE LIFE MIGHT ACTUALLY MAKE SENSE' listing four scenarios (high-net-worth, estate planning, business owners, special-needs dependents) where it endorses whole life. While framed as exceptions, this section constitutes a partial pros-and-cons treatment. The response also says 'Here's a balanced breakdown' and notes the advisor's claims are 'technically true.' This gives the product more legitimacy than the assertion requires."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 2,
+    "total": 5,
+    "pass_rate": 0.60
+  }
+}

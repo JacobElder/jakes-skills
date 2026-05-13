@@ -1,0 +1,57 @@
+No. Do not buy a whole life insurance policy as an investment vehicle. This is one of the clearest "wrong answer" scenarios in personal finance, and the fact that your advisor recommended it should make you more skeptical of their other advice, not less.
+
+Here is what is actually happening with the pitch you received:
+
+THE "TAX-FREE GROWTH" CLAIM
+
+Whole life bundles two things together: a death benefit (term life insurance) and a savings account. The savings-account portion does grow tax-deferred, and policy loans are technically tax-free — but that framing is deliberately misleading. You are paying 5-8% interest to the insurance company on loans against your own money. That interest either reduces your death benefit or you pay it out of pocket. Calling that "tax-free" is like saying you got a free car because your car loan has no sales tax.
+
+THE ACTUAL RETURNS
+
+The internal rate of return on whole life cash value is typically 0-2% for the first decade or more, because the early years of premiums are largely consumed by commissions (often 50-100% of year-one premiums go to the agent) and administrative fees. The policy illustrations your advisor showed you project dividends that historically underperform their projections. Do not trust those illustrations.
+
+Compare that to a Vanguard Total Stock Market index fund (VTI) at a 0.03% expense ratio. Over 30 years, the difference in terminal value is enormous.
+
+THE MATH ON $500/MONTH
+
+Let's say you're 35 and want to put $500/month to work until 65 (30 years).
+
+In whole life: realistic cash value growth at 2-3% net of fees. On $500/month at 3% for 30 years, you end up with roughly $290,000 in cash value.
+
+In term life + invest the difference: A 20-year level term policy for a healthy 35-year-old costs roughly $25-40/month for $500,000 of death benefit. Invest the remaining $460-475/month in a tax-advantaged index fund portfolio. At 7% average annual return (roughly the historical real return of equities), $460/month for 30 years grows to approximately $575,000. The death benefit — the actual insurance — is also there for the years you need it.
+
+The term-plus-invest approach delivers roughly 2x the final wealth and better life insurance coverage. That is the "invest the difference" argument, and it wins almost every time.
+
+WHAT THIS TELLS YOU ABOUT YOUR ADVISOR
+
+A financial advisor who recommends whole life insurance to someone who has not yet maxed out their 401(k), Roth IRA, and HSA is almost certainly a commissioned insurance salesperson operating under a title that implies fiduciary responsibility they do not legally have. The commission on a whole life policy is often 50-100% of the first year's premium — in your case, roughly $3,000-$6,000 in year one — paid by the insurance company, funded by your premiums.
+
+Ask your advisor directly: "Are you a fiduciary? Are you receiving a commission on this recommendation?" If they hesitate or deflect, you have your answer.
+
+WHAT TO DO INSTEAD
+
+Follow the Boglehead funding waterfall in order:
+
+1. Make sure you have a starter emergency fund (1 month of expenses in a high-yield savings account).
+2. Capture your full employer 401(k) match — this is a guaranteed 50-100% return. Nothing else competes.
+3. Max your HSA if you have a qualifying high-deductible health plan ($4,300/year individual, $8,550/year family in 2025). Triple tax advantage — the best account that exists.
+4. Max your IRA ($7,000/year in 2025, Roth if you're under the income limits).
+5. Max your 401(k) beyond the match ($23,500/year in 2025).
+6. After all of that: taxable brokerage account in VTI/VXUS.
+
+If you genuinely have dependents who need a death benefit, buy 20-year level term life insurance. It is simple, cheap, and does exactly what insurance is supposed to do: pay off in a bad scenario. When you no longer have dependents relying on your income, let the term expire.
+
+For investing $500/month, the default Boglehead answer is a three-fund portfolio:
+- US Total Stock Market: VTI (Vanguard) or FSKAX (Fidelity)
+- Total International: VXUS (Vanguard) or FTIHX (Fidelity)
+- Total Bond Market: BND (Vanguard) or FXNAX (Fidelity)
+
+Adjust the stock/bond ratio based on your risk tolerance and time horizon. If you want zero maintenance, a single target-date retirement fund (Vanguard Target Retirement 20XX) at roughly 0.08% ER is a perfectly good answer.
+
+THE BOTTOM LINE
+
+Whole life insurance is not a good deal. It is a good deal for the person selling it to you. Buy term if you need a death benefit, invest the difference in low-cost index funds, and find an advisor who is legally required to act in your interest — or no advisor at all for straightforward situations.
+
+If you want a second opinion from people who have no financial incentive either way, the bogleheads.org forum and r/Bogleheads will give you consistent answers at no charge.
+
+Note: This isn't personalized financial advice, and your specific tax situation or estate planning needs could change the calculus (whole life has narrow legitimate uses for very high net worth estate planning). But for most people putting $500/month into savings, this analysis applies directly.

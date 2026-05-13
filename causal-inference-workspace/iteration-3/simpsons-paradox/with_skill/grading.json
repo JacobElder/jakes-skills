@@ -1,0 +1,96 @@
+{
+  "expectations": [
+    {
+      "text": "Claude identifies this as Simpson's paradox (or the equivalent phenomenon)",
+      "passed": true,
+      "evidence": "Explicitly named multiple times. Step 4 states: 'This is Simpson's Paradox, but the resolution is not trust the stratified results. The DAG decides the resolution, and the DAG here points to the aggregate.' The summary table includes: 'Is this Simpson's Paradox? Yes — but the resolution favors the aggregate, not the disaggregate.' The final paragraph also names it directly."
+    },
+    {
+      "text": "Claude explicitly raises the mediator scenario: the 'Continue on App' prompt could cause web users to shift to the app checkout, making platform a mediator (downstream of treatment) — in which case the aggregate +2.1% is the correct estimate and disaggregating is wrong",
+      "passed": true,
+      "evidence": "This is the central thesis of the response. Story B (Step 2) presents the mediator DAG. Step 3 states: 'Your feature description answers this directly. The feature prominently shows a Continue on App prompt at checkout. By construction, its mechanism is to redirect users from web checkout to app checkout... This means platform is a mediator, not a confounder. Part of the causal effect of your feature operates through the channel: Feature → user switches to app → higher conversion. That channel is real. Stratifying by platform and computing effects within each platform blocks that exact channel.' Step 5 explicitly states 'Mediator → aggregate' and that the aggregate is the correct estimate."
+    },
+    {
+      "text": "Claude distinguishes the two cases: (a) platform fixed before treatment → confounder → trust segment-level negatives; (b) feature causes platform switching → mediator → trust aggregate positive",
+      "passed": true,
+      "evidence": "Step 2 presents both as explicit competing DAGs: 'Story A — Platform is a confounder (your analyst's implicit assumption)' and 'Story B — Platform is a mediator (the more plausible story)'. Step 5 states the structural rule: 'Confounder → disaggregate. Mediator → aggregate.' The robustness table in Step 8 tabulates both cases, mapping confounder → 'Kill the feature' and mediator → 'Ship the feature'."
+    },
+    {
+      "text": "Claude does NOT simply endorse killing the feature based on the segment-level results, and gives the user a concrete diagnostic: check whether the feature caused any shift in platform composition — e.g., did the web-to-app conversion rate change in the treatment arm? If yes, platform is a mediator and the aggregate is correct",
+      "passed": true,
+      "evidence": "The opening line is 'Your analyst is probably wrong. Killing the feature based on the platform-level splits is likely the wrong call.' Step 7 provides a specific operationalizable diagnostic: 'Compare platform composition across arms. If the feature caused switching, the treatment arm should have a meaningfully higher share of app checkouts than the control arm. If the platform mix is identical across arms, the switching story collapses and the stratified results gain credibility. If the treatment arm shows significantly more app checkouts, that is direct evidence that platform is a mediator and the aggregate estimate is the right one. A single cross-tab answers this.' The summary verdict also states: 'Should you kill the feature? Not on this evidence.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": null,
+    "total_tool_calls": null,
+    "total_steps": null,
+    "errors_encountered": 0,
+    "output_chars": 9249,
+    "transcript_chars": null
+  },
+  "timing": {
+    "executor_duration_seconds": 126.6,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 126.6,
+    "total_tokens": 22715
+  },
+  "claims": [
+    {
+      "claim": "The feature's mechanism is to redirect users from web checkout to app checkout",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Directly stated in Step 3 and grounded in the feature description: 'prominently shows a Continue on App prompt at checkout.' The inference that this redirects web users to app is logically sound and directly supports the mediator story."
+    },
+    {
+      "claim": "The within-platform negatives arise because the treatment re-sorts users across platforms, corrupting within-stratum intent comparability",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 4 provides a mechanistic explanation: the web-checkout population in the treatment arm is a negatively selected residual (users who resisted the app prompt), while the app population in treatment is diluted with lower-intent switchers from web. This is a correct and detailed explanation of overcontrol bias from conditioning on a mediator."
+    },
+    {
+      "claim": "A cross-tab of platform composition by treatment arm is a sufficient diagnostic to resolve the confounder vs. mediator ambiguity",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Step 7 correctly prescribes comparing the proportion of app checkouts between treatment and control arms. A meaningful difference confirms the mediator story. This is the right first diagnostic."
+    },
+    {
+      "claim": "The overall ITT +2.1% is the correctly identified causal effect and requires no adjustment",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 6 states: 'Since you have a true A/B test, the overall ITT (intent-to-treat) estimate — the +2.1% in aggregate — is the correctly identified causal effect of offering the feature. It requires no adjustment.' Correct under the mediator DAG with valid randomization."
+    },
+    {
+      "claim": "Conditioning on a mediator induces overcontrol bias",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Step 4 uses the term 'overcontrol bias' correctly, consistent with standard causal inference terminology for bias introduced by conditioning on a post-treatment variable on the causal path."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "reason": "All four assertions are conceptual presence checks — they test whether the right ideas appear in the response, not whether the reasoning is mechanically correct. A response that named Simpson's Paradox, mentioned mediators, and suggested a vague 'check platform' but got the direction of the bias backwards or misidentified which stratum would go negative would still pass all four assertions. Consider adding an assertion that checks the mechanistic explanation of why within-platform results go negative under the mediator story (the overcontrol/selection distortion mechanism)."
+      },
+      {
+        "assertion": "Claude does NOT simply endorse killing the feature based on the segment-level results, and gives the user a concrete diagnostic: check whether the feature caused any shift in platform composition",
+        "reason": "This assertion is partially redundant with assertions 2 and 3 — a response that correctly identifies the mediator scenario necessarily implies not killing the feature. The distinguishing requirement is the 'concrete diagnostic,' but a response that said 'investigate whether platform shifted' without specifying how would arguably satisfy this assertion as written. The response here goes well beyond the minimum and provides an explicit cross-tab instruction, so it passes clearly — but sharpening the assertion to require an operationalizable check (e.g., comparing platform share percentages by arm) would make it more discriminating."
+      },
+      {
+        "reason": "No assertion checks whether the response correctly preserves the confounder alternative — i.e., acknowledges the conditions under which the platform-stratified results would be correct (if randomization failed or if platform were demonstrably pre-treatment). The response handles this well in Step 2 Story A and the robustness table, but this nuance is unasserted and could be missing in a weaker response that simply dismisses the analyst without engaging the alternative."
+      }
+    ],
+    "overall": "The evals correctly target the core causal reasoning. All four pass on strong, specific evidence. The main gap is depth: the assertions check concept presence but not mechanistic correctness or diagnostic specificity. Adding one assertion about why within-platform estimates go negative (overcontrol via mediator conditioning) would meaningfully raise the bar."
+  }
+}

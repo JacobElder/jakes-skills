@@ -1,0 +1,32 @@
+{
+  "eval_id": 1,
+  "config": "old_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude explicitly recommends against whole life insurance as an investment vehicle, not just 'it depends on your situation'",
+      "passed": true,
+      "evidence": "Opens with: 'Short answer: almost certainly no. This is one of the most reliably bad recommendations in personal finance'"
+    },
+    {
+      "text": "Claude names the term life + invest the difference alternative as the standard Boglehead recommendation",
+      "passed": true,
+      "evidence": "Dedicated section 'The math comparison: term + invest the difference' with specific numbers ($30/month term, $470/month invested), and 'What to do instead' recommends a three-fund portfolio (VTI/VTSAX, VXUS, BND)"
+    },
+    {
+      "text": "Claude explains why the 'tax-free growth' pitch is misleading — tax-advantaged accounts (401k, IRA, HSA) should be maxed before insurance-based wrappers are considered",
+      "passed": true,
+      "evidence": "Section 'The tax-free pitch, scrutinized' explains IRR is typically 0-2% for first decade and loan interest is 5-8%. Boglehead priority order explicitly lists 401(k) match, HSA, IRA, and 401(k) max before any consideration of whole life alternatives."
+    },
+    {
+      "text": "Claude identifies the high commission structure as a reason the advisor may be recommending this product",
+      "passed": true,
+      "evidence": "'the agent selling you this policy earns somewhere in the neighborhood of 50–100% of your first year's premium as commission' and 'this product primarily serves your advisor's financial interests, not yours'"
+    },
+    {
+      "text": "Claude does NOT present whole life as a reasonable option for the average investor or give it a neutral pros-and-cons treatment",
+      "passed": true,
+      "evidence": "The 'When whole life does make sense' section lists only narrow edge cases (estates $10M+, business buy-sell, disabled dependents) explicitly framed as exceptions, not as general pros. The overall tone is strongly negative, not neutral, and the conclusion steers toward fee-only fiduciary advisors over the recommending advisor."
+    }
+  ]
+}

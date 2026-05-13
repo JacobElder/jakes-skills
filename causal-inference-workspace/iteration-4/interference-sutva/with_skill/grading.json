@@ -1,0 +1,30 @@
+{
+  "run_id": "interference-sutva-with_skill",
+  "eval_id": 13,
+  "eval_name": "interference-sutva",
+  "config": "with_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude confirms the colleague is correct — user-level randomization for a social/network feature violates SUTVA (the Stable Unit Treatment Value Assumption), which requires no interference between units",
+      "passed": true,
+      "evidence": "Response opens: 'Yes, your colleague is right to flag this' and explicitly names SUTVA, explaining the feature 'violates assumption #1 structurally' (no interference), because value of seeing a friend online depends on whether that friend is in treatment or control."
+    },
+    {
+      "text": "Claude explains the specific interference mechanism: control users whose friends are in the treatment arm are affected by the treatment (they interact with treated friends), contaminating the control group and making the treatment/control comparison a partial-network-effect estimate, not a pure direct effect",
+      "passed": true,
+      "evidence": "The response identifies the contamination mechanism — treatment users see only a 'diluted' version (half their friends visible), and separately notes 'control-group users were being affected by their treatment-group neighbors' and lists 'control group deprivation (cross-group envy)' as a bias mechanism. The interference is framed as making the estimate a partial-network-effect, not a pure direct effect ('the experiment and the rollout expose users to fundamentally different social environments')."
+    },
+    {
+      "text": "Claude explains why the +15% does NOT directly extrapolate to full rollout: the observed effect is a blend of direct effects and partial spillovers under 50% penetration; at 100% penetration, spillover dynamics are completely different and the total effect is unknown",
+      "passed": true,
+      "evidence": "Step 3 explicitly contrasts the two potential outcomes: Y_i(1) at ~50% social graph treated (experiment) vs Y_i(1) at 100% social graph treated (rollout), stating 'These are different potential outcomes. Your experiment measured the first; you want to predict the second.' Bottom line confirms: '+15% is not the right number to plug into a full-rollout projection.'"
+    },
+    {
+      "text": "Claude recommends cluster-randomization (randomize by social graph clusters, geographic markets, or another natural grouping) as the correct design to estimate causal effects for network features, and notes this would allow estimation of both direct and spillover effects",
+      "passed": true,
+      "evidence": "Option A 'Cluster-randomized experiment (the gold standard fix)' recommends randomizing at the 'friend-cluster or community level: entire social circles go to treatment or control together,' noting SUTVA is 'approximately restored' and that treatment users have 100% of friends in treatment while control users have 0%."
+    }
+  ]
+}

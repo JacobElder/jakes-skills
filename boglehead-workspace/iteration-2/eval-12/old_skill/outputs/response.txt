@@ -1,0 +1,141 @@
+You're in an excellent starting position — 26 years old, stable income, and asking the right question before you've made costly mistakes. Let's walk through the Boglehead funding waterfall and map it directly to your situation.
+
+---
+
+## Your Situation at a Glance
+
+- Age: 26
+- Income: $75,000/year
+- Savings: $2,000
+- Student loan: $8,000 at 5.5% interest
+- Employer: offers a 401(k) (match details unknown)
+- Goals: build long-term wealth
+
+---
+
+## Step 0: Foundations (You're Partway There)
+
+You already have $2,000 in savings — that covers the starter emergency fund requirement of $1,000 to 1 month of expenses. Before anything else, make sure you're keeping up with minimum loan payments and have basic insurance in place (health, renter's, disability if your employer offers it).
+
+Your $2,000 should sit in a **high-yield savings account** (HYSA) — something like Ally, Marcus, or Wealthfront Cash, currently yielding around 4–5%. Not a checking account, not stocks, not crypto.
+
+---
+
+## Step 1: Capture the Full 401(k) Employer Match — First Priority
+
+Before paying extra on the student loan, before maxing an IRA, before anything else: find out exactly what your employer match is and contribute enough to capture every dollar of it.
+
+A typical employer match might be "50% of up to 6% of your salary" — meaning if you contribute 6% of $75,000 ($4,500/year), your employer adds 3% ($2,250). That's an immediate 50% return on those dollars, guaranteed, before the money is invested in anything. There is no other investment that competes with this. Even at 5.5% student loan interest, take the match first.
+
+**Action:** Find your 401(k) plan summary (check your HR portal or benefits email). Identify the match formula. Set your contribution rate to capture every dollar of it. Do this this week.
+
+---
+
+## Step 2: Your Student Loan — The Gray Zone
+
+Your 5.5% student loan sits in what Bogleheads call the "soft debate zone" — roughly 4–7% interest is where people reasonably disagree. Below ~4%, most Bogleheads invest instead of paying off debt early; above ~7%, paying it off is the priority because it's a guaranteed return that's hard to beat. At 5.5%, both approaches are defensible.
+
+The practical Boglehead answer for your situation: **don't ignore the loan, but don't panic-pay it either.** Your expected real return on a broad stock index fund over long periods is roughly 6–7% nominal — roughly similar to your loan rate. Neither choice is clearly superior.
+
+A reasonable approach: continue making regular (possibly slightly accelerated) payments while investing in tax-advantaged accounts. If having debt bothers you psychologically, bias toward paying it off faster. If you're comfortable carrying it, bias toward investing. At an $8,000 balance on $75,000 income, you could knock this out in under 12–18 months if you push it. Once it's gone, redirect that payment into investing and never look back.
+
+You should NOT stop contributing to your 401(k) match just to pay off this loan faster. That would be leaving free money on the table.
+
+---
+
+## Step 3: Does Your Employer Offer an HSA-Eligible Health Plan?
+
+If your employer offers a High-Deductible Health Plan (HDHP) option, the HSA that comes with it is **the most tax-advantaged account that exists**. It's triple-tax-advantaged: your contributions reduce taxable income today, the money grows tax-free, and withdrawals for medical expenses are tax-free.
+
+The Boglehead play: contribute to the HSA, invest it in index funds, pay your current medical bills out of pocket if you can, and let the HSA compound for decades. After 65, it acts like a Traditional IRA for non-medical withdrawals — so worst-case it's a second retirement account; best-case it's completely tax-free.
+
+2025 limit: $4,300 individual. If you're on an HDHP, this slots in right after capturing the full 401(k) match, above even the IRA.
+
+---
+
+## Step 4: Open and Max a Roth IRA
+
+At $75,000 income as a single filer, you're well under the Roth IRA income phase-out (around $150,000 for 2025), so you can contribute directly. The 2025 limit is $7,000.
+
+**Why Roth at your income level?** At 26 and $75,000/year, you're likely in the 22% federal marginal bracket. There's a reasonable case your marginal tax rate will be higher in retirement — especially as your income grows over a 40-year career. Roth contributions mean you pay tax now at (likely) a lower rate and never pay tax on the growth again. Forty years of compounding on $7,000/year, tax-free, is substantial.
+
+**Where to open it:** Fidelity, Vanguard, or Schwab are all excellent. These are the three Boglehead-approved custodians. There's no meaningful difference for your purposes at this stage.
+
+**What to invest in:** A simple three-fund portfolio, or even simpler — a single **target-date fund** set to your approximate retirement year (e.g., a 2065 fund). Target-date funds are completely Boglehead-legitimate. They hold diversified US stocks, international stocks, and bonds in age-appropriate proportions, automatically rebalancing over time. Expense ratios at Fidelity, Vanguard, or Schwab are around 0.10–0.15%. That's cheap enough that there's no reason to over-engineer it.
+
+If you want to build the three-fund yourself:
+- US Total Stock Market: VTI (Vanguard ETF), FSKAX or FZROX (Fidelity mutual funds), SWTSX (Schwab)
+- Total International Stock: VXUS (Vanguard), FTIHX or FZILX (Fidelity)
+- Total Bond Market: BND (Vanguard), FXNAX (Fidelity)
+
+At 26, a common allocation is 90% stocks / 10% bonds, or even 100% stocks if you have a high risk tolerance and won't panic during a downturn. Bond allocation is one of the genuine Boglehead debates — there's no single right answer, but you have time on your side and can lean toward stocks.
+
+Note: If you go with Fidelity and use FZROX/FZILX (the zero-expense-ratio funds) — these are only appropriate inside an IRA or 401(k), not a taxable brokerage account. They aren't portable to other brokerages without triggering a taxable sale.
+
+---
+
+## Step 5: Contribute More to Your 401(k)
+
+After funding the Roth IRA ($7,000/year), direct additional savings toward your 401(k) beyond the match. The 2025 employee contribution limit is $23,500.
+
+At $75,000 gross income, maxing both the Roth IRA and the full 401(k) in year one may not be realistic — and that's fine. Even pushing your 401(k) contribution rate to 10–15% of salary is meaningful progress. Increase it each year as your income grows, and especially after the student loan is gone.
+
+**Roth 401(k) vs. Traditional 401(k)?** Your employer may offer both. At your income, the case for Roth 401(k) is similar to the Roth IRA argument — pay tax now at your current rate, never pay it on the growth. But this is a genuine Boglehead debate. If you're not sure, splitting between the two is a perfectly reasonable hedge.
+
+**What to invest in within the 401(k):** Look for the lowest-expense-ratio index funds available in your plan. S&P 500 index funds or total stock market index funds are what you want. Flag anything with an expense ratio above 0.20% — that's worth scrutinizing. Here's why this matters: a 1% expense ratio might not sound like much, but on a $200,000 balance it's $2,000 per year in drag. Over 30 years at 7% returns, the difference between 0.05% and 1.00% in fees can consume well over $200,000 in final wealth. Bogle called it "the tyranny of compounding costs" — it's not hyperbole.
+
+---
+
+## Step 6: Build Out Your Full Emergency Fund
+
+Once you're investing consistently, work toward a full emergency fund of 3–6 months of essential expenses. If your monthly expenses are around $3,000–$4,000, you're looking at $9,000–$24,000 in cash. Your current $2,000 is a solid start. Add to this in parallel with your investing — you don't have to fully fund it before investing; it's a concurrent goal.
+
+Keep this in a high-yield savings account or a money market fund. Not stocks. Not anything you'd have to sell in a panic.
+
+---
+
+## Your Full Priority Order, Ranked
+
+1. Minimum student loan payments: keep making them
+2. Starter emergency fund to ~$1,000–$2,000: done — confirm it's in a HYSA
+3. 401(k) up to the full employer match: do this immediately if you haven't
+4. HSA max: if you're on an HDHP-eligible plan ($4,300 in 2025)
+5. Roth IRA: open and contribute up to $7,000/year
+6. Student loan: pay off (accelerate moderately; at 5.5% this is not a crisis, but clearing an $8k balance is fast and freeing)
+7. Max 401(k) beyond the match: push toward $23,500/year
+8. Build full 3–6 month emergency fund: in parallel throughout
+9. Taxable brokerage: after all the above are running
+
+---
+
+## What to Avoid
+
+A few things that may come up as you start learning about personal finance — the Boglehead position on each is direct:
+
+**Individual stocks:** "Don't look for the needle in the haystack. Just buy the haystack." (Bogle) A diversified index fund already owns every major company. You don't need to pick winners.
+
+**Dividend strategies (SCHD, dividend-focused ETFs, "dividend aristocrats"):** Dividends are not free money. A stock's price drops by the dividend amount on the ex-dividend date. What matters is total return — price appreciation plus dividends — and a total-market index fund captures that without concentrating in dividend payers or generating extra tax drag in a taxable account.
+
+**Market timing:** Don't wait to invest until "things settle down" or "the market corrects." Time in the market beats timing the market. Invest consistently and ignore the noise.
+
+**Whole life or indexed universal life insurance:** If anyone — an advisor, a family member, a coworker — suggests you use life insurance as an investment vehicle, that's almost always a bad deal. You don't need life insurance right now unless you have dependents. If you eventually do, buy inexpensive term life and invest the difference.
+
+**Moving your emergency fund into stocks or crypto:** That money needs to be there precisely when things go wrong. Stocks can drop 40% right when a job loss happens. Keep it in cash equivalents.
+
+**A financial advisor who charges 1% AUM:** This sounds small but on a $500,000 portfolio is $5,000/year, every year, regardless of whether they add value. The evidence that active managers beat the market after fees is not good. A fee-only, advice-only fiduciary can be worth paying for a specific question; an AUM-based advisor recommending actively managed funds is usually not.
+
+---
+
+## The Big Picture
+
+At 26, the most powerful variable you have is time. A dollar invested now has 40+ years to compound before traditional retirement age. The difference between starting now versus waiting a few years is larger than most people realize — not because of some trick, but because of how compounding works.
+
+"The two greatest enemies of the equity fund investor are expenses and emotions." — Bogle
+
+You don't need to optimize everything on day one. Get the 401(k) match, open the Roth IRA, pick a simple target-date fund or three-fund portfolio, automate contributions, and stay the course. That's it. Don't change it every time you read a new article. Complexity in investing tends to add costs and behavioral risk without adding return.
+
+The bogleheads.org wiki — especially the "Getting Started" and "Prioritizing Investments" pages — is an excellent free resource. The subreddit r/Bogleheads is genuinely one of the better financial communities online; if you post your 401(k) fund list there, experienced members will help you identify the best options.
+
+---
+
+*This reflects the Boglehead investing philosophy as documented on bogleheads.org and in John Bogle's writing — not personalized financial advice. For complex tax situations or large, irreversible decisions, a fee-only fiduciary advisor is worth consulting.*

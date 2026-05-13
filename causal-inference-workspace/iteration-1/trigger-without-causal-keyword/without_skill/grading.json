@@ -1,0 +1,43 @@
+{
+  "expectations": [
+    {
+      "text": "Claude explicitly identifies this as a causal question (e.g., names the rung, frames it as treatment effect estimation, or distinguishes correlation from causation)",
+      "passed": true,
+      "evidence": "In the opening paragraph: 'Correlation in time does not equal causation. Here's how to think through this rigorously and build real confidence in whether the onboarding flow is the cause.' The response frames the entire analysis around isolating the treatment effect of the onboarding flow."
+    },
+    {
+      "text": "Claude flags the core identification problem — that pre/post comparison alone confounds the flow change with other temporal changes, or that self-selection into the new flow creates confounding",
+      "passed": true,
+      "evidence": "Under 'The Core Problem: Confounding': 'When you observe that retention improved after shipping a new feature, several things could explain it' — then lists seasonal effects, marketing channel mix, simultaneous product changes, regression to the mean, and macro trends. The response explicitly calls out that pre/post comparison is insufficient without isolation."
+    },
+    {
+      "text": "Claude recommends a specific identification strategy — A/B test, randomized rollout, difference-in-differences, regression discontinuity at rollout date, or similar",
+      "passed": true,
+      "evidence": "The response recommends four specific strategies: (1) A/B test as the gold standard, (2) Difference-in-Differences, (3) Regression Discontinuity Design, and (4) Interrupted Time Series — each explained in detail with assumptions and implementation guidance."
+    },
+    {
+      "text": "Claude does NOT just suggest 'control for confounders in a regression' as the primary answer without addressing identification",
+      "passed": true,
+      "evidence": "The primary recommendation is a randomized A/B test, followed by quasi-experimental methods (DiD, RDD, ITS). The only mention of regression is in the context of Interrupted Time Series modeling the pre-launch trend — not as a standalone 'control for confounders' solution. Identification is central to the entire response."
+    },
+    {
+      "text": "Claude flags at least one specific trap or alternative explanation (seasonality, marketing changes, user composition shift, etc.)",
+      "passed": true,
+      "evidence": "Multiple specific alternative explanations are listed: 'Seasonal effects — maybe this cohort signed up during a period of higher intent', 'Marketing channel mix — maybe paid/organic mix shifted and you're now acquiring higher-quality users', 'Other simultaneous product changes', 'Regression to the mean', and 'Macroeconomic or market trends'."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [
+      "The response is exceptionally thorough — future versions could also mention instrumental variables or propensity score matching for completeness, though these are less applicable to this specific scenario.",
+      "The response could more explicitly name 'treatment effect estimation' or reference the causal inference ladder/rungs to satisfy the first assertion even more directly."
+    ],
+    "overall": "The response passes all five assertions with high quality. It clearly distinguishes correlation from causation, identifies the core confounding problem with pre/post comparisons, recommends multiple specific identification strategies (A/B test, DiD, RDD, ITS), does not fall back on naive regression-based confounding control as the primary answer, and enumerates several concrete alternative explanations including seasonality and marketing channel shifts. This is a strong causal inference response even without a specialized skill trigger."
+  }
+}

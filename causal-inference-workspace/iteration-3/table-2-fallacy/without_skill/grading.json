@@ -1,0 +1,89 @@
+{
+  "expectations": [
+    {
+      "text": "Claude names or describes the Table 2 Fallacy — that control variable coefficients in a regression designed to identify the focal treatment effect are not themselves causally identified",
+      "passed": true,
+      "evidence": "Section '3. The Table 2 Fallacy' explicitly names the fallacy and cites Westreich & Greenland (2013): 'Readers (and sometimes authors) mistake the coefficients on control variables for causal estimates. They are not. Each coefficient in a multivariable regression answers the question \"what is the partial association of this variable with the outcome, holding all other included variables fixed?\" — but that partial association is only causally interpretable if the identification conditions for *that specific variable* are satisfied. For treatment, you presumably satisfied those conditions. For country, you almost certainly did not.'"
+    },
+    {
+      "text": "Claude explains structurally why: the adjustment set was chosen to block back-door paths from treatment to conversion, not from country to conversion — these are different back-door sets requiring potentially different controls",
+      "passed": false,
+      "evidence": "The response gestures at this in Section 1 ('Your experiment was designed to identify the causal effect of *treatment*, not of country') but never makes the structural DAG argument. It does not use the language of back-door paths, adjustment sets, or explain that the controls chosen to satisfy the treatment identification strategy are a different set from what would be needed to causally identify country's effect. The argument is stated as a general fact about regression design, not as a structural causal reasoning about differing back-door paths."
+    },
+    {
+      "text": "Claude notes that some controls in the model (e.g., browser) could be mediators on the country → conversion path, meaning the country coefficient might be partial (not total) and would be biased by conditioning on its own mediators",
+      "passed": false,
+      "evidence": "This point is entirely absent from the response. Browser is listed as a control variable in the example regression, and Section 4 briefly notes country correlates with browser usage, but the response never raises the mediator problem — that browser could lie on the causal path from country to conversion, such that conditioning on it blocks part of country's effect and produces a biased (partial) estimate of country's total effect."
+    },
+    {
+      "text": "Claude does NOT confirm that the country coefficient measures country's causal effect on conversion",
+      "passed": true,
+      "evidence": "The response is unambiguous throughout. The summary table states: 'Is the country coefficient a causal estimate? No — it's a partial correlation with omitted variable bias.' The conclusion also states: 'The country coefficient is doing its job as a control variable — it is not a result you should interpret causally.' No statement in the response confirms or implies the country coefficient is causal."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 2,
+    "total": 4,
+    "pass_rate": 0.5
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": 0,
+    "total_steps": 1,
+    "errors_encountered": 0,
+    "output_chars": 3247,
+    "transcript_chars": 3247
+  },
+  "timing": {
+    "executor_duration_seconds": 47.6,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 47.6
+  },
+  "claims": [
+    {
+      "claim": "The Table 2 Fallacy is described in Westreich & Greenland (2013)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "This is a real, well-known paper in epidemiology: Westreich D, Greenland S. 'The Table 2 Fallacy: Presenting and Interpreting Confounder and Modifier Coefficients.' Am J Epidemiol. 2013. The citation is accurate."
+    },
+    {
+      "claim": "Country's coefficient has omitted variable bias because country correlates with many unmeasured confounders",
+      "type": "factual",
+      "verified": true,
+      "evidence": "This is a valid and well-supported causal reasoning point made in Section 2. Country does absorb a large bundle of correlated variables, and the response correctly identifies this as a source of bias."
+    },
+    {
+      "claim": "The treatment coefficient is causally identified if the identification strategy is valid",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Accurately stated in the summary table: 'Is the treatment coefficient a causal estimate? Yes, if your identification strategy is valid.' This is a correct conditional claim."
+    },
+    {
+      "claim": "The country coefficient is useful for improving the treatment estimate by reducing residual variance and removing confounding",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Stated in the 'What the Country Coefficient Is Useful For' section. This is a correct use of control variables in a regression context."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Claude explains structurally why: the adjustment set was chosen to block back-door paths from treatment to conversion, not from country to conversion — these are different back-door sets requiring potentially different controls",
+        "reason": "The current assertion is quite specific (back-door sets, DAG language) but a response that makes the intuitive point without that precise causal graph vocabulary would fail even if it got the spirit right. Consider whether the goal is to test structural causal reasoning specifically or the general insight that the identification strategy applies to treatment and not to other variables. If the former, the assertion is good. If the latter, it may be too narrow. In this case the model gave a correct but less precise version of the argument — the assertion appropriately failed it, which seems intentional and discriminating."
+      },
+      {
+        "reason": "No assertion checks whether the response gives actionable guidance about what would actually be required to causally identify the country effect. The model did include a solid 'What You Would Need' section — this is a meaningful output that goes beyond just naming the fallacy. An assertion like 'Claude identifies what would be needed to make a credible causal claim about country (e.g., exogenous variation in country, a natural experiment)' would reward more complete responses."
+      },
+      {
+        "reason": "Expectation 3 (mediator bias) is the most discriminating assertion here — it tests whether Claude reasons about post-treatment variables or collider/mediator bias, which requires a deeper causal graph understanding. Without-skill responses are unlikely to reach this level without a prompt about causal graphs. Consider whether this expectation is meant to be the hard bar for a 'with skill' response that explicitly walks through the DAG."
+      }
+    ],
+    "overall": "The eval set is well-constructed. Expectations 2 and 3 are genuinely discriminating: they require structural causal reasoning beyond just naming the Table 2 Fallacy. The without-skill response correctly identified the fallacy and avoided the error (expectations 1 and 4), but missed the back-door path argument and the mediator bias point — which is exactly the kind of deeper reasoning a skill should add."
+  }
+}

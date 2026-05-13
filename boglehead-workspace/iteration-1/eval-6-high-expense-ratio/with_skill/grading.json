@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Claude explicitly recommends switching to the Vanguard 500 Index fund (0.03% ER) from AGTHX (0.63% ER)",
+      "passed": true,
+      "evidence": "The very first line reads: 'Switch to the Vanguard 500 Index. This is one of the clearest calls in personal finance, and you should make the move at your next opportunity.' The WHAT TO DO section further provides step-by-step instructions for executing the fund transfer from AGTHX to the Vanguard 500 Index fund."
+    },
+    {
+      "text": "Claude calculates or estimates the concrete dollar cost of the expense ratio difference on $120k (approximately $720/year currently, compounding over time)",
+      "passed": true,
+      "evidence": "The response explicitly states: 'On your $120,000 balance today, that's $720 per year leaving your account in fees before a single dollar of returns is calculated.' It then compounds this out over 10, 20, and 30 years showing fee gaps of ~$15,000, ~$57,000, and ~$174,000 respectively."
+    },
+    {
+      "text": "Claude cites or references SPIVA data showing that 80%+ of active large-cap funds underperform their benchmark over 15-year periods",
+      "passed": true,
+      "evidence": "The response states: 'The S&P SPIVA U.S. Scorecard — the most rigorous, independent benchmark comparison run — consistently shows that over 15-year periods, more than 80% of active US large-cap mutual funds underperform the S&P 500 index. That's not 51% — it's over 80%.' SPIVA is also referenced again in the persistence section and echoed in the bottom line."
+    },
+    {
+      "text": "Claude explicitly rejects the 'strong track record' argument — past active fund performance does not reliably predict future outperformance",
+      "passed": true,
+      "evidence": "An entire section titled 'REJECTING THE STRONG TRACK RECORD ARGUMENT' directly addresses this: 'Past performance does not predict future outperformance.' and 'An active manager with a 10-year strong record is not more likely to outperform over the next 10 years.' The response also explains survivorship bias and the inability to identify future outperformers in advance."
+    },
+    {
+      "text": "Claude does NOT recommend a 'split approach' or staying in AGTHX for any portion without a very strong justification",
+      "passed": true,
+      "evidence": "Claude makes no recommendation to keep any portion in AGTHX. The recommendation is a clean, complete switch: 'Execute a fund transfer (or exchange) moving the existing $120,000 balance from AGTHX to the Vanguard 500 Index fund' and 'Change your future contribution election to direct new contributions to the Vanguard 500 Index fund as well.' No split approach is suggested."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

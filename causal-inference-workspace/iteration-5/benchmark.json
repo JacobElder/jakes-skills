@@ -1,0 +1,1066 @@
+{
+  "metadata": {
+    "skill_name": "causal-inference",
+    "skill_path": "/Users/jacobelder/Documents/GitHub/jakes-skills/causal-inference",
+    "executor_model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-13T02:44:25.975461Z",
+    "evals_run": [
+      "att-vs-ate-rollout",
+      "did-parallel-trends-violation",
+      "front-door-identification",
+      "interference-sutva",
+      "iv-exclusion-violation",
+      "mediator-overcontrol",
+      "near-iv-bias-amplification",
+      "predictive-vs-causal",
+      "rdd-manipulation",
+      "rung-identification",
+      "selection-bias-power-users",
+      "simpsons-paradox",
+      "table-2-fallacy"
+    ],
+    "runs_per_configuration": 1,
+    "note": "7 evals newly run in iteration-5; 6 evals carried forward from iteration-4/3"
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "rung-identification",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 169.1,
+        "tokens": 25716,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude rejects the junior analyst's claim that last-digit user ID assignment is 'essentially random' \u2014 and explains that arbitrary-looking assignment is NOT the same as independent assignment from potential outcomes",
+          "passed": true,
+          "evidence": "Step 3 explicitly separates 'Claim 1: The last digit is uniformly distributed' from 'Claim 2: The last digit is independent of potential conversion outcomes,' stating that 'Uniformity of assignment is not the same as independence of outcomes.' The summary table reiterates: 'Uniformity of assignment is not the same as independence of potential outcomes.' The response also says directly that 'Asserting that user IDs are arbitrary is not that argument' (the argument needed for causal identification)."
+        },
+        {
+          "text": "Claude identifies the specific threat the senior engineer raises: sequentially assigned user IDs create a cohort split, so digit groups 0\u20134 vs 5\u20139 differ systematically in account age, product experience, acquisition wave, and anything else that co-varies with signup time",
+          "passed": true,
+          "evidence": "The DAG in Step 2 makes the fork explicit: Registration_timing --> UserID --> last_digit --> Treatment and Registration_timing --> Cohort_characteristics --> Conversion. Step 3 enumerates specific threats: older users have higher trust and product familiarity; acquisition channel mix shifts over time (early users from founder referrals vs. later paid acquisition); product quality improvements affect onboarding; seasonal effects from registration quarter. Step 7 also states 'sequential ID assignment encodes registration order, registration order encodes time, time encodes cohort, cohort encodes user characteristics that predict conversion.'"
+        },
+        {
+          "text": "Claude states that the +4.2% difference is NOT a valid causal estimate without first verifying that the two groups are balanced on pre-treatment covariates \u2014 the assignment mechanism must be interrogated, not assumed benign",
+          "passed": true,
+          "evidence": "The opening verdict states: 'The +4.2% estimate is not a valid causal estimate of the checkout effect without further scrutiny and adjustment.' The summary table entry reads: '+4.2% is our causal estimate (analyst) \u2192 Not valid as stated. This is a confounded association. The checkout effect and cohort effects are mixed.' Practical recommendation #1 is: 'Do not act on the +4.2% as a confirmed causal effect.'"
+        },
+        {
+          "text": "Claude recommends a concrete diagnostic: run balance tests on pre-treatment covariates (account age, acquisition channel, historical conversion rates) between digit groups \u2014 if they differ, the 'natural experiment' is invalid and the estimate is confounded",
+          "passed": true,
+          "evidence": "Practical recommendation #2 explicitly states: 'Run a balance check immediately: compare account age, acquisition source, pre-checkout session counts, and device type between the two groups. If they are well-balanced, the confounding threat is reduced.' Option A in Step 6 also specifies: 'Within each stratum, compare the two treatment groups on pre-treatment observables (number of sessions before reaching checkout, acquisition source, device type). If balanced, the within-stratum comparison is defensible.'"
+        },
+        {
+          "text": "Claude explains what would actually constitute valid quasi-experimental identification here: either verify empirically that digit groups are balanced (and explain why they would be, given the sequential assignment concern), or use a different identification strategy (e.g., a holdout or time-based DiD)",
+          "passed": true,
+          "evidence": "Step 6 lays out four identification paths: Option A (back-door adjustment stratified by registration cohort, with balance checks within strata \u2014 the kernel of truth in the analyst's argument is that within a narrow window, last digit should be uncorrelated with conversion), Option B (Difference-in-Differences using pre-bug conversion data with a parallel trends check), Option C (local randomization interpretation treating each 10-consecutive-ID window as a micro-RCT), and Option D (run a properly randomized experiment). The conditions for validity of each are stated explicitly."
+        }
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "rung-identification",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 134.7,
+        "tokens": 19096,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude rejects the junior analyst's claim that last-digit user ID assignment is 'essentially random' \u2014 and explains that arbitrary-looking assignment is NOT the same as independent assignment from potential outcomes",
+          "passed": true,
+          "evidence": "Claude directly addresses this: 'This reasoning conflates distributional uniformity with independence from confounders.' Key Takeaway 1 states: 'Arbitrary labels are not the same as random assignment. Randomness is a property of the assignment mechanism, not the labels themselves.' The response also formalizes this via the ignorability condition T \u22a5\u22a5 Y(0),Y(1) | X and explains why sequential IDs violate it."
+        },
+        {
+          "text": "Claude identifies the specific threat the senior engineer raises: sequentially assigned user IDs create a cohort split, so digit groups 0\u20134 vs 5\u20139 differ systematically in account age, product experience, acquisition wave, and anything else that co-varies with signup time",
+          "passed": true,
+          "evidence": "Claude enumerates four specific confounders: (1) Account Tenure \u2014 older accounts have higher purchase intent and stored payment info; (2) Cohort Effects \u2014 early adopters differ in demographics, tech-savviness, and were acquired differently; (3) Survivorship Bias \u2014 older cohorts have survived longer attrition funnels; (4) Temporal Confounds \u2014 economy, seasonality, product changes differ across cohorts. Claude also notes that the interleaving means it's not a clean old-vs-new split, but correctly concludes the cohort confounding threat remains valid."
+        },
+        {
+          "text": "Claude states that the +4.2% difference is NOT a valid causal estimate without first verifying that the two groups are balanced on pre-treatment covariates \u2014 the assignment mechanism must be interrogated, not assumed benign",
+          "passed": true,
+          "evidence": "The Verdict table explicitly states: '+4.2% is our causal estimate of the checkout effect \u2014 Not valid as stated. The raw comparison is confounded by cohort effects, tenure, and acquisition channel differences.' The closing paragraph states: 'Without controlling for cohort and tenure and passing a pre-period balance check, these cannot be disentangled. The estimate should not be used to make product decisions.' The response also frames this through Pearl's Ladder, noting the analyst is reading a Rung 2 answer off Rung 1 data."
+        },
+        {
+          "text": "Claude recommends a concrete diagnostic: run balance tests on pre-treatment covariates (account age, acquisition channel, historical conversion rates) between digit groups \u2014 if they differ, the 'natural experiment' is invalid and the estimate is confounded",
+          "passed": false,
+          "evidence": "Claude does not explicitly recommend running a covariate balance test (e.g., comparing means of account age, acquisition channel, and historical conversion rates between digit groups) as the primary concrete diagnostic. Option 2 is a pre-period placebo test on conversion rates, which is related but is not a general covariate balance check. Option 1 mentions conditioning on cohort but frames it as a recovery strategy, not a diagnostic. The specific recommendation to tabulate and compare pre-treatment covariates across the two digit groups to detect imbalance is absent."
+        },
+        {
+          "text": "Claude explains what would actually constitute valid quasi-experimental identification here: either verify empirically that digit groups are balanced (and explain why they would be, given the sequential assignment concern), or use a different identification strategy (e.g., a holdout or time-based DiD)",
+          "passed": true,
+          "evidence": "Claude outlines multiple valid identification paths: Option 1 (stratify by signup cohort and verify within-cohort last-digit balance), Option 2 (pre-period placebo test to empirically check for baseline differences), Option 4 (Difference-in-Differences with parallel trends assumption), and Option 5 (run a properly randomized experiment with cryptographic hashing). DiD is explicitly named. The response explains that within a narrow same-day cohort window, the last digit may do a reasonable job of randomizing \u2014 acknowledging the conditions under which the design could be salvaged."
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "selection-bias-power-users",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 162.8,
+        "tokens": 24345,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude flags that restricting the analysis to '90-day active users' conditions on a downstream variable \u2014 users who survived to 90 days are already a selected, high-retention population",
+          "passed": true,
+          "evidence": "Step 2 identifies A90 (still active at 90 days) as a variable in the DAG and Step 3 states explicitly: 'By filtering to A90 = 1, the analysis opens [a spurious path].' The summary verdict reinforces this: 'filtering to 90-day-active users conditions on a common effect of onboarding completion and user quality.' The response also describes the population correctly as a 'selected' sample defined by a collider, not a neutral sample of engaged users."
+        },
+        {
+          "text": "Claude explains the collider mechanism specifically: being active at 90 days is a common effect of both onboarding engagement and baseline retention tendency, so conditioning on it induces spurious correlation between those two causes even if they are independent in the full population \u2014 this means the r = 0.42 could exist even if onboarding completion has zero causal effect",
+          "passed": true,
+          "evidence": "Step 3 names A90 as a collider caused by both O and Q, writes out the path 'O \u2192 A90 \u2190 Q \u2192 R6', and explains the induced correlation: 'Within the 90-day-active sample, O and Q are no longer independent \u2014 even if they were independent in the full population.' The table in Step 5 explicitly shows that zero genuine causal effect is consistent with the observed r = 0.42, stating 'The observed correlation is consistent with a large genuine effect, a moderate effect buried in confounding, or essentially zero genuine effect.'"
+        },
+        {
+          "text": "Claude does NOT take the r = 0.42 correlation at face value as evidence that improving onboarding completion will causally improve retention",
+          "passed": true,
+          "evidence": "The response opens by distinguishing the Rung 1 (association) question answered by the data from the Rung 2 (intervention) question the business is asking. It explicitly states: 'A highly significant association in a badly conditioned sample is still a badly conditioned sample' and the summary verdict concludes 'No \u2014 you should not invest in improving onboarding completion as a retention lever based on this analysis.' The response treats r = 0.42 as 'a reasonable hypothesis about mechanism' but not 'investment-grade evidence.'"
+        },
+        {
+          "text": "Claude recommends analyzing the full user population (including churned users) rather than the 90-day survivors, or using an approach that corrects for selection (e.g., IPW)",
+          "passed": true,
+          "evidence": "Option 1 in Step 7 states: 'Randomize at the point of signup to an improved onboarding condition vs. control... do not filter to 90-day survivors.' Option 2 states: 'Rerun the analysis without the selection filter. Compute the O\u2013R6 correlation in the full user base (including those who churned before 90 days).' The summary verdict repeats: 'The right next step is an A/B test on the full user population \u2014 not the 90-day survivors.' Note: IPW is not mentioned specifically, but the expectation lists it as an example ('e.g., IPW') and the response covers the intent with full-population analysis and IV approaches."
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "selection-bias-power-users",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 42.5,
+        "tokens": 10660,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude flags that restricting the analysis to '90-day active users' conditions on a downstream variable \u2014 users who survived to 90 days are already a selected, high-retention population",
+          "passed": true,
+          "evidence": "Response states: 'The analysis was restricted to users who were still active at the 90-day mark. That filtering decision corrupts the inference... By conditioning your analysis on surviving to 90 days, you've created a sample that is systematically different from your full user population in ways that are directly related to your outcome variable (retention). This is survivorship bias \u2014 a specific form of selection bias where you only see the outcomes of survivors and draw conclusions that don't generalize to the broader population.'"
+        },
+        {
+          "text": "Claude explains the collider mechanism specifically: being active at 90 days is a common effect of both onboarding engagement and baseline retention tendency, so conditioning on it induces spurious correlation between those two causes even if they are independent in the full population \u2014 this means the r = 0.42 could exist even if onboarding completion has zero causal effect",
+          "passed": false,
+          "evidence": "The response mentions 'Collider bias: By conditioning on still active at 90 days, you may have induced a spurious statistical relationship between variables that are causally unrelated or even negatively related in the full population.' This is only a brief mention. The response does not explain the collider mechanism \u2014 it does not identify 'being active at 90 days' as a common effect of both onboarding engagement and baseline retention tendency as distinct causes, does not explain why conditioning on a shared effect induces correlation between two otherwise independent causes, and does not articulate that r = 0.42 could exist even if onboarding completion has zero causal effect. The emphasis is on survivorship bias and confounding; collider bias is listed as a tertiary bullet without mechanistic elaboration."
+        },
+        {
+          "text": "Claude does NOT take the r = 0.42 correlation at face value as evidence that improving onboarding completion will causally improve retention",
+          "passed": true,
+          "evidence": "Response explicitly states: 'Do not treat the r = 0.42 as evidence that improving onboarding completion will improve retention. That inference is not supported by the data.' The entire response is structured around arguing against a causal interpretation of the correlation."
+        },
+        {
+          "text": "Claude recommends analyzing the full user population (including churned users) rather than the 90-day survivors, or using an approach that corrects for selection (e.g., IPW)",
+          "passed": true,
+          "evidence": "Response recommends: 'Rerun the analysis on all users from the moment they sign up, not filtered to survivors. This won't fully solve confounding but will at least remove the survivorship bias.' and in the practical recommendation: 'Rerun the analysis on your full user cohort (all sign-ups, not filtered to 90-day survivors).' The expectation is satisfied by the first clause. Note: IPW or other statistical selection-correction methods are not mentioned."
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "near-iv-bias-amplification",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 73.4,
+        "tokens": 23086,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude identifies prior performance as a near-instrument (or near-IV) \u2014 a variable that strongly predicts treatment assignment (r \u2248 0.85) and is not itself exogenous",
+          "passed": true,
+          "evidence": "Step 3 explicitly labels prior performance a 'near-instrument': 'This is the defining feature of a near-instrument \u2014 a variable that is heavily predictive of treatment but has a weaker direct relationship to the outcome independent of the treatment path.' The table in Step 4 confirms 'Strong predictor of treatment, weaker on outcome \u2014 near-instrument? Yes, r = 0.85'. The response also establishes it is not exogenous \u2014 it is a confounder causing both mentorship and promotion directly."
+        },
+        {
+          "text": "Claude warns that controlling for a near-IV in the presence of unmeasured confounders can amplify rather than reduce bias \u2014 the mechanism being that conditioning concentrates remaining treatment variation onto the part correlated with unmeasured factors",
+          "passed": true,
+          "evidence": "Step 3 provides the full mechanism: 'Conditioning on prior performance removes prior performance's contribution to variation in mentorship. The residual variation in mentorship \u2014 the part that remains after controlling for prior performance \u2014 is now disproportionately driven by U, those unmeasured confounders. They become stronger confounders in the adjusted regression than they were in the unadjusted one. This is bias amplification.' The response also quantifies the risk: 'The more extreme the correlation between the near-instrument and treatment, the worse the amplification. At r = 0.85, you are conditioning out the dominant source of variation in mentorship assignment.'"
+        },
+        {
+          "text": "Claude does NOT unconditionally endorse 'control for prior performance because it predicts both treatment and outcome'",
+          "passed": true,
+          "evidence": "The response directly pushes back on this advice. From the summary and conclusion: 'Your colleague's structural intuition (prior performance is a confounder, control for it) is correct. The operational advice (just put it in the regression) fails because it ignores bias amplification under near-perfect selection on observables.' The opening framing also sets this up: 'the near-perfect correlation between prior performance and mentorship creates a separate, serious problem that your colleague's advice does not address \u2014 and that problem can make your estimate worse, not better.'"
+        },
+        {
+          "text": "Claude explicitly states the conditional: if prior performance is the ONLY confounder and no unmeasured confounders exist, controlling is correct; but given the plausibility of unmeasured confounders like ambition, sponsorship, or political capital, the near-IV amplification risk makes mechanical conditioning dangerous. Claude states which scenario is more realistic and recommends sensitivity analysis or an alternative design rather than leaving the user with an unresolved 'it depends.'",
+          "passed": true,
+          "evidence": "The conditional is stated in Step 5: 'Controlling for prior performance is the right move if and only if prior performance fully captures all the confounding.' Unmeasured confounders are enumerated: 'visibility to senior leadership, social capital and network, likability or cultural fit, volunteering for high-profile projects, having a sponsor who advocates informally.' The response clearly signals which scenario is more realistic \u2014 'which is highly plausible at r = 0.85' and 'which is probably false' (that residual factors are uncorrelated with promotion). Step 6 provides five concrete alternatives: IV, formal program exploitation, DiD, sensitivity analysis, and bounding \u2014 resolving the question rather than leaving it open."
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "near-iv-bias-amplification",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 44.1,
+        "tokens": 10970,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude identifies prior performance as a near-instrument (or near-IV) \u2014 a variable that strongly predicts treatment assignment (r \u2248 0.85) and is not itself exogenous",
+          "passed": true,
+          "evidence": "The response explicitly uses the term 'near-instrument' multiple times: 'it is nearly an instrument for treatment', 'if X is a near-instrument (strong treatment predictor, weaker direct outcome predictor)', and 'the near-instrument structure (r = 0.85)'. It also acknowledges r = 0.85 and notes that prior performance is a confounder \u2014 simultaneously predicting treatment and outcome \u2014 which establishes its endogenous character."
+        },
+        {
+          "text": "Claude warns that controlling for a near-IV in the presence of unmeasured confounders can amplify rather than reduce bias \u2014 the mechanism being that conditioning concentrates remaining treatment variation onto the part correlated with unmeasured factors",
+          "passed": true,
+          "evidence": "The 'Why Controlling for Prior Performance Is Complicated' section lays out the mechanism step-by-step: 'When you condition on prior performance, you partial out a large chunk of the variance in mentorship. The residual variation in mentorship \u2014 the part your model is now using to estimate the effect \u2014 is disproportionately driven by U. The ratio of bias-from-U to signal-from-mentorship grows after conditioning, not shrinks.' This matches the expected mechanism precisely."
+        },
+        {
+          "text": "Claude does NOT unconditionally endorse 'control for prior performance because it predicts both treatment and outcome'",
+          "passed": true,
+          "evidence": "The response opens by acknowledging the colleague's point but immediately flags a 'second, less obvious hazard: bias amplification.' The entire response is structured as a caution against the naive control-for-everything approach. The Bottom Line reiterates: 'conditioning on it may amplify bias from unmeasured confounders rather than reduce overall bias' and 'regression adjustment alone is unlikely to give you a credible causal estimate.'"
+        },
+        {
+          "text": "Claude explicitly states the conditional: if prior performance is the ONLY confounder and no unmeasured confounders exist, controlling is correct; but given the plausibility of unmeasured confounders like ambition, sponsorship, or political capital, the near-IV amplification risk makes mechanical conditioning dangerous. Claude states which scenario is more realistic and recommends sensitivity analysis or an alternative design rather than leaving the user with an unresolved 'it depends.'",
+          "passed": false,
+          "evidence": "The response does satisfy parts of this expectation: it states the conditional ('some adjustment is better than none if it is the only confounder'), names plausible unmeasured confounders ('social capital, manager favoritism, networking skill'), and recommends both sensitivity analysis (E-value) and alternative designs (RDD). However, it never explicitly declares which scenario is more realistic \u2014 i.e., it does not say 'unmeasured confounders are likely in this setting, so the amplification scenario is the operative one.' The response's stance is that the problem is hard and adjustment is 'unlikely to give a credible estimate,' which implicitly favors the confounded scenario, but the expectation requires an explicit declaration. This omission means the response partially evades the discriminating requirement of the assertion."
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "table-2-fallacy",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 58.8,
+        "tokens": 19063,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude names or describes the Table 2 Fallacy \u2014 that control variable coefficients in a regression designed to identify the focal treatment effect are not themselves causally identified",
+          "passed": true,
+          "evidence": "The opening sentence names it directly: 'What you are describing is a textbook instance of the Table 2 Fallacy.' Section 2 ('The Table 2 Fallacy') elaborates: controls 'were included for one purpose: to satisfy the back-door criterion for the treatment effect' and 'The coefficient on country does not estimate the causal effect of country on conversion.' The Westreich & Greenland (2013) citation is also provided."
+        },
+        {
+          "text": "Claude explains structurally why: the adjustment set was chosen to block back-door paths from treatment to conversion, not from country to conversion \u2014 these are different back-door sets requiring potentially different controls",
+          "passed": true,
+          "evidence": "Section 3 states: 'That conditioning set was chosen to identify treatment, not to identify country. To identify country's causal effect on conversion, you would need to close all back-door paths into country \u2014 a completely different adjustment set.' Section 5 reinforces: 'The controls you chose for treatment identification are not the right set for country identification.'"
+        },
+        {
+          "text": "Claude notes that some controls in the model (e.g., browser) could be mediators on the country \u2192 conversion path, meaning the country coefficient might be partial (not total) and would be biased by conditioning on its own mediators",
+          "passed": true,
+          "evidence": "Section 5, point 2 reads: 'In fact, some of them (treatment itself, browser, time-of-day) could be mediators or descendants of country \u2014 controlling for them would block part of the country \u2192 conversion path.' Browser is explicitly named as a potential mediator. The mechanism (blocking part of the causal path by conditioning on a mediator) is correctly described, which is the source of downward bias in the country coefficient."
+        },
+        {
+          "text": "Claude does NOT confirm that the country coefficient measures country's causal effect on conversion",
+          "passed": true,
+          "evidence": "The response opens with 'No' and consistently denies causal interpretability. The summary table in Section 6 explicitly marks Country as 'No' for 'Causal interpretation valid?' with the reason 'Identified only as a conditional association, adjustment set was chosen for treatment, not country.' There is no passage in the response that affirms causal interpretability of the country coefficient."
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "table-2-fallacy",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 2,
+        "failed": 2,
+        "total": 4,
+        "time_seconds": 47.6,
+        "tokens": 10950,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude names or describes the Table 2 Fallacy \u2014 that control variable coefficients in a regression designed to identify the focal treatment effect are not themselves causally identified",
+          "passed": true,
+          "evidence": "Section '3. The Table 2 Fallacy' explicitly names the fallacy and cites Westreich & Greenland (2013): 'Readers (and sometimes authors) mistake the coefficients on control variables for causal estimates. They are not. Each coefficient in a multivariable regression answers the question \"what is the partial association of this variable with the outcome, holding all other included variables fixed?\" \u2014 but that partial association is only causally interpretable if the identification conditions for *that specific variable* are satisfied. For treatment, you presumably satisfied those conditions. For country, you almost certainly did not.'"
+        },
+        {
+          "text": "Claude explains structurally why: the adjustment set was chosen to block back-door paths from treatment to conversion, not from country to conversion \u2014 these are different back-door sets requiring potentially different controls",
+          "passed": false,
+          "evidence": "The response gestures at this in Section 1 ('Your experiment was designed to identify the causal effect of *treatment*, not of country') but never makes the structural DAG argument. It does not use the language of back-door paths, adjustment sets, or explain that the controls chosen to satisfy the treatment identification strategy are a different set from what would be needed to causally identify country's effect. The argument is stated as a general fact about regression design, not as a structural causal reasoning about differing back-door paths."
+        },
+        {
+          "text": "Claude notes that some controls in the model (e.g., browser) could be mediators on the country \u2192 conversion path, meaning the country coefficient might be partial (not total) and would be biased by conditioning on its own mediators",
+          "passed": false,
+          "evidence": "This point is entirely absent from the response. Browser is listed as a control variable in the example regression, and Section 4 briefly notes country correlates with browser usage, but the response never raises the mediator problem \u2014 that browser could lie on the causal path from country to conversion, such that conditioning on it blocks part of country's effect and produces a biased (partial) estimate of country's total effect."
+        },
+        {
+          "text": "Claude does NOT confirm that the country coefficient measures country's causal effect on conversion",
+          "passed": true,
+          "evidence": "The response is unambiguous throughout. The summary table states: 'Is the country coefficient a causal estimate? No \u2014 it's a partial correlation with omitted variable bias.' The conclusion also states: 'The country coefficient is doing its job as a control variable \u2014 it is not a result you should interpret causally.' No statement in the response confirms or implies the country coefficient is causal."
+        }
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "did-parallel-trends-violation",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 176.3,
+        "tokens": 29809,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude confirms the reviewer is correct \u2014 TWFE with staggered adoption and heterogeneous treatment effects can be biased even when parallel trends holds for every cohort",
+          "passed": true,
+          "evidence": "Section 2 heading reads 'Why standard TWFE breaks under staggered rollout \u2014 even with valid parallel trends' and the response opens with 'Your reviewer is correct.' The summary table explicitly states: 'Is the reviewer right that TWFE can be biased even under parallel trends? Yes, definitively. This is an established result.'"
+        },
+        {
+          "text": "Claude explains the core mechanism: TWFE uses already-treated units as controls for later-treated units ('forbidden comparisons'), which is only unbiased if treatment effects are constant across cohorts and over time",
+          "passed": true,
+          "evidence": "Section 2 explains: 'TWFE implicitly treats previously-treated units as valid controls for units receiving treatment later' and labels these 'Contaminated comparisons (the problem): Already-treated early adopters (Q1 cohort) used as the control group when estimating the effect for later adopters.' The response clarifies the bias arises when treatment effects vary over time, and the summary table confirms: 'TWFE uses already-treated units as controls for later cohorts; this biases estimates when treatment effects vary over time.'"
+        },
+        {
+          "text": "Claude names or describes the Goodman-Bacon decomposition problem \u2014 that TWFE is a weighted average of 2\u00d72 DiDs, some receiving negative weights when later-cohort treatment effects differ from early-cohort effects",
+          "passed": true,
+          "evidence": "Section 3 is titled 'The Goodman-Bacon decomposition: your specific exposure' and states: 'Goodman-Bacon (2021) proves that the TWFE coefficient is a weighted average of all possible 2\u00d72 DiD estimators. The weights are determined by group sizes and the variance in treatment timing \u2014 not by which comparisons are cleanest.' Section 2 also notes: 'In extreme cases of treatment effect heterogeneity, TWFE can return a negative coefficient even when every cohort's true treatment effect is positive, because some implicit 2\u00d72 DiD comparisons receive negative weight.'"
+        },
+        {
+          "text": "Claude recommends a heterogeneity-robust DiD estimator (e.g., Callaway-Sant'Anna, Sun-Abraham, or Borusyak-Jaravel-Spiess) rather than standard TWFE",
+          "passed": true,
+          "evidence": "Section 5 ('What to do instead') recommends Callaway & Sant'Anna (2021) as the primary estimator ('recommended for your case'), and also describes Sun & Abraham (2021) and de Chaisemartin & D'Haultfoeuille (2020) as alternatives. The summary table states: 'Is there a better approach? Yes. Callaway-Sant'Anna or Sun-Abraham, plus an event-study plot.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "did-parallel-trends-violation",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 138.8,
+        "tokens": 20250,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude confirms the reviewer is correct \u2014 TWFE with staggered adoption and heterogeneous treatment effects can be biased even when parallel trends holds for every cohort",
+          "passed": true,
+          "evidence": "Response opens: 'Your reviewer is absolutely right to flag this' and explicitly states 'Standard two-way fixed-effects (TWFE) with staggered treatment timing is not equivalent to a simple difference-in-differences estimator, even when the parallel trends assumption holds perfectly.' The dedicated section 'Is Parallel Trends Enough?' reinforces: 'parallel trends is not sufficient to save you here.'"
+        },
+        {
+          "text": "Claude explains the core mechanism: TWFE uses already-treated units as controls for later-treated units ('forbidden comparisons'), which is only unbiased if treatment effects are constant across cohorts and over time",
+          "passed": true,
+          "evidence": "Response explicitly uses the term 'forbidden comparisons' and describes how 'early-treated units' are used as controls for later-treated units. It states TWFE recovers the true ATT 'if and only if treatment effects are homogeneous across cohorts (Q1, Q3, Q4 adopters all experience the same effect) and time periods (the effect does not grow, decay, or change after adoption).'"
+        },
+        {
+          "text": "Claude names or describes the Goodman-Bacon decomposition problem \u2014 that TWFE is a weighted average of 2\u00d72 DiDs, some receiving negative weights when later-cohort treatment effects differ from early-cohort effects",
+          "passed": true,
+          "evidence": "Response explicitly names 'The Goodman-Bacon (2021) decomposition' and explains it shows 'the TWFE estimator can be written as a weighted average of all possible 2x2 DiD comparisons' and that 'Some of these weights are negative \u2014 specifically, comparisons that use already-treated units as the control group get negative weights when treatment effects are heterogeneous over time.'"
+        },
+        {
+          "text": "Claude recommends a heterogeneity-robust DiD estimator (e.g., Callaway-Sant'Anna, Sun-Abraham, or Borusyak-Jaravel-Spiess) rather than standard TWFE",
+          "passed": true,
+          "evidence": "Response recommends replacing TWFE with Callaway & Sant'Anna (2021) as the primary recommendation, Sun & Abraham (2021) as Option 2, and de Chaisemartin & D'Haultfoeuille (2020) as Option 3. Callaway-Sant'Anna is labeled 'Recommended for Your Case' with specific implementation guidance (did package in R, csdid in Stata)."
+        }
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "mediator-overcontrol",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 80.5,
+        "tokens": 18884,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude identifies that manager motivation was measured after the treatment and therefore may be a mediator on the training \u2192 motivation \u2192 performance causal path",
+          "passed": true,
+          "evidence": "Step 2 explicitly states: 'The critical structural fact: M is measured **after** the treatment. The first question to ask about any post-treatment variable is: could treatment have caused this variable? The answer here is almost certainly yes \u2014 that is the explicit logic of the training program.' The DAG drawn in Step 2 shows X \u2192 M \u2192 Y with M labeled as 'Manager Motivation, t+1 month.' Step 3's classification table explicitly labels M as 'Mediator (X \u2192 M \u2192 Y)' with verdict 'Do not control.'"
+        },
+        {
+          "text": "Claude warns that controlling for a post-treatment mediator blocks the causal mechanism you're trying to measure, biasing the estimated training effect toward zero",
+          "passed": true,
+          "evidence": "Step 3 states: 'When you include M in a regression of Y on X, you are asking: Among managers with the *same* motivation level 1 month after training, what is the effect of training on performance? You have held constant the very mechanism through which training was supposed to work.' It explicitly warns: 'This is overcontrol bias. The result: The coefficient on X (training) will be attenuated toward zero / In the extreme case where motivation is the *only* mechanism, the training coefficient goes to zero \u2014 meaning you'd conclude the training had no effect, even if it worked perfectly through motivation / The bias is systematic and structural, not sampling error; larger samples make it worse, not better.'"
+        },
+        {
+          "text": "Claude distinguishes the total effect of training (including the motivation pathway) from the direct effect (net of motivation) \u2014 AND specifies which estimand is policy-relevant for the question at hand: if the goal is evaluating whether to scale the training program, the total effect is what matters; the direct effect is only relevant if you're trying to isolate mechanisms beyond the motivation pathway",
+          "passed": true,
+          "evidence": "Step 2 names both paths: 'X \u2192 M \u2192 Y (the indirect/motivational pathway)' and 'X \u2192 Y directly (any residual direct pathway not mediated by motivation).' Step 7 designates the total effect as the primary policy-relevant estimand: 'For estimating the total effect of training (what you almost certainly want)' and frames the direct effect as only relevant for mechanism-isolation: 'If you want to understand the motivational mechanism: This is a mediation analysis question.' The response does not use the phrase 'scale the program' verbatim, but it clearly positions the total effect as the correct estimand for program evaluation and the direct effect as appropriate only when studying causal pathways \u2014 which aligns with the expectation's logic."
+        },
+        {
+          "text": "Claude does NOT recommend including post-treatment motivation as a control without raising this structural concern",
+          "passed": true,
+          "evidence": "The very first sentence of the response reads: 'Short answer: No. Controlling for manager motivation level \u2014 measured 1 month after the training ended \u2014 is a structural mistake.' The structural concern is raised before any other analysis. The summary table at the end reiterates: 'Is post-training manager motivation a good control variable? No.' Step 7 instructs to 'Leave post-training motivation out of the main outcome model entirely.' There is no point in the response where controlling for post-treatment motivation is recommended or implicitly endorsed."
+        }
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "mediator-overcontrol",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 39.1,
+        "tokens": 10648,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude identifies that manager motivation was measured after the treatment and therefore may be a mediator on the training \u2192 motivation \u2192 performance causal path",
+          "passed": true,
+          "evidence": "Response explicitly states: 'Manager motivation level, measured 1 month after the training ended, is almost certainly a mediator \u2014 a variable that sits on the causal pathway between the treatment (training) and the outcome (performance). The causal chain likely looks something like this: Management Training \u2192 Manager Motivation \u2191 \u2192 Team Performance \u2191'. Post-treatment timing is further emphasized: 'Manager motivation measured 1 month after training fails both conditions.'"
+        },
+        {
+          "text": "Claude warns that controlling for a post-treatment mediator blocks the causal mechanism you're trying to measure, biasing the estimated training effect toward zero",
+          "passed": true,
+          "evidence": "Response states: 'When you include a mediator as a control variable in a regression, you are blocking the very pathway through which your treatment works. This is called overcontrol bias... your estimate of the training effect will be attenuated \u2014 you'll systematically underestimate how much the training actually improved performance, potentially to the point of finding no effect at all when there truly is one.' A concrete example reinforces the direction: 'If you control for motivation, your model asks: Among managers with the same motivation level, did training affect performance? The answer will be approximately zero \u2014 not because training doesn't work, but because you've conditioned away the effect.'"
+        },
+        {
+          "text": "Claude distinguishes the total effect of training (including the motivation pathway) from the direct effect (net of motivation) \u2014 AND specifies which estimand is policy-relevant for the question at hand: if the goal is evaluating whether to scale the training program, the total effect is what matters; the direct effect is only relevant if you're trying to isolate mechanisms beyond the motivation pathway",
+          "passed": false,
+          "evidence": "The response mentions decomposing 'the total effect into direct and indirect (motivation-mediated) components' only in the context of mediation analysis as a secondary goal. It does not name or frame 'total effect' vs. 'direct effect' as distinct estimands that the analyst must choose between, and it never connects estimand choice to the policy decision at hand. There is no statement that the total effect is what matters for a scaling decision, nor that the direct effect is only relevant for mechanism investigation. The policy-relevance framing \u2014 the core of this expectation \u2014 is absent."
+        },
+        {
+          "text": "Claude does NOT recommend including post-treatment motivation as a control without raising this structural concern",
+          "passed": true,
+          "evidence": "The entire response is structured around warning against including motivation as a control. The only mention of inclusion is as a labeled sensitivity analysis: 'If a reviewer or stakeholder insists, you can report a sensitivity analysis with motivation included, but clearly label it as a potentially biased estimate and explain the direction of expected bias (downward attenuation of the training effect).' This is explicitly flagged as biased, fully satisfying the requirement."
+        }
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "front-door-identification",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 223.3,
+        "tokens": 27651,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude does NOT just conclude 'not identifiable because of unmeasured confounder'",
+          "passed": true,
+          "evidence": "The response opens with 'Short answer: No \u2014 not necessarily. The structure you've described is a textbook candidate for front-door identification' and explicitly states 'Back-door identification fails here' but goes on to offer front-door as an alternative, never concluding unidentifiability."
+        },
+        {
+          "text": "Claude recognizes the potential for front-door identification via the observed mediator 'skills applied on the job'",
+          "passed": true,
+          "evidence": "Step 2 identifies 'M (Skills Applied on the Job): The mediator. Sits between X and Y.' Step 3 introduces Pearl's front-door criterion by name and applies it directly to this mediator."
+        },
+        {
+          "text": "Claude describes the front-door criterion or the logic behind it: estimate the effect of training on skills-applied (unconfounded), then estimate the effect of skills-applied on performance (adjusting for training as a back-door block), then combine",
+          "passed": true,
+          "evidence": "Step 3 states the formula in plain language: 'estimate the effect of training on skills-applied (X \u2192 M), then estimate the effect of skills-applied on performance controlling for training status (M \u2192 Y | X), and combine them.' Step 5 operationalizes this as a two-stage regression with explicit instruction to include X in the second stage."
+        },
+        {
+          "text": "Claude notes the key assumption: ambition (the unmeasured confounder) must not directly cause skills-applied independent of the training \u2014 i.e., ambition affects performance only through the training \u2192 skills-applied path or through paths that can be blocked",
+          "passed": true,
+          "evidence": "Condition 2 (Step 4) is titled 'No Unobserved Confounding on X \u2192 M' and explicitly asks 'Does ambition (U) also directly affect skills-applied on the job?' It warns that a direct U\u2192M path confounds the first stage of the front-door estimator."
+        },
+        {
+          "text": "Claude notes the complete mediation condition: all causal paths from training to performance must pass through 'skills applied on the job' \u2014 if training has a direct effect on performance ratings independent of skills-applied (e.g., being seen attending training boosts ratings), the front-door formula is biased. Claude flags this as an assumption to verify, not just accept.",
+          "passed": true,
+          "evidence": "Condition 1 (Step 4) is titled 'Complete Mediation \u2014 X affects Y only through M' and is described as 'The condition most often glossed over.' It lists halo/signaling, credential effects, network effects, and confidence shifts as candidate direct X\u2192Y paths. Step 7 designates this the 'most likely trap' and provides a concrete diagnostic question: 'Do the managers who rate performance know which employees attended training at the time they complete the review?'"
+        }
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "front-door-identification",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 108.4,
+        "tokens": 17701,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude does NOT just conclude 'not identifiable because of unmeasured confounder'",
+          "passed": true,
+          "evidence": "The very first line reads: 'Short answer: No. The effect is still identifiable.' Claude explicitly rejects unidentifiability and proceeds to explain the identification strategy."
+        },
+        {
+          "text": "Claude recognizes the potential for front-door identification via the observed mediator 'skills applied on the job'",
+          "passed": true,
+          "evidence": "Claude immediately names 'skills applied on the job' as the key variable and invokes the front-door criterion: 'The variable you described \u2014 \"skills applied on the job\" \u2014 gives you exactly what you need to apply the front-door criterion.'"
+        },
+        {
+          "text": "Claude describes the front-door criterion or the logic behind it: estimate the effect of training on skills-applied (unconfounded), then estimate the effect of skills-applied on performance (adjusting for training as a back-door block), then combine",
+          "passed": true,
+          "evidence": "The 'Front-Door Adjustment Formula' section walks through four explicit steps: (1) estimate P(M|T) \u2014 unconfounded T\u2192M effect; (2) estimate P(Y|M,T) \u2014 conditioning on T blocks the backdoor from M to Y; (3) average over the distribution of T; (4) compose to get the total causal effect. The intuition section also restates this two-step logic in plain language."
+        },
+        {
+          "text": "Claude notes the key assumption: ambition (the unmeasured confounder) must not directly cause skills-applied independent of the training \u2014 i.e., ambition affects performance only through the training \u2192 skills-applied path or through paths that can be blocked",
+          "passed": true,
+          "evidence": "Condition 2 states 'there are no unblocked backdoor paths from T to M' and explicitly says 'U (ambition) affects T, but U does not have a direct arrow into M.' The 'Assumptions to Scrutinize' section further flags 'The No U \u2192 M Assumption' with a concrete example: ambitious employees developing skills through self-study would violate this condition."
+        },
+        {
+          "text": "Claude notes the complete mediation condition: all causal paths from training to performance must pass through 'skills applied on the job' \u2014 if training has a direct effect on performance ratings independent of skills-applied (e.g., being seen attending training boosts ratings), the front-door formula is biased. Claude flags this as an assumption to verify, not just accept.",
+          "passed": true,
+          "evidence": "Condition 1 ('M intercepts all causal paths from T to Y') directly states this requirement and labels it 'often the most demanding condition to defend in organizational contexts.' Claude enumerates specific direct-path scenarios (managers rewarding attendance, credential effects, social capital) and explicitly instructs: 'Think carefully about whether...' The 'Assumptions to Scrutinize' section further identifies the exclusion restriction as 'the hard one' and specifies that if a direct T\u2192Y effect exists the front-door formula fails."
+        }
+      ]
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "simpsons-paradox",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 126.6,
+        "tokens": 22715,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude identifies this as Simpson's paradox (or the equivalent phenomenon)",
+          "passed": true,
+          "evidence": "Explicitly named multiple times. Step 4 states: 'This is Simpson's Paradox, but the resolution is not trust the stratified results. The DAG decides the resolution, and the DAG here points to the aggregate.' The summary table includes: 'Is this Simpson's Paradox? Yes \u2014 but the resolution favors the aggregate, not the disaggregate.' The final paragraph also names it directly."
+        },
+        {
+          "text": "Claude explicitly raises the mediator scenario: the 'Continue on App' prompt could cause web users to shift to the app checkout, making platform a mediator (downstream of treatment) \u2014 in which case the aggregate +2.1% is the correct estimate and disaggregating is wrong",
+          "passed": true,
+          "evidence": "This is the central thesis of the response. Story B (Step 2) presents the mediator DAG. Step 3 states: 'Your feature description answers this directly. The feature prominently shows a Continue on App prompt at checkout. By construction, its mechanism is to redirect users from web checkout to app checkout... This means platform is a mediator, not a confounder. Part of the causal effect of your feature operates through the channel: Feature \u2192 user switches to app \u2192 higher conversion. That channel is real. Stratifying by platform and computing effects within each platform blocks that exact channel.' Step 5 explicitly states 'Mediator \u2192 aggregate' and that the aggregate is the correct estimate."
+        },
+        {
+          "text": "Claude distinguishes the two cases: (a) platform fixed before treatment \u2192 confounder \u2192 trust segment-level negatives; (b) feature causes platform switching \u2192 mediator \u2192 trust aggregate positive",
+          "passed": true,
+          "evidence": "Step 2 presents both as explicit competing DAGs: 'Story A \u2014 Platform is a confounder (your analyst's implicit assumption)' and 'Story B \u2014 Platform is a mediator (the more plausible story)'. Step 5 states the structural rule: 'Confounder \u2192 disaggregate. Mediator \u2192 aggregate.' The robustness table in Step 8 tabulates both cases, mapping confounder \u2192 'Kill the feature' and mediator \u2192 'Ship the feature'."
+        },
+        {
+          "text": "Claude does NOT simply endorse killing the feature based on the segment-level results, and gives the user a concrete diagnostic: check whether the feature caused any shift in platform composition \u2014 e.g., did the web-to-app conversion rate change in the treatment arm? If yes, platform is a mediator and the aggregate is correct",
+          "passed": true,
+          "evidence": "The opening line is 'Your analyst is probably wrong. Killing the feature based on the platform-level splits is likely the wrong call.' Step 7 provides a specific operationalizable diagnostic: 'Compare platform composition across arms. If the feature caused switching, the treatment arm should have a meaningfully higher share of app checkouts than the control arm. If the platform mix is identical across arms, the switching story collapses and the stratified results gain credibility. If the treatment arm shows significantly more app checkouts, that is direct evidence that platform is a mediator and the aggregate estimate is the right one. A single cross-tab answers this.' The summary verdict also states: 'Should you kill the feature? Not on this evidence.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "simpsons-paradox",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 2,
+        "failed": 2,
+        "total": 4,
+        "time_seconds": 45.5,
+        "tokens": 11034,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude identifies this as Simpson's paradox (or the equivalent phenomenon)",
+          "passed": true,
+          "evidence": "The response names 'Simpson's Paradox' in the title ('A/B Test Analysis: Simpson's Paradox in Checkout Feature'), in the Short Answer section ('What you're describing is a textbook case of Simpson's Paradox'), as a section header ('What's Happening: Simpson's Paradox'), and repeatedly throughout the response."
+        },
+        {
+          "text": "Claude explicitly raises the mediator scenario: the 'Continue on App' prompt could cause web users to shift to the app checkout, making platform a mediator (downstream of treatment) \u2014 in which case the aggregate +2.1% is the correct estimate and disaggregating is wrong",
+          "passed": true,
+          "evidence": "The response explicitly states: 'In causal inference terms: platform is a mediator (or at minimum a variable downstream of treatment), not a baseline covariate. You should never condition on mediators when estimating a total treatment effect.' It explains the 'Continue on App' prompt actively redirects users, making platform a post-treatment variable, and concludes the aggregate +2.1% is the correct measure."
+        },
+        {
+          "text": "Claude distinguishes the two cases: (a) platform fixed before treatment \u2192 confounder \u2192 trust segment-level negatives; (b) feature causes platform switching \u2192 mediator \u2192 trust aggregate positive",
+          "passed": false,
+          "evidence": "The response only argues case (b) \u2014 it assumes throughout that the feature is causing platform switching and the aggregate is correct. It never presents case (a) as a distinct alternative: that if platform were fixed pre-treatment (e.g., device type is intrinsic to the user and not changed by the prompt), platform would be a genuine confounder and the segment-level negatives would be the valid signal. The two-case framing \u2014 which is the key epistemic distinction \u2014 is entirely absent. The response confidently asserts the mediator interpretation from the first sentence."
+        },
+        {
+          "text": "Claude does NOT simply endorse killing the feature based on the segment-level results, and gives the user a concrete diagnostic: check whether the feature caused any shift in platform composition \u2014 e.g., did the web-to-app conversion rate change in the treatment arm? If yes, platform is a mediator and the aggregate is correct",
+          "passed": false,
+          "evidence": "The response correctly does NOT endorse killing the feature. However, it fails on the diagnostic requirement. While Step 2 says 'Confirm that the treatment group does indeed show higher app checkout rates,' this is framed as post-hoc confirmation of an already-asserted conclusion, not as a conditional gate. Critically, Step 1 says 'Trust the aggregate result' before any diagnostic is run. The correct diagnostic framing \u2014 'IF the platform composition shifted in the treatment arm THEN platform is a mediator and trust the aggregate; IF NOT THEN platform may be a confounder and segment-level results may be valid' \u2014 is absent. The response presents the diagnostic as optional verification, not as the deciding test between two interpretations."
+        }
+      ]
+    },
+    {
+      "eval_id": 9,
+      "eval_name": "att-vs-ate-rollout",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 171.5,
+        "tokens": 29109,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude identifies the $32 as a LATE estimate \u2014 the treatment effect for compliers (users who adopted because of the push notification) \u2014 not the ATE for the full user population or the policy-relevant effect for a forced rollout",
+          "passed": true,
+          "evidence": "The response opens by calling $32 a LATE that 'applies to a specific, self-selected subgroup.' Step 3 states 'The LATE of +$32 is the average treatment effect for compliers only' and the Wald estimator derivation shows it is identified from the complier share (18%\u22123%=15%). The summary table explicitly confirms: 'The causal effect of feature adoption on 6-month revenue, identified for the complier subpopulation.'"
+        },
+        {
+          "text": "Claude explains why LATE \u2260 ATE for forced adoption: forced rollout affects never-takers (who actively declined the notification) whose response to forced adoption is unknown and likely much smaller or negative \u2014 the LATE tells us nothing about how they would respond",
+          "passed": true,
+          "evidence": "Step 4 explains the force-enable rollout targets never-takers 'who received a notification and still did not adopt' and that 'There is no statistical or structural reason to expect never-takers to respond like compliers \u2014 they are defined by the fact that they don't respond to nudges.' Step 6 provides a table showing the defensible range is $0 to negative, calling $32 'a ceiling estimate for a different population, not a floor estimate for this one.' The response explicitly labels this as 'ATE vs. LATE confusion.'"
+        },
+        {
+          "text": "Claude does NOT confirm that $32/user is the right planning figure for a forced adoption rollout",
+          "passed": true,
+          "evidence": "The response opens with 'No.' and states 'The CEO is conflating three different causal estimands.' The summary table answers 'Is the CEO's expectation well-founded? No.' Nowhere in the response does Claude affirm $32 as a valid planning figure; it consistently argues the figure does not apply to the forced-rollout population."
+        },
+        {
+          "text": "Claude recommends a forced-adoption experiment (random assignment to feature enabled vs. disabled regardless of opt-in) to estimate the ATE before committing to the forced rollout decision",
+          "passed": true,
+          "evidence": "Step 7 explicitly states: 'Run a direct A/B test on force-enable. A direct experiment \u2014 randomly force-enable the feature for a subset of non-adopters and hold out a control group \u2014 would directly measure what the CEO wants to know. This is the clean Rung 2 answer.' The summary table also recommends 'Run a randomized force-enable experiment on a subset of non-adopters before any broad rollout.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 9,
+      "eval_name": "att-vs-ate-rollout",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 82.8,
+        "tokens": 13975,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude identifies the $32 as a LATE estimate \u2014 the treatment effect for compliers (users who adopted because of the push notification) \u2014 not the ATE for the full user population or the policy-relevant effect for a forced rollout",
+          "passed": true,
+          "evidence": "The response explicitly states the IV estimate recovers the 'Local Average Treatment Effect \u2014 the average treatment effect specifically for compliers' and that '$32 LATE is the average causal effect for compliers only. It says nothing directly about the never-takers.' The summary table labels LATE as 'Effect for compliers only \u2014 the nudgeable users.'"
+        },
+        {
+          "text": "Claude explains why LATE \u2260 ATE for forced adoption: forced rollout affects never-takers (who actively declined the notification) whose response to forced adoption is unknown and likely much smaller or negative \u2014 the LATE tells us nothing about how they would respond",
+          "passed": true,
+          "evidence": "The 'Core Problem: Never-Takers Are Different' section explains that never-takers received the notification and said no, and gives multiple reasons their effect would be lower or negative: no value fit, psychological reactance/backlash leading to potential negative revenue, and no empirical basis to extrapolate the complier LATE to never-takers. A numerical example shows ATE could be ~$9 vs. $32 under plausible assumptions."
+        },
+        {
+          "text": "Claude does NOT confirm that $32/user is the right planning figure for a forced adoption rollout",
+          "passed": true,
+          "evidence": "The response opens with 'Short answer: No. The $32 LATE almost certainly overstates what you should expect from force-enabling the feature' and concludes that '$32 LATE...is the wrong number to use for projecting the revenue impact of a force-enable rollout.'"
+        },
+        {
+          "text": "Claude recommends a forced-adoption experiment (random assignment to feature enabled vs. disabled regardless of opt-in) to estimate the ATE before committing to the forced rollout decision",
+          "passed": true,
+          "evidence": "Option 1 under 'What You Should Do Before a Full Rollout' explicitly recommends: 'run a small A/B test where you actually force-enable the feature for a random subset of non-adopters and measure the revenue outcome directly. This gives you an unbiased estimate of the ATE for that population, rather than extrapolating from the LATE.' The final sentence of the response repeats this recommendation."
+        }
+      ]
+    },
+    {
+      "eval_id": 10,
+      "eval_name": "predictive-vs-causal",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 172.5,
+        "tokens": 24393,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude clearly states that feature importance in a predictive model does not imply that intervening on that feature will change the outcome",
+          "passed": true,
+          "evidence": "Step 5 ('The Core Trap Here') states: 'Predictive accuracy does not equal causal validity. A model with 92% AUC is doing its job excellently at identifying which customers are likely to churn. The mistake is using feature importances from that model to set intervention priorities.' Step 1 also draws an explicit distinction: the model answers a Rung 1 (association) question; marketing is asking a Rung 2 (intervention) question. 'These quantities can be dramatically different \u2014 and the gap is not a matter of sample size or model sophistication.'"
+        },
+        {
+          "text": "Claude identifies last_login_days as a downstream indicator \u2014 customers stop logging in BECAUSE they are already disengaging, not the other way around \u2014 and therefore explicitly states it is NOT a valid intervention target: re-engagement campaigns that move the login metric may not reduce churn because they address the symptom, not the cause. Claude does NOT label it 'potentially actionable' or give it 'medium causal plausibility' without flagging this critical caveat.",
+          "passed": true,
+          "evidence": "The section header for last_login_days reads 'Downstream Indicator. Do not intervene directly.' The body states: 'Disengaged customers stop logging in before they cancel. The causal arrow runs: Disengagement -> infrequent logins -> (eventually) Churn... Re-engagement campaigns that increase login frequency without addressing the underlying reason for disengagement will not reduce churn. They treat the symptom.' The summary table marks it 'No' for Intervention Target. At no point is it labeled 'potentially actionable' or given 'medium causal plausibility' without a clear caveat."
+        },
+        {
+          "text": "Claude explicitly invokes do-operator reasoning: observing P(churn | last_login_days = 30) \u2014 the churn rate among users who happen to log in every 30 days \u2014 is not the same as P(churn | do(last_login_days = 30)) \u2014 what would happen if you forced users to log in every 30 days. The model captures the former; marketing needs the latter.",
+          "passed": true,
+          "evidence": "The response explicitly contrasts: 'P(churn | last_login_days = 30): The churn rate among customers who happen to have a 30-day login gap. High \u2014 because disengaged users have long gaps.' versus 'P(churn | do(last_login_days = 30)): The churn rate if you forced someone to log in every 30 days. Likely far lower and possibly close to zero change \u2014 because the intervention addresses the symptom, not the underlying disengagement.' The do-operator notation and the precise distinction between observing and intervening are both present."
+        },
+        {
+          "text": "Claude recommends building a causal DAG and identifying a proper estimation strategy before deciding where to intervene \u2014 and does NOT recommend targeting features simply because they have high importance scores",
+          "passed": true,
+          "evidence": "Step 2 sketches an explicit causal DAG for all four features, including the unobserved latent disengagement variable. Step 4 provides a table of 'Identification Strategy' for each feature (e.g., RCT for pricing_tier, resolution-speed comparison for support_tickets, targeting signal only for last_login_days). The closing summary states: 'The question marketing is asking requires a different tool: causal identification, not predictive modeling.' The response never recommends acting on any feature solely because of its importance score."
+        }
+      ]
+    },
+    {
+      "eval_id": 10,
+      "eval_name": "predictive-vs-causal",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.25,
+        "passed": 1,
+        "failed": 3,
+        "total": 4,
+        "time_seconds": 93.9,
+        "tokens": 14272,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude clearly states that feature importance in a predictive model does not imply that intervening on that feature will change the outcome",
+          "passed": true,
+          "evidence": "Response states: 'Feature importance tells you which variables were most useful for making accurate predictions. That is a very different question from \"which variables, if we change them, will reduce churn?\"' and later: 'Feature importance... answers the question: \"How much does knowing this feature help the model predict the outcome?\" It does not answer: Does changing this feature change the outcome?' The shoe-size/reading-ability analogy reinforces this point explicitly."
+        },
+        {
+          "text": "Claude identifies last_login_days as a downstream indicator \u2014 customers stop logging in BECAUSE they are already disengaging, not the other way around \u2014 and therefore explicitly states it is NOT a valid intervention target: re-engagement campaigns that move the login metric may not reduce churn because they address the symptom, not the cause. Claude does NOT label it 'potentially actionable' or give it 'medium causal plausibility' without flagging this critical caveat.",
+          "passed": false,
+          "evidence": "The response hedges on last_login_days rather than calling it a downstream indicator. It presents two symmetrical 'stories' (Story A: re-engagement could work; Story B: both are driven by low perceived value) and then places the feature in the recommendations table as a 'Possible lever' that 'Needs causal validation.' The expectation requires Claude to lean toward the downstream/symptom interpretation and explicitly say it is NOT a valid intervention target; instead the response treats it as an open question with genuine upside potential. The table entry 'Possible lever' is exactly the kind of label the expectation says should not appear without a strong caveat that the causal direction most likely runs churn \u2192 low logins, not low logins \u2192 churn."
+        },
+        {
+          "text": "Claude explicitly invokes do-operator reasoning: observing P(churn | last_login_days = 30) \u2014 the churn rate among users who happen to log in every 30 days \u2014 is not the same as P(churn | do(last_login_days = 30)) \u2014 what would happen if you forced users to log in every 30 days. The model captures the former; marketing needs the latter.",
+          "passed": false,
+          "evidence": "The response never mentions the do-operator, do-calculus, or the formal distinction between P(Y|X) and P(Y|do(X)). It discusses confounding and recommends running experiments, but does not use the interventional distribution framing that this expectation requires. The closest passage is 'Every feature's importance reflects the correlation structure in that data, including all the confounding, reverse causation, and mediation that exists in the real world' \u2014 which gestures at the idea but does not invoke do-operator notation or reasoning."
+        },
+        {
+          "text": "Claude recommends building a causal DAG and identifying a proper estimation strategy before deciding where to intervene \u2014 and does NOT recommend targeting features simply because they have high importance scores",
+          "passed": false,
+          "evidence": "The response does not mention building a causal DAG at any point. Its recommended workflow goes directly from 'classify signals vs. levers' to 'run experiments' to 'use causal inference methods (PSM, IV, DiD)' \u2014 the foundational step of drawing a DAG to encode causal assumptions and identify valid adjustment sets is absent. The second half of the expectation is satisfied: the response clearly does not recommend targeting features by importance score alone and explicitly warns against it."
+        }
+      ]
+    },
+    {
+      "eval_id": 11,
+      "eval_name": "rdd-manipulation",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 147.9,
+        "tokens": 25092,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude identifies the density spike (more users clustering at 41-45 than expected) as a serious threat to RDD validity \u2014 specifically, evidence of score manipulation or sorting near the threshold",
+          "passed": true,
+          "evidence": "The response opens by calling the spike 'direct evidence that something like that happened' and Step 2 states: 'A spike above 40 \u2014 excess density just above the cutoff \u2014 is the hallmark signature of manipulation in favor of non-treatment.' Step 5 reinforces this: 'the users bunched just above 40 are a selected group \u2014 they were maneuvered across the threshold.'"
+        },
+        {
+          "text": "Claude explains WHY this matters for RDD: if users or CSMs can influence scores near the cutoff, users just above 40 are NOT a valid control group \u2014 they've been selectively moved there, making them systematically different from users just below the threshold",
+          "passed": true,
+          "evidence": "Step 2 explains the local-as-good-as-random assumption and how sorting violates it. Step 5 explicitly states: 'your control group just above 40 is contaminated with users who should have been in the treatment group but were moved out. This makes your control group look artificially like healthier, more-retainable users' \u2014 directly naming why users just above 40 are not a valid control group."
+        },
+        {
+          "text": "Claude rejects the 'only communicated internally' argument as insufficient to rule out manipulation \u2014 internal knowledge of the threshold is exactly what enables CSM sorting",
+          "passed": true,
+          "evidence": "Step 4 is titled 'Why Only Communicated Internally Is Not Exculpatory' and Step 7 states: 'the internal communication of the threshold is precisely what makes failure mode 1 more likely: the people who know about the threshold are the same people who interact with the scoring inputs.' The response explicitly dismisses the lead's reasoning as 'answering the wrong concern.'"
+        },
+        {
+          "text": "Claude recommends a formal density test (McCrary test or equivalent) at the threshold and pre-treatment covariate balance tests near the cutoff to assess severity, before concluding the RDD is valid",
+          "passed": true,
+          "evidence": "Step 6 lists both: (1) 'Run the McCrary / Cattaneo-Jansson-Ma density test. Quantify whether the density discontinuity at 40 is statistically significant.' and (4) 'Check covariate smoothness at the cutoff. For pre-treatment covariates (account age, plan tier, historical activity), check whether they jump at 40. In a valid RDD, pre-treatment covariates should be continuous at the threshold.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 11,
+      "eval_name": "rdd-manipulation",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 140.7,
+        "tokens": 18837,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude identifies the density spike (more users clustering at 41-45 than expected) as a serious threat to RDD validity \u2014 specifically, evidence of score manipulation or sorting near the threshold",
+          "passed": true,
+          "evidence": "The response opens: 'The density spike you've observed is called \"sorting\" or \"manipulation\" of the running variable, and it is one of the most serious threats to the validity of a regression discontinuity design.' The 'Why the Spike Is a Red Flag' section explicitly notes 'more users have health scores of 41\u201345 than a smooth distribution would predict' and catalogs manipulation mechanisms."
+        },
+        {
+          "text": "Claude explains WHY this matters for RDD: if users or CSMs can influence scores near the cutoff, users just above 40 are NOT a valid control group \u2014 they've been selectively moved there, making them systematically different from users just below the threshold",
+          "passed": true,
+          "evidence": "The 'What the Spike Does to Your Estimates' section states: 'If users near 41\u201345 are systematically different from users near 35\u201339 \u2014 not just because of the outreach, but because who ends up on each side is non-random \u2014 then your estimated treatment effect is confounded.' It also explicitly flags that 'The control group (41\u201345) is contaminated \u2014 it likely includes users who received some form of intervention...even though they are nominally \"untreated.\"'"
+        },
+        {
+          "text": "Claude rejects the 'only communicated internally' argument as insufficient to rule out manipulation \u2014 internal knowledge of the threshold is exactly what enables CSM sorting",
+          "passed": true,
+          "evidence": "The section 'Why Your Data Science Lead's Argument Is Wrong' directly addresses this: 'This argument is too narrow.' It identifies agent-side manipulation as the primary counter-example: 'If support agents knew the threshold and \u2014 even with good intentions \u2014 subtly adjusted health scores for near-threshold users, the RDD is broken.' The summary table labels the internal-only argument 'Partially true, but irrelevant \u2014 agent-side and algorithmic manipulation are still possible.'"
+        },
+        {
+          "text": "Claude recommends a formal density test (McCrary test or equivalent) at the threshold and pre-treatment covariate balance tests near the cutoff to assess severity, before concluding the RDD is valid",
+          "passed": true,
+          "evidence": "A dedicated section 'The McCrary Density Test' recommends the McCrary (2008) test and the Cattaneo et al. (2020) rddensity package, with working R and Python code. Step 1 of 'What You Should Do' is 'Run the formal density test.' Step 4 explicitly includes 'Covariate balance test: Check whether observable pre-treatment covariates (e.g., account age, product tier, historical engagement) are smooth at the threshold.' Both are presented as prerequisites before trusting RDD estimates."
+        }
+      ]
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "iv-exclusion-violation",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 130.6,
+        "tokens": 21964,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude confirms the colleague is correct \u2014 the exclusion restriction is very likely violated: distance to gym probably affects health through mechanisms other than gym membership (neighborhood walkability, socioeconomic status, park access, food environment, etc.)",
+          "passed": true,
+          "evidence": "\"Your colleague is right, and they are right in a way that matters more than you might think. The exclusion restriction for distance-to-gym is almost certainly violated.\" Step 3 enumerates direct violation pathways: neighborhood quality/SES (\"Gyms cluster in wealthier, more walkable, more commercially developed areas. Those same neighborhoods have better grocery stores, safer streets, lower pollution, better access to parks\"), physical activity through walkability and active transportation, chronic stress from neighborhood social environment, and health-conscious peer effects."
+        },
+        {
+          "text": "Claude explains the exclusion restriction precisely: the instrument (distance) must affect the outcome (health) ONLY through the treatment (gym membership) \u2014 any direct path or alternative mechanism from distance to health invalidates the IV estimate",
+          "passed": true,
+          "evidence": "Step 2 states: \"Exclusion restriction: Z affects Y only through X. Distance to gym has no direct effect on health except by changing gym membership status.\" Step 3 draws DAGs with explicit direct Z\u2192Y paths and states: \"The first arrow is a direct path from Z to Y that bypasses X. The exclusion restriction is violated.\""
+        },
+        {
+          "text": "Claude explains that a violated exclusion restriction biases the IV estimate in an unknown direction \u2014 it is NOT just a statistical power issue; the estimate may be wrong in sign or magnitude",
+          "passed": true,
+          "evidence": "Step 4: \"An exclusion violation is not a power problem \u2014 more data will not fix it. It is a structural bias problem. The IV estimator converges to: plim(\u03b2_IV) = \u03b2_true + (direct effect of Z on Y) / (effect of Z on X).\" And: \"The direction of the bias is unknown. Whether the IV estimate is too high, too low, or even wrong in sign depends on the sign and magnitude of the direct Z \u2192 Y effect relative to the Z \u2192 X \u2192 Y effect.\""
+        },
+        {
+          "text": "Claude recommends either finding a stronger instrument that more plausibly satisfies exclusion (e.g., lottery-based gym subsidy assignment), or conducting falsification tests (e.g., does distance predict health outcomes in a population that would never join a gym?)",
+          "passed": true,
+          "evidence": "Step 5 falsification test: \"does distance to gym predict health outcomes among people who are definitively unable to use a gym regardless of proximity \u2014 people with severe mobility impairments, residents of long-term care facilities, or people who are incarcerated?\" Step 6 Option A: \"Randomly assign discounts, free memberships, or free trials to some people. Lottery assignment is a clean instrument because it is genuinely independent of neighborhood quality and walkability \u2014 it has no plausible direct effect on health except through the membership it encourages.\""
+        }
+      ]
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "iv-exclusion-violation",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 135.1,
+        "tokens": 18606,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude confirms the colleague is correct \u2014 the exclusion restriction is very likely violated: distance to gym probably affects health through mechanisms other than gym membership (neighborhood walkability, socioeconomic status, park access, food environment, etc.)",
+          "passed": true,
+          "evidence": "The response opens: 'Yes, your colleague is almost certainly right.' and the Bottom Line reaffirms 'Your colleague is correct.' It explicitly lists neighborhood walkability, socioeconomic status, park access, food environment, and other mechanisms as direct paths from distance to health that bypass gym membership."
+        },
+        {
+          "text": "Claude explains the exclusion restriction precisely: the instrument (distance) must affect the outcome (health) ONLY through the treatment (gym membership) \u2014 any direct path or alternative mechanism from distance to health invalidates the IV estimate",
+          "passed": true,
+          "evidence": "Under 'Background', the response states: 'Exclusion restriction: Z affects Y *only through* D' and 'The exclusion restriction fails whenever distance to a gym has *any* direct or indirect path to health that bypasses gym membership.' This precisely captures the requirement."
+        },
+        {
+          "text": "Claude explains that a violated exclusion restriction biases the IV estimate in an unknown direction \u2014 it is NOT just a statistical power issue; the estimate may be wrong in sign or magnitude",
+          "passed": false,
+          "evidence": "The response correctly addresses that this is a bias issue (not a statistical power issue) and provides the formula \u03b2_IV \u2192 \u03b2_true + \u03b4/(first stage coefficient) showing the magnitude distortion. However, it does not acknowledge that the direction of bias is unknown. Instead, it asserts a specific direction: 'the IV estimate will *overstate* the causal effect of gym membership.' The assertion requires acknowledging that the direction of bias is unknown, but the response claims a known upward direction without noting that other violation scenarios could bias in either direction."
+        },
+        {
+          "text": "Claude recommends either finding a stronger instrument that more plausibly satisfies exclusion (e.g., lottery-based gym subsidy assignment), or conducting falsification tests (e.g., does distance predict health outcomes in a population that would never join a gym?)",
+          "passed": true,
+          "evidence": "Under 'Alternative Instruments', the response recommends 'Gym construction lotteries or zoning decisions where timing or location has some quasi-random component' and 'Random price variation from employer wellness programs or insurance-linked gym reimbursements.' Under 'Falsification Tests', it recommends testing whether distance predicts health 'among people who definitely cannot use gyms (e.g., those with severe mobility impairments)' \u2014 directly matching the assertion's example of a population that would never join a gym."
+        }
+      ]
+    },
+    {
+      "eval_id": 13,
+      "eval_name": "interference-sutva",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 99.4,
+        "tokens": 17161,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude confirms the colleague is correct \u2014 user-level randomization for a social/network feature violates SUTVA (the Stable Unit Treatment Value Assumption), which requires no interference between units",
+          "passed": true,
+          "evidence": "Response opens with 'Your colleague is right to flag this' and dedicates Step 2 entirely to SUTVA, stating 'Your feature violates Part 1 spectacularly.' The summary reinforces: 'Your colleague is correct that the SUTVA assumption is violated by this feature.'"
+        },
+        {
+          "text": "Claude explains the specific interference mechanism: control users whose friends are in the treatment arm are affected by the treatment (they interact with treated friends), contaminating the control group and making the treatment/control comparison a partial-network-effect estimate, not a pure direct effect",
+          "passed": true,
+          "evidence": "Step 2 explicitly states: 'A control user's behavior is affected by whether their friends are in treatment or control: if a friend is in treatment and is now more active and sending messages, the control user receives more messages and social stimuli, independent of their own assignment.' Step 4 (Scenario B) further discusses 'Control-group contamination deflated the control baseline.' Step 5 concludes the experiment measured 'the individual treatment effect under partial equilibrium, not the total equilibrium effect under full deployment.'"
+        },
+        {
+          "text": "Claude explains why the +15% does NOT directly extrapolate to full rollout: the observed effect is a blend of direct effects and partial spillovers under 50% penetration; at 100% penetration, spillover dynamics are completely different and the total effect is unknown",
+          "passed": true,
+          "evidence": "Step 4 states: 'Your experiment estimated the ATE under a specific network saturation condition: approximately 50% of each user's social graph is treated... When you do a full rollout, you are asking about \u03c4(1.0). The two quantities can differ substantially and in either direction.' Three scenarios are presented showing direction is ambiguous. The key takeaway says: 'You don't know which scenario you're in. The sign of the bias is genuinely ambiguous without understanding the mechanism.' Summary states the +15% 'cannot be cleanly extrapolated without additional assumptions.'"
+        },
+        {
+          "text": "Claude recommends cluster-randomization (randomize by social graph clusters, geographic markets, or another natural grouping) as the correct design to estimate causal effects for network features, and notes this would allow estimation of both direct and spillover effects",
+          "passed": true,
+          "evidence": "Step 7 explicitly recommends: 'run a cluster-randomized experiment: randomize at the level of social clusters (friend groups, communities) rather than individual users. Within a cluster, everyone is either all-treatment or all-control. This eliminates cross-cluster contamination and gives you clean estimates of \u03c4(1.0) vs. \u03c4(0.0).' An extended saturation experiment design is also described which enables estimation of '\u03c4(s) as a function of saturation \u2014 exactly the quantity you need to extrapolate to full launch,' covering both direct and spillover effects."
+        }
+      ]
+    },
+    {
+      "eval_id": 13,
+      "eval_name": "interference-sutva",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 79.7,
+        "tokens": 14537,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Claude confirms the colleague is correct \u2014 user-level randomization for a social/network feature violates SUTVA (the Stable Unit Treatment Value Assumption), which requires no interference between units",
+          "passed": true,
+          "evidence": "\"Yes, your colleague is right to raise this concern.\" The response dedicates a full section titled \"The Core Problem: SUTVA and Why Your Experiment Violates It,\" explicitly names the no-interference condition, and states the experiment \"almost certainly violates the first condition\" structurally. The summary table also confirms: \"Does your experiment violate SUTVA? Almost certainly yes, on the no-interference condition.\""
+        },
+        {
+          "text": "Claude explains the specific interference mechanism: control users whose friends are in the treatment arm are affected by the treatment (they interact with treated friends), contaminating the control group and making the treatment/control comparison a partial-network-effect estimate, not a pure direct effect",
+          "passed": true,
+          "evidence": "Section \"The Spillover Problem: Your Control Group Isn't Clean\" explains that treated users changed behavior and \"some fraction of those interactions landed on control-group users, who are friends with treated users\" causing their engagement to be lifted by spillover. The response states \"the denominator of your treatment effect estimate (control group mean) is inflated\" and uses formal notation to show the experiment estimated E[Y_i(1,~0.5)] - E[Y_i(0,~0.5)] \u2014 a partial-network-effect estimate, not a pure direct effect."
+        },
+        {
+          "text": "Claude explains why the +15% does NOT directly extrapolate to full rollout: the observed effect is a blend of direct effects and partial spillovers under 50% penetration; at 100% penetration, spillover dynamics are completely different and the total effect is unknown",
+          "passed": true,
+          "evidence": "Section \"What the +15% Actually Estimates\" uses formal potential-outcome notation to show the experiment measured E[Y_i(1,~0.5)] - E[Y_i(0,~0.5)] while full-launch requires E[Y_i(1,1.0)] - E[Y_i(0,0.0)], concluding \"These are different quantities. Your experiment cannot directly identify the full-launch effect without additional modeling assumptions.\" Note: the response argues the true full-launch effect is likely *larger* (not simply unknown), taking a directional stance based on positive network externalities \u2014 a minor divergence from the assertion's \"total effect is unknown\" framing, but the core non-extrapolability claim is clearly made."
+        },
+        {
+          "text": "Claude recommends cluster-randomization (randomize by social graph clusters, geographic markets, or another natural grouping) as the correct design to estimate causal effects for network features, and notes this would allow estimation of both direct and spillover effects",
+          "passed": true,
+          "evidence": "Under \"What You Should Do,\" the response recommends: \"Cluster randomization: Randomize by geographic region, city, or detected social community rather than at the individual user level. This contains interference within clusters and allows valid comparisons between clusters.\" It also recommends \"Graph-cluster randomization: Use community detection (Louvain, spectral clustering, etc.) on your social graph to find densely connected subgraphs. Randomize entire communities to treatment or control.\" Estimation of both direct and spillover effects is addressed via the ego-network saturation design (\"lets you directly estimate the dose-response relationship\") and exposure modeling (\"estimate the saturation-response curve\") recommendations."
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 137.9,
+        "stddev": 46.5439,
+        "min": 58.8,
+        "max": 223.3
+      },
+      "tokens": {
+        "mean": 23768.3077,
+        "stddev": 3729.716,
+        "min": 17161,
+        "max": 29809
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.7731,
+        "stddev": 0.2292,
+        "min": 0.25,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 87.1462,
+        "stddev": 39.3424,
+        "min": 39.1,
+        "max": 140.7
+      },
+      "tokens": {
+        "mean": 14733.5385,
+        "stddev": 3577.5038,
+        "min": 10648,
+        "max": 20250
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.2269",
+      "time_seconds": "+50.8",
+      "tokens": "+9034"
+    }
+  },
+  "notes": [
+    "iteration-5: with_skill achieves 100.0% mean pass rate across 13 evals (54/54 assertions).",
+    "without_skill: 77.3% mean pass rate (42/54 assertions).",
+    "Net delta: +22.7pp (was +19.2pp in iter-4 where with_skill regressed on front-door and iv-exclusion).",
+    "FIXED: front-door-identification \u2014 with_skill now 5/5 (was 4/5 in iter-4). Added explicit complete-mediation condition.",
+    "FIXED: iv-exclusion-violation \u2014 with_skill now 4/4 (was 2/4 in iter-4). Added 'bias direction unknown' principle and never-taker falsification test.",
+    "STILL NON-DISCRIMINATING (0pp delta): did-parallel-trends, att-vs-ate-rollout, rdd-manipulation, interference-sutva \u2014 base model passes all at 100%.",
+    "DISCRIMINATING: rung-identification (+20pp: 5/5 vs 4/5), iv-exclusion-violation (+25pp: 4/4 vs 3/4).",
+    "REMAINING GAP: iv-exclusion without_skill still fails assertion 3 (bias direction unknown) \u2014 base model still characterizes IV bias as directionally upward."
+  ]
+}

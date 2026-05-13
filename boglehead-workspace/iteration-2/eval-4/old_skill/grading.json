@@ -1,0 +1,32 @@
+{
+  "eval_id": 4,
+  "config": "old_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude identifies paying off the 24% credit card debt as the top priority before investing in anything (no employer match means there's no 'free money' competing for the dollars)",
+      "passed": true,
+      "evidence": "With no employer match to chase first, this is your #1 priority. / The Boglehead position here is unambiguous: pay off credit cards before investing in taxable accounts. Full stop. / The absence of an employer match changes the calculus significantly."
+    },
+    {
+      "text": "Claude explicitly explains that 24% interest is a guaranteed return that no investment reliably beats",
+      "passed": true,
+      "evidence": "24% APR is the equivalent of a guaranteed, risk-free, tax-free 24% return. There is no investment in the world that reliably delivers 24% returns. The stock market, long-term, averages something like 7% real after inflation."
+    },
+    {
+      "text": "Claude identifies the HSA as triple-tax-advantaged and notes the user qualifies due to the HDHP — recommending it come after debt payoff",
+      "passed": true,
+      "evidence": "You're enrolled in an HDHP, which makes you eligible for an HSA — and the HSA is arguably the most tax-advantaged account that exists. It's triple-tax-advantaged: [1] Contributions go in pre-tax, [2] Growth is tax-free, [3] Withdrawals for qualified medical expenses are tax-free. / My lean: given how brutal 24% is, prioritize the debt first. Once it's gone...immediately redirect toward maxing the HSA."
+    },
+    {
+      "text": "Claude follows the canonical waterfall order: debt payoff → emergency fund → HSA → IRA → 401k, and does not recommend investing in taxable accounts while high-interest debt exists",
+      "passed": true,
+      "evidence": "Waterfall followed: starter emergency fund (already covered with $3,000) → credit card debt payoff → then post-debt: HSA first → Roth IRA → 401k. No recommendation to invest in taxable accounts while debt exists; the taxable brokerage is only mentioned as a last-resort remainder after maxing tax-advantaged accounts post-debt."
+    },
+    {
+      "text": "Claude does NOT split the $1,200 between debt payoff and investing in the market as if they are comparable uses of capital",
+      "passed": true,
+      "evidence": "Right now: put your $1,200/month toward the credit card debt. / The monthly allocation shown ($358 HSA, $583 Roth IRA, remainder to 401k) is explicitly framed as the post-debt plan once the $18,000 is eliminated (~18 months from now)."
+    }
+  ]
+}

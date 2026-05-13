@@ -1,0 +1,88 @@
+{
+  "expectations": [
+    {
+      "text": "Claude names or describes the Table 2 Fallacy — that control variable coefficients in a regression designed to identify the focal treatment effect are not themselves causally identified",
+      "passed": true,
+      "evidence": "The opening sentence names it directly: 'What you are describing is a textbook instance of the Table 2 Fallacy.' Section 2 ('The Table 2 Fallacy') elaborates: controls 'were included for one purpose: to satisfy the back-door criterion for the treatment effect' and 'The coefficient on country does not estimate the causal effect of country on conversion.' The Westreich & Greenland (2013) citation is also provided."
+    },
+    {
+      "text": "Claude explains structurally why: the adjustment set was chosen to block back-door paths from treatment to conversion, not from country to conversion — these are different back-door sets requiring potentially different controls",
+      "passed": true,
+      "evidence": "Section 3 states: 'That conditioning set was chosen to identify treatment, not to identify country. To identify country's causal effect on conversion, you would need to close all back-door paths into country — a completely different adjustment set.' Section 5 reinforces: 'The controls you chose for treatment identification are not the right set for country identification.'"
+    },
+    {
+      "text": "Claude notes that some controls in the model (e.g., browser) could be mediators on the country → conversion path, meaning the country coefficient might be partial (not total) and would be biased by conditioning on its own mediators",
+      "passed": true,
+      "evidence": "Section 5, point 2 reads: 'In fact, some of them (treatment itself, browser, time-of-day) could be mediators or descendants of country — controlling for them would block part of the country → conversion path.' Browser is explicitly named as a potential mediator. The mechanism (blocking part of the causal path by conditioning on a mediator) is correctly described, which is the source of downward bias in the country coefficient."
+    },
+    {
+      "text": "Claude does NOT confirm that the country coefficient measures country's causal effect on conversion",
+      "passed": true,
+      "evidence": "The response opens with 'No' and consistently denies causal interpretability. The summary table in Section 6 explicitly marks Country as 'No' for 'Causal interpretation valid?' with the reason 'Identified only as a conditional association, adjustment set was chosen for treatment, not country.' There is no passage in the response that affirms causal interpretability of the country coefficient."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": 0,
+    "total_steps": 1,
+    "errors_encountered": 0,
+    "output_chars": 7356,
+    "transcript_chars": 7356
+  },
+  "timing": {
+    "executor_duration_seconds": 58.8,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 58.8
+  },
+  "claims": [
+    {
+      "claim": "The Table 2 Fallacy was named by Westreich and Greenland (2013)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Westreich, D., & Greenland, S. (2013) 'The Table 2 Fallacy: Presenting and Interpreting Confounder and Modifier Coefficients' in American Journal of Epidemiology is a real and correctly cited paper that coined this terminology."
+    },
+    {
+      "claim": "Hünermund and Louw (2024) showed that a control variable's coefficient can vary wildly across different valid adjustment sets even when the focal coefficient is stable",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Hünermund, P., & Louw, B. (2024) 'On the Nuisance of Control Variables in Causal Regression Analysis' in Organizational Research Methods is a real paper; the claim about instability of control coefficients across valid adjustment sets is a key finding of that work."
+    },
+    {
+      "claim": "Country coefficient is 'large and significant because country is a strong predictor of conversion'",
+      "type": "quality",
+      "verified": false,
+      "evidence": "This is a conditional claim about the user's scenario. The response reasonably infers this from context (why else would country be a prominent coefficient?) but it is not strictly verifiable from the prompt alone. It is plausible and does not mislead the reader."
+    },
+    {
+      "claim": "The treatment coefficient is cleanly identified if the A/B test was clean (even after conditioning on country)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "With randomized treatment, conditioning on pre-treatment covariates like country cannot open new back-door paths; the claim is correct and consistent with standard causal inference theory."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "reason": "Expectation 3 checks that browser is named as a potential mediator, but the response's claim is more nuanced — it says browser 'could be' a mediator or descendant. A stronger assertion would require Claude to commit to at least one concrete structural reason why browser is likely a mediator (e.g., 'country determines device/browser ecosystem'), not just flag it as a possibility. The current wording passes even if Claude only hedges vaguely."
+      },
+      {
+        "reason": "No assertion checks whether Claude correctly distinguishes the 'partial effect' framing from the 'biased estimate' framing. The response identifies that conditioning on a mediator blocks part of the path (correct mechanism), but never explicitly says the resulting coefficient is biased downward or is a partial effect rather than a total effect. An assertion checking that nuance would discriminate between a surface-level and a technically precise answer."
+      },
+      {
+        "reason": "No assertion checks whether Claude recommends an alternative approach to actually estimate country's causal effect. The response does provide this (DiD, RD, IV in Section 5), which is genuinely useful, but it goes entirely unchecked. A passing answer could omit this entirely and still satisfy all four assertions."
+      }
+    ],
+    "overall": "The four assertions are well-targeted and correctly discriminate. The main gap is that Expectation 3 is satisfied by a weak hedge ('could be mediators'), when the mechanistic reasoning deserves a stronger check. Adding an assertion about the alternative identification strategy for country and about explicit bias direction would tighten the eval considerably."
+  }
+}

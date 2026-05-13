@@ -1,0 +1,41 @@
+The short answer: invest the $60,000 now. Waiting for a crash is market timing, and market timing doesn't work — not for you, not for the hedge fund manager on CNBC predicting a 30% correction, not for anyone doing it consistently.
+
+---
+
+**Why "wait for a correction" almost always loses**
+
+The market has looked "overvalued" by valuation metrics for most of the past 30 years. Investors who acted on that signal in 1996, 2012, 2017, or 2019 missed enormous bull runs while sitting in cash earning money-market rates. The crash they waited for either came years late, came briefly and recovered before they felt safe getting back in, or never came at all.
+
+Vanguard's research on lump sum vs. dollar-cost averaging found that lump sum beats DCA about two-thirds of the time historically, across multiple countries and time periods. The reason is simple: markets go up more than they go down, so cash sitting on the sideline has a negative expected value relative to being invested.
+
+Peter Lynch put it plainly: "Far more money has been lost by investors preparing for corrections than has been lost in corrections themselves."
+
+Here's the trap in your specific framing: even if a 20–30% correction does arrive, you still have to decide *when* to get in. Markets don't ring a bell at the bottom. The recovery typically starts before it feels safe — by the time the headlines shift from "crash" to "recovery," a significant portion of the bounce has already happened. Missing just the 10 best trading days in any given decade typically cuts your long-run return roughly in half.
+
+**What "everyone says a crash is coming" actually signals**
+
+When widespread consensus exists that a crash is imminent, that view is already reflected in prices. Markets are made up of millions of participants, including professionals with more information and faster execution than either of us. If a crash were reliably predictable, the professional money would have already moved to avoid it — and in doing so, would have caused the prices to adjust. The fact that the market is at all-time highs despite widespread fear of a crash is itself information.
+
+**What to actually do with $60,000**
+
+Lump sum, invested now, in a simple allocation appropriate to your time horizon. If you don't have one already, a three-fund portfolio is the standard Boglehead starting point:
+
+- US Total Stock Market (VTI / VTSAX)
+- Total International (VXUS / VTIAX)
+- Total Bond Market (BND / VBTLX)
+
+The bond allocation depends on your time horizon and risk tolerance — if this money is for retirement 20+ years away, a majority in stocks is appropriate. A target-date index fund (Vanguard's VTTSX or equivalent) is also a perfectly Boglehead one-decision answer.
+
+**If you genuinely can't sleep through a crash: DCA as a behavioral compromise**
+
+This is the one concession the Boglehead community makes to human psychology. If lump-summing $60,000 today would cause you to panic-sell during a 40% drawdown — which would be catastrophic — then spreading it out over 6–12 months via automatic monthly investments is a reasonable behavioral solution. You'll probably leave a little return on the table statistically, but a DCA plan you can hold through volatility beats a lump-sum position you bail on at the bottom.
+
+What you should *not* do is wait indefinitely for a specific entry price. That's not DCA — that's speculating on a correction that may or may not materialize, while cash drag compounds against you every month.
+
+**The real question to ask yourself**
+
+What's your asset allocation — how much volatility can you tolerate without selling? A portfolio that lets you stay invested through a 50% drawdown is the right portfolio for you, even if a more aggressive allocation has higher expected returns. Design the allocation first, then invest.
+
+---
+
+This isn't personalized financial advice. For a $60,000 decision with specific tax considerations, an advice-only fee-only fiduciary or the bogleheads.org forum (free, knowledgeable, staffed by people who've seen every flavor of "should I wait for a crash" post) are good places to pressure-test a plan.

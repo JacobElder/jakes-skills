@@ -1,0 +1,74 @@
+The urge to wait for a correction is one of the most common — and most expensive — instincts in investing. Let me give you the Boglehead view on this directly, because it's one of the clearest cases where the evidence points in a specific direction.
+
+---
+
+**The short answer: Don't wait. Invest the $60,000 now, or if you genuinely can't stomach it, spread it over 6–12 months as a behavioral compromise — but don't sit in cash waiting for a 20–30% drop that may or may not come.**
+
+---
+
+## Why waiting almost always loses
+
+Here's the core problem with the "wait for a crash" strategy: the market has been "overvalued," "at all-time highs," and "due for a correction" for most of the past 30 years. People who acted on that intuition in 1995, 1997, 2012, 2016, 2019, or 2023 missed enormous gains.
+
+A few concrete points:
+
+**All-time highs are normal, not ominous.** A healthy, growing market sets new all-time highs constantly. By definition, a market that trends upward over time will spend a lot of time at or near its highs. If you only invest after a 20–30% correction, you'd have been waiting a very long time between opportunities — and sitting in cash the whole time.
+
+**You can't predict when the crash comes — or when the recovery starts.** Even if a correction does happen, you now have a second timing problem: when do you get back in? Markets typically start their sharpest recoveries before people feel safe. Missing the 10 best trading days in any given decade roughly halves your return. The people who sold at the March 2020 COVID bottom and waited for "things to calm down" missed one of the fastest recoveries in market history.
+
+**Vanguard has actually studied this.** In a study comparing lump-sum investing vs. dollar-cost averaging a windfall, lump sum beat DCA about two-thirds of the time — and beat "wait for a crash" at an even higher rate. The reason: markets go up more than they go down, so time in the market works in your favor.
+
+Peter Lynch put it well: "Far more money has been lost by investors preparing for corrections than has been lost in corrections themselves."
+
+---
+
+## What "waiting for a 20–30% drop" actually requires
+
+Let's think through the mechanics of your plan:
+
+1. The market needs to drop 20–30% from current levels. That's a significant bear market, not a routine pullback.
+2. You need to correctly identify the bottom (or near-bottom) as the right moment to buy — while every news headline is screaming that things are worse than anyone imagined.
+3. You need to actually pull the trigger at that moment, when the prevailing emotion is fear, not confidence.
+
+Step 3 is where almost everyone fails. The people who talk about "buying the dip" in calm markets overwhelmingly don't buy when the dip actually arrives — because by then it feels like a freefall, not an opportunity. The correction that feels like a buying opportunity in theory feels like the beginning of a depression in practice.
+
+---
+
+## The right frame: risk tolerance, not timing
+
+The Boglehead approach doesn't say "go all-in regardless of your nerves." It says: **design a portfolio you can hold through a 40–50% drawdown without selling, and then invest that portfolio today.**
+
+That's a meaningfully different question. If the idea of your $60,000 dropping to $40,000 or $36,000 on paper — temporarily — causes you to lose sleep or sell at the bottom, then 100% stocks may not be your correct allocation. A 70/30 or 80/20 stock/bond split would soften that volatility at the cost of some expected return.
+
+But the answer to "I'm nervous about stocks at all-time highs" is not "wait in cash." It's "figure out the right stock/bond allocation for your actual risk tolerance, and put it to work now."
+
+---
+
+## What I'd actually recommend
+
+**Before anything else: a quick priority check.**
+
+- Do you have a 3–6 month emergency fund in a high-yield savings account? If not, keep enough of this $60k to complete it.
+- Is there any high-interest debt (credit cards, anything above ~7%)? Pay that first — it's a guaranteed return.
+- Have you captured your full employer 401(k) match? If not, adjust your contribution rate before putting this in taxable.
+- Is there room in an IRA ($7,000/year) or maxing out a 401(k) ($23,500 in 2025) with this money? Tax-advantaged space beats taxable every time.
+
+Assuming those are covered and you're looking at a taxable brokerage:
+
+**Option A (lump sum):** Invest the full $60,000 today into a broad index fund (VTI for US total market, or VT if you want global in one fund). This is the statistically better bet roughly two-thirds of the time.
+
+**Option B (DCA over 6 months):** Invest $10,000/month for 6 months. This is a perfectly reasonable behavioral compromise — you get most of the market exposure while reducing the regret risk of investing everything right before a drop. You'll lose a small amount of expected return compared to lump sum, but you'll sleep better, and sleeping better means you're less likely to panic-sell if things do go sideways.
+
+**What's off the table:** sitting in cash for months or years waiting for a 20–30% correction. That's a timing strategy, and timing strategies don't work — not for you, not for your broker, not for the guy on YouTube who says a crash is coming.
+
+---
+
+## One more thing
+
+The sentiment "everyone says a crash is coming" is actually weak evidence that a crash is imminent. Markets are priced by millions of participants who have already incorporated those fears. If professional analysts and fund managers widely expect a correction, that expectation is already partly reflected in current prices. Markets don't crash because everyone knows they should — they crash when something happens that people didn't expect.
+
+"Stay the course" isn't just a slogan. It's the empirically supported behavior. The people who built wealth in the market over the past 50 years weren't the ones who timed it right — they were the ones who showed up consistently, didn't panic when things got ugly, and let compounding do its work.
+
+---
+
+*This isn't personalized financial advice — I don't know your full tax situation, account structure, or time horizon. If you want to pressure-test a specific plan, the bogleheads.org forum is free and staffed by people who've thought about this deeply for decades. Worth a post if the stakes feel high.*

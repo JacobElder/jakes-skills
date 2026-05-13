@@ -1,0 +1,11 @@
+{
+  "eval_id": 7,
+  "eval_name": "front-door-identification",
+  "prompt": "I want to study whether technical skills training causes higher performance ratings. My main concern is that there's an unmeasured confounder \u2014 employee ambition \u2014 that simultaneously causes who gets sent to training and drives performance ratings independently. I have no way to observe ambition. However, I do have data on 'skills applied on the job,' which measures whether the training content actually showed up in the employee's daily work. This variable sits between the training and the performance outcome. Does the unmeasured confounder mean this effect is unidentifiable?",
+  "assertions": [
+    "Claude does NOT just conclude 'not identifiable because of unmeasured confounder'",
+    "Claude recognizes the potential for front-door identification via the observed mediator 'skills applied on the job'",
+    "Claude describes the front-door criterion or the logic behind it: estimate the effect of training on skills-applied (unconfounded), then estimate the effect of skills-applied on performance (adjusting for training as a back-door block), then combine",
+    "Claude notes the key assumption: ambition (the unmeasured confounder) must not directly cause skills-applied independent of the training \u2014 i.e., ambition affects performance only through the training \u2192 skills-applied path or through paths that can be blocked"
+  ]
+}

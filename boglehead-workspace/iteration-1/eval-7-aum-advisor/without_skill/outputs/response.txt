@@ -1,0 +1,81 @@
+QUESTION: I've been with a financial advisor for 6 years. They charge 1% of assets under management. I have $350,000 with them. They've done a solid job — my portfolio is in low-cost Vanguard index funds. Is this a good deal?
+
+RESPONSE:
+
+Short answer: No, it's probably not a good deal — and understanding why requires looking at what you're actually paying for versus what you're getting.
+
+---
+
+WHAT YOU'RE ACTUALLY PAYING
+
+At $350,000 with a 1% AUM fee, you're paying $3,500 per year right now. But that number will grow as your portfolio grows — which is the key issue with AUM fees.
+
+If your portfolio grows to $700,000, you'll be paying $7,000/year.
+If it reaches $1,000,000, you'll be paying $10,000/year.
+Over a 20–30 year retirement horizon, the cumulative cost is enormous.
+
+The compounding effect cuts both ways: your investments compound upward, but so do the fees dragging on that growth. A commonly cited estimate is that a 1% annual fee can reduce your ending portfolio value by 20–25% over 30 years, compared to a fee-free equivalent.
+
+---
+
+THE CORE PROBLEM: WHAT ARE YOU PAYING FOR?
+
+This is the critical question. You said your portfolio is in low-cost Vanguard index funds. That's actually a red flag for value — not because index funds are bad (they're excellent), but because:
+
+1. Index funds are designed to be self-managing. They don't require active stock-picking, market timing, or ongoing research. A three-fund portfolio of Vanguard index funds is something you could set up yourself in an afternoon.
+
+2. The advisor's core job — selecting investments — is already outsourced to Vanguard. The advisor is essentially getting paid 1% to hold a portfolio that Vanguard manages for 0.03–0.15% in fund expense ratios.
+
+3. Rebalancing is straightforward. With index funds, annual rebalancing takes less than an hour and can be done by nearly anyone following a simple rule (e.g., return to target allocation).
+
+If your advisor is primarily providing portfolio management via index funds, you are significantly overpaying.
+
+---
+
+WHAT A 1% ADVISOR MIGHT LEGITIMATELY PROVIDE
+
+There are situations where a financial advisor earns their fee. Ask yourself honestly whether your advisor does any of the following:
+
+- Comprehensive financial planning: retirement projections, Social Security optimization, withdrawal sequencing in retirement, estate planning coordination
+- Tax optimization: tax-loss harvesting, Roth conversion strategies, asset location (placing bonds in tax-advantaged accounts, stocks in taxable)
+- Behavioral coaching: keeping you invested during market crashes when you'd otherwise panic-sell (this has real, documented value)
+- Major life event guidance: divorce, inheritance, business sale, disability, death of a spouse
+- Insurance and estate review: evaluating life insurance, long-term care, beneficiary designations
+
+If your advisor provides robust, ongoing service in several of these areas, the 1% may be more defensible — though still worth shopping.
+
+If your interactions are mostly quarterly statements and an annual phone call, you're overpaying substantially.
+
+---
+
+WHAT YOU SHOULD DO INSTEAD (LIKELY)
+
+Option 1: Do it yourself
+A simple three-fund portfolio (US total market, international, bonds) with Vanguard, Fidelity, or Schwab costs almost nothing and can be managed in a few hours per year. If you're comfortable with this, you could save $3,500+ annually — money that stays invested and compounds.
+
+Option 2: Fee-only financial planner (one-time or hourly)
+Services like the Garrett Planning Network or NAPFA-registered advisors offer one-time or hourly financial planning. You pay $2,000–$5,000 for a comprehensive financial plan, then implement it yourself. Repeat every few years or at major life events. This gives you professional guidance without the ongoing 1% drag.
+
+Option 3: Lower-cost ongoing advisor
+Some advisors charge flat retainer fees ($2,000–$6,000/year regardless of assets) or lower AUM percentages (0.25–0.5%). As your portfolio grows, these structures become far more cost-effective than 1% AUM.
+
+Option 4: Robo-advisors
+Betterment, Wealthfront, and Vanguard Digital Advisor offer automated portfolio management at 0.15–0.35% annually — a fraction of 1%. These are appropriate if you want some automation but don't need comprehensive planning.
+
+---
+
+THE LOYALTY FACTOR
+
+Six years is a long time, and there's a natural reluctance to change. But sunk costs shouldn't drive future decisions. The question is: going forward, is this the best use of $3,500+ per year?
+
+Also worth noting: the fact that you're asking this question suggests you may already sense the answer. Trust that instinct.
+
+---
+
+BOTTOM LINE
+
+Your advisor put you in good investments — that's genuinely positive. But good investments don't justify a 1% ongoing fee when you're in passive index funds. You're essentially paying for execution of a strategy you could run yourself, or hire someone for a one-time flat fee to set up.
+
+Before making a change, have an honest conversation with your advisor: ask them to clearly articulate what ongoing value they're providing beyond investment selection. If the answer is compelling, stay. If it's vague, it may be time to move on.
+
+For most people with a straightforward financial situation and a comfortable relationship with basic financial concepts, the DIY or fee-only planner route will leave them significantly wealthier over time.

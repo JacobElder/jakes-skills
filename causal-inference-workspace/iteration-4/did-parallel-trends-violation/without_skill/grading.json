@@ -1,0 +1,30 @@
+{
+  "run_id": "did-parallel-trends-violation-without_skill",
+  "eval_id": 5,
+  "eval_name": "did-parallel-trends-violation",
+  "config": "without_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude confirms the reviewer is correct — TWFE with staggered adoption and heterogeneous treatment effects can be biased even when parallel trends holds for every cohort",
+      "passed": true,
+      "evidence": "Response opens with 'Your reviewer is correct' and explicitly states: 'TWFE can be biased even when parallel trends holds *exactly* if there is any cohort-level or time-varying heterogeneity in treatment effects.' The bottom line section reinforces: 'TWFE is not the right estimator for staggered rollouts even when parallel trends holds.'"
+    },
+    {
+      "text": "Claude explains the core mechanism: TWFE uses already-treated units as controls for later-treated units ('forbidden comparisons'), which is only unbiased if treatment effects are constant across cohorts and over time",
+      "passed": true,
+      "evidence": "Response explicitly describes the third comparison type as dangerous: 'Early-treated vs. late-treated — it uses early-treated units *as a control group* for the late-treated units, even though those early-treated units are already treated.' It further explains this produces bias 'when treatment effects are heterogeneous across cohorts...or dynamic (effects grow or change over time).'"
+    },
+    {
+      "text": "Claude names or describes the Goodman-Bacon decomposition problem — that TWFE is a weighted average of 2×2 DiDs, some receiving negative weights when later-cohort treatment effects differ from early-cohort effects",
+      "passed": true,
+      "evidence": "Response states TWFE 'implicitly decomposes into a weighted average of pairwise difference-in-differences comparisons,' describes 'Negative weights (a red flag)' in the Goodman-Bacon decomposition diagnostic step, and cites 'Goodman-Bacon (2021). Difference-in-differences with variation in treatment timing.' The negative weights arising from treated-vs-treated comparisons is explicitly discussed."
+    },
+    {
+      "text": "Claude recommends a heterogeneity-robust DiD estimator (e.g., Callaway-Sant'Anna, Sun-Abraham, or Borusyak-Jaravel-Spiess) rather than standard TWFE",
+      "passed": true,
+      "evidence": "Response dedicates a full section 'Better Estimators to Use Instead' recommending Callaway & Sant'Anna (2021) as the 'Recommended Starting Point,' Sun & Abraham (2021), and de Chaisemartin & D'Haultfoeuille (2020). The bottom line explicitly states: 'use a heterogeneity-robust DiD estimator (Callaway & Sant'Anna is the most widely used and cited).'"
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "expectations": [
+    {
+      "text": "Claude clearly states that feature importance in a predictive model does not imply that intervening on that feature will change the outcome",
+      "passed": true,
+      "evidence": "Response states: 'Feature importance tells you which variables were most useful for making accurate predictions. That is a very different question from \"which variables, if we change them, will reduce churn?\"' and later: 'Feature importance... answers the question: \"How much does knowing this feature help the model predict the outcome?\" It does not answer: Does changing this feature change the outcome?' The shoe-size/reading-ability analogy reinforces this point explicitly."
+    },
+    {
+      "text": "Claude identifies last_login_days as a downstream indicator — customers stop logging in BECAUSE they are already disengaging, not the other way around — and therefore explicitly states it is NOT a valid intervention target: re-engagement campaigns that move the login metric may not reduce churn because they address the symptom, not the cause. Claude does NOT label it 'potentially actionable' or give it 'medium causal plausibility' without flagging this critical caveat.",
+      "passed": false,
+      "evidence": "The response hedges on last_login_days rather than calling it a downstream indicator. It presents two symmetrical 'stories' (Story A: re-engagement could work; Story B: both are driven by low perceived value) and then places the feature in the recommendations table as a 'Possible lever' that 'Needs causal validation.' The expectation requires Claude to lean toward the downstream/symptom interpretation and explicitly say it is NOT a valid intervention target; instead the response treats it as an open question with genuine upside potential. The table entry 'Possible lever' is exactly the kind of label the expectation says should not appear without a strong caveat that the causal direction most likely runs churn → low logins, not low logins → churn."
+    },
+    {
+      "text": "Claude explicitly invokes do-operator reasoning: observing P(churn | last_login_days = 30) — the churn rate among users who happen to log in every 30 days — is not the same as P(churn | do(last_login_days = 30)) — what would happen if you forced users to log in every 30 days. The model captures the former; marketing needs the latter.",
+      "passed": false,
+      "evidence": "The response never mentions the do-operator, do-calculus, or the formal distinction between P(Y|X) and P(Y|do(X)). It discusses confounding and recommends running experiments, but does not use the interventional distribution framing that this expectation requires. The closest passage is 'Every feature's importance reflects the correlation structure in that data, including all the confounding, reverse causation, and mediation that exists in the real world' — which gestures at the idea but does not invoke do-operator notation or reasoning."
+    },
+    {
+      "text": "Claude recommends building a causal DAG and identifying a proper estimation strategy before deciding where to intervene — and does NOT recommend targeting features simply because they have high importance scores",
+      "passed": false,
+      "evidence": "The response does not mention building a causal DAG at any point. Its recommended workflow goes directly from 'classify signals vs. levers' to 'run experiments' to 'use causal inference methods (PSM, IV, DiD)' — the foundational step of drawing a DAG to encode causal assumptions and identify valid adjustment sets is absent. The second half of the expectation is satisfied: the response clearly does not recommend targeting features by importance score alone and explicitly warns against it."
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 3,
+    "total": 4,
+    "pass_rate": 0.25
+  },
+  "execution_metrics": {
+    "tool_calls": null,
+    "total_tool_calls": null,
+    "total_steps": null,
+    "errors_encountered": 0,
+    "output_chars": 4800,
+    "transcript_chars": null
+  },
+  "timing": {
+    "executor_duration_seconds": 93.9,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 93.9
+  },
+  "claims": [
+    {
+      "claim": "92% AUC is strong and the model can reliably identify who is at risk",
+      "type": "factual",
+      "verified": false,
+      "evidence": "This figure presumably comes from the eval prompt; it is accepted as given in the response. The response treats it as context rather than a claim it generated, so it cannot be independently verified from the outputs alone."
+    },
+    {
+      "claim": "Feature importance from tree-based models, permutation importance, and SHAP all measure the same thing: how much knowing a feature helps prediction",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Accurate characterization. All three measure predictive contribution in observational data, not causal effect."
+    },
+    {
+      "claim": "Making support harder to access would suppress the churn signal but increase actual churn",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Logically sound and a genuine causal insight — suppressing the measurement of a problem does not fix the problem."
+    },
+    {
+      "claim": "Propensity score matching, IV, and DiD are appropriate causal inference methods for this setting",
+      "type": "quality",
+      "verified": true,
+      "evidence": "These are standard observational causal inference approaches. Recommending them without first constructing a DAG to verify assumptions (e.g., valid instruments for IV) is incomplete but not wrong."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Claude identifies last_login_days as a downstream indicator...",
+        "reason": "The assertion is doing important work but could be more precise about what 'downstream indicator' means. A response that says 'the causal direction is ambiguous' technically acknowledges uncertainty, yet still lands on 'possible lever' — which is arguably the wrong default prior. The assertion should specify that Claude must state the most likely causal direction (logins are a lagging symptom) rather than treating both directions as equally plausible, and that 'possible lever' without a strong caveat is a failing answer."
+      },
+      {
+        "assertion": "Claude recommends building a causal DAG...",
+        "reason": "The assertion bundles two separate things: (a) recommend a DAG, and (b) do not recommend feature-importance-based targeting. These should be separate assertions. In this run, (b) clearly passes and (a) clearly fails, but the compound assertion forces a single verdict. Splitting them would give cleaner signal."
+      },
+      {
+        "reason": "No assertion checks whether Claude addresses the distinction between using the model for *targeting* (who to intervene on) vs. *intervention selection* (what to do). The response correctly draws this line — 'The model tells you who to worry about. Figuring out what to do about it requires additional work' — and this is a high-value insight that goes unchecked. An assertion covering it would reward responses that make this distinction explicit."
+      },
+      {
+        "reason": "No assertion tests whether Claude avoids recommending a discount-to-upgrade intervention for pricing_tier without causal validation. The response correctly flags the self-selection confound, but the eval does not check this — a weaker response could sail through by only handling last_login_days correctly."
+      }
+    ],
+    "overall": "The evals are directionally well-targeted but miss two high-value causal concepts (do-operator and DAG construction) that are central to the skill being tested. The last_login_days assertion is the most discriminating of the four; tightening its language around 'most likely causal direction' rather than 'any acknowledgment of ambiguity' would prevent a hedging response from passing."
+  }
+}
