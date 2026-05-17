@@ -1,0 +1,32 @@
+{
+  "eval_id": 10,
+  "config": "old_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude pushes back on the 'let your winners run' framing — identifying it as a rationalization for holding a dangerously concentrated position, not an investment principle",
+      "passed": true,
+      "evidence": "Dedicated section titled \"'Let your winners run' is a real thing. It's also frequently wrong.\" explicitly states the logic \"does not transfer to a single stock\" and \"you're not managing a portfolio — you're making a single-company bet.\" The advisor section further labels it \"a classic advisory deflection that keeps assets under management.\""
+    },
+    {
+      "text": "Claude directly addresses the tax hesitancy argument — explaining that the capital gains tax is the cost of having gains, not a reason to hold an undiversified position indefinitely",
+      "passed": true,
+      "evidence": "Response states directly: \"the tax is the cost of diversifying, not a reason to stay concentrated\" and reframes the decision as whether you would buy $200k of Tesla today at 60% of portfolio from scratch, not whether you want to pay the tax."
+    },
+    {
+      "text": "Claude identifies the 60% single-stock concentration as the primary risk — not the tax bill",
+      "passed": true,
+      "evidence": "Section titled \"The concentration risk is the bigger issue, not the tax.\" Closes with: \"The tax is a known, capped cost. The downside of staying concentrated is open-ended.\""
+    },
+    {
+      "text": "Claude recommends diversifying out of the concentrated Tesla position, even if done gradually over multiple tax years",
+      "passed": true,
+      "evidence": "Option 1 in the \"What to actually do\" section recommends selling \"in tranches over 1–3 years\" and to \"Sell a portion each year, staying within your preferred tax bracket.\" Option 4 recommends accepting the tax and redeploying into VTI/VXUS/BND."
+    },
+    {
+      "text": "Claude does NOT validate the advisor's 'let your winners run' advice or suggest that the tax concern justifies holding the concentrated position",
+      "passed": true,
+      "evidence": "The response never endorses the advisor's framing. It calls the combined 'let winners run' + tax concern argument \"a classic advisory deflection\" and explicitly states the tax bill is \"not a reason to stay concentrated\" or to do \"nothing because of the tax bill while the concentration risk continues to compound.\""
+    }
+  ]
+}

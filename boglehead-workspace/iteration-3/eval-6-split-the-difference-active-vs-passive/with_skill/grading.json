@@ -1,0 +1,27 @@
+{
+  "eval_id": 6,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude recommends switching entirely to the Vanguard 500 Index — not splitting or keeping any portion in AGTHX",
+      "passed": true,
+      "evidence": "Response states 'Move everything to the Vanguard 500 Index Fund' and concludes 'switching entirely to the low-cost index fund is the straightforward Boglehead answer.' No partial allocation to AGTHX is suggested anywhere."
+    },
+    {
+      "text": "Claude explains why the 5-year outperformance record is not a reliable predictor of future results (e.g., survivorship bias, style tailwinds, regression to mean)",
+      "passed": true,
+      "evidence": "Response cites SPIVA data showing funds that outperformed in one 5-year window mostly underperform in the next ('essentially zero predictive power'), identifies AGTHX's returns as a 'growth tilt catching a favorable wind' (style tailwinds), and notes 'the probability of a given active fund outperforming the index over 20+ years is well under 20%.' Survivorship bias is implicitly addressed through the SPIVA framing, and mean-reversion is covered by the predictive-power argument."
+    },
+    {
+      "text": "Claude directly rejects 'diversifying management styles' as a flawed concept — AGTHX and the index hold the same stocks, so splitting just creates a blended expense ratio",
+      "passed": true,
+      "evidence": "Response says 'No. And this framing — \"diversifying management styles\" — is worth pushing back on directly.' It then explains AGTHX's top holdings (Apple, Microsoft, Amazon, Meta, Alphabet) are 'the same names dominating the S&P 500' with ~0.95+ correlation, and explicitly calculates that a 50/50 split yields a blended expense ratio of 0.33% — 'worse than just going all-index.'"
+    },
+    {
+      "text": "Claude does NOT suggest keeping half in AGTHX as a reasonable compromise or hedge",
+      "passed": true,
+      "evidence": "Response explicitly calls out the 'keep half' framing as 'the compromise position that keeps expensive funds collecting fees they wouldn't otherwise earn' and tells the user to 'Make a clean decision based on the evidence.' No hedged or partial recommendation is offered."
+    }
+  ]
+}

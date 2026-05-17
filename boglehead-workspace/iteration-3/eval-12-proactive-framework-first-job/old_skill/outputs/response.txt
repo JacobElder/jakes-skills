@@ -1,0 +1,93 @@
+Great timing to be asking this question. At 26 with a real income, a manageable debt load, and access to a 401(k), you're in a genuinely good position. Let's walk through exactly where your money should go, in priority order.
+
+---
+
+## The Boglehead Funding Waterfall Applied to Your Situation
+
+### Step 1: Make minimum debt payments
+You're already doing this (presumably), so check.
+
+### Step 2: Build a starter emergency fund — you're close
+You have $2,000 already. The target here is roughly $1,000–1 month of expenses as a bare minimum so you're not forced to take on new debt if something breaks. You're likely there. Keep it in a high-yield savings account (HYSA) — something like Marcus, Ally, or a money market fund at Fidelity/Vanguard. Do not put your emergency fund in stocks.
+
+### Step 3: Capture your full 401(k) employer match — do this first
+Before paying extra on your student loans, before maxing an IRA, before anything else: find out if your employer matches 401(k) contributions and contribute enough to get every dollar of that match. If your employer matches 50% of contributions up to 6% of salary, contribute at least 6%. That's a guaranteed 50% return on your money — nothing else comes close. This is the clearest "free money" in personal finance.
+
+Log into your HR portal and find the exact match formula. Then set your contribution rate accordingly.
+
+### Step 4: Your student loans — the key question is the interest rate
+Your loans are at 5.5%. The Boglehead threshold for "pay off aggressively before investing further" is roughly 7%+. Below that, the math favors investing (especially in tax-advantaged accounts) over aggressive paydown, because expected long-run equity returns (~7% real, ~10% nominal) are likely to exceed the after-tax cost of the debt.
+
+5.5% is a judgment call — it's in what Bogleheads call the "gray zone" (roughly 4–7%). A reasonable approach:
+
+- Don't make extra payments on the loans beyond the minimum until you've captured the full 401(k) match and maxed an IRA.
+- Once you've done those, you can decide whether to pay down the loan faster or continue investing in taxable. Both are defensible.
+- If the psychological weight of the debt bothers you, paying it off faster has real value even if it's not the pure math-optimal choice. Boglehead forums acknowledge this.
+
+The one thing not to do: make extra loan payments while leaving the 401(k) match on the table. That's giving up free money to pay down 5.5% debt — a bad trade.
+
+### Step 5: Max your IRA
+After capturing the match, the next best use of your money is an IRA. You can contribute up to $7,000/year (2025 limit). The question is Roth vs. Traditional:
+
+**At $75,000 gross income at 26, Roth is almost certainly the right call.** Here's why:
+
+- Your current marginal federal tax rate is likely 22% (single filer, standard deduction puts you solidly in the 22% bracket).
+- At 26, you have 35+ years of compounding ahead of you. Roth growth is entirely tax-free.
+- Most people's income rises as their career progresses. Locking in contributions at a 22% rate now and paying zero tax on withdrawals in retirement is almost always a good deal.
+- Roth IRA contributions (not earnings) can be withdrawn penalty-free at any time, so there's optionality if you ever truly need the money.
+
+Open a Roth IRA at Fidelity, Vanguard, or Schwab. (Fidelity and Schwab are slightly more user-friendly for newcomers; Vanguard has historically been the Boglehead default but has caught less praise for its interface in recent years.)
+
+### Step 6: Contribute more to the 401(k) up to the annual limit
+After maxing the IRA ($7,000/year), direct any remaining savings capacity back into the 401(k) up to the annual limit ($23,500 in 2025). Whether to use Traditional or Roth 401(k) here is the same analysis: at your income level and age, Roth leaning makes sense, but it depends on what options your plan offers.
+
+### Step 7: Build out your full emergency fund
+Target 3–6 months of expenses in the HYSA. With $2,000 and presumably low fixed expenses at 26, you may not need to wait long to hit this — but don't skip steps 3–5 in order to rush the emergency fund above the starter amount.
+
+### Step 8: Taxable brokerage (after the above)
+Only after the tax-advantaged accounts are fully utilized (or you've hit your savings rate ceiling) does it make sense to open a taxable brokerage. At your income, you probably won't need this for a while.
+
+---
+
+## What to Actually Invest In
+
+Once you've decided *where* to put the money (401k, Roth IRA), the *what* is simple. The Boglehead-canonical answer is a **three-fund portfolio** or its single-fund equivalent:
+
+**Three-fund portfolio:**
+- US Total Stock Market: VTI (Vanguard ETF) / FSKAX or FZROX (Fidelity) / SWTSX (Schwab)
+- Total International Stock: VXUS / FTIHX or FZILX / IXUS
+- US Total Bond Market: BND / FXNAX / AGG
+
+**Or, even simpler:** Buy a single **Target-Date Retirement Fund** (e.g., a "Target Date 2065 Fund" if you plan to retire around age 65). This is a perfectly Boglehead answer — it gives you a diversified three-fund-style portfolio in one ticker, automatically rebalances, and glides toward a more conservative allocation as you age. Vanguard's (VLXVX), Fidelity's (FDKLX-ish), and Schwab's all have very low expense ratios.
+
+**At 26, with a long horizon, a stock-heavy allocation makes sense.** Something like 90% stocks / 10% bonds is defensible, or even 100% stocks if you have high risk tolerance and won't panic-sell in a downturn. A target-date fund handles this automatically.
+
+The most important expense ratio note: look at what funds your 401(k) offers and find the ones with the lowest expense ratios. If you see "S&P 500 Index Fund" at 0.03% and "Large Cap Growth Fund" at 0.85%, choose the index fund. Costs are the most controllable variable in investing. As Bogle put it: "In investing, you get what you don't pay for."
+
+---
+
+## A Concrete Action Plan
+
+1. **This week:** Find your 401(k) match formula in your HR portal. Set your contribution rate to capture the full match.
+2. **This month:** Open a Roth IRA at Fidelity, Vanguard, or Schwab. Set up an automatic monthly contribution ($583/month gets you to the $7,000 annual max).
+3. **Pick your investments:** In the Roth IRA, buy a target-date fund or the three-fund portfolio. In the 401(k), pick the lowest-cost index funds available.
+4. **Keep your $2,000 in a HYSA** as your starter emergency fund. Slowly build toward 3–6 months of expenses alongside your investing.
+5. **Don't make extra student loan payments yet** — get the 401(k) match and IRA contributions going first. Revisit after.
+6. **Automate everything and don't look at it daily.** "The two greatest enemies of the equity fund investor are expenses and emotions." — Bogle
+
+---
+
+## What Not to Do
+
+A few things that will come up that you should be skeptical of:
+
+- **An advisor who recommends whole life insurance as an "investment"** — almost certainly a bad deal. Term life insurance (if you need life insurance at all, which at 26 with no dependents you probably don't yet) plus investing the difference in index funds is the right answer.
+- **Picking individual stocks** — "Don't look for the needle in the haystack. Just buy the haystack."
+- **Waiting for a market correction to invest** — time in the market beats timing the market. Set up the contributions and let them run.
+- **A dividend-focused strategy** — dividends aren't free money; they reduce share price by the payout amount. Total return is what matters.
+
+---
+
+You're starting at the right age with the right instincts. The math is powerful: a 26-year-old who invests $10,000/year in broad index funds for 40 years at a 7% real return ends up with roughly $2 million in today's dollars. The strategy is simple. The hard part is staying the course when markets are scary.
+
+*This isn't personalized financial advice — for a full plan that accounts for your specific tax situation, an advice-only fee-only fiduciary advisor (or the bogleheads.org forum, which is free) is worth consulting.*

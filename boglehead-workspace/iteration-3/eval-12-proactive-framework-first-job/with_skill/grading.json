@@ -1,0 +1,32 @@
+{
+  "eval_id": 12,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude addresses the emergency fund as a prerequisite — the $2,000 in savings is acknowledged as a starter fund and Claude recommends building it to 3-6 months of expenses",
+      "passed": true,
+      "evidence": "Step 1 explicitly calls the $2,000 a 'starter emergency fund' and directs it to a HYSA. Action item 6 in the summary says 'Build your emergency fund up to 3–6 months of expenses as cash flow allows.'"
+    },
+    {
+      "text": "Claude gives a prioritized step-by-step order based on the Boglehead waterfall — employer match first, then tax-advantaged accounts, not a flat menu of options",
+      "passed": true,
+      "evidence": "The response is structured as numbered steps: Step 1 (emergency fund), Step 2 (employer 401k match), Step 3 (student loans), Step 4 (Roth IRA), Step 5 (401k beyond match). This is an explicit prioritized waterfall, not a flat menu."
+    },
+    {
+      "text": "Claude recommends capturing the full employer 401k match as the first investing priority (before IRA, before extra debt payoff)",
+      "passed": true,
+      "evidence": "Step 2 is titled 'Capture the full 401(k) employer match — immediately' and states 'This is the most important investment move you can make' and 'the match comes first.' It appears before the IRA (Step 4) and student loan payoff discussion (Step 3)."
+    },
+    {
+      "text": "Claude addresses the student loan at 5.5% with a clear recommendation — either pay it off first, invest in parallel, or explain why the rate is in the gray zone",
+      "passed": true,
+      "evidence": "Step 3 explicitly labels 5.5% as 'right at the Boglehead gray zone' and gives a concrete recommendation: pay aggressively over 12–18 months while simultaneously starting IRA contributions. It also notes the behavioral case for paying it off first."
+    },
+    {
+      "text": "Claude recommends a specific investment vehicle (three-fund portfolio or target-date fund) rather than leaving fund selection open-ended",
+      "passed": true,
+      "evidence": "The response recommends both a target-date fund (Vanguard Target Retirement 2065, ticker VFFVX, ER ~0.08%) and a three-fund portfolio with specific tickers (VTI/VXUS/BND for Vanguard; FSKAX/FTIHX/FXNAX for Fidelity) and expense ratios. Fund selection is not left open-ended."
+    }
+  ]
+}

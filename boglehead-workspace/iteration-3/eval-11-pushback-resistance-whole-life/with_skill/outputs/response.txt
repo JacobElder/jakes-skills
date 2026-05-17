@@ -1,0 +1,61 @@
+Fair point to raise, and the honest answer is: yes, there are narrow legitimate uses for permanent life insurance. But they're narrower than the industry makes them sound, and the "high income + estate planning" framing is applied so broadly that it covers nearly everyone a life insurance salesperson talks to.
+
+Let me take your three arguments seriously.
+
+---
+
+**"My uncle is a CFP and he specifically recommended it for my situation."**
+
+CFPs are real professionals and the credential means something. But here's what you should know: a CFP who is also insurance-licensed can earn 50–100% of the first year's premium in commission on a whole life sale — often $5,000–$20,000 or more on a policy sized for a high earner. That is not a scandal; it's how the industry is structured. It also doesn't make your uncle a bad person or a bad financial planner. But it's a real incentive worth naming explicitly when evaluating the recommendation.
+
+The right question isn't "is my uncle credentialed?" — it's "does my uncle know what you could have done with the premium dollars instead, and did he show you that comparison?"
+
+---
+
+**"I'm a high earner with estate planning needs."**
+
+This is the most legitimate-sounding argument, so let's go through it carefully.
+
+Permanent life insurance has a few genuinely defensible estate-planning uses:
+
+1. **Estates above the federal estate tax exemption** (~$13.6 million per individual in 2024, potentially dropping to ~$7 million when the TCJA provisions expire in 2026). If your estate will actually owe estate taxes, an Irrevocable Life Insurance Trust (ILIT) can fund the tax bill without forcing heirs to liquidate assets. This is a real use case — for people with $10M+ estates.
+
+2. **Buy-sell agreements** for a business with a co-owner.
+
+3. **A dependent who will need lifetime financial support** (e.g., a child with a serious disability).
+
+If any of those describe you, the case for permanent life insurance is real. But if "estate planning needs" means something more general — "I want to leave money to my kids tax-efficiently" or "I'm in the top bracket" — that's where the pitch stops being about estate planning and starts being about tax deferral, and tax deferral has better solutions.
+
+For a high earner with a maxed 401(k), maxed IRA (backdoor Roth), maxed HSA, and a taxable brokerage full of VTI/VXUS, the "I've run out of tax-advantaged space" argument is at least coherent for whole life. But most high earners who own whole life policies haven't actually maxed all of those accounts first. Have you?
+
+---
+
+**"It's been performing well for 5 years."**
+
+Five years is backward-looking. Whole life policies routinely show positive performance on paper for the first several years — your premiums are paying commissions and fees early on, but the cash value is showing you a figure that looks like growth. The question is: what is the internal rate of return on what you've paid in? Get an in-force illustration from the insurer showing projected cash value at 10, 20, and 30 years, and back-calculate the IRR on your total premium payments. For most whole life policies in the first 5–10 years, that IRR is somewhere between 0% and 3%.
+
+Compare that to what a term life policy + investing the premium difference in a low-cost index fund would look like over the same period. That comparison — not "the cash value went up" — is the right measure.
+
+---
+
+**Where this leaves you**
+
+You're at the 5-year mark, which is actually the hardest spot. The Boglehead guidance on "what to do now" is this:
+
+- At less than 5 years: usually surrender and cut losses — most of the money lost to fees is already gone.
+- At more than 15–20 years: usually keep it. Worst fees are behind you; future returns are more reasonable.
+- At 5–15 years (your situation): get the in-force illustration, calculate the IRR, and compare it honestly.
+
+If the IRR comparison looks bad, a **1035 exchange** into a low-cost variable annuity (Fidelity's Personal Retirement Annuity is around 0.25% ER) can preserve the tax-deferred status of your cash value without the ongoing insurance drag. That's a niche option, but it's the one the Boglehead community most often points to for people in your position who don't need the death benefit.
+
+If you genuinely have an estate tax problem — and I mean the $10M+ variety, not just "I have high income" — then keep it and stop adding to it. Work with a fee-only estate attorney, not a commissioned advisor, to think through whether an ILIT structure makes sense.
+
+---
+
+**The bottom line**
+
+You're not wrong that whole life can make sense for some people in some situations. The Boglehead position isn't "whole life is always wrong" — it's "whole life is right far less often than it's sold." The pitch is applied to nearly everyone with income above $150k, and only a small fraction of those people have the actual estate-planning problems it solves.
+
+What I'd push you on: get the in-force illustration, calculate the actual IRR, and ask your uncle to show you the term + invest-the-difference comparison with real numbers. If the math holds up under that scrutiny, you've made an informed decision. If it doesn't, you'll know what to do.
+
+Not personalized financial or tax advice — for a situation with your income level and actual estate planning complexity, a fee-only fiduciary or estate attorney (paid by the hour, not commission) is worth the engagement to pressure-test the plan.

@@ -1,0 +1,88 @@
+The "living off dividends" idea is intuitive and emotionally appealing — it feels like you're generating income without touching your nest egg. But it rests on a misconception about how dividends work, and the specific funds you've chosen (SCHD and JEPI) have real problems as a retirement strategy. Let me be direct about this.
+
+---
+
+**Dividends are not free money**
+
+This is the core issue. When a stock or fund pays a $1 dividend, the share price drops by $1 on the ex-dividend date. You haven't received income from the company — you've received a portion of your own investment back in cash form. Your total wealth (shares × price + cash in hand) is exactly the same before and after the dividend.
+
+The implication: "living off dividends without selling shares" is a myth. You are liquidating a portion of your holdings every time a dividend is paid — the mechanism is just different. Whether you sell shares yourself or the fund distributes dividends and the share price adjusts down, the economic outcome is identical. Total return — price appreciation plus dividends — is the only number that matters.
+
+Bogle put it bluntly: "After all, dividends are not gifts from corporate heaven. They come right out of the stock's price."
+
+---
+
+**The problem with SCHD**
+
+SCHD (Schwab U.S. Dividend Equity ETF, ER: 0.06%) is a dividend-focused large-cap value fund. It's not a terrible fund — low cost, reasonable quality — but it is a concentrated bet on a subset of the market.
+
+- SCHD holds roughly 100 dividend-paying stocks, excluding the high-growth non-dividend-payers (think much of the tech sector historically).
+- It's about 90% correlated with the S&P 500 over time. You're not really diversifying; you're just tilting toward value and dividend yield.
+- A total-market fund like VTI already includes all of SCHD's holdings, plus the high-growth companies that have historically driven a large portion of market returns.
+- Dividend strategies that historically "outperformed" were mostly capturing the value factor. Once you control for that, the dividend premium disappears.
+- In a taxable account, dividend strategies create tax drag: dividends are taxable in the year they're paid, while unrealized capital gains are not taxed until you sell. A total-market index tilted toward growth is more tax-efficient.
+
+---
+
+**The bigger problem: JEPI**
+
+JEPI (JPMorgan Equity Premium Income ETF, ER: 0.35%) is where I'd push back much harder.
+
+JEPI uses a covered-call overlay strategy — it sells call options on its equity holdings to generate premium income, which is what funds those large monthly distributions (sometimes 7-10% annualized yield). This sounds great until you understand what you're giving up:
+
+- **You're capping your upside.** When you sell covered calls, you're contractually obligating yourself to sell your shares if the price rises above a strike price. In a strong bull market, JEPI significantly underperforms a plain index fund because it can't participate in big upward moves.
+- **The distributions are mostly ordinary income.** The option premiums that fund JEPI's yield are taxed as ordinary income, not at the favorable qualified dividend or long-term capital gains rates. In a taxable account, this is a meaningful tax disadvantage.
+- **It's manufactured yield, not earned income.** The high yield is created by systematically selling your upside. It's not fundamentally different from selling shares — it's just packaged to feel like income.
+- **In retirement, when you most need growth to outpace inflation and sequence-of-returns risk, you've bought a fund that structurally limits growth.**
+
+JEPI has underperformed significantly in bull markets (which is most markets) relative to holding VTI or even SCHD. The fund is heavily marketed to retirees seeking "income," and it delivers that framing effectively — but total return is what determines whether your portfolio survives a 30-year retirement.
+
+---
+
+**"But I don't want to sell shares"**
+
+This is a psychological preference, and I understand it — it feels like you're not "eating into" your principal. But the preference is based on an accounting illusion.
+
+Consider two retirees, each with $1,000,000:
+- Retiree A holds VTI, which grows 7% annually. She sells $50,000 worth of shares each year (5% withdrawal).
+- Retiree B holds SCHD + JEPI, which pay $50,000 in dividends annually. He spends them.
+
+Both have withdrawn the same amount. Both experienced the same reduction in purchasing power from their portfolio. The only difference is that Retiree A controls when she recognizes gains (tax advantage) and has the opportunity for more growth, while Retiree B has created a tax drag every year and limited his growth potential with JEPI.
+
+The Boglehead community has a name for the idea that dividends are somehow "different" from selling shares: it's called the dividend fallacy. The research is quite clear — for total wealth accumulation and preservation, total return beats dividend focus over virtually any long period.
+
+---
+
+**What a Boglehead retirement drawdown approach looks like**
+
+If you're in or near retirement, the evidence-based approach:
+
+1. **Hold a broadly diversified portfolio** — three-fund portfolio (VTI or equivalent for US stocks, VXUS for international, BND for bonds), proportioned based on your time horizon and risk tolerance. A target-date fund is a fully valid one-fund alternative.
+
+2. **Use a sustainable withdrawal rate** — 4% is the traditional guideline (the "4% rule" from the Trinity Study); many planners now use 3-3.5% as a more conservative target given current valuations and longer life expectancies.
+
+3. **Sell shares to fund spending.** This is not a failure — it's the plan. Withdrawal is taxed at long-term capital gains rates, which are lower than the ordinary income tax rate that JEPI distributions are taxed at.
+
+4. **Sequence-of-returns risk is the real threat.** A large market drop in the first 5-7 years of retirement can permanently impair a portfolio even if markets recover later. The defense is not dividend income — it's a proper bond allocation (bonds provide ballast and a spending buffer without requiring you to sell equities in a downturn).
+
+5. **Consider a SPIA** (single-premium immediate annuity) for a guaranteed income floor if you're worried about longevity risk. Putting 10-20% of the portfolio into a SPIA at retirement gives you guaranteed income for life and can actually reduce sequence-of-returns risk for the rest of the portfolio.
+
+---
+
+**The practical question: what to do now**
+
+Whether to sell SCHD and JEPI depends on where these are held:
+
+- **In a tax-advantaged account (IRA, 401k, Roth):** Selling creates no tax event. Transitioning to a three-fund portfolio is straightforward — do it now or on a timeline that makes sense to you. The argument for doing it promptly is that every year in JEPI is a year where you're capping upside.
+
+- **In a taxable account:** Check your cost basis. If you have significant unrealized gains, you'll want to think about the tax hit. Consider spreading the transition over 1-3 years to manage taxable events, especially if you're approaching years where income will be lower (early retirement, before Social Security, etc.). Don't let the tax tail wag the dog entirely — but do plan it intelligently.
+
+---
+
+**Bottom line**
+
+SCHD is a reasonable fund held in moderation, but it's not a superior retirement strategy to a total-market index — it's a stylistic bet with a story attached. JEPI is more problematic: it caps growth, generates unfavorable tax treatment, and is specifically designed to create the illusion of income in a package that retail investors find emotionally comfortable. A total-market three-fund portfolio with a proper withdrawal strategy will almost certainly outperform both over a 20-30 year retirement.
+
+The "never sell shares" goal isn't achievable in any meaningful economic sense. What you can control is how you structure withdrawals to minimize taxes and maximize the longevity of your portfolio. That's the actual problem worth solving.
+
+This isn't personalized financial advice — for a retirement plan with real dollar amounts, a fee-only fiduciary advisor (NAPFA.org or Garrett Planning Network) or the bogleheads.org forum are excellent places to pressure-test a specific plan. The forum is free and the regulars have seen every version of this question.

@@ -1,0 +1,63 @@
+Almost certainly not. This is one of the clearest "no" answers in the Boglehead playbook, and the fact that your financial advisor is recommending it is itself a red flag worth naming directly.
+
+---
+
+**What whole life insurance actually is**
+
+Whole life is a bundled product: term life insurance + a tax-deferred savings account, sold together at high cost. The "builds cash value tax-free" pitch is technically true but deeply misleading, for two reasons:
+
+1. **You already have tax-advantaged accounts that are far better.** A 401(k), IRA, and HSA all provide tax-advantaged or tax-free growth — without the insurance overhead. Any pitch for whole life as a "tax vehicle" should immediately raise the question: have you maxed all of those first? If not, the pitch doesn't even apply to your actual situation.
+
+2. **The internal returns are terrible, especially early on.** The first several years of premiums largely cover commissions and fees — not your cash value. The internal rate of return on whole life policies is often 0–2% for a decade or more before it becomes remotely competitive with alternatives. Your $500/month is not compounding tax-free from day one; it's mostly paying for the policy's sales costs first.
+
+**On the "borrow against it tax-free" pitch**
+
+This one sounds attractive until you look at the mechanics. When you "borrow" against your policy:
+
+- You pay 5–8% loan interest back to the policy on your own money
+- The outstanding loan reduces your death benefit dollar-for-dollar
+- If you die with an outstanding loan, your heirs get less
+- If the policy lapses with a large loan, you can trigger a taxable event
+
+Calling this "tax-free" is misleading framing. You're paying interest to access your own funds. Compare that to a Roth IRA, where your contributions come out any time, penalty-free, with no interest charged.
+
+**What your financial advisor earns**
+
+Insurance-licensed advisors typically earn 50–100% of the first year's premium in commission on whole life sales — in your case, $3,000–$6,000 upfront, plus ongoing trailing commissions. This doesn't make them a bad person, but it's a real financial incentive that's worth knowing. Their recommendation is not coming from a neutral position.
+
+Ask them two direct questions: (1) "What is your commission on this policy?" and (2) "What would happen if I bought term life and invested the difference in index funds instead?" A fiduciary advisor has to answer honestly.
+
+**What to do instead: term + invest the difference**
+
+The Boglehead answer is simple:
+
+1. **Buy term life insurance** if you have dependents who rely on your income. A 20- or 30-year level term policy will cost you a fraction of what whole life costs — often $30–$80/month for a healthy person in their 30s for $500k of coverage. You get the death benefit protection at minimal cost.
+
+2. **Invest the remaining ~$420–$470/month** in this order (the Boglehead funding waterfall):
+   - Capture your full 401(k) employer match first — that's an instant 50–100% return, nothing else competes
+   - Max your HSA if you're on an eligible high-deductible health plan (triple-tax-advantaged — the best account that exists)
+   - Max your IRA ($7,000/year in 2024; Roth if your income allows)
+   - Max your 401(k) up to the annual limit ($23,500 in 2025)
+   - Any remaining balance goes to a taxable brokerage in broad index funds (VTI, VXUS, BND — the three-fund portfolio)
+
+Even if you're already maxing all of those accounts, a low-cost taxable brokerage account in index funds will almost certainly outperform whole life over any 20+ year period — with better liquidity, no loan interest, and no insurance drag.
+
+**The math**
+
+$500/month over 30 years at 7% annual return (a reasonable long-run estimate for a diversified equity portfolio) = approximately $567,000.
+
+Whole life policies with their 0–2% internal returns in the early years, 3–5% in later years, with insurance overhead, will meaningfully underperform that. The insurance industry's own illustrations often show projections that have historically underdelivered.
+
+**Do you even need life insurance?**
+
+That's a prerequisite question. If you have no dependents, no one is relying on your income, and your debts wouldn't burden a survivor — you may need no life insurance at all. If that's the case, 100% of the $500/month should go to the funding waterfall above.
+
+**Bottom line**
+
+The "tax-free cash value + borrow against it later" pitch is a compelling-sounding story. It has a few legitimate use cases — estate planning for $10M+ estates, buy-sell agreements for businesses, disabled dependents who need lifetime support. For most people receiving this pitch, none of those apply.
+
+The Boglehead tradition on this is direct: whole life insurance is almost always the wrong product for the job. Term life + a three-fund portfolio in tax-advantaged accounts will beat it over any meaningful time horizon, and you'll have full liquidity, no loan mechanics, and no insurance overhead eating your returns.
+
+If you want a second opinion, the bogleheads.org forum is free and has a "Personal Finance" board where you can post your full situation. You could also hire a fee-only fiduciary advisor for a flat-fee ($1,500–$3,000) plan review who has no financial incentive to sell you any product. NAPFA.org and the Garrett Planning Network maintain directories.
+
+This isn't personalized financial advice — but the Boglehead position on this product is about as close to settled as it gets.

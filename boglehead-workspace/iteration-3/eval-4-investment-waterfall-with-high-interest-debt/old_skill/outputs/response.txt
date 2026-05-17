@@ -1,0 +1,80 @@
+Your situation has a clear answer once you run through the Boglehead funding waterfall. Let me walk through it with your numbers.
+
+---
+
+## Where Your $1,200 Should Go — In Order
+
+### Step 1: Minimum debt payments (already assumed)
+This is table stakes. Make sure you're paying at least the minimums on all debts before anything else.
+
+### Step 2: Starter emergency fund — you're already there
+You have $3,000 in savings. That's roughly 1–2 months of expenses for most people, which is enough to cover the starter emergency fund (the wiki recommends ~$1,000–1 month of expenses at this stage). You can move on.
+
+### Step 3: Employer 401(k) match — skip
+Your employer offers no match. There is no free money here, so this step is irrelevant. Move on.
+
+### Step 4: Pay off high-interest debt — THIS IS YOUR ENTIRE JOB RIGHT NOW
+You have $18,000 in credit card debt at 24% APR.
+
+This is not a close call.
+
+Paying down 24% debt is a guaranteed, risk-free 24% return. There is no investment — index funds, Roth IRA, anything — that reliably returns 24%. The stock market's long-run average is roughly 7% real. Putting money into a Roth IRA while carrying 24% credit card debt is like pouring water into a bucket with a gaping hole in the side. You are paying 24 cents per year for every dollar of that debt. At $18,000, that's roughly $4,320/year in interest — more than $360/month — disappearing into nothing.
+
+The Boglehead position here is firm: **pay off high-interest debt (anything above ~7%) before contributing to taxable accounts or even IRAs.**
+
+**Your entire $1,200/month should go to the credit card debt until it is gone.**
+
+At $1,200/month directed at $18,000 at 24% APR, you'll pay it off in roughly 17–18 months (the interest slows you down; a simple calculator puts it closer to 18 months with minimum interest accumulation in early months). That's a hard slog, but it unlocks a completely different financial life on the other side.
+
+Some people argue for a "hybrid" approach — put a little into a Roth IRA while paying debt, because you can't recapture past contribution room. That's a legitimate debate at 8–10% interest rates. At 24%, the math is not close enough to justify the split. Kill the debt first.
+
+### Step 5: HSA — your next priority after the debt is gone
+You mentioned you're enrolled in an HDHP. That means you're eligible to contribute to an HSA, and this matters a lot.
+
+The HSA is the most tax-advantaged account that exists:
+- **Contributions are pre-tax** (reduce your taxable income)
+- **Growth is tax-free**
+- **Withdrawals for qualified medical expenses are tax-free**
+
+That's triple-tax-advantaged — better than a Roth IRA, better than a Traditional IRA. Once your credit card debt is gone, maxing your HSA should be the next step. The 2025 HSA contribution limit is $4,300 for self-only coverage ($8,550 for family coverage).
+
+The Boglehead move: contribute to the HSA, then pay medical expenses out of pocket from your regular cash flow if at all possible. Let the HSA grow invested (in something like VTI or a low-cost target-date fund). Keep receipts — you can reimburse yourself years later for past medical expenses, tax-free.
+
+### Step 6: Max your Roth IRA (or Traditional — depends on your tax bracket)
+After the HSA, the next step is maxing an IRA. The 2025 IRA contribution limit is $7,000 ($8,000 if you're 50+).
+
+**Roth vs. Traditional:**
+- If you're in the 22% bracket or below, many Bogleheads favor Roth — you're locking in a reasonable tax rate, and having tax-free money in retirement is valuable flexibility.
+- If you're in the 24% bracket or above, Traditional IRA (or deductible Traditional, if your income allows) is worth considering.
+- If you're in the 12% bracket, Roth is almost certainly the right answer — you'll likely be in a higher bracket in retirement.
+
+This is one of the few areas where the community has legitimate disagreement. The honest answer depends on your current marginal rate and expected retirement income.
+
+### Step 7: Max the 401(k) — if there's money left
+After the HSA and IRA are maxed, contribute to your 401(k) up to the annual limit ($23,500 in 2025). Even without a match, the tax deferral (or Roth option, if available) is valuable. But this step comes after HSA and IRA in a no-match plan.
+
+### Step 8: Build out your full emergency fund
+Once the debt is gone and tax-advantaged accounts are being funded, build your emergency fund from the current ~$3,000 up to 3–6 months of essential expenses. Park it in a high-yield savings account (currently paying around 4–5% APY at online banks) or short-term Treasuries via TreasuryDirect or a money market fund. Not stocks.
+
+---
+
+## The Concrete Action Plan
+
+**Now (months 1–18):** Put all $1,200/month toward the credit card debt. Don't invest, don't open an IRA, don't contribute to the 401(k) beyond any required minimum. Just kill the 24% debt. This is the highest-return move available to you.
+
+**After the debt is gone (month 18+):** You'll have freed up roughly $1,200/month plus whatever you were paying in minimum payments — likely $1,400–1,500/month of new cash flow. At that point:
+1. Direct ~$360/month (~$4,300/year) to your HSA
+2. Direct ~$583/month (~$7,000/year) to a Roth or Traditional IRA at Vanguard, Fidelity, or Schwab — invest in VTI, VTSAX, or a target-date fund
+3. Put the remaining ~$250–300/month toward finishing the emergency fund, then into your 401(k)
+
+**What to invest in once you're investing:** The simple Boglehead answer is a target-date retirement fund (pick your expected retirement year) or a two/three-fund portfolio — VTI + VXUS + BND, allocated to your risk tolerance. Don't overthink the fund selection while you're paying off 24% debt. You have bigger fish to fry.
+
+---
+
+## One More Thing
+
+Some people in your situation feel the pull to do something with the HSA right now — open one, contribute something — because the tax benefit feels urgent. The math doesn't support splitting focus from 24% debt for a tax deduction worth maybe 22–24 cents on the dollar. Kill the debt. Then use every tool available to you.
+
+Bogle: "The stock market is a giant distraction to the business of investing." Your giant distraction right now is 24% APR. Remove it.
+
+*This isn't personalized financial advice. For a situation this specific — especially around the Roth vs. Traditional question and your exact tax bracket — the bogleheads.org forum is free, has seen this exact scenario a thousand times, and will give you community-vetted input.*

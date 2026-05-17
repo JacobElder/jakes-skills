@@ -1,0 +1,39 @@
+Your advisor is using a real tax fact to lead you to a questionable conclusion. Let's separate those two things.
+
+**The tax concern is legitimate — but it's not a reason to hold.**
+
+You have a $135,000 long-term capital gain ($200k - $65k cost basis). At the 15% federal LTCG rate (or 20% if your income is high enough, plus 3.8% net investment income tax if applicable), you're looking at roughly $20,000–$33,000 in federal taxes. That's real money. But here's the key reframe: the tax is the cost of diversifying, not a reason to stay concentrated.
+
+The question isn't "should I pay $25,000 in taxes?" The question is: **would you buy $200,000 of Tesla stock today with 60% of your portfolio if you were starting from scratch?** If the answer is no — and for most Bogleheads it would be a hard no — then the only reason you're still holding is anchoring to your cost basis and fear of the tax bill. Neither of those is an investment thesis.
+
+**"Let your winners run" is a real thing. It's also frequently wrong.**
+
+There's a version of this advice that makes sense: don't sell a diversified index fund just because it went up. Markets generally go up; letting a total-market position grow is fine. But that logic does not transfer to a single stock. What made Tesla a winner in the past is not evidence about what it will do next. And at 60% concentration, you're not managing a portfolio — you're making a single-company bet.
+
+Bessembinder's research (covering 1926–2016) found that the majority of individual stocks underperform Treasury bills over their lifetime, and nearly all of the wealth creation in the US market came from roughly 4% of stocks. If you hold Tesla specifically, you're betting you own one of those — and that even if it is one, you know that now, when it already has a very large market cap. That's the part your advisor is skipping.
+
+**The concentration risk is the bigger issue, not the tax.**
+
+At 60% of your portfolio in a single stock, here's what that means concretely: a 50% drawdown in Tesla — which has happened twice in the past five years — cuts your total portfolio by 30%. Tesla has had multiple 70%+ drawdowns from peak to trough. A company that went from $65k to $200k can also go from $200k to $60k. The tax on the gain wouldn't feel "enormous" in that scenario; it would feel like a missed opportunity.
+
+The Boglehead view on individual stocks is blunt: even if you're right about the business, concentration risk is real and the expected value of a diversified portfolio typically exceeds the expected value of a concentrated single-stock bet. This isn't a knock on Tesla specifically — it's true of Apple, Amazon, Nvidia, or any other name at 60% weight.
+
+**What to actually do.**
+
+You have a few options, and you don't have to do them all at once:
+
+1. **Sell in tranches over 1–3 years.** If tax minimization is important, you don't have to realize the whole gain at once. Sell a portion each year, staying within your preferred tax bracket. This reduces the tax hit in any single year without requiring you to stay fully concentrated indefinitely.
+
+2. **Donate appreciated shares to charity (or a DAF).** If you give to charity, donating Tesla shares directly to a donor-advised fund lets you deduct the full market value, avoid the capital gains entirely, and invest the DAF in diversified index funds. Even if you don't have a current charitable intent, it's worth knowing this option exists.
+
+3. **Harvest losses elsewhere to offset the gains.** If you have losing positions anywhere in your taxable account, realize those to reduce the net taxable gain.
+
+4. **Accept the tax and redeploy.** Sometimes the simplest thing is right. Pay the tax, move $175k (after-tax approximate) into VTI/VXUS/BND in whatever allocation fits your plan, and stop worrying about one company.
+
+The one thing I'd push back on: doing nothing because of the tax bill while the concentration risk continues to compound. The tax is a known, capped cost. The downside of staying concentrated is open-ended.
+
+**On your advisor.**
+
+"Let your winners run" combined with "the tax would be enormous" is a classic advisory deflection that keeps assets under management without forcing a hard conversation. It's not necessarily bad faith — some advisors genuinely believe it. But it's a phrase that serves the status quo rather than your portfolio's health. A fee-only fiduciary advisor who ran actual scenario analysis on your concentration vs. diversification tradeoffs would likely give you different guidance.
+
+One sentence at the end: this involves enough money and enough tax complexity that talking to an advice-only, fee-only fiduciary (NAPFA directory at napfa.org, or the Garrett Planning Network for hourly options) — or posting your full situation at bogleheads.org — is worth your time before you move.

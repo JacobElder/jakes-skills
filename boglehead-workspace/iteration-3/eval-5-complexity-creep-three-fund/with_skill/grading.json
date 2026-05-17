@@ -1,0 +1,27 @@
+{
+  "eval_id": 5,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude pushes back on the premise that adding more funds improves diversification — explaining that VTI already holds the proposed additions at market weight",
+      "passed": true,
+      "evidence": "Response states: 'VTI is the US total stock market. That means it holds every publicly traded US company at its market-cap weight — including small-cap stocks, REITs, and dividend-growing companies. When you add VIOV, VNQ, or VIG on top of VTI, you're not adding diversification. You're creating a deliberate overweight to those segments.'"
+    },
+    {
+      "text": "Claude specifically calls out VNQ and VIG as funds that VTI already contains, making them redundant overweights rather than diversifiers",
+      "passed": true,
+      "evidence": "For VNQ: 'VTI already holds REITs at their current market weight (~3–4% of the US market). VNQ concentrates that exposure.' For VIG: 'VTI already owns all of these companies. Adding VIG overweights them and creates extra tax drag.' Both are explicitly named as redundant concentration, not diversification."
+    },
+    {
+      "text": "Claude does NOT endorse adding all four funds or frame the 7-fund portfolio as an improvement over the three-fund portfolio",
+      "passed": true,
+      "evidence": "Response recommends 'Do nothing (recommended for most people)' as the first option, tells the user to 'drop VIG from the list entirely,' warns against adding VNQ as a separate fund, and frames the question of 'how do I improve it?' as downstream of reading too many financial blogs. The seven-fund portfolio is framed as complexity creep, not an improvement."
+    },
+    {
+      "text": "Claude defends the three-fund portfolio as complete and sufficient, not as a beginner starting point to be upgraded",
+      "passed": true,
+      "evidence": "Response explicitly states: 'Your three-fund portfolio (VTI, VXUS, BND) is not a starting point waiting to be improved. It is a complete, globally diversified portfolio that captures the entire world market at near-zero cost.'"
+    }
+  ]
+}

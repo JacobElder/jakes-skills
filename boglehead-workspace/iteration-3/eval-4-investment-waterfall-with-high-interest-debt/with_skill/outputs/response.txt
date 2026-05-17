@@ -1,0 +1,120 @@
+Given your situation, here is the Boglehead funding waterfall applied directly to your $1,200/month. Let's walk through it in order.
+
+---
+
+## Your situation at a glance
+
+- $1,200/month to allocate
+- No employer 401(k) match
+- $18,000 in credit card debt at 24% APR
+- $3,000 in savings
+- Enrolled in a high-deductible health plan (HDHP)
+
+---
+
+## Step 1: You already have a starter emergency fund — mostly.
+
+The Boglehead waterfall starts with a $1,000–$1 month-of-expenses cushion before anything else. Your $3,000 in savings likely covers this depending on your monthly expenses. If your monthly essential spending is under $3,000, you're fine here and can move on. If it's significantly more, keep your $3,000 in a high-yield savings account (Ally, Marcus, SoFi, or similar — currently yielding ~4–5%) and don't touch it.
+
+---
+
+## Step 2: No employer match — skip.
+
+You have no employer match, so step 2 of the waterfall (capture the full match before doing anything else) is irrelevant. This is actually a meaningful loss — an employer match is typically a 50–100% instant return, and nothing else in the waterfall competes with it. Without it, we move directly to high-interest debt.
+
+---
+
+## Step 3: Attack the credit card debt. All $1,200/month goes here.
+
+This is the core of the answer.
+
+Your credit card debt at 24% APR is a guaranteed, risk-free, tax-free 24% return to pay it off. The S&P 500 averages roughly 10% per year *before* inflation and before taxes. No investment reliably returns more than 24%. There is no world where putting money into an IRA or brokerage account while carrying credit card debt at 24% makes mathematical sense.
+
+Here's the math: $18,000 at 24% APR accrues roughly $4,320 in interest per year — about $360/month. If you're only making minimum payments, much of your payment is just servicing interest, not reducing principal. Every dollar you put toward an index fund instead of this debt is effectively a dollar borrowing at 24% to invest.
+
+**Direct all $1,200/month to the credit card debt.**
+
+At $1,200/month, assuming your minimum payments are included in that figure and assuming no new charges:
+
+- $18,000 / $1,200 ≈ 15 months to pay off (roughly — interest will slow you down early, so call it 16–18 months)
+
+The exact payoff timeline depends on your current minimum payment and interest accrual, but you're looking at the debt being gone in approximately 1.5 years if you stay disciplined.
+
+**Do not split the $1,200 between debt payoff and investing.** This is a common mistake. Splitting it feels balanced, but it means you're borrowing at 24% to invest. The guaranteed 24% return from debt payoff will almost certainly beat anything the market does in that 18-month window.
+
+---
+
+## The HSA exception — a small carve-out worth considering
+
+Here's where it gets nuanced: you are enrolled in an HDHP, which makes you eligible for a Health Savings Account (HSA). The HSA is the only account with triple-tax advantages:
+
+1. Contributions are pre-tax (or above-the-line deductible if made outside payroll)
+2. Growth is tax-free
+3. Withdrawals for qualified medical expenses are tax-free
+
+This is genuinely the best account structure that exists for US investors. The Boglehead consensus places it *above* IRA contributions in the waterfall because of this.
+
+The 2025 HSA contribution limit is $4,300 for individual coverage (approximately $358/month).
+
+**Should you contribute to the HSA while paying down credit card debt?**
+
+This is one of the trickier judgment calls. The strict Boglehead waterfall says: pay off the high-interest debt first, then HSA. And that math is technically correct — 24% is a hard number to beat, even accounting for the tax advantages of the HSA.
+
+However, there's a legitimate argument for a small monthly HSA contribution even while carrying the debt:
+
+- If your effective marginal tax rate is meaningful (say 22–24%), the immediate pre-tax contribution effectively reduces the cost. At 22%, contributing $1 pre-tax costs you $0.78 after tax. You're borrowing at 24% on a net-of-tax basis on the credit card, and the HSA contribution is saving you 22% right now. The math is close.
+- HSA funds can be invested in index funds and grow tax-free for decades. Time in the market has compounding value that's difficult to recover.
+- You can pay current medical expenses out of pocket and reimburse yourself from the HSA years later — there's no time limit on reimbursements. This is the "HSA hack" that Bogleheads love.
+
+**My recommendation:** If your tax rate is 22%+, consider contributing at least enough to the HSA to fund expected medical costs this year (your HDHP deductible and likely out-of-pocket expenses), and direct the rest to credit card payoff. If you're in the 12% bracket or below, the math tips toward 100% debt payoff.
+
+The rough allocation if you choose the HSA carve-out: $200–$358/month to HSA, remainder (~$842–$1,000) to credit card debt. Payoff takes a few months longer, but you get the HSA clock ticking.
+
+---
+
+## Step 4: After the debt is gone — here's the order for your $1,200/month
+
+Once the credit card is paid off (call it 18–20 months from now), the order for your $1,200/month becomes:
+
+1. **Finish the emergency fund** if it's not already at 3–6 months of expenses. Your $3,000 may or may not cover this depending on your expenses. If not, top it up to 3–6 months in a HYSA before heavy investing.
+
+2. **Max the HSA** — $4,300/year individual in 2025 (~$358/month). Invest it in a low-cost index fund inside the HSA (not just the default money market). Pay medical expenses out of pocket if you can; let the HSA grow untouched.
+
+3. **Max a Roth IRA** — $7,000/year in 2025 (~$583/month). Use Vanguard, Fidelity, or Schwab. At Fidelity: FZROX (total US market) + FZILX (total international) is a simple two-fund portfolio with 0% expense ratios. At Vanguard: VTI + VXUS. At Schwab: SWTSX + SWISX (add SCHE for emerging markets coverage).
+
+   Roth vs Traditional: If you expect your income to grow over your career, Roth is almost certainly better — you pay today's lower tax rate and never pay again. If you're already in a high bracket (32%+), revisit.
+
+4. **Max the 401(k)** — $23,500 in 2025 limit. Even without a match, the 401(k) provides a tax-deferred shelter worth having. After IRA is maxed, this is the next stop.
+
+5. **Taxable brokerage** for any remainder beyond that.
+
+With $1,200/month post-debt:
+- HSA: $358/month
+- Roth IRA: $583/month
+- Remainder ($259/month) → toward 401(k) or taxable
+
+That gets you HSA and Roth fully maxed. Clean and straightforward.
+
+---
+
+## What not to do
+
+- Do not open a brokerage account and start investing in index funds while carrying this debt. The 24% rate is a guaranteed loss you're absorbing while chasing an uncertain 7–10% gain.
+- Do not put the $3,000 in savings toward the credit card yet if it leaves you with no cushion. A $0 savings balance means the next car repair or medical bill goes on the credit card, adding to the problem.
+- Do not try to time the market or wait for a "better entry point" once the debt is gone. Lump sum beats dollar-cost averaging about two-thirds of the time; when you're ready to invest, invest.
+
+---
+
+## Summary
+
+| Now (next 16–20 months) | After debt is paid off |
+|---|---|
+| $1,200/month → credit card debt (or ~$842 debt + ~$358 HSA if tax rate is 22%+) | $358/month → HSA (max it) |
+| Keep $3,000 in HYSA as emergency fund | $583/month → Roth IRA (max it) |
+| | $259/month → 401(k) or taxable brokerage |
+
+The 24% credit card debt is the most important financial problem you have right now. Fix it aggressively, use the HSA if your tax rate makes it compelling, and then build a clean index-fund portfolio once you're free of it.
+
+---
+
+*This isn't personalized financial advice — it's the Boglehead framework applied to your numbers. For a situation with significant complexity (tax questions, debt consolidation options, etc.), the bogleheads.org forum is free and staffed by knowledgeable volunteers.*

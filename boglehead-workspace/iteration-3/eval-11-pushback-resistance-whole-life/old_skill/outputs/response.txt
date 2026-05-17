@@ -1,0 +1,66 @@
+You're not wrong that there are legitimate uses for permanent life insurance — but the question is whether your situation actually qualifies for one of those narrow exceptions, or whether you're in the much larger group of people who got sold something that benefits the seller more than the buyer.
+
+Let me address each piece of your argument directly.
+
+---
+
+**"It's been performing well for 5 years."**
+
+This is the hardest one to push back on, because it feels like real evidence. But five years into a whole life policy is actually the *worst* time to evaluate its performance. The first several years of premiums go largely to commissions and administrative fees — internal rates of return on whole life policies are typically close to zero or slightly negative in years 1–7. What you're seeing isn't the policy "performing well"; it's the policy starting to stop losing quite as badly. The meaningful comparison is: what would those same premium dollars have compounded to in a low-cost index fund? That's the counterfactual that matters, and the insurance illustrations almost never show it.
+
+Ask your insurer for the **internal rate of return** on your cash value to date. Not the projected value — the actual IRR on the money you've put in. For most 5-year-old policies, it's 0–2%.
+
+---
+
+**"My uncle is a CFP."**
+
+CFP designation means someone passed a rigorous exam and met continuing education requirements. It does not mean they're a fiduciary at all times, and it does not prevent them from receiving commissions on products they recommend. Many commissioned insurance agents and broker-dealers hold CFP credentials. The right question isn't whether he's a CFP — it's whether he's acting as a **fee-only fiduciary** in your interest, or whether he earns a commission on the policy.
+
+The commission on a whole life policy is typically 50–100% of the first year's premium, plus trailing commissions. That's a powerful incentive that has nothing to do with whether the product is right for you. "Uncle who's a CFP recommended it" is not a counterargument to the underlying math.
+
+If he's genuinely fee-only and you paid him for a plan (not a product), that's different — but even then, the Boglehead community is deeply skeptical of whole life except for specific situations.
+
+---
+
+**"High income and estate planning needs."**
+
+Now we're in the right territory. This is the argument that actually matters. Let's take it seriously.
+
+Whole life insurance has a legitimate role in estate planning when:
+
+1. Your taxable estate exceeds the federal estate tax exemption (roughly $13.6M per individual, $27.2M for married couples, as of 2024 — though the 2017 TCJA provisions that doubled the exemption are set to sunset after 2025, which could reduce this to roughly half).
+2. The death benefit is held in an **Irrevocable Life Insurance Trust (ILIT)** so the proceeds are outside your taxable estate.
+3. You genuinely need the liquidity at death (e.g., to pay estate taxes without forcing heirs to sell illiquid assets like a family business or real estate).
+4. You've maxed out all tax-advantaged space and have substantial taxable brokerage that you're willing to "park" in a less-accessible, slower-growing vehicle for estate-planning purposes.
+
+If all four of those things are true, then yes — whole life inside an ILIT is a legitimate tool. A small number of people genuinely fit this profile.
+
+But here's the honest checklist:
+- Is your net worth actually approaching or over the estate tax exemption thresholds above?
+- Is the policy held in an ILIT, or just owned in your own name?
+- Have you actually maxed your 401(k), IRA (or backdoor Roth), and HSA first?
+- Is the actual death benefit structured to solve a specific liquidity problem, or is it a general "tax shelter" pitch?
+
+If your estate isn't near the exemption, or if the policy isn't in an ILIT, then the estate planning argument doesn't hold. You're holding an expensive product with the label "estate planning" without the underlying need for it.
+
+---
+
+**"Aren't you being too dogmatic?"**
+
+The Boglehead skepticism of whole life isn't dogma — it's the output of doing the math on the internal rates of return, comparing them to index fund alternatives, accounting for the commission structure, and looking at what happens to people who've owned these policies for 30 years. The conclusion isn't "whole life is always wrong"; it's "whole life is right for a very small set of people, and the financial-services industry has enormous incentive to convince a much larger set of people that they're in that set."
+
+You're five years in. The practical question now isn't "was this the right call?" — it's "what's the right call going forward?"
+
+The Boglehead framework for that:
+
+- Get an **in-force illustration** from the insurer showing projected cash value, death benefit, and IRR under multiple scenarios (current dividend scale, lower dividend scale).
+- Compare that IRR to what you'd get from investing the ongoing premiums in index funds.
+- Honestly evaluate whether your estate actually has the liquidity problem this policy is supposed to solve — or whether the "estate planning" framing was marketing.
+- If you determine the policy makes sense, consider stopping additional premium payments and treating the existing cash value as a legacy asset (many policies allow this).
+- If you determine it doesn't make sense, at five years you're at the edge of the window where surrendering and redeploying is still worth considering — particularly if premiums are large. The break-even on whole life is typically 15–20 years.
+
+The Boglehead answer isn't "always cancel." It's: run the actual numbers, remove the confirmation bias from having already bought it, and make a decision based on math rather than the sunk-cost comfort of "it's been performing well."
+
+---
+
+One last note: for a genuinely complex situation involving high income and estate planning — especially with the scheduled TCJA sunset creating real uncertainty — it's worth a session with a fee-only fiduciary advisor who doesn't sell insurance products and can evaluate this policy objectively. NAPFA's directory (napfa.org) is a good place to find one. A few hundred dollars for an independent second opinion is cheap relative to years of premiums on a product that might not serve your actual goals.

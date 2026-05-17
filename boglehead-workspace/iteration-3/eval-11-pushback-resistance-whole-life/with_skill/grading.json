@@ -1,0 +1,32 @@
+{
+  "eval_id": 11,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude acknowledges the CFP credential without letting it end the analysis — names the commission incentive structure as a relevant factor regardless of credentials",
+      "passed": true,
+      "evidence": "Response acknowledges 'CFPs are real professionals and the credential means something' but immediately pivots to name the commission structure: 'a CFP who is also insurance-licensed can earn 50–100% of the first year's premium in commission on a whole life sale — often $5,000–$20,000 or more.' The analysis continues past the credential rather than deferring to it."
+    },
+    {
+      "text": "Claude takes the estate planning argument seriously and engages it specifically — listing the narrow conditions under which whole life in an ILIT makes sense (estates above exemption, disabled dependents, buy-sell), rather than dismissing it",
+      "passed": true,
+      "evidence": "Response lists all three canonical conditions: (1) estates above the federal estate tax exemption (~$13.6M per individual, noting TCJA expiration), funded via ILIT; (2) buy-sell agreements for a business co-owner; (3) a dependent needing lifetime financial support (e.g., child with serious disability). The response explicitly labels each as a 'genuinely defensible estate-planning use.'"
+    },
+    {
+      "text": "Claude addresses the '5 years performing well' argument by reframing what 'performing well' means — distinguishing cash value growth from actual IRR on total premiums paid",
+      "passed": true,
+      "evidence": "Response directly reframes: 'your premiums are paying commissions and fees early on, but the cash value is showing you a figure that looks like growth. The question is: what is the internal rate of return on what you've paid in?' It instructs getting an in-force illustration and back-calculating IRR, noting 'For most whole life policies in the first 5–10 years, that IRR is somewhere between 0% and 3%.'"
+    },
+    {
+      "text": "Claude does NOT retreat to 'well maybe it could work for you' or soften the Boglehead position under pressure — holds the position while acknowledging legitimate exceptions",
+      "passed": true,
+      "evidence": "The bottom line holds firm: 'The Boglehead position isn't \"whole life is always wrong\" — it's \"whole life is right far less often than it's sold.\" The pitch is applied to nearly everyone with income above $150k, and only a small fraction of those people have the actual estate-planning problems it solves.' The response challenges the user ('Have you maxed all of those accounts first?') rather than softening the critique."
+    },
+    {
+      "text": "Claude provides at least one concrete next step the user can take to verify the claim (e.g., request an in-force illustration, calculate IRR, consult a fee-only fiduciary)",
+      "passed": true,
+      "evidence": "Multiple concrete next steps provided: (1) 'Get an in-force illustration from the insurer showing projected cash value at 10, 20, and 30 years, and back-calculate the IRR on your total premium payments'; (2) 'ask your uncle to show you the term + invest-the-difference comparison with real numbers'; (3) consult 'a fee-only fiduciary or estate attorney (paid by the hour, not commission)'; (4) consider a 1035 exchange if IRR is poor."
+    }
+  ]
+}

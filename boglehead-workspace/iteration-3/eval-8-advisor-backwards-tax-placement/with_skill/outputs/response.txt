@@ -1,0 +1,74 @@
+No, this is not right — and the reasoning your advisor gave is a red flag. What you've described is a textbook case of backwards asset location, which is one of the most common and most costly mistakes in multi-account portfolio management.
+
+Let's go through each account and explain what went wrong.
+
+---
+
+**Roth IRA: BND (bonds)**
+
+This is the biggest problem. Your Roth IRA is the most valuable account you have from a tax perspective — every dollar of growth inside it is completely tax-free, forever. You never pay tax on dividends, interest, or capital gains as long as you follow the rules. The Roth is where you want your highest-expected-return assets, precisely because you want as much tax-free compounding as possible.
+
+BND is a total bond market fund. It currently yields around 4–5%, and bonds don't grow much beyond that. Holding BND in your Roth means you're sheltering a relatively slow-growing, income-focused asset in your best tax shelter. You're "wasting" Roth space on an asset that doesn't benefit much from tax-free compounding.
+
+Your advisor's framing — "safe assets belong in your retirement security account" — confuses tax treatment with investment safety. The Roth's advantage has nothing to do with how risky or safe the underlying fund is. It's about the tax treatment of returns. Putting bonds there for safety reasons is like keeping cash in a fireproof safe while leaving your valuables on the front porch.
+
+---
+
+**Traditional 401(k): VXUS (international stocks)**
+
+This one is mixed — not as clearly wrong as the Roth situation, but suboptimal for a specific reason.
+
+International stock funds pay foreign withholding taxes on dividends. When you hold an international fund like VXUS in a taxable account, you can claim a foreign tax credit to recoup most of that withholding (worth roughly 0.20% of the fund's value per year — small but real). When VXUS sits inside a tax-advantaged account like a 401(k), that foreign tax credit is permanently lost. You've paid foreign taxes and get no offset for them.
+
+The other issue: your Traditional 401(k) is a pre-tax account. You'll owe ordinary income taxes on every dollar you withdraw in retirement. That's not a disaster, but it means the growth inside the Traditional 401(k) is partially "pre-taxed" in a way Roth growth is not. Higher-growth assets (stocks) held there aren't as advantaged as they would be in a Roth, but they're still far better there than bonds would be.
+
+The "that's where you have the most money" rationale is not a tax principle — it's a convenience heuristic. Asset location decisions should be driven by tax treatment, not account size.
+
+---
+
+**Taxable brokerage: VTI (US stocks)**
+
+This is actually the most correctly placed asset. VTI is a broad US total market index fund. It's tax-efficient in a taxable account because:
+
+- Most of its return comes from capital appreciation, which isn't taxed until you sell.
+- Its dividends are mostly qualified (taxed at the lower long-term capital gains rate of 0%, 15%, or 20% depending on your bracket — not your ordinary income rate).
+- The ETF structure (VTI specifically) has extremely low capital gains distributions.
+
+So your taxable account is fine.
+
+---
+
+**What the correct placement looks like**
+
+Here's the general Boglehead rule, grounded in the tax treatment of each account type:
+
+- **Bonds → Traditional 401(k) / Traditional IRA.** Bond interest is taxed as ordinary income. In a pre-tax account, that tax is deferred until withdrawal — which is the best you can do with ordinary income. Bonds are the most natural fit for tax-deferred space.
+- **Stocks (especially international) → Roth IRA.** This is where you want your highest-growth assets. International stocks can also work here reasonably well — you lose the foreign tax credit, but Roth's tax-free growth more than compensates.
+- **US stocks → taxable.** VTI, VTSAX, or equivalent. Highly tax-efficient already, and you benefit from the step-up in basis at death if you hold it long enough.
+- **International stocks → taxable** is another valid choice, to capture the foreign tax credit. But it's a small benefit and shouldn't be the primary driver if you have better placement options.
+
+So a reasonable corrected setup with your three funds:
+
+| Account | Fund | Why |
+|---|---|---|
+| Roth IRA | VTI or VXUS (stocks) | Tax-free growth on high-return assets |
+| Traditional 401(k) | BND (bonds) | Shelter ordinary income from bond interest |
+| Taxable | VTI (or VXUS for FTC) | Tax-efficient stock fund, capital gains rates |
+
+---
+
+**A note on switching**
+
+If your Roth IRA and 401(k) are currently misallocated, you can fix this without tax consequences — you're just selling and buying inside tax-advantaged accounts, which doesn't trigger a taxable event. Sell BND in the Roth, buy stocks. Sell VXUS in the 401(k), buy BND. No tax bill.
+
+The taxable account (VTI) should largely be left alone. If you've had it long enough to have unrealized gains, selling just to rebalance isn't worth triggering the capital gains. Let new contributions direct the portfolio where you want it.
+
+---
+
+**To be fair to your advisor**
+
+The overall three-fund portfolio (VTI + VXUS + BND) is excellent — low cost, broadly diversified, simple. She made a good fund selection. The mistake is purely in the account assignment, not the fund choices themselves.
+
+And the "safe assets" framing is a common intuition that sounds reasonable but doesn't map onto how the tax code actually works. It's possible she just applied a mental shorthand without thinking through asset location specifically. Worth a conversation with her — but the fix is straightforward and can be made entirely within your existing accounts at no tax cost.
+
+One line of caution: if there's something about your specific tax situation I'm not aware of (very low income, unusual state tax rules, imminent retirement), the calculus could shift slightly. For decisions of meaningful dollar size, it's worth pressure-testing this with a fee-only fiduciary advisor or posting the full picture to the bogleheads.org forum, where portfolio reviews are free and thorough.

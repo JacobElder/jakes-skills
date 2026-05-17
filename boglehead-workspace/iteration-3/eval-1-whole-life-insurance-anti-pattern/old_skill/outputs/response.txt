@@ -1,0 +1,55 @@
+No, almost certainly not. This is one of the clearest cases where the financial-services industry's incentives and your interests point in opposite directions.
+
+Here's what's actually happening with whole life insurance.
+
+**What you're being sold**
+
+Whole life is a bundled product: term life insurance wrapped together with a tax-deferred savings account. The pitch sounds attractive — tax-free growth, borrow against it later, guaranteed death benefit. But the costs embedded in that bundle are enormous, and they come at your expense.
+
+**The math is bad, especially at the start**
+
+The first several years of your premiums largely go to commissions and fees — not to your cash value. Insurance agents selling whole life earn commissions that can be 50–100% of your first year's premium. That $500/month ($6,000/year) you're about to send: a substantial chunk of year one is paying your advisor's commission.
+
+After those initial years, the internal rate of return on whole life cash value is typically in the range of 0–2% for decades before it becomes even remotely competitive with what you'd get elsewhere. Compare that to the long-run expected return of a total stock market index fund (historically ~7% real, ~10% nominal).
+
+**The "tax-free" claim is misleading**
+
+The loans against your cash value are not free. You're borrowing your own money and paying 5–8% loan interest back to the policy. The "no tax" framing is technically accurate — it's a loan, not a withdrawal — but you are paying interest *to yourself* at a rate that reduces the death benefit if you don't pay it back. It's not the tax-free miracle it sounds like.
+
+**What you should do instead: Term + Invest the Difference**
+
+If you have dependents who rely on your income, you do need life insurance. But you should buy pure life insurance (term), not a savings vehicle wrapped in insurance.
+
+- **Buy 20- or 30-year level term life insurance.** For most people in their 30s-40s, $1M of 20-year term coverage costs $30–60/month. That's the insurance piece.
+- **Invest the rest** — the remaining $440–470/month — into tax-advantaged accounts in this priority order:
+
+  1. Get the full employer 401(k) match first (free money, beats everything).
+  2. Max an HSA if you're on a high-deductible health plan (triple-tax-advantaged — deductible contributions, tax-free growth, tax-free withdrawals for medical).
+  3. Max a Roth or Traditional IRA ($7,000/year in 2025; choose Roth if your income qualifies and you expect your tax rate to be similar or higher in retirement).
+  4. Max the 401(k) beyond the match.
+  5. If you've done all of that, taxable brokerage in broad index funds.
+
+**What you'd be giving up**
+
+At $500/month, you're investing $6,000/year. In a Roth IRA and 401(k) with a three-fund index portfolio, at a 7% average annual return over 30 years, that grows to roughly $567,000. The whole life policy, with its drag of first-year commissions, ongoing expenses, and sub-market cash value growth, is likely to produce a fraction of that over the same period — despite similar (or higher) contributions.
+
+Bogle put it plainly: "In investing, you get what you don't pay for." Every dollar that goes to commissions and expenses inside a whole life policy is a dollar that never compounds for you.
+
+**Legitimate uses of whole life (rare)**
+
+There are a few situations where permanent life insurance makes genuine sense:
+- Very high-net-worth estates ($10M+) needing liquidity for estate taxes via an irrevocable life insurance trust (ILIT).
+- Funding a buy-sell agreement for a business.
+- Providing lifetime support for a disabled dependent.
+
+If you're not in one of those situations, the answer is no.
+
+**About your advisor**
+
+Worth knowing: advisors who sell whole life insurance typically earn large commissions on these policies. That doesn't mean they're acting in bad faith — many genuinely believe in the product — but it does mean the recommendation isn't coming from a neutral, fee-only analysis of what's best for you. If you want independent advice, look for a fee-only fiduciary advisor (NAPFA.org or the Garrett Planning Network). They charge a flat fee or hourly rate, don't sell products, and are legally required to act in your interest.
+
+**Bottom line**
+
+If you need life insurance: buy term, invest the difference. If you don't need life insurance (no dependents, already wealthy, etc.), the answer is even clearer — just invest the $500/month in low-cost index funds through tax-advantaged accounts.
+
+*This isn't personalized financial advice — if you have a complex tax situation, large estate, or other factors at play, it's worth pressure-testing this with a fee-only fiduciary or the bogleheads.org forum (free, and the community there has seen thousands of these situations).*

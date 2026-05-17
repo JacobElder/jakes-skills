@@ -1,0 +1,74 @@
+Your financial advisor is giving you a bad argument, and the tax framing is backwards. Let me be direct about this.
+
+**The core issue: "the tax would be enormous" is not a reason to stay concentrated**
+
+You have $200,000 in a single stock — Tesla — representing 60% of your total portfolio. Your cost basis is $65,000, so your unrealized gain is $135,000. At the long-term capital gains rate (15% for most people, 23.8% including NIIT for high earners), you're looking at a federal tax bill of roughly $20,000–$32,000 on a full sale. That is real money.
+
+But here is the Boglehead framing that should replace your advisor's: **the tax you owe is the cost of having gains, not a reason to hold a concentrated position indefinitely.** You don't owe that tax because of some injustice — you owe it because your investment went up roughly 3x. Congratulations. The question is not "how do I avoid paying tax?" but "given that I can either (a) pay $20–32k in tax and diversify, or (b) stay 60% concentrated in a single volatile stock, which decision makes more sense for my financial future?"
+
+When you frame it that way, the tax bill usually looks a lot smaller relative to the risk you're carrying.
+
+---
+
+**"Let your winners run" is a bias, not a strategy**
+
+This phrase sounds like savvy investing. It isn't. Here's why.
+
+The fact that Tesla has gone up 3x tells you nothing about what it will do next. The market already knows Tesla's historical performance — it's priced in. What determines Tesla's future return is whether future performance exceeds expectations, which is not predictable. A stock that has tripled is not more likely to continue tripling than any other stock. Past appreciation is not an edge.
+
+"Let your winners run" is a rule of thumb from active traders trying to cut losers and ride trends. It has no place in a long-term investor's vocabulary, and it has nothing to say about when to *stop* running — Tesla could double again, or it could fall 70%. Both have happened within Tesla's own history. In 2020–2021, Tesla rose ~700% in under 18 months, then fell over 70% from its peak by late 2022. Investors who were "letting it run" at the peak watched those gains evaporate.
+
+---
+
+**What you're actually carrying: concentration risk**
+
+60% in a single stock is an enormous amount of risk. You are not diversified. If Tesla falls 70% — which, again, has literally happened before — your $200,000 position becomes $60,000, and your total portfolio is devastated. That would be a permanent, realized destruction of wealth that no amount of future "running" would easily recover.
+
+The tax you'd pay on a full sale today ($20–32k depending on your bracket) is a fraction of what you stand to lose if Tesla undergoes even a moderate correction from here.
+
+A sensible comparison:
+- Selling now, paying $25k in tax (rough midpoint), and diversifying into a total-market index: you net $175,000 deployed into broad diversification
+- Staying concentrated and Tesla drops 50%: your position drops from $200,000 to $100,000 — a $100,000 loss, against which the $25k tax you avoided looks trivial
+- Staying concentrated and Tesla drops 70% (has happened): position drops from $200,000 to $60,000 — a $140,000 loss
+
+The tax tail is wagging the asset-allocation dog.
+
+---
+
+**What to actually do**
+
+You don't have to sell all at once. Here's a sensible approach:
+
+1. **Spread sales over 2–3 tax years.** Selling a portion each year (e.g., $67,000 of the position per year over three years) keeps you in lower tax brackets and smooths the hit. If you're near year-end now, you can sell in December and then again in January, creating two tax years out of a few weeks.
+
+2. **Harvest any losses elsewhere to offset the gain.** If you have any other positions sitting at a loss, sell them in the same tax year. Capital losses offset capital gains dollar for dollar.
+
+3. **Redirect proceeds into a diversified portfolio.** At your apparent total portfolio size ($200,000 / 0.60 = approximately $333,000 total), you're probably in a position to hold a three-fund portfolio: VTI (US total stock market), VXUS (international), and a bond fund appropriate to your age and risk tolerance. A single target-date fund at your expected retirement year is also perfectly Boglehead.
+
+4. **Check your tax-advantaged accounts.** If you're not maxing your 401(k) and IRA, this is also a good time to increase those contributions — which reduces your ordinary income and indirectly reduces your net capital gains tax rate. The Boglehead funding waterfall says max your tax-advantaged space before investing in taxable.
+
+---
+
+**On your advisor**
+
+"Let your winners run" coming from a financial advisor is worth examining. A few questions worth asking:
+
+- Is your advisor a fiduciary, legally required to act in your interest, or a broker, who operates under a looser "suitability" standard?
+- How is your advisor compensated? AUM advisors (who charge a % of your portfolio) have a financial incentive to keep assets with them and to frame decisions in ways that prevent you from simplifying. The more complicated your situation, the more dependent on them you feel.
+- What specific analysis did your advisor do on Tesla's future expected return versus a diversified index to justify the "let it run" advice? If the answer is "I think Tesla is a great company," that is not analysis — that is a belief, and markets have already priced in that many people share it.
+
+This doesn't mean your advisor is acting in bad faith. But "let your winners run" + "the tax would be enormous" is the kind of advice that often preserves the advisor's AUM rather than your wealth.
+
+---
+
+**The direct Boglehead answer**
+
+Sell Tesla. Not necessarily all at once, but sell it — in tranches over 2–3 years if the tax math justifies that, or all at once if simplicity matters more. Pay the capital gains tax. It is the cost of your gains, not a punishment. Redeploy into a diversified, low-cost index portfolio you can hold without watching TSLA's daily moves. Then stop thinking about Tesla.
+
+The goal of personal investing is not to avoid tax — it's to build wealth. A concentrated, volatile single-stock position is the opposite of the simple, diversified, low-cost approach that has the best evidence behind it.
+
+"The two greatest enemies of the equity fund investor are expenses and emotions." Your advisor's framing is appealing to the emotional side — the tax pain of selling — and using it to keep you in a risky position. That is not in your interest.
+
+---
+
+*This is not personalized financial advice. For a situation involving $200,000 in taxable gains, it's worth running the specific numbers by a fee-only fiduciary advisor (NAPFA.org or Garrett Planning Network). The analysis above reflects the documented Boglehead community consensus on concentrated positions and tax-driven inaction.*

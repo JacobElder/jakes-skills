@@ -1,0 +1,55 @@
+Your instinct to be careful with $175,000 is understandable — that's a meaningful sum and the fear is real. But let's be direct: your plan to spread it over 3 years at $5,000/month is a form of market timing, and the evidence says it's probably costing you money.
+
+## What the data actually says
+
+Vanguard studied this directly. Across historical data for US, UK, and Australian markets, lump-sum investing outperformed dollar-cost averaging (DCA) about two-thirds of the time, with the lump-sum advantage averaging around 2.3% in the first year. The reason is simple: stocks have a long-run upward bias. Every month you're parked in cash is a month you're not earning the equity risk premium.
+
+Your $175,000 spread over 36 months means, on average, roughly half that money — about $87,500 — is sitting in cash for roughly 18 months. At a 7% expected real return on equities, that cash drag costs you approximately $11,000–$12,000 in expected returns over that period. That's not a guarantee, obviously — expected returns aren't realized returns — but it's the direction the math points.
+
+Peter Lynch put it this way: "Far more money has been lost by investors preparing for corrections than has been lost in corrections themselves."
+
+## The fear is real, but here's what you're actually afraid of
+
+You're imagining: invest everything in January, market drops 30% in March, and you're sitting on $122,500 instead of $175,000.
+
+A few things about that scenario:
+
+**1. It doesn't matter as much as it feels like it will.** You're investing for decades. A 30% drawdown shortly after a lump-sum investment is uncomfortable but not ruinous. If you're already a few years into a three-fund portfolio, you've presumably sat through at least some volatility — this is more of the same. The money you already have invested would also be down 30%; the lump-sum timing is just a small additional piece.
+
+**2. The crash might not come.** Or it might come in year 2, or year 4. If you wait 3 years and the market goes up 40%, you'll have "protected" yourself right out of a significant gain. This happens more often than the bad scenario.
+
+**3. DCA doesn't fully protect you anyway.** If a crash happens in month 30, most of your DCA money is already invested at higher prices. DCA is psychological insurance — it makes you feel better about each tranche — but it doesn't eliminate sequence risk in any meaningful sense. It just distributes it.
+
+## What Bogleheads actually recommend for windfalls
+
+The community's honest answer: **lump sum is mathematically correct, DCA is the behavioral compromise.**
+
+If you genuinely cannot stomach putting $175,000 in at once — if you know yourself well enough to know you'd panic-sell in a downturn — then DCA is a fine answer, because the best asset allocation is the one you'll actually hold. An investor who goes 100% equities and sells at the bottom has a worse real-world outcome than one who went 80% equities and held.
+
+But there's a middle ground: **your 3-year / $5,000-per-month plan is probably too conservative as a behavioral compromise.**
+
+Three years is a long time to keep nearly six figures on the sidelines. A more typical Boglehead-endorsed DCA compromise is **6 to 12 months**, not 36. If you can't stomach lump sum, put it in over 12 months — $14,583/month — and you've made a real behavioral concession without surrendering 18 months of expected equity returns.
+
+At $5,000/month over 36 months, you're not really DCA-ing from a risk-management standpoint. You're timing the market over a very long window, which is exactly what you said you don't want to do.
+
+## A few practical notes for your situation
+
+**Asset allocation matters more than the timing decision.** If you're putting $175,000 into a three-fund portfolio and your existing allocation is, say, 90% stocks / 10% bonds, consider whether you're comfortable with a 40–50% drawdown on the full portfolio (including this new money). If the honest answer is no, the fix isn't a 3-year DCA — it's adjusting your stock/bond allocation to something you can actually hold through a bad market.
+
+**Where is the money sitting now?** While you decide, it should be in a high-yield savings account or short-term Treasuries, not a checking account. Current rates on HYSA or money market funds are meaningful; you're not just earning zero while you wait.
+
+**Have you maxed tax-advantaged accounts first?** This is a separate but important question. Before investing $175,000 in a taxable brokerage, make sure you've run through the Boglehead funding waterfall: full employer 401(k) match, HSA if eligible, IRA contributions ($7,000/year for 2024/2025 unless over 50). If you haven't, directing some of this windfall toward maxing those accounts this year (and possibly next year's contributions at the turn of the year) is worth doing before the taxable bucket.
+
+## Bottom line
+
+Your plan isn't wrong — DCA is a legitimate approach and far better than not investing at all. But 36 months is a very long DCA window. The Boglehead-consistent options, ranked by expected return:
+
+1. **Lump sum now.** Mathematically best. Right answer if you can stay the course through a downturn.
+2. **DCA over 6–12 months.** Behavioral compromise that's still reasonable. Recommended if you know you'd panic-sell a lump sum purchase in a crash.
+3. **DCA over 36 months.** What you're proposing. Better than nothing, but probably too conservative — you're giving up significant expected returns for emotional comfort that you could get with a much shorter window.
+
+The question to ask yourself: is my three-year plan about having a sensible process, or is it about hoping to time a better entry? If it's the latter, that's market timing by another name.
+
+---
+
+*This isn't personalized financial advice. For a decision of this size, it's worth posting your full situation on bogleheads.org — it's free, and the community has seen every variation of this question. A fee-only fiduciary advisor for a one-time consultation is another option if you want a human to pressure-test the plan.*

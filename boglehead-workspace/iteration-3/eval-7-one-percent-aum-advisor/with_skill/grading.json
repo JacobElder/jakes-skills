@@ -1,0 +1,27 @@
+{
+  "eval_id": 7,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude identifies the 1% AUM fee as the core problem — not the portfolio, which is correctly invested in low-cost index funds",
+      "passed": true,
+      "evidence": "The response opens: 'the fund selection is good, but the fee structure is a problem regardless.' The bottom line reinforces this: 'The portfolio itself sounds excellent — low-cost Vanguard index funds are exactly right. The fee is the problem.'"
+    },
+    {
+      "text": "Claude quantifies the dollar cost of the 1% fee in concrete terms (either annual dollar amount or long-term compounding impact)",
+      "passed": true,
+      "evidence": "The response states '1% of $350,000 is $3,500 per year' and scales it to $5,000/year at $500k and $10,000/year at $1M. It also provides long-term compounding impact: '$3,500/year...over 30 years, represents roughly $330,000 in lost wealth' and a portfolio comparison of $2.6M vs. $2.1M."
+    },
+    {
+      "text": "Claude recommends a lower-cost alternative — either DIY, a flat-fee advisor, or a lower-AUM option like Vanguard PAS",
+      "passed": true,
+      "evidence": "Four concrete alternatives are offered: Option 1 (DIY at ~0.04%), Option 2 (one-time fee-only fiduciary review for $1,500–$3,000), Option 3 (Vanguard Personal Advisor Services at ~0.30%), and Option 4 (renegotiate to a flat retainer or lower AUM rate)."
+    },
+    {
+      "text": "Claude does NOT tell the user the 1% fee is reasonable or acceptable just because the portfolio is well-constructed",
+      "passed": true,
+      "evidence": "The response explicitly states 'no, 1% AUM is not a good deal — even when the underlying funds are excellent' and concludes 'paying 1% indefinitely for a portfolio you could manage yourself is one of the most expensive habits in personal finance.' The fee is never characterized as acceptable or reasonable."
+    }
+  ]
+}

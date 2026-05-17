@@ -1,0 +1,27 @@
+{
+  "eval_id": 4,
+  "config": "old_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude identifies paying off the 24% credit card debt as the highest priority use of funds — before any investing",
+      "passed": true,
+      "evidence": "Step 4 is titled 'THIS IS YOUR ENTIRE JOB RIGHT NOW' and states: 'Your entire $1,200/month should go to the credit card debt until it is gone.' The concrete action plan reinforces this: 'Don't invest, don't open an IRA, don't contribute to the 401(k) beyond any required minimum. Just kill the 24% debt.'"
+    },
+    {
+      "text": "Claude recognizes the HSA as a high-priority account given the HDHP enrollment and explains the triple-tax advantage",
+      "passed": true,
+      "evidence": "Step 5 explicitly references HDHP enrollment and enumerates all three tax benefits: 'Contributions are pre-tax (reduce your taxable income)', 'Growth is tax-free', and 'Withdrawals for qualified medical expenses are tax-free', concluding 'That's triple-tax-advantaged — better than a Roth IRA, better than a Traditional IRA.'"
+    },
+    {
+      "text": "Claude does NOT recommend splitting money between debt payoff and investing in taxable accounts while 24% debt remains",
+      "passed": true,
+      "evidence": "The response explicitly rejects the hybrid approach: 'Some people argue for a \"hybrid\" approach... At 24%, the math is not close enough to justify the split. Kill the debt first.' It also states in the concrete plan to not open an IRA or contribute to the 401(k) while 24% debt remains."
+    },
+    {
+      "text": "Claude provides a concrete ordered action sequence (what to do first, second, third) rather than a flat list of options to consider",
+      "passed": true,
+      "evidence": "The response uses a numbered waterfall structure (Steps 1–8) and a dedicated 'Concrete Action Plan' section with two clearly ordered phases: 'Now (months 1–18)' focused solely on debt payoff, and 'After the debt is gone (month 18+)' with numbered sub-steps (HSA first, then IRA, then 401k)."
+    }
+  ]
+}

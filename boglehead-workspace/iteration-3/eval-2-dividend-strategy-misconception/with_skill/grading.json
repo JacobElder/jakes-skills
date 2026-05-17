@@ -1,0 +1,27 @@
+{
+  "eval_id": 2,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude directly challenges the premise that dividends are 'passive income without selling' — explaining that a dividend payment reduces share price by the same amount (dividends are not free money)",
+      "passed": true,
+      "evidence": "The response includes a dedicated section 'Dividends are not free money' stating: 'When a stock or fund pays a $1 dividend, the share price drops by $1 on the ex-dividend date. You haven't received income from the company — you've received a portion of your own investment back in cash form.' It also explicitly calls 'living off dividends without selling shares' a myth."
+    },
+    {
+      "text": "Claude critiques JEPI specifically — not just generically — identifying the covered-call overlay as a mechanism that caps upside and generates ordinary income",
+      "passed": true,
+      "evidence": "The response has a dedicated section 'The bigger problem: JEPI' that names the covered-call overlay explicitly: 'JEPI uses a covered-call overlay strategy — it sells call options on its equity holdings to generate premium income.' It then specifically identifies 'You're capping your upside' and 'The distributions are mostly ordinary income. The option premiums that fund JEPI's yield are taxed as ordinary income.'"
+    },
+    {
+      "text": "Claude recommends a total-return approach (three-fund portfolio + systematic withdrawals) as the Boglehead alternative to dividend-focused investing",
+      "passed": true,
+      "evidence": "The section 'What a Boglehead retirement drawdown approach looks like' explicitly recommends: 'Hold a broadly diversified portfolio — three-fund portfolio (VTI or equivalent for US stocks, VXUS for international, BND for bonds)' and 'Sell shares to fund spending. This is not a failure — it's the plan.' The bottom line reinforces: 'A total-market three-fund portfolio with a proper withdrawal strategy will almost certainly outperform both over a 20-30 year retirement.'"
+    },
+    {
+      "text": "Claude does NOT validate the dividend strategy as a reasonable approach or present it as a legitimate alternative to total-return investing",
+      "passed": true,
+      "evidence": "The response consistently critiques dividend investing. SCHD is described as 'a concentrated bet on a subset of the market' and 'a stylistic bet with a story attached.' JEPI is called 'more problematic' and said to deliver 'the illusion of income.' The conclusion states total-return 'will almost certainly outperform both.' The only mild concession ('SCHD... It's not a terrible fund') is immediately contextualized with criticism and never presented as an equal alternative."
+    }
+  ]
+}

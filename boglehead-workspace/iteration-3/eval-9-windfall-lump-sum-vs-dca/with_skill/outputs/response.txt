@@ -1,0 +1,67 @@
+Your instinct to be cautious is completely understandable — $175,000 is real money and the fear of investing at a market peak is a deeply human reaction. But let's be honest about what your plan actually is: you're proposing to spread $175,000 over 36 months at $5,000/month, which means for most of that period the majority of your windfall is sitting in cash. That's a significant bet that waiting will work out better than investing — and the evidence says it won't, most of the time.
+
+**What the research actually says**
+
+Vanguard published a study comparing lump-sum investing (LSI) to dollar-cost averaging (DCA) across US, UK, and Australian markets going back decades. The finding: lump sum outperformed a 12-month DCA about two-thirds of the time. The reason is simple — markets go up more often than they go down, so cash sitting on the sidelines is usually a drag, not protection.
+
+Your plan isn't DCA over 12 months. It's DCA over 36 months. That's much more aggressive as a "wait and see" strategy. The longer the timeline, the worse cash tends to perform relative to invested capital.
+
+Peter Lynch put it bluntly: "Far more money has been lost by investors preparing for corrections than has been lost in corrections themselves."
+
+**The fear is rational but the math doesn't support it**
+
+Yes, the market could drop right after you invest. That's always true. But consider:
+
+- If you invest $175k today and the market drops 30%, you have ~$122k. That's painful.
+- If you invest $5k/month and the market rises 20% over the next two years before you finish deploying, you've missed $35k+ in gains on the money sitting in cash.
+- The second scenario is roughly twice as likely as the first based on historical frequencies.
+
+You don't feel the cash drag because it's invisible. You feel the loss acutely because it's visible. That's the behavioral asymmetry here, not a real asymmetry in expected outcomes.
+
+**The Boglehead answer: lump sum if you can, 6–12 months DCA if you genuinely cannot**
+
+The community's honest position on windfalls is this:
+
+1. Lump sum is the mathematically correct move. If you can stomach the psychological risk of investing all at once and watching it potentially decline 30% in the short term, lump sum is the right call. The key question: is your asset allocation correct? If you're in a portfolio you could hold through a 50% drawdown without selling, then invest it all. If your allocation is right, the timing of a single entry point matters less than decades of compounding.
+
+2. DCA over 3–12 months is the behavioral compromise. If the thought of investing $175k all at once and watching it drop $50k in a month would cause you to do something irrational — sell, panic, change your allocation — then DCA over a shorter timeframe is fine. It costs you some expected return but buys you peace of mind, which has real value if it keeps you from doing something worse.
+
+3. DCA over 3 years is too long. This isn't a behavioral hedge anymore; it's market timing with extra steps. You're not protecting yourself from your own emotions — you're making a multi-year prediction about market direction. Bogleheads don't do that.
+
+**A more reasonable approach**
+
+If you want to stage this in, compress the timeline dramatically. Some options:
+
+- **3 equal monthly installments ($58,333/month over 3 months)**: Fast enough to mostly capture the market's expected return, slow enough to feel like you're not betting everything on a single day.
+- **6 installments (~$29,000/month)**: The upper end of what most Boglehead-minded folks would call a "behavioral compromise."
+- **12 installments (~$14,600/month)**: Stretching it, but still defensible.
+
+At 36 months, you'd be leaving a substantial amount in cash for an extended period. Over that time, assuming a modest 8% expected market return, you'd expect the uninvested balance to cost you roughly $10,000–$20,000 in foregone gains on average — and that's in an average-return scenario, not a bull market.
+
+**Before you deploy it: make sure the rest of your financial house is in order**
+
+Since this is a windfall on top of an existing portfolio, run through the basics quickly:
+
+- Is your emergency fund fully funded (3–6 months of expenses in a high-yield savings account)? If not, carve out that amount first before investing any of this.
+- Any high-interest debt (credit cards, anything above ~7%)? Pay that off first. Guaranteed return.
+- Have you maxed your IRA for this year ($7,000 in 2025)? If not, do that immediately.
+- Have you maxed your 401(k) contribution for this year? If you have remaining contribution room, you could accelerate payroll contributions and use this cash to cover living expenses — an indirect way to front-load tax-advantaged space with the windfall.
+
+Once those boxes are checked, whatever's left goes into your three-fund portfolio in a taxable brokerage.
+
+**Fund placement reminder for the taxable portion**
+
+If you're adding to a taxable account, keep it tax-efficient:
+- VTI or VTSAX for US stocks (qualified dividends, favorable LTCG treatment, step-up basis at death)
+- VXUS for international (holds the foreign tax credit, which is lost if you own this in a tax-deferred account)
+- Keep bonds out of taxable if you can — their interest income is taxed at ordinary rates
+
+**The bottom line**
+
+Your $5k/month over 3 years plan is driven by fear, not strategy. The fear is understandable, but the expected cost is real. At a minimum, compress that timeline to 6–12 months. If you can accept some short-term paper losses in exchange for the higher expected return of getting invested faster, lump sum is the right call.
+
+The worst outcome isn't investing on a bad day. The worst outcome is staying in cash for 2 years while the market runs and then panic-buying at the top. That's the scenario the 3-year DCA plan actually risks.
+
+---
+
+*This isn't personalized financial advice. For a windfall of this size with tax implications, it's worth spending an hour with a fee-only fiduciary advisor (find one at napfa.org or garrettplanningnetwork.com) or posting your specific situation on bogleheads.org — that forum is free and the regulars are excellent.*

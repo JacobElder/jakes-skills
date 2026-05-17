@@ -1,0 +1,27 @@
+{
+  "eval_id": 5,
+  "config": "old_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude pushes back on the premise that adding more funds improves diversification — explaining that VTI already holds the proposed additions at market weight",
+      "passed": true,
+      "evidence": "The response directly states: 'What your proposed additions do is not broaden diversification — you can't get more diversified than the total world equity market. What they do is tilt your portfolio toward specific sectors and factors.' It also notes VTI already holds REITs (~3.5%), all of VIG's holdings, and small-cap stocks, making the proposed funds overweights rather than new exposure."
+    },
+    {
+      "text": "Claude specifically calls out VNQ and VIG as funds that VTI already contains, making them redundant overweights rather than diversifiers",
+      "passed": true,
+      "evidence": "On VNQ: 'VTI already includes REITs — about 3.5% of the fund. You are not missing REITs. Adding VNQ overweights real estate relative to its market-cap weight.' On VIG: 'VTI already owns all of VIG's holdings, and you're underweighting the parts of VTI that VIG excludes. This is portfolio complexity that generates no benefit.'"
+    },
+    {
+      "text": "Claude does NOT endorse adding all four funds or frame the 7-fund portfolio as an improvement over the three-fund portfolio",
+      "passed": true,
+      "evidence": "Claude explicitly recommends skipping VNQ ('generally a no from a Boglehead standpoint') and VIG ('redundant overlap with VTI, dividend mythology'). It states: 'Seven funds is where complexity starts costing you more than it earns you.' At most it suggests a possible four-fund portfolio with only conditional endorsement of VIOV and VSS."
+    },
+    {
+      "text": "Claude defends the three-fund portfolio as complete and sufficient, not as a beginner starting point to be upgraded",
+      "passed": true,
+      "evidence": "The response states: 'The three-fund portfolio has earned its reputation not because people couldn't think of anything to add. It's because people thought of everything and concluded that less was more.' And: 'You are already as diversified as a stock-and-bond investor can get.' The portfolio is framed as a principled, fully sufficient choice, not a stepping stone."
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "eval_id": 4,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude identifies paying off the 24% credit card debt as the highest priority use of funds — before any investing",
+      "passed": true,
+      "evidence": "Step 3 explicitly directs 'All $1,200/month goes here' to credit card debt and states 'There is no world where putting money into an IRA or brokerage account while carrying credit card debt at 24% makes mathematical sense.' The response frames 24% payoff as a guaranteed risk-free return that no investment reliably beats."
+    },
+    {
+      "text": "Claude recognizes the HSA as a high-priority account given the HDHP enrollment and explains the triple-tax advantage",
+      "passed": true,
+      "evidence": "A dedicated 'HSA exception' section explains all three tax advantages: (1) pre-tax contributions, (2) tax-free growth, and (3) tax-free withdrawals for qualified medical expenses. The response calls it 'the only account with triple-tax advantages' and 'the best account structure that exists for US investors,' and places it above IRA contributions in the post-debt waterfall."
+    },
+    {
+      "text": "Claude does NOT recommend splitting money between debt payoff and investing in taxable accounts while 24% debt remains",
+      "passed": true,
+      "evidence": "The response explicitly states 'Do not open a brokerage account and start investing in index funds while carrying this debt' and 'Do not split the $1,200 between debt payoff and investing. This is a common mistake.' The only split discussed is an optional carve-out between debt payoff and the HSA — not taxable investing."
+    },
+    {
+      "text": "Claude provides a concrete ordered action sequence (what to do first, second, third) rather than a flat list of options to consider",
+      "passed": true,
+      "evidence": "The response uses a clear numbered waterfall (Step 1: emergency fund check, Step 2: employer match — skip, Step 3: credit card debt). The post-debt section provides a numbered priority list (1. finish emergency fund, 2. max HSA, 3. max Roth IRA, 4. max 401(k), 5. taxable brokerage) with specific monthly dollar amounts for each step."
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+Great starting point. At 26, with a real income, minimal high-interest debt, and an employer 401(k), you're in better shape than most people who ask this question. Here's the Boglehead playbook for your exact situation — not a list of things to consider, but a prioritized action sequence.
+
+---
+
+## Step 1: Nail down your starter emergency fund
+
+You have $2,000 in savings. That's close to the starter target of $1,000–1 month of expenses. Before you do anything else, park that money in a high-yield savings account (HYSA) — Ally, Marcus, SoFi, Wealthfront Cash, or similar. These are currently yielding around 4–5%, which is meaningfully better than a checking account and keeps the money fully liquid. Don't put it in stocks; this is your "car breaks down / ER visit" buffer. Without it, any financial shock pushes you into credit card debt, and that unravels everything else.
+
+Your $2,000 is probably enough to call this done. Move on.
+
+---
+
+## Step 2: Capture the full 401(k) employer match — immediately
+
+Find out what your employer match is. The most common structure is something like "we match 50% of your contributions up to 6% of salary," but it varies. Whatever it is, contribute at minimum enough to get every dollar of that match.
+
+This is the most important investment move you can make. An employer match is an immediate 50–100% return on your money before it's even invested. Nothing else competes. Not paying off student loans, not maxing an IRA — the match comes first.
+
+At $75,000 salary, if your employer matches 50% of up to 6%, contributing 6% ($4,500/year) earns you $2,250 in free employer contributions. That's an instant 50% return. Enroll today if you haven't.
+
+---
+
+## Step 3: Your student loans — probably not a crisis, but worth addressing next
+
+You have $8,000 at 5.5%. That puts you right at the Boglehead gray zone — the soft cutoff where people debate whether to pay it down aggressively or invest instead is roughly 5–7%.
+
+At 5.5%, you're not clearly on either side. The practical Boglehead answer: after capturing the full employer match, make more than the minimum payment on your loans, but don't go scorched-earth on them before funding your IRA. A reasonable approach is to pay them down on an accelerated schedule (maybe 12–18 months at current income) while simultaneously starting your IRA contributions. At $75k income and $8k in debt, you have enough cash flow to do both.
+
+If the psychological weight of the debt bothers you, pay it off first. The math doesn't heavily favor one over the other at 5.5%, and the behavioral clarity of being debt-free is worth something.
+
+---
+
+## Step 4: Max a Roth IRA
+
+After the employer match is captured and you're making real progress on the student loans, open a Roth IRA. At 26 with $75,000 in income, Roth is almost certainly the right call:
+
+- You're likely in the 22% federal bracket now, and your income will probably grow over a 40-year career. Paying tax now at 22% and withdrawing tax-free in retirement — when you might be drawing from a sizable portfolio — is a good trade.
+- A Roth IRA also has better flexibility than a traditional: you can withdraw your contributions (not earnings) anytime, penalty-free. It's not an emergency fund, but it's not locked away with zero escape hatch either.
+- 2025 limit: $7,000. At $75k, you're well under the income phaseout ($150,000 single for 2025).
+
+Open it at Vanguard, Fidelity, or Schwab. All three are excellent. Don't overthink this choice.
+
+What to buy inside the Roth IRA: a single target-date fund (e.g., Vanguard Target Retirement 2065, ticker VFFVX, expense ratio ~0.08%) is a perfectly Boglehead answer. It holds a diversified global stock + bond portfolio in one fund and automatically adjusts the allocation as you age. If you want to build a three-fund portfolio yourself, that's also great — but the target-date fund means you can set it up in 20 minutes and never lose sleep over it.
+
+---
+
+## Step 5: Beyond the match in your 401(k)
+
+Once the IRA is funded, go back to the 401(k) and contribute beyond the match up to the annual limit ($23,500 in 2025). You probably won't max it immediately while also paying off student loans, and that's fine. Directional progress matters more than doing everything perfectly in year one.
+
+One thing to check: what's the fund menu in your 401(k)? Some plans have good low-cost index funds; others have expensive active funds. Look for a total US stock market index fund or S&P 500 index fund with an expense ratio below 0.20%. If the best option in your plan is an S&P 500 index at 0.05%, that's great. If the only options are actively managed funds at 0.80%+, that's worth knowing — contribute enough for the match, fund your IRA, and come back to this later.
+
+If your plan has a Roth 401(k) option, the Roth vs. traditional decision is the same as the IRA: at 26 with likely rising income, Roth is probably right.
+
+---
+
+## What to actually invest in
+
+The Boglehead default is a three-fund portfolio:
+
+1. **US Total Stock Market** — VTI (ETF) or VTSAX (Vanguard mutual fund), expense ratio 0.03–0.04%. If you're at Fidelity, FSKAX (0.015%) or FZROX (0.00%) in tax-advantaged accounts (do not use FZROX in taxable — it's not portable and forces a taxable sale if you ever switch brokerages).
+2. **Total International Stock Market** — VXUS (Vanguard), FTIHX (Fidelity), IXUS (iShares)
+3. **US Total Bond Market** — BND (Vanguard), FXNAX (Fidelity)
+
+At 26 with a long time horizon, most Bogleheads would run heavy in equities — 80/20 or even 90/10 stocks/bonds is defensible. You have decades to ride out volatility. What you cannot afford is bailing during a crash because you held more risk than you could stomach — so pick an allocation you'll hold through a 40% drawdown without panic-selling.
+
+The honest answer: if you don't want to manage this yourself, a single target-date fund in both your 401(k) and IRA is exactly what the Boglehead community endorses. "Don't look for the needle in the haystack. Just buy the haystack."
+
+---
+
+## Your action sequence, in order
+
+1. Move your $2,000 to a high-yield savings account (starter emergency fund — done).
+2. Log into your 401(k) and set contribution to capture the full employer match.
+3. Pay off student loans aggressively over the next 12–18 months while simultaneously starting the IRA.
+4. Open a Roth IRA (Fidelity or Vanguard); fund it with $7,000 this year if you can.
+5. As income grows and the student loan is gone, increase 401(k) contributions beyond the match toward the $23,500 annual limit.
+6. Build your emergency fund up to 3–6 months of expenses as cash flow allows.
+7. Any money after that: taxable brokerage, same three-fund portfolio.
+
+---
+
+## A few things to ignore for now
+
+You don't need to think about backdoor Roth conversions, mega backdoor Roth, tax-loss harvesting, factor tilts, dividend strategies, or sector ETFs. Those are problems for a later version of you with a more complex financial picture. For the next few years, your job is to: stay out of high-interest debt, capture free money (employer match), fill tax-advantaged accounts with cheap index funds, and leave it alone.
+
+"Stay the course" isn't a platitude — it's the actual instruction. The biggest mistake most investors make isn't picking the wrong fund; it's selling during a downturn and locking in losses. The fund choice barely matters compared to your savings rate and your willingness to stay invested through volatility.
+
+---
+
+One note: I don't know your full tax situation, state, or specific employer plan details. For large or irreversible decisions, the bogleheads.org forum is a free and excellent resource staffed by people who do this every day. But for getting started at 26 with a good income and a clean slate, the steps above are close to universal.

@@ -1,0 +1,32 @@
+{
+  "eval_id": 1,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude explicitly recommends against whole life insurance as an investment vehicle, not just 'it depends on your situation'",
+      "passed": true,
+      "evidence": "Opens with 'Almost certainly not. This is one of the clearest \"no\" answers in the Boglehead playbook' and concludes 'whole life insurance is almost always the wrong product for the job.' No hedging to 'it depends on your situation.'"
+    },
+    {
+      "text": "Claude names the term life + invest the difference alternative as the standard Boglehead recommendation",
+      "passed": true,
+      "evidence": "Dedicated section titled 'What to do instead: term + invest the difference' explicitly recommends buying term life and investing the remainder in index funds via the Boglehead funding waterfall. Also states 'The Boglehead tradition on this is direct: whole life insurance is almost always the wrong product for the job. Term life + a three-fund portfolio in tax-advantaged accounts will beat it.'"
+    },
+    {
+      "text": "Claude explains why the 'tax-free growth' pitch is misleading — tax-advantaged accounts (401k, IRA, HSA) should be maxed before insurance-based wrappers are considered",
+      "passed": true,
+      "evidence": "Directly addresses this: 'The \"builds cash value tax-free\" pitch is technically true but deeply misleading' and 'A 401(k), IRA, and HSA all provide tax-advantaged or tax-free growth — without the insurance overhead. Any pitch for whole life as a \"tax vehicle\" should immediately raise the question: have you maxed all of those first?'"
+    },
+    {
+      "text": "Claude identifies the high commission structure as a reason the advisor may be recommending this product",
+      "passed": true,
+      "evidence": "Explicit section 'What your financial advisor earns' states: 'Insurance-licensed advisors typically earn 50–100% of the first year's premium in commission on whole life sales — in your case, $3,000–$6,000 upfront, plus ongoing trailing commissions... Their recommendation is not coming from a neutral position.'"
+    },
+    {
+      "text": "Claude does NOT present whole life as a reasonable option for the average investor or give it a neutral pros-and-cons treatment",
+      "passed": true,
+      "evidence": "The response is consistently critical throughout with no neutral pros-and-cons framing. The only mention of legitimate use cases is narrowly scoped to edge cases ('estate planning for $10M+ estates, buy-sell agreements for businesses, disabled dependents') and immediately followed by 'For most people receiving this pitch, none of those apply.'"
+    }
+  ]
+}

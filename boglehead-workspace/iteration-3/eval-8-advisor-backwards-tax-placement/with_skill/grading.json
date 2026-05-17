@@ -1,0 +1,32 @@
+{
+  "eval_id": 8,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude identifies the tax placement as backwards — bonds belong in tax-deferred accounts (Traditional 401k), not Roth IRA",
+      "passed": true,
+      "evidence": "The response opens by calling this 'a textbook case of backwards asset location' and explicitly states under the corrected placement table: 'Bonds → Traditional 401(k) / Traditional IRA. Bond interest is taxed as ordinary income. In a pre-tax account, that tax is deferred until withdrawal — which is the best you can do with ordinary income. Bonds are the most natural fit for tax-deferred space.'"
+    },
+    {
+      "text": "Claude explains WHY bonds should not be in the Roth IRA — bonds generate income that's taxed as ordinary income, wasting the Roth's tax-free growth on a low-returning asset",
+      "passed": true,
+      "evidence": "The response explains: 'BND is a total bond market fund. It currently yields around 4–5%, and bonds don't grow much beyond that. Holding BND in your Roth means you're sheltering a relatively slow-growing, income-focused asset in your best tax shelter. You're \"wasting\" Roth space on an asset that doesn't benefit much from tax-free compounding.' It also notes the Roth should hold 'highest-expected-return assets, precisely because you want as much tax-free compounding as possible.'"
+    },
+    {
+      "text": "Claude identifies that VXUS (international) should be in taxable to capture the foreign tax credit, not in the Traditional 401k",
+      "passed": true,
+      "evidence": "The response states: 'When you hold an international fund like VXUS in a taxable account, you can claim a foreign tax credit to recoup most of that withholding (worth roughly 0.20% of the fund's value per year — small but real). When VXUS sits inside a tax-advantaged account like a 401(k), that foreign tax credit is permanently lost.' The corrected placement table also lists 'Taxable | VTI (or VXUS for FTC) | Tax-efficient stock fund, capital gains rates.'"
+    },
+    {
+      "text": "Claude explicitly debunks the advisor's rationale ('safe assets in retirement' and 'most money') as conflating risk management with tax efficiency",
+      "passed": true,
+      "evidence": "The response directly addresses both rationales: (1) 'Your advisor's framing — \"safe assets belong in your retirement security account\" — confuses tax treatment with investment safety. The Roth's advantage has nothing to do with how risky or safe the underlying fund is. It's about the tax treatment of returns.' (2) 'The \"that's where you have the most money\" rationale is not a tax principle — it's a convenience heuristic. Asset location decisions should be driven by tax treatment, not account size.'"
+    },
+    {
+      "text": "Claude recommends a specific corrective action — swapping BND and stocks between accounts, noting there are no tax consequences for trades within tax-advantaged accounts",
+      "passed": true,
+      "evidence": "The response explicitly states: 'If your Roth IRA and 401(k) are currently misallocated, you can fix this without tax consequences — you're just selling and buying inside tax-advantaged accounts, which doesn't trigger a taxable event. Sell BND in the Roth, buy stocks. Sell VXUS in the 401(k), buy BND. No tax bill.'"
+    }
+  ]
+}

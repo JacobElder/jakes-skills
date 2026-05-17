@@ -1,0 +1,62 @@
+Short answer: the portfolio is good. The fee structure is not. And once you understand the math, "they put me in low-cost Vanguard funds" starts to look less like a value-add and more like the bare minimum.
+
+---
+
+**The cost problem**
+
+1% AUM sounds small. Here's what it actually means:
+
+- On $350,000 today, you're paying $3,500 per year in advisory fees.
+- As your portfolio grows — say, to $700,000 — that becomes $7,000/year.
+- To $1,000,000: $10,000/year. Every year. Forever.
+
+Now let's look at what you're getting for $3,500 annually: someone who put you in low-cost Vanguard index funds (which, to be clear, is the right answer) and has presumably kept you from making big behavioral mistakes. That's it. The funds themselves — VTI, VXUS, BND, whatever the mix is — cost roughly 0.03–0.07% per year. You're paying roughly 15x the cost of the underlying investments for someone to select and hold them.
+
+Over 30 years on $350,000, the difference between a 1% AUM fee and a DIY approach (essentially $0 in advisory fees) at a 7% gross return is roughly **$400,000–$500,000 in ending wealth**, depending on contributions. That's not a rounding error. Bogle called this "the tyranny of compounding costs," and it's the right framing.
+
+---
+
+**What are you actually paying for?**
+
+Let's be precise. A 1% AUM fee is defensible if you're getting:
+
+- Comprehensive financial planning (tax strategy, estate planning, insurance review, retirement income planning)
+- Behavioral coaching that genuinely keeps you from panic-selling
+- Active tax-loss harvesting in a large taxable account
+- Complex situations (business owner, equity compensation, divorce, etc.)
+
+Is that what you've been getting for six years? If the answer is "they review my portfolio once a year and I get quarterly statements," that's not worth 1%. If they've also helped you navigate a backdoor Roth conversion, optimize your 401(k) contributions, analyze your tax situation, and review your estate documents — that's closer to worth debating.
+
+The test: could you describe three specific, dollar-quantifiable things your advisor did in the last year that you couldn't have done yourself with a few hours of reading? If not, you're paying for fund selection that you could replicate in an afternoon.
+
+---
+
+**The "solid job" question**
+
+You said they've done a solid job. Probably true. But here's what a Boglehead would point out: the "solid job" may be mostly attributable to the market and to being in index funds, not to the advisor. If VTI returned 10% and your portfolio returned 10%, the advisor did not add alpha — the market did. The 1% fee still came out of your pocket regardless.
+
+This isn't to say financial advisors don't provide value. Some do, substantially. But that value comes from financial planning and behavioral guardrails, not from fund selection. And here's the uncomfortable truth: if your advisor put you in Vanguard index funds, they've already conceded that point. Active fund selection isn't their value-add. So what is?
+
+---
+
+**What would a Boglehead do?**
+
+Option 1 — DIY: Open a Vanguard, Fidelity, or Schwab account. Replicate the existing portfolio (or simplify to a three-fund portfolio: US total market + international + bonds). Set up auto-contributions. Rebalance annually. Total annual cost: $0 in advisory fees + fund ERs of ~0.05%. Read *The Little Book of Common Sense Investing* (Bogle) or *The Bogleheads' Guide to Investing* once. Done.
+
+Option 2 — Fee-only advice for specific questions: If you genuinely want human advice occasionally, hire a **fee-only fiduciary** advisor on an hourly or flat-fee basis. NAPFA (napfa.org) and the Garrett Planning Network list them. Expect to pay $1,500–$3,500 for a comprehensive financial plan, or $200–$400/hour for specific questions. You'd save $1,000–$2,000+ per year versus the current arrangement.
+
+Option 3 — Vanguard Personal Advisor Services (~0.30% AUM): If you want a real human managing things and don't want to DIY, Vanguard's service uses Vanguard funds and won't push commission products. At 0.30%, it's a third of what you're paying now, though still not free.
+
+---
+
+**The six-year relationship factor**
+
+You've been with this advisor six years, which means they've probably seen your full financial picture. That continuity has value — there's real switching friction, and a good working relationship matters. Don't blow it up without a plan.
+
+But before you decide: ask your advisor directly what services are included in the 1% fee. Get the list in writing. Then honestly assess whether you've been receiving them. That conversation will tell you more than any calculation.
+
+If after six years your primary takeaway is "they put me in index funds and I didn't panic-sell," that's worth something — but probably not $3,500/year forever. A one-time financial plan + index funds + a little self-discipline would have gotten you the same outcome at a fraction of the cost.
+
+---
+
+This is general reasoning, not personalized advice. If your situation involves a business, large taxable gains, or complex estate issues, a one-time fee-only review would help pressure-test whatever you decide.

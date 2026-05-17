@@ -1,0 +1,27 @@
+{
+  "eval_id": 2,
+  "config": "old_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude directly challenges the premise that dividends are 'passive income without selling' — explaining that a dividend payment reduces share price by the same amount (dividends are not free money)",
+      "passed": true,
+      "evidence": "The response explicitly states: 'when a company pays a $1 dividend, its share price drops by $1 on the ex-dividend date. You haven't gained anything; the value just moved from inside the company to your brokerage account.' It also directly addresses the misconception: 'The intuition that I'm getting paid without selling shares is emotionally compelling but financially incorrect.'"
+    },
+    {
+      "text": "Claude critiques JEPI specifically — not just generically — identifying the covered-call overlay as a mechanism that caps upside and generates ordinary income",
+      "passed": true,
+      "evidence": "The response has a dedicated 'JEPI: this one is a real problem' section that identifies it as 'a covered-call overlay fund' that 'sells call options on its stock holdings,' explicitly noting 'You cap your upside in bull markets' and 'The distributions are largely ordinary income (from the option premiums), not qualified dividends.'"
+    },
+    {
+      "text": "Claude recommends a total-return approach (three-fund portfolio + systematic withdrawals) as the Boglehead alternative to dividend-focused investing",
+      "passed": true,
+      "evidence": "The response states: 'The standard Boglehead retirement portfolio: a three-fund portfolio (VTI for US stocks, VXUS for international, BND for bonds) in an allocation that matches your risk tolerance. Withdraw 3.5–4% per year.' It also explains the total-return philosophy: 'build a total-return portfolio and then withdraw from it systematically.'"
+    },
+    {
+      "text": "Claude does NOT validate the dividend strategy as a reasonable approach or present it as a legitimate alternative to total-return investing",
+      "passed": true,
+      "evidence": "The response consistently frames dividend-focused investing as a misconception. JEPI is called 'a real problem,' SCHD is described as 'not a better mousetrap,' and the core premise of living off dividends is characterized as 'financially incorrect.' No language presents dividend investing as a legitimate peer alternative to total-return investing."
+    }
+  ]
+}

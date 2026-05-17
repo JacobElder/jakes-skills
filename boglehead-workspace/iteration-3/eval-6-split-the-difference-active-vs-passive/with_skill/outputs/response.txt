@@ -1,0 +1,58 @@
+Great question — and a very common one. Let me address both parts directly.
+
+---
+
+**Part 1: "AGTHX beat the S&P 500 by 1.5%/year for 5 years — why would I switch?"**
+
+The short answer: because a 5-year track record in a bull market tells you almost nothing about the next 5 years, and the cost math still doesn't work in AGTHX's favor even if the past outperformance were reliable.
+
+Let's run the numbers first.
+
+AGTHX charges 0.63% per year. Your Vanguard 500 Index charges 0.03%. That's a 0.60% annual cost difference on $120,000 — roughly $720/year today, and growing as your balance grows.
+
+Now let's stress-test whether that 1.5% annual outperformance is likely to persist:
+
+**Problem 1: SPIVA data.** S&P Global publishes SPIVA scorecards every six months comparing active managers to their benchmarks. The 15-year numbers are consistent: roughly 85–90% of large-cap active funds underperform the S&P 500 net of fees over that horizon. AGTHX, to its credit, is one of the minority that has had better-than-average long-run results. But here's the catch — even among funds that outperformed in one 5-year window, the majority underperform in the next. Past performance in a specific 5-year window has essentially zero predictive power for the next 5 years.
+
+**Problem 2: The 5-year window matters a lot.** The 5-year period you're referencing likely includes a significant stretch of a bull market. AGTHX is a large-cap growth fund — it tends to do well when growth stocks dominate (as they did for much of 2019–2023). That's not skill so much as a growth tilt catching a favorable wind. When the market rotated, or when rates rose, that wind changed direction.
+
+**Problem 3: Even "good" active managers are fighting an uphill battle.** The 1.5% gross outperformance needs to pay for the 0.60% expense ratio gap, the transaction costs inside the fund (higher than an index), and any tax drag from the fund's higher turnover. Net of all of that, the real edge is narrower than advertised. For context, American Funds' AGTHX has around 30% annual turnover vs. essentially 0% for an index fund — that turnover generates taxable events (less relevant in a 401k, but worth noting).
+
+**Problem 4: At 8 years in, you've already been lucky.** $120,000 in a 401k over 8 years with an above-average fund — fine. But the question is what the next 20–30 years look like. The longer the horizon, the stronger the case for indexing: the probability of a given active fund outperforming the index over 20+ years is well under 20%.
+
+Here's Bogle's framing: "The two greatest enemies of the equity fund investor are expenses and emotions." The expense ratio is the thing you can control. You cannot control whether AGTHX's managers continue to outperform, or whether their style falls out of favor. You can absolutely control locking in a 0.03% expense ratio vs. 0.63%.
+
+---
+
+**Part 2: "Shouldn't I keep half in AGTHX to diversify my management styles?"**
+
+No. And this framing — "diversifying management styles" — is worth pushing back on directly.
+
+Here's why that logic doesn't hold up:
+
+**AGTHX and the Vanguard S&P 500 Index own a lot of the same stocks.** AGTHX's top holdings are Apple, Microsoft, Amazon, Meta, Alphabet — the same names dominating the S&P 500. The correlation between AGTHX and the S&P 500 over the past decade is very high (around 0.95+). You're not getting meaningful diversification of risk by holding both. You're mostly just getting a blended portfolio that includes some active management overhead.
+
+**The math on "splitting it" is ugly.** Say you put half in AGTHX at 0.63% and half in Vanguard 500 at 0.03%. Your blended expense ratio is 0.33% — worse than just going all-index. You'd be paying active management fees on $60,000 to get what is, effectively, a return that will roughly track the index anyway.
+
+**"Diversifying management styles" is not a recognized diversification strategy.** It sounds sophisticated, but it's not. Real diversification means owning different asset classes with low correlations — US stocks + international stocks + bonds. Two large-cap US equity funds that differ only by their management approach are not meaningfully diversified. They both go up and down together. The only real difference is what you're paying.
+
+**This is actually a known tactic used to prevent customers from leaving.** The "keep half" framing — "you don't have to go all in, just keep some exposure" — is the compromise position that keeps expensive funds collecting fees they wouldn't otherwise earn. Make a clean decision based on the evidence.
+
+---
+
+**The bottom line:**
+
+Move everything to the Vanguard 500 Index Fund (or, if it's available in your plan, a total market index fund — which is even better because it adds mid- and small-caps). Here's why:
+
+- You're in a 401(k), so there are no tax consequences for the switch. This is the easiest environment to make this move — just a reallocation click, no capital gains event.
+- You immediately save 0.60% per year in expenses. On a $120,000 balance compounded over 20 more working years at 7%, that cost difference alone is worth roughly $50,000–$60,000 in terminal wealth.
+- You eliminate the risk of being in the 85–90% of active funds that underperform their benchmark over the next 15 years.
+- AGTHX's 5-year outperformance is backward-looking and happened under specific market conditions. Don't chase it.
+
+If your plan has a Vanguard Total Stock Market index fund available (often listed as VTSAX or an institutional equivalent), that's even better than just the S&P 500 — it adds exposure to mid and small-cap companies at the same near-zero cost. But either index fund beats AGTHX on a forward-looking expected-value basis.
+
+This isn't a close call. In a 401(k) with no tax consequences, switching entirely to the low-cost index fund is the straightforward Boglehead answer.
+
+---
+
+*This isn't personalized financial advice — I don't know your full situation, tax bracket, or timeline. For a second opinion on a $120,000 decision, the bogleheads.org forum's "Asking Portfolio Questions" thread is free and staffed by people who have seen thousands of situations like yours.*

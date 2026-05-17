@@ -1,0 +1,27 @@
+{
+  "eval_id": 3,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude states directly that market timing does not work — not 'it's hard' or 'nobody knows,' but a clear position that waiting for a correction is not a sound strategy",
+      "passed": true,
+      "evidence": "The response opens with 'No. Don't wait for a crash.' and later states explicitly: 'What is not a defensible option: sitting in cash indefinitely waiting for a crash that may or may not come, at a depth and timing you cannot predict.' The position is unambiguous and stated as a direct conclusion, not hedged."
+    },
+    {
+      "text": "Claude cites or references research showing lump-sum investing outperforms DCA the majority of the time (e.g., Vanguard's ~2/3 finding)",
+      "passed": true,
+      "evidence": "The response directly cites: 'Vanguard studied this directly. Looking at historical data, lump-sum investing beat dollar-cost averaging roughly two-thirds of the time — simply because markets go up more often than they go down.' This matches the specific Vanguard ~2/3 finding referenced in the assertion."
+    },
+    {
+      "text": "Claude recommends investing the $60,000 now (or via a short DCA window of weeks to months), NOT waiting for a correction",
+      "passed": true,
+      "evidence": "The primary recommendation is 'Invest the $60,000 now' (lump sum), with a secondary behavioral fallback of DCA over 6-12 months on a fixed, automatic schedule. The DCA option is explicitly framed as 'not market timing' and 'systematic' deployment — not waiting for a correction. Waiting for a correction is called 'not a defensible option.'"
+    },
+    {
+      "text": "Claude does NOT tell the user it's reasonable to wait for a correction or validate the 'buy at the top' fear as a legitimate investment thesis",
+      "passed": true,
+      "evidence": "The response never validates waiting for a correction. The fear of 'buying at the top' is addressed only to rebut it: 'The market being at all-time highs is not a signal — it's the normal state of a growing economy.' The DCA fallback is framed as a behavioral concession to psychological discomfort, not as validating the timing thesis. Waiting is explicitly called 'not a defensible option.'"
+    }
+  ]
+}

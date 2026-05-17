@@ -1,0 +1,32 @@
+{
+  "eval_id": 1,
+  "config": "old_skill",
+  "pass_rate": 0.8,
+  "expectations": [
+    {
+      "text": "Claude explicitly recommends against whole life insurance as an investment vehicle, not just 'it depends on your situation'",
+      "passed": true,
+      "evidence": "Opens with 'No, almost certainly not.' and closes with 'If you need life insurance: buy term, invest the difference.' — a clear, direct recommendation against whole life, not a situational hedge."
+    },
+    {
+      "text": "Claude names the term life + invest the difference alternative as the standard Boglehead recommendation",
+      "passed": true,
+      "evidence": "Dedicated section titled 'What you should do instead: Term + Invest the Difference' and repeated in the bottom line: 'If you need life insurance: buy term, invest the difference.'"
+    },
+    {
+      "text": "Claude explains why the 'tax-free growth' pitch is misleading — tax-advantaged accounts (401k, IRA, HSA) should be maxed before insurance-based wrappers are considered",
+      "passed": false,
+      "evidence": "Claude does address the misleading 'tax-free' claim, but focuses on the loan interest mechanic ('you're borrowing your own money and paying 5–8% loan interest') rather than the key Boglehead argument that 401k/IRA/HSA tax advantages should be exhausted first before considering insurance-based wrappers. The priority order lists tax-advantaged accounts but does not explicitly frame this as the reason the tax-free pitch is misleading."
+    },
+    {
+      "text": "Claude identifies the high commission structure as a reason the advisor may be recommending this product",
+      "passed": true,
+      "evidence": "'Insurance agents selling whole life earn commissions that can be 50–100% of your first year's premium' and in the advisor section: 'advisors who sell whole life insurance typically earn large commissions on these policies... the recommendation isn't coming from a neutral, fee-only analysis of what's best for you.'"
+    },
+    {
+      "text": "Claude does NOT present whole life as a reasonable option for the average investor or give it a neutral pros-and-cons treatment",
+      "passed": true,
+      "evidence": "The only legitimate uses mentioned (ILIT for $10M+ estates, buy-sell agreements, disabled dependents) are explicitly framed as rare edge cases, followed by 'If you're not in one of those situations, the answer is no.' No neutral pros-and-cons framing is used."
+    }
+  ]
+}
