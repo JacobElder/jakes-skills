@@ -18,9 +18,9 @@ Without the skill, Claude tends to give balanced pros-and-cons responses or soft
 Evaluated on 10 real investing scenarios. Each is graded against 4–5 specific assertions about whether Claude took the correct Boglehead position.
 
 ```mermaid
-xychart-beta
-    title "Pass Rate by Scenario"
-    x-axis ["Whole life", "Dividend strat", "Mkt timing", "Waterfall", "Three-fund", "High ER fund", "1% AUM", "Tax placement", "Lump sum", "Portfolio review"]
+xychart-beta horizontal
+    title "Pass Rate by Scenario (■ with skill  □ base Claude)"
+    x-axis ["Whole life insurance", "Dividend strategy", "Market timing", "Investment waterfall", "Three-fund portfolio", "High ER active fund", "1% AUM advisor", "Tax placement", "Lump sum vs DCA", "Portfolio review"]
     y-axis "Pass rate" 0 --> 1
     bar [1.0, 1.0, 1.0, 0.8, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
     bar [0.6, 0.6, 0.6, 0.2, 1.0, 1.0, 0.8, 1.0, 0.6, 1.0]
