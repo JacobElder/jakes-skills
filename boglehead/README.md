@@ -4,7 +4,13 @@ A Claude skill that applies the [Boglehead investing philosophy](https://www.bog
 
 ## Installation
 
-Copy the skill into your Claude skills directory:
+The quickest way to install uses [`npx skills`](https://github.com/vercel-labs/skills):
+
+```bash
+npx skills add https://github.com/JacobElder/jakes-skills/tree/main/boglehead
+```
+
+Or manually:
 
 ```bash
 # Clone the repo (or pull if you already have it)
