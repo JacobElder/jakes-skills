@@ -29,7 +29,25 @@ Once installed, Claude will apply the skill automatically whenever you ask about
 **"Is this whole life policy a good deal?"**
 > My financial advisor says I should put $500/month into a whole life insurance policy for the tax-free growth and the death benefit. It builds cash value I can borrow against. Sounds reasonable — should I do it?
 
-The skill gives a direct "almost certainly no" rather than a balanced pros-and-cons list, names the commission incentive driving the recommendation, explains why the tax-free pitch is misleading (401k/IRA/HSA should be maxed first), and gives a concrete alternative: term life + invest the difference.
+This is the scenario where the gap between base Claude and the skill is most visible. Base Claude opens cautiously and later includes a section titled **"WHEN WHOLE LIFE MIGHT ACTUALLY MAKE SENSE"** — the hedging pattern Bogleheads warn against, because someone anchored on their advisor's recommendation will read that section and find their justification:
+
+> This is a common recommendation from financial advisors, but it deserves careful scrutiny. The short answer for most people: whole life insurance is probably not the right choice, and there are almost certainly better ways to deploy $500/month toward your financial goals.
+>
+> Here's a balanced breakdown: **WHAT YOUR ADVISOR SAID IS TECHNICALLY TRUE — BUT INCOMPLETE**
+>
+> Yes, whole life insurance does build cash value on a tax-deferred basis... And yes, you can borrow against that cash value. But those facts leave out a lot of important context.
+
+With the skill:
+
+> No. Do not buy a whole life insurance policy as an investment vehicle. This is one of the clearest "wrong answer" scenarios in personal finance, and the fact that your advisor recommended it should make you more skeptical of their other advice, not less.
+>
+> Here is what is actually happening with the pitch you received:
+>
+> **THE "TAX-FREE GROWTH" CLAIM**
+>
+> Whole life bundles two things together: a death benefit (term life insurance) and a savings account. The savings-account portion does grow tax-deferred, and policy loans are technically tax-free — but that framing is deliberately misleading. You are paying 5–8% interest to the insurance company on loans against your own money. That interest either reduces your death benefit or you pay it out of pocket. Calling that "tax-free" is like saying you got a free car because your car loan has no sales tax.
+
+The skill response goes on to name the commission (~50–100% of year-one premiums), run the $500/month math directly (whole life → ~$290k cash value at 3%; term + index fund → ~$575k at 7%), and walk through the full funding waterfall. No "when it might make sense" section.
 
 ---
 
@@ -120,35 +138,7 @@ xychart-beta horizontal
 | Tax-efficient fund placement | 1.0 | 1.0 |
 | Portfolio review (concentrated Roth) | 1.0 | 1.0 |
 
-The pattern: base Claude handles *knowledge questions* well (it knows what a three-fund portfolio is), but struggles on *behavioral questions* — the cases where the Boglehead view is directionally strong and the financial industry incentives point the other way.
-
-### What the difference looks like in practice
-
-The whole life insurance scenario shows the gap most clearly. The prompt: *"My financial advisor recommended I put $500/month into a whole life insurance policy. They said it builds cash value tax-free and I can borrow against it later. Sounds like a good deal — should I do it?"*
-
-**Base Claude (no skill) — opening:**
-
-> This is a common recommendation from financial advisors, but it deserves careful scrutiny. The short answer for most people: whole life insurance is probably not the right choice, and there are almost certainly better ways to deploy $500/month toward your financial goals.
->
-> Here's a balanced breakdown:
->
-> **WHAT YOUR ADVISOR SAID IS TECHNICALLY TRUE — BUT INCOMPLETE**
->
-> Yes, whole life insurance does build cash value on a tax-deferred basis (not technically "tax-free" unless handled carefully). And yes, you can borrow against that cash value. But those facts leave out a lot of important context.
-
-Later in the same response, base Claude includes a section titled **"WHEN WHOLE LIFE MIGHT ACTUALLY MAKE SENSE"** — listing circumstances where it could be a reasonable choice. This is the hedging pattern Bogleheads warn against: someone anchored on their advisor's recommendation reads that section and finds their justification.
-
-**With skill — opening:**
-
-> No. Do not buy a whole life insurance policy as an investment vehicle. This is one of the clearest "wrong answer" scenarios in personal finance, and the fact that your advisor recommended it should make you more skeptical of their other advice, not less.
->
-> Here is what is actually happening with the pitch you received:
->
-> **THE "TAX-FREE GROWTH" CLAIM**
->
-> Whole life bundles two things together: a death benefit (term life insurance) and a savings account. The savings-account portion does grow tax-deferred, and policy loans are technically tax-free — but that framing is deliberately misleading. You are paying 5–8% interest to the insurance company on loans against your own money. That interest either reduces your death benefit or you pay it out of pocket. Calling that "tax-free" is like saying you got a free car because your car loan has no sales tax.
-
-The skill response goes on to name the commission (~50–100% of year-one premiums), run the $500/month math directly (whole life → ~$290k cash value at 3%; term + index fund → ~$575k at 7%), and recommend the full funding waterfall. No "when it might make sense" section.
+The pattern: base Claude handles *knowledge questions* well (it knows what a three-fund portfolio is), but struggles on *behavioral questions* — the cases where the Boglehead view is directionally strong and the financial industry incentives point the other way. The whole life insurance example in the [Example use cases](#example-use-cases) section shows this contrast directly with quoted responses.
 
 ## Eval suite
 

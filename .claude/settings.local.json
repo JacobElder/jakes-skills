@@ -25,7 +25,9 @@
       "Bash(git commit -m ' *)",
       "Bash([ -f \"$dir/grading.json\" ])",
       "Bash([ -f \"$dir/timing.json\" ])",
-      "Bash([ -f \"$dir/outputs/response.md\" ])"
+      "Bash([ -f \"$dir/outputs/response.md\" ])",
+      "WebSearch",
+      "WebFetch(domain:github.com)"
     ]
   }
 }
