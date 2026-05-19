@@ -21,7 +21,8 @@
       "Bash(echo \"Exit: $?\")",
       "Bash(python -m scripts.run_loop --skill-path /Users/jacobelder/Documents/GitHub/jakes-skills/causal-inference --eval-set /Users/jacobelder/Documents/GitHub/jakes-skills/causal-inference/evals/trigger_evals.json --max-iterations 1 --runs-per-query 1 --model claude-sonnet-4-6 --verbose --report none)",
       "Bash(claude -p --output-format text)",
-      "Bash(curl -s http://localhost:8000)"
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
