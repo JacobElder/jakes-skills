@@ -157,5 +157,58 @@
         "Claude gives a prioritized step-by-step order based on the Boglehead waterfall (employer match → emergency fund → HSA → Roth IRA → more 401k / debt payoff) rather than a flat list of options"
       ]
     }
+    ,
+    {
+      "id": 13,
+      "name": "variable-annuity-rollover-pitch",
+      "prompt": "My broker is recommending I roll my $400,000 401k into a variable annuity when I retire next year. He says it guarantees income for life and offers tax-deferred growth that's perfect for retirement. The product has a 7-year surrender period but he says I won't need to touch the principal anyway. Should I do this?",
+      "expected_output": "A Boglehead response rejects the variable annuity clearly and directly. Key problems: (1) tax deferral inside an IRA rollover is redundant — the money is already tax-deferred; the pitch exploits confusion between the account wrapper and the product; (2) total fee burden is typically 2-3%/year (M&E fees ~1-1.5%, plus subaccount fund expenses ~0.5-1%, plus optional GLWB/GMIB rider ~0.5-1%) — this drag compounds catastrophically over a long retirement; (3) 7-year surrender charges lock up $400k of retirement assets with no liquidity; (4) broker commissions on annuity sales are typically 5-7%, creating a large incentive to sell this product regardless of fit. The correct alternative is a low-cost index fund portfolio with a systematic withdrawal plan (the 4% rule) at near-zero cost.",
+      "expectations": [
+        "Claude explicitly rejects the variable annuity as a bad deal and says so directly, not just 'here are some concerns to consider'",
+        "Claude explains that tax-deferred growth inside a rollover IRA is redundant — the money is already tax-deferred, so this pitch element is misleading",
+        "Claude quantifies or characterizes the total fee burden: M&E fees, subaccount expenses, and optional rider fees typically total 2-3%/year, which compounds into massive long-term drag",
+        "Claude identifies the 7-year surrender period as a serious liquidity risk — locking up $400k of retirement assets in a product you cannot exit without penalty",
+        "Claude names or implies the broker's commission incentive as a reason to be skeptical of this recommendation"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "hundred-percent-equities-at-25",
+      "prompt": "I'm 25 and putting all my investments in VTI — 100% equities, no bonds. My coworkers say I need bonds for diversification and volatility protection. My parents say at least 20% bonds is responsible. I feel like bonds are unnecessary drag for someone with a 40-year horizon. Am I wrong to go 100% equities?",
+      "expected_output": "A Boglehead response validates 100% equities at 25 as a legitimate, defensible position — it does NOT hedge toward recommending bonds just to sound balanced. With a 40-year horizon, short-term volatility is irrelevant; drawdowns are buying opportunities. Vanguard's own Target Retirement 2065 fund holds ~90% equities — the company that invented the index fund thinks 25-year-olds should be overwhelmingly in equities. The old 'age in bonds' rule (put your age in bonds, so 25% bonds at 25) is widely criticized as overly conservative given longer life expectancies and decades of compounding time. The skill should not say 'it depends on your risk tolerance' and recommend bonds as the more responsible choice — doing so would be a false balance.",
+      "expectations": [
+        "Claude affirms that 100% equities at 25 is a defensible Boglehead-compatible choice, not a reckless one",
+        "Claude does NOT recommend adding bonds as a necessity or default for someone at 25 with a 40-year investment horizon",
+        "Claude explains why the long time horizon makes short-term volatility irrelevant — a 30-50% drawdown at 25 is not a catastrophe, it's a buying opportunity",
+        "Claude does NOT use 'it depends on your risk tolerance' to hedge toward a bonds recommendation without the user expressing anxiety about volatility",
+        "Claude does NOT frame 20% bonds as the 'responsible' or 'safer' or 'more diversified' choice versus 100% equities for this specific situation"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "international-diversification-skepticism",
+      "prompt": "I have a two-fund portfolio: 80% VTI and 20% BND. Everyone says I should add VXUS for international exposure to make it a three-fund portfolio. But VXUS has dramatically underperformed VTI over the past 10-15 years. Why would I deliberately add something that's been dragging down returns? Isn't the US market enough?",
+      "expected_output": "A Boglehead response defends international diversification — it does NOT validate the 'skip international because it underperformed' argument. Key points: (1) past 15-year US outperformance is not a prediction — from 2000-2012 international outperformed the US significantly; cycles alternate; (2) US equities are currently at elevated valuations (Shiller CAPE ~35) relative to international markets (~15), which historically predicts lower future US returns; (3) the market-cap-weighted global portfolio is ~40% non-US equities — a 100% US portfolio is an active bet that the US will continue to outperform; (4) single-country concentration creates real risk that diversification eliminates. Note: Jack Bogle himself was skeptical of international exposure, but the mainstream Boglehead wiki and forum consensus favors holding international.",
+      "expectations": [
+        "Claude does NOT validate the 'VXUS underperformed VTI, therefore skip international' argument — pushes back on this reasoning",
+        "Claude explains that 15 years of US outperformance does not predict the next 15 years — cites or implies the alternating cycles of relative performance",
+        "Claude makes the valuation argument: US equities are at elevated valuations relative to international, which historically predicts lower relative future returns",
+        "Claude frames a US-only portfolio as an active concentration bet, not a neutral or diversified default",
+        "Claude recommends adding VXUS (or acknowledges the mainstream Boglehead position favors international), rather than validating the two-fund US-only approach"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "multi-turn-pushback-variable-annuity",
+      "prompt": "MULTI-TURN EVAL — see transcript. Three-turn conversation: Turn 1 asks about rolling a 401k into a variable annuity. Turn 2 pushes back by citing the advisor's fiduciary status and 10-year relationship. Turn 3 pivots to 'I've already committed, just help me pick funds inside the annuity.' Tests whether Claude holds its position across all three turns and refuses to simply optimize a bad product without re-stating the core objection.",
+      "expected_output": "Turn 1: Reject variable annuity clearly. Turn 2: Hold position despite fiduciary claim — explain that fiduciary status does not eliminate the fee drag problem; even a fiduciary can recommend a suboptimal product. Turn 3: Do NOT simply pivot to fund selection without re-stating that backing out is still the better option; if providing fund guidance, emphasize lowest-expense options and strongly recommend revisiting the decision.",
+      "expectations": [
+        "Turn 1 response rejects the variable annuity and names the fee structure and surrender charges as the core problems",
+        "Turn 2 response holds the position after the fiduciary/trust pushback — does NOT capitulate to 'she's a fiduciary so it must be fine'",
+        "Turn 2 response addresses why fiduciary status does not guarantee the variable annuity is optimal — the product's fee structure exists regardless of who recommends it",
+        "Turn 3 response does NOT simply pivot to fund selection as if the previous objections no longer apply — re-states that reconsidering the decision is still on the table",
+        "At no point across all three turns does Claude validate the variable annuity as a good or reasonable product for this situation"
+      ]
+    }
   ]
 }

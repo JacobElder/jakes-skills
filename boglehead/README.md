@@ -105,24 +105,25 @@ Without the skill, Claude tends to give balanced pros-and-cons responses or soft
 
 ## Benchmark: skill vs. base Claude
 
-Evaluated on 10 real investing scenarios. Each is graded against 4–5 specific assertions about whether Claude took the correct Boglehead position.
+Evaluated on 14 scenarios graded against 4–5 specific assertions each. The first 10 form the original benchmark; 4 additional scenarios were added to probe new anti-patterns and edge cases.
 
 ```mermaid
 xychart-beta horizontal
     title "Pass Rate by Scenario (■ with skill  □ base Claude)"
-    x-axis ["Whole life insurance", "Dividend strategy", "Market timing", "Investment waterfall", "Three-fund portfolio", "High ER active fund", "1% AUM advisor", "Tax placement", "Lump sum vs DCA", "Portfolio review"]
+    x-axis ["Whole life insurance", "Dividend strategy", "Market timing", "Investment waterfall", "Three-fund portfolio", "High ER active fund", "1% AUM advisor", "Tax placement", "Lump sum vs DCA", "Portfolio review", "Variable annuity", "100% equities at 25", "International skepticism", "Multi-turn pushback"]
     y-axis "Pass rate" 0 --> 1
-    bar [1.0, 1.0, 1.0, 0.8, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-    bar [0.6, 0.6, 0.6, 0.2, 1.0, 1.0, 0.8, 1.0, 0.6, 1.0]
+    bar [1.0, 1.0, 1.0, 0.8, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    bar [0.6, 0.6, 0.6, 0.2, 1.0, 1.0, 0.8, 1.0, 0.6, 1.0, 0.8, 1.0, 1.0, 1.0]
 ```
 
 | | With skill | Without skill |
 |--|:---:|:---:|
-| **Mean pass rate** | **0.98** | 0.74 |
-| Std deviation | 0.06 | 0.25 |
-| Min | 0.8 | 0.2 |
+| **Mean pass rate (original 10)** | **0.98** | 0.74 |
+| **Mean pass rate (4 new scenarios)** | **1.00** | 0.95 |
+| Std deviation (original 10) | 0.06 | 0.25 |
+| Min (original 10) | 0.8 | 0.2 |
 
-**+24 percentage point improvement overall.** The skill's impact concentrates on the cases where Bogleheads diverge most sharply from mainstream financial advice.
+**+24 percentage point improvement on the original 10 scenarios.** The skill's impact concentrates on cases where Bogleheads diverge most sharply from mainstream financial advice.
 
 ### Where the skill makes the biggest difference
 
@@ -134,6 +135,7 @@ xychart-beta horizontal
 | Market timing / crash fear | 1.0 | 0.6 | **+0.4** |
 | Windfall: lump sum vs. DCA | 1.0 | 0.6 | **+0.4** |
 | 1% AUM advisor | 1.0 | 0.8 | +0.2 |
+| Variable annuity rollover | 1.0 | 0.8 | +0.2 |
 
 ### Where base Claude already gets it right
 
@@ -143,8 +145,11 @@ xychart-beta horizontal
 | High expense ratio active fund | 1.0 | 1.0 |
 | Tax-efficient fund placement | 1.0 | 1.0 |
 | Portfolio review (concentrated Roth) | 1.0 | 1.0 |
+| 100% equities at 25 (supporting aggressive position) | 1.0 | 1.0 |
+| International diversification defense | 1.0 | 1.0 |
+| Multi-turn pushback resistance | 1.0 | 1.0 |
 
-The pattern: base Claude handles *knowledge questions* well (it knows what a three-fund portfolio is), but struggles on *behavioral questions* — the cases where the Boglehead view is directionally strong and the financial industry incentives point the other way. The whole life insurance example in the [Example use cases](#example-use-cases) section shows this contrast directly with quoted responses.
+The pattern: base Claude handles *knowledge questions* and *publicly-documented Boglehead positions* well (it knows what a three-fund portfolio is, it knows variable annuities have high fees). The skill's value concentrates on *behavioral questions* — where the Boglehead view requires conviction to state directly, where financial industry incentives push toward softer language, and where the skill prevents Claude from giving a balanced "here are some concerns" response when the correct answer is a direct "no." The whole life insurance example in the [Example use cases](#example-use-cases) section shows this contrast directly with quoted responses.
 
 ## Eval suite
 
@@ -164,6 +169,10 @@ The skill was developed and validated against 12 scenarios across 3 iterations. 
 | 10 | "Let my winners run" / tax hesitancy | Tax is cost of gains not reason to hold; 60% single-stock concentration is primary risk |
 | 11 | Pushback resistance (whole life) | Holds position against CFP authority + estate planning argument; no softening |
 | 12 | Proactive framework (first job) | Full waterfall in correct order: emergency fund → match → HSA → IRA → 401k → taxable |
+| 13 | Variable annuity rollover | Rejects product; names redundant tax-deferral pitch; quantifies 2–4%/yr fee drag; identifies surrender charges; names commission |
+| 14 | 100% equities at 25 | Validates aggressive equity allocation; does not hedge toward bonds for someone with 40-year horizon |
+| 15 | International diversification skepticism | Defends VXUS against past-performance argument; valuation cycle argument; frames US-only as active bet |
+| 16 | Multi-turn pushback (variable annuity) | Holds rejection across 3 turns: initial ask → fiduciary authority pushback → "help me optimize a bad decision" pivot |
 
 See [`RESULTS.md`](RESULTS.md) for the full iteration history, benchmark data, and changelog.
 

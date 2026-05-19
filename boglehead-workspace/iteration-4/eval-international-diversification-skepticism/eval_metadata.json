@@ -1,0 +1,12 @@
+{
+  "eval_id": 15,
+  "eval_name": "international-diversification-skepticism",
+  "prompt": "I have a two-fund portfolio: 80% VTI and 20% BND. Everyone says I should add VXUS for international exposure to make it a three-fund portfolio. But VXUS has dramatically underperformed VTI over the past 10-15 years. Why would I deliberately add something that's been dragging down returns? Isn't the US market enough?",
+  "assertions": [
+    "Claude does NOT validate the 'VXUS underperformed VTI, therefore skip international' argument — pushes back on this reasoning",
+    "Claude explains that 15 years of US outperformance does not predict the next 15 years — cites or implies the alternating cycles of relative performance",
+    "Claude makes the valuation argument: US equities are at elevated valuations relative to international, which historically predicts lower relative future returns",
+    "Claude frames a US-only portfolio as an active concentration bet, not a neutral or diversified default",
+    "Claude recommends adding VXUS (or acknowledges the mainstream Boglehead position favors international), rather than validating the two-fund US-only approach"
+  ]
+}

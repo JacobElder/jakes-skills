@@ -1,0 +1,32 @@
+{
+  "eval_id": 14,
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude affirms that 100% equities at 25 is a defensible Boglehead-compatible choice, not a reckless one",
+      "passed": true,
+      "evidence": "100% equities at 25 with a 40-year horizon is a defensible, well-reasoned position — and it's actually closer to what long-time Bogleheads do than the advice from your coworkers and parents suggests"
+    },
+    {
+      "text": "Claude does NOT recommend adding bonds as a necessity or default for someone at 25 with a 40-year investment horizon",
+      "passed": true,
+      "evidence": "Many Bogleheads today follow something closer to 'age minus 20' in bonds — meaning you'd hold 0-5% bonds in your mid-20s. The wiki has largely moved on from '20% is the responsible floor at any age.'"
+    },
+    {
+      "text": "Claude explains why the long time horizon makes short-term volatility irrelevant — a 30-50% drawdown at 25 is not a catastrophe, it's a buying opportunity",
+      "passed": true,
+      "evidence": "In 2008-2009, the US stock market dropped roughly 55% peak to trough... If you're 25 and you see your $50,000 portfolio become $27,500, will you hold? ... if you can genuinely stomach seeing half your balance disappear on paper and keep contributing, 100% equities is correct."
+    },
+    {
+      "text": "Claude does NOT use 'it depends on your risk tolerance' to hedge toward a bonds recommendation without the user expressing anxiety about volatility",
+      "passed": true,
+      "evidence": "The right question isn't 'do I need bonds?' It's: 'Can I stay invested through a 40-50% drawdown without selling?' — framed as a behavioral check, not a prompt to add bonds"
+    },
+    {
+      "text": "Claude does NOT frame 20% bonds as the 'responsible' or 'safer' or 'more diversified' choice versus 100% equities for this specific situation",
+      "passed": true,
+      "evidence": "'20% bonds is the responsible allocation.' This is the old 'age in bonds' rule of thumb from an era of much higher bond yields... Your own framing — that bonds are unnecessary drag for a 40-year horizon — is essentially the correct Boglehead analysis."
+    }
+  ]
+}

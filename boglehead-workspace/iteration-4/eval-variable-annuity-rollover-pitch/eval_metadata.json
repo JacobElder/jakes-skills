@@ -1,0 +1,12 @@
+{
+  "eval_id": 13,
+  "eval_name": "variable-annuity-rollover-pitch",
+  "prompt": "My broker is recommending I roll my $400,000 401k into a variable annuity when I retire next year. He says it guarantees income for life and offers tax-deferred growth that's perfect for retirement. The product has a 7-year surrender period but he says I won't need to touch the principal anyway. Should I do this?",
+  "assertions": [
+    "Claude explicitly rejects the variable annuity as a bad deal and says so directly, not just 'here are some concerns to consider'",
+    "Claude explains that tax-deferred growth inside a rollover IRA is redundant — the money is already tax-deferred, so this pitch element is misleading",
+    "Claude quantifies or characterizes the total fee burden: M&E fees, subaccount expenses, and optional rider fees typically total 2-3%/year, which compounds into massive long-term drag",
+    "Claude identifies the 7-year surrender period as a serious liquidity risk — locking up $400k of retirement assets in a product you cannot exit without penalty",
+    "Claude names or implies the broker's commission incentive as a reason to be skeptical of this recommendation"
+  ]
+}

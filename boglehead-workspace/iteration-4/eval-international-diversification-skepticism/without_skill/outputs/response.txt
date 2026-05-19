@@ -1,0 +1,31 @@
+This is a great question, and it's one of the most common debates in Bogleheads circles.
+
+The argument for adding VXUS despite its underperformance comes down to a few core ideas:
+
+1. Past performance is not predictive of future returns — especially for entire asset classes
+
+The US market's dominance over the last 10-15 years is real, but it's not guaranteed to continue. There have been multiple extended periods where international stocks outperformed US stocks significantly — the 2000s being the most recent clear example, where international stocks beat the US for roughly a decade. If you'd been making this same argument in 2009 ("why would I add US stocks, international has crushed them for 10 years?"), you'd have made the wrong decision.
+
+2. Valuations matter
+
+Right now, US stocks trade at significantly higher P/E ratios than international stocks. CAPE ratios for international developed markets and emerging markets are substantially lower than the US. This doesn't guarantee international will outperform, but it does mean you're buying international earnings at a much cheaper price. Historically, starting valuations are one of the better predictors of future 10-year returns.
+
+3. Concentration risk is real
+
+The US is roughly 60-65% of global market cap. Holding only VTI means you're making an active bet that the US will continue to outperform the rest of the world combined. That's not a passive, market-cap-weighted position — it's a deliberate overweight. Adding VXUS actually moves you toward a neutral, globally diversified stance.
+
+4. The "US companies are global anyway" argument is weaker than it sounds
+
+Yes, US multinationals have international revenue. But stock returns are driven by local market dynamics, currency effects, capital flows, and investor sentiment — not just revenue geography. Japanese investors in US-listed companies lost money when the dollar fell against the yen, even as US stocks rose in dollar terms.
+
+5. Regret minimization
+
+If the US continues to dominate, you'll slightly underperform with VXUS in the mix — but you'll still do very well. If international has a decade of outperformance and you held zero, you'll have significantly lagged a globally diversified portfolio. The asymmetry of regret favors diversification.
+
+The honest counterargument
+
+To be fair to your skepticism: reasonable people disagree on this. Some respected investors (including some in the Boglehead community) argue that a US-only approach is defensible given the structural advantages of US markets — rule of law, shareholder protections, deep capital markets, innovation dominance. Jack Bogle himself was famously skeptical of international diversification.
+
+A middle-ground position: rather than 80/20 VTI/BND, you could do something like 60% VTI / 20% VXUS / 20% BND. That gives you meaningful international exposure without going to a fully market-cap-weighted global allocation (which would be closer to 40% US, 60% international).
+
+Bottom line: The 10-15 year underperformance of VXUS is a real data point, but it's not a sound reason to bet your entire equity portfolio on one country's continued dominance. Diversification works precisely because different assets don't move in lockstep — and the diversification benefit shows up most when you need it.

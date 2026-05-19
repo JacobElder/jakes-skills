@@ -1,0 +1,32 @@
+{
+  "eval_id": 13,
+  "config": "without_skill",
+  "pass_rate": 0.8,
+  "expectations": [
+    {
+      "text": "Claude explicitly rejects the variable annuity as a bad deal and says so directly, not just 'here are some concerns to consider'",
+      "passed": false,
+      "evidence": "This situation raises several serious red flags that you should carefully consider... this recommendation has several hallmarks of a high-commission product sale dressed up as financial planning advice"
+    },
+    {
+      "text": "Claude explains that tax-deferred growth inside a rollover IRA is redundant — the money is already tax-deferred, so this pitch element is misleading",
+      "passed": true,
+      "evidence": "putting a tax-deferred product inside an already-tax-deferred account is redundant and provides no marginal tax advantage"
+    },
+    {
+      "text": "Claude quantifies or characterizes the total fee burden: M&E fees, subaccount expenses, and optional rider fees typically total 2-3%/year, which compounds into massive long-term drag",
+      "passed": true,
+      "evidence": "total annual costs of 2.5% to 4% or more are common. On a $400,000 account, that's $10,000 to $16,000 per year in fees — every single year, compounding against your growth"
+    },
+    {
+      "text": "Claude identifies the 7-year surrender period as a serious liquidity risk — locking up $400k of retirement assets in a product you cannot exit without penalty",
+      "passed": true,
+      "evidence": "THE 7-YEAR SURRENDER PERIOD IS A SERIOUS CONCERN... withdrawing more than a small annual allowance...triggers surrender charges... You would be locking up your life savings with significant penalties"
+    },
+    {
+      "text": "Claude names or implies the broker's commission incentive as a reason to be skeptical of this recommendation",
+      "passed": true,
+      "evidence": "brokers who sell variable annuities earn some of the highest commissions in the financial industry — often 5% to 8%... your broker could stand to earn $20,000 to $32,000 or more from this single transaction"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "eval_id": 14,
+  "config": "without_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude affirms that 100% equities at 25 is a defensible Boglehead-compatible choice, not a reckless one",
+      "passed": true,
+      "evidence": "For a 25-year-old with genuine long-term conviction and no foreseeable need for the money, 100% VTI is defensible... 100% equities is not irresponsible — it's a historically grounded decision."
+    },
+    {
+      "text": "Claude does NOT recommend adding bonds as a necessity or default for someone at 25 with a 40-year investment horizon",
+      "passed": true,
+      "evidence": "The classic '100 minus your age in bonds' rule is increasingly seen as outdated... At 25, VTI all-in is a reasonable, well-reasoned choice."
+    },
+    {
+      "text": "Claude explains why the long time horizon makes short-term volatility irrelevant — a 30-50% drawdown at 25 is not a catastrophe, it's a buying opportunity",
+      "passed": true,
+      "evidence": "At 25 with a 40-year horizon, time is your most powerful asset. Bonds exist primarily to reduce volatility and preserve capital, which matters a lot more when you're close to needing the money."
+    },
+    {
+      "text": "Claude does NOT use 'it depends on your risk tolerance' to hedge toward a bonds recommendation without the user expressing anxiety about volatility",
+      "passed": true,
+      "evidence": "The risk is behavioral, not mathematical. The math clearly favors 100% equities over 40 years. The risk is YOU. — framed as behavioral self-check, not used to push bonds"
+    },
+    {
+      "text": "Claude does NOT frame 20% bonds as the 'responsible' or 'safer' or 'more diversified' choice versus 100% equities for this specific situation",
+      "passed": true,
+      "evidence": "Your parents and coworkers mean well. The advice to hold bonds is sensible as a general rule, especially for people who aren't sure how they'll handle volatility. But rules of thumb are for people who haven't thought carefully about their situation — and you clearly have."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "eval_id": 14,
+  "eval_name": "hundred-percent-equities-at-25",
+  "prompt": "I'm 25 and putting all my investments in VTI — 100% equities, no bonds. My coworkers say I need bonds for diversification and volatility protection. My parents say at least 20% bonds is responsible. I feel like bonds are unnecessary drag for someone with a 40-year horizon. Am I wrong to go 100% equities?",
+  "assertions": [
+    "Claude affirms that 100% equities at 25 is a defensible Boglehead-compatible choice, not a reckless one",
+    "Claude does NOT recommend adding bonds as a necessity or default for someone at 25 with a 40-year investment horizon",
+    "Claude explains why the long time horizon makes short-term volatility irrelevant — a 30-50% drawdown at 25 is not a catastrophe, it's a buying opportunity",
+    "Claude does NOT use 'it depends on your risk tolerance' to hedge toward a bonds recommendation without the user expressing anxiety about volatility",
+    "Claude does NOT frame 20% bonds as the 'responsible' or 'safer' or 'more diversified' choice versus 100% equities for this specific situation"
+  ]
+}

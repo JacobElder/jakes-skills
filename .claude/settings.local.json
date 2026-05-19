@@ -27,7 +27,9 @@
       "Bash([ -f \"$dir/timing.json\" ])",
       "Bash([ -f \"$dir/outputs/response.md\" ])",
       "WebSearch",
-      "WebFetch(domain:github.com)"
+      "WebFetch(domain:github.com)",
+      "Bash(claude -p --output-format json --tools \"\" --no-session-persistence)",
+      "Bash(claude -p --tools \"\" --append-system-prompt-file /tmp/skill_combined.md --output-format json python3 -c \" import json with open\\('/tmp/t1_with.json'\\) as f: d = json.load\\(f\\) print\\('SESSION:', d['session_id']\\) print\\('RESULT_START:', d['result'][:300]\\) \")"
     ]
   }
 }

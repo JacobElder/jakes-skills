@@ -1,0 +1,68 @@
+You're not wrong. 100% equities at 25 with a 40-year horizon is a defensible, well-reasoned position — and it's actually closer to what long-time Bogleheads do than the advice from your coworkers and parents suggests.
+
+Let me be direct about where your instincts are right, where the pushback has some merit, and what the real question actually is.
+
+
+WHERE YOUR INSTINCTS ARE RIGHT
+
+Your core logic is sound: you have an extremely long time horizon, and the historical evidence strongly favors equities over bonds for long-term wealth accumulation. Over any 30+ year period in US market history, a 100% equity portfolio has outperformed a bond-heavy portfolio by a significant margin. Holding bonds at 25 is a drag on expected return, and the "safety" those bonds provide is largely irrelevant if you're not touching the money for four decades.
+
+The specific pushback you're getting doesn't hold up to scrutiny:
+
+"You need bonds for diversification." This conflates diversification with risk reduction. Bonds do reduce volatility, but that's not the same as diversification in the meaningful sense. VTI already gives you broad diversification across thousands of US companies and sectors. Adding bonds reduces volatility, yes — but it also reduces expected return, and at 25, you don't need to reduce volatility. You need growth.
+
+"20% bonds is the responsible allocation." This is the old "age in bonds" rule of thumb from an era of much higher bond yields and when most people had pension income as a bond-like floor. Many Bogleheads today follow something closer to "age minus 20" in bonds — meaning you'd hold 0-5% bonds in your mid-20s. The wiki has largely moved on from "20% is the responsible floor at any age."
+
+Your own framing — that bonds are unnecessary drag for a 40-year horizon — is essentially the correct Boglehead analysis.
+
+
+THE REAL QUESTION
+
+The right question isn't "do I need bonds?" It's: "Can I stay invested through a 40-50% drawdown without selling?"
+
+That's the actual stress test for 100% equities. Your expected return is higher, but the volatility is real. In 2008-2009, the US stock market dropped roughly 55% peak to trough. In early 2020, it dropped 34% in five weeks. If you're 25 and you see your $50,000 portfolio become $27,500, will you hold? Or will you panic and sell?
+
+The Boglehead answer is honest about this: the right stock/bond split is whatever lets you stay the course. If 100% equities and a 50% drawdown would cause you to bail, the "theoretically optimal" allocation is the wrong one for you, because bailing at the bottom destroys the return advantage you were counting on. If you can genuinely stomach seeing half your balance disappear on paper and keep contributing, 100% equities is correct.
+
+Bogle himself put it this way: "The two greatest enemies of the equity fund investor are expenses and emotions." You've got expenses handled — VTI is 0.03% ER, essentially free. The question is whether you've also handled emotions.
+
+If you have an honest answer of "yes, I will not sell during a crash," then 100% VTI is a clean, rational, evidence-supported plan.
+
+
+ONE THING WORTH EXAMINING: INTERNATIONAL EXPOSURE
+
+The Boglehead community has a long-running debate about whether you need international exposure alongside US equity. VTI is US-only. This is worth thinking about:
+
+- John Bogle's own late view was that US-only is fine — the largest US companies already derive ~40% of revenues internationally, so you have implicit international exposure.
+- Vanguard's own target-date funds (which are designed by the same people who created VTI) put roughly 40% of equities in international stocks.
+- The common Boglehead compromise is 20-30% of equities in international (VXUS).
+
+This is genuinely a "reasonable people disagree" question within the community — it's not like the bonds question where your instinct is basically right. US equities have dramatically outperformed international over the past 15 years, but the 20 years before that told the opposite story. Holding some VXUS is not a hedge against US underperformance in the narrow sense, but it does ensure you're capturing global growth if the next 20 years favor non-US markets.
+
+You don't have to change anything today, but it's worth having a considered position on this rather than defaulting to US-only by inertia.
+
+
+WHAT TO ACTUALLY DO
+
+Keep VTI. It's exactly the right fund — broad, cheap, and liquid. 100% equities at 25 is a coherent choice. Before finalizing the plan, check two things:
+
+1. The behavioral question: Have you been investing long enough to have experienced a significant drawdown? If not, think hard about whether your confidence in "I'll hold through anything" is based on experience or just the absence of a test. A lot of people discover their actual risk tolerance in their first real bear market.
+
+2. The account structure question: Are you maximizing tax-advantaged space before any taxable investing? The priority order matters more than the equity/bond split:
+   - Full 401(k) employer match first (free money)
+   - Then HSA if you have an eligible HDHP
+   - Then IRA ($7,000/year; Roth is usually correct at 25 when you're likely in a lower tax bracket than you'll be at retirement)
+   - Then max the 401(k) to the limit ($23,500 in 2025)
+   - Then taxable brokerage with VTI
+
+If you're already doing all of this and putting VTI in a taxable account: hold VTI there too, no bonds needed.
+
+
+BOTTOM LINE
+
+100% equities at 25 is not reckless. Your coworkers and parents are applying heuristics designed for people who are older or who have less tolerance for volatility than you're describing. The Boglehead tradition is not "bonds at every age" — it's "own your allocation, understand why you hold it, and stay the course through anything."
+
+You're doing the right thing. The only question is whether you've examined the international equity question deliberately, and whether you've pressure-tested your volatility tolerance against a real bear market scenario rather than just a thought experiment.
+
+---
+This isn't personalized financial advice. For a full plan review — especially as the portfolio grows — the bogleheads.org forum (free, excellent, and full of people who've thought about exactly this) is worth a post.
