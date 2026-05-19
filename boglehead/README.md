@@ -64,6 +64,19 @@ Rather than jumping straight to fund recommendations, the skill walks through th
 
 ---
 
+**"I just want to live off dividends in retirement"**
+> I love the idea of living off dividends without touching my principal. I've been putting all my savings into SCHD and JEPI because they pay high dividends. Is this a good retirement strategy?
+
+Base Claude partially validates the approach, calling SCHD "a legitimate, well-constructed fund" that "many Bogleheads-style investors hold without controversy" — and ends by suggesting the user could keep SCHD as a "modest tilt (10–20%)" if dividend-quality exposure appeals to them:
+
+> SCHD (Schwab U.S. Dividend Equity ETF) is a legitimate, well-constructed fund. It screens for dividend quality — companies with strong cash flows that have consistently paid dividends. It has solid long-term total return performance. Many Bogleheads-style investors hold SCHD without controversy, though most treat it as a tilt rather than an entire portfolio.
+
+With the skill, SCHD gets no such endorsement. The response opens by correcting the core misconception directly, then frames SCHD as a concentration bet rather than a reasonable hold:
+
+> **Dividends are not free money.** When a company pays a $1 dividend, its share price drops by $1 on the ex-dividend date. You haven't received income from the market; you've received a return of your own capital in a different form... SCHD is not a terrible fund — but it's a concentrated bet on a slice of the market (large-cap value/dividend payers) rather than the whole market. VTI already holds all the dividend aristocrats in it, plus everything else. JEPI is a different problem entirely — it caps your upside to generate yield and distributes that yield as ordinary income rather than qualified dividends.
+
+---
+
 **"Shouldn't I add more funds to diversify?"**
 > I have a simple three-fund portfolio (VTI, VXUS, BND) but want to add VIOV (small-cap value), VNQ (REITs), VIG (dividend growth), and VSS (international small-cap) to diversify more. Good idea?
 
