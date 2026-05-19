@@ -1,0 +1,35 @@
+{
+  "run_id": "front-door-identification-with_skill",
+  "eval_id": 7,
+  "eval_name": "front-door-identification",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Claude does NOT just conclude 'not identifiable because of unmeasured confounder'",
+      "passed": true,
+      "evidence": "Section 3 opens with 'No — not necessarily. This is precisely the structure the front-door adjustment was designed for,' explicitly rejecting the unidentifiability conclusion."
+    },
+    {
+      "text": "Claude recognizes the potential for front-door identification via the observed mediator 'skills applied on the job'",
+      "passed": true,
+      "evidence": "Section 4 is titled 'Front-Door Identification: The Three Conditions' and directly applies the criterion to the mediator M = 'Skills applied on the job' described in the DAG in Section 2."
+    },
+    {
+      "text": "Claude describes the front-door criterion or the logic behind it: estimate the effect of training on skills-applied (unconfounded), then estimate the effect of skills-applied on performance (adjusting for training as a back-door block), then combine",
+      "passed": true,
+      "evidence": "Section 5 gives the front-door formula and states: 'Step 1: Estimate the effect of training on skills applied — this is clean because any confounder... Step 2: Estimate the effect of skills applied on performance ratings — this is done by conditioning on X, which blocks the ambition confounder's back-door path.'"
+    },
+    {
+      "text": "Claude notes the key assumption: ambition (the unmeasured confounder) must not directly cause skills-applied independent of the training",
+      "passed": true,
+      "evidence": "Condition 2 states: 'There must be no unobserved confounder that independently causes both training assignment and skills applied on the job, bypassing training itself... The plausible story: ambitious employees may proactively self-study, seek feedback, and apply skills they learned elsewhere. In that case, ambition affects M directly, and Condition 2 fails.'"
+    },
+    {
+      "text": "Claude notes the complete mediation condition: all causal paths from training to performance must pass through 'skills applied on the job' — if training has a direct effect on performance ratings independent of skills-applied (e.g., being seen attending training boosts ratings), the front-door formula is biased. Claude flags this as an assumption to verify, not just accept.",
+      "passed": true,
+      "evidence": "Condition 1 is labeled 'This is the condition most likely to fail in your setting' and lists signaling/halo, credential, and social capital direct paths. A concrete diagnostic test is recommended: 'Look at employees who attended training but whose skills applied scores show no change. If their ratings still improved, you have evidence of a direct path.'"
+    }
+  ]
+}
