@@ -2,6 +2,58 @@
 
 A Claude skill that applies the [Boglehead investing philosophy](https://www.bogleheads.org/) — John Bogle / Vanguard / index funds — to personal finance questions. It gives Claude the conviction to push back on the financial industry products and strategies that Bogleheads consistently flag as bad deals.
 
+## Installation
+
+Copy the skill into your Claude skills directory:
+
+```bash
+# Clone the repo (or pull if you already have it)
+git clone https://github.com/JacobElder/jakes-skills.git
+
+# Install the skill
+cp -r jakes-skills/boglehead ~/.claude/skills/boglehead
+```
+
+To keep it up to date automatically, symlink instead of copy:
+
+```bash
+ln -s "$(pwd)/jakes-skills/boglehead" ~/.claude/skills/boglehead
+```
+
+Once installed, Claude will apply the skill automatically whenever you ask about investing, retirement accounts, or any of the products and scenarios it covers.
+
+---
+
+## Example use cases
+
+**"Is this whole life policy a good deal?"**
+> My financial advisor says I should put $500/month into a whole life insurance policy for the tax-free growth and the death benefit. It builds cash value I can borrow against. Sounds reasonable — should I do it?
+
+The skill gives a direct "almost certainly no" rather than a balanced pros-and-cons list, names the commission incentive driving the recommendation, explains why the tax-free pitch is misleading (401k/IRA/HSA should be maxed first), and gives a concrete alternative: term life + invest the difference.
+
+---
+
+**"I want to start investing — where do I begin?"**
+> I'm 27, just started a job making $68k. I have $1,500 in savings, $9k in student loans at 5.8%, and my employer offers a 401k with a 4% match. I want to build wealth. What do I do first?
+
+Rather than jumping straight to fund recommendations, the skill walks through the full Boglehead waterfall in priority order: starter emergency fund → capture the full employer match → assess the student loan rate → Roth IRA → 401k max. It names specific fund tickers and explains the Roth vs. Traditional decision for someone at 27.
+
+---
+
+**"Shouldn't I add more funds to diversify?"**
+> I have a simple three-fund portfolio (VTI, VXUS, BND) but want to add VIOV (small-cap value), VNQ (REITs), VIG (dividend growth), and VSS (international small-cap) to diversify more. Good idea?
+
+The skill pushes back directly: VTI already holds all four at market weight, so adding them creates deliberate overweights, not diversification. It defends the three-fund portfolio as complete rather than a starting point, names VIG and VNQ as the weakest additions, and flags the complexity-creep pattern by name.
+
+---
+
+**"My advisor says to keep half in the active fund"**
+> I've had $120k in American Funds AGTHX (0.63% ER) for 8 years and it's beaten the S&P 500 by 1.5%/year for 5 years. My advisor says I could split it — half in the Vanguard 500 Index (0.03% ER) to hedge my bets. Doesn't that diversify my management styles?
+
+The skill rejects the split: AGTHX and the S&P 500 index hold the same large-cap stocks at ~0.95 correlation, so "diversifying management styles" just means paying the blended expense ratio of 0.33% instead of 0.03%. It explains why 5-year active outperformance is not predictive, and recommends switching everything to the index — since this is a 401k, there are no tax consequences to doing so cleanly.
+
+---
+
 ## What it does
 
 Base Claude knows Boglehead facts. The skill gives it the *conviction to act on them*. The Boglehead approach often requires Claude to:
