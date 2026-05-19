@@ -1,0 +1,30 @@
+{
+  "run_id": "did-parallel-trends-violation-with_skill",
+  "eval_id": 5,
+  "eval_name": "did-parallel-trends-violation",
+  "config": "with_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude confirms the reviewer is correct — TWFE with staggered adoption and heterogeneous treatment effects can be biased even when parallel trends holds for every cohort",
+      "passed": true,
+      "evidence": "The response opens: 'Your reviewer is exactly right. TWFE with staggered treatment timing can produce biased estimates even when parallel trends holds perfectly for every cohort.' The summary table also confirms: 'Is the reviewer right that TWFE can bias estimates even when parallel trends holds? Yes — this is a well-established result.'"
+    },
+    {
+      "text": "Claude explains the core mechanism: TWFE uses already-treated units as controls for later-treated units ('forbidden comparisons'), which is only unbiased if treatment effects are constant across cohorts and over time",
+      "passed": true,
+      "evidence": "The response explains: 'TWFE implicitly constructs comparisons... it uses already-treated regions as controls for later-treated regions... When estimating the Q3 cohort's effect, TWFE partially compares Q3 adopters (post-treatment) against Q1 adopters (also post-treatment by Q3). The Q1 adopters' outcome in Q3 already reflects the program's effect on them. If the program's effect grew over time... the Q1 adopters' outcome is a contaminated counterfactual.'"
+    },
+    {
+      "text": "Claude names or describes the Goodman-Bacon decomposition problem — that TWFE is a weighted average of 2×2 DiDs, some receiving negative weights when later-cohort treatment effects differ from early-cohort effects",
+      "passed": true,
+      "evidence": "The response states: 'The Goodman-Bacon decomposition shows that the TWFE coefficient is a weighted average of all pairwise 2x2 DiD estimates — including forbidden comparisons... The weights can even be negative — meaning a cohort with a positive treatment effect can subtract from the TWFE estimate rather than add to it.'"
+    },
+    {
+      "text": "Claude recommends a heterogeneity-robust DiD estimator (e.g., Callaway-Sant'Anna, Sun-Abraham, or Borusyak-Jaravel-Spiess) rather than standard TWFE",
+      "passed": true,
+      "evidence": "The response provides a table of recommended estimators including 'Callaway & Sant'Anna (2021),' 'Sun & Abraham (2021),' 'de Chaisemartin & D'Haultfoeuille (2020),' and 'Borusyak, Jaravel & Spiess (2024),' and recommends running one of these instead of standard TWFE."
+    }
+  ]
+}
