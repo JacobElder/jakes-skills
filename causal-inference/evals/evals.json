@@ -59,7 +59,8 @@
         "Claude confirms the reviewer is correct — TWFE with staggered adoption and heterogeneous treatment effects can be biased even when parallel trends holds for every cohort",
         "Claude explains the core mechanism: TWFE uses already-treated units as controls for later-treated units ('forbidden comparisons'), which is only unbiased if treatment effects are constant across cohorts and over time",
         "Claude names or describes the Goodman-Bacon decomposition problem — that TWFE is a weighted average of 2×2 DiDs, some receiving negative weights when later-cohort treatment effects differ from early-cohort effects",
-        "Claude recommends a heterogeneity-robust DiD estimator (e.g., Callaway-Sant'Anna, Sun-Abraham, or Borusyak-Jaravel-Spiess) rather than standard TWFE"
+        "Claude recommends a heterogeneity-robust DiD estimator (e.g., Callaway-Sant'Anna, Sun-Abraham, or Borusyak-Jaravel-Spiess) rather than standard TWFE",
+        "Claude explains that the TWFE bias is severe enough to reverse the sign of the estimate: if later-treated cohorts have larger treatment effects (e.g., because Q3/Q4 regions benefit more from the program), their negative-weighted forbidden comparisons can drag the aggregate TWFE coefficient NEGATIVE — meaning the +6% estimate could be an underestimate, zero, or even the wrong sign relative to the true average effect"
       ]
     },
     {
@@ -84,7 +85,8 @@
         "Claude recognizes the potential for front-door identification via the observed mediator 'skills applied on the job'",
         "Claude describes the front-door criterion or the logic behind it: estimate the effect of training on skills-applied (unconfounded), then estimate the effect of skills-applied on performance (adjusting for training as a back-door block), then combine",
         "Claude notes the key assumption: ambition (the unmeasured confounder) must not directly cause skills-applied independent of the training — i.e., ambition affects performance only through the training → skills-applied path or through paths that can be blocked",
-        "Claude notes the complete mediation condition: all causal paths from training to performance must pass through 'skills applied on the job' — if training has a direct effect on performance ratings independent of skills-applied (e.g., being seen attending training boosts ratings), the front-door formula is biased. Claude flags this as an assumption to verify, not just accept."
+        "Claude notes the complete mediation condition: all causal paths from training to performance must pass through 'skills applied on the job' — if training has a direct effect on performance ratings independent of skills-applied (e.g., being seen attending training boosts ratings), the front-door formula is biased. Claude flags this as an assumption to verify, not just accept.",
+        "Claude identifies at least one specific organizational mechanism that would create a direct training → ratings path bypassing 'skills applied on the job' — such as raters knowing the employee attended training and adjusting ratings upward (halo/signaling effect), the prestige of being selected for training influencing how raters perceive the employee, or increased employee confidence producing visible behavioral changes that raters interpret positively — rather than only abstractly noting that direct paths might exist"
       ]
     },
     {
@@ -108,7 +110,8 @@
         "Claude identifies the $32 as a LATE estimate — the treatment effect for compliers (users who adopted because of the push notification) — not the ATE for the full user population or the policy-relevant effect for a forced rollout",
         "Claude explains why LATE ≠ ATE for forced adoption: forced rollout affects never-takers (who actively declined the notification) whose response to forced adoption is unknown and likely much smaller or negative — the LATE tells us nothing about how they would respond",
         "Claude does NOT confirm that $32/user is the right planning figure for a forced adoption rollout",
-        "Claude recommends a forced-adoption experiment (random assignment to feature enabled vs. disabled regardless of opt-in) to estimate the ATE before committing to the forced rollout decision"
+        "Claude recommends a forced-adoption experiment (random assignment to feature enabled vs. disabled regardless of opt-in) to estimate the ATE before committing to the forced rollout decision",
+        "Claude uses the first-stage compliance numbers to make the complier population concrete: the 15pp first-stage (18% − 3%) means compliers are roughly 15% of notified users, and this 15% is the only group the $32 LATE identifies — the ~85% who did not adopt despite the notification are exactly the population a force-enable targets, yet they are entirely outside the $32 estimate's identification boundary"
       ]
     },
     {
@@ -132,7 +135,8 @@
         "Claude identifies the density spike (more users clustering at 41-45 than expected) as a serious threat to RDD validity — specifically, evidence of score manipulation or sorting near the threshold",
         "Claude explains WHY this matters for RDD: if users or CSMs can influence scores near the cutoff, users just above 40 are NOT a valid control group — they've been selectively moved there, making them systematically different from users just below the threshold",
         "Claude rejects the 'only communicated internally' argument as insufficient to rule out manipulation — internal knowledge of the threshold is exactly what enables CSM sorting",
-        "Claude recommends a formal density test (McCrary test or equivalent) at the threshold and pre-treatment covariate balance tests near the cutoff to assess severity, before concluding the RDD is valid"
+        "Claude recommends a formal density test (McCrary test or equivalent) at the threshold and pre-treatment covariate balance tests near the cutoff to assess severity, before concluding the RDD is valid",
+        "Claude specifies the direction of bias from the suspected manipulation: if CSMs move borderline users above the threshold to spare them from outreach (upward sorting of users who seem 'fine'), the above-cutoff control group becomes positively selected — these are users a human decided looked healthy — making the control group appear artificially retainable and biasing the estimated treatment effect DOWNWARD (the outreach program appears less effective than it truly is)"
       ]
     },
     {
@@ -156,7 +160,8 @@
         "Claude confirms the colleague is correct — user-level randomization for a social/network feature violates SUTVA (the Stable Unit Treatment Value Assumption), which requires no interference between units",
         "Claude explains the specific interference mechanism: control users whose friends are in the treatment arm are affected by the treatment (they interact with treated friends), contaminating the control group and making the treatment/control comparison a partial-network-effect estimate, not a pure direct effect",
         "Claude explains why the +15% does NOT directly extrapolate to full rollout: the observed effect is a blend of direct effects and partial spillovers under 50% penetration; at 100% penetration, spillover dynamics are completely different and the total effect is unknown",
-        "Claude recommends cluster-randomization (randomize by social graph clusters, geographic markets, or another natural grouping) as the correct design to estimate causal effects for network features, and notes this would allow estimation of both direct and spillover effects"
+        "Claude recommends cluster-randomization (randomize by social graph clusters, geographic markets, or another natural grouping) as the correct design to estimate causal effects for network features, and notes this would allow estimation of both direct and spillover effects",
+        "Claude does NOT confidently assert that the full-rollout effect will be larger than +15% — it acknowledges the direction of the extrapolation error is genuinely ambiguous: positive network complementarities would amplify the effect at full saturation, but the contaminated control group (whose engagement was already lifted by treated friends) means some spillover is already embedded in the +15%, and these two forces could offset in either direction"
       ]
     }
   ]

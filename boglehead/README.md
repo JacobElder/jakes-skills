@@ -76,3 +76,26 @@ The skill was developed and validated against 12 scenarios across 3 iterations. 
 | 12 | Proactive framework (first job) | Full waterfall in correct order: emergency fund → match → HSA → IRA → 401k → taxable |
 
 See [`RESULTS.md`](RESULTS.md) for the full iteration history, benchmark data, and changelog.
+
+---
+
+## Sources
+
+The skill's positions, framings, and anti-patterns are drawn from the following.
+
+### Community canon
+- **[Bogleheads Wiki](https://www.bogleheads.org/wiki/Main_Page)** — the primary reference. Key articles: [Bogleheads investment philosophy](https://www.bogleheads.org/wiki/Bogleheads%C2%AE_investment_philosophy), [Prioritizing investments](https://www.bogleheads.org/wiki/Prioritizing_investments), [Three-fund portfolio](https://www.bogleheads.org/wiki/Three-fund_portfolio), [Tax-efficient fund placement](https://www.bogleheads.org/wiki/Tax-efficient_fund_placement)
+- **[r/Bogleheads](https://www.reddit.com/r/Bogleheads/)** — forum culture, the "Asking Portfolio Questions" template, and the community's consistent positions on financial industry products
+- **[Bogleheads Forum](https://www.bogleheads.org/forum/index.php)** — original long-form discussion; the wiki distills this
+
+### Books
+- **[The Little Book of Common Sense Investing](https://www.amazon.com/Little-Book-Common-Sense-Investing/dp/1119404509)** — John C. Bogle. The foundational text. Source of the "tyranny of compounding costs" argument and most Bogle quotes used in the skill.
+- **[The Bogleheads' Guide to Investing](https://www.amazon.com/Bogleheads-Guide-Investing-Taylor-Larimore/dp/1118921283)** — Larimore, Lindauer, LeBoeuf. Practical implementation; the funding waterfall and account priority guidance originate here.
+- **[The Bogleheads' Guide to the Three-Fund Portfolio](https://www.amazon.com/Bogleheads-Guide-Three-Fund-Portfolio/dp/1119487331)** — Taylor Larimore. The definitive defense of the three-fund approach against complexity creep.
+- **[A Random Walk Down Wall Street](https://www.amazon.com/Random-Walk-Down-Wall-Street/dp/0393330338)** — Burton Malkiel. The academic grounding for why active management underperforms.
+- **[The Four Pillars of Investing](https://www.amazon.com/Four-Pillars-Investing-Building-Portfolio/dp/0071747052)** — William Bernstein. Asset allocation and the history of market returns.
+
+### Research
+- **[SPIVA Scorecards](https://www.spglobal.com/spdji/en/research-insights/spiva/)** (S&P Dow Jones Indices) — the source for "80–90% of active large-cap managers underperform their benchmark over 15 years"
+- **[Vanguard: Dollar-cost averaging just means taking risk later](https://corporate.vanguard.com/content/dam/corp/research/pdf/Dollar-cost_averaging_just_means_taking_risk_later_ISGDCA.pdf)** — the lump-sum vs. DCA study cited in the windfall scenario (~2/3 win rate for lump sum)
+- **Dichev (2007), "What Are Stock Investors' Actual Historical Returns?"** — source of the ~1.3% annual behavior gap from mistimed entries and exits
