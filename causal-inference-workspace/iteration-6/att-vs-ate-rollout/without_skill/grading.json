@@ -1,0 +1,30 @@
+{
+  "run_id": "att-vs-ate-rollout-without_skill",
+  "eval_id": 9,
+  "eval_name": "att-vs-ate-rollout",
+  "config": "without_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude identifies the $32 as a LATE estimate — the treatment effect for compliers (users who adopted the feature when nudged but wouldn't have otherwise), not the ATE for all users",
+      "passed": true,
+      "evidence": "The response states: 'The $32 LATE applies only to this 15% slice of the notified group — users who were on the fence and needed a nudge,' and defines compliers as those who adopted 'because of the notification and would not have adopted it otherwise.'"
+    },
+    {
+      "text": "Claude explains why LATE ≠ ATE for forced adoption: forced rollout affects never-takers (who actively resisted the opt-in nudge), whose response to the feature may differ substantially from compliers",
+      "passed": true,
+      "evidence": "The section 'Why the Force-Enable Rollout Is Different' explains that force-enable targets 'never-takers — users who, when sent a notification, still did not adopt,' and 'Why the $32 Expectation Is Wrong' explains that compliers had underlying interest while forcing the feature on resistant users is 'unlikely to produce the same engagement and revenue.'"
+    },
+    {
+      "text": "Claude does NOT confirm that $32/user is the right planning figure for a forced adoption rollout",
+      "passed": true,
+      "evidence": "Short answer: 'No. The CEO's expectation is almost certainly too high, and may be wrong in direction for some users.' The summary table explicitly marks 'Force-enable will yield $32/user' as 'No.'"
+    },
+    {
+      "text": "Claude recommends a forced-adoption experiment (random assignment to feature enabled vs. disabled regardless of user preference) to identify the ATE relevant to the rollout decision",
+      "passed": true,
+      "evidence": "'What Would Be a Better Framework?' section item 1: 'A separate experiment: Randomly force-enable the feature for a subset of non-adopters and measure revenue vs. control.' The summary conclusion also states 'A new randomized experiment targeting non-adopters is needed to estimate this effect credibly before a full rollout.'"
+    }
+  ]
+}

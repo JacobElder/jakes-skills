@@ -1,0 +1,30 @@
+{
+  "run_id": "predictive-vs-causal-with_skill",
+  "eval_id": 10,
+  "eval_name": "predictive-vs-causal",
+  "config": "with_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude clearly states that feature importance in a predictive model does not imply that intervening on that feature will reduce churn — correlation/prediction is not causation",
+      "passed": true,
+      "evidence": "The response states: 'Feature importance tells you what variables carry information about the outcome in the world as it is. It says nothing about what happens when you reach in and change those variables.' and 'Feature importance from a predictive model is not a causal model, and substituting one for the other is one of the most common and consequential analytic errors in applied machine learning for business decisions.'"
+    },
+    {
+      "text": "Claude identifies last_login_days as a downstream indicator — customers stop logging in BECAUSE they are already disengaged or about to churn, making it a symptom rather than a cause",
+      "passed": true,
+      "evidence": "The response states: 'Days since last login predicts churn well precisely because disengaged customers stop logging in before they cancel. The causal direction runs: Underlying disengagement → infrequent logins → churn. The login gap is an effect of the disengagement state that also causes churn. It is a downstream indicator — a symptom with a common cause, not the cause itself.'"
+    },
+    {
+      "text": "Claude explicitly invokes do-operator reasoning: observing P(churn | last_login_days = 30) is very different from P(churn | do(last_login_days = 30))",
+      "passed": true,
+      "evidence": "The response explicitly writes: 'P(churn | last_login_days = 30) — the churn rate among customers who happen to have 30-day login gaps' versus 'P(churn | do(last_login_days = 30)) — the churn rate if you force a customer to log in every 30 days. These are different quantities. Feature importance estimates the first. You need the second.'"
+    },
+    {
+      "text": "Claude recommends building a causal DAG and identifying a proper estimation strategy before deciding which features to intervene on",
+      "passed": true,
+      "evidence": "'Step 2: Build a causal model of churn. Sketch a DAG with your domain knowledge: What are the underlying states that drive churn?... Which of your measured variables are upstream causes of those states vs. downstream symptoms? What are the unobserved confounders?'"
+    }
+  ]
+}

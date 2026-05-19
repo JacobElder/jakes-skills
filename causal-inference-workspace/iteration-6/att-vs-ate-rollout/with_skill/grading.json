@@ -1,0 +1,30 @@
+{
+  "run_id": "att-vs-ate-rollout-with_skill",
+  "eval_id": 9,
+  "eval_name": "att-vs-ate-rollout",
+  "config": "with_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude identifies the $32 as a LATE estimate — the treatment effect for compliers (users who adopted the feature when nudged but wouldn't have otherwise), not the ATE for all users",
+      "passed": true,
+      "evidence": "Step 3 states: 'The $32 LATE is the average treatment effect only for compliers — roughly 15% of the user base,' and the complier definition is given explicitly as users who 'adopted the feature because they received the notification, and would NOT have adopted without it.'"
+    },
+    {
+      "text": "Claude explains why LATE ≠ ATE for forced adoption: forced rollout affects never-takers (who actively resisted the opt-in nudge), whose response to the feature may differ substantially from compliers",
+      "passed": true,
+      "evidence": "Step 4 is titled 'Why Never-Takers Are Different' and lists reasons they differ (feature doesn't fit their workflow, low willingness to pay, etc.), then states: 'Under heterogeneous treatment effects... the LATE for compliers will typically exceed the ATE across all users — particularly when compliers are positively selected on feature-outcome fit and never-takers have lower treatment effects by definition.'"
+    },
+    {
+      "text": "Claude does NOT confirm that $32/user is the right planning figure for a forced adoption rollout",
+      "passed": true,
+      "evidence": "The short answer is: 'No. The $32 estimate almost certainly overstates the revenue effect of forced rollout, possibly substantially. The CEO's expectation is built on a category error about what LATE measures.' The summary table also explicitly marks 'Force-enable will yield $32/user' as 'No.'"
+    },
+    {
+      "text": "Claude recommends a forced-adoption experiment (random assignment to feature enabled vs. disabled regardless of user preference) to identify the ATE relevant to the rollout decision",
+      "passed": true,
+      "evidence": "Step 8, Option 1: 'Run a forced-enable A/B test directly. Randomly force-enable the feature for a holdout group of non-adopters and measure 6-month revenue. This directly estimates the effect of the intervention the CEO actually wants. This is the cleanest answer.'"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "run_id": "near-iv-bias-amplification-without_skill",
+  "eval_id": 3,
+  "eval_name": "near-iv-bias-amplification",
+  "config": "without_skill",
+  "passed": 3,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude identifies prior performance as a near-instrument (or near-IV) — a variable that strongly predicts treatment (mentorship selection) but has a weak direct effect on the outcome (promotion) controlling for the treatment",
+      "passed": true,
+      "evidence": "Response defines the near-instrument concept and applies it: 'Near-instrument: A variable that strongly predicts treatment but has only a weak direct effect on the outcome. Controlling for it amplifies any remaining unmeasured confounding. With r ≈ 0.85 between prior performance and mentorship, you've described a situation where prior performance functions more like a near-instrument.'"
+    },
+    {
+      "text": "Claude warns that controlling for a near-IV in the presence of unmeasured confounders can amplify rather than reduce bias — because it concentrates the remaining variation in treatment onto the part correlated with unmeasured factors",
+      "passed": true,
+      "evidence": "Response warns: 'controlling for it can actually amplify bias rather than reduce it' and explains the mechanism: 'If there are any other unmeasured confounders...the residual variation in mentorship is now more strongly correlated with those unmeasured factors,' citing the OLS formula showing bias scales with 1/(1 - R²)."
+    },
+    {
+      "text": "Claude does NOT unconditionally endorse 'control for prior performance because it predicts both treatment and outcome'",
+      "passed": false,
+      "evidence": "The practical recommendation section states 'Do control for prior performance — it is a confounder and omitting it entirely is worse than including it, provided prior performance has a meaningful direct effect on promotions.' This is a near-unconditional endorsement of controlling; the proviso about 'meaningful direct effect' does not address the unmeasured confounding condition that makes the near-IV concern bite."
+    },
+    {
+      "text": "Claude explicitly states the conditional: if prior performance is the ONLY confounder and no unmeasured confounders remain, controlling for it is fine — the near-IV concern only bites when unmeasured confounding is present alongside the near-IV",
+      "passed": true,
+      "evidence": "Response states the formal condition: 'Controlling for a variable reduces bias if and only if: The variable's direct effect on the outcome...is large enough to offset the amplification of remaining omitted variable bias' and later: 'Bias amplification is most dangerous when there are other unmeasured confounders,' implying that absent unmeasured confounders the amplification concern does not apply."
+    }
+  ]
+}

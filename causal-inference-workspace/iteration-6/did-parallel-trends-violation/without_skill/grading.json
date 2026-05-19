@@ -1,0 +1,30 @@
+{
+  "run_id": "did-parallel-trends-violation-without_skill",
+  "eval_id": 5,
+  "eval_name": "did-parallel-trends-violation",
+  "config": "without_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude confirms the reviewer is correct — TWFE with staggered adoption and heterogeneous treatment effects can be biased even when parallel trends holds for every cohort",
+      "passed": true,
+      "evidence": "The response opens: 'Your reviewer is correct. TWFE regression with staggered treatment timing can produce biased and potentially misleading estimates even when the parallel trends assumption holds perfectly.' The bottom line also states: 'The +6% TWFE estimate: May be biased due to forbidden comparisons.'"
+    },
+    {
+      "text": "Claude explains the core mechanism: TWFE uses already-treated units as controls for later-treated units ('forbidden comparisons'), which is only unbiased if treatment effects are constant across cohorts and over time",
+      "passed": true,
+      "evidence": "The response explains: 'TWFE uses... Forbidden comparisons — early-treated regions (Q1 cohort) used as the control group for later-treated regions (Q3 or Q4 cohorts)... using it as a control for units that are about to be treated implicitly assumes the treatment effect is constant over time and across cohorts.'"
+    },
+    {
+      "text": "Claude names or describes the Goodman-Bacon decomposition problem — that TWFE is a weighted average of 2×2 DiDs, some receiving negative weights when later-cohort treatment effects differ from early-cohort effects",
+      "passed": true,
+      "evidence": "The response states: 'Goodman-Bacon (2021) showed that the TWFE estimator can be decomposed as: β_TWFE = Σ_{k,l} w_{kl} * δ_{kl} Where k and l are cohort pairs and the weights w_{kl} are determined by group sizes and timing... those comparisons contribute negatively weighted terms to the aggregate β.'"
+    },
+    {
+      "text": "Claude recommends a heterogeneity-robust DiD estimator (e.g., Callaway-Sant'Anna, Sun-Abraham, or Borusyak-Jaravel-Spiess) rather than standard TWFE",
+      "passed": true,
+      "evidence": "The response recommends: 'Callaway & Sant'Anna (2021),' 'Sun & Abraham (2021),' and 'Stacked DiD' as alternatives to standard TWFE, with implementation details in R and Stata for each."
+    }
+  ]
+}

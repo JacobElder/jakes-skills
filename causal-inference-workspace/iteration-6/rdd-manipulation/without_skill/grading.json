@@ -1,0 +1,30 @@
+{
+  "run_id": "rdd-manipulation-without_skill",
+  "eval_id": 11,
+  "eval_name": "rdd-manipulation",
+  "config": "without_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude identifies the density spike (more users clustering at 41-45 than expected) as a serious threat to the RDD — this pattern suggests score manipulation (gaming) near the threshold, not sampling noise",
+      "passed": true,
+      "evidence": "The response states: 'A density spike — specifically, an excess mass of observations just above the cutoff — is a signature pattern of manipulation or sorting. The standard diagnostic for this is the McCrary (2008) density test.' It calls this 'a serious validity concern that you cannot dismiss.'"
+    },
+    {
+      "text": "Claude explains WHY this matters for RDD: if users or CSMs can influence scores near the cutoff, users near the threshold are no longer as-good-as-randomly assigned to treatment/control, violating the local randomization assumption",
+      "passed": true,
+      "evidence": "The response explains: 'RDD requires that the conditional expectation of potential outcomes is continuous through the cutoff. Sorting violates this. Users just above 40 may have systematically better prognosis... making the treatment group (below 40) look worse off not because outreach failed, but because the control group was selected to look good.'"
+    },
+    {
+      "text": "Claude rejects the 'only communicated internally' argument as insufficient to rule out manipulation — internal staff (CSMs) knowing the cutoff is exactly the mechanism that enables strategic score inflation",
+      "passed": true,
+      "evidence": "The response states: 'This reasoning conflates two very different channels through which manipulation can occur' and identifies 'Administrator/Operator-Side Sorting' as 'the real threat' — specifically that the support team knowing the threshold could bump borderline users above 40 to avoid triggering outreach."
+    },
+    {
+      "text": "Claude recommends a formal density test (McCrary test or equivalent) at the threshold and pre-treatment covariate balance checks near the cutoff as diagnostic steps before trusting the RDD estimate",
+      "passed": true,
+      "evidence": "The response recommends: 'Run the McCrary density test (or the Cattaneo-Jansson-Ma 2018 local polynomial density test, which is more robust)' and 'Test for covariate balance at the cutoff. Run RDD-style local linear regressions for pre-treatment covariates (e.g., account age, plan tier, historical usage) as the outcome.'"
+    }
+  ]
+}

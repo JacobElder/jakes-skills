@@ -54,6 +54,20 @@ The skill rejects the split: AGTHX and the S&P 500 index hold the same large-cap
 
 ---
 
+## The financial stakes
+
+Bad financial advice isn't just suboptimal — the dollar cost compounds for decades. Here are three of the most common anti-patterns the skill addresses, with rough estimates of what they actually cost:
+
+| Anti-pattern | Scenario | 30-year cost vs. the Boglehead alternative |
+|---|---|---|
+| 1% AUM advisor | $300k portfolio, 7% gross annual return | ~$560,000 in foregone compounding |
+| Whole life insurance | $500/month premium vs. $40/month term + investing the $460 difference | ~$280,000 in foregone growth — plus inferior insurance coverage |
+| High expense ratio (0.63% vs. 0.03%) | $200k portfolio | ~$230,000 in extra fees |
+
+These are approximations assuming 7% nominal annual return with costs applied as a constant annual drag. The individual numbers will vary; the order of magnitude will not. Percentage-point differences in fees and returns compound into six-figure gaps over a working career — which is exactly why the financial industry can sustain these products and why a model with strong Boglehead conviction is useful.
+
+---
+
 ## What it does
 
 Base Claude knows Boglehead facts. The skill gives it the *conviction to act on them*. The Boglehead approach often requires Claude to:
@@ -107,6 +121,34 @@ xychart-beta horizontal
 | Portfolio review (concentrated Roth) | 1.0 | 1.0 |
 
 The pattern: base Claude handles *knowledge questions* well (it knows what a three-fund portfolio is), but struggles on *behavioral questions* — the cases where the Boglehead view is directionally strong and the financial industry incentives point the other way.
+
+### What the difference looks like in practice
+
+The whole life insurance scenario shows the gap most clearly. The prompt: *"My financial advisor recommended I put $500/month into a whole life insurance policy. They said it builds cash value tax-free and I can borrow against it later. Sounds like a good deal — should I do it?"*
+
+**Base Claude (no skill) — opening:**
+
+> This is a common recommendation from financial advisors, but it deserves careful scrutiny. The short answer for most people: whole life insurance is probably not the right choice, and there are almost certainly better ways to deploy $500/month toward your financial goals.
+>
+> Here's a balanced breakdown:
+>
+> **WHAT YOUR ADVISOR SAID IS TECHNICALLY TRUE — BUT INCOMPLETE**
+>
+> Yes, whole life insurance does build cash value on a tax-deferred basis (not technically "tax-free" unless handled carefully). And yes, you can borrow against that cash value. But those facts leave out a lot of important context.
+
+Later in the same response, base Claude includes a section titled **"WHEN WHOLE LIFE MIGHT ACTUALLY MAKE SENSE"** — listing circumstances where it could be a reasonable choice. This is the hedging pattern Bogleheads warn against: someone anchored on their advisor's recommendation reads that section and finds their justification.
+
+**With skill — opening:**
+
+> No. Do not buy a whole life insurance policy as an investment vehicle. This is one of the clearest "wrong answer" scenarios in personal finance, and the fact that your advisor recommended it should make you more skeptical of their other advice, not less.
+>
+> Here is what is actually happening with the pitch you received:
+>
+> **THE "TAX-FREE GROWTH" CLAIM**
+>
+> Whole life bundles two things together: a death benefit (term life insurance) and a savings account. The savings-account portion does grow tax-deferred, and policy loans are technically tax-free — but that framing is deliberately misleading. You are paying 5–8% interest to the insurance company on loans against your own money. That interest either reduces your death benefit or you pay it out of pocket. Calling that "tax-free" is like saying you got a free car because your car loan has no sales tax.
+
+The skill response goes on to name the commission (~50–100% of year-one premiums), run the $500/month math directly (whole life → ~$290k cash value at 3%; term + index fund → ~$575k at 7%), and recommend the full funding waterfall. No "when it might make sense" section.
 
 ## Eval suite
 

@@ -1,0 +1,30 @@
+{
+  "run_id": "mediator-overcontrol-without_skill",
+  "eval_id": 6,
+  "eval_name": "mediator-overcontrol",
+  "config": "without_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude identifies that manager motivation was measured after the treatment and therefore may be a mediator (a variable on the causal path from training to performance), not just a predictor",
+      "passed": true,
+      "evidence": "The response states: 'Manager motivation level is measured 1 month after the training ended — meaning it is measured after the treatment has already occurred...Manager motivation is a mediator: a variable that sits on the causal path between the treatment and the outcome.'"
+    },
+    {
+      "text": "Claude warns that controlling for a post-treatment mediator blocks the causal mechanism you're trying to measure — it yields the direct effect of training (net of motivation) rather than the total effect",
+      "passed": true,
+      "evidence": "The response warns: 'When you control for a mediator, you block the very pathway you are trying to measure. You will: 1. Underestimate the total effect of the training — possibly severely, since motivation may be a primary mechanism.'"
+    },
+    {
+      "text": "Claude distinguishes the total effect of training (including the motivation pathway) from the direct effect (bypassing motivation), and flags which estimand the user actually wants",
+      "passed": true,
+      "evidence": "The summary table explicitly distinguishes: 'Motivation measured after training, goal is total effect → Do NOT include' versus 'Motivation measured after training, goal is mechanism → Use formal causal mediation analysis,' making the estimand choice explicit."
+    },
+    {
+      "text": "Claude does NOT recommend including post-treatment motivation as a control without raising this structural concern prominently",
+      "passed": true,
+      "evidence": "The response opens: 'No — including manager motivation level measured 1 month post-training as a control variable is likely a bad idea from a causal inference standpoint. It introduces mediator over-control bias.' The concern is raised immediately and is the entire focus of the response."
+    }
+  ]
+}

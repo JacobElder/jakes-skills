@@ -1,0 +1,30 @@
+{
+  "run_id": "iv-exclusion-violation-without_skill",
+  "eval_id": 12,
+  "eval_name": "iv-exclusion-violation",
+  "config": "without_skill",
+  "passed": 2,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Claude confirms the colleague is correct — the exclusion restriction is very likely violated: distance to gym almost certainly affects health through multiple pathways beyond gym membership (neighborhood wealth → healthier food/air/activity options; transportation access → exercise and healthcare access; residential self-selection by health-conscious people)",
+      "passed": true,
+      "evidence": "The response states: 'Yes, your colleague is almost certainly right. The exclusion restriction... is highly implausible.' It identifies neighborhood walkability, food access, SES, safety, air quality, and residential self-selection by health-conscious people as direct pathways from distance to health that bypass membership."
+    },
+    {
+      "text": "Claude explains the exclusion restriction precisely: the instrument (distance) must affect the outcome (health) ONLY through the treatment (gym membership) — any other causal path from distance to health violates it",
+      "passed": true,
+      "evidence": "The response states: 'The exclusion restriction: Z affects the outcome Y (health) only through D' and formalizes it in potential outcomes notation: 'Y_i(d, z) = Y_i(d, z') for all z, z' and all d — that is, changing the instrument Z while holding the treatment D fixed should not change the outcome Y.'"
+    },
+    {
+      "text": "Claude explains that a violated exclusion restriction biases the IV estimate in an unknown direction — NOT just upward — because the direct distance→health effect can be positive or negative and its sign relative to the first-stage effect determines whether the IV overestimates or underestimates the true effect",
+      "passed": false,
+      "evidence": "The response asserts a specific direction: 'your IV estimate will be upward biased relative to the true effect of gym membership.' It does not acknowledge that the bias direction is unknown or that the estimate could be wrong in sign — contradicting the assertion's requirement."
+    },
+    {
+      "text": "Claude recommends either finding a stronger instrument that more plausibly satisfies exclusion (e.g., a lottery for free gym membership) OR a falsification test using never-takers: does distance predict health outcomes among people who would never join a gym regardless of distance? If yes, the instrument is contaminated",
+      "passed": false,
+      "evidence": "The response recommends controlling for neighborhood characteristics, within-neighborhood variation, sensitivity analysis, and finding a policy-change-based instrument — but does not describe the specific never-takers falsification test. No mention is made of testing whether distance predicts health among those who would never join regardless of proximity."
+    }
+  ]
+}
