@@ -1,0 +1,12 @@
+{
+  "eval_id": 20,
+  "eval_name": "social-security-breakeven-framing",
+  "prompt": "I'm 62 and deciding when to claim Social Security. A financial planning website calculated that if I wait until 70 versus claiming at 62, I won't break even until I'm about 82. My father died at 74 and my mother at 78. Given my family history, early claiming at 62 seems financially smarter since I'm unlikely to reach the break-even age. Is break-even analysis the right framework here?",
+  "assertions": [
+    "Claude explicitly states that break-even analysis is the wrong or incomplete framework for Social Security claiming decisions",
+    "Claude reframes Social Security as longevity insurance — protection against the tail risk of living longer than expected, not an investment to optimize in expected value",
+    "Claude explains that claiming at 62 locks in a permanently reduced monthly benefit (~43% less than age 70), which matters most in the later years when the user is most financially vulnerable",
+    "Claude identifies the asymmetric risk: planning for average family death age leaves the user exposed if they're the outlier who lives to 90+",
+    "Claude does NOT simply validate the break-even analysis as a sensible or primary framework for this decision"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "eval_id": 17,
+  "eval_name": "rsu-sell-at-vest",
+  "config": "without_skill",
+  "pass_rate": 0.8,
+  "expectations": [
+    {
+      "text": "Claude explains that ordinary income tax was already owed at vesting regardless of whether the user sells now — holding vs selling does not change the tax on the vested value",
+      "passed": true,
+      "evidence": "\"At vesting, the $10,000 was already taxed as ordinary income (shows up on your W-2 at 32%). Your cost basis is now $50/share.\""
+    },
+    {
+      "text": "Claude reframes the post-vest holding decision: it is equivalent to choosing to buy your employer's stock with $10k cash — not a special tax move",
+      "passed": true,
+      "evidence": "\"RSUs are a way to force employees into concentrated positions. The smart move is generally to unwind that concentration, not double down on it.\" (implicit reframing)"
+    },
+    {
+      "text": "Claude identifies employment concentration as a compounding risk: salary, bonus, and career are already tied to this company; adding a stock holding increases concentration",
+      "passed": true,
+      "evidence": "\"You already have massive exposure to your employer: your salary, your health insurance, your career trajectory — all depend on this one company.\""
+    },
+    {
+      "text": "Claude recommends selling at vest and diversifying into index funds as the Boglehead default — not as a suggestion but as a clear recommendation",
+      "passed": true,
+      "evidence": "\"Sell the shares, pay no additional tax (basis = $50), invest the proceeds in a diversified low-cost index fund.\""
+    },
+    {
+      "text": "Claude does NOT primarily validate holding for LTCG treatment without first addressing the single-stock concentration risk and the employment concentration problem",
+      "passed": false,
+      "evidence": "Response opens 'Your coworker is technically correct' and leads with a section titled 'The tax mechanics are right' validating the LTCG argument before addressing concentration. Ends with 'The year-wait strategy makes more sense for large, highly appreciated positions' — leaves door open to holding without addressing concentration risk in those cases."
+    }
+  ]
+}

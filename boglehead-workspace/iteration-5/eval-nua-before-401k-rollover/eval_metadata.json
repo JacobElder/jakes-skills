@@ -1,0 +1,12 @@
+{
+  "eval_id": 21,
+  "eval_name": "nua-before-401k-rollover",
+  "prompt": "I'm retiring in 8 weeks. My 401k has $620,000 total — $240,000 of that is company stock I've accumulated over 25 years at work. My HR told me the average cost basis on those shares is about $38,000. My financial advisor says to roll everything to a Vanguard IRA for simplicity, better fund options, and lower fees. Should I just do the full rollover?",
+  "assertions": [
+    "Claude explicitly flags NUA (Net Unrealized Appreciation) as a strategy that must be evaluated before rolling company stock to an IRA",
+    "Claude explains the key tax consequence: rolling company stock to an IRA permanently converts the unrealized appreciation from LTCG rates to ordinary income rates on future withdrawals",
+    "Claude explains the NUA mechanics: take a lump-sum distribution of company shares in-kind, pay ordinary income tax on cost basis ($38k) now, sell shares later at LTCG rates on the $202k appreciation",
+    "Claude explicitly states that NUA treatment is irreversible — once you roll to an IRA, you permanently lose the ability to use NUA treatment on those shares",
+    "Claude does NOT simply validate 'roll everything to Vanguard for simplicity' without at minimum flagging NUA as an irreversible opportunity requiring evaluation before the rollover"
+  ]
+}

@@ -291,6 +291,80 @@ For commodities, gold, and other "alternatives" — similar reasoning. They have
 
 ---
 
+## 19. RSUs and ESPPs — holding for tax treatment or "I believe in the company"
+
+**What's pitched:** "I should hold my RSUs for at least a year after vesting to get long-term capital gains treatment." / "I hold my ESPP shares because I believe in my company."
+
+**The Boglehead reality for RSUs:**
+- Ordinary income tax is owed at vest regardless of whether you sell or hold. The $X of vested RSUs was W-2 income the moment it vested. The question of hold vs. sell is purely a forward-looking investment decision — not a tax strategy.
+- After vesting, holding RSU shares is identical to receiving cash and *choosing* to buy your employer's single stock with it. Would you?
+- The LTCG benefit of holding 1+ year is real but modest (saving ~10-15% on any future gains). The concentration risk of a single stock that could drop 50-80% is not modest.
+- Employment concentration multiplies the risk: salary, bonus, options, and career are already tied to one company. Adding a stock holding compounds this.
+
+**The Boglehead reality for ESPPs:**
+- The value of an ESPP is the guaranteed discount (15% is typical) — that return is locked in at purchase. Once you own the shares, they carry the same single-stock risk as any other individual stock.
+- Qualifying disposition vs. disqualifying disposition tax treatment is real but small compared to two years of single-stock concentration risk.
+- "I believe in the company" is an available belief at any share price for any investor — it's not a reason to concentrate.
+
+**The Boglehead answer (both):** Sell at vest (RSUs) or immediately after each purchase period (ESPPs). Reinvest in a total-market index fund. Repeat every cycle. Don't speculate with tax-advantaged income.
+
+---
+
+## 20. HSA — Using it for current medical expenses (vs. stealth retirement account)
+
+**What's pitched:** "I have an HSA, so I should use it for my medical bills — that's what it's for."
+
+**The Boglehead reality:**
+- There is no deadline on HSA reimbursements. You can submit claims for qualified medical expenses incurred at *any point in the past*, as long as you have documentation (save your receipts). A dentist bill from 2025 can be reimbursed tax-free in 2045.
+- The highest-value use of the HSA: invest it in index funds, pay current medical expenses from cash flow, accumulate tax-free growth for decades, then reimburse historical expenses (or withdraw tax-free for medical costs) in retirement.
+- Paying from the HSA today treats it as a tax-advantaged medical checking account. Not wrong — but it sacrifices decades of tax-free compounding for a reimbursement you could have deferred.
+- After age 65, HSA withdrawals for non-medical purposes are taxed as ordinary income (no penalty) — making it a backdoor Traditional IRA. Before 65, non-medical withdrawals incur a 20% penalty plus income tax.
+
+**The Boglehead answer:**
+- Pay medical bills from your checking account or regular savings. Save every receipt.
+- Invest the HSA in low-cost index funds (Fidelity offers FSKAX and FXNAX with zero minimums).
+- Reimburse yourself at retirement (or whenever you want) by submitting the accumulated receipts.
+- Only use the HSA for current medical expenses if you have genuinely no other cash available.
+
+---
+
+## 21. Social Security claiming — break-even framing
+
+**What's pitched:** "The break-even age for waiting is 82. My family dies in their 70s. I should claim at 62."
+
+**The Boglehead reality:**
+- Break-even is the wrong question. Social Security is **longevity insurance**, not an investment to maximize in expected value terms. Its purpose is to ensure you cannot outlive your income — specifically in your 80s and 90s when you're least able to earn income and most likely to need care.
+- The SSA designs claiming ages so the average-health person receives roughly equal actuarial value at every age. "Break-even at 82" isn't a magic number where one side wins — it's just when the cumulative payout curves cross.
+- The relevant risk: claiming at 62 locks in roughly 25-30% less than FRA and ~43% less than age-70 benefits, permanently (plus inflation adjustments on a smaller base). If you live to 88 or 92, that deficit accumulates for decades when you are most financially vulnerable.
+- Planning around the median family death age means accepting the tail risk: if you're the outlier in your family who lives to 93, you will have permanently chosen a lower income floor for your most vulnerable years.
+
+**The Boglehead answer:**
+- Reframe: the question isn't "when do I break even?" but "what is my downside if I live to 92?"
+- For most people in reasonable health, delaying SS as long as possible (or at least to FRA) provides the highest floor for longevity risk.
+- If claiming early to delay drawing down investments: the "claim at 62, invest the SS payments" strategy occasionally beats delayed claiming in expected-value terms, but this depends on investment returns and is not guaranteed.
+- Spouses: SS spousal/survivor benefits strongly favor the higher earner delaying.
+
+---
+
+## 22. NUA (Net Unrealized Appreciation) — Rolling company stock to an IRA without evaluating NUA
+
+**What's pitched:** "Just roll your 401k to a Vanguard IRA — it's simpler and has better fund options."
+
+**The Boglehead reality:**
+- NUA treatment is a **permanent, irreversible election**. If your 401k contains company stock with a low cost basis relative to its current value, you may be eligible to take a lump-sum distribution and elect NUA treatment — a one-time opportunity.
+- **How NUA works:** Instead of rolling the company stock to an IRA, you take it as an in-kind distribution to a taxable brokerage account. You pay ordinary income tax on the original cost basis now. When you later sell the shares, *all the appreciation above the original cost basis* (the "NUA") is taxed at long-term capital gains rates — not ordinary income rates.
+- **Why it matters:** Traditional IRA withdrawals are taxed entirely at ordinary income rates (up to 37%). NUA treatment converts the appreciation portion to LTCG rates (0%, 15%, or 20%). On a $200k gain, that's a potential tax difference of $34,000–$74,000.
+- **The irreversible part:** Once you complete an IRA rollover, NUA treatment is gone forever. The opportunity exists only during a lump-sum distribution from the plan in a qualifying event (separation from service, death, disability, or age 59½).
+
+**Triggers for NUA evaluation:**
+- 401k contains company stock
+- Cost basis is significantly below current market value (NUA benefit is proportional to the spread)
+- User is at or near qualifying event (retirement, layoff, age 59½)
+
+**The Boglehead answer:** Before touching a 401k that includes appreciated company stock, consult a CPA or tax advisor about NUA eligibility. The "roll everything for simplicity" advice from an advisor who hasn't run the NUA numbers could be a very expensive shortcut. The additional tax-planning complexity is worth it for a one-time, irreversible decision of this magnitude.
+
+---
+
 ## When the user pushes back
 
 You'll sometimes get pushback: "But my situation is different / my advisor said / I read on Reddit / my uncle is a CFP..."

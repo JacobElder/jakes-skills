@@ -1,0 +1,39 @@
+warn: CPU lacks AVX support, strange crashes may occur. Reinstall Bun or use *-baseline build:
+  https://github.com/oven-sh/bun/releases/download/bun-v1.3.13/bun-darwin-x64-baseline.zip
+Break-even analysis is the wrong framework for this decision, and the family history argument has a few hidden flaws worth examining.
+
+## Why break-even fails here
+
+Break-even treats Social Security as an investment return problem ("did I get my money's worth?"). But Social Security is **longevity insurance** — protection against outliving your money. Insurance isn't evaluated by whether you "break even"; it's evaluated by what happens in the bad scenario.
+
+The asymmetry matters:
+- If you claim at 62 and die at 74: you "win" the break-even bet, but you're dead and don't need the money
+- If you claim at 62 and live to 90: you lose ~$100,000–$200,000+ in real income during the years when you're most likely to need it and least able to earn it
+
+The downside of delaying (dying before 82) is bounded. The downside of claiming early (living to 90) is large and ongoing.
+
+## The family history problem
+
+Two data points isn't a sample — it's anecdote. Specifically:
+
+- **Sex matters**: If you're female, your life expectancy is substantially higher than your father's experience predicts
+- **Cause of death matters**: Did they die of hereditary disease, or accidents, smoking, infectious illness? Heritable vs. non-heritable causes have very different predictive value
+- **Survivorship and cohort effects**: You are a 62-year-old alive today. That already selects for better-than-average health. A 62-year-old in good health has a median life expectancy well into the 80s
+- **Medical progress**: Your parents' generation didn't have the treatments available today for heart disease, cancer, diabetes
+
+A healthy 62-year-old today has roughly a 50% chance of living past 85, and ~25% past 90.
+
+## What actually matters
+
+The right questions:
+
+1. **Are you married?** The delayed benefit becomes the survivor benefit — this is often the single biggest factor and heavily favors delay
+2. **Do you have other income?** If you can cover ages 62–70 from savings, pension, or part-time work, delay converts those savings into a higher guaranteed inflation-adjusted income floor
+3. **Is your health actually poor?** Family history is weak evidence; your actual health status (blood pressure, BMI, no major diagnoses) is stronger
+4. **What's the tax treatment?** Early Social Security + continued work creates tax complexity
+
+## The conventional conclusion
+
+For most healthy people with any other resources, delaying to 70 — or at least to full retirement age — provides substantially better expected outcomes. The 8%/year increase from delay is a guaranteed, inflation-adjusted return that no market investment can match on a risk-adjusted basis.
+
+If your actual health is genuinely poor (not just family history), or if you have zero other income sources and need the money now, early claiming may make sense. But the break-even calculation as stated doesn't capture the full picture.

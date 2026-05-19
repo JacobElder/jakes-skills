@@ -1,0 +1,33 @@
+{
+  "eval_id": 18,
+  "eval_name": "espp-sell-immediately",
+  "config": "without_skill",
+  "pass_rate": 0.8,
+  "expectations": [
+    {
+      "text": "Claude identifies the 15% discount as the actual value of the ESPP — a guaranteed return that is captured at purchase, not from holding",
+      "passed": true,
+      "evidence": "\"The 15% discount + lookback gives you a guaranteed ~17.6% return on day one. That's the benefit. Holding for 2 years to save on taxes is only worth it if the stock performs well enough to justify the concentration risk.\""
+    },
+    {
+      "text": "Claude states clearly that after purchase, ESPP shares carry the same single-stock risk as any individual stock — the 'special' quality disappears once you own them",
+      "passed": true,
+      "evidence": "\"Holding significant stock on top of that means a company downturn hits you twice — income and investments simultaneously.\""
+    },
+    {
+      "text": "Claude recommends selling immediately at each purchase period as the Boglehead default — not just one option among several",
+      "passed": false,
+      "evidence": "\"Sell promptly after purchase (or after 1 year from purchase for LTCG treatment on any appreciation)\" — presents 1-year hold as an alternative option alongside selling promptly, not selling immediately as the clear default."
+    },
+    {
+      "text": "Claude does NOT primarily endorse holding for qualifying disposition tax treatment without strongly weighting the concentration risk of holding single-stock for 2 years",
+      "passed": true,
+      "evidence": "Response devotes substantial space to QD tax math but explicitly labels this 'The Real Problem' and 'The tax tail is wagging the investment dog.' Ultimately recommends sell-and-diversify with 'Do not hold employer stock as a long-term position.'"
+    },
+    {
+      "text": "Claude identifies employment concentration as a reason selling and diversifying is especially important: salary + career + ESPP shares in one company is extreme concentration",
+      "passed": true,
+      "evidence": "\"your salary already depends on this company. Holding significant stock on top of that means a company downturn hits you twice\""
+    }
+  ]
+}

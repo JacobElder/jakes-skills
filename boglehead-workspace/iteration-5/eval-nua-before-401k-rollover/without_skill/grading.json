@@ -1,0 +1,33 @@
+{
+  "eval_id": 21,
+  "eval_name": "nua-before-401k-rollover",
+  "config": "without_skill",
+  "pass_rate": 0.8,
+  "expectations": [
+    {
+      "text": "Claude explicitly flags NUA (Net Unrealized Appreciation) as a strategy that must be evaluated before rolling company stock to an IRA",
+      "passed": true,
+      "evidence": "\"Before you do a full rollover, there's a critical tax strategy your advisor may not have mentioned: Net Unrealized Appreciation (NUA).\""
+    },
+    {
+      "text": "Claude explains the key tax consequence: rolling company stock to an IRA permanently converts the unrealized appreciation from LTCG rates to ordinary income rates on future withdrawals",
+      "passed": true,
+      "evidence": "\"Full IRA rollover: Ordinary income when withdrawn (22–24%+ federal)\" vs \"NUA distribution: Long-term capital gains when sold (0–20% federal)\""
+    },
+    {
+      "text": "Claude explains the NUA mechanics: take a lump-sum distribution of company shares in-kind, pay ordinary income tax on cost basis ($38k) now, sell shares later at LTCG rates on the $202k appreciation",
+      "passed": true,
+      "evidence": "\"Instead of rolling the company stock to an IRA, you take a lump-sum in-kind distribution of just the stock to a taxable brokerage account. You pay ordinary income tax now on the cost basis only (~$38,000)... the $202,000 appreciation is taxed at LTCG rates\""
+    },
+    {
+      "text": "Claude explicitly states that NUA treatment is irreversible — once you roll to an IRA, you permanently lose the ability to use NUA treatment on those shares",
+      "passed": false,
+      "evidence": "Response mentions the lump-sum distribution must meet IRS requirements and urgency to consult a tax professional before signing, but never explicitly states 'once rolled to an IRA, NUA treatment is permanently lost.' The irreversibility is implied but not stated."
+    },
+    {
+      "text": "Claude does NOT simply validate 'roll everything to Vanguard for simplicity' without at minimum flagging NUA as an irreversible opportunity requiring evaluation before the rollover",
+      "passed": true,
+      "evidence": "\"Ask your advisor specifically: 'Have you modeled the NUA strategy for my company stock?' If they haven't, that's a meaningful gap.\" Does not validate rolling everything."
+    }
+  ]
+}

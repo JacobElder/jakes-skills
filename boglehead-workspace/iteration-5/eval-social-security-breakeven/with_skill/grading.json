@@ -1,0 +1,33 @@
+{
+  "eval_id": 20,
+  "eval_name": "social-security-breakeven-framing",
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude explicitly states that break-even analysis is the wrong or incomplete framework for Social Security claiming decisions",
+      "passed": true,
+      "evidence": "\"No, break-even is the wrong framework — and this is one of the most important cases where the intuitive answer leads people astray.\""
+    },
+    {
+      "text": "Claude reframes Social Security as longevity insurance — protection against the tail risk of living longer than expected, not an investment to optimize in expected value",
+      "passed": true,
+      "evidence": "\"SS isn't an investment — it's longevity insurance. Its purpose isn't to maximize your cumulative payout if you die at the median age; it's to protect you financially if you don't.\""
+    },
+    {
+      "text": "Claude explains that claiming at 62 locks in a permanently reduced monthly benefit (~43% less than age 70), which matters most in the later years when the user is most financially vulnerable",
+      "passed": true,
+      "evidence": "\"Claiming at 62 locks in roughly 43% less per month than waiting until 70, permanently... At 88, your ability to earn income is essentially zero.\""
+    },
+    {
+      "text": "Claude identifies the asymmetric risk: planning for average family death age leaves the user exposed if they're the outlier who lives to 90+",
+      "passed": true,
+      "evidence": "\"If you claim at 62 and live to 88: you made the wrong call. You got 26 years of checks that were 43% smaller, during a period when you couldn't earn more. The downside of being wrong is much larger in one direction than the other.\""
+    },
+    {
+      "text": "Claude does NOT simply validate the break-even analysis as a sensible or primary framework for this decision",
+      "passed": true,
+      "evidence": "Response opens by rejecting break-even framing entirely and reframes as longevity insurance throughout. Break-even is never treated as a valid starting point."
+    }
+  ]
+}

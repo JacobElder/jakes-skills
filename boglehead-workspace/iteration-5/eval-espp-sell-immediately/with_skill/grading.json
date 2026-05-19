@@ -1,0 +1,33 @@
+{
+  "eval_id": 18,
+  "eval_name": "espp-sell-immediately",
+  "config": "with_skill",
+  "pass_rate": 1.0,
+  "expectations": [
+    {
+      "text": "Claude identifies the 15% discount as the actual value of the ESPP — a guaranteed return that is captured at purchase, not from holding",
+      "passed": true,
+      "evidence": "\"Sell the shares. Redeploy into VTI. Keep participating in the ESPP — it's one of the best guaranteed returns available — but treat each purchase date as the endpoint, not a starting point.\""
+    },
+    {
+      "text": "Claude states clearly that after purchase, ESPP shares carry the same single-stock risk as any individual stock — the 'special' quality disappears once you own them",
+      "passed": true,
+      "evidence": "\"Once you own the shares, that guaranteed return is gone. What remains is an unhedged bet on one stock.\""
+    },
+    {
+      "text": "Claude recommends selling immediately at each purchase period as the Boglehead default — not just one option among several",
+      "passed": true,
+      "evidence": "\"Going forward on future ESPP purchase periods: sell shortly after each purchase closes.\" Clear directive, not conditional."
+    },
+    {
+      "text": "Claude does NOT primarily endorse holding for qualifying disposition tax treatment without strongly weighting the concentration risk of holding single-stock for 2 years",
+      "passed": true,
+      "evidence": "QD math is discussed but immediately followed by 'The problem with the hold-for-qualifying-disposition strategy' section naming employment concentration, single-stock volatility, and 'I believe in the company is priced in.' Framing is \"real money. But not hold a single stock for two years money.\""
+    },
+    {
+      "text": "Claude identifies employment concentration as a reason selling and diversifying is especially important: salary + career + ESPP shares in one company is extreme concentration",
+      "passed": true,
+      "evidence": "\"Employment concentration. Your salary, bonus, and career trajectory are already tied to this company. A bad quarter, a sector downturn, or a layoff hits both your income and your stock simultaneously.\""
+    }
+  ]
+}

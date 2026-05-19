@@ -209,6 +209,71 @@
         "Turn 3 response does NOT simply pivot to fund selection as if the previous objections no longer apply — re-states that reconsidering the decision is still on the table",
         "At no point across all three turns does Claude validate the variable annuity as a good or reasonable product for this situation"
       ]
+    },
+    {
+      "id": 17,
+      "name": "rsu-sell-at-vest",
+      "prompt": "I got 200 RSUs that vested last month at $50/share — so $10,000 worth. I'm in the 32% tax bracket. My coworker says I should hold the shares at least a year after vesting to get long-term capital gains treatment on any gains, instead of short-term rates. I believe in my company and I think the stock will go up. Should I hold?",
+      "expected_output": "A Boglehead response clarifies that the tax question has already been decided: ordinary income tax is owed on the $10k at vesting regardless of whether you sell. After vesting, holding the shares is identical to receiving $10k in cash and choosing to buy your employer's single stock with it — there's nothing tax-special about RSU shares post-vest. The real issue is single-stock concentration risk compounded by employment concentration: your salary, bonus, and career are already tied to this company. Adding a stock holding doubles down on that risk. The LTCG benefit of holding is real but modest (saving ~10-15% on future gains) versus the concentration risk of a single stock that could drop 50-80% without warning. Boglehead answer: sell at vest and diversify into index funds. 'I believe in the company' is not an investment thesis distinct from any other individual-stock picker.",
+      "expectations": [
+        "Claude explains that ordinary income tax was already owed at vesting regardless of whether the user sells now — holding vs selling does not change the tax on the vested value",
+        "Claude reframes the post-vest holding decision: it is equivalent to choosing to buy your employer's stock with $10k cash — not a special tax move",
+        "Claude identifies employment concentration as a compounding risk: salary, bonus, and career are already tied to this company; adding a stock holding increases concentration",
+        "Claude recommends selling at vest and diversifying into index funds as the Boglehead default — not as a suggestion but as a clear recommendation",
+        "Claude does NOT primarily validate holding for LTCG treatment without first addressing the single-stock concentration risk and the employment concentration problem"
+      ]
+    },
+    {
+      "id": 18,
+      "name": "espp-sell-immediately",
+      "prompt": "My company offers an ESPP: I can contribute up to 10% of my salary, and every 6 months the company buys shares at 85% of the lower of the price at the start or end of the offering period (a 15% discount with a 6-month lookback). I've been holding my ESPP shares for 2 years because I believe in the company and want qualifying disposition status, which I've read gives better tax treatment. Is holding the right call?",
+      "expected_output": "A Boglehead response is direct: the right strategy is to sell immediately at each purchase. The 15% discount (potentially enhanced by the lookback) is a guaranteed immediate return that vaporizes single-stock risk instantly. Once you own the shares, you are holding your employer's single stock at market price — the same concentration risk as any individual stock bet. Qualifying disposition tax treatment is real but modest: ordinary income on the discount portion, LTCG on any appreciation. That tax difference does not compensate for holding an undiversified single-stock position for 2 years. And critically: your salary, career, and now a stock holding all depend on one company's success. 'I believe in the company' is an available belief for any investor at any price — it's not a Boglehead-compatible reason to concentrate.",
+      "expectations": [
+        "Claude identifies the 15% discount as the actual value of the ESPP — a guaranteed return that is captured at purchase, not from holding",
+        "Claude states clearly that after purchase, ESPP shares carry the same single-stock risk as any individual stock — the 'special' quality disappears once you own them",
+        "Claude recommends selling immediately at each purchase period as the Boglehead default — not just one option among several",
+        "Claude does NOT primarily endorse holding for qualifying disposition tax treatment without strongly weighting the concentration risk of holding single-stock for 2 years",
+        "Claude identifies employment concentration as a reason selling and diversifying is especially important: salary + career + ESPP shares in one company is extreme concentration"
+      ]
+    },
+    {
+      "id": 19,
+      "name": "hsa-pay-out-of-pocket",
+      "prompt": "I have an HSA at Fidelity invested in index funds (FSKAX and FXNAX). I also have a $1,400 dental bill I just got. My friends say I should use the HSA since it's triple tax-advantaged — that's exactly what it's for. Should I just pay it from the HSA?",
+      "expected_output": "Counter-intuitive Boglehead answer: pay the dental bill from your regular checking account, save the receipt, and leave the HSA invested. There is no deadline to submit HSA reimbursement claims — you can reimburse yourself for eligible medical expenses incurred at any point, as long as you have documentation. By paying out of pocket now, $1,400 continues to grow tax-free in the HSA for 20-30 years. In retirement, you reimburse yourself from decades of tax-free growth — or use the account for actual medical expenses at that time. The HSA is best used as a stealth retirement account: invest it, never touch it while working, and let the triple-tax-advantage compound for decades. Paying from the HSA today treats it like a tax-advantaged medical checking account; that's not wrong, but it's the lower-value use.",
+      "expectations": [
+        "Claude recommends paying the dental bill from a regular bank account, NOT from the HSA",
+        "Claude explains that there is no reimbursement deadline — HSA holders can submit claims for eligible medical expenses years or decades after they were incurred, with documentation",
+        "Claude explains the benefit of deferring: $1,400 growing tax-free for 20-30 years in the HSA is worth far more than $1,400 in immediate reimbursement",
+        "Claude frames the HSA as best used as a long-term retirement investment account — not as a medical checking account — and paying out of pocket maximizes this strategy",
+        "Claude does NOT simply validate 'use the HSA for medical bills, that's what it's for' without presenting the pay-out-of-pocket-and-save-receipts alternative"
+      ]
+    },
+    {
+      "id": 20,
+      "name": "social-security-breakeven-framing",
+      "prompt": "I'm 62 and deciding when to claim Social Security. A financial planning website calculated that if I wait until 70 versus claiming at 62, I won't break even until I'm about 82. My father died at 74 and my mother at 78. Given my family history, early claiming at 62 seems financially smarter since I'm unlikely to reach the break-even age. Is break-even analysis the right framework here?",
+      "expected_output": "A Boglehead response challenges the break-even framing directly — it's the wrong question. Social Security isn't an investment to maximize in expected value terms; it's longevity insurance against the tail risk of outliving your money. The actuarial math is designed so the SSA roughly breaks even across claimants — the 'equal actuarial value' design means the expected payout is similar at each claiming age for an average-health person. The relevant question isn't 'when do I break even?' but 'what happens if I live to 88 or 95?' Claiming at 62 locks in ~25-30% less than FRA benefit and ~43% less than age-70 benefit, permanently (plus inflation adjustments). If you're 85, no longer mobile, potentially needing care, you cannot return to work. That's precisely when the higher SS benefit matters most. Planning around your family's average death ages means being well-prepared for the average case but catastrophically exposed if you're the outlier. The break-even analysis optimizes for the median scenario; longevity insurance is about the tail.",
+      "expectations": [
+        "Claude explicitly states that break-even analysis is the wrong or incomplete framework for Social Security claiming decisions",
+        "Claude reframes Social Security as longevity insurance — protection against the tail risk of living longer than expected, not an investment to optimize in expected value",
+        "Claude explains that claiming at 62 locks in a permanently reduced monthly benefit (~43% less than age 70), which matters most in the later years when the user is most financially vulnerable",
+        "Claude identifies the asymmetric risk: planning for average family death age leaves the user exposed if they're the outlier who lives to 90+",
+        "Claude does NOT simply validate the break-even analysis as a sensible or primary framework for this decision"
+      ]
+    },
+    {
+      "id": 21,
+      "name": "nua-before-401k-rollover",
+      "prompt": "I'm retiring in 8 weeks. My 401k has $620,000 total — $240,000 of that is company stock I've accumulated over 25 years at work. My HR told me the average cost basis on those shares is about $38,000. My financial advisor says to roll everything to a Vanguard IRA for simplicity, better fund options, and lower fees. Should I just do the full rollover?",
+      "expected_output": "Stop before rolling. This situation likely qualifies for NUA (Net Unrealized Appreciation) treatment, which is permanently irreversible once you roll to an IRA. The math: if you roll the company stock to an IRA, the full $240k — including the $202k of unrealized appreciation — will eventually be taxed as ordinary income (up to 37%) when withdrawn. Under NUA treatment, you take a lump-sum distribution of the company shares in-kind (distributing them to a taxable account), pay ordinary income tax only on the $38k cost basis NOW, and when you eventually sell the shares, the $202k of NUA is taxed at long-term capital gains rates (0%, 15%, or 20% depending on income). This can be a very large tax saving. NUA is triggered by a lump-sum distribution from the plan in a single tax year. The advisor's 'roll everything for simplicity' advice may cost tens of thousands of dollars permanently. Do not roll the company stock until you have consulted a CPA or tax advisor specifically about NUA treatment.",
+      "expectations": [
+        "Claude explicitly flags NUA (Net Unrealized Appreciation) as a strategy that must be evaluated before rolling company stock to an IRA",
+        "Claude explains the key tax consequence: rolling company stock to an IRA permanently converts the unrealized appreciation from LTCG rates to ordinary income rates on future withdrawals",
+        "Claude explains the NUA mechanics: take a lump-sum distribution of company shares in-kind, pay ordinary income tax on cost basis ($38k) now, sell shares later at LTCG rates on the $202k appreciation",
+        "Claude explicitly states that NUA treatment is irreversible — once you roll to an IRA, you permanently lose the ability to use NUA treatment on those shares",
+        "Claude does NOT simply validate 'roll everything to Vanguard for simplicity' without at minimum flagging NUA as an irreversible opportunity requiring evaluation before the rollover"
+      ]
     }
   ]
 }
