@@ -1,0 +1,14 @@
+{
+  "eval_id": 4,
+  "eval_name": "rasch-vs-2pl-choice",
+  "prompt": "What's the actual difference between a Rasch model and a 2PL model, and how would I decide which to use for my 30-item knowledge test (N = 800 students)?",
+  "assertions": [
+    "Explains Rasch as equal-discrimination across items, while 2PL allows discriminations to vary",
+    "Frames the Rasch vs. 2PL choice as a substantive measurement-philosophy decision, not just an AIC/BIC comparison",
+    "Mentions specific objectivity or sample-independence as a property of the Rasch model",
+    "States that N = 800 is adequate for 2PL (or for either model)",
+    "Provides mirt R code example (mirt::mirt with itemtype='Rasch' and/or '2PL')",
+    "Mentions item information function (IIF) or test information function (TIF)",
+    "Does not recommend 3PL as a default for a knowledge test without considering whether guessing is substantively relevant"
+  ]
+}

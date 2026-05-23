@@ -1,0 +1,16 @@
+{
+  "eval_id": 2,
+  "eval_name": "survey-design-workflow",
+  "prompt": "I'm designing a new 8-item survey to measure 'product trust.' Each item is a 7-point Likert. We have ~600 participants in a pilot. What analyses would you recommend, and what mistakes should I avoid?",
+  "assertions": [
+    "Recommends parallel analysis (e.g., psych::fa.parallel) for determining number of factors",
+    "Recommends polychoric correlations for the Likert data (e.g., cor='poly' or psych::polychoric)",
+    "Recommends oblique rotation (oblimin, promax) rather than orthogonal/varimax",
+    "Recommends omega (in addition to or instead of alpha) for reliability",
+    "Mentions splitting the sample or using an independent sample for CFA after EFA",
+    "Warns against eigenvalue > 1 rule for selecting number of factors",
+    "Mentions cognitive interviews, pilot/pretesting, or content review as a step",
+    "Includes at least one R code example with psych or lavaan",
+    "Mentions that 600 N is adequate for EFA and CFA with this scale size"
+  ]
+}

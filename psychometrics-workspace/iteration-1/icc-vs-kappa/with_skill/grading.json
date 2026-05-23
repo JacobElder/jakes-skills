@@ -1,0 +1,52 @@
+{
+  "run_id": "icc-vs-kappa-with_skill",
+  "eval_id": 7,
+  "eval_name": "icc-vs-kappa",
+  "config": "with_skill",
+  "passed": 7,
+  "total": 7,
+  "expectations": [
+    {
+      "id": 1,
+      "description": "Recommends ICC over Cohen's kappa for this case (continuous/ordinal ratings, not pure categorical)",
+      "passed": true,
+      "evidence": "Opens with 'Use ICC, not Cohen's kappa' and provides clear rationale for a 5-point ordinal severity scale"
+    },
+    {
+      "id": 2,
+      "description": "Mentions that Cohen's kappa is for categorical agreement, while ICC is for continuous reliability",
+      "passed": true,
+      "evidence": "States 'Cohen's kappa is a measure of categorical agreement — it's designed for nominal or coarsely categorical ratings' and contrasts with ICC for ordinal/continuous scales"
+    },
+    {
+      "id": 3,
+      "description": "Mentions that there are multiple ICC variants (Shrout & Fleiss labels 1/2/3 OR McGraw-Wong A/C, single vs. average)",
+      "passed": true,
+      "evidence": "Lists ICC(1,1), ICC(2,1), ICC(3,1) with Shrout & Fleiss labels and references McGraw & Wong (1996) ICC(A,1) notation"
+    },
+    {
+      "id": 4,
+      "description": "Recommends a specific ICC type with rationale (e.g., ICC(2,1) absolute agreement if generalizing to other clinicians)",
+      "passed": true,
+      "evidence": "Recommends 'ICC(2,1) with absolute agreement' with explicit rationale: 'you likely want results to generalize to other clinicians like these two'"
+    },
+    {
+      "id": 5,
+      "description": "Distinguishes between absolute agreement and consistency, OR between single-rater and average-rater ICC",
+      "passed": true,
+      "evidence": "Explicitly distinguishes absolute agreement vs. consistency and single-measure ICC(2,1) vs. average-measure ICC(2,k)"
+    },
+    {
+      "id": 6,
+      "description": "Mentions psych::ICC() or a comparable function",
+      "passed": true,
+      "evidence": "Provides R code block using psych::ICC(rating_matrix) with explanation"
+    },
+    {
+      "id": 7,
+      "description": "Optionally mentions that for ordinal data weighted kappa is an alternative if you want kappa specifically",
+      "passed": true,
+      "evidence": "States 'If you're committed to a kappa-family statistic, weighted kappa — with linear or quadratic weights — at least acknowledges the ordinal structure'"
+    }
+  ]
+}

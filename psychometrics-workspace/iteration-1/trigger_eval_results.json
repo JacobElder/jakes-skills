@@ -1,0 +1,185 @@
+{
+  "skill_name": "psychometrics",
+  "queries": [
+    {
+      "id": 1,
+      "query": "My alpha is .68. Is that good?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "Directly mentions Cronbach's alpha, a reliability coefficient. The skill description lists 'reliability coefficients' as an explicit trigger keyword. This is a core psychometric question about score reliability."
+    },
+    {
+      "id": 2,
+      "query": "How do I run a CFA in lavaan?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "Explicitly names the 'lavaan' package, which is listed as a trigger in the skill description. CFA (confirmatory factor analysis) is also squarely within the skill's scope."
+    },
+    {
+      "id": 3,
+      "query": "What's measurement invariance and when do I need it?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "The term 'measurement invariance' is explicitly named as a trigger keyword in the skill description. This is a canonical psychometric topic covered in the SKILL.md."
+    },
+    {
+      "id": 4,
+      "query": "I'm building a survey to measure user trust. Help me think through the design.",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "Mentions 'survey' (explicit trigger keyword) and scale development for measuring a latent construct (user trust). The skill covers scale development as a core topic."
+    },
+    {
+      "id": 5,
+      "query": "Should I use Cronbach's alpha or omega for my scale?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "Directly asks about reliability coefficients (alpha, omega) for a scale. Both 'reliability coefficients' and 'scale' are trigger-relevant terms. This is one of the skill's core stance topics."
+    },
+    {
+      "id": 6,
+      "query": "What does it mean if my factor loadings are around 0.4? Should I drop those items?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "Mentions 'factor loadings' which is an explicit trigger keyword in the skill description. This is a direct measurement/psychometric question about item performance."
+    },
+    {
+      "id": 7,
+      "query": "I want to test if the Big Five structure replicates in my sample. What should I do?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "'Big Five' is explicitly named as a trigger instrument in the skill description. Testing structural replication involves CFA and measurement invariance, core skill topics."
+    },
+    {
+      "id": 8,
+      "query": "Help me interpret these modification indices.",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "'Modification indices' is an explicit trigger keyword in the skill description. This is a core CFA/SEM topic covered under CFA fit in the SKILL.md."
+    },
+    {
+      "id": 9,
+      "query": "Can I just sum the Likert items to get a total score?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "'Likert items' is an explicit trigger keyword in the skill description. The question touches on the reflective model assumption, dimensionality, and scoring — all psychometric fundamentals."
+    },
+    {
+      "id": 10,
+      "query": "Reviewing a paper that says their PHQ-9 has good validity because alpha was .85. Thoughts?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "'PHQ' is explicitly named as a trigger instrument in the skill description. The query also involves validity and alpha, both core psychometric topics. The SKILL.md has a whole section on critiquing measurement claims."
+    },
+    {
+      "id": 11,
+      "query": "What's a Rasch model?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "Rasch is covered under IRT in the skill description ('Rasch, 2PL, 3PL, GRM'). IRT is an explicit domain in the skill."
+    },
+    {
+      "id": 12,
+      "query": "I have ratings from 3 coders on 100 transcripts. How do I report interrater reliability?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "Interrater reliability (ICC) is explicitly listed in the skill description. The SKILL.md has specific guidance distinguishing ICC from kappa and which to use for continuous vs. categorical ratings."
+    },
+    {
+      "id": 13,
+      "query": "DIF analysis for gender on a math test — what's the recommended approach?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "'Differential item functioning' is explicitly listed in the skill description. Gender DIF on a test is a canonical psychometric question addressed in the SKILL.md's DIF/invariance section."
+    },
+    {
+      "id": 14,
+      "query": "Why is my CFI only .87? My loadings look fine.",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "'CFI' is an explicit fit index trigger keyword in the skill description. This is a CFA fit question directly addressed in the SKILL.md's section on not fetishizing Hu & Bentler cutoffs."
+    },
+    {
+      "id": 15,
+      "query": "Generalizability theory — when would I use it instead of just computing ICC?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "'Generalizability theory' is explicitly listed in the skill description. The query is squarely about measurement reliability methodology."
+    },
+    {
+      "id": 16,
+      "query": "How do I make a histogram in ggplot2?",
+      "should_trigger": false,
+      "triggered": false,
+      "reasoning": "Pure data visualization question about ggplot2. No measurement, psychometric, or latent-variable concepts involved. No trigger keywords present."
+    },
+    {
+      "id": 17,
+      "query": "What's the difference between supervised and unsupervised learning?",
+      "should_trigger": false,
+      "triggered": false,
+      "reasoning": "Machine learning taxonomy question with no psychometric or measurement-theory relevance. No trigger keywords present."
+    },
+    {
+      "id": 18,
+      "query": "Recommend a good NYC ramen place in Brooklyn.",
+      "should_trigger": false,
+      "triggered": false,
+      "reasoning": "Restaurant recommendation — entirely outside the skill's domain. No psychometric relevance whatsoever."
+    },
+    {
+      "id": 19,
+      "query": "I want to run a t-test comparing my treatment and control groups on age. Is age normally distributed enough?",
+      "should_trigger": false,
+      "triggered": false,
+      "reasoning": "A normality check for a t-test on a demographic variable (age). No latent constructs, scales, surveys, or measurement instruments involved. This is a generic statistical question appropriately handled without psychometric framing."
+    },
+    {
+      "id": 20,
+      "query": "Help me write a SQL query to join two tables.",
+      "should_trigger": false,
+      "triggered": false,
+      "reasoning": "Database querying task with no psychometric relevance. No measurement, scale, or latent-variable concepts present."
+    },
+    {
+      "id": 21,
+      "query": "Should I use Likert or slider scales for my UX survey?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "'Likert' and 'survey' are explicit trigger keywords in the skill description. The choice between response formats is a measurement decision with psychometric implications (item characteristics, reliability, IRT models)."
+    },
+    {
+      "id": 22,
+      "query": "What's a polychoric correlation and when do I need one?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "Polychoric correlations are directly covered in the SKILL.md as the appropriate correlation method for ordinal Likert items. Even though not listed verbatim in the trigger keywords, this is unambiguously a psychometric/measurement question."
+    },
+    {
+      "id": 23,
+      "query": "I'm comparing depression scores across age groups. Anything I should watch out for?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "Comparing scores across groups is a measurement invariance question — 'measurement invariance' is an explicit trigger keyword. Depression scores typically come from instruments (PHQ, etc.), and the cross-group comparison issue is a core psychometric concern addressed in SKILL.md."
+    },
+    {
+      "id": 24,
+      "query": "What's the right sample size for an EFA?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "EFA (exploratory factor analysis) is directly within the skill's scope. The SKILL.md has specific guidance on sample size for EFA, citing MacCallum et al. (1999) and disputing the crude rules of thumb."
+    },
+    {
+      "id": 25,
+      "query": "If a scale was 'validated' in the US, can I use it in Japan without revalidation?",
+      "should_trigger": true,
+      "triggered": true,
+      "reasoning": "Cross-cultural use of a validated 'scale' (trigger keyword) involves measurement invariance (trigger keyword) and validity (trigger topic). The SKILL.md's sections on measurement invariance and validity directly address this."
+    }
+  ],
+  "summary": {
+    "should_trigger_true_rate": 1.0,
+    "should_trigger_false_rate": 0.0,
+    "total_queries": 25
+  }
+}

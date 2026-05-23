@@ -1,0 +1,45 @@
+{
+  "run_id": "alpha-misinterpretation-with_skill",
+  "eval_id": 1,
+  "eval_name": "alpha-misinterpretation",
+  "config": "with_skill",
+  "passed": 7,
+  "total": 7,
+  "expectations": [
+    {
+      "text": "States that alpha does not measure unidimensionality",
+      "passed": true,
+      "evidence": "'Alpha does not measure unidimensionality. Full stop. This is the single most common misuse of coefficient alpha in applied papers.' and 'Reporting alpha = .87 and calling it evidence of unidimensionality is a category error. It isn't.'"
+    },
+    {
+      "text": "Mentions that alpha is driven by k (number of items) and mean inter-item correlation, so long scales can have high alpha despite multidimensionality",
+      "passed": true,
+      "evidence": "'Alpha is driven by the quantity k × r̄ — the number of items times the mean inter-item correlation. A 20-item scale with moderate average inter-item correlations will produce high alpha even if those items are measuring two, three, or four distinct dimensions.'"
+    },
+    {
+      "text": "Recommends or names McDonald's omega (omega-total and/or omega-hierarchical) as a better reliability estimator",
+      "passed": true,
+      "evidence": "Full dedicated section: 'Alpha is the wrong reliability estimator here — use McDonald's omega.' Names omega-total and omega-hierarchical explicitly, plus R code: 'psych::omega() on raw data, or semTools::compRelSEM() from a fitted lavaan CFA model.'"
+    },
+    {
+      "text": "Recommends EFA, CFA, or parallel analysis to test unidimensionality",
+      "passed": true,
+      "evidence": "'tested separately with factor analysis — EFA if the structure is unknown or exploratory, CFA if you're testing a specific hypothesis. Before the paper reports any reliability coefficient, it should show a parallel analysis (psych::fa.parallel() is the standard), a scree plot, and either an EFA or CFA.'"
+    },
+    {
+      "text": "Frames reliability as sample-specific (e.g., 'in this sample') rather than a property of the scale",
+      "passed": true,
+      "evidence": "'Reliability is a property of scores in a specific sample, not an intrinsic property of the instrument. The correct framing is \"in this sample, alpha was .87.\"'"
+    },
+    {
+      "text": "Raises a question about the construct definition or whether 'workplace flourishing' is defined to be unidimensional",
+      "passed": true,
+      "evidence": "Full section 4: 'what is \"workplace flourishing\" that it should be unidimensional, and what's explicitly not part of it?' with reference to Keyes, Huppert & So, Seligman's PERMA as explicitly multidimensional frameworks."
+    },
+    {
+      "text": "Does not endorse alpha = .87 as sufficient evidence on its own",
+      "passed": true,
+      "evidence": "'Alpha = .87 is not bad, but on its own it doesn't establish reliability (because omega is the right estimator) and it certainly doesn't establish unidimensionality (because nothing about alpha's formula involves factor structure). The paper is over-claiming from a single number.'"
+    }
+  ]
+}

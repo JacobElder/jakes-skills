@@ -1,0 +1,150 @@
+Short answer: no, you cannot just do a t-test on sum scores. Not because t-tests are bad, but because sum scores are only comparable across countries if the PHQ-9 measures depression in the same way in both countries — and that is an empirical claim you have not yet tested. Running the t-test without that test conflates "true differences in depression prevalence" with "differences in how the PHQ-9 functions across cultural contexts." The literature on the PHQ-9 specifically gives you good reason to be cautious here.
+
+---
+
+## What you need to establish first: measurement invariance
+
+Before comparing any group means on a multi-item scale, the standard requirement is **scalar (strong) measurement invariance**. This is not pedantry — it is the condition under which observed mean differences in scale scores correspond to latent mean differences in the underlying construct (depression). Without it, a higher sum score in Country A could mean either more depression or a systematic tendency to endorse items differently at the same depression level.
+
+The framework (CFA-based, using lavaan) tests a sequence of nested models, each with progressively tighter constraints:
+
+### Step 1: Configural invariance
+The same factor structure (same items loading on the same factor) holds in both countries, but all loadings and intercepts are freely estimated per group.
+
+- This tests: "Does the PHQ-9 have the same basic dimensional structure in both countries?"
+- If this fails, the construct is structurally different — comparison is not meaningful at any level.
+
+### Step 2: Metric (weak) invariance
+Add the constraint that **factor loadings are equal** across countries.
+
+- This tests: "Do items relate to the underlying depression factor with the same strength in both countries?"
+- If metric holds: you can compare relationships between depression and other variables across countries (e.g., structural paths). You still cannot compare means.
+- If metric fails: items are differentially sensitive to depression across countries.
+
+### Step 3: Scalar (strong) invariance
+Add the constraint that **item intercepts are equal** across countries (in continuous CFA; for ordinal items, these become thresholds — more on that below).
+
+- This tests: "Do people at the same depression level give the same expected item endorsement in both countries?"
+- If scalar holds: **observed mean differences reflect true latent mean differences**. This is the level you need to justify comparing means via t-test or anything else.
+- If scalar fails: at the same underlying depression level, people in the two countries answer the PHQ-9 differently. A t-test on sum scores will confound true depression differences with these item-level biases.
+
+---
+
+## The PHQ-9 specifically
+
+Cross-cultural invariance of the PHQ-9 is not a given. The PHQ-9 was developed for primary care in the U.S. and subsequently translated and adapted for use worldwide — but adapted translations do not guarantee scalar invariance. The psychometric literature on the PHQ-9 shows that:
+
+- Factor structure is generally consistent (the unidimensional or bifactor model usually shows configural invariance across cultures).
+- Metric invariance is more variable.
+- **Scalar invariance frequently fails or is only partial** across country or language groups. Specific items (particularly the suicidal ideation item, sleep and appetite items) often show cross-cultural non-invariance.
+
+This means that even if your overall PHQ-9 sums look different between your two countries, some of that difference could be attributable to response style or cultural variation in how the items are interpreted — not to actual differences in depression.
+
+---
+
+## How to test this in R
+
+The PHQ-9 has 9 ordinal items (0–3). For ordinal data with this many response categories, you should use the **WLSMV estimator** with ordered indicators, not the standard ML estimator (which assumes continuous normal data and will distort your loadings and fit). The invariance framework for ordinal data tests thresholds (the cut points between response categories) rather than simple intercepts.
+
+The cleanest approach uses `semTools::measEq.syntax()` which handles the parameterization correctly for ordered items:
+
+```r
+library(lavaan)
+library(semTools)
+
+# Define the PHQ-9 model (typically one-factor or bifactor; test both)
+phq9_model <- 'depression =~ phq1 + phq2 + phq3 + phq4 + phq5 +
+                              phq6 + phq7 + phq8 + phq9'
+
+ord_items <- paste0("phq", 1:9)
+
+# Configural model
+config_syntax <- measEq.syntax(
+  configural.model = phq9_model,
+  data = your_data,
+  ordered = ord_items,
+  parameterization = "theta",
+  ID.fac = "std.lv",
+  ID.cat = "Wu.Estabrook.2016",
+  group = "country",
+  group.equal = character(0)   # no constraints — configural
+)
+fit_config <- cfa(as.character(config_syntax),
+                  data = your_data,
+                  ordered = ord_items,
+                  parameterization = "theta",
+                  group = "country")
+
+# Metric: equal loadings
+metric_syntax <- measEq.syntax(
+  configural.model = phq9_model, data = your_data,
+  ordered = ord_items, parameterization = "theta",
+  ID.fac = "std.lv", ID.cat = "Wu.Estabrook.2016",
+  group = "country", group.equal = "loadings"
+)
+fit_metric <- cfa(as.character(metric_syntax), data = your_data,
+                  ordered = ord_items, parameterization = "theta",
+                  group = "country")
+
+# Scalar: equal loadings + thresholds
+scalar_syntax <- measEq.syntax(
+  configural.model = phq9_model, data = your_data,
+  ordered = ord_items, parameterization = "theta",
+  ID.fac = "std.lv", ID.cat = "Wu.Estabrook.2016",
+  group = "country", group.equal = c("loadings", "thresholds")
+)
+fit_scalar <- cfa(as.character(scalar_syntax), data = your_data,
+                  ordered = ord_items, parameterization = "theta",
+                  group = "country")
+
+# Compare nested models
+lavTestLRT(fit_config, fit_metric, fit_scalar,
+           method = "satorra.bentler.2010")
+```
+
+When comparing nested models, use both:
+- The scaled chi-square difference test (Satorra-Bentler, appropriate for WLSMV).
+- Change in approximate fit indices: ΔCFI ≤ −.010 and ΔRMSEA ≥ .015 as signals that invariance is failing (Cheung & Rensvold, 2002; Chen, 2007).
+
+---
+
+## What if scalar invariance fails?
+
+You have two options:
+
+**Option A: Partial scalar invariance.** Identify the specific items whose thresholds differ across countries (look at modification indices), free those thresholds, and constrain the rest. This is partial scalar invariance (Byrne, Shavelson & Muthén, 1989). For mean comparison, you need at least 2 invariant items per factor. If you can point to a substantive reason why released items behave differently (e.g., the suicidal ideation item is interpreted differently, or a translation carried a different valence for appetite), partial invariance is defensible. Report it explicitly.
+
+**Option B: Don't compare sum-score means.** If partial invariance still requires freeing too many items (> ~20% is a red flag), the comparison is not interpretable and you should say so.
+
+---
+
+## After you establish scalar (or partial scalar) invariance
+
+Once invariance is confirmed, you can compare **latent means** in the CFA framework directly — which is actually more informative than a t-test on sum scores because it accounts for measurement error. In lavaan, set one group's latent mean to 0 (reference) and estimate the other group's latent mean freely:
+
+```r
+# Latent mean comparison after scalar invariance established
+fit_scalar_means <- cfa(as.character(scalar_syntax), data = your_data,
+                        ordered = ord_items, parameterization = "theta",
+                        group = "country",
+                        group.equal = c("loadings", "thresholds"),
+                        group.partial = c("depression~1"),  # free latent means
+                        meanstructure = TRUE)
+summary(fit_scalar_means, standardized = TRUE)
+```
+
+The estimated latent mean difference (with SE) gives you a directly interpretable comparison that respects the measurement model. If you prefer to keep it simple and your scalar invariance is clean, a t-test on sum scores is a reasonable approximation — but you need to have verified invariance first.
+
+---
+
+## Summary
+
+| What you want to do | What you need to establish first |
+|---|---|
+| Compare mean depression between countries | Scalar (strong) measurement invariance of PHQ-9 |
+| Compare PHQ-9's relationship to another variable | Metric invariance is sufficient |
+| Just describe factor structure in each country | Configural invariance |
+
+**The published reliability of the PHQ-9 does not substitute for this.** Reliability says the scale is internally consistent within a sample — it says nothing about whether the scale works the same way across groups. Those are orthogonal questions.
+
+Do the invariance testing first. If scalar holds, your t-test (or better, latent mean comparison) is interpretable. If it doesn't, you have more informative work to do before drawing conclusions about cross-national differences in depression.

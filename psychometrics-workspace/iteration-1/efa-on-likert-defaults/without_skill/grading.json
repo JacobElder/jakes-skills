@@ -1,0 +1,52 @@
+{
+  "run_id": "efa-on-likert-defaults-without_skill",
+  "eval_id": 8,
+  "eval_name": "efa-on-likert-defaults",
+  "config": "without_skill",
+  "passed": 7,
+  "total": 7,
+  "expectations": [
+    {
+      "id": 1,
+      "description": "Recommends polychoric correlations (cor='poly' argument or similar)",
+      "met": true,
+      "evidence": "Uses cor='poly' in both fa.parallel() and fa() calls, with explanation: 'Likert items are ordinal, not continuous. Pearson correlations applied to 5-point scales underestimate the true latent correlations.'"
+    },
+    {
+      "id": 2,
+      "description": "Recommends oblique rotation (oblimin or promax) rather than varimax",
+      "met": true,
+      "evidence": "Uses rotate='oblimin' with reasoning: 'Psychological constructs are almost always correlated. Using varimax or another orthogonal rotation imposes the constraint that your factors are uncorrelated — a constraint that is rarely true.' Promax mentioned as alternative."
+    },
+    {
+      "id": 3,
+      "description": "Provides a code example with fa() and reasonable arguments",
+      "met": true,
+      "evidence": "Full fa() code block with nfactors, fm='minres', rotate='oblimin', cor='poly', and inline comments. Also includes fa.parallel() code block."
+    },
+    {
+      "id": 4,
+      "description": "Mentions parallel analysis (fa.parallel) for determining factor count before running fa()",
+      "met": true,
+      "evidence": "Step 1 is entirely dedicated to parallel analysis with fa.parallel(your_data, fa='fa', cor='poly'), called 'more reliable than Kaiser's eigenvalue > 1 rule.'"
+    },
+    {
+      "id": 5,
+      "description": "Mentions an extraction method (minres or ml) with brief justification",
+      "met": true,
+      "evidence": "Recommends fm='minres' with justification: 'minimizes the off-diagonal residuals without requiring multivariate normality... less prone to Heywood cases compared to maximum likelihood.' Also notes when ml is appropriate."
+    },
+    {
+      "id": 6,
+      "description": "Does not default to varimax rotation",
+      "met": true,
+      "evidence": "Uses oblimin, and explicitly states: 'Do not use varimax by default for psychological scale data.'"
+    },
+    {
+      "id": 7,
+      "description": "Does not default to Pearson correlations for Likert data without flagging it",
+      "met": true,
+      "evidence": "Uses cor='poly' throughout. Explicitly warns against Pearson: 'Pearson correlations applied to 5-point scales underestimate the true latent correlations, which biases your loadings downward and can distort factor structure.'"
+    }
+  ]
+}

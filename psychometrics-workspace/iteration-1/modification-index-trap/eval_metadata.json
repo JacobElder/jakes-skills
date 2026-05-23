@@ -1,0 +1,14 @@
+{
+  "eval_id": 6,
+  "eval_name": "modification-index-trap",
+  "prompt": "My CFA model has poor fit (CFI = .89, RMSEA = .08). The modification indices suggest adding three correlated residuals and one cross-loading, which would bring CFI up to .95. Should I just add those and report the improved model?",
+  "assertions": [
+    "Warns against adding modifications purely to improve fit (MI-chasing)",
+    "Uses or invokes the concept of 'capitalization on chance' or 'overfit' or 'sample-specific'",
+    "Recommends substantive justification for any modification (e.g., similar item wording, method effects)",
+    "Recommends cross-validation, replication, or holdout sample if modifications are made",
+    "States that the resulting model should be characterized as exploratory/respecified, not confirmatory",
+    "Suggests examining standardized residuals to understand WHERE the model misfits, not just global indices",
+    "Does not endorse adding the MIs without any caveats"
+  ]
+}

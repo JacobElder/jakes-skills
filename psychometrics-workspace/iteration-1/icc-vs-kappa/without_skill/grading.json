@@ -1,0 +1,52 @@
+{
+  "run_id": "icc-vs-kappa-without_skill",
+  "eval_id": 7,
+  "eval_name": "icc-vs-kappa",
+  "config": "without_skill",
+  "passed": 7,
+  "total": 7,
+  "expectations": [
+    {
+      "id": 1,
+      "description": "Recommends ICC over Cohen's kappa for this case (continuous/ordinal ratings, not pure categorical)",
+      "met": true,
+      "evidence": "Opens with 'you should use ICC (Intraclass Correlation Coefficient), not Cohen's kappa' and provides detailed rationale throughout."
+    },
+    {
+      "id": 2,
+      "description": "Mentions that Cohen's kappa is for categorical agreement, while ICC is for continuous reliability",
+      "met": true,
+      "evidence": "States 'Cohen's kappa is designed for categorical agreement on nominal (or at best ordinal) data' and contrasts with ICC treating ratings as 'interval-level (or at least continuous-ish) measure'."
+    },
+    {
+      "id": 3,
+      "description": "Mentions that there are multiple ICC variants (Shrout & Fleiss labels 1/2/3 OR McGraw-Wong A/C, single vs. average)",
+      "met": true,
+      "evidence": "Explicitly references 'Shrout & Fleiss (1979) and McGraw & Wong (1996)' classification systems and explains ICC(1), ICC(2), ICC(3), single vs. average distinctions."
+    },
+    {
+      "id": 4,
+      "description": "Recommends a specific ICC type with rationale (e.g., ICC(2,1) absolute agreement if generalizing to other clinicians)",
+      "met": true,
+      "evidence": "Recommends 'ICC(2,1) is usually the defensible choice' with explanation that it 'allows you to generalize your conclusions beyond these two raters'."
+    },
+    {
+      "id": 5,
+      "description": "Distinguishes between absolute agreement and consistency, OR between single-rater and average-rater ICC",
+      "met": true,
+      "evidence": "Dedicated sections for both 'Single vs. average' and 'Absolute agreement vs. consistency' with clear explanations of when each applies."
+    },
+    {
+      "id": 6,
+      "description": "Mentions psych::ICC() or a comparable function",
+      "met": true,
+      "evidence": "References 'psych::ICC() function in R reports all major variants' and provides R code example using ICC(ratings)."
+    },
+    {
+      "id": 7,
+      "description": "Optionally mentions that for ordinal data weighted kappa is an alternative if you want kappa specifically",
+      "met": true,
+      "evidence": "Final section 'When weighted kappa is a reasonable alternative' explains quadratic weighted kappa for ordinal scales and its relationship to ICC(3,1)."
+    }
+  ]
+}

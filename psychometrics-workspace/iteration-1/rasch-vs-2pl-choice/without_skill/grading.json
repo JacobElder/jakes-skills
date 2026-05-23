@@ -1,0 +1,52 @@
+{
+  "run_id": "rasch-vs-2pl-choice-without_skill",
+  "eval_id": 4,
+  "eval_name": "rasch-vs-2pl-choice",
+  "config": "without_skill",
+  "passed": 7,
+  "total": 7,
+  "expectations": [
+    {
+      "id": 1,
+      "description": "Explains Rasch as equal-discrimination across items, while 2PL allows discriminations to vary",
+      "met": true,
+      "evidence": "Response explicitly states: 'Every item has the same discrimination parameter (fixed to 1.0 by convention)' for Rasch, and 'Items are allowed to have their own discrimination parameters (the a parameter)' for 2PL."
+    },
+    {
+      "id": 2,
+      "description": "Frames the Rasch vs. 2PL choice as a substantive measurement-philosophy decision, not just an AIC/BIC comparison",
+      "met": true,
+      "evidence": "Dedicated section titled 'This is a measurement-philosophy decision, not just a model-fit comparison' explicitly addresses this, calling out the mistake of treating it as a purely empirical AIC/BIC comparison."
+    },
+    {
+      "id": 3,
+      "description": "Mentions specific objectivity or sample-independence as a property of the Rasch model",
+      "met": true,
+      "evidence": "Response explicitly names 'specific objectivity (or sample-independence)' and explains it: 'the comparison between any two persons does not depend on which particular items were used, and the comparison between any two items does not depend on which persons were sampled.'"
+    },
+    {
+      "id": 4,
+      "description": "States that N = 800 is adequate for 2PL (or for either model)",
+      "met": true,
+      "evidence": "Response states: 'N = 800 is adequate for both models' with specific thresholds: Rasch ~200+, 2PL ~500 minimum, and '800 is solid.'"
+    },
+    {
+      "id": 5,
+      "description": "Provides mirt R code example (mirt::mirt with itemtype='Rasch' and/or '2PL')",
+      "met": true,
+      "evidence": "Full R code block using mirt() with both itemtype='Rasch' and itemtype='2PL', including coef(), itemplot(), and plot() calls."
+    },
+    {
+      "id": 6,
+      "description": "Mentions item information function (IIF) or test information function (TIF)",
+      "met": true,
+      "evidence": "Dedicated section on 'Item and test information functions' explains both IIF and TIF, and code includes itemplot(..., type='info') and plot(model, type='info')."
+    },
+    {
+      "id": 7,
+      "description": "Does not recommend 3PL as a default for a knowledge test without considering whether guessing is substantively relevant",
+      "met": true,
+      "evidence": "Response explicitly cautions: 'Avoid 3PL unless guessing is substantively meaningful' and 'For a 30-item knowledge test used with students who are engaging seriously, the guessing parameter adds complexity without payoff.'"
+    }
+  ]
+}

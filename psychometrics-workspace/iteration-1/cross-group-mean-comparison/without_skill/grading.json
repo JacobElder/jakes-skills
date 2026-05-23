@@ -1,0 +1,58 @@
+{
+  "run_id": "cross-group-mean-comparison-without_skill",
+  "eval_id": 3,
+  "eval_name": "cross-group-mean-comparison",
+  "config": "without_skill",
+  "passed": 8,
+  "total": 8,
+  "expectations": [
+    {
+      "id": 1,
+      "description": "States that t-test on sum scores is not adequate without first testing measurement invariance",
+      "met": true,
+      "note": "Clearly stated in opening and elaborated throughout — sum score t-test assumes measurement invariance which must be tested empirically."
+    },
+    {
+      "id": 2,
+      "description": "Explains the configural → metric → scalar invariance sequence",
+      "met": true,
+      "note": "All three levels explained with correct definitions: configural (same structure), metric (same loadings), scalar (same intercepts/thresholds)."
+    },
+    {
+      "id": 3,
+      "description": "Identifies scalar invariance as the level required for mean comparison",
+      "met": true,
+      "note": "Explicitly stated: 'Scalar invariance — same item intercepts... This is the level you need for mean comparisons.'"
+    },
+    {
+      "id": 4,
+      "description": "Mentions partial scalar invariance as a fallback when full scalar fails",
+      "met": true,
+      "note": "Dedicated section on partial scalar invariance as fallback, with guidance on how many intercepts should remain invariant (~80%+)."
+    },
+    {
+      "id": 5,
+      "description": "Names lavaan, semTools, measEq.syntax, or measurementInvariance function",
+      "met": true,
+      "note": "Both lavaan and semTools named; measurementInvariance() function shown in code example; compareFit() also mentioned."
+    },
+    {
+      "id": 6,
+      "description": "Mentions that ordinal/Likert items may need WLSMV estimator or threshold-based testing",
+      "met": true,
+      "note": "Dedicated section on ordinal problem: polychoric correlations, WLSMV estimator, threshold parameters for invariance testing."
+    },
+    {
+      "id": 7,
+      "description": "Either mentions PHQ-9 cross-cultural invariance issues specifically OR flags that translated mental-health scales commonly have invariance problems",
+      "met": true,
+      "note": "Both: mentions published PHQ-9 cross-cultural studies showing partial invariance/factor structure differences, and notes somatic symptoms may map differently across cultural settings."
+    },
+    {
+      "id": 8,
+      "description": "Does not greenlight a t-test on sum scores without invariance testing",
+      "met": true,
+      "note": "Never recommends proceeding with t-test without invariance testing; bottom line explicitly states skipping invariance makes results 'uninterpretable.'"
+    }
+  ]
+}

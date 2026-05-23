@@ -1,0 +1,55 @@
+{
+  "run_id": "survey-design-workflow-without_skill",
+  "eval_id": 2,
+  "eval_name": "survey-design-workflow",
+  "config": "without_skill",
+  "passed": 9,
+  "total": 9,
+  "expectations": [
+    {
+      "text": "Recommends parallel analysis (e.g., psych::fa.parallel) for determining number of factors",
+      "passed": true,
+      "evidence": "Step 3 explicitly recommends parallel analysis and includes fa.parallel() code example: 'fa.parallel(poly_matrix, n.obs = 600, fa = \"fa\", fm = \"ml\")'"
+    },
+    {
+      "text": "Recommends polychoric correlations for the Likert data (e.g., cor='poly' or psych::polychoric)",
+      "passed": true,
+      "evidence": "Step 2 explicitly recommends polychoric correlations and includes psych::polychoric() code example, noting 'Pearson correlations will underestimate the true relationships between items'"
+    },
+    {
+      "text": "Recommends oblique rotation (oblimin, promax) rather than orthogonal/varimax",
+      "passed": true,
+      "evidence": "Step 4 states 'Use an oblique rotation (e.g., oblimin or promax) rather than orthogonal Varimax' with oblimin used in code example"
+    },
+    {
+      "text": "Recommends omega (in addition to or instead of alpha) for reliability",
+      "passed": true,
+      "evidence": "Step 5 explicitly recommends McDonald's omega over Cronbach's alpha, includes omega() code example, and explains why alpha is problematic"
+    },
+    {
+      "text": "Mentions splitting the sample or using an independent sample for CFA after EFA",
+      "passed": true,
+      "evidence": "Step 6 states 'fitting and testing a model on the same data is circular and inflates fit' and recommends 300/300 split for EFA and CFA respectively"
+    },
+    {
+      "text": "Warns against eigenvalue > 1 rule for selecting number of factors",
+      "passed": true,
+      "evidence": "Step 3 explicitly warns: 'A very common mistake is using the eigenvalue > 1 rule (Kaiser criterion)... This rule has poor accuracy and routinely over-extracts factors. Do not rely on it.'"
+    },
+    {
+      "text": "Mentions cognitive interviews, pilot/pretesting, or content review as a step",
+      "passed": true,
+      "evidence": "Step 8 mentions cognitive interviews, expert review, face validity, and pilot testing as qualitative/content validity steps"
+    },
+    {
+      "text": "Includes at least one R code example with psych or lavaan",
+      "passed": true,
+      "evidence": "Multiple R code examples included using psych (polychoric, fa.parallel, fa, omega) and lavaan (cfa) packages"
+    },
+    {
+      "text": "Mentions that 600 N is adequate for EFA and CFA with this scale size",
+      "passed": true,
+      "evidence": "Step 7 explicitly states 'your sample is well-powered for both EFA and CFA' and that a 300/300 split 'comfortably supports both stages'"
+    }
+  ]
+}

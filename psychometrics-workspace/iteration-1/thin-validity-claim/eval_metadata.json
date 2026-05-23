@@ -1,0 +1,14 @@
+{
+  "eval_id": 5,
+  "eval_name": "thin-validity-claim",
+  "prompt": "A scale paper claims 'construct validity was established' because their scale correlated r = 0.55 with another self-report measure of the same construct. Is that adequate?",
+  "assertions": [
+    "Clearly states the evidence is not adequate (no hedging that obscures the answer)",
+    "Mentions that validity is about score interpretation/use, not a property checked off",
+    "Mentions Messick or the 2014 Standards or the unified view of validity",
+    "Identifies that one correlation is convergent evidence at most, not full construct validity",
+    "Mentions that both measures being self-report introduces common-method variance",
+    "Names MTMM (multitrait-multimethod) or the trait/method variance distinction",
+    "Mentions at least two additional sources of validity evidence that would be needed (content, response processes, internal structure, discriminant, predictive, etc.)"
+  ]
+}

@@ -1,0 +1,56 @@
+Use ICC, not Cohen's kappa.
+
+## Why not Cohen's kappa?
+
+Cohen's kappa is a measure of categorical agreement — it's designed for nominal or coarsely categorical ratings where you want to know whether two raters assigned targets to the same category, corrected for chance. Your 5-point severity scale is ordinal (and operationally treated as near-interval), and you have 50 patients with continuous-ish ratings. Kappa treats each scale point as an unordered category, throwing away the information that a disagreement of 1 point (e.g., 2 vs. 3) is much less serious than a disagreement of 4 points (e.g., 1 vs. 5). That's not the question you want answered.
+
+(If you're committed to a kappa-family statistic, weighted kappa — with linear or quadratic weights — at least acknowledges the ordinal structure. But ICC is still the better choice for the reasons below.)
+
+## Use ICC — and pick the right variant
+
+ICC quantifies the proportion of total variance in ratings that is attributable to differences between patients (the signal you care about), rather than rater error. It directly answers "how reliably do these two clinicians rank patients?" on a continuous or ordinal scale.
+
+There are multiple ICC variants and you need to choose deliberately. The standard framework comes from Shrout & Fleiss (1979), with McGraw & Wong (1996) offering a complementary labeling:
+
+**Model (which variance components to estimate):**
+- **ICC(1,1)** — one-way random: raters are different for each patient (not your case)
+- **ICC(2,1)** — two-way random: same raters rate all patients, but raters are a *sample* from a larger population of possible clinicians. This is right when you want results to generalize beyond these two specific clinicians.
+- **ICC(3,1)** — two-way mixed: same raters rate all patients, and these raters *are* the population of interest (no generalization intended). This treats rater bias as a fixed effect.
+
+**Agreement type:**
+- **Absolute agreement**: penalizes raters who systematically use different parts of the scale (one rates everyone 1 point higher). This is usually what you want for interrater reliability in clinical settings.
+- **Consistency**: ignores systematic offsets between raters; only cares about rank-order agreement.
+
+**Recommendation for your situation:** Use **ICC(2,1) with absolute agreement** (also called ICC(A,1) in the McGraw & Wong notation). Rationale: you likely want results to generalize to other clinicians like these two, not just describe these two individuals; and in clinical settings, a systematic scale-usage offset between raters is a real problem you don't want to sweep under the rug.
+
+If your goal is only to describe how consistently *these specific* clinicians rank patients (not to generalize), ICC(3,1) consistency is appropriate — but be explicit about that limitation.
+
+**Single vs. average measure:**
+- ICC(2,1) gives the reliability of *one* rater's score for a patient
+- ICC(2,k) gives the reliability of the *average* of both raters (always higher; use if you'll actually average the two scores in your study)
+
+Report which ICC type you used and why — reviewers increasingly expect this.
+
+## Computing in R
+
+```r
+library(psych)
+
+# rating_matrix: rows = patients, columns = raters (50 × 2 matrix)
+icc_results <- ICC(rating_matrix)
+print(icc_results)  # reports all 6 ICC variants with Shrout & Fleiss labels
+```
+
+`psych::ICC()` prints all six ICCs at once (ICC1, ICC2, ICC3, and their k-rater equivalents) with confidence intervals. Pull the specific value you pre-specified — don't cherry-pick the highest one after seeing them all.
+
+Koo & Li (2016) offer rough interpretive cutoffs: < .50 poor, .50–.75 moderate, .75–.90 good, > .90 excellent — but these are context-dependent. For clinical severity ratings used in treatment decisions, you'd want to be in the good-to-excellent range.
+
+## Summary
+
+| Question | Statistic |
+|---|---|
+| Do raters assign the same category (nominal/categorical)? | Cohen's kappa |
+| Do raters rank patients consistently on a continuous/ordinal scale? | ICC |
+| Ordinal ratings, want kappa specifically? | Weighted kappa (linear or quadratic weights) |
+
+For two clinicians rating 50 patients on a 5-point severity scale, ICC(2,1) absolute agreement is the right choice. Use `psych::ICC()` and report the model, agreement type, and confidence interval.

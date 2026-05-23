@@ -1,0 +1,42 @@
+No — don't just add those modifications and report the improved model as if nothing changed. This is one of the most common ways researchers quietly corrupt a confirmatory analysis. Here's what's actually going on and what to do instead.
+
+**The MI-chasing problem**
+
+Modification indices tell you the chi-square improvement you'd get by freeing a currently constrained parameter. The problem is not that the information is useless — it's that acting on it post-hoc, without theory, is capitalizing on chance. Every sample contains idiosyncratic noise. The MIs are partly picking up real signal and partly fitting that noise. The three correlated residuals and one cross-loading that improve fit in your sample will likely not improve fit (or even worsen it) in a new sample. This is overfit — a model increasingly tailored to sample-specific quirks rather than the underlying population structure.
+
+The iterative version of this is especially dangerous: you free the largest MI, refit, and the next-largest changes — the landscape shifts because the parameters are now entangled. After four such steps, you have a model that's materially different from what you set out to test, and you've lost the probabilistic guarantees that make CFA inference meaningful.
+
+**You are no longer doing CFA**
+
+Once you add post-hoc modifications to improve fit, the analysis is exploratory respecification, not confirmatory factor analysis. The whole logic of CFA rests on having a prespecified model and asking whether it fits. A model that was modified because it didn't fit, and then refitted until it did, has been confirmed by circular reasoning. Reporting this as a CFA without disclosing the respecification history — or presenting it as confirmatory — is a methodological misrepresentation, whether intentional or not. The final model should be labeled as a respecified or exploratory model, and the respecification path should be reported in full.
+
+**Before reaching for MIs, inspect where the model misfits**
+
+Global fit indices (CFI, RMSEA) tell you the model is off, but not where or why. Your first diagnostic move should be inspecting the standardized residual covariances:
+
+```r
+residuals(fit, type = "standardized")
+```
+
+Large standardized residuals (|z| > 2, or more conservatively > 2.58) flag specific item pairs that covary more or less than the model predicts. This is much more informative than the MI list because it ties the misfit to interpretable item content. You might find, for example, that two specific items share near-identical wording and their residual is large — that gives you a substantive rationale for a correlated residual. That's very different from "the MI was 12 and I freed it."
+
+**When modifications are substantively justified**
+
+There are legitimate reasons to add correlated residuals or cross-loadings — but those reasons must come from the construct theory and item characteristics, not from the MI value alone:
+
+- Correlated residuals are theoretically warranted for items with nearly identical wording (method effect), reverse-worded items as a group (acquiescence factor), items administered adjacently with likely carryover, or in longitudinal CFA for the same indicator across adjacent time points.
+- A cross-loading might be warranted if item content genuinely spans two constructs — but this should have been anticipated before data collection.
+
+If you can identify a substantive rationale that you would have specified a priori had you thought of it, the modification is defensible. "The MI was large" is not a rationale.
+
+**If you proceed with modifications: requirements**
+
+1. Document every modification and the substantive rationale for each one. Report the initial model fit, the modifications made, the rationale, and the final model fit — not just the final model.
+2. Cross-validate. Run the respecified model on a holdout sample (random split), or better, collect a replication sample. If the MIs don't generalize and fit deteriorates, that's diagnostic. Without this, you cannot claim the modifications reflect real structure rather than sample noise.
+3. Characterize the result honestly. The final model is exploratory/respecified. Future work should treat it as a hypothesis to confirm in a new sample with a preregistered CFA.
+
+**On your current fit values**
+
+CFI = .89 and RMSEA = .08 are below common benchmarks, but don't treat those benchmarks as hard thresholds. Hu & Bentler's (1999) cutoffs (CFI > .95, RMSEA < .06) came from specific simulation conditions and were explicitly not intended as universal rules. With more complex models, smaller communalities, or ordinal data, these cutoffs can be too strict. The right question isn't "how do I get to .95?" but "where is my model wrong, is that misfit substantively important, and can I explain it?"
+
+Start with the standardized residuals. If the misfit concentrates in a few interpretable item pairs, you may have a clear, defensible path forward. If the MIs are scattered across many pairs with no theoretical coherence, that suggests a more fundamental structural problem that adding correlated residuals won't fix — and shouldn't be papered over with them.

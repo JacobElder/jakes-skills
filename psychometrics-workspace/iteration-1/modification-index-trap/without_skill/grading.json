@@ -1,0 +1,52 @@
+{
+  "run_id": "modification-index-trap-without_skill",
+  "eval_id": 6,
+  "eval_name": "modification-index-trap",
+  "config": "without_skill",
+  "passed": 7,
+  "total": 7,
+  "expectations": [
+    {
+      "id": 1,
+      "description": "Warns against adding modifications purely to improve fit (MI-chasing)",
+      "passed": true,
+      "evidence": "Directly warns against 'MI-chasing' and describes it as 'mining your data for post-hoc adjustments'"
+    },
+    {
+      "id": 2,
+      "description": "Uses or invokes the concept of 'capitalization on chance' or 'overfit' or 'sample-specific'",
+      "passed": true,
+      "evidence": "Uses the phrase 'capitalizing on chance' and references 'idiosyncratic features of your particular sample'"
+    },
+    {
+      "id": 3,
+      "description": "Recommends substantive justification for any modification",
+      "passed": true,
+      "evidence": "Explicitly asks for 'a plausible substantive reason this parameter should exist, independent of the fact that it improves fit' and gives examples (shared item wording, method effects)"
+    },
+    {
+      "id": 4,
+      "description": "Recommends cross-validation, replication, or holdout sample if modifications are made",
+      "passed": true,
+      "evidence": "States 'the resulting model should be validated in an independent sample or via cross-validation before it's presented as a confirmed structure'"
+    },
+    {
+      "id": 5,
+      "description": "States that the resulting model should be characterized as exploratory/respecified, not confirmatory",
+      "passed": true,
+      "evidence": "States 'A model that started as CFA but incorporated data-driven modifications is no longer a confirmatory model — it's an exploratory respecification'"
+    },
+    {
+      "id": 6,
+      "description": "Suggests examining standardized residuals to understand WHERE the model misfits",
+      "passed": true,
+      "evidence": "Recommends 'Examine the matrix of standardized residual covariances' to understand 'which specific item pairs are being poorly reproduced'"
+    },
+    {
+      "id": 7,
+      "description": "Does not endorse adding the MIs without any caveats",
+      "passed": true,
+      "evidence": "Opens with 'No — you shouldn't just add those modifications and report the improved model without careful caveats' and maintains this throughout"
+    }
+  ]
+}

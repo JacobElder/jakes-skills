@@ -1,0 +1,52 @@
+{
+  "run_id": "thin-validity-claim-with_skill",
+  "eval_id": 5,
+  "eval_name": "thin-validity-claim",
+  "config": "with_skill",
+  "passed": 7,
+  "total": 7,
+  "expectations": [
+    {
+      "id": 1,
+      "description": "Clearly states the evidence is not adequate (no hedging that obscures the answer)",
+      "met": true,
+      "evidence": "Opens with 'No, that is not adequate evidence for construct validity.' — direct, unhedged, first sentence."
+    },
+    {
+      "id": 2,
+      "description": "Mentions that validity is about score interpretation/use, not a property checked off",
+      "met": true,
+      "evidence": "Explicitly states: 'validity is a property of score interpretations and uses, not of a test or scale' and criticizes treating validity 'as a status to be achieved rather than an ongoing argument to be constructed.'"
+    },
+    {
+      "id": 3,
+      "description": "Mentions Messick or the 2014 Standards or the unified view of validity",
+      "met": true,
+      "evidence": "Cites both Messick (1989, 1995) and the 2014 Standards (AERA/APA/NCME) by name, in the body text and references section, and names the 'unified view.'"
+    },
+    {
+      "id": 4,
+      "description": "Identifies that one correlation is convergent evidence at most, not full construct validity",
+      "met": true,
+      "evidence": "States: 'A correlation of r = 0.55 with another measure of the same construct is convergent evidence... This is one of five sources of validity evidence, and even within this source, a single correlation is the weakest possible form of the argument.'"
+    },
+    {
+      "id": 5,
+      "description": "Mentions that both measures being self-report introduces common-method variance",
+      "met": true,
+      "evidence": "Dedicated section on 'The common-method variance problem' explicitly names common-method variance and explains that self-report × self-report inflation comes from social desirability, acquiescence, response sets, and item wording similarity."
+    },
+    {
+      "id": 6,
+      "description": "Names MTMM (multitrait-multimethod) or the trait/method variance distinction",
+      "met": true,
+      "evidence": "Names the MTMM framework (Campbell & Fiske, 1959) by full name and acronym, explains the monotrait-heteromethod vs. heterotrait-monomethod logic, and mentions CFA-MTMM models for formally partitioning trait and method variance."
+    },
+    {
+      "id": 7,
+      "description": "Mentions at least two additional sources of validity evidence that would be needed (content, response processes, internal structure, discriminant, predictive, etc.)",
+      "met": true,
+      "evidence": "Lists five additional sources: (1) content evidence via expert review, (2) response processes via cognitive interviews, (3) internal structure via factor analysis and reliability, (4) discriminant evidence, and (5) predictive validity. Far exceeds the threshold of two."
+    }
+  ]
+}

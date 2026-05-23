@@ -1,0 +1,1009 @@
+{
+  "metadata": {
+    "skill_name": "psychometrics",
+    "skill_path": "/Users/jacobelder/Documents/GitHub/jakes-skills/psychometrics/psychometrics.skill",
+    "executor_model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-23T17:57:10.709892Z",
+    "evals_run": [
+      "alpha-misinterpretation",
+      "cross-group-mean-comparison",
+      "efa-on-likert-defaults",
+      "icc-vs-kappa",
+      "modification-index-trap",
+      "rasch-vs-2pl-choice",
+      "survey-design-workflow",
+      "thin-validity-claim"
+    ],
+    "runs_per_configuration": 1,
+    "iteration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "alpha-misinterpretation",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 43.0,
+        "tokens": 18500,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "States that alpha does not measure unidimensionality",
+          "passed": true,
+          "evidence": "'Alpha does not measure unidimensionality. Full stop. This is the single most common misuse of coefficient alpha in applied papers.' and 'Reporting alpha = .87 and calling it evidence of unidimensionality is a category error. It isn't.'"
+        },
+        {
+          "text": "Mentions that alpha is driven by k (number of items) and mean inter-item correlation, so long scales can have high alpha despite multidimensionality",
+          "passed": true,
+          "evidence": "'Alpha is driven by the quantity k \u00d7 r\u0304 \u2014 the number of items times the mean inter-item correlation. A 20-item scale with moderate average inter-item correlations will produce high alpha even if those items are measuring two, three, or four distinct dimensions.'"
+        },
+        {
+          "text": "Recommends or names McDonald's omega (omega-total and/or omega-hierarchical) as a better reliability estimator",
+          "passed": true,
+          "evidence": "Full dedicated section: 'Alpha is the wrong reliability estimator here \u2014 use McDonald's omega.' Names omega-total and omega-hierarchical explicitly, plus R code: 'psych::omega() on raw data, or semTools::compRelSEM() from a fitted lavaan CFA model.'"
+        },
+        {
+          "text": "Recommends EFA, CFA, or parallel analysis to test unidimensionality",
+          "passed": true,
+          "evidence": "'tested separately with factor analysis \u2014 EFA if the structure is unknown or exploratory, CFA if you're testing a specific hypothesis. Before the paper reports any reliability coefficient, it should show a parallel analysis (psych::fa.parallel() is the standard), a scree plot, and either an EFA or CFA.'"
+        },
+        {
+          "text": "Frames reliability as sample-specific (e.g., 'in this sample') rather than a property of the scale",
+          "passed": true,
+          "evidence": "'Reliability is a property of scores in a specific sample, not an intrinsic property of the instrument. The correct framing is \"in this sample, alpha was .87.\"'"
+        },
+        {
+          "text": "Raises a question about the construct definition or whether 'workplace flourishing' is defined to be unidimensional",
+          "passed": true,
+          "evidence": "Full section 4: 'what is \"workplace flourishing\" that it should be unidimensional, and what's explicitly not part of it?' with reference to Keyes, Huppert & So, Seligman's PERMA as explicitly multidimensional frameworks."
+        },
+        {
+          "text": "Does not endorse alpha = .87 as sufficient evidence on its own",
+          "passed": true,
+          "evidence": "'Alpha = .87 is not bad, but on its own it doesn't establish reliability (because omega is the right estimator) and it certainly doesn't establish unidimensionality (because nothing about alpha's formula involves factor structure). The paper is over-claiming from a single number.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "alpha-misinterpretation",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 35.0,
+        "tokens": 9800,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "States that alpha does not measure unidimensionality",
+          "passed": true,
+          "evidence": "'Cronbach's alpha is a measure of internal consistency, not dimensionality. A scale can have high alpha while being clearly multidimensional... Citing alpha as evidence of unidimensionality is a category error.'"
+        },
+        {
+          "text": "Mentions that alpha is driven by k (number of items) and mean inter-item correlation, so long scales can have high alpha despite multidimensionality",
+          "passed": true,
+          "evidence": "'Alpha is a function of two things: the number of items (k) and the mean inter-item correlation (r\u0304). The Spearman-Brown formula makes this explicit. A 20-item scale with modest average inter-item correlations can easily hit \u03b1 = .87.'"
+        },
+        {
+          "text": "Recommends or names McDonald's omega (omega-total and/or omega-hierarchical) as a better reliability estimator",
+          "passed": true,
+          "evidence": "'McDonald's omega (\u03c9) is a superior reliability coefficient. Omega-total (\u03c9_t) estimates the proportion of scale variance attributable to all common factors, while omega-hierarchical (\u03c9_h) estimates variance attributable specifically to the general factor after accounting for group factors.'"
+        },
+        {
+          "text": "Recommends EFA, CFA, or parallel analysis to test unidimensionality",
+          "passed": true,
+          "evidence": "'the authors need factor-analytic evidence: exploratory factor analysis (EFA) with parallel analysis to determine the number of factors, or a confirmatory factor analysis (CFA) comparing a one-factor model to plausible multi-factor alternatives.'"
+        },
+        {
+          "text": "Frames reliability as sample-specific (e.g., 'in this sample') rather than a property of the scale",
+          "passed": true,
+          "evidence": "'Alpha = .87 is an estimate in this particular sample. It is not a fixed property of the scale. A different sample \u2014 different occupational context, different variance in the construct \u2014 could yield meaningfully different values.'"
+        },
+        {
+          "text": "Raises a question about the construct definition or whether 'workplace flourishing' is defined to be unidimensional",
+          "passed": true,
+          "evidence": "'\"Workplace flourishing\" is a broad, potentially multidimensional construct \u2014 it might plausibly span hedonic wellbeing, engagement, meaning, relationships, and growth. Before treating it as a single composite, the authors should justify theoretically why flourishing is unidimensional.'"
+        },
+        {
+          "text": "Does not endorse alpha = .87 as sufficient evidence on its own",
+          "passed": true,
+          "evidence": "'Alpha = .87 on a 20-item scale is not sufficient evidence of reliability (properly understood) or unidimensionality. The authors need: (1) omega coefficients rather than just alpha, (2) factor-analytic tests of dimensionality, and (3) a theoretical justification for treating this construct as unidimensional.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "survey-design-workflow",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 62.0,
+        "tokens": 23500,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Recommends parallel analysis (e.g., psych::fa.parallel) for determining number of factors",
+          "passed": true,
+          "evidence": "psych::fa.parallel(data_efa, fa='fa', cor='poly', n.iter=500) with explicit explanation: 'Use parallel analysis instead \u2014 it compares your observed eigenvalues to eigenvalues from random data of the same dimensions'"
+        },
+        {
+          "text": "Recommends polychoric correlations for the Likert data (e.g., cor='poly' or psych::polychoric)",
+          "passed": true,
+          "evidence": "'Use polychoric correlations throughout the EFA.' Code: fa(data_efa, ..., cor='poly') and psych::polychoric(data_efa)$rho. Explicit explanation: 'Pearson correlations on ordinal items underestimate the true correlation between the underlying continuous traits'"
+        },
+        {
+          "text": "Recommends oblique rotation (oblimin, promax) rather than orthogonal/varimax",
+          "passed": true,
+          "evidence": "'Use oblique rotation (oblimin or promax), not varimax. Varimax forces your factors to be uncorrelated, which is almost never true for psychological constructs.' Code: rotate='oblimin'"
+        },
+        {
+          "text": "Recommends omega (in addition to or instead of alpha) for reliability",
+          "passed": true,
+          "evidence": "'Report both McDonald's omega and Cronbach's alpha... Omega is derived from the factor model and doesn't require that assumption \u2014 it's the right estimate for a congeneric scale.' Code: psych::omega() and semTools::compRelSEM()"
+        },
+        {
+          "text": "Mentions splitting the sample or using an independent sample for CFA after EFA",
+          "passed": true,
+          "evidence": "'Split your sample before you do anything. Use ~300 participants for EFA and hold ~300 for CFA. Running EFA on the full dataset and then CFA on the same data is double-dipping \u2014 you'll capitalize on chance and then \"confirm\" exactly what you found.'"
+        },
+        {
+          "text": "Warns against eigenvalue > 1 rule for selecting number of factors",
+          "passed": true,
+          "evidence": "'The eigenvalue > 1 (Kaiser) rule reliably overestimates the number of factors. With 8 items, it could easily suggest 2\u20133 factors where there is only 1. Do not use it as your primary criterion.' Also in the mistakes list: 'Eigenvalue > 1 for factor count. It will tell you that you have 2\u20133 factors when you have 1.'"
+        },
+        {
+          "text": "Mentions cognitive interviews, pilot/pretesting, or content review as a step",
+          "passed": true,
+          "evidence": "First section 'Before you run any statistics': 'Run cognitive interviews on 5\u201310 people before your 600-person pilot. Sit with participants, have them think aloud while answering each item.' Also in mistake list: 'Skipping cognitive interviews.'"
+        },
+        {
+          "text": "Includes at least one R code example with psych or lavaan",
+          "passed": true,
+          "evidence": "Multiple code blocks: fa() with psych package, psych::fa.parallel(), psych::omega(), lavaan cfa() with WLSMV, semTools::compRelSEM()"
+        },
+        {
+          "text": "Mentions that 600 N is adequate for EFA and CFA with this scale size",
+          "passed": true,
+          "evidence": "'N = 600 with 8 items is adequate for both EFA and CFA with this scale size... With 8 items on a single or two-factor trust construct and reasonably strong loadings (h\u00b2 > .4 on average), 600 gives you stable EFA solutions and comfortable CFA power.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "survey-design-workflow",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 38.0,
+        "tokens": 11000,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Recommends parallel analysis (e.g., psych::fa.parallel) for determining number of factors",
+          "passed": true,
+          "evidence": "Step 3 explicitly recommends parallel analysis and includes fa.parallel() code example: 'fa.parallel(poly_matrix, n.obs = 600, fa = \"fa\", fm = \"ml\")'"
+        },
+        {
+          "text": "Recommends polychoric correlations for the Likert data (e.g., cor='poly' or psych::polychoric)",
+          "passed": true,
+          "evidence": "Step 2 explicitly recommends polychoric correlations and includes psych::polychoric() code example, noting 'Pearson correlations will underestimate the true relationships between items'"
+        },
+        {
+          "text": "Recommends oblique rotation (oblimin, promax) rather than orthogonal/varimax",
+          "passed": true,
+          "evidence": "Step 4 states 'Use an oblique rotation (e.g., oblimin or promax) rather than orthogonal Varimax' with oblimin used in code example"
+        },
+        {
+          "text": "Recommends omega (in addition to or instead of alpha) for reliability",
+          "passed": true,
+          "evidence": "Step 5 explicitly recommends McDonald's omega over Cronbach's alpha, includes omega() code example, and explains why alpha is problematic"
+        },
+        {
+          "text": "Mentions splitting the sample or using an independent sample for CFA after EFA",
+          "passed": true,
+          "evidence": "Step 6 states 'fitting and testing a model on the same data is circular and inflates fit' and recommends 300/300 split for EFA and CFA respectively"
+        },
+        {
+          "text": "Warns against eigenvalue > 1 rule for selecting number of factors",
+          "passed": true,
+          "evidence": "Step 3 explicitly warns: 'A very common mistake is using the eigenvalue > 1 rule (Kaiser criterion)... This rule has poor accuracy and routinely over-extracts factors. Do not rely on it.'"
+        },
+        {
+          "text": "Mentions cognitive interviews, pilot/pretesting, or content review as a step",
+          "passed": true,
+          "evidence": "Step 8 mentions cognitive interviews, expert review, face validity, and pilot testing as qualitative/content validity steps"
+        },
+        {
+          "text": "Includes at least one R code example with psych or lavaan",
+          "passed": true,
+          "evidence": "Multiple R code examples included using psych (polychoric, fa.parallel, fa, omega) and lavaan (cfa) packages"
+        },
+        {
+          "text": "Mentions that 600 N is adequate for EFA and CFA with this scale size",
+          "passed": true,
+          "evidence": "Step 7 explicitly states 'your sample is well-powered for both EFA and CFA' and that a 300/300 split 'comfortably supports both stages'"
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "cross-group-mean-comparison",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 50.0,
+        "tokens": 20000,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "States that t-test on sum scores is not adequate without first testing measurement invariance",
+          "passed": true,
+          "evidence": "Opening paragraph explicitly states: 'no, you cannot just do a t-test on sum scores' and explains that sum scores are only comparable 'if the PHQ-9 measures depression in the same way in both countries \u2014 and that is an empirical claim you have not yet tested.'"
+        },
+        {
+          "text": "Explains the configural \u2192 metric \u2192 scalar invariance sequence",
+          "passed": true,
+          "evidence": "The response walks through all three steps explicitly under 'What you need to establish first: measurement invariance' \u2014 configural (Step 1), metric/weak (Step 2), and scalar/strong (Step 3), with explanation of what each level tests."
+        },
+        {
+          "text": "Identifies scalar invariance as the level required for mean comparison",
+          "passed": true,
+          "evidence": "Step 3 states: 'If scalar holds: observed mean differences reflect true latent mean differences. This is the level you need to justify comparing means via t-test or anything else.' Summary table also maps 'Compare mean depression between countries' to 'Scalar (strong) measurement invariance.'"
+        },
+        {
+          "text": "Mentions partial scalar invariance as a fallback when full scalar fails",
+          "passed": true,
+          "evidence": "Under 'What if scalar invariance fails?' Option A describes partial scalar invariance: 'Identify the specific items whose thresholds differ across countries...free those thresholds, and constrain the rest. This is partial scalar invariance (Byrne, Shavelson & Muth\u00e9n, 1989).'"
+        },
+        {
+          "text": "Names lavaan, semTools, measEq.syntax, or measurementInvariance function",
+          "passed": true,
+          "evidence": "R code examples use both lavaan (cfa function) and semTools (measEq.syntax function). The text also references lavTestLRT for model comparison."
+        },
+        {
+          "text": "Mentions that ordinal/Likert items may need WLSMV estimator or threshold-based testing",
+          "passed": true,
+          "evidence": "'The PHQ-9 has 9 ordinal items (0\u20133). For ordinal data with this many response categories, you should use the WLSMV estimator with ordered indicators' and 'The invariance framework for ordinal data tests thresholds (the cut points between response categories) rather than simple intercepts.'"
+        },
+        {
+          "text": "Either mentions PHQ-9 cross-cultural invariance issues specifically OR flags that translated mental-health scales commonly have invariance problems",
+          "passed": true,
+          "evidence": "The PHQ-9 section explicitly states: 'Scalar invariance frequently fails or is only partial across country or language groups. Specific items (particularly the suicidal ideation item, sleep and appetite items) often show cross-cultural non-invariance.' Also notes the PHQ-9 was developed for U.S. primary care and subsequent translations don't guarantee scalar invariance."
+        },
+        {
+          "text": "Does not greenlight a t-test on sum scores without invariance testing",
+          "passed": true,
+          "evidence": "The response opens with 'no, you cannot just do a t-test on sum scores' and consistently frames the t-test as only valid after establishing invariance. The summary section reinforces: 'Do the invariance testing first. If scalar holds, your t-test...is interpretable. If it doesn't, you have more informative work to do.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "cross-group-mean-comparison",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 38.0,
+        "tokens": 10500,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": 1,
+          "description": "States that t-test on sum scores is not adequate without first testing measurement invariance",
+          "met": true,
+          "note": "Clearly stated in opening and elaborated throughout \u2014 sum score t-test assumes measurement invariance which must be tested empirically."
+        },
+        {
+          "id": 2,
+          "description": "Explains the configural \u2192 metric \u2192 scalar invariance sequence",
+          "met": true,
+          "note": "All three levels explained with correct definitions: configural (same structure), metric (same loadings), scalar (same intercepts/thresholds)."
+        },
+        {
+          "id": 3,
+          "description": "Identifies scalar invariance as the level required for mean comparison",
+          "met": true,
+          "note": "Explicitly stated: 'Scalar invariance \u2014 same item intercepts... This is the level you need for mean comparisons.'"
+        },
+        {
+          "id": 4,
+          "description": "Mentions partial scalar invariance as a fallback when full scalar fails",
+          "met": true,
+          "note": "Dedicated section on partial scalar invariance as fallback, with guidance on how many intercepts should remain invariant (~80%+)."
+        },
+        {
+          "id": 5,
+          "description": "Names lavaan, semTools, measEq.syntax, or measurementInvariance function",
+          "met": true,
+          "note": "Both lavaan and semTools named; measurementInvariance() function shown in code example; compareFit() also mentioned."
+        },
+        {
+          "id": 6,
+          "description": "Mentions that ordinal/Likert items may need WLSMV estimator or threshold-based testing",
+          "met": true,
+          "note": "Dedicated section on ordinal problem: polychoric correlations, WLSMV estimator, threshold parameters for invariance testing."
+        },
+        {
+          "id": 7,
+          "description": "Either mentions PHQ-9 cross-cultural invariance issues specifically OR flags that translated mental-health scales commonly have invariance problems",
+          "met": true,
+          "note": "Both: mentions published PHQ-9 cross-cultural studies showing partial invariance/factor structure differences, and notes somatic symptoms may map differently across cultural settings."
+        },
+        {
+          "id": 8,
+          "description": "Does not greenlight a t-test on sum scores without invariance testing",
+          "met": true,
+          "note": "Never recommends proceeding with t-test without invariance testing; bottom line explicitly states skipping invariance makes results 'uninterpretable.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "rasch-vs-2pl-choice",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 48.0,
+        "tokens": 19000,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": 1,
+          "description": "Explains Rasch as equal-discrimination across items, while 2PL allows discriminations to vary",
+          "met": true,
+          "note": "Clearly explained with the mathematical formulas and description: 'Rasch constrains all discriminations to be equal... 2PL says: items differ in how well they differentiate ability, and we should model that.'"
+        },
+        {
+          "id": 2,
+          "description": "Frames the Rasch vs. 2PL choice as a substantive measurement-philosophy decision, not just an AIC/BIC comparison",
+          "met": true,
+          "note": "Explicitly stated in opening and dedicated section: 'This is why you shouldn't choose based on AIC/BIC alone.' Discusses Andrich/Wright tradition vs Birnbaum/Lord tradition as philosophical stances."
+        },
+        {
+          "id": 3,
+          "description": "Mentions specific objectivity or sample-independence as a property of the Rasch model",
+          "met": true,
+          "note": "Dedicated section on specific objectivity with both definitions: item parameters independent of person sample, person parameters independent of item sample. Linked to practical applications (test banking, equating, CAT)."
+        },
+        {
+          "id": 4,
+          "description": "States that N = 800 is adequate for 2PL (or for either model)",
+          "met": true,
+          "note": "Explicitly states: 'Your sample size is solidly adequate. Rasch needs roughly 250+ for stable estimation; 2PL needs ~500. At N = 800 with 30 items, both models will give you stable, reliable parameter estimates.'"
+        },
+        {
+          "id": 5,
+          "description": "Provides mirt R code example (mirt::mirt with itemtype='Rasch' and/or '2PL')",
+          "met": true,
+          "note": "Full R code block includes both mirt(data, 1, itemtype='2PL') and mirt(data, 1, itemtype='Rasch') with coef(), anova(), itemfit(), M2(), plot(), and fscores() examples."
+        },
+        {
+          "id": 6,
+          "description": "Mentions item information function (IIF) or test information function (TIF)",
+          "met": true,
+          "note": "Both IIF and TIF mentioned with explanation of what they represent, code to plot them, and practical guidance on using TIF for cut-score decision-making."
+        },
+        {
+          "id": 7,
+          "description": "Does not recommend 3PL as a default for a knowledge test without considering whether guessing is substantively relevant",
+          "met": true,
+          "note": "3PL section explicitly cautions against it: 'I'd be cautious about 3PL... The question to ask is substantive: is guessing meaningfully happening in your test context? Not: does 3PL fit better by AIC?'"
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "rasch-vs-2pl-choice",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 38.0,
+        "tokens": 10500,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": 1,
+          "description": "Explains Rasch as equal-discrimination across items, while 2PL allows discriminations to vary",
+          "met": true,
+          "evidence": "Response explicitly states: 'Every item has the same discrimination parameter (fixed to 1.0 by convention)' for Rasch, and 'Items are allowed to have their own discrimination parameters (the a parameter)' for 2PL."
+        },
+        {
+          "id": 2,
+          "description": "Frames the Rasch vs. 2PL choice as a substantive measurement-philosophy decision, not just an AIC/BIC comparison",
+          "met": true,
+          "evidence": "Dedicated section titled 'This is a measurement-philosophy decision, not just a model-fit comparison' explicitly addresses this, calling out the mistake of treating it as a purely empirical AIC/BIC comparison."
+        },
+        {
+          "id": 3,
+          "description": "Mentions specific objectivity or sample-independence as a property of the Rasch model",
+          "met": true,
+          "evidence": "Response explicitly names 'specific objectivity (or sample-independence)' and explains it: 'the comparison between any two persons does not depend on which particular items were used, and the comparison between any two items does not depend on which persons were sampled.'"
+        },
+        {
+          "id": 4,
+          "description": "States that N = 800 is adequate for 2PL (or for either model)",
+          "met": true,
+          "evidence": "Response states: 'N = 800 is adequate for both models' with specific thresholds: Rasch ~200+, 2PL ~500 minimum, and '800 is solid.'"
+        },
+        {
+          "id": 5,
+          "description": "Provides mirt R code example (mirt::mirt with itemtype='Rasch' and/or '2PL')",
+          "met": true,
+          "evidence": "Full R code block using mirt() with both itemtype='Rasch' and itemtype='2PL', including coef(), itemplot(), and plot() calls."
+        },
+        {
+          "id": 6,
+          "description": "Mentions item information function (IIF) or test information function (TIF)",
+          "met": true,
+          "evidence": "Dedicated section on 'Item and test information functions' explains both IIF and TIF, and code includes itemplot(..., type='info') and plot(model, type='info')."
+        },
+        {
+          "id": 7,
+          "description": "Does not recommend 3PL as a default for a knowledge test without considering whether guessing is substantively relevant",
+          "met": true,
+          "evidence": "Response explicitly cautions: 'Avoid 3PL unless guessing is substantively meaningful' and 'For a 30-item knowledge test used with students who are engaging seriously, the guessing parameter adds complexity without payoff.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "thin-validity-claim",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 45.0,
+        "tokens": 17000,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": 1,
+          "description": "Clearly states the evidence is not adequate (no hedging that obscures the answer)",
+          "met": true,
+          "evidence": "Opens with 'No, that is not adequate evidence for construct validity.' \u2014 direct, unhedged, first sentence."
+        },
+        {
+          "id": 2,
+          "description": "Mentions that validity is about score interpretation/use, not a property checked off",
+          "met": true,
+          "evidence": "Explicitly states: 'validity is a property of score interpretations and uses, not of a test or scale' and criticizes treating validity 'as a status to be achieved rather than an ongoing argument to be constructed.'"
+        },
+        {
+          "id": 3,
+          "description": "Mentions Messick or the 2014 Standards or the unified view of validity",
+          "met": true,
+          "evidence": "Cites both Messick (1989, 1995) and the 2014 Standards (AERA/APA/NCME) by name, in the body text and references section, and names the 'unified view.'"
+        },
+        {
+          "id": 4,
+          "description": "Identifies that one correlation is convergent evidence at most, not full construct validity",
+          "met": true,
+          "evidence": "States: 'A correlation of r = 0.55 with another measure of the same construct is convergent evidence... This is one of five sources of validity evidence, and even within this source, a single correlation is the weakest possible form of the argument.'"
+        },
+        {
+          "id": 5,
+          "description": "Mentions that both measures being self-report introduces common-method variance",
+          "met": true,
+          "evidence": "Dedicated section on 'The common-method variance problem' explicitly names common-method variance and explains that self-report \u00d7 self-report inflation comes from social desirability, acquiescence, response sets, and item wording similarity."
+        },
+        {
+          "id": 6,
+          "description": "Names MTMM (multitrait-multimethod) or the trait/method variance distinction",
+          "met": true,
+          "evidence": "Names the MTMM framework (Campbell & Fiske, 1959) by full name and acronym, explains the monotrait-heteromethod vs. heterotrait-monomethod logic, and mentions CFA-MTMM models for formally partitioning trait and method variance."
+        },
+        {
+          "id": 7,
+          "description": "Mentions at least two additional sources of validity evidence that would be needed (content, response processes, internal structure, discriminant, predictive, etc.)",
+          "met": true,
+          "evidence": "Lists five additional sources: (1) content evidence via expert review, (2) response processes via cognitive interviews, (3) internal structure via factor analysis and reliability, (4) discriminant evidence, and (5) predictive validity. Far exceeds the threshold of two."
+        }
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "thin-validity-claim",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 36.0,
+        "tokens": 10000,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": 1,
+          "description": "Clearly states the evidence is not adequate (no hedging that obscures the answer)",
+          "passed": true,
+          "evidence": "Opens unambiguously: 'No, that is not adequate evidence to claim construct validity has been established.'"
+        },
+        {
+          "id": 2,
+          "description": "Mentions that validity is about score interpretation/use, not a property checked off",
+          "passed": true,
+          "evidence": "Explicitly states validity 'refers to the degree to which evidence and theory support the interpretation and use of test scores for a specific purpose and population' and that 'you cannot establish validity once and for all.'"
+        },
+        {
+          "id": 3,
+          "description": "Mentions Messick or the 2014 Standards or the unified view of validity",
+          "passed": true,
+          "evidence": "Cites 'Standards for Educational and Psychological Testing (AERA/APA/NCME, 2014)' and its five sources of validity evidence framework."
+        },
+        {
+          "id": 4,
+          "description": "Identifies that one correlation is convergent evidence at most, not full construct validity",
+          "passed": true,
+          "evidence": "States 'A single correlation of r = 0.55 between two self-report measures of the same construct is convergent evidence \u2014 and not even particularly strong convergent evidence at that.'"
+        },
+        {
+          "id": 5,
+          "description": "Mentions that both measures being self-report introduces common-method variance",
+          "passed": true,
+          "evidence": "Dedicates a full section to this: 'the observed correlation is inflated by common-method variance \u2014 shared variance attributable to the method of measurement... rather than to the construct itself.'"
+        },
+        {
+          "id": 6,
+          "description": "Names MTMM (multitrait-multimethod) or the trait/method variance distinction",
+          "passed": true,
+          "evidence": "Explicitly invokes 'multitrait-multimethod (MTMM) framework,' cites Campbell and Fiske (1959), and discusses the need to separate trait variance from method variance."
+        },
+        {
+          "id": 7,
+          "description": "Mentions at least two additional sources of validity evidence that would be needed",
+          "passed": true,
+          "evidence": "Lists content evidence, internal structure evidence (factor analysis), discriminant evidence, response process evidence, and multi-method measurement as additional sources needed."
+        }
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "modification-index-trap",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 46.0,
+        "tokens": 17500,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": 1,
+          "description": "Warns against adding modifications purely to improve fit (MI-chasing)",
+          "passed": true,
+          "evidence": "Opens with 'don't just add those modifications and report the improved model as if nothing changed' and dedicates a section to 'The MI-chasing problem,' explaining why acting post-hoc without theory corrupts a confirmatory analysis."
+        },
+        {
+          "id": 2,
+          "description": "Uses or invokes the concept of 'capitalization on chance' or 'overfit' or 'sample-specific'",
+          "passed": true,
+          "evidence": "Uses all three: 'capitalizing on chance,' 'This is overfit \u2014 a model increasingly tailored to sample-specific quirks,' and references sample-specific noise throughout."
+        },
+        {
+          "id": 3,
+          "description": "Recommends substantive justification for any modification (e.g., similar item wording, method effects)",
+          "passed": true,
+          "evidence": "Provides explicit examples of substantively justified correlated residuals (nearly identical wording, reverse-worded items, adjacent administration, longitudinal same-indicator) and states 'The MI value alone is not a rationale.'"
+        },
+        {
+          "id": 4,
+          "description": "Recommends cross-validation, replication, or holdout sample if modifications are made",
+          "passed": true,
+          "evidence": "Explicitly states 'Cross-validate. Run the respecified model on a holdout sample (random split), or better, collect a replication sample.'"
+        },
+        {
+          "id": 5,
+          "description": "States that the resulting model should be characterized as exploratory/respecified, not confirmatory",
+          "passed": true,
+          "evidence": "Dedicated section 'You are no longer doing CFA' explains this directly: 'the analysis is exploratory respecification, not confirmatory factor analysis.' Also states final model should be 'labeled as a respecified or exploratory model.'"
+        },
+        {
+          "id": 6,
+          "description": "Suggests examining standardized residuals to understand WHERE the model misfits, not just global indices",
+          "passed": true,
+          "evidence": "Full section 'Before reaching for MIs, inspect where the model misfits' recommends `residuals(fit, type = 'standardized')` with R code and explains how large standardized residuals flag specific item pairs more usefully than global indices."
+        },
+        {
+          "id": 7,
+          "description": "Does not endorse adding the MIs without any caveats",
+          "passed": true,
+          "evidence": "The response never endorses adding the modifications; it warns against the approach throughout and, when describing conditions under which modifications are defensible, imposes multiple requirements (substantive rationale, documentation, cross-validation, honest characterization)."
+        }
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "modification-index-trap",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 37.0,
+        "tokens": 10500,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": 1,
+          "description": "Warns against adding modifications purely to improve fit (MI-chasing)",
+          "passed": true,
+          "evidence": "Directly warns against 'MI-chasing' and describes it as 'mining your data for post-hoc adjustments'"
+        },
+        {
+          "id": 2,
+          "description": "Uses or invokes the concept of 'capitalization on chance' or 'overfit' or 'sample-specific'",
+          "passed": true,
+          "evidence": "Uses the phrase 'capitalizing on chance' and references 'idiosyncratic features of your particular sample'"
+        },
+        {
+          "id": 3,
+          "description": "Recommends substantive justification for any modification",
+          "passed": true,
+          "evidence": "Explicitly asks for 'a plausible substantive reason this parameter should exist, independent of the fact that it improves fit' and gives examples (shared item wording, method effects)"
+        },
+        {
+          "id": 4,
+          "description": "Recommends cross-validation, replication, or holdout sample if modifications are made",
+          "passed": true,
+          "evidence": "States 'the resulting model should be validated in an independent sample or via cross-validation before it's presented as a confirmed structure'"
+        },
+        {
+          "id": 5,
+          "description": "States that the resulting model should be characterized as exploratory/respecified, not confirmatory",
+          "passed": true,
+          "evidence": "States 'A model that started as CFA but incorporated data-driven modifications is no longer a confirmatory model \u2014 it's an exploratory respecification'"
+        },
+        {
+          "id": 6,
+          "description": "Suggests examining standardized residuals to understand WHERE the model misfits",
+          "passed": true,
+          "evidence": "Recommends 'Examine the matrix of standardized residual covariances' to understand 'which specific item pairs are being poorly reproduced'"
+        },
+        {
+          "id": 7,
+          "description": "Does not endorse adding the MIs without any caveats",
+          "passed": true,
+          "evidence": "Opens with 'No \u2014 you shouldn't just add those modifications and report the improved model without careful caveats' and maintains this throughout"
+        }
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "icc-vs-kappa",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 44.0,
+        "tokens": 16000,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": 1,
+          "description": "Recommends ICC over Cohen's kappa for this case (continuous/ordinal ratings, not pure categorical)",
+          "passed": true,
+          "evidence": "Opens with 'Use ICC, not Cohen's kappa' and provides clear rationale for a 5-point ordinal severity scale"
+        },
+        {
+          "id": 2,
+          "description": "Mentions that Cohen's kappa is for categorical agreement, while ICC is for continuous reliability",
+          "passed": true,
+          "evidence": "States 'Cohen's kappa is a measure of categorical agreement \u2014 it's designed for nominal or coarsely categorical ratings' and contrasts with ICC for ordinal/continuous scales"
+        },
+        {
+          "id": 3,
+          "description": "Mentions that there are multiple ICC variants (Shrout & Fleiss labels 1/2/3 OR McGraw-Wong A/C, single vs. average)",
+          "passed": true,
+          "evidence": "Lists ICC(1,1), ICC(2,1), ICC(3,1) with Shrout & Fleiss labels and references McGraw & Wong (1996) ICC(A,1) notation"
+        },
+        {
+          "id": 4,
+          "description": "Recommends a specific ICC type with rationale (e.g., ICC(2,1) absolute agreement if generalizing to other clinicians)",
+          "passed": true,
+          "evidence": "Recommends 'ICC(2,1) with absolute agreement' with explicit rationale: 'you likely want results to generalize to other clinicians like these two'"
+        },
+        {
+          "id": 5,
+          "description": "Distinguishes between absolute agreement and consistency, OR between single-rater and average-rater ICC",
+          "passed": true,
+          "evidence": "Explicitly distinguishes absolute agreement vs. consistency and single-measure ICC(2,1) vs. average-measure ICC(2,k)"
+        },
+        {
+          "id": 6,
+          "description": "Mentions psych::ICC() or a comparable function",
+          "passed": true,
+          "evidence": "Provides R code block using psych::ICC(rating_matrix) with explanation"
+        },
+        {
+          "id": 7,
+          "description": "Optionally mentions that for ordinal data weighted kappa is an alternative if you want kappa specifically",
+          "passed": true,
+          "evidence": "States 'If you're committed to a kappa-family statistic, weighted kappa \u2014 with linear or quadratic weights \u2014 at least acknowledges the ordinal structure'"
+        }
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "icc-vs-kappa",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 36.0,
+        "tokens": 10000,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": 1,
+          "description": "Recommends ICC over Cohen's kappa for this case (continuous/ordinal ratings, not pure categorical)",
+          "met": true,
+          "evidence": "Opens with 'you should use ICC (Intraclass Correlation Coefficient), not Cohen's kappa' and provides detailed rationale throughout."
+        },
+        {
+          "id": 2,
+          "description": "Mentions that Cohen's kappa is for categorical agreement, while ICC is for continuous reliability",
+          "met": true,
+          "evidence": "States 'Cohen's kappa is designed for categorical agreement on nominal (or at best ordinal) data' and contrasts with ICC treating ratings as 'interval-level (or at least continuous-ish) measure'."
+        },
+        {
+          "id": 3,
+          "description": "Mentions that there are multiple ICC variants (Shrout & Fleiss labels 1/2/3 OR McGraw-Wong A/C, single vs. average)",
+          "met": true,
+          "evidence": "Explicitly references 'Shrout & Fleiss (1979) and McGraw & Wong (1996)' classification systems and explains ICC(1), ICC(2), ICC(3), single vs. average distinctions."
+        },
+        {
+          "id": 4,
+          "description": "Recommends a specific ICC type with rationale (e.g., ICC(2,1) absolute agreement if generalizing to other clinicians)",
+          "met": true,
+          "evidence": "Recommends 'ICC(2,1) is usually the defensible choice' with explanation that it 'allows you to generalize your conclusions beyond these two raters'."
+        },
+        {
+          "id": 5,
+          "description": "Distinguishes between absolute agreement and consistency, OR between single-rater and average-rater ICC",
+          "met": true,
+          "evidence": "Dedicated sections for both 'Single vs. average' and 'Absolute agreement vs. consistency' with clear explanations of when each applies."
+        },
+        {
+          "id": 6,
+          "description": "Mentions psych::ICC() or a comparable function",
+          "met": true,
+          "evidence": "References 'psych::ICC() function in R reports all major variants' and provides R code example using ICC(ratings)."
+        },
+        {
+          "id": 7,
+          "description": "Optionally mentions that for ordinal data weighted kappa is an alternative if you want kappa specifically",
+          "met": true,
+          "evidence": "Final section 'When weighted kappa is a reasonable alternative' explains quadratic weighted kappa for ordinal scales and its relationship to ICC(3,1)."
+        }
+      ]
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "efa-on-likert-defaults",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 40.0,
+        "tokens": 15000,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": 1,
+          "description": "Recommends polychoric correlations (cor='poly' argument or similar)",
+          "met": true,
+          "evidence": "Uses cor = 'poly' in the fa() call with explanation: 'Likert items are ordinal discretizations of underlying continuous traits; Pearson underestimates correlations and biases loadings downward.' Also uses cor='poly' in fa.parallel()."
+        },
+        {
+          "id": 2,
+          "description": "Recommends oblique rotation (oblimin or promax) rather than varimax",
+          "met": true,
+          "evidence": "Uses rotate = 'oblimin' with explicit reasoning: 'psychological constructs are correlated; varimax imposes orthogonality that is almost never true.' Explicitly says 'Do NOT use varimax as a default for Likert-based psychological scales.'"
+        },
+        {
+          "id": 3,
+          "description": "Provides a code example with fa() and reasonable arguments",
+          "met": true,
+          "evidence": "Full code block with fa(your_data, nfactors=k, fm='minres', rotate='oblimin', cor='poly') with inline comments explaining each argument."
+        },
+        {
+          "id": 4,
+          "description": "Mentions parallel analysis (fa.parallel) for determining factor count before running fa()",
+          "met": true,
+          "evidence": "Step 0 is dedicated to parallel analysis: 'fa.parallel(your_data, fa = \"fa\", cor = \"poly\")' with explanation to run it before the EFA call."
+        },
+        {
+          "id": 5,
+          "description": "Mentions an extraction method (minres or ml) with brief justification",
+          "met": true,
+          "evidence": "Recommends fm='minres' with detailed justification: 'minimizes the off-diagonal residuals, doesn't require multivariate normality, and is less prone to Heywood cases than ML.' Also mentions when to use ml instead."
+        },
+        {
+          "id": 6,
+          "description": "Does not default to varimax rotation",
+          "met": true,
+          "evidence": "Uses oblimin, explicitly warns against varimax: 'Do NOT use varimax as a default for Likert-based psychological scales.'"
+        },
+        {
+          "id": 7,
+          "description": "Does not default to Pearson correlations for Likert data without flagging it",
+          "met": true,
+          "evidence": "Explicitly uses cor='poly' and warns that 'Pearson underestimates correlations and biases loadings downward' \u2014 Pearson is not used as a default anywhere in the response."
+        }
+      ]
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "efa-on-likert-defaults",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 33.0,
+        "tokens": 9500,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "id": 1,
+          "description": "Recommends polychoric correlations (cor='poly' argument or similar)",
+          "met": true,
+          "evidence": "Uses cor='poly' in both fa.parallel() and fa() calls, with explanation: 'Likert items are ordinal, not continuous. Pearson correlations applied to 5-point scales underestimate the true latent correlations.'"
+        },
+        {
+          "id": 2,
+          "description": "Recommends oblique rotation (oblimin or promax) rather than varimax",
+          "met": true,
+          "evidence": "Uses rotate='oblimin' with reasoning: 'Psychological constructs are almost always correlated. Using varimax or another orthogonal rotation imposes the constraint that your factors are uncorrelated \u2014 a constraint that is rarely true.' Promax mentioned as alternative."
+        },
+        {
+          "id": 3,
+          "description": "Provides a code example with fa() and reasonable arguments",
+          "met": true,
+          "evidence": "Full fa() code block with nfactors, fm='minres', rotate='oblimin', cor='poly', and inline comments. Also includes fa.parallel() code block."
+        },
+        {
+          "id": 4,
+          "description": "Mentions parallel analysis (fa.parallel) for determining factor count before running fa()",
+          "met": true,
+          "evidence": "Step 1 is entirely dedicated to parallel analysis with fa.parallel(your_data, fa='fa', cor='poly'), called 'more reliable than Kaiser's eigenvalue > 1 rule.'"
+        },
+        {
+          "id": 5,
+          "description": "Mentions an extraction method (minres or ml) with brief justification",
+          "met": true,
+          "evidence": "Recommends fm='minres' with justification: 'minimizes the off-diagonal residuals without requiring multivariate normality... less prone to Heywood cases compared to maximum likelihood.' Also notes when ml is appropriate."
+        },
+        {
+          "id": 6,
+          "description": "Does not default to varimax rotation",
+          "met": true,
+          "evidence": "Uses oblimin, and explicitly states: 'Do not use varimax by default for psychological scale data.'"
+        },
+        {
+          "id": 7,
+          "description": "Does not default to Pearson correlations for Likert data without flagging it",
+          "met": true,
+          "evidence": "Uses cor='poly' throughout. Explicitly warns against Pearson: 'Pearson correlations applied to 5-point scales underestimate the true latent correlations, which biases your loadings downward and can distort factor structure.'"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 47.25,
+        "stddev": 6.26,
+        "min": 40.0,
+        "max": 62.0
+      },
+      "tokens": {
+        "mean": 18312.5,
+        "stddev": 2474.0844,
+        "min": 15000,
+        "max": 23500
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 36.375,
+        "stddev": 1.6536,
+        "min": 33.0,
+        "max": 38.0
+      },
+      "tokens": {
+        "mean": 10225.0,
+        "stddev": 452.0785,
+        "min": 9500,
+        "max": 11000
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.0000",
+      "time_seconds": "+10.9",
+      "tokens": "+8087"
+    }
+  }
+}

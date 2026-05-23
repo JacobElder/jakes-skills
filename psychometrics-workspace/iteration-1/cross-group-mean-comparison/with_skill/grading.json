@@ -1,0 +1,50 @@
+{
+  "run_id": "cross-group-mean-comparison-with_skill",
+  "eval_id": 3,
+  "eval_name": "cross-group-mean-comparison",
+  "config": "with_skill",
+  "passed": 8,
+  "total": 8,
+  "expectations": [
+    {
+      "text": "States that t-test on sum scores is not adequate without first testing measurement invariance",
+      "passed": true,
+      "evidence": "Opening paragraph explicitly states: 'no, you cannot just do a t-test on sum scores' and explains that sum scores are only comparable 'if the PHQ-9 measures depression in the same way in both countries — and that is an empirical claim you have not yet tested.'"
+    },
+    {
+      "text": "Explains the configural → metric → scalar invariance sequence",
+      "passed": true,
+      "evidence": "The response walks through all three steps explicitly under 'What you need to establish first: measurement invariance' — configural (Step 1), metric/weak (Step 2), and scalar/strong (Step 3), with explanation of what each level tests."
+    },
+    {
+      "text": "Identifies scalar invariance as the level required for mean comparison",
+      "passed": true,
+      "evidence": "Step 3 states: 'If scalar holds: observed mean differences reflect true latent mean differences. This is the level you need to justify comparing means via t-test or anything else.' Summary table also maps 'Compare mean depression between countries' to 'Scalar (strong) measurement invariance.'"
+    },
+    {
+      "text": "Mentions partial scalar invariance as a fallback when full scalar fails",
+      "passed": true,
+      "evidence": "Under 'What if scalar invariance fails?' Option A describes partial scalar invariance: 'Identify the specific items whose thresholds differ across countries...free those thresholds, and constrain the rest. This is partial scalar invariance (Byrne, Shavelson & Muthén, 1989).'"
+    },
+    {
+      "text": "Names lavaan, semTools, measEq.syntax, or measurementInvariance function",
+      "passed": true,
+      "evidence": "R code examples use both lavaan (cfa function) and semTools (measEq.syntax function). The text also references lavTestLRT for model comparison."
+    },
+    {
+      "text": "Mentions that ordinal/Likert items may need WLSMV estimator or threshold-based testing",
+      "passed": true,
+      "evidence": "'The PHQ-9 has 9 ordinal items (0–3). For ordinal data with this many response categories, you should use the WLSMV estimator with ordered indicators' and 'The invariance framework for ordinal data tests thresholds (the cut points between response categories) rather than simple intercepts.'"
+    },
+    {
+      "text": "Either mentions PHQ-9 cross-cultural invariance issues specifically OR flags that translated mental-health scales commonly have invariance problems",
+      "passed": true,
+      "evidence": "The PHQ-9 section explicitly states: 'Scalar invariance frequently fails or is only partial across country or language groups. Specific items (particularly the suicidal ideation item, sleep and appetite items) often show cross-cultural non-invariance.' Also notes the PHQ-9 was developed for U.S. primary care and subsequent translations don't guarantee scalar invariance."
+    },
+    {
+      "text": "Does not greenlight a t-test on sum scores without invariance testing",
+      "passed": true,
+      "evidence": "The response opens with 'no, you cannot just do a t-test on sum scores' and consistently frames the t-test as only valid after establishing invariance. The summary section reinforces: 'Do the invariance testing first. If scalar holds, your t-test...is interpretable. If it doesn't, you have more informative work to do.'"
+    }
+  ]
+}

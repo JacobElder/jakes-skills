@@ -1,0 +1,45 @@
+{
+  "run_id": "alpha-misinterpretation-without_skill",
+  "eval_id": 1,
+  "eval_name": "alpha-misinterpretation",
+  "config": "without_skill",
+  "passed": 7,
+  "total": 7,
+  "expectations": [
+    {
+      "text": "States that alpha does not measure unidimensionality",
+      "passed": true,
+      "evidence": "'Cronbach's alpha is a measure of internal consistency, not dimensionality. A scale can have high alpha while being clearly multidimensional... Citing alpha as evidence of unidimensionality is a category error.'"
+    },
+    {
+      "text": "Mentions that alpha is driven by k (number of items) and mean inter-item correlation, so long scales can have high alpha despite multidimensionality",
+      "passed": true,
+      "evidence": "'Alpha is a function of two things: the number of items (k) and the mean inter-item correlation (r̄). The Spearman-Brown formula makes this explicit. A 20-item scale with modest average inter-item correlations can easily hit α = .87.'"
+    },
+    {
+      "text": "Recommends or names McDonald's omega (omega-total and/or omega-hierarchical) as a better reliability estimator",
+      "passed": true,
+      "evidence": "'McDonald's omega (ω) is a superior reliability coefficient. Omega-total (ω_t) estimates the proportion of scale variance attributable to all common factors, while omega-hierarchical (ω_h) estimates variance attributable specifically to the general factor after accounting for group factors.'"
+    },
+    {
+      "text": "Recommends EFA, CFA, or parallel analysis to test unidimensionality",
+      "passed": true,
+      "evidence": "'the authors need factor-analytic evidence: exploratory factor analysis (EFA) with parallel analysis to determine the number of factors, or a confirmatory factor analysis (CFA) comparing a one-factor model to plausible multi-factor alternatives.'"
+    },
+    {
+      "text": "Frames reliability as sample-specific (e.g., 'in this sample') rather than a property of the scale",
+      "passed": true,
+      "evidence": "'Alpha = .87 is an estimate in this particular sample. It is not a fixed property of the scale. A different sample — different occupational context, different variance in the construct — could yield meaningfully different values.'"
+    },
+    {
+      "text": "Raises a question about the construct definition or whether 'workplace flourishing' is defined to be unidimensional",
+      "passed": true,
+      "evidence": "'\"Workplace flourishing\" is a broad, potentially multidimensional construct — it might plausibly span hedonic wellbeing, engagement, meaning, relationships, and growth. Before treating it as a single composite, the authors should justify theoretically why flourishing is unidimensional.'"
+    },
+    {
+      "text": "Does not endorse alpha = .87 as sufficient evidence on its own",
+      "passed": true,
+      "evidence": "'Alpha = .87 on a 20-item scale is not sufficient evidence of reliability (properly understood) or unidimensionality. The authors need: (1) omega coefficients rather than just alpha, (2) factor-analytic tests of dimensionality, and (3) a theoretical justification for treating this construct as unidimensional.'"
+    }
+  ]
+}

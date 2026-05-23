@@ -1,0 +1,52 @@
+{
+  "run_id": "thin-validity-claim-without_skill",
+  "eval_id": 5,
+  "eval_name": "thin-validity-claim",
+  "config": "without_skill",
+  "passed": 7,
+  "total": 7,
+  "expectations": [
+    {
+      "id": 1,
+      "description": "Clearly states the evidence is not adequate (no hedging that obscures the answer)",
+      "passed": true,
+      "evidence": "Opens unambiguously: 'No, that is not adequate evidence to claim construct validity has been established.'"
+    },
+    {
+      "id": 2,
+      "description": "Mentions that validity is about score interpretation/use, not a property checked off",
+      "passed": true,
+      "evidence": "Explicitly states validity 'refers to the degree to which evidence and theory support the interpretation and use of test scores for a specific purpose and population' and that 'you cannot establish validity once and for all.'"
+    },
+    {
+      "id": 3,
+      "description": "Mentions Messick or the 2014 Standards or the unified view of validity",
+      "passed": true,
+      "evidence": "Cites 'Standards for Educational and Psychological Testing (AERA/APA/NCME, 2014)' and its five sources of validity evidence framework."
+    },
+    {
+      "id": 4,
+      "description": "Identifies that one correlation is convergent evidence at most, not full construct validity",
+      "passed": true,
+      "evidence": "States 'A single correlation of r = 0.55 between two self-report measures of the same construct is convergent evidence — and not even particularly strong convergent evidence at that.'"
+    },
+    {
+      "id": 5,
+      "description": "Mentions that both measures being self-report introduces common-method variance",
+      "passed": true,
+      "evidence": "Dedicates a full section to this: 'the observed correlation is inflated by common-method variance — shared variance attributable to the method of measurement... rather than to the construct itself.'"
+    },
+    {
+      "id": 6,
+      "description": "Names MTMM (multitrait-multimethod) or the trait/method variance distinction",
+      "passed": true,
+      "evidence": "Explicitly invokes 'multitrait-multimethod (MTMM) framework,' cites Campbell and Fiske (1959), and discusses the need to separate trait variance from method variance."
+    },
+    {
+      "id": 7,
+      "description": "Mentions at least two additional sources of validity evidence that would be needed",
+      "passed": true,
+      "evidence": "Lists content evidence, internal structure evidence (factor analysis), discriminant evidence, response process evidence, and multi-method measurement as additional sources needed."
+    }
+  ]
+}

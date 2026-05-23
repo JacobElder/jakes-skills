@@ -1,0 +1,26 @@
+No, that is not adequate evidence to claim construct validity has been "established."
+
+A single correlation of r = 0.55 between two self-report measures of the same construct is convergent evidence — and not even particularly strong convergent evidence at that. Claiming it establishes construct validity reflects several serious misunderstandings about what validity is and how it is evaluated.
+
+**What's wrong with this claim:**
+
+1. **Validity is not a property of a scale that gets "established" and checked off.** Validity — in the modern sense articulated in the Standards for Educational and Psychological Testing (AERA/APA/NCME, 2014) — refers to the degree to which evidence and theory support the interpretation and use of test scores for a specific purpose and population. You cannot establish validity once and for all; you accumulate evidence relevant to specific interpretations and uses. The phrase "construct validity was established" misrepresents how validity works.
+
+2. **One convergent correlation is one piece of evidence from one source.** The 2014 Standards identify multiple sources of validity evidence: (a) content evidence (item relevance, representativeness, expert review), (b) response process evidence (are respondents interpreting items as intended?), (c) internal structure evidence (does the factor structure match the construct theory?), (d) relations to other variables (convergent and discriminant relationships), and (e) consequences of testing. A single correlation with another measure addresses only one narrow aspect of source (d). The other sources have not been touched.
+
+3. **Both measures being self-report is a serious problem.** When you correlate two self-report questionnaires, the observed correlation is inflated by common-method variance — shared variance attributable to the method of measurement (self-report, single occasion, similar response format) rather than to the construct itself. The r = 0.55 may partly or substantially reflect that both measures share rater/source and response format, not that they both capture the target construct. This is the classic common-method bias problem.
+
+4. **Convergent validity must be evaluated alongside discriminant validity within the multitrait-multimethod (MTMM) framework.** Campbell and Fiske (1959) established the logical requirement: to claim a measure captures a trait, you need to show it correlates more highly with other measures of the same trait (convergent) than with measures of different traits using the same method (discriminant within-method) or the same trait using different methods. Without an MTMM matrix — or at minimum a CFA-MTMM model that separates trait variance from method variance — you cannot know whether r = 0.55 reflects trait overlap, method overlap, or both. The failure to even mention discriminant evidence is a major gap.
+
+5. **The magnitude r = 0.55 is also not particularly impressive for two measures allegedly of the same construct.** This leaves 70% of variance unshared. Depending on expected reliability attenuation, this could be consistent with solid convergent evidence — or it could indicate the measures are capturing related but not identical things. Context matters, but a bare r without correcting for attenuation or acknowledging what it leaves unexplained is incomplete.
+
+**What would be needed:**
+
+To mount a credible validity argument, the authors would need at minimum:
+- Content evidence: systematic expert review, judgment of item relevance and representativeness to the construct domain
+- Internal structure evidence: factor analysis showing the items cohere in a way consistent with the construct theory
+- Discriminant evidence: demonstration that the scale does NOT correlate as highly with conceptually distinct constructs (especially using a different method to rule out method artifacts)
+- Response process evidence: cognitive interviews or think-aloud data showing respondents interpret items as the authors intend
+- Ideally, multi-method measurement (e.g., peer report, behavioral observation, or physiological index if appropriate) to disentangle trait and method variance via MTMM
+
+A single same-method convergent correlation is a starting point, not a destination. The authors should revise the claim to something like "preliminary evidence of convergent validity with [scale X]" and acknowledge the limitations noted above.
