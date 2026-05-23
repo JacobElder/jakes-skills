@@ -1,0 +1,29 @@
+Yes, there are several important issues worth pushing back on here.
+
+**Alpha does not measure unidimensionality**
+
+This is the most critical point: Cronbach's alpha is a measure of internal consistency, not dimensionality. A scale can have high alpha while being clearly multidimensional. Alpha indexes the average inter-item covariance relative to total variance — it tells you items are intercorrelated, but not *why* they're intercorrelated or whether a single factor explains those correlations. Citing alpha as evidence of unidimensionality is a category error that persists widely in the literature but is simply incorrect.
+
+**Alpha is inflated by scale length**
+
+Alpha is a function of two things: the number of items (k) and the mean inter-item correlation (r̄). The Spearman-Brown formula makes this explicit. A 20-item scale with modest average inter-item correlations can easily hit α = .87. That same mean inter-item correlation on a 5-item scale might yield α ≈ .60. So the impressive-looking .87 is partly an artifact of having 20 items. Reviewers should look at the mean inter-item correlation directly (a value of ~.20–.25 across 20 items would produce α ≈ .87, which is not particularly impressive at the item level).
+
+**Better reliability estimators exist**
+
+McDonald's omega (ω) is a superior reliability coefficient. Omega-total (ω_t) estimates the proportion of scale variance attributable to all common factors, while omega-hierarchical (ω_h) estimates variance attributable specifically to the general factor after accounting for group factors. If the scale truly has a dominant general factor, ω_h will be close to ω_t. If they diverge substantially, that's evidence of multidimensionality that alpha would have masked. The authors should report both.
+
+**Unidimensionality should be tested structurally**
+
+To actually test whether the scale is unidimensional, the authors need factor-analytic evidence: exploratory factor analysis (EFA) with parallel analysis to determine the number of factors, or a confirmatory factor analysis (CFA) comparing a one-factor model to plausible multi-factor alternatives. Fit indices (CFI, RMSEA, SRMR) for a single-factor CFA would directly speak to whether one latent variable adequately explains item covariances.
+
+**Reliability is sample-specific, not a scale property**
+
+Alpha = .87 is an estimate in this particular sample. It is not a fixed property of the scale. A different sample — different occupational context, different variance in the construct — could yield meaningfully different values. The framing "the scale is reliable" as if it's a certified property is overreaching; the correct statement is something like "in this sample, internal consistency was high."
+
+**The construct definition matters**
+
+"Workplace flourishing" is a broad, potentially multidimensional construct — it might plausibly span hedonic wellbeing, engagement, meaning, relationships, and growth. Before treating it as a single composite, the authors should justify theoretically why flourishing is unidimensional, or alternatively use a bifactor model that allows a general flourishing factor alongside specific subdomain factors. Using a unit-weighted composite when the construct is multifactorial can obscure differential relationships with outcomes.
+
+**Bottom line**
+
+Alpha = .87 on a 20-item scale is not sufficient evidence of reliability (properly understood) or unidimensionality. The authors need: (1) omega coefficients rather than just alpha, (2) factor-analytic tests of dimensionality, and (3) a theoretical justification for treating this construct as unidimensional.

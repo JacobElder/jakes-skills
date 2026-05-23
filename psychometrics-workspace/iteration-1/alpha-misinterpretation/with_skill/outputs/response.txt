@@ -1,0 +1,45 @@
+Yes, several things to push back on — and the core problem is that the paper is using alpha to establish two claims with a single number, but alpha can't actually do either job on its own.
+
+---
+
+**1. Alpha does not measure unidimensionality. Full stop.**
+
+This is the single most common misuse of coefficient alpha in applied papers. Alpha is driven by the quantity k × r̄ — the number of items times the mean inter-item correlation. A 20-item scale with moderate average inter-item correlations will produce high alpha even if those items are measuring two, three, or four distinct dimensions. The math doesn't care whether the items share a single latent factor or a bouquet of correlated ones. Reporting alpha = .87 and calling it evidence of unidimensionality is a category error. It isn't.
+
+Unidimensionality is a structural question, not a reliability question. It has to be tested separately with factor analysis — EFA if the structure is unknown or exploratory, CFA if you're testing a specific hypothesis. Before the paper reports any reliability coefficient, it should show a parallel analysis (psych::fa.parallel() is the standard), a scree plot, and either an EFA or CFA. If those analyses support a single dominant factor, then the unidimensionality claim is defensible. Without them, citing alpha doesn't come close.
+
+**2. With 20 items, alpha = .87 can easily be spuriously inflated.**
+
+The Spearman-Brown prophecy and the algebra of alpha guarantee that adding items inflates alpha even if the new items are weaker or measuring something slightly different. A 20-item scale has a lot of alpha-inflating leverage. The paper should report the mean inter-item correlation alongside alpha — r̄ around .25–.30 is typical for a well-constructed scale. If r̄ is much lower (say .15), alpha = .87 is being driven by item count, not shared variance, and should raise flags rather than inspire confidence.
+
+**3. Alpha is the wrong reliability estimator here — use McDonald's omega.**
+
+Alpha is a lower bound on reliability only under the assumption of tau-equivalence: that every item has an equal true-score loading on the construct. This is almost never true in practice and is especially unlikely for a rich, multifaceted construct like "workplace flourishing." Under the more realistic congeneric model (loadings differ across items), alpha underestimates reliability, and McDonald's omega is the correct estimator.
+
+Specifically:
+- **Omega-total (ω_t)** = proportion of total-score variance attributable to all common variance (general + group factors). This is the right reliability estimate for a composite score.
+- **Omega-hierarchical (ω_h)** = proportion attributable to the general factor alone. This tells you how well-justified the single total score is. If ω_h is substantially lower than ω_t, the scale has group-factor variance that contaminates the total score — the single composite is not cleanly interpretable as "flourishing."
+
+In R: psych::omega() on raw data, or semTools::compRelSEM() from a fitted lavaan CFA model. If the authors haven't computed these, reviewer push-back is warranted. Reporting omega alongside alpha (not instead of) is now standard in methodologically careful journals.
+
+**4. The construct definition deserves scrutiny.**
+
+"Workplace flourishing" is a construct with real theoretical ambiguity. Flourishing in the positive psychology tradition (Keyes, Huppert & So, Seligman's PERMA) is explicitly multidimensional — it encompasses hedonic well-being, engagement, meaning, relationships, and accomplishment, none of which are obviously reducible to a single latent variable. If the paper is treating 20 items about these multiple facets as a single composite and justifying that with alpha, the reviewers should ask: is there a theoretical rationale for unidimensionality in the first place? What theory of workplace flourishing predicts that a general factor accounts for most item variance? Without that argument, the single composite is a measurement convenience, not a validated construct.
+
+This is the construct definition question: what is "workplace flourishing" that it should be unidimensional, and what's explicitly not part of it?
+
+**5. Reliability is a property of scores in this sample, not the scale.**
+
+A smaller but real issue: the paper presumably phrases this as "the scale has alpha = .87" or "the scale is reliable (α = .87)." That framing is wrong. Reliability is a property of scores in a specific sample, not an intrinsic property of the instrument. The correct framing is "in this sample, alpha was .87." If the scale is used in a different population (different occupation, country, age range), reliability should be re-estimated — it will likely differ. Treating .87 as a fixed property of the scale licenses its use in contexts where the actual reliability is unknown.
+
+---
+
+**Summary of what to ask for:**
+
+1. Show the dimensionality analysis: parallel analysis + scree, and either EFA (if exploratory) or CFA (if confirmatory) with factor loadings. Alpha comes after, not instead of, this step.
+2. Report McDonald's omega (omega-total and omega-hierarchical) in addition to alpha. If it's a bifactor or multidimensional structure, omega-hierarchical is the key number for the total score.
+3. Report mean inter-item correlation alongside alpha so readers can see whether .87 is being driven by item count or genuine covariance.
+4. Articulate the theoretical basis for treating workplace flourishing as unidimensional — or, if the construct is multidimensional, use subscale scores and report subscale-level reliability.
+5. Frame reliability as sample-specific: "alpha was .87 in this sample."
+
+Alpha = .87 is not bad, but on its own it doesn't establish reliability (because omega is the right estimator) and it certainly doesn't establish unidimensionality (because nothing about alpha's formula involves factor structure). The paper is over-claiming from a single number.

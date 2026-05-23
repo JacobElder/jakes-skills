@@ -1,0 +1,157 @@
+{
+  "skill_name": "psychometrics",
+  "_comment": "Trigger evals test whether the skill description causes the skill to fire on appropriate queries (should_trigger=true) and stay quiet on inappropriate ones (should_trigger=false). Run via `run_eval.py` or `run_loop.py` in Claude Code. On Claude.ai, used as a checklist for manual review.",
+  "_format": "Each query is run multiple times (typically 3) to estimate a trigger rate. Aim for >80% on should_trigger=true and <20% on should_trigger=false.",
+  "queries": [
+    {
+      "id": 1,
+      "query": "My alpha is .68. Is that good?",
+      "should_trigger": true,
+      "rationale": "Direct reliability question; classic case for the skill."
+    },
+    {
+      "id": 2,
+      "query": "How do I run a CFA in lavaan?",
+      "should_trigger": true,
+      "rationale": "Explicit psychometric method + named package."
+    },
+    {
+      "id": 3,
+      "query": "What's measurement invariance and when do I need it?",
+      "should_trigger": true,
+      "rationale": "Core psychometric concept."
+    },
+    {
+      "id": 4,
+      "query": "I'm building a survey to measure user trust. Help me think through the design.",
+      "should_trigger": true,
+      "rationale": "Scale development task; primary use case."
+    },
+    {
+      "id": 5,
+      "query": "Should I use Cronbach's alpha or omega for my scale?",
+      "should_trigger": true,
+      "rationale": "Reliability index choice — exactly what the skill answers opinionatedly."
+    },
+    {
+      "id": 6,
+      "query": "What does it mean if my factor loadings are around 0.4? Should I drop those items?",
+      "should_trigger": true,
+      "rationale": "Factor analysis interpretation."
+    },
+    {
+      "id": 7,
+      "query": "I want to test if the Big Five structure replicates in my sample. What should I do?",
+      "should_trigger": true,
+      "rationale": "Names an instrument family (Big Five) and asks a CFA-style question."
+    },
+    {
+      "id": 8,
+      "query": "Help me interpret these modification indices.",
+      "should_trigger": true,
+      "rationale": "Direct SEM/CFA jargon — the skill has an opinion about MIs."
+    },
+    {
+      "id": 9,
+      "query": "Can I just sum the Likert items to get a total score?",
+      "should_trigger": true,
+      "rationale": "Likert + scoring question; touches dimensionality, reliability, and IRT alternatives."
+    },
+    {
+      "id": 10,
+      "query": "Reviewing a paper that says their PHQ-9 has good validity because alpha was .85. Thoughts?",
+      "should_trigger": true,
+      "rationale": "Names instrument + validity + alpha — perfect storm of psychometric misuse."
+    },
+    {
+      "id": 11,
+      "query": "What's a Rasch model?",
+      "should_trigger": true,
+      "rationale": "Core IRT concept."
+    },
+    {
+      "id": 12,
+      "query": "I have ratings from 3 coders on 100 transcripts. How do I report interrater reliability?",
+      "should_trigger": true,
+      "rationale": "Interrater reliability — ICC vs. kappa territory."
+    },
+    {
+      "id": 13,
+      "query": "DIF analysis for gender on a math test — what's the recommended approach?",
+      "should_trigger": true,
+      "rationale": "DIF — squarely in scope."
+    },
+    {
+      "id": 14,
+      "query": "Why is my CFI only .87? My loadings look fine.",
+      "should_trigger": true,
+      "rationale": "CFA fit diagnosis."
+    },
+    {
+      "id": 15,
+      "query": "Generalizability theory — when would I use it instead of just computing ICC?",
+      "should_trigger": true,
+      "rationale": "G theory question."
+    },
+    {
+      "id": 16,
+      "query": "How do I make a histogram in ggplot2?",
+      "should_trigger": false,
+      "rationale": "Pure data viz; nothing psychometric."
+    },
+    {
+      "id": 17,
+      "query": "What's the difference between supervised and unsupervised learning?",
+      "should_trigger": false,
+      "rationale": "ML question; not measurement theory."
+    },
+    {
+      "id": 18,
+      "query": "Recommend a good NYC ramen place in Brooklyn.",
+      "should_trigger": false,
+      "rationale": "Completely off-topic."
+    },
+    {
+      "id": 19,
+      "query": "I want to run a t-test comparing my treatment and control groups on age. Is age normally distributed enough?",
+      "should_trigger": false,
+      "rationale": "Statistics question, but not measurement. Age isn't a latent construct."
+    },
+    {
+      "id": 20,
+      "query": "Help me write a SQL query to join two tables.",
+      "should_trigger": false,
+      "rationale": "Programming task."
+    },
+    {
+      "id": 21,
+      "query": "Should I use Likert or slider scales for my UX survey?",
+      "should_trigger": true,
+      "rationale": "Survey design — item format question is in scope."
+    },
+    {
+      "id": 22,
+      "query": "What's a polychoric correlation and when do I need one?",
+      "should_trigger": true,
+      "rationale": "Direct psychometric concept."
+    },
+    {
+      "id": 23,
+      "query": "I'm comparing depression scores across age groups. Anything I should watch out for?",
+      "should_trigger": true,
+      "rationale": "Cross-group construct comparison — invariance trap. Worded subtly without using 'invariance' itself."
+    },
+    {
+      "id": 24,
+      "query": "What's the right sample size for an EFA?",
+      "should_trigger": true,
+      "rationale": "Sample size for factor analysis."
+    },
+    {
+      "id": 25,
+      "query": "If a scale was 'validated' in the US, can I use it in Japan without revalidation?",
+      "should_trigger": true,
+      "rationale": "Cross-cultural validity — invariance + validation transfer."
+    }
+  ]
+}

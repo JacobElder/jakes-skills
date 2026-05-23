@@ -33,7 +33,9 @@
       "Bash(npm view *)",
       "Bash(npx skills *)",
       "WebFetch(domain:www.bogleheads.org)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Read(//private/tmp/psychometrics-unzip/psychometrics/**)",
+      "Read(//private/tmp/psychometrics-unzip/psychometrics/references/**)"
     ]
   }
 }

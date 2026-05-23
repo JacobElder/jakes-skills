@@ -1,0 +1,129 @@
+{
+  "skill_name": "psychometrics",
+  "_comment": "Behavior evals test whether responses, when the skill fires, exhibit the right psychometric reasoning. Each expectation is objectively checkable from the response text. Trigger evals (does the skill fire?) are in trigger_evals.json.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "alpha-misinterpretation",
+      "prompt": "I'm reviewing a paper that reports Cronbach's alpha = 0.87 for a 20-item scale they call 'workplace flourishing' and uses as a single composite. They cite this as evidence the scale is reliable and unidimensional. Anything to push back on?",
+      "expected_output": "A response that diagnoses the alpha-as-evidence-of-unidimensionality misuse, names omega as the better estimator, asks for dimensionality evidence, and frames reliability as sample-specific.",
+      "expectations": [
+        "States that alpha does not measure unidimensionality",
+        "Mentions that alpha is driven by k (number of items) and mean inter-item correlation, so long scales can have high alpha despite multidimensionality",
+        "Recommends or names McDonald's omega (omega-total and/or omega-hierarchical) as a better reliability estimator",
+        "Recommends EFA, CFA, or parallel analysis to test unidimensionality",
+        "Frames reliability as sample-specific (e.g., 'in this sample') rather than a property of the scale",
+        "Raises a question about the construct definition or whether 'workplace flourishing' is defined to be unidimensional",
+        "Does not endorse alpha = .87 as sufficient evidence on its own"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "survey-design-workflow",
+      "prompt": "I'm designing a new 8-item survey to measure 'product trust.' Each item is a 7-point Likert. We have ~600 participants in a pilot. What analyses would you recommend, and what mistakes should I avoid?",
+      "expected_output": "A structured workflow covering descriptives, dimensionality, EFA, reliability, and ideally CFA on holdout. R code with psych/lavaan. Common-mistake warnings.",
+      "expectations": [
+        "Recommends parallel analysis (e.g., psych::fa.parallel) for determining number of factors",
+        "Recommends polychoric correlations for the Likert data (e.g., cor='poly' or psych::polychoric)",
+        "Recommends oblique rotation (oblimin, promax) rather than orthogonal/varimax",
+        "Recommends omega (in addition to or instead of alpha) for reliability",
+        "Mentions splitting the sample or using an independent sample for CFA after EFA",
+        "Warns against eigenvalue > 1 rule for selecting number of factors",
+        "Mentions cognitive interviews, pilot/pretesting, or content review as a step",
+        "Includes at least one R code example with psych or lavaan",
+        "Mentions that 600 N is adequate for EFA and CFA with this scale size"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "cross-group-mean-comparison",
+      "prompt": "I have PHQ-9 depression data collected from two countries and I want to compare mean depression levels between them. The scale has decent published reliability. Can I just do a t-test on the sum scores?",
+      "expected_output": "A clear 'not yet' answer, an explanation of measurement invariance, the configural/metric/scalar sequence, and concrete R code or guidance.",
+      "expectations": [
+        "States that t-test on sum scores is not adequate without first testing measurement invariance",
+        "Explains the configural → metric → scalar invariance sequence",
+        "Identifies scalar invariance as the level required for mean comparison",
+        "Mentions partial scalar invariance as a fallback when full scalar fails",
+        "Names lavaan, semTools, measEq.syntax, or measurementInvariance function",
+        "Mentions that ordinal/Likert items may need WLSMV estimator or threshold-based testing",
+        "Either mentions PHQ-9 cross-cultural invariance issues specifically OR flags that translated mental-health scales commonly have invariance problems",
+        "Does not greenlight a t-test on sum scores without invariance testing"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "rasch-vs-2pl-choice",
+      "prompt": "What's the actual difference between a Rasch model and a 2PL model, and how would I decide which to use for my 30-item knowledge test (N = 800 students)?",
+      "expected_output": "Explanation that goes beyond '1 parameter vs 2 parameters' and frames the choice as substantive, not just model fit. R code in mirt. Mention of information functions.",
+      "expectations": [
+        "Explains Rasch as equal-discrimination across items, while 2PL allows discriminations to vary",
+        "Frames the Rasch vs. 2PL choice as a substantive measurement-philosophy decision, not just an AIC/BIC comparison",
+        "Mentions specific objectivity or sample-independence as a property of the Rasch model",
+        "States that N = 800 is adequate for 2PL (or for either model)",
+        "Provides mirt R code example (mirt::mirt with itemtype='Rasch' and/or '2PL')",
+        "Mentions item information function (IIF) or test information function (TIF)",
+        "Does not recommend 3PL as a default for a knowledge test without considering whether guessing is substantively relevant"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "thin-validity-claim",
+      "prompt": "A scale paper claims 'construct validity was established' because their scale correlated r = 0.55 with another self-report measure of the same construct. Is that adequate?",
+      "expected_output": "Clear 'no' answer, explanation of unified validity framework, mention of method variance / MTMM, mention of multiple sources of evidence.",
+      "expectations": [
+        "Clearly states the evidence is not adequate (no hedging that obscures the answer)",
+        "Mentions that validity is about score interpretation/use, not a property checked off",
+        "Mentions Messick or the 2014 Standards or the unified view of validity",
+        "Identifies that one correlation is convergent evidence at most, not full construct validity",
+        "Mentions that both measures being self-report introduces common-method variance",
+        "Names MTMM (multitrait-multimethod) or the trait/method variance distinction",
+        "Mentions at least two additional sources of validity evidence that would be needed (content, response processes, internal structure, discriminant, predictive, etc.)"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "modification-index-trap",
+      "prompt": "My CFA model has poor fit (CFI = .89, RMSEA = .08). The modification indices suggest adding three correlated residuals and one cross-loading, which would bring CFI up to .95. Should I just add those and report the improved model?",
+      "expected_output": "A clear warning about MI-chasing, capitalization on chance, and the importance of substantive justification and replication.",
+      "expectations": [
+        "Warns against adding modifications purely to improve fit (MI-chasing)",
+        "Uses or invokes the concept of 'capitalization on chance' or 'overfit' or 'sample-specific'",
+        "Recommends substantive justification for any modification (e.g., similar item wording, method effects)",
+        "Recommends cross-validation, replication, or holdout sample if modifications are made",
+        "States that the resulting model should be characterized as exploratory/respecified, not confirmatory",
+        "Suggests examining standardized residuals to understand WHERE the model misfits, not just global indices",
+        "Does not endorse adding the MIs without any caveats"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "icc-vs-kappa",
+      "prompt": "I have two clinicians rating patients on a 5-point severity scale across 50 patients. I want to know their interrater reliability. Should I use Cohen's kappa or ICC?",
+      "expected_output": "Clear recommendation of ICC (since continuous-ish ratings), explanation of which ICC variant, and the agreement vs. reliability distinction.",
+      "expectations": [
+        "Recommends ICC over Cohen's kappa for this case (continuous/ordinal ratings, not pure categorical)",
+        "Mentions that Cohen's kappa is for categorical agreement, while ICC is for continuous reliability",
+        "Mentions that there are multiple ICC variants (Shrout & Fleiss labels 1/2/3 OR McGraw-Wong A/C, single vs. average)",
+        "Recommends a specific ICC type with rationale (e.g., ICC(2,1) absolute agreement if generalizing to other clinicians)",
+        "Distinguishes between absolute agreement and consistency, OR between single-rater and average-rater ICC",
+        "Mentions psych::ICC() or a comparable function",
+        "Optionally mentions that for ordinal data weighted kappa is an alternative if you want kappa specifically"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "efa-on-likert-defaults",
+      "prompt": "I'm running EFA on 25 Likert items in R. What's a sensible default call to psych::fa()?",
+      "expected_output": "A psych::fa() call with polychoric correlations, oblique rotation, and minres or ML extraction. Brief justification.",
+      "expectations": [
+        "Recommends polychoric correlations (cor='poly' argument or similar)",
+        "Recommends oblique rotation (oblimin or promax) rather than varimax",
+        "Provides a code example with fa() and reasonable arguments",
+        "Mentions parallel analysis (fa.parallel) for determining factor count before running fa()",
+        "Mentions an extraction method (minres or ml) with brief justification",
+        "Does not default to varimax rotation",
+        "Does not default to Pearson correlations for Likert data without flagging it"
+      ]
+    }
+  ]
+}
