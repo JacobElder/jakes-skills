@@ -1,13 +1,13 @@
 {
   "skill_name": "nilearn-fmri",
-  "_note": "Evals use bundled synthetic fixtures (see files/make_fixtures.py and files/make_extra_fixtures.py) rather than nilearn.datasets fetchers, because Anthropic's sandbox blocks the CDN hosts the fetchers download from. End users with normal internet should use the built-in fetchers — the skill recommends them by default.",
+  "_note": "Evals use bundled synthetic fixtures (see files/make_fixtures.py, files/make_extra_fixtures.py, files/make_tier1_fixtures.py) rather than nilearn.datasets fetchers, because Anthropic's sandbox blocks the CDN hosts the fetchers download from. End users with normal internet should use the built-in fetchers — the skill recommends them by default.",
   "evals": [
     {
       "id": 1,
       "name": "glm_first_level_block_design",
-      "prompt": "I have a small task-fMRI dataset and I want to fit a first-level GLM. The BOLD file is at evals/files/glm/bold.nii.gz with TR=7s, the events are in evals/files/glm/events.tsv (a single trial type called 'active' in a block design), and there's a brain mask at evals/files/glm/brain_mask.nii.gz. Please fit the model, compute the contrast for 'active' vs baseline, save the z-map and a glass-brain visualization to ./results_glm/, and tell me what z-range you saw. Also generate an HTML report.",
+      "prompt": "I have a small task-fMRI dataset and I want to fit a first-level GLM. The BOLD file is at evals/files/glm/bold.nii.gz with TR=7s, the events are in evals/files/glm/events.tsv (a single trial type called 'active' in a block design), and there's a brain mask at evals/files/glm/brain_mask.nii.gz. Please fit the model, compute the contrast for 'active' vs baseline, save the z-map and a glass-brain visualization to ./results_glm/, and tell me what z-range you saw. Also generate an HTML report and save the design matrix as a PNG.",
       "files": ["evals/files/glm/bold.nii.gz", "evals/files/glm/events.tsv", "evals/files/glm/brain_mask.nii.gz"],
-      "expected_output": "A working FirstLevelModel fit on the provided fixture, with t_r=7 set explicitly, the 'active' contrast computed and saved as a NIfTI, glass-brain PNG saved, HTML report saved, and a written summary that includes the actual z-range observed.",
+      "expected_output": "A working FirstLevelModel fit on the provided fixture, with t_r=7 set explicitly, the 'active' contrast computed and saved as a NIfTI, glass-brain PNG saved, HTML report generated via model.generate_report() (not deprecated make_glm_report), design matrix plot saved, smoothing_fwhm documented, and a written summary that includes the actual z-range observed.",
       "expectations": [
         "Reads bold.nii.gz from evals/files/glm/ (does not invent a different path or call a nilearn dataset fetcher)",
         "Loads events.tsv as a DataFrame with onset, duration, trial_type columns",
@@ -16,7 +16,9 @@
         "Calls .compute_contrast('active', ...) (or equivalent) and gets a z-map",
         "Saves at least one .nii.gz file to ./results_glm/",
         "Saves at least one .png file (e.g., glass brain or stat map) to ./results_glm/",
-        "Generates an HTML report (e.g., via make_glm_report)",
+        "Generates HTML report using model.generate_report() — not the deprecated standalone make_glm_report function",
+        "Saves design matrix visualization using plot_design_matrix to ./results_glm/",
+        "Documents smoothing_fwhm: explicitly sets it (e.g., smoothing_fwhm=5.0) or explicitly states no smoothing was applied",
         "Reports the actual z-range in the response text (not a placeholder)",
         "Uses standardize=False (or omits it; the default is False for FirstLevelModel) and not the deprecated 'True' value for any maskers used"
       ]
@@ -189,6 +191,196 @@
         "Combined model peak z-score should be >= single-run peak (more data = more power)",
         "Saves z-maps as .nii.gz in ./multirun_out/",
         "Saves glass-brain PNGs to ./multirun_out/"
+      ]
+    },
+    {
+      "id": 9,
+      "name": "atlas_space_mismatch_resampling",
+      "prompt": "I have resting-state BOLD at evals/files/space_mismatch/bold.nii.gz (4mm voxels, TR=2s, 150 volumes) and a 6-region label atlas at evals/files/space_mismatch/atlas_2mm.nii.gz — note that the atlas is at 2mm resolution while the BOLD is 4mm (different affine and shape). Confounds are in evals/files/space_mismatch/confounds.tsv. Extract per-region timeseries using NiftiLabelsMasker and compute a 6×6 correlation matrix. Handle the space mismatch so you don't get a shape error or a wrong number of regions. Save a heatmap of the correlation matrix to ./space_out/.",
+      "files": [
+        "evals/files/space_mismatch/bold.nii.gz",
+        "evals/files/space_mismatch/atlas_2mm.nii.gz",
+        "evals/files/space_mismatch/confounds.tsv",
+        "evals/files/space_mismatch/atlas_labels.csv"
+      ],
+      "expected_output": "Atlas resampled to BOLD space before masker, NiftiLabelsMasker extracts timeseries of shape (150, 6), correlation matrix shape (6, 6) with known structure, heatmap saved to ./space_out/.",
+      "expectations": [
+        "Detects or explicitly handles the space mismatch (atlas 2mm vs BOLD 4mm — different affine/shape)",
+        "Uses nilearn.image.resample_to_img(atlas, bold_img, interpolation='nearest') to resample the label atlas to BOLD space (or equivalent resampling before masking)",
+        "Uses NiftiLabelsMasker (not NiftiMapsMasker — atlas is discrete labels)",
+        "Constructs masker with t_r=2.0 explicitly",
+        "Uses standardize='zscore_sample' (not deprecated True)",
+        "Passes confounds to fit_transform",
+        "Produces timeseries of shape (150, 6) — 6 regions, not 1 or some other number",
+        "Uses ConnectivityMeasure with kind='correlation' to compute the 6×6 matrix",
+        "Saves a heatmap PNG to ./space_out/"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "glm_multicontrast_face_house",
+      "prompt": "I have a two-condition event-related fMRI task: BOLD at evals/files/glm_multicontrast/bold.nii.gz (TR=2s, 120 volumes), events at evals/files/glm_multicontrast/events.tsv (trial_type column contains 'face' and 'house'), brain mask at evals/files/glm_multicontrast/brain_mask.nii.gz. Fit a first-level GLM and compute three contrasts: (1) face > house, (2) house > face, and (3) an F-contrast testing whether face OR house differs from baseline (i.e., the omnibus test for any task effect). Save all three stat maps and glass-brain plots to ./multicontrast_out/. Report the peak stat value for each.",
+      "files": [
+        "evals/files/glm_multicontrast/bold.nii.gz",
+        "evals/files/glm_multicontrast/events.tsv",
+        "evals/files/glm_multicontrast/brain_mask.nii.gz"
+      ],
+      "expected_output": "FirstLevelModel fit with face+house events, three contrasts computed: face>house (t), house>face (t), F-contrast for both conditions. All stat maps saved. Peak stats reported.",
+      "expectations": [
+        "Instantiates FirstLevelModel with t_r=2.0",
+        "Fits model with events.tsv containing both 'face' and 'house' trial_types",
+        "Computes face > house contrast using string formula ('face - house') or contrast vector",
+        "Computes house > face contrast",
+        "Computes an F-contrast testing both face and house vs baseline — not just a t-test on 'face + house'",
+        "F-contrast uses a 2D numpy contrast matrix (two rows) or the 'effects of interest' string with stat_type='F'",
+        "Saves at least 3 stat map .nii.gz files to ./multicontrast_out/",
+        "Saves glass-brain PNGs for at least 2 contrasts to ./multicontrast_out/",
+        "Reports peak stat for face > house in response text"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "decoder_regressor_continuous_labels",
+      "prompt": "I have 90 trial volumes at evals/files/regression/bold.nii.gz (TR=2s, each volume = one trial). Each trial has a continuous orientation angle (0–180°) in evals/files/regression/labels.csv (columns: 'angle' and 'chunks' for run number, 5 runs of 18 trials). Use the V1 ROI mask at evals/files/regression/v1_mask.nii.gz. Fit a regression decoder to predict the continuous stimulus orientation using leave-one-run-out CV. Report the cross-validated R² score and compare it to chance (R²=0). Save the weight map as a NIfTI and a glass-brain plot to ./regression_out/.",
+      "files": [
+        "evals/files/regression/bold.nii.gz",
+        "evals/files/regression/labels.csv",
+        "evals/files/regression/v1_mask.nii.gz"
+      ],
+      "expected_output": "DecoderRegressor (not Decoder) with SVR or ridge estimator, LeaveOneGroupOut CV, R² metric, weight map saved as NIfTI and plotted.",
+      "expectations": [
+        "Uses nilearn.decoding.DecoderRegressor (not nilearn.decoding.Decoder for classification)",
+        "Uses a regression estimator: estimator='svr' or 'ridge' (not 'svc' or 'logistic')",
+        "Uses v1_mask.nii.gz as the mask= argument",
+        "Uses LeaveOneGroupOut or equivalent group-based CV (not KFold ignoring run structure)",
+        "Passes groups=chunks (run numbers) to decoder.fit()",
+        "Uses standardize='zscore_sample' (not deprecated True)",
+        "Reports the cross-validated R² score (or r_pairwise) in the response text",
+        "Notes that chance R² is 0 (baseline for regression, not 0.5 as in classification)",
+        "Saves weight map as .nii.gz to ./regression_out/",
+        "Saves a glass-brain or stat-map plot as PNG to ./regression_out/"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "connectivity_tangent_space",
+      "prompt": "I have the same 3-subject resting-state data as before: evals/files/connectivity/sub-0{1,2,3}_bold.nii.gz (TR=2s) with confounds and the 6-region atlas. This time compute connectivity using the tangent space method (kind='tangent') instead of Pearson correlation. Explain what the tangent method does differently from correlation and what values you would expect on the diagonal of a tangent matrix. Compute the tangent matrices, report the mean off-diagonal value, and save a heatmap to ./tangent_out/.",
+      "files": [
+        "evals/files/connectivity/sub-01_bold.nii.gz",
+        "evals/files/connectivity/sub-02_bold.nii.gz",
+        "evals/files/connectivity/sub-03_bold.nii.gz",
+        "evals/files/connectivity/sub-01_confounds.tsv",
+        "evals/files/connectivity/sub-02_confounds.tsv",
+        "evals/files/connectivity/sub-03_confounds.tsv",
+        "evals/files/connectivity/atlas.nii.gz"
+      ],
+      "expected_output": "ConnectivityMeasure(kind='tangent') producing (3, 6, 6) matrices; diagonal elements near zero (not 1.0); explanation of tangent space projection; mean off-diagonal reported; heatmap saved.",
+      "expectations": [
+        "Uses NiftiLabelsMasker with t_r=2.0 and standardize='zscore_sample'",
+        "Uses ConnectivityMeasure with kind='tangent' (not kind='correlation')",
+        "Correctly explains that tangent projects covariance matrices to the tangent space at the geometric mean across subjects",
+        "Correctly notes that diagonal elements of tangent matrices are approximately zero (unlike correlation where diagonal=1)",
+        "Produces connectivity matrices of shape (3, 6, 6) — one per subject",
+        "Reports the mean off-diagonal value in the response",
+        "Saves a connectivity heatmap PNG to ./tangent_out/",
+        "Does not confuse tangent output with correlation (diagonal should not be forced to 1 or described as 1)",
+        "Notes that tangent is recommended for downstream ML on connectivity (not raw correlation)"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "cluster_level_thresholding",
+      "prompt": "Fit a GLM on evals/files/glm/ (bold.nii.gz TR=7s, events.tsv with 'active' condition, brain_mask.nii.gz). After computing the 'active' contrast z-map, apply cluster-level thresholding: use a cluster-forming threshold of z=2.5 and require a minimum cluster size of 10 voxels. Use nilearn.reporting.get_clusters_table to produce a table of significant clusters with their peak MNI coordinates, peak z-score, and cluster size (as would go in a paper's Table 1). Print the table, report how many clusters were found, and save the thresholded z-map and a visualization to ./cluster_out/.",
+      "files": [
+        "evals/files/glm/bold.nii.gz",
+        "evals/files/glm/events.tsv",
+        "evals/files/glm/brain_mask.nii.gz"
+      ],
+      "expected_output": "GLM fit → z-map → get_clusters_table(z_map, stat_threshold=2.5, cluster_threshold=10). Cluster table printed with peak coordinates, peak stat, cluster size. Number of clusters reported. Thresholded map and visualization saved.",
+      "expectations": [
+        "Fits FirstLevelModel with t_r=7.0 and computes 'active' contrast z-map",
+        "Calls nilearn.reporting.get_clusters_table (not threshold_stats_img for the table)",
+        "Passes stat_threshold (e.g., 2.5) to get_clusters_table",
+        "Passes cluster_threshold (minimum cluster size in voxels, e.g., 10) to get_clusters_table",
+        "Produces a pandas DataFrame (not just an image) with cluster information",
+        "Cluster table includes columns for peak MNI coordinates (X, Y, Z) and cluster size",
+        "Prints or displays the cluster table in the response",
+        "Reports the number of clusters found in the response text",
+        "Saves thresholded z-map or stat map .nii.gz to ./cluster_out/",
+        "Saves a PNG visualization to ./cluster_out/"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "first_level_from_bids",
+      "prompt": "I have a BIDS dataset at evals/files/bids_dataset/. Preprocessed BOLD images are in the derivatives/ subfolder (space-MNI, desc-preproc). The task is 'visualloc'. Use first_level_from_bids to automatically discover all subjects and their preprocessed BOLD files, sidecar JSONs (for TR), and events TSVs — don't manually glob for files. Fit first-level models for all subjects, compute the 'active' contrast for each subject, and save subject-level z-maps to ./bids_out/. Report how many subjects were found and the peak z-score for one of them.",
+      "files": [
+        "evals/files/bids_dataset/dataset_description.json",
+        "evals/files/bids_dataset/sub-01/func/sub-01_task-visualloc_bold.nii.gz",
+        "evals/files/bids_dataset/sub-01/func/sub-01_task-visualloc_events.tsv",
+        "evals/files/bids_dataset/derivatives/sub-01/func/sub-01_task-visualloc_space-MNI_desc-preproc_bold.nii.gz"
+      ],
+      "expected_output": "first_level_from_bids called with dataset_path, task_label='visualloc', space_label='MNI', img_filters for preproc. 3 subjects found. Models fitted and 'active' contrast computed per subject. Z-maps saved.",
+      "expectations": [
+        "Calls nilearn.glm.first_level.first_level_from_bids (not a manual loop with Path.glob)",
+        "Passes the BIDS root dataset_path pointing to evals/files/bids_dataset/",
+        "Passes task_label='visualloc'",
+        "Passes space_label='MNI' and img_filters=[('desc', 'preproc')] (or equivalent to select preprocessed images)",
+        "Gets t_r from the sidecar JSON automatically (not hard-coded differently from 2.0s)",
+        "Fits models by iterating over the (models, imgs, events, confounds) returned by first_level_from_bids",
+        "Computes 'active' contrast for each subject",
+        "Reports that 3 subjects were found in the response",
+        "Saves at least one subject-level z-map .nii.gz to ./bids_out/"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "interactive_html_visualization",
+      "prompt": "Using the GLM fixture evals/files/glm/ (bold.nii.gz TR=7s, events.tsv, brain_mask.nii.gz), fit a first-level GLM, compute the 'active' contrast z-map, and create interactive HTML visualizations — not just static PNGs. Specifically: (1) an interactive slice viewer using plotting.view_img, and (2) an interactive surface projection using plotting.view_img_on_surf. Save both HTML files to ./interactive_out/. Also save one static glass-brain PNG for comparison. Report the peak z-score.",
+      "files": [
+        "evals/files/glm/bold.nii.gz",
+        "evals/files/glm/events.tsv",
+        "evals/files/glm/brain_mask.nii.gz"
+      ],
+      "expected_output": "GLM fit → z-map → view_img(...).save_as_html() AND view_img_on_surf(...).save_as_html(). Two .html files saved to ./interactive_out/. Static PNG also saved. Peak z reported.",
+      "expectations": [
+        "Fits FirstLevelModel with t_r=7.0 and computes 'active' contrast z-map",
+        "Calls plotting.view_img(z_map, ...) — NOT just plot_stat_map (which only produces static PNG)",
+        "Calls view.save_as_html(path) to save the interactive slice viewer",
+        "Calls plotting.view_img_on_surf(z_map, ...) for interactive surface projection",
+        "Calls surface_view.save_as_html(path) to save the surface HTML",
+        "Saves at least two .html files (not .png) to ./interactive_out/",
+        "Also saves at least one static PNG (glass-brain or stat-map) to ./interactive_out/",
+        "Reports the peak z-score in the response text"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "clusters_table_peak_reporting",
+      "prompt": "I have a group-level z-map from a second-level GLM at evals/files/second_level/. Load sub-01 through sub-08 z-maps, run SecondLevelModel with an intercept design, compute the group z-map, then use nilearn.reporting.get_clusters_table to extract a table of activation peaks. Use a voxel-level threshold of z=2.3 and a minimum cluster size of 5 voxels. The table should be ready to paste into a paper as a peak coordinates table. Show me the full table, report the number of clusters, and save the table as a CSV and a glass-brain visualization to ./peaks_out/.",
+      "files": [
+        "evals/files/second_level/sub-01_zmap.nii.gz",
+        "evals/files/second_level/sub-02_zmap.nii.gz",
+        "evals/files/second_level/sub-03_zmap.nii.gz",
+        "evals/files/second_level/sub-04_zmap.nii.gz",
+        "evals/files/second_level/sub-05_zmap.nii.gz",
+        "evals/files/second_level/sub-06_zmap.nii.gz",
+        "evals/files/second_level/sub-07_zmap.nii.gz",
+        "evals/files/second_level/sub-08_zmap.nii.gz",
+        "evals/files/second_level/brain_mask.nii.gz"
+      ],
+      "expected_output": "SecondLevelModel → group z-map → get_clusters_table(z_map, stat_threshold=2.3, cluster_threshold=5). Table shows X, Y, Z MNI coordinates, peak z, cluster size. Table printed and saved as CSV. Glass-brain saved.",
+      "expectations": [
+        "Uses SecondLevelModel (not FirstLevelModel or image.mean_img)",
+        "Builds intercept design matrix as pandas DataFrame of ones",
+        "Calls get_clusters_table from nilearn.reporting (not threshold_stats_img only)",
+        "Passes stat_threshold=2.3 (or similar) to get_clusters_table",
+        "Passes cluster_threshold=5 (minimum cluster extent) to get_clusters_table",
+        "Table has columns including MNI peak coordinates (X, Y, Z) and cluster size",
+        "Prints or displays the full cluster table in the response",
+        "Reports the number of clusters found",
+        "Saves the cluster table as a CSV file to ./peaks_out/",
+        "Saves a glass-brain or stat-map PNG to ./peaks_out/"
       ]
     }
   ]

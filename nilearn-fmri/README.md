@@ -65,7 +65,7 @@ Without the skill, the base model frequently uses `sklearn.svm.SVC` and `cross_v
 
 > I have a BIDS dataset with BOLD + events.tsv. TR is 2s. Fit a first-level GLM and compute the face > scrambled contrast.
 
-Without the skill, the base model handles this task reasonably — it knows `FirstLevelModel`, sets t_r, and computes the contrast. The main gap is the HTML report: the base model often skips `make_glm_report` or `model.generate_report()`, so the user gets a z-map file but no reviewable summary of the design matrix, HRF, VIF, and contrast. With the skill, the model generates the full HTML report and calls out the actual z-range explicitly.
+Without the skill, the base model handles this task reasonably — it knows `FirstLevelModel`, sets t_r, and computes the contrast. The main gaps are: using the deprecated `make_glm_report` function instead of `model.generate_report()` (the current API since 0.13); skipping the design matrix visualization (`plot_design_matrix`); and failing to document the smoothing setting. With the skill, the model uses `model.generate_report()`, saves the design matrix plot, and documents all key parameters including smoothing_fwhm.
 
 ---
 
@@ -79,6 +79,13 @@ Without the skill, the base model handles this task reasonably — it knows `Fir
 | tSNR map is all zeros | `detrend=True` removes mean before `mean/std` | Median tSNR = 20 (realistic fMRI range) | Median tSNR ≈ 0 — map is uninformative |
 | Multi-run GLM misspecified | `concat_imgs` instead of list → design matrix misaligned | Combined peak z=6.33 (more power) | Peak z=5.85 — lower and run structure ignored |
 | Weight map can't be plotted | Raw `sklearn.svm.SVC` has no `coef_img_` in brain space | Weight map saved as NIfTI + glass-brain PNG | Just an accuracy float — no spatial output |
+| Atlas resampling skipped | Shape mismatch between 4mm BOLD and 2mm atlas unhandled | 6-region timeseries shape (150, 6) after resample | ValueError on shape mismatch, or single-region (150,1) output |
+| Wrong connectivity metric | `kind='correlation'` instead of `kind='tangent'` | Tangent matrices with diagonal ≈ 0 | Correlation matrices (diagonal=1) — wrong for downstream ML |
+| DecoderRegressor swapped for Decoder | `Decoder(estimator='svc')` on continuous labels | R² reported, SVR weight map saved | SVC throws error or silently treats angles as class labels |
+| Cluster table missing | `threshold_stats_img` returns image only, no DataFrame | `get_clusters_table()` returns peak coords + cluster sizes | No coordinates table — can't write Table 1 of a paper |
+| BIDS pipeline done manually | `Path.glob` instead of `first_level_from_bids` | All subjects found automatically, TR from sidecar JSON | Manual file wrangling — fragile, misses sidecar metadata |
+| Interactive view is static | `plot_stat_map(output_file=...)` instead of `view_img(...).save_as_html(...)` | Explorable HTML viewer + surface projection | Static PNG — can't zoom, rotate, or inspect voxels |
+| GLM report uses deprecated API | `make_glm_report()` instead of `model.generate_report()` | Current API, no deprecation warning | DeprecationWarning in nilearn 0.13+, removed in 0.15 |
 
 The connectivity case is the subtlest failure because nilearn raises no warning: `NiftiMapsMasker` on an integer label image runs silently and returns a shape that looks plausible at a glance.
 
@@ -92,24 +99,24 @@ The most common nilearn mistake is `standardize=True`. It was deprecated in 0.13
 
 ## Benchmark: skill vs. base model
 
-Evaluated on 8 scenarios graded against 9–11 specific expectations each. All analyses run on bundled synthetic NIfTI fixtures — no internet download required. Without-skill code uses the same fixtures with documented base-model failure patterns (wrong masker class, deprecated arguments, incorrect model class).
+Evaluated on 16 scenarios graded against 8–12 specific expectations each. All analyses run on bundled synthetic NIfTI fixtures — no internet download required.
 
 ```mermaid
 xychart-beta horizontal
     title "Pass Rate by Eval (■ with skill  □ base model)"
-    x-axis ["GLM: block design", "Connectivity (3 sub)", "MVPA decoding", "GLM: FDR threshold", "Group (2nd-level) GLM", "Seed connectivity", "NiftiMasker tSNR", "Multi-run GLM"]
+    x-axis ["GLM: block design", "Connectivity (3 sub)", "MVPA decoding", "GLM: FDR threshold", "Group (2nd-level) GLM", "Seed connectivity", "NiftiMasker tSNR", "Multi-run GLM", "Atlas space mismatch", "Multi-contrast GLM", "DecoderRegressor", "Tangent connectivity", "Cluster-level threshold", "first_level_from_bids", "Interactive HTML viz", "get_clusters_table peaks"]
     y-axis "Pass rate" 0 --> 1
-    bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-    bar [0.90, 0.36, 0.60, 0.44, 0.38, 0.67, 0.60, 0.70]
+    bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    bar [0.75, 0.36, 0.60, 0.44, 0.38, 0.67, 0.60, 0.70, 0.67, 0.78, 0.50, 0.44, 0.38, 0.67, 0.38, 0.25]
 ```
 
 | | With skill | Without skill |
 |--|:---:|:---:|
-| **Mean pass rate (all 8 evals)** | **1.00** | 0.58 |
-| Std deviation | 0.00 | 0.18 |
-| Min pass rate | 1.00 | 0.36 |
+| **Mean pass rate (all 16 evals)** | **1.00** | 0.54 |
+| Std deviation | 0.00 | 0.15 |
+| Min pass rate | 1.00 | 0.25 |
 
-**+42 percentage point improvement overall.**
+**+46 percentage point improvement overall.**
 
 ### Where the skill makes the biggest difference
 
@@ -118,28 +125,36 @@ xychart-beta horizontal
 | Connectivity (3 subjects) | 1.00 | 0.36 | **+0.64** | `NiftiMapsMasker` returns `(150,1)` instead of `(150,6)` — 1×1 matrix output |
 | Group (2nd-level) GLM | 1.00 | 0.38 | **+0.62** | Manual mean or `FirstLevelModel` instead of `SecondLevelModel` — no valid inference |
 | GLM: FDR thresholding | 1.00 | 0.44 | **+0.56** | `plot_stat_map(threshold=3.0)` instead of `threshold_stats_img` — 39 false positives |
+| get_clusters_table peaks | 1.00 | 0.25 | **+0.75** | No `get_clusters_table` knowledge — can't build paper Table 1 |
+| Interactive HTML viz | 1.00 | 0.38 | **+0.62** | Static PNG instead of `view_img(...).save_as_html()` |
+| Cluster-level threshold | 1.00 | 0.38 | **+0.62** | No `get_clusters_table` — uses `threshold_stats_img` only, no cluster DataFrame |
 | MVPA decoding | 1.00 | 0.60 | **+0.40** | Raw `sklearn.svm.SVC` — no weight map NIfTI, no `Decoder` |
 | NiftiMasker tSNR | 1.00 | 0.60 | **+0.40** | `detrend=True` removes mean → tSNR ≈ 0 everywhere |
-| Seed connectivity | 1.00 | 0.67 | **+0.33** | No `NiftiSpheresMasker`; deprecated `standardize=True` |
-| Multi-run GLM | 1.00 | 0.70 | **+0.30** | `concat_imgs` instead of list — peak z drops 0.5 units |
+| DecoderRegressor | 1.00 | 0.50 | **+0.50** | Uses `Decoder` (classification) not `DecoderRegressor` — wrong estimator type |
+| Tangent connectivity | 1.00 | 0.44 | **+0.56** | `kind='correlation'` instead of `kind='tangent'`; diagonal misunderstood |
 
-### Where the base model already does well
+### Where the base model already does reasonably well
 
-| Eval | With skill | Without skill |
-|------|:---:|:---:|
-| GLM: block design | 1.00 | 0.90 |
+| Eval | With skill | Without skill | Gap |
+|------|:---:|:---:|:---:|
+| Multi-contrast GLM | 1.00 | 0.78 | +0.22 |
+| Multi-run GLM | 1.00 | 0.70 | +0.30 |
+| Seed connectivity | 1.00 | 0.67 | +0.33 |
+| Atlas space mismatch | 1.00 | 0.67 | +0.33 |
+| first_level_from_bids | 1.00 | 0.67 | +0.33 |
+| GLM: block design | 1.00 | 0.75 | +0.25 |
 
-The pattern: the base model handles standard first-level GLM well — it's the most-documented nilearn workflow. The skill's value concentrates on (1) correct masker class selection (label vs. maps vs. sphere maskers), (2) statistical inference APIs (`threshold_stats_img`, `SecondLevelModel`) absent from beginner examples, (3) the `standardize` deprecation trap, and (4) gotchas where the wrong code runs silently and produces plausible-looking but wrong output.
+The pattern: the base model handles single-subject, single-condition GLM reasonably well — it's the most-documented nilearn workflow. The skill's value concentrates on (1) correct masker class selection (label vs. maps vs. sphere maskers), (2) statistical inference APIs (`threshold_stats_img`, `SecondLevelModel`, `get_clusters_table`) absent from beginner examples, (3) the `standardize` deprecation trap, (4) the `generate_report()` vs deprecated `make_glm_report` transition, and (5) gotchas where the wrong code runs silently and produces plausible-looking but wrong output.
 
 ---
 
 ## Eval suite
 
-8 evals with bundled 16×16×16 synthetic NIfTI fixtures. Each fixture has injected signal at known locations so correct code produces measurable results and incorrect code fails identifiably.
+16 evals with bundled synthetic NIfTI fixtures. Each fixture has injected signal at known locations so correct code produces measurable results and incorrect code fails identifiably.
 
 | # | Eval | Key APIs tested | Notable expectations |
 |---|------|-----------------|----------------------|
-| 1 | GLM: block design | `FirstLevelModel`, `compute_contrast`, HTML report | t_r set; report generated; actual z-range reported |
+| 1 | GLM: block design | `FirstLevelModel`, `compute_contrast`, `model.generate_report()`, `plot_design_matrix` | t_r set; `generate_report()` not deprecated `make_glm_report`; design matrix plot saved; smoothing documented |
 | 2 | Connectivity: 3 subjects | `NiftiLabelsMasker`, `ConnectivityMeasure`, bandpass | `zscore_sample`; bandpass; correct masker class; timeseries shape (150,6) |
 | 3 | MVPA decoding | `nilearn.decoding.Decoder`, `LeaveOneGroupOut` | Decoder not raw sklearn; weight map NIfTI saved; groups= passed |
 | 4 | GLM: FDR thresholding | `threshold_stats_img(height_control='fdr')` | Numeric threshold reported; not just a plot argument |
@@ -147,6 +162,14 @@ The pattern: the base model handles standard first-level GLM well — it's the m
 | 6 | Seed-based connectivity | `NiftiSpheresMasker`, voxel-wise correlation | Sphere at correct MNI coords; `inverse_transform` used |
 | 7 | NiftiMasker tSNR | `NiftiMasker(standardize=False, detrend=False)` | Mean preserved; median tSNR > 1; correct NIfTI output |
 | 8 | Multi-run GLM | Multi-run `FirstLevelModel` with list interface | List not concat; single-run comparison; combined ≥ single |
+| 9 | Atlas space mismatch | `resample_to_img(atlas, bold, interpolation='nearest')` | Atlas resampled to BOLD space; timeseries shape (150,6) |
+| 10 | Multi-contrast GLM | String formula contrast, 2D F-contrast matrix | face>house t-contrast; F-contrast via 2D numpy array |
+| 11 | DecoderRegressor | `nilearn.decoding.DecoderRegressor`, SVR/ridge | DecoderRegressor not Decoder; R² metric not accuracy |
+| 12 | Tangent connectivity | `ConnectivityMeasure(kind='tangent')` | Tangent not correlation; diagonal ≈ 0 explained |
+| 13 | Cluster-level threshold | `get_clusters_table(stat_threshold, cluster_threshold)` | Table produced as DataFrame with peak coords + sizes |
+| 14 | first_level_from_bids | `first_level_from_bids`, BIDS derivatives | API used (not manual glob); 3 subjects found; sidecar TR |
+| 15 | Interactive HTML viz | `view_img().save_as_html()`, `view_img_on_surf()` | HTML not PNG; both slice viewer and surface projection |
+| 16 | get_clusters_table peaks | `get_clusters_table` on group z-map | Table with MNI coords + cluster sizes; CSV saved |
 
 Fixture ground truth:
 - **GLM** (96 vol, TR=7s): block design, signal at voxel (4,8,8) → peak |z| ≈ 7
@@ -154,6 +177,9 @@ Fixture ground truth:
 - **Decoding** (120 trials, 6 runs): face/house in VT mask → SVC accuracy ≈ 0.99
 - **Second-level** (8 subjects): z-maps with group signal → group z-peak ≈ 5.25
 - **Multi-run** (2 × 48 vol, TR=7s): combined model peak z=6.33 vs single-run z=4.51
+- **Space mismatch**: 16³ BOLD @4mm, 32³ atlas @2mm — requires `resample_to_img`
+- **Multi-contrast** (120 vol, TR=2s): face blob at x=4, house blob at x=12
+- **Regression** (90 trials, 5 runs): continuous orientation angle in V1 mask
 
 ---
 
@@ -166,7 +192,7 @@ nilearn-fmri/
 │   ├── datasets.md               #   built-in fetchers, BIDS, fMRIPrep, atlases
 │   ├── glm.md                    #   first-level, second-level, contrasts, thresholding
 │   ├── connectivity.md           #   maskers, ConnectivityMeasure, seed-based
-│   ├── decoding.md               #   Decoder, MVPA, searchlight, weight maps
+│   ├── decoding.md               #   Decoder, DecoderRegressor, MVPA, searchlight, weight maps
 │   └── visualization.md          #   static plots, interactive views, reports
 ├── scripts/                      # Parameterized end-to-end helpers
 │   ├── run_first_level_glm.py
@@ -175,15 +201,20 @@ nilearn-fmri/
 │   ├── run_decoder.py
 │   └── make_report.py
 └── evals/
-    ├── evals.json                # 8 tests covering all four workflows
+    ├── evals.json                # 16 tests covering all four workflows
     └── files/
         ├── make_fixtures.py      # generates core synthetic NIfTIs
         ├── make_extra_fixtures.py# generates second_level + multirun fixtures
+        ├── make_tier1_fixtures.py# generates space_mismatch, glm_multicontrast, regression, bids_dataset
         ├── glm/                  # bold, events, brain_mask, anat
         ├── connectivity/         # 3 subjects, atlas, confounds
         ├── decoding/             # bold, labels, vt_mask
         ├── second_level/         # 8 subject z-maps + brain_mask
-        └── multirun/             # 2 runs, events, brain_mask
+        ├── multirun/             # 2 runs, events, brain_mask
+        ├── space_mismatch/       # bold @4mm, atlas @2mm, confounds
+        ├── glm_multicontrast/    # bold, events (face+house), brain_mask
+        ├── regression/           # bold, angle labels, v1_mask
+        └── bids_dataset/         # BIDS tree with derivatives/
 ```
 
 ## Requirements
@@ -198,6 +229,7 @@ pip install nilearn nibabel scipy pandas matplotlib scikit-learn
 cd evals/files
 python make_fixtures.py        # GLM, connectivity, decoding
 python make_extra_fixtures.py  # second-level, multi-run
+python make_tier1_fixtures.py  # space_mismatch, glm_multicontrast, regression, bids_dataset
 ```
 
 ---
