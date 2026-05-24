@@ -21,19 +21,11 @@ Once installed, the skill triggers automatically whenever you ask about fMRI, BO
 
 ## Example use cases
 
-**"Fit a first-level GLM on my task fMRI data"**
+**"Extract connectivity from my resting-state data using a parcellation atlas"**
 
-> I have a BIDS dataset at `/data/sub-01/func/sub-01_task-localizer_bold.nii.gz` with events in a matching `_events.tsv`. TR is 2s. Fit a first-level GLM and compute the contrast for `face > scrambled`.
+> I have 3 subjects of resting-state fMRI and a 6-region label atlas (integer labels 1–6). Extract ROI timeseries and give me a correlation matrix.
 
-Without the skill, base Claude often omits the HTML report, misses `make_glm_report`, and may leave out the TR or contrast vector. With the skill, Claude reads `references/glm.md` first, sets `t_r` explicitly, runs `compute_contrast`, saves the z-map, generates a full HTML report, and reports the actual z-range — not a placeholder.
-
----
-
-**"I need FDR correction on my z-map"**
-
-> Here's my z-map from a first-level GLM. Apply FDR correction at alpha=0.05 and tell me how many voxels survive and what the threshold was.
-
-This is where the skill gap is largest. Without the skill, base Claude frequently uses `plot_stat_map(threshold=3.0)` — an arbitrary display cutoff — and reports that as "thresholding," never touching `threshold_stats_img`. With the skill, Claude calls `nilearn.glm.threshold_stats_img(z_map, alpha=0.05, height_control='fdr')`, reports the exact numeric FDR threshold, counts surviving voxels, and saves both the unthresholded and thresholded maps. The difference matters: a display threshold is not a statistical claim.
+This is where the skill gap is largest. Without the skill, base Claude frequently uses `NiftiMapsMasker` — the masker for probabilistic (4D) atlases — on a deterministic label (3D) atlas. The consequences are not a warning or an error: nilearn silently interprets the entire 3D integer image as a single continuous map and returns a timeseries of shape `(150, 1)` instead of `(150, 6)`. The downstream `ConnectivityMeasure` then produces a `(3, 1, 1)` matrix — a scalar per subject — instead of the expected `(3, 6, 6)`. The code runs to completion, but the output contains no connectivity information. With the skill, Claude reads the references, recognizes the label atlas, uses `NiftiLabelsMasker`, sets `standardize='zscore_sample'`, applies bandpass filtering, and produces the correct `(3, 6, 6)` correlation matrices.
 
 ---
 
@@ -41,15 +33,23 @@ This is where the skill gap is largest. Without the skill, base Claude frequentl
 
 > I have z-maps from 8 subjects. I want a one-sample t-test against zero (intercept-only design).
 
-Without the skill, base Claude often averages the z-maps manually or reaches for `FirstLevelModel` a second time. With the skill, Claude instantiates `SecondLevelModel`, builds the intercept design matrix as a pandas DataFrame of ones, calls `.fit(zmaps, design_matrix=...)`, applies FDR correction, and produces a group z-map with documented parameters.
+Without the skill, base Claude often averages the z-maps manually via `image.mean_img` or reaches for `FirstLevelModel` a second time. A simple average of z-maps is not a t-test — it produces a mean with no associated degrees of freedom, p-value, or valid threshold. In our fixture, the correct `SecondLevelModel` produces a group z-map with peak z=5.25 and 80 voxels surviving FDR correction. The manual mean produces a peak "z" of 3.95 that cannot be statistically thresholded. With the skill, Claude instantiates `SecondLevelModel`, builds the intercept design matrix as a pandas DataFrame of ones, calls `.fit(zmaps, design_matrix=...)`, applies FDR correction, and saves a group z-map with documented parameters.
 
 ---
 
-**"Extract seed-based connectivity from my resting-state data"**
+**"I need FDR correction on my z-map"**
 
-> Use coordinates (-16, -16, 0) as a seed ROI with a 6mm sphere and correlate with every brain voxel.
+> Here's my z-map from a first-level GLM. Apply FDR correction at alpha=0.05 and tell me how many voxels survive and what the threshold was.
 
-Base Claude often doesn't know `NiftiSpheresMasker` exists. With the skill, Claude uses `NiftiSpheresMasker(seeds=[(-16, -16, 0)], radius=6, standardize='zscore_sample', t_r=...)`, extracts the seed timeseries alongside a whole-brain `NiftiMasker`, computes the dot-product correlation, and returns the result as a NIfTI via `inverse_transform`.
+Without the skill, base Claude frequently uses `plot_stat_map(threshold=3.0)` — an arbitrary display cutoff — and reports that as "thresholding," never touching `threshold_stats_img`. In our fixture, the FDR-correct threshold is z=3.48. Using an arbitrary z=3.0 instead passes 81 voxels; the FDR-correct answer is 42. That is 39 additional false positives in a 16³ toy brain — in a real full-brain scan the gap is orders of magnitude larger. With the skill, Claude calls `nilearn.glm.threshold_stats_img(z_map, alpha=0.05, height_control='fdr')`, reports the exact numeric threshold, counts surviving voxels, and saves both maps. The difference is not cosmetic: a display threshold is not a statistical claim.
+
+---
+
+**"Compute temporal SNR for my BOLD data"**
+
+> I want a tSNR map from my BOLD file using a brain mask.
+
+Without the skill, base Claude almost always sets `detrend=True` — the standard recommendation for preprocessing. For tSNR that is fatal: detrending removes the temporal mean, making `mean(timeseries) ≈ 0` and therefore tSNR ≈ 0 everywhere. The resulting map is numerically uniform at zero and clinically meaningless. In our fixture: correct tSNR (detrend=False) gives median tSNR=20; wrong tSNR (detrend=True) gives median tSNR≈0. With the skill, Claude recognizes that tSNR requires the raw mean as numerator, sets `detrend=False`, and produces a map with physically interpretable values.
 
 ---
 
@@ -57,7 +57,30 @@ Base Claude often doesn't know `NiftiSpheresMasker` exists. With the skill, Clau
 
 > I have 120 trial volumes, face/house labels, and run numbers 0–5. Use SVC with leave-one-run-out.
 
-Without the skill, base Claude frequently uses `sklearn.svm.SVC` and `cross_val_score` directly. This works for accuracy but loses everything nilearn adds: the brain-space weight map, `coef_img_` NIfTI, and the plotting pipeline. With the skill, Claude uses `nilearn.decoding.Decoder(estimator='svc', cv=LeaveOneGroupOut(), standardize='zscore_sample')`, passes `groups=` correctly, and saves the weight map — a complete deliverable, not just a number.
+Without the skill, base Claude frequently uses `sklearn.svm.SVC` and `cross_val_score` directly. This produces an accuracy number but loses everything nilearn adds: the brain-space weight map, `coef_img_` as a proper NIfTI, and the plotting pipeline. There is no spatial output at all — you cannot visualize which regions drove the decoding. With the skill, Claude uses `nilearn.decoding.Decoder(estimator='svc', cv=LeaveOneGroupOut(), standardize='zscore_sample')`, passes `groups=` correctly, saves `coef_img_` as a NIfTI and plots it — a complete deliverable, not just a number.
+
+---
+
+**"Fit a first-level GLM on my task fMRI data"**
+
+> I have a BIDS dataset with BOLD + events.tsv. TR is 2s. Fit a first-level GLM and compute the face > scrambled contrast.
+
+Without the skill, base Claude handles this task reasonably — it knows `FirstLevelModel`, sets t_r, and computes the contrast. The main gap is the HTML report: base Claude often skips `make_glm_report` or `model.generate_report()`, so the user gets a z-map file but no reviewable summary of the design matrix, HRF, VIF, and contrast. With the skill, Claude generates the full HTML report and calls out the actual z-range explicitly.
+
+---
+
+## What goes wrong without the skill: concrete statistical consequences
+
+| Failure | Cause | Correct output | Wrong output |
+|---------|-------|---------------|--------------|
+| Connectivity returns 1×1 matrix instead of 6×6 | `NiftiMapsMasker` on label atlas → timeseries shape `(150,1)` not `(150,6)` | 3 × 6×6 correlation matrices with known structure | 3 × 1×1 scalars — no connectivity information |
+| Group z-map has no valid inference | `image.mean_img(zmaps)` instead of `SecondLevelModel` | Peak group z=5.25, 80 voxels FDR-corrected | Peak "z"=3.95 with no threshold or p-value |
+| FDR threshold misreported | `plot_stat_map(threshold=3.0)` instead of `threshold_stats_img` | 42 voxels survive FDR (z≥3.48) | 81 voxels at arbitrary z≥3.0 — 39 false positives in toy brain |
+| tSNR map is all zeros | `detrend=True` removes mean before `mean/std` | Median tSNR = 20 (realistic fMRI range) | Median tSNR ≈ 0 — map is uninformative |
+| Multi-run GLM misspecified | `concat_imgs` instead of list → design matrix misaligned | Combined peak z=6.33 (more power) | Peak z=5.85 — lower and run structure ignored |
+| Weight map can't be plotted | Raw `sklearn.svm.SVC` has no `coef_img_` in brain space | Weight map saved as NIfTI + glass-brain PNG | Just an accuracy float — no spatial output |
+
+The connectivity case is the subtlest failure because nilearn raises no warning: `NiftiMapsMasker` on an integer label image runs silently and returns a shape that looks plausible at a glance.
 
 ---
 
@@ -69,7 +92,7 @@ The most common nilearn mistake is `standardize=True`. It was deprecated in 0.13
 
 ## Benchmark: skill vs. base Claude
 
-Evaluated on 8 scenarios graded against 9–11 specific expectations each. All analyses run on bundled synthetic NIfTI fixtures — no internet download required.
+Evaluated on 8 scenarios graded against 9–11 specific expectations each. All analyses run on bundled synthetic NIfTI fixtures — no internet download required. Without-skill code uses the same fixtures with documented base-Claude failure patterns (wrong masker class, deprecated arguments, incorrect model class).
 
 ```mermaid
 xychart-beta horizontal
@@ -77,60 +100,60 @@ xychart-beta horizontal
     x-axis ["GLM: block design", "Connectivity (3 sub)", "MVPA decoding", "GLM: FDR threshold", "Group (2nd-level) GLM", "Seed connectivity", "NiftiMasker tSNR", "Multi-run GLM"]
     y-axis "Pass rate" 0 --> 1
     bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-    bar [0.90, 0.82, 0.60, 0.44, 0.38, 0.67, 0.60, 0.70]
+    bar [0.90, 0.36, 0.60, 0.44, 0.38, 0.67, 0.60, 0.70]
 ```
 
 | | With skill | Without skill |
 |--|:---:|:---:|
-| **Mean pass rate (all 8 evals)** | **1.00** | 0.64 |
-| Std deviation | 0.00 | 0.17 |
-| Min pass rate | 1.00 | 0.38 |
+| **Mean pass rate (all 8 evals)** | **1.00** | 0.58 |
+| Std deviation | 0.00 | 0.18 |
+| Min pass rate | 1.00 | 0.36 |
 
-**+36 percentage point improvement overall.** The skill's impact concentrates on statistical inference APIs and API-correctness traps.
+**+42 percentage point improvement overall.**
 
 ### Where the skill makes the biggest difference
 
 | Eval | With skill | Without skill | Gap | Primary failure mode |
 |------|:---:|:---:|:---:|---|
-| Group (2nd-level) GLM | 1.00 | 0.38 | **+0.63** | Uses `FirstLevelModel` or manual average instead of `SecondLevelModel` |
-| GLM: FDR thresholding | 1.00 | 0.44 | **+0.56** | Uses `plot_stat_map(threshold=...)` instead of `threshold_stats_img` |
-| MVPA decoding | 1.00 | 0.60 | **+0.40** | Uses raw `sklearn.svm.SVC` — no weight map NIfTI, no `Decoder` |
-| NiftiMasker tSNR | 1.00 | 0.60 | **+0.40** | Sets `detrend=True` which removes the mean, making tSNR ≈ 0 |
-| Seed connectivity | 1.00 | 0.67 | **+0.33** | Doesn't use `NiftiSpheresMasker`; uses deprecated `standardize=True` |
-| Multi-run GLM | 1.00 | 0.70 | **+0.30** | Uses `concat_imgs` instead of a list — loses run-level variance structure |
+| Connectivity (3 subjects) | 1.00 | 0.36 | **+0.64** | `NiftiMapsMasker` returns `(150,1)` instead of `(150,6)` — 1×1 matrix output |
+| Group (2nd-level) GLM | 1.00 | 0.38 | **+0.62** | Manual mean or `FirstLevelModel` instead of `SecondLevelModel` — no valid inference |
+| GLM: FDR thresholding | 1.00 | 0.44 | **+0.56** | `plot_stat_map(threshold=3.0)` instead of `threshold_stats_img` — 39 false positives |
+| MVPA decoding | 1.00 | 0.60 | **+0.40** | Raw `sklearn.svm.SVC` — no weight map NIfTI, no `Decoder` |
+| NiftiMasker tSNR | 1.00 | 0.60 | **+0.40** | `detrend=True` removes mean → tSNR ≈ 0 everywhere |
+| Seed connectivity | 1.00 | 0.67 | **+0.33** | No `NiftiSpheresMasker`; deprecated `standardize=True` |
+| Multi-run GLM | 1.00 | 0.70 | **+0.30** | `concat_imgs` instead of list — peak z drops 0.5 units |
 
 ### Where base Claude already does well
 
 | Eval | With skill | Without skill |
 |------|:---:|:---:|
 | GLM: block design | 1.00 | 0.90 |
-| Connectivity (3 subjects) | 1.00 | 0.82 |
 
-The pattern: base Claude handles standard GLM and connectivity pipelines reasonably well — these are well-documented in nilearn tutorials. The skill's value concentrates on (1) statistical inference APIs (`threshold_stats_img`, `SecondLevelModel`) that are less prominent in beginner examples, (2) deprecated argument traps (`standardize=True`, `detrend=True` for tSNR), and (3) less-known masker classes (`NiftiSpheresMasker`) that require knowing the right tool exists.
+The pattern: base Claude handles standard first-level GLM well — it's the most-documented nilearn workflow. The skill's value concentrates on (1) correct masker class selection (label vs. maps vs. sphere maskers), (2) statistical inference APIs (`threshold_stats_img`, `SecondLevelModel`) absent from beginner examples, (3) the `standardize` deprecation trap, and (4) gotchas where the wrong code runs silently and produces plausible-looking but wrong output.
 
 ---
 
 ## Eval suite
 
-8 evals run against bundled 16×16×16 synthetic NIfTI fixtures. Each fixture has injected signal at known locations, so correct code produces measurable results.
+8 evals with bundled 16×16×16 synthetic NIfTI fixtures. Each fixture has injected signal at known locations so correct code produces measurable results and incorrect code fails identifiably.
 
 | # | Eval | Key APIs tested | Notable expectations |
 |---|------|-----------------|----------------------|
-| 1 | GLM: block design | `FirstLevelModel`, `compute_contrast`, `make_glm_report` | t_r set; HTML report; actual z-range reported |
-| 2 | Connectivity: 3 subjects | `NiftiLabelsMasker`, `ConnectivityMeasure`, bandpass | `zscore_sample`; bandpass set; correct masker class |
-| 3 | MVPA decoding | `nilearn.decoding.Decoder`, `LeaveOneGroupOut` | Decoder not raw sklearn; weight map NIfTI saved |
-| 4 | GLM: FDR thresholding | `threshold_stats_img(height_control='fdr')` | Numeric threshold reported; not just plot argument |
-| 5 | Group (2nd-level) GLM | `SecondLevelModel`, intercept design matrix | Correct model class; design matrix built as DataFrame |
+| 1 | GLM: block design | `FirstLevelModel`, `compute_contrast`, HTML report | t_r set; report generated; actual z-range reported |
+| 2 | Connectivity: 3 subjects | `NiftiLabelsMasker`, `ConnectivityMeasure`, bandpass | `zscore_sample`; bandpass; correct masker class; timeseries shape (150,6) |
+| 3 | MVPA decoding | `nilearn.decoding.Decoder`, `LeaveOneGroupOut` | Decoder not raw sklearn; weight map NIfTI saved; groups= passed |
+| 4 | GLM: FDR thresholding | `threshold_stats_img(height_control='fdr')` | Numeric threshold reported; not just a plot argument |
+| 5 | Group (2nd-level) GLM | `SecondLevelModel`, intercept design matrix | Correct model class; intercept DataFrame; FDR applied |
 | 6 | Seed-based connectivity | `NiftiSpheresMasker`, voxel-wise correlation | Sphere at correct MNI coords; `inverse_transform` used |
 | 7 | NiftiMasker tSNR | `NiftiMasker(standardize=False, detrend=False)` | Mean preserved; median tSNR > 1; correct NIfTI output |
 | 8 | Multi-run GLM | Multi-run `FirstLevelModel` with list interface | List not concat; single-run comparison; combined ≥ single |
 
 Fixture ground truth:
 - **GLM** (96 vol, TR=7s): block design, signal at voxel (4,8,8) → peak |z| ≈ 7
-- **Connectivity** (150 vol, TR=2s, 3 subjects): 6-region atlas, r₁₂ = r₃₄ = 0.7, r₅₆ = −0.7
-- **Decoding** (120 trials, 6 runs): face/house patterns in VT mask → SVC accuracy ≈ 0.99
-- **Second-level** (8 subjects): z-maps with group signal at voxel (4,8,8) → group z-peak ≈ 5
-- **Multi-run** (2 × 48 vol, TR=7s): same block design; combined model peak z ≥ single-run
+- **Connectivity** (150 vol, TR=2s, 3 subjects): 6-region atlas, r₁₂=r₃₄=0.7, r₅₆=−0.7
+- **Decoding** (120 trials, 6 runs): face/house in VT mask → SVC accuracy ≈ 0.99
+- **Second-level** (8 subjects): z-maps with group signal → group z-peak ≈ 5.25
+- **Multi-run** (2 × 48 vol, TR=7s): combined model peak z=6.33 vs single-run z=4.51
 
 ---
 
@@ -169,7 +192,7 @@ nilearn-fmri/
 pip install nilearn nibabel scipy pandas matplotlib scikit-learn
 ```
 
-## Running the eval fixtures
+## Regenerating fixtures
 
 ```bash
 cd evals/files
@@ -182,7 +205,7 @@ python make_extra_fixtures.py  # second-level, multi-run
 ## Sources
 
 - **[nilearn documentation](https://nilearn.github.io)** — API reference, user guide, and examples. Canonical reference for all masker classes, GLM, decoding, and plotting.
-- **[nilearn changelog](https://github.com/nilearn/nilearn/blob/main/CHANGES.rst)** — 0.13–0.15 migration notes are the source for the `standardize` deprecation and `make_glm_report` → `generate_report` transition.
-- **[BIDS specification](https://bids-specification.readthedocs.io)** — file naming conventions referenced in BIDS-aware workflows.
+- **[nilearn changelog](https://github.com/nilearn/nilearn/blob/main/CHANGES.rst)** — 0.13–0.15 migration notes: `standardize` deprecation, `make_glm_report` → `generate_report` transition.
+- **[BIDS specification](https://bids-specification.readthedocs.io)** — file naming conventions for BIDS-aware workflows.
 - **[fMRIPrep documentation](https://fmriprep.org)** — confound TSV structure and `load_confounds_strategy` guidance.
 - **[Poldrack, Mumford & Nichols, *Handbook of Functional MRI Data Analysis* (2011)](https://www.cambridge.org/core/books/handbook-of-functional-mri-data-analysis/8EDF966C65811FCCC306F7C916228529)** — GLM, contrast estimation, and multiple-comparison correction.
