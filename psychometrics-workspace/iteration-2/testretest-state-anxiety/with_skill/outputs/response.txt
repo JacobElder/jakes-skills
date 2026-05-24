@@ -1,0 +1,21 @@
+Short answer: no, ICC = 0.72 over 4 weeks is not good reliability for a state anxiety scale — it's actually a red flag.
+
+Here's the core problem. Test-retest correlation (and ICC) conflates two distinct things: the stability of the construct and the reliability of measurement. For a trait construct — something like Big Five Neuroticism or dispositional affect — you want high test-retest stability over weeks or months, because that's what "trait" means. For a state measure, the construct is explicitly defined as transient, fluctuating with current circumstances. If your state anxiety scale yields ICC = 0.72 over 4 weeks, the most parsimonious interpretation is not "great reliability" — it's that your scale is functioning more like a trait measure than a state measure.
+
+Put differently: genuine state anxiety should look quite different in the same person at two points 4 weeks apart, especially in the absence of any particular anxiety-inducing manipulation. If scores correlate at r ≈ .72 (roughly what ICC ≈ .72 implies), the scale is picking up stable between-person variance — individual differences in baseline anxiety proneness, i.e., trait anxiety — rather than within-person fluctuation in current state. The Spielberger STAI distinction between State (Form Y-1) and Trait (Form Y-2) exists precisely because this conflation is a known measurement problem.
+
+What's the appropriate test-retest interval for a state measure? Short — very short. Same session (immediate retest), 24–48 hours at most, and ideally with an active mood induction or situational manipulation so you can test whether scores track the manipulation. At 4 weeks, you are not measuring equivalence of the measurement procedure; you are measuring stability of a construct that, by definition, should not be stable. The high ICC you obtained is not evidence of reliability — it's evidence of construct contamination.
+
+The more granular question: what exactly does ICC = 0.72 mean here? You'd want to know which ICC model you used (Shrout & Fleiss ICC(2,1) absolute agreement is typical for test-retest; ICC(3,1) consistency is sometimes used but gives an inflated estimate when systematic session drift is present). Either way, a value of .72 over 4 weeks should trigger concern, not satisfaction.
+
+What you should actually do:
+
+1. Examine within-person change scores across the two sessions. If the variance of change scores is small, that is additional evidence that scores are not behaving as state measures should.
+
+2. Check whether your scale correlates more strongly with established trait anxiety measures (e.g., STAI-Trait, IPIP Neuroticism) than with validated state measures administered concurrently — that pattern would confirm the trait-contamination hypothesis.
+
+3. Consider whether items have been written in a way that pulls for dispositional interpretations ("I tend to feel anxious" rather than "I feel anxious right now"). State items should use present-tense, momentary language and ideally reference the current situation explicitly.
+
+4. If you want to assess internal consistency reliability (a different question from stability), use McDonald's omega from a factor model on the item-level data from a single time point. That gives you reliability as a property of the measurement process, unconfounded by construct stability.
+
+Bottom line: reframe your concern. The problem isn't that ICC = 0.72 is "too high" in some abstract sense — it's that a high ICC at a 4-week interval is theoretically inconsistent with what state anxiety is supposed to be. Treating this as acceptable reliability would be a mistake; a reviewer who understands the state-trait distinction will flag it immediately.

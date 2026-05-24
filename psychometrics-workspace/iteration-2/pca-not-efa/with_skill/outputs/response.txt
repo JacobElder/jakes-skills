@@ -1,0 +1,106 @@
+Not quite — there are several things here worth pausing on before you compute subscale scores, and your advisor's recommendation, while common in practice, glosses over some real methodological problems. Let me be direct about each one.
+
+---
+
+## 1. PCA is not factor analysis, and the distinction matters for what you're trying to do
+
+This is the core issue. Principal Components Analysis (PCA) and Exploratory Factor Analysis (EFA) are not interchangeable methods with different names — they answer different questions, and for measuring a latent construct like "social connection," you want EFA, not PCA.
+
+Here's the critical difference:
+
+- **PCA** models **total variance**. Components are weighted linear composites of your observed items, and the goal is data reduction — summarizing as much of the overall variance as possible in fewer variables. PCA makes no commitment to a latent-variable interpretation.
+- **EFA** models **common variance**. The factor model partitions each item's variance into communality (variance shared with other items, attributed to latent factors) and uniqueness (item-specific variance plus error). Factors are treated as latent causes of the items.
+
+The mathematical expression of the EFA model makes this explicit:
+
+  xᵢ = Σⱼ λᵢⱼ · ξⱼ + δᵢ
+
+where ξⱼ are the latent factors, λᵢⱼ are factor loadings, and δᵢ is the unique variance for item i. PCA has no δᵢ — it fits all the variance, including item-specific junk. When you use PCA components as subscales and call them measures of latent constructs, you're using the wrong model for the claim you're making.
+
+In practice, when communalities are high and you have many items, PCA and EFA give similar loading patterns, so the distinction gets hand-waved away. With 15 items and an unknown factor structure, you should not assume this will be one of those cases.
+
+---
+
+## 2. Varimax rotation is almost certainly wrong here
+
+Varimax is an orthogonal rotation — it constrains the components (or factors) to be uncorrelated with each other. For psychological constructs like subscales of "social connection," this is almost never a defensible assumption. Social connection facets — say, belonging, felt closeness, and social engagement — are almost certainly correlated in the population. Forcing them to be orthogonal doesn't make the underlying reality orthogonal; it just distorts your solution to satisfy that constraint.
+
+The fix is to use an **oblique rotation** — promax or oblimin are both defensible defaults. Oblique rotation allows the factors to correlate and reports:
+
+- A **pattern matrix** (factor loadings, i.e., the standardized regression coefficients of items on factors — use this for interpretation)
+- A **structure matrix** (simple item-factor correlations, always larger in magnitude when factors correlate)
+- A **factor correlation matrix** (the correlations among factors)
+
+If after fitting an oblique rotation the interfactor correlations are near zero, your subscales are de facto orthogonal and you've lost nothing by going oblique. If the correlations are non-trivial (which they almost certainly will be), varimax was hiding a real pattern. Always report the factor correlations; reviewers who care about this will ask.
+
+---
+
+## 3. The eigenvalue > 1 rule is a poor way to decide the number of factors
+
+Kaiser's eigenvalue-greater-than-1 rule (often called the K1 rule) is decades old and is widely known to **overextract** — it systematically suggests too many factors, especially with longer item pools. The rule was derived from mathematical convenience, not empirical justification about when factors are substantively meaningful.
+
+The reason it stays in common use is software defaults: SPSS defaults to eigenvalue > 1, so a whole generation of researchers grew up treating it as authoritative. It's not.
+
+Better approaches:
+
+1. **Parallel analysis** — the gold standard. Compare your observed eigenvalues to eigenvalues generated from random data of the same dimensions (same N, same number of items). Retain factors whose observed eigenvalue exceeds the random eigenvalue. Run this with `psych::fa.parallel(data, fa = "fa")` in R. Parallel analysis tends to give more conservative (lower) factor counts than the K1 rule, and in simulation studies it's much more accurate.
+
+2. **Velicer's MAP (Minimum Average Partial)** — finds the number of factors that minimizes the average squared partial correlation after partialing out the factors. `psych::nfactors()` reports this alongside several other criteria.
+
+3. **Scree plot** — visual inspection for the "elbow" in the eigenvalue plot. Useful alongside parallel analysis; not reliable alone.
+
+4. **Interpretability** — ultimately a substantive call. Can you name each factor and articulate what the high-loading items have in common? Does the structure make theoretical sense? If the 3-factor solution requires strained naming, try 2.
+
+Getting the number of factors wrong has downstream consequences: too many factors means you're treating sampling noise or method artifacts as substantive constructs; too few means you're collapsing genuinely distinct dimensions into one.
+
+---
+
+## 4. Polychoric correlations for Likert items
+
+A further issue: Pearson correlations on Likert items (especially 5-point scales, which are ordinal) underestimate the true relationship between the underlying continuous traits respondents are expressing. This biases your factor loadings downward and can even produce a spurious "difficulty factor" separating items by their endorsement level rather than their content.
+
+The appropriate input matrix for EFA with Likert items is a **polychoric correlation matrix**, which models each item response as a discretized version of a latent continuous variable and estimates the correlation between those underlying variables. In R, `psych::fa(..., cor = "poly")` handles this directly. SPSS does not compute polychoric correlations natively (at least not in the standard menu), which is another reason the typical SPSS-PCA-varimax workflow can mislead.
+
+---
+
+## What you should actually do
+
+Rerun this as an EFA:
+
+```r
+library(psych)
+
+# Step 1: Determine number of factors — use parallel analysis, not eigenvalue > 1
+fa.parallel(data, fa = "fa", cor = "poly")
+
+# Step 2: Fit EFA with oblique rotation and polychoric correlations
+# Start with the parallel-analysis-suggested number of factors (call it k)
+efa_fit <- fa(data, nfactors = k, fm = "minres", rotate = "oblimin", cor = "poly")
+
+# Step 3: Inspect results
+print(efa_fit, cut = .30, sort = TRUE)  # Pattern matrix, communalities
+efa_fit$Phi  # Factor correlation matrix
+```
+
+If the parallel analysis agrees with your advisor that 3 factors is the right number, that's reassuring — but now you're getting there through a method that actually justifies latent-variable subscale interpretation, uses an appropriate correlation matrix for ordinal data, and allows the subscales to correlate as they likely do in reality.
+
+Then, if you want to do this properly:
+
+- Treat this EFA as **exploratory** (you're discovering structure, not confirming it).
+- On an independent sample (or a random holdout split), run a **CFA** to confirm the structure before you write up the three subscales as established.
+- Report **omega** (not just alpha) for each subscale — `psych::omega()` or `semTools::compRelSEM()` after fitting a lavaan CFA. Alpha assumes tau-equivalence (equal loadings) which is almost never true.
+
+---
+
+## Summary
+
+| Issue | Current approach | Better approach |
+|-------|-----------------|-----------------|
+| Analysis type | PCA (total variance) | EFA (common/latent variance) |
+| Rotation | Varimax (orthogonal, assumes no factor correlation) | Oblimin/Promax (oblique, allows correlation) |
+| Factor count criterion | Eigenvalue > 1 (overextracts) | Parallel analysis + MAP + interpretability |
+| Correlation input | Pearson (biases loadings on Likert) | Polychoric |
+| Confirmation | None | CFA on independent sample |
+| Reliability | (presumably alpha) | Omega + alpha, reported per subscale |
+
+Your advisor's recommendation reflects a workflow that was standard in the 1980s and is still unfortunately common. The items above aren't pedantry — each one affects whether the subscales you report actually measure what you claim they measure.

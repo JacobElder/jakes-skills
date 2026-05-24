@@ -1,0 +1,35 @@
+{
+  "run_id": "grm-for-polytomous-irt-with_skill",
+  "eval_id": 5,
+  "eval_name": "grm-for-polytomous-irt",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "States clearly that 2PL is designed for binary (0/1 dichotomous) responses and is NOT appropriate for 5-point Likert items",
+      "passed": true,
+      "evidence": "Response opens with 'No — 2PL is the wrong model for your burnout scale' and explicitly explains: 'The 2PL (and all dichotomous IRT models — 1PL/Rasch, 2PL, 3PL) are defined for binary (0/1) responses.' It makes clear the binary response function is 'the wrong architecture entirely' for 5-category items."
+    },
+    {
+      "text": "Recommends the Graded Response Model (GRM) or Generalized Partial Credit Model (GPCM) for polytomous ordinal items",
+      "passed": true,
+      "evidence": "Response explicitly recommends both GRM (Samejima, 1969) and GPCM (Muraki, 1992) as the appropriate models, with GRM named as the default recommendation ('GRM is usually the first choice for burnout scales') and GPCM offered as a comparison."
+    },
+    {
+      "text": "Names mirt as the R package and mentions itemtype='graded' or 'gpcm'",
+      "passed": true,
+      "evidence": "R code block uses `library(mirt)`, `mirt(burnout_data, 1, itemtype = \"graded\", SE = TRUE)` for GRM and `mirt(burnout_data, 1, itemtype = \"gpcm\", SE = TRUE)` for GPCM. The note also explains '`itemtype = \"graded\"` is GRM; `itemtype = \"gpcm\"` is GPCM.'"
+    },
+    {
+      "text": "Does not recommend proceeding with 2PL for 5-point items without first correcting the model type",
+      "passed": true,
+      "evidence": "Response never suggests 2PL as a viable starting point. The bottom line explicitly states 'Don't use 2PL.' There is no hedging that 2PL could be acceptable or a reasonable approximation."
+    },
+    {
+      "text": "Explains that polytomous IRT models estimate multiple threshold (or step) parameters per item — one per response category boundary",
+      "passed": true,
+      "evidence": "Response states: 'polytomous IRT models estimate multiple threshold parameters per item — one for each response category boundary. For your 5-point scale, that's 4 thresholds per item' and describes the GRM threshold structure bᵢ,₁ < bᵢ,₂ < bᵢ,₃ < bᵢ,₄ explicitly."
+    }
+  ]
+}

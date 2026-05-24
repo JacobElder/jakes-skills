@@ -1,0 +1,72 @@
+Your committee may be satisfied, but as a psychometrician I'd want you to understand what alpha = 0.73 actually tells you — and what it doesn't — before you finalize your reliability evidence section.
+
+**The short answer: alpha = 0.73 is not adequate reliability evidence, even if it meets the threshold. The threshold itself is the first problem, and alpha is the second.**
+
+---
+
+## Problem 1: The 0.70 rule is a Nunnally artifact, misapplied
+
+The alpha ≥ 0.70 cutoff traces to Nunnally (1978), who explicitly said 0.70 was appropriate for *early-stage, exploratory* research. He set 0.80+ for applied research and 0.90+ for individual-level decisions. That context got stripped away as the rule passed through the literature, and now 0.70 gets cited as a universal pass/fail threshold for everything. It isn't.
+
+For a thesis, the relevant question is what the scale will be used to do. If you're comparing group means, 0.73 probably carries enough precision. If you're making any claim about individual scores or using the scale as a key predictor in a regression, 0.73 is lower than you'd want, and the committee being satisfied doesn't change what measurement error is doing to your estimates.
+
+More importantly: meeting a threshold is not the same as providing adequate reliability *evidence*. One number is not evidence; a well-reasoned argument about the psychometric properties of the scores is.
+
+---
+
+## Problem 2: Alpha assumes tau-equivalence, which is almost certainly false
+
+Cronbach's alpha is a lower bound on reliability *only* under tau-equivalence — the assumption that all items have identical true-score loadings on the construct. In tau-equivalent models, items differ only in their error variance, not in how strongly they relate to the latent variable. This is a strong, rarely-met assumption.
+
+In reality, your 12 items almost certainly have different loadings (congeneric measurement). When that's true, alpha underestimates reliability — sometimes by a meaningful margin. The modern substitute is **McDonald's omega**, which is derived from the actual factor loadings and doesn't require tau-equivalence:
+
+ω = (Σλᵢ)² / [(Σλᵢ)² + Σθᵢ]
+
+where λᵢ are the factor loadings and θᵢ are the item residual variances. Omega is what you should be reporting. In R:
+
+```r
+library(psych)
+omega(your_data)  # gives omega_h and omega_total
+
+# or, if you have a CFA model in lavaan:
+library(semTools)
+compRelSEM(fit)  # preferred when you have a fitted model
+```
+
+If omega comes back higher than 0.73 (common), your reliability is actually better than alpha suggested. If it comes back lower, you have a real problem alpha was hiding. Either way, you need to know.
+
+---
+
+## Problem 3: Dimensionality must come before reliability
+
+This is the part that most often goes wrong in applied work. Alpha is not a measure of unidimensionality. A multidimensional scale — one that actually measures two or three distinct constructs — can produce high alpha as long as the items intercorrelate, which they will if they share *anything* in common. The formula is essentially k × r̄ (number of items times mean inter-item correlation); a long scale with moderate inter-item correlations will hit 0.73 whether it's unidimensional or not.
+
+If your 12-item scale is actually measuring more than one thing, computing a single alpha on the total score is not just imprecise — it's meaningless. You'd be treating a composite of distinct constructs as if it were one thing and then declaring it "reliable."
+
+Before reporting alpha or omega, you need to verify that the scale is approximately unidimensional (or decide how to handle subscales). Run an EFA or at minimum examine the eigenvalues and factor loadings:
+
+```r
+library(psych)
+fa.parallel(your_data, fm = "ml", fa = "fa")  # parallel analysis for number of factors
+fa(your_data, nfactors = 1, rotate = "none", fm = "ml")  # one-factor solution; examine loadings
+```
+
+If a second factor explains substantial variance, you have a dimensionality problem, not just a reliability problem, and reporting alpha = 0.73 on the total score is not appropriate.
+
+---
+
+## Problem 4: Reliability is sample-specific
+
+Alpha in your thesis sample is alpha in *that sample*, not a property of the scale. Different samples with different variance, different range restriction, different subgroup composition will yield different alphas. Your thesis should say "alpha was .73 in this sample (N = X)" — not "the scale has reliability of .73." This isn't pedantry; it's what stops you from making overly confident claims about the scale's general measurement quality.
+
+---
+
+## What adequate reliability evidence actually looks like for a thesis
+
+1. **Check dimensionality first** (EFA/parallel analysis). Confirm that a single-factor or theoretically justified factor structure fits reasonably.
+2. **Report McDonald's omega** (omega-total at minimum; omega-hierarchical if you have a bifactor structure). Report alpha alongside it for reader familiarity, but omega is the defensible estimate.
+3. **Frame both statistics as sample-specific**: "In this sample (N = X), omega-total = .__, alpha = .73."
+4. **Interpret in context**: group-level research vs. individual-level decisions warrant different standards. State which applies.
+5. **Report a confidence interval** if possible (`MBESS::ci.reliability()` gives a CI around omega).
+
+Doing all of this — and being able to explain *why* — is what transforms "I computed alpha" into actual reliability evidence. Your committee asked for the latter.

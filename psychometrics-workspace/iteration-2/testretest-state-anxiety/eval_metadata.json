@@ -1,0 +1,14 @@
+{
+  "eval_id": 6,
+  "eval_name": "testretest-state-anxiety",
+  "prompt": "I computed test-retest reliability for my 'state anxiety' scale \u2014 it measures anxiety right now, in this moment. The two sessions were 4 weeks apart, both in a controlled lab. I got ICC = 0.72. Is this good reliability?",
+  "trap": "The naive answer says ICC = 0.72 is acceptable. The correct answer inverts the logic: high ICC for a state measure over 4 weeks is a PROBLEM \u2014 it suggests the scale is capturing trait-like variance, not state anxiety.",
+  "assertions": [
+    "Does NOT simply validate ICC = 0.72 as acceptable reliability for this scale",
+    "Raises the conceptual problem: state anxiety is expected to fluctuate over 4 weeks, so high ICC contradicts what the construct is supposed to measure",
+    "States or implies that ICC = 0.72 over 4 weeks suggests the scale may be capturing trait-like (stable) variance rather than genuine state variance",
+    "Distinguishes stability (appropriate for trait constructs) from equivalence (appropriate for state constructs over short intervals)",
+    "Notes that test-retest intervals for state measures should be much shorter \u2014 same session, 24-48 hours, not weeks",
+    "Does not endorse ICC = 0.72 at a 4-week interval as evidence of good state-anxiety scale performance"
+  ]
+}

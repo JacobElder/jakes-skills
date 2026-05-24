@@ -1,0 +1,40 @@
+{
+  "run_id": "factor-score-indeterminacy-without_skill",
+  "eval_id": 4,
+  "eval_name": "factor-score-indeterminacy",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Raises the factor score indeterminacy problem — EFA factor scores are not uniquely determined; multiple sets of scores are consistent with any given factor solution",
+      "passed": false,
+      "evidence": "Indeterminacy is never mentioned. The response treats fa()$scores as well-defined estimated scores with no discussion of the infinite family of solutions consistent with the factor model."
+    },
+    {
+      "text": "Does not simply confirm 'yes, save fa()$scores and use them in regression' without addressing indeterminacy",
+      "passed": false,
+      "evidence": "Response opens with 'Yes, that's a standard and reasonable workflow' and proceeds to endorse fa()$scores → regression without any caveat about indeterminacy. This is the exact naive confirmation the trap targets."
+    },
+    {
+      "text": "Explains that EFA factor scores (unlike CFA latent variable scores) lack a unique mathematical solution",
+      "passed": false,
+      "evidence": "No distinction between EFA and CFA factor scores is made. EFA scores are described as straightforward estimates computed by 'predicting each person's factor score from their item responses weighted by the factor loadings,' implying a unique, determinate solution."
+    },
+    {
+      "text": "Recommends alternatives: sum scores or unit-weighted composites of high-loading items as more transparent and reproducible",
+      "passed": false,
+      "evidence": "Sum scores and unit-weighted composites are not mentioned. The only scoring variant mentioned is Anderson-Rubin, and it is raised only to address multicollinearity among predictors, not as a response to indeterminacy."
+    },
+    {
+      "text": "Optionally notes that CFA with lavaan allows better-defined factor score estimation if model fit is adequate",
+      "passed": false,
+      "evidence": "CFA is not mentioned at all. The response stays entirely within the EFA → fa()$scores → regression framing without suggesting a better-constrained alternative."
+    },
+    {
+      "text": "Does not treat fa()$scores as equivalent to true factor scores or latent variable scores",
+      "passed": false,
+      "evidence": "fa()$scores are described as 'estimated factor scores for each observation' that 'capture the underlying latent structure,' framing them as adequate proxies for the latent variables. No acknowledgment that the scores are one arbitrary element of an infinite set."
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "run_id": "alpha-threshold-adequate-without_skill",
+  "eval_id": 3,
+  "eval_name": "alpha-threshold-adequate",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Does not simply validate alpha = 0.73 as meeting the 0.70 threshold and conclude the matter is settled",
+      "passed": false,
+      "evidence": "Response opens with 'Yes, alpha = 0.73 is generally considered adequate reliability evidence' and explicitly states 'Your committee is right to be satisfied.' The matter is treated as fully settled by threshold-passing."
+    },
+    {
+      "text": "States or explains that alpha assumes tau-equivalence (all items load equally on the construct), which is rarely true",
+      "passed": false,
+      "evidence": "No mention of tau-equivalence, congeneric measurement, or the assumptions underlying alpha anywhere in the response."
+    },
+    {
+      "text": "Recommends computing McDonald's omega in addition to or instead of alpha, with a reason",
+      "passed": false,
+      "evidence": "McDonald's omega is not mentioned. The response recommends only optional CI reporting as an addition, not omega."
+    },
+    {
+      "text": "Notes that the 0.70 cutoff from Nunnally (1978) was intended for early-stage research, not as a universal applied standard",
+      "passed": false,
+      "evidence": "The 0.70 cutoff is presented as 'the widely accepted threshold' with no attribution to Nunnally, no context about its original scope, and no caveat about its misapplication."
+    },
+    {
+      "text": "Frames reliability as sample-specific (alpha in this sample) rather than a fixed property of the scale",
+      "passed": false,
+      "evidence": "Response treats alpha = 0.73 as a general descriptor of the scale ('your scale'), not as a sample-specific estimate. No mention of sample-specificity."
+    },
+    {
+      "text": "Raises or flags that dimensionality should be verified before reporting reliability — alpha does not distinguish low reliability from multidimensionality",
+      "passed": false,
+      "evidence": "No mention of dimensionality, factor structure, unidimensionality, or the risk that alpha can be inflated by multidimensional scales. The response treats reliability as a standalone, settled question."
+    }
+  ]
+}

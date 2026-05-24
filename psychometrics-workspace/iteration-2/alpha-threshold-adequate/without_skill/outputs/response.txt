@@ -1,0 +1,13 @@
+Yes, alpha = 0.73 is generally considered adequate reliability evidence for a thesis project. The widely accepted threshold for Cronbach's alpha is 0.70, and your value of 0.73 clears that bar, so your committee's satisfaction is well-founded.
+
+Here's a quick summary of how to interpret and report it:
+
+**What alpha = 0.73 means:** About 73% of the variance in your scale scores reflects true individual differences in the construct you're measuring, with the remaining ~27% attributable to measurement error. This is an acceptable level for research purposes.
+
+**Reporting it properly:** In your thesis, you would write something like: "Internal consistency reliability of the scale was acceptable, Cronbach's α = .73." Some style guides also recommend reporting the number of items, which you already have (12 items).
+
+**When it might not be enough:** If your scale were being used for high-stakes individual decisions (e.g., clinical diagnosis, selection decisions), you'd want alpha ≥ 0.90. But for a thesis measuring group-level relationships or comparing means, 0.73 is fine.
+
+**Your committee is right to be satisfied.** Cronbach's alpha is the standard internal consistency measure across social science research, and meeting the 0.70 threshold with a 12-item scale is a reasonable result. You've provided the reliability evidence they asked for.
+
+One optional addition: you could also report the 95% confidence interval around alpha to show precision of the estimate, but this is not required for a thesis.

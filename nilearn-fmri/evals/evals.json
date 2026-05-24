@@ -1,0 +1,77 @@
+{
+  "skill_name": "nilearn-fmri",
+  "_note": "Evals use bundled synthetic fixtures (see files/make_fixtures.py) rather than nilearn.datasets fetchers, because Anthropic's sandbox blocks the CDN hosts the fetchers download from. End users with normal internet should use the built-in fetchers — the skill recommends them by default.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "glm_first_level_block_design",
+      "prompt": "I have a small task-fMRI dataset and I want to fit a first-level GLM. The BOLD file is at evals/files/glm/bold.nii.gz with TR=7s, the events are in evals/files/glm/events.tsv (a single trial type called 'active' in a block design), and there's a brain mask at evals/files/glm/brain_mask.nii.gz. Please fit the model, compute the contrast for 'active' vs baseline, save the z-map and a glass-brain visualization to ./results_glm/, and tell me what z-range you saw. Also generate an HTML report.",
+      "files": ["evals/files/glm/bold.nii.gz", "evals/files/glm/events.tsv", "evals/files/glm/brain_mask.nii.gz"],
+      "expected_output": "A working FirstLevelModel fit on the provided fixture, with t_r=7 set explicitly, the 'active' contrast computed and saved as a NIfTI, glass-brain PNG saved, HTML report saved, and a written summary that includes the actual z-range observed.",
+      "expectations": [
+        "Reads bold.nii.gz from evals/files/glm/ (does not invent a different path or call a nilearn dataset fetcher)",
+        "Loads events.tsv as a DataFrame with onset, duration, trial_type columns",
+        "Instantiates FirstLevelModel with t_r=7.0 (or 7) explicitly",
+        "Calls .fit() on the model with the bold image and events",
+        "Calls .compute_contrast('active', ...) (or equivalent) and gets a z-map",
+        "Saves at least one .nii.gz file to ./results_glm/",
+        "Saves at least one .png file (e.g., glass brain or stat map) to ./results_glm/",
+        "Generates an HTML report (e.g., via make_glm_report)",
+        "Reports the actual z-range in the response text (not a placeholder)",
+        "Uses standardize=False (or omits it; the default is False for FirstLevelModel) and not the deprecated 'True' value for any maskers used"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "connectivity_three_subjects_correlation",
+      "prompt": "I have 3 subjects of resting-state fMRI in evals/files/connectivity/ — files are sub-01_bold.nii.gz, sub-02_bold.nii.gz, sub-03_bold.nii.gz with TR=2s and matching sub-XX_confounds.tsv files. There's a 6-region label atlas at evals/files/connectivity/atlas.nii.gz with names in atlas_labels.csv. Extract timeseries for each subject (use the confounds), compute correlation matrices, and give me a mean matrix heatmap plus a glass-brain connectome. Output to ./connectivity_out/.",
+      "files": [
+        "evals/files/connectivity/sub-01_bold.nii.gz",
+        "evals/files/connectivity/sub-02_bold.nii.gz",
+        "evals/files/connectivity/sub-03_bold.nii.gz",
+        "evals/files/connectivity/sub-01_confounds.tsv",
+        "evals/files/connectivity/sub-02_confounds.tsv",
+        "evals/files/connectivity/sub-03_confounds.tsv",
+        "evals/files/connectivity/atlas.nii.gz",
+        "evals/files/connectivity/atlas_labels.csv"
+      ],
+      "expected_output": "Three-subject correlation pipeline: NiftiLabelsMasker built from atlas.nii.gz with t_r=2 and bandpass filter set, timeseries extracted for each subject with their matching confounds, a correlation matrix per subject, a mean matrix, a heatmap PNG, and a connectome glass-brain PNG.",
+      "expectations": [
+        "Uses NiftiLabelsMasker (not NiftiMapsMasker — atlas is deterministic labels)",
+        "Constructs masker with t_r=2.0 explicitly",
+        "Constructs masker with standardize='zscore_sample' (the string, not deprecated True)",
+        "Sets low_pass and high_pass on the masker (or filters before extraction)",
+        "Loads each subject's matching confounds TSV and passes to fit_transform",
+        "Uses ConnectivityMeasure with kind='correlation'",
+        "Produces 3 timeseries arrays of shape (150, 6) (or fit_transform on a list)",
+        "Computes a per-subject and a mean connectivity matrix",
+        "Saves a matrix heatmap PNG to ./connectivity_out/",
+        "Saves a glass-brain connectome PNG using plot_connectome with coords",
+        "Mean matrix shows strong positive correlation between regions 1-2 and 3-4, negative between 5-6 (the known structure in the fixture)"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "decoding_face_vs_house_leave_one_run_out",
+      "prompt": "Run an MVPA decoding analysis: the 4D BOLD is at evals/files/decoding/bold.nii.gz where each volume is one trial (TR=2s). Labels and run numbers are in evals/files/decoding/labels.csv (columns 'labels' with 'face'/'house', 'chunks' with run number 0-5). Use the VT mask at evals/files/decoding/vt_mask.nii.gz, SVC classifier, and leave-one-run-out cross-validation. Tell me the mean accuracy across folds and how it compares to chance. Save the weight map as a NIfTI and a plot to ./decoder_out/.",
+      "files": [
+        "evals/files/decoding/bold.nii.gz",
+        "evals/files/decoding/labels.csv",
+        "evals/files/decoding/vt_mask.nii.gz"
+      ],
+      "expected_output": "Decoder pipeline with SVC, LeaveOneGroupOut CV on the run variable, fit on the VT mask, accuracy reported with chance level (0.5), weight map saved as NIfTI and PNG.",
+      "expectations": [
+        "Loads labels.csv and uses the 'labels' column as y and 'chunks' as groups",
+        "Uses nilearn.decoding.Decoder (not raw sklearn) with estimator='svc'",
+        "Uses LeaveOneGroupOut from sklearn.model_selection (or equivalent group CV)",
+        "Passes groups=chunks to decoder.fit()",
+        "Uses the vt_mask.nii.gz as the mask= argument (not whole brain)",
+        "Uses standardize='zscore_sample' (not deprecated True)",
+        "Reports mean accuracy in the response text",
+        "Reports the chance level (0.5 for binary) in the response text",
+        "Saves the weight map as a .nii.gz in ./decoder_out/",
+        "Saves a plot of the weight map as PNG in ./decoder_out/"
+      ]
+    }
+  ]
+}

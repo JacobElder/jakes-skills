@@ -1,0 +1,40 @@
+{
+  "run_id": "testretest-state-anxiety-with_skill",
+  "eval_id": 6,
+  "eval_name": "testretest-state-anxiety",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Does NOT simply validate ICC = 0.72 as acceptable reliability for this scale",
+      "passed": true,
+      "evidence": "Response explicitly states 'ICC = 0.72 over 4 weeks is not good reliability for a state anxiety scale — it's actually a red flag' and 'Treating this as acceptable reliability would be a mistake.'"
+    },
+    {
+      "text": "Raises the conceptual problem: state anxiety is expected to fluctuate over 4 weeks, so high ICC contradicts what the construct is supposed to measure",
+      "passed": true,
+      "evidence": "Response states 'genuine state anxiety should look quite different in the same person at two points 4 weeks apart' and that high stability 'is theoretically inconsistent with what state anxiety is supposed to be.'"
+    },
+    {
+      "text": "States or implies that ICC = 0.72 over 4 weeks suggests the scale may be capturing trait-like (stable) variance rather than genuine state variance",
+      "passed": true,
+      "evidence": "Response directly states 'the scale is picking up stable between-person variance — individual differences in baseline anxiety proneness, i.e., trait anxiety — rather than within-person fluctuation in current state.' References the STAI State vs. Trait distinction."
+    },
+    {
+      "text": "Distinguishes stability (appropriate for trait constructs) from equivalence (appropriate for state constructs over short intervals)",
+      "passed": true,
+      "evidence": "Response explicitly states 'Test-retest correlation conflates two distinct things: the stability of the construct and the reliability of measurement' and contrasts trait measures (high stability appropriate) with state measures (stability inappropriate)."
+    },
+    {
+      "text": "Notes that test-retest intervals for state measures should be much shorter — same session, 24-48 hours, not weeks",
+      "passed": true,
+      "evidence": "Response states 'Same session (immediate retest), 24–48 hours at most' as appropriate intervals, and that at 4 weeks 'You are not measuring equivalence of the measurement procedure; you are measuring stability of a construct that, by definition, should not be stable.'"
+    },
+    {
+      "text": "Does not endorse ICC = 0.72 at a 4-week interval as evidence of good state-anxiety scale performance",
+      "passed": true,
+      "evidence": "Response concludes 'a high ICC at a 4-week interval is theoretically inconsistent with what state anxiety is supposed to be' and 'a reviewer who understands the state-trait distinction will flag it immediately.'"
+    }
+  ]
+}

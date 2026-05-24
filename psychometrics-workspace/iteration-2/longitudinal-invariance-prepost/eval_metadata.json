@@ -1,0 +1,14 @@
+{
+  "eval_id": 8,
+  "eval_name": "longitudinal-invariance-prepost",
+  "prompt": "We ran a 6-week mindfulness training program. We measured 'psychological safety' in teams before and after with a validated 7-item Likert scale. Scores went from M = 3.9 to M = 4.4 (SD \u2248 0.8). Can we say the training improved psychological safety?",
+  "trap": "The naive answer recommends a paired t-test and interprets the mean shift as real. The correct answer raises longitudinal measurement invariance \u2014 does the scale measure the same construct before and after training? \u2014 before interpreting score differences.",
+  "assertions": [
+    "Does NOT simply recommend a paired t-test and interpret the mean difference as evidence of improved psychological safety",
+    "Raises longitudinal measurement invariance as a prerequisite for interpreting the pre-post score difference",
+    "Explains that training programs can change how respondents interpret and use scale items (response shift, referent recalibration)",
+    "States that without invariance testing, a mean shift could reflect a real construct change OR a change in how respondents use the scale",
+    "Names or implies the configural/metric/scalar invariance sequence as what would need to be tested",
+    "Does not conflate 'statistically significant pre-post difference' with 'training improved psychological safety' without the measurement caveat"
+  ]
+}

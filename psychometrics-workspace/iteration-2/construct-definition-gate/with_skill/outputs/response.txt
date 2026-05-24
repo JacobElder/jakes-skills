@@ -1,0 +1,43 @@
+Stop. I want to help you get this right, and the most important thing I can tell you right now is: do not touch those 40 items yet.
+
+Here is the problem. You have a pool of candidate items but you do not yet have a construct. "Digital wellbeing" is a label, not a definition. And writing items before the construct is clearly bounded and defined is the single most common — and most consequential — mistake in scale development. Sophisticated analyses downstream cannot fix this. You cannot EFA your way out of a vague construct.
+
+Before you do anything else with those 40 items, you need to answer a set of prior questions:
+
+**1. What exactly is digital wellbeing?**
+
+Write a clear conceptual statement. Not a paragraph of hedges — a precise definition that someone else could use to independently judge whether a given item belongs. What psychological state or trait are you trying to capture? Is it a felt sense of balance and control over one's digital life? Is it freedom from technology-induced distress? Is it the degree to which digital technology use supports versus undermines broader flourishing? These sound similar but they are different constructs that would produce different factor structures.
+
+**2. What is NOT digital wellbeing?**
+
+The boundary is as important as the center. Your items already span screen time, social comparison, notification stress, and online connection quality. Are all four of those part of the same construct, or are some of them antecedents, consequences, or correlates of digital wellbeing rather than constitutive of it? Social comparison is arguably a mechanism that produces (low) wellbeing; it may not be a component of wellbeing itself. Notification stress may be an environmental stressor. You need a nomological network — a map of what predicts the construct, what the construct predicts, and what is adjacent but distinct — before item writing can proceed sensibly.
+
+**3. Is this construct unidimensional, or is multidimensionality intentional?**
+
+Your four content areas (screen time, social comparison, notification stress, online connection) may represent distinct facets of a broader construct, or they may be indicators of a single underlying dimension, or they may be so different that they should be separate scales. This is a substantive theoretical question. You need to take a position on it before you write a table of specifications. If you want a multidimensional scale with subscores, you need to define each subdimension. If you want a unidimensional global score, you need to defend why those four content areas all reflect a single latent variable.
+
+**4. Reflective or formative?**
+
+This is not a statistical detail — it changes the entire measurement model and how you evaluate the scale. A reflective model assumes that a latent "digital wellbeing" variable causes the item responses: people who have high digital wellbeing tend to endorse positive items because the underlying state drives those responses. Interchangeable items are fine; dropping an item does not change the construct. A formative model assumes the opposite: the items collectively define and constitute digital wellbeing, the way income + education + occupational prestige together constitute SES. In a formative model, items are not interchangeable, and standard internal consistency analyses are not appropriate.
+
+Most wellbeing constructs are treated as reflective, but digital wellbeing is contested enough that you should make this decision explicitly. If screen time, social comparison, notification stress, and online connection are all causes of wellbeing rather than reflections of it, you may have a formative or even a composite model — and the implications for your entire analytic strategy are substantial.
+
+**5. Does an adequate measure already exist?**
+
+Before defending a new scale, you should document why existing measures — the Digital Wellbeing Scale, components of the Problematic Social Media Use scale, Przybylski and Weinstein's work, Twenge and colleagues' measures — do not meet your needs. "I want to build a scale" is not sufficient justification for adding another instrument to an already crowded space.
+
+---
+
+Here is what I recommend you do now:
+
+1. Write a 1–2 paragraph construct definition. It should specify what the construct is, what it is not, whether it is one thing or several, and for what population it applies.
+
+2. Draw a domain map — a table or outline that lists the content facets the construct covers, with a rationale for each one being included.
+
+3. Decide the measurement model: reflective or formative, and unidimensional or multidimensional.
+
+4. Go back to your 40 items with that definition and domain map in hand. Evaluate each item against it. Some items will clearly fit; others will turn out to be measuring something adjacent. Items that do not clearly map to a facet in your domain map should be dropped or rewritten, not retained because you spent time writing them.
+
+Only after that groundwork is laid does it make sense to talk about expert review panels, cognitive interviews, piloting, or any statistical workflow. The items you have may be useful raw material — or they may be 40 measurements of vibes about digital life. You cannot tell until you know what you are measuring.
+
+What is your current working definition of digital wellbeing, and what theoretical framework are you building from?

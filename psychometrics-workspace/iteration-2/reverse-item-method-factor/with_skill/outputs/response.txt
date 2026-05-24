@@ -1,0 +1,37 @@
+The 10/10 positive/negative split is standard practice in the sense that you'll see it in most scale-development textbooks and a large fraction of published personality measures — but "standard" and "good" are two different things here, and this particular standard has a well-documented empirical problem you need to plan around before you collect a single response.
+
+**The method factor problem**
+
+When you put 10 negatively-worded items in an EFA or CFA alongside 10 positively-worded items, what you very often get is not one clean personality factor. You get two factors: the substantive construct you were trying to measure, and a method factor defined almost entirely by item wording direction. Positively-worded items load together; negatively-worded items load together — even when they're supposed to be measuring the same thing. This has been replicated across constructs including self-esteem (the Rosenberg scale is the classic case), neuroticism, life satisfaction, and others.
+
+That second factor isn't your personality dimension. It's an artifact of how respondents process negative syntax. It will appear as a real dimension in your EFA. If you then use parallel analysis or an eigenvalue criterion and extract two factors, you'll conclude you measured a two-dimensional construct when you set out to measure one. Your factor count is now wrong, and any downstream analyses (subscale scoring, structural models) will be built on that error.
+
+In CFA, you'll find that a single-factor model fits very poorly, while a two-factor model — or a one-factor model with a correlated method factor for negatively-worded items — fits substantially better. Modification indices will be screaming at you to correlate residuals among your reverse-coded items. That's not model refinement; that's the method factor showing up.
+
+**The acquiescence problem, honestly**
+
+The reason for including reverse-keyed items in the first place is acquiescence bias — the tendency of some respondents to agree regardless of item content. The theory is that if half the items are reverse-worded, acquiescent responding inflates scores on positively-worded items but deflates them on negatively-worded items, and these two effects cancel out in the sum score.
+
+The problem is that this works as a cancellation strategy only if the negatively-worded items function symmetrically with the positively-worded ones on the underlying construct. In practice they often don't. Respondents interpret negatively-worded items differently — they require additional cognitive processing ("Not being anxious" is not simply the opposite of "Being anxious" for every respondent), and they activate a response set that's somewhat distinct from the set triggered by straightforward positive items. The result is that your reverse-coded items may have lower factor loadings, lower corrected item-total correlations, and higher residual variances than your positive items. They're doing worse measurement work, not better.
+
+Blanton and Jaccard (2006) and Rodebaugh et al. (2007) lay this out clearly. Kam and Meyer (2015) showed that the acquiescence-control benefit of reverse-keyed items is much smaller than traditionally assumed, while the method-factor cost is real and often substantial.
+
+**What to do instead**
+
+You have a few options, depending on your goals:
+
+1. **Reduce or eliminate negatively-worded items and write all-positive items thoughtfully.** This sounds heretical but works. For many personality constructs, a unidimensional scale of carefully written positive items will outperform a mixed-wording scale that has to contend with method-factor contamination. You lose the acquiescence "correction" but gain clean measurement.
+
+2. **If you must use reverse-worded items, pilot them rigorously.** Cognitive interviews will tell you whether respondents are processing "I rarely feel sad" as the functional opposite of "I feel sad" or as a different kind of item entirely. Items that survive cognitive interviews and show good item statistics in pilot data are candidates to keep; those that don't should be dropped regardless of your 10/10 plan.
+
+3. **Plan to test and model the method factor explicitly.** In your CFA, specify a priori that negatively-worded items may share residual covariance (a method factor), and compare: (a) one-factor model, (b) one-factor model with a method factor for negatively-worded items, (c) two-factor model. This is the Marsh (1996) approach for self-concept scales, and it's the honest way to handle the situation. If you find the method factor is substantial, you can partial it out analytically — but now you have a more complex model that requires justification.
+
+4. **Consider balanced item construction as an alternative to wording-direction balance.** You can write items that tap opposite poles of a trait without using negative syntax — "I feel calm in stressful situations" vs. "I feel overwhelmed easily" — where both are grammatically positive but substantively tap different regions of the trait continuum.
+
+**For your 20-item scale specifically**
+
+I would not write 10 negatively-worded items with the expectation that they'll function symmetrically with your positive items. The more defensible plan: write 20–25 positive items, run a pilot, and prune to the best 15–20 based on item-total correlations, distributional properties, and cognitive interview findings. Then at EFA/CFA, you have a clean unidimensional model to test. You can still examine inter-item correlation patterns for signs of acquiescence clustering if you're worried about that response style.
+
+If you do use negatively-worded items, treat the 10/10 split as a hypothesis to test, not a design feature that controls for something. Build the method-factor CFA before you finalize your scale structure. And report both the clean-one-factor and the method-factor models so reviewers can see what you found.
+
+The short version: the 10/10 split is a reflex from an older literature. The empirical record since the mid-1990s says it often creates more measurement problems than it solves.

@@ -1,0 +1,35 @@
+{
+  "run_id": "grm-for-polytomous-irt-without_skill",
+  "eval_id": 5,
+  "eval_name": "grm-for-polytomous-irt",
+  "config": "without_skill",
+  "passed": 1,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "States clearly that 2PL is designed for binary (0/1 dichotomous) responses and is NOT appropriate for 5-point Likert items",
+      "passed": false,
+      "evidence": "Response calls 2PL 'a reasonable starting point' and says 'many researchers use it even with Likert data after some recoding.' It never states unambiguously that 2PL is a binary model that is NOT appropriate for 5-point items. The hedged framing ('could be a reasonable starting point,' 'can work reasonably well in practice') directly falls into the trap described in the eval."
+    },
+    {
+      "text": "Recommends the Graded Response Model (GRM) or Generalized Partial Credit Model (GPCM) for polytomous ordinal items",
+      "passed": true,
+      "evidence": "Response does mention GRM and GPCM as models 'designed for ordered response categories' and says they would be 'the more technically appropriate choice' — though this is heavily qualified and buried after endorsing 2PL as a valid option."
+    },
+    {
+      "text": "Names mirt as the R package and mentions itemtype='graded' or 'gpcm'",
+      "passed": false,
+      "evidence": "Response mentions the `mirt` package by name but does not specify `itemtype = 'graded'` or `itemtype = 'gpcm'`. No code or specific function call syntax is provided."
+    },
+    {
+      "text": "Does not recommend proceeding with 2PL for 5-point items without first correcting the model type",
+      "passed": false,
+      "evidence": "Response explicitly validates 2PL for 5-point Likert items, stating '2PL is a good starting point and many researchers use it even with Likert data after some recoding.' This is the exact failure mode the trap is designed to catch — recommending 2PL as an acceptable approach rather than correcting the misapprehension."
+    },
+    {
+      "text": "Explains that polytomous IRT models estimate multiple threshold (or step) parameters per item — one per response category boundary",
+      "passed": false,
+      "evidence": "Response says polytomous models 'model each response category separately' but does not explain threshold parameters, the K-1 boundary structure, or anything about the parameter structure of GRM/GPCM. The conceptual explanation is absent."
+    }
+  ]
+}

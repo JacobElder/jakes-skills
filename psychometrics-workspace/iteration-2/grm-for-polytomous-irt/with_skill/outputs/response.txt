@@ -1,0 +1,56 @@
+No — 2PL is the wrong model for your burnout scale. Here's why, and what to use instead.
+
+**Why 2PL doesn't work for your data**
+
+The 2PL (and all dichotomous IRT models — 1PL/Rasch, 2PL, 3PL) are defined for binary (0/1) responses. The model's response function maps a latent trait θ to the probability of a single "correct" or "endorsed" response: P(X = 1 | θ). Your items have five ordered response categories ("never" through "always"), so a binary response function is the wrong architecture entirely. You'd have to collapse your 5-point scale to 0/1 to use 2PL, and that throws away real information — you're discarding the distinctions between response categories that make the scale useful in the first place.
+
+This isn't a minor technical quibble. Using a dichotomous model on polytomous data means your item parameters will be estimated from a mutilated version of the response process, and your θ estimates will be less precise than they should be.
+
+**What you should use: GRM or GPCM**
+
+For 5-point Likert items, the right IRT models are:
+
+1. **Graded Response Model (GRM; Samejima, 1969)** — the default recommendation for ordered polytomous items. For each item, GRM estimates one discrimination parameter (aᵢ) and four threshold parameters (one per adjacent category boundary: bᵢ,₁ < bᵢ,₂ < bᵢ,₃ < bᵢ,₄). Each threshold is the point on the θ scale where a respondent has a 50% probability of responding in that category or higher. The probability of any specific response category is modeled as the difference between two cumulative probabilities. This is the key structural feature: **polytomous IRT models estimate multiple threshold parameters per item — one for each response category boundary.** For your 5-point scale, that's 4 thresholds per item, plus a discrimination, for a total of 5 parameters per item.
+
+2. **Generalized Partial Credit Model (GPCM; Muraki, 1992)** — parameterizes adjacent-category logits rather than cumulative probabilities. Allows for non-ordered step parameters, which can be a better fit when middle categories are infrequently used. Also estimates one discrimination and K−1 step parameters per item.
+
+GRM is usually the first choice for burnout scales and similar attitude/symptom measures. GPCM is worth comparing when you see category response curves that GRM doesn't fit well.
+
+**In R with mirt:**
+
+```r
+library(mirt)
+
+# Fit the Graded Response Model
+fit_grm <- mirt(burnout_data, 1, itemtype = "graded", SE = TRUE)
+
+# Fit GPCM for comparison
+fit_gpcm <- mirt(burnout_data, 1, itemtype = "gpcm", SE = TRUE)
+
+# Inspect item parameters (a = discrimination, d = threshold intercepts)
+coef(fit_grm, simplify = TRUE, IRTpars = TRUE)
+
+# Visualize category response functions for each item
+itemplot(fit_grm, item = 1)
+
+# Test information function — where on the burnout continuum is your scale precise?
+plot(fit_grm, type = "info")
+plot(fit_grm, type = "infoSE")
+
+# Item fit
+itemfit(fit_grm, fit_stats = "S_X2")
+
+# Model-level fit
+M2(fit_grm)
+
+# Person scores
+theta_eap <- fscores(fit_grm, method = "EAP", full.scores.SE = TRUE)
+```
+
+`itemtype = "graded"` is GRM; `itemtype = "gpcm"` is GPCM. You can compare them with `anova(fit_grm, fit_gpcm)` or by AIC/BIC.
+
+**One important caveat: sample size**
+
+GRM needs approximately 500+ respondents to estimate parameters stably — the thresholds, especially for the outer categories, require enough observations in each response category. If your N is below ~300, parameter estimates will have wide confidence intervals and may not replicate. With a large enough sample (500+), GRM will give you item-level information about where on the burnout continuum each item discriminates, which items are most informative at high burnout levels (often the most clinically relevant region), and conditional standard errors across the trait range — things a CTT sum score simply can't provide.
+
+**Bottom line:** Don't use 2PL. Fit GRM first with `mirt(..., itemtype = "graded")`, check item fit with S-χ², inspect the category response curves and test information function, and compare to GPCM if you have reason to think the cumulative model is misspecified.

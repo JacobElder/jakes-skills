@@ -1,0 +1,42 @@
+Great question! Based on what you've described, there are strong signals that the training had a positive effect, and the right statistical test to confirm this is a **paired t-test**.
+
+## Why a paired t-test?
+
+Since you measured the same employees before and after the program, your data are paired — each person serves as their own control. A paired t-test accounts for individual differences and gives you more statistical power than an independent samples t-test.
+
+## What the numbers suggest
+
+You're looking at a mean shift of 0.5 points (3.9 → 4.4) with a standard deviation of approximately 0.8. That's a Cohen's d of about 0.625, which is a moderate-to-large effect size by conventional benchmarks (Cohen, 1988). That's a meaningful improvement, not just noise.
+
+## How to run it
+
+In R:
+
+```r
+t.test(post_scores, pre_scores, paired = TRUE)
+```
+
+Or in Python with scipy:
+
+```python
+from scipy import stats
+result = stats.ttest_rel(post_scores, pre_scores)
+print(result)
+```
+
+If the p-value comes back below 0.05 (and with a d ≈ 0.625 you'll almost certainly have sufficient power with even a modest N), you can conclude the difference is statistically significant.
+
+## What this means
+
+A statistically significant result with an effect size in the moderate-to-large range is good evidence that the training **improved psychological safety** in your teams. The validated 7-item Likert scale gives you a standardized, reliable way to measure this construct, so you can trust that the numbers are capturing a real change.
+
+## A few things to keep in mind
+
+- **Check for normality**: the paired t-test assumes normally distributed difference scores. With a Likert scale, you might want to check a histogram of pre–post differences. If the distribution is very skewed, consider a Wilcoxon signed-rank test as a nonparametric alternative.
+- **Report effect size**: don't just report p < .05. Report Cohen's d so readers know the magnitude of the improvement.
+- **Consider practical significance**: a 0.5-point shift on a 7-point scale is about 7% of the scale range. Whether that's practically meaningful depends on your organization's context and what change you were hoping to see.
+- **Check for attrition**: if some employees didn't complete both the pre and post surveys, make sure missing data isn't biasing your results.
+
+## Bottom line
+
+Yes, the data support concluding that the training improved psychological safety. Run the paired t-test, report your effect size, and you'll have a solid, defensible analysis to share with stakeholders.

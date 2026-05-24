@@ -1,0 +1,40 @@
+{
+  "run_id": "factor-score-indeterminacy-with_skill",
+  "eval_id": 4,
+  "eval_name": "factor-score-indeterminacy",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Raises the factor score indeterminacy problem — EFA factor scores are not uniquely determined; multiple sets of scores are consistent with any given factor solution",
+      "passed": true,
+      "evidence": "The response dedicates an entire section ('The indeterminacy problem') to this: 'for any given factor solution — the same loadings, the same observed covariance matrix — there are infinitely many sets of factor scores that are mathematically consistent with the model.' Explicitly names factor score indeterminacy and cites Grice (2001)."
+    },
+    {
+      "text": "Does not simply confirm 'yes, save fa()$scores and use them in regression' without addressing indeterminacy",
+      "passed": true,
+      "evidence": "Response opens with 'Not quite' and immediately flags the indeterminacy problem before giving any practical guidance. Never endorses the described workflow as-is."
+    },
+    {
+      "text": "Explains that EFA factor scores (unlike CFA latent variable scores) lack a unique mathematical solution",
+      "passed": true,
+      "evidence": "'This is not a rounding issue or a sampling artifact. It's a logical consequence of the common factor model: the factors are latent (unobserved), and the observed items underdetermine them.' Contrasts with CFA: 'CFA in lavaan... produces factor scores that are better-defined than EFA scores because the model imposes additional constraints that reduce indeterminacy.'"
+    },
+    {
+      "text": "Recommends alternatives: sum scores or unit-weighted composites of high-loading items as more transparent and reproducible",
+      "passed": true,
+      "evidence": "Option 1 explicitly recommends unit-weighted composite scores with code example, noting they are 'transparent, reproducible... don't require the factor model at all, and behave well in downstream regression.'"
+    },
+    {
+      "text": "Optionally notes that CFA with lavaan allows better-defined factor score estimation if model fit is adequate",
+      "passed": true,
+      "evidence": "Option 2 explicitly covers CFA with lavaan: 'fit that structure as a CFA' using lavPredict(), noting that CFA scores have 'additional model constraints [that] sharply reduce indeterminacy compared to EFA.' Also mentions SEM as Option 3."
+    },
+    {
+      "text": "Does not treat fa()$scores as equivalent to true factor scores or latent variable scores",
+      "passed": true,
+      "evidence": "Explicitly states: 'The problem is interpreting those scores as if they are the unique, true latent factor scores. They aren't.' Clarifies fa()$scores is 'one arbitrary choice' from an infinite family of equivalent solutions."
+    }
+  ]
+}

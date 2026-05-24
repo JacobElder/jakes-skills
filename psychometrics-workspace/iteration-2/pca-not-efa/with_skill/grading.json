@@ -1,0 +1,40 @@
+{
+  "run_id": "pca-not-efa-with_skill",
+  "eval_id": 1,
+  "eval_name": "pca-not-efa",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Distinguishes PCA from EFA — states they are fundamentally different analyses (PCA models total variance; EFA models common/latent variance attributed to latent factors)",
+      "passed": true,
+      "evidence": "PCA models total variance. Components are weighted linear composites of your observed items... EFA models common variance. The factor model partitions each item's variance into communality (variance shared with other items, attributed to latent factors) and uniqueness (item-specific variance plus error)."
+    },
+    {
+      "text": "Does not endorse using PCA components as subscales for a latent-variable measurement model without flagging this limitation",
+      "passed": true,
+      "evidence": "When you use PCA components as subscales and call them measures of latent constructs, you're using the wrong model for the claim you're making."
+    },
+    {
+      "text": "Warns that varimax (orthogonal) rotation is inappropriate when constructs are expected to be correlated — recommends oblique rotation instead",
+      "passed": true,
+      "evidence": "Varimax is an orthogonal rotation — it constrains the components (or factors) to be uncorrelated with each other. For psychological constructs like subscales of 'social connection,' this is almost never a defensible assumption... The fix is to use an oblique rotation — promax or oblimin are both defensible defaults."
+    },
+    {
+      "text": "Warns against or questions the eigenvalue > 1 rule for selecting the number of components/factors",
+      "passed": true,
+      "evidence": "Kaiser's eigenvalue-greater-than-1 rule (often called the K1 rule) is decades old and is widely known to overextract — it systematically suggests too many factors, especially with longer item pools."
+    },
+    {
+      "text": "Recommends EFA with oblique rotation and polychoric correlations as the appropriate analysis for developing subscales from Likert items",
+      "passed": true,
+      "evidence": "fa(data, nfactors = k, fm = 'minres', rotate = 'oblimin', cor = 'poly') ... uses an appropriate correlation matrix for ordinal data, and allows the subscales to correlate as they likely do in reality."
+    },
+    {
+      "text": "Does not simply validate the advisor's PCA recommendation without raising the PCA vs. EFA distinction",
+      "passed": true,
+      "evidence": "Not quite — there are several things here worth pausing on before you compute subscale scores, and your advisor's recommendation, while common in practice, glosses over some real methodological problems."
+    }
+  ]
+}

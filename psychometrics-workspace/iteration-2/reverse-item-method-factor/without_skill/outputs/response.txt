@@ -1,0 +1,23 @@
+Yes, including a mix of positively-worded and negatively-worded (reverse-scored) items is a widely recommended practice in personality and attitude scale development. Here's why it's generally considered good practice and some things to keep in mind:
+
+**Why the 10/10 split is commonly used**
+
+1. **Controls for acquiescence bias.** Some respondents tend to agree with statements regardless of content (acquiescent response style). By including both positively- and negatively-worded items, you can detect and partially cancel out this bias, since agreeing with positively-worded items increases scores while agreeing with reverse-scored items decreases them.
+
+2. **Reduces response patterns.** A scale with all items going in the same direction can encourage respondents to answer on autopilot. Alternating item direction encourages more careful reading.
+
+3. **Consistent with established scales.** Many validated and widely-used personality measures — such as the Rosenberg Self-Esteem Scale, the Big Five personality inventories, and others — use this approach.
+
+**Practical considerations**
+
+- **Ensure proper reverse-scoring during analysis.** Before computing scale scores, you need to reverse the scores on negatively-worded items so they all point in the same direction. For example, on a 1–5 Likert scale, a "5" on a reverse-scored item becomes a "1."
+
+- **Check item functioning.** Run item-total correlations for all items to confirm that both positively- and negatively-worded items are correlating appropriately with the total scale score. Occasionally, negatively-worded items don't perform as well.
+
+- **Consider your population.** For respondents with lower reading ability, younger children, or cross-cultural samples, negatively-worded items can be more confusing and may introduce construct-irrelevant variance.
+
+- **Balance the distribution of positive and negative items.** A 50/50 split, as you've planned, is a reasonable and common choice.
+
+**Conclusion**
+
+Overall, your plan to include 10 positively-worded and 10 negatively-worded items is a sound and standard approach for a 20-item personality scale. Just make sure to reverse-score the appropriate items before analysis and check that both item types are functioning as expected in your pilot data. If you find that the negatively-worded items are performing poorly, you may consider revising or replacing some of them.

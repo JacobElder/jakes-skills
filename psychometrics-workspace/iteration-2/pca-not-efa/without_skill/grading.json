@@ -1,0 +1,40 @@
+{
+  "run_id": "pca-not-efa-without_skill",
+  "eval_id": 1,
+  "eval_name": "pca-not-efa",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Distinguishes PCA from EFA — states they are fundamentally different analyses (PCA models total variance; EFA models common/latent variance attributed to latent factors)",
+      "passed": false,
+      "evidence": "The response never mentions EFA or the common/latent variance distinction. It treats PCA as the appropriate analysis without raising the conceptual difference: 'PCA with varimax rotation is a standard exploratory technique in social science research.'"
+    },
+    {
+      "text": "Does not endorse using PCA components as subscales for a latent-variable measurement model without flagging this limitation",
+      "passed": false,
+      "evidence": "The response endorses computing subscale scores directly from PCA components without flagging the latent-variable modeling limitation: 'computing subscale scores as simple sum scores (or averages) of the items with the highest loadings on each component is a very common and defensible approach.'"
+    },
+    {
+      "text": "Warns that varimax (orthogonal) rotation is inappropriate when constructs are expected to be correlated — recommends oblique rotation instead",
+      "passed": false,
+      "evidence": "The response mentions oblique rotation only as an optional extra check with equivocal framing: 'try both and seeing if the solutions differ.' It does not warn that varimax is inappropriate or recommend oblique as the default for correlated psychological constructs."
+    },
+    {
+      "text": "Warns against or questions the eigenvalue > 1 rule for selecting the number of components/factors",
+      "passed": false,
+      "evidence": "The response validates the eigenvalue > 1 rule without criticism: 'using eigenvalue > 1 (the Kaiser criterion) is the most common method for deciding how many components to retain.' It does not mention parallel analysis, MAP, or the known tendency of the K1 rule to overextract."
+    },
+    {
+      "text": "Recommends EFA with oblique rotation and polychoric correlations as the appropriate analysis for developing subscales from Likert items",
+      "passed": false,
+      "evidence": "The response never mentions EFA, polychoric correlations, or frames oblique rotation as the recommended approach. The recommendation is to use PCA with optional oblique rotation as a check, not as the primary analysis."
+    },
+    {
+      "text": "Does not simply validate the advisor's PCA recommendation without raising the PCA vs. EFA distinction",
+      "passed": false,
+      "evidence": "The response opens by validating the advisor: 'It sounds like you're on the right track! PCA with varimax rotation is a very common and widely accepted approach.' The PCA vs. EFA distinction is never raised anywhere in the response."
+    }
+  ]
+}

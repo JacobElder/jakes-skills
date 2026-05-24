@@ -1,0 +1,40 @@
+{
+  "run_id": "testretest-state-anxiety-without_skill",
+  "eval_id": 6,
+  "eval_name": "testretest-state-anxiety",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Does NOT simply validate ICC = 0.72 as acceptable reliability for this scale",
+      "passed": false,
+      "evidence": "Response opens with 'ICC = 0.72 indicates moderate-to-good reliability' and concludes 'ICC = 0.72 is a reasonable and acceptable test-retest reliability coefficient.' It fully validates the value without raising any concern."
+    },
+    {
+      "text": "Raises the conceptual problem: state anxiety is expected to fluctuate over 4 weeks, so high ICC contradicts what the construct is supposed to measure",
+      "passed": false,
+      "evidence": "Response never raises this concern. It frames the 4-week interval as a design strength ('long enough to reduce memory effects') and does not discuss whether state anxiety is expected to be stable."
+    },
+    {
+      "text": "States or implies that ICC = 0.72 over 4 weeks suggests the scale may be capturing trait-like (stable) variance rather than genuine state variance",
+      "passed": false,
+      "evidence": "Response makes no mention of trait variance contamination or the state-trait distinction. The possibility that stable scores reflect trait rather than state measurement is not raised."
+    },
+    {
+      "text": "Distinguishes stability (appropriate for trait constructs) from equivalence (appropriate for state constructs over short intervals)",
+      "passed": false,
+      "evidence": "Response treats test-retest reliability as a unitary concept with no distinction between construct stability and measurement equivalence. No mention of trait vs. state construct implications for interval choice."
+    },
+    {
+      "text": "Notes that test-retest intervals for state measures should be much shorter — same session, 24-48 hours, not weeks",
+      "passed": false,
+      "evidence": "Response affirms the 4-week interval as 'common and reasonable' without noting that state measures require much shorter intervals. The correct guidance (same session or 24-48 hours) is absent."
+    },
+    {
+      "text": "Does not endorse ICC = 0.72 at a 4-week interval as evidence of good state-anxiety scale performance",
+      "passed": false,
+      "evidence": "Response explicitly endorses the result: 'ICC = 0.72 is a reasonable and acceptable test-retest reliability coefficient for your scale' and 'your state anxiety measure is performing adequately.'"
+    }
+  ]
+}
