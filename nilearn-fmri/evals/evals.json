@@ -1,6 +1,6 @@
 {
   "skill_name": "nilearn-fmri",
-  "_note": "Evals use bundled synthetic fixtures (see files/make_fixtures.py) rather than nilearn.datasets fetchers, because Anthropic's sandbox blocks the CDN hosts the fetchers download from. End users with normal internet should use the built-in fetchers — the skill recommends them by default.",
+  "_note": "Evals use bundled synthetic fixtures (see files/make_fixtures.py and files/make_extra_fixtures.py) rather than nilearn.datasets fetchers, because Anthropic's sandbox blocks the CDN hosts the fetchers download from. End users with normal internet should use the built-in fetchers — the skill recommends them by default.",
   "evals": [
     {
       "id": 1,
@@ -71,6 +71,125 @@
         "Reports the chance level (0.5 for binary) in the response text",
         "Saves the weight map as a .nii.gz in ./decoder_out/",
         "Saves a plot of the weight map as PNG in ./decoder_out/"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "glm_statistical_thresholding_fdr",
+      "prompt": "I've already decided to use the GLM fixture from evals/files/glm/: bold.nii.gz (TR=7s), events.tsv (trial type 'active'), and brain_mask.nii.gz. Fit a first-level GLM, compute the 'active' contrast z-map, then apply FDR thresholding at alpha=0.05 using nilearn.glm.threshold_stats_img. Report the FDR threshold value, how many voxels survive, and the peak z-score in the surviving map. Save both the unthresholded and thresholded z-maps as NIfTIs, plus a side-by-side visualization showing unthresholded vs FDR-corrected, to ./results_threshold/.",
+      "files": [
+        "evals/files/glm/bold.nii.gz",
+        "evals/files/glm/events.tsv",
+        "evals/files/glm/brain_mask.nii.gz"
+      ],
+      "expected_output": "GLM fit → contrast → threshold_stats_img with height_control='fdr', alpha=0.05. Reports the numeric FDR threshold, surviving voxel count, and peak z-score. Saves unthresholded z-map, thresholded z-map, and a comparison PNG.",
+      "expectations": [
+        "Calls nilearn.glm.threshold_stats_img (not just plot_stat_map threshold argument)",
+        "Passes height_control='fdr' and alpha=0.05 explicitly",
+        "Reports the actual numeric FDR threshold value in the response text",
+        "Reports the number of voxels surviving the threshold",
+        "Reports the peak z-score in the surviving map",
+        "Saves the unthresholded z-map as a .nii.gz in ./results_threshold/",
+        "Saves the thresholded z-map as a .nii.gz in ./results_threshold/",
+        "Saves at least one PNG visualization to ./results_threshold/",
+        "Does not confuse the plot_stat_map threshold argument with statistical inference"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "second_level_group_glm",
+      "prompt": "I have first-level z-maps from 8 subjects: evals/files/second_level/sub-01_zmap.nii.gz through sub-08_zmap.nii.gz, and a brain mask at evals/files/second_level/brain_mask.nii.gz. Run a second-level (group) GLM to test for a population-level activation (one-sample t-test against zero). Use an intercept-only design matrix. Compute the second-level z-map, apply FDR correction at alpha=0.05, and report where the group activates. Save the group z-map and a glass-brain plot to ./results_group/.",
+      "files": [
+        "evals/files/second_level/sub-01_zmap.nii.gz",
+        "evals/files/second_level/sub-02_zmap.nii.gz",
+        "evals/files/second_level/sub-03_zmap.nii.gz",
+        "evals/files/second_level/sub-04_zmap.nii.gz",
+        "evals/files/second_level/sub-05_zmap.nii.gz",
+        "evals/files/second_level/sub-06_zmap.nii.gz",
+        "evals/files/second_level/sub-07_zmap.nii.gz",
+        "evals/files/second_level/sub-08_zmap.nii.gz",
+        "evals/files/second_level/brain_mask.nii.gz"
+      ],
+      "expected_output": "SecondLevelModel fit on 8 z-maps with intercept design, contrast computed, FDR thresholding applied, group z-map and glass-brain saved to ./results_group/. Response includes numeric description of where group activation is found.",
+      "expectations": [
+        "Uses nilearn.glm.second_level.SecondLevelModel (not FirstLevelModel)",
+        "Builds design matrix with pandas DataFrame containing a single 'intercept' column of ones, length 8",
+        "Calls second_level_model.fit(zmaps_list, design_matrix=...)",
+        "Calls .compute_contrast() to get the group z-map",
+        "Applies threshold_stats_img with height_control='fdr', alpha=0.05",
+        "Saves group z-map as .nii.gz in ./results_group/",
+        "Saves a glass-brain PNG in ./results_group/",
+        "Reports the location or extent of group-level activation in the response"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "seed_based_connectivity",
+      "prompt": "I have one subject's resting-state BOLD at evals/files/connectivity/sub-01_bold.nii.gz (TR=2s) and confounds at evals/files/connectivity/sub-01_confounds.tsv. Run a seed-based connectivity analysis: use a 6mm-radius sphere centered at MNI (-16, -16, 0) as the seed ROI (this is region_1 in the atlas). Extract the seed timeseries with NiftiSpheresMasker, extract whole-brain voxel timeseries with NiftiMasker (using the atlas as mask — or the brain implicitly), regress out confounds for both, then compute the correlation between the seed timeseries and every brain voxel. Save the seed correlation map as a NIfTI and a glass-brain plot to ./seed_out/. Report the peak correlation value.",
+      "files": [
+        "evals/files/connectivity/sub-01_bold.nii.gz",
+        "evals/files/connectivity/sub-01_confounds.tsv",
+        "evals/files/connectivity/atlas.nii.gz"
+      ],
+      "expected_output": "NiftiSpheresMasker seed extraction + NiftiMasker whole-brain extraction, correlation computed, seed-map saved as NIfTI and plotted. Peak correlation reported.",
+      "expectations": [
+        "Uses NiftiSpheresMasker with seeds=[(-16, -16, 0)] and radius=6 (or nearby value)",
+        "Passes t_r=2.0 to NiftiSpheresMasker",
+        "Uses standardize='zscore_sample' (not deprecated True) for both maskers",
+        "Passes confounds to fit_transform for both maskers",
+        "Computes voxel-wise correlation between seed timeseries and brain timeseries (e.g. np.corrcoef or stats.pearsonr)",
+        "Builds a NIfTI image from the correlation array using the masker's inverse_transform or nibabel directly",
+        "Saves seed correlation map as .nii.gz in ./seed_out/",
+        "Saves a glass-brain PNG in ./seed_out/",
+        "Reports the peak (maximum) correlation value in the response"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "niftimasker_signal_extraction_tsnr",
+      "prompt": "Use evals/files/glm/bold.nii.gz (TR=7s) and evals/files/glm/brain_mask.nii.gz to extract a whole-brain timeseries matrix with NiftiMasker. Apply detrending and high-pass filtering (cutoff 0.01 Hz) but do NOT standardize (we want raw signal units for tSNR). After extraction, compute the temporal SNR map: for each voxel, tSNR = mean(timeseries) / std(timeseries). Report the median tSNR across voxels and save the tSNR map as a NIfTI and a stat-map PNG to ./tsnr_out/.",
+      "files": [
+        "evals/files/glm/bold.nii.gz",
+        "evals/files/glm/brain_mask.nii.gz"
+      ],
+      "expected_output": "NiftiMasker extraction with detrend=True, high_pass=0.01, t_r=7, standardize=False. tSNR computed per voxel as mean/std. Median tSNR reported. tSNR NIfTI and PNG saved.",
+      "expectations": [
+        "Uses NiftiMasker with mask_img pointing to brain_mask.nii.gz",
+        "Sets t_r=7.0 on the masker",
+        "Sets detrend=True on the masker",
+        "Sets high_pass=0.01 on the masker",
+        "Sets standardize=False (we want raw signal, not z-scores)",
+        "Extracted timeseries has shape (96, n_voxels) — 96 timepoints",
+        "Computes tSNR = mean(axis=0) / std(axis=0) per voxel",
+        "Reports the median tSNR value in the response text",
+        "Converts tSNR array back to a NIfTI image using masker.inverse_transform",
+        "Saves tSNR NIfTI to ./tsnr_out/",
+        "Saves a stat-map or brain-map PNG to ./tsnr_out/"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "multirun_first_level_glm",
+      "prompt": "I have two runs of task fMRI: evals/files/multirun/run-01_bold.nii.gz and run-02_bold.nii.gz (TR=7s, 48 volumes each), with matching events in run-01_events.tsv and run-02_events.tsv (trial type 'active', same block design in each run), and a brain mask at evals/files/multirun/brain_mask.nii.gz. Fit a single FirstLevelModel across both runs (pass both BOLD files and both event DataFrames as lists), compute the 'active' contrast, and compare the z-map peak to what you'd get from run-01 alone. Save z-maps and glass-brain plots for the combined model and run-01-only model to ./multirun_out/. Report both peak z-scores.",
+      "files": [
+        "evals/files/multirun/run-01_bold.nii.gz",
+        "evals/files/multirun/run-02_bold.nii.gz",
+        "evals/files/multirun/run-01_events.tsv",
+        "evals/files/multirun/run-02_events.tsv",
+        "evals/files/multirun/brain_mask.nii.gz"
+      ],
+      "expected_output": "FirstLevelModel fit with a list of two BOLD images and a list of two events DataFrames, contrast computed from combined model, comparison with single-run model. Both peak z-scores reported, z-maps and plots saved.",
+      "expectations": [
+        "Passes a list of two NIfTI images to FirstLevelModel.fit(), not a single concatenated image",
+        "Passes a list of two events DataFrames (one per run) to .fit()",
+        "Sets t_r=7.0 explicitly",
+        "Fits a second model on run-01 alone for comparison",
+        "Calls .compute_contrast('active') on both models",
+        "Reports peak z-score for the combined model in the response text",
+        "Reports peak z-score for the single-run model in the response text",
+        "Combined model peak z-score should be >= single-run peak (more data = more power)",
+        "Saves z-maps as .nii.gz in ./multirun_out/",
+        "Saves glass-brain PNGs to ./multirun_out/"
       ]
     }
   ]

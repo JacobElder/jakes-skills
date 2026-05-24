@@ -3,7 +3,8 @@
     "allow": [
       "Bash(python3 -c ' *)",
       "Bash(pip install *)",
-      "Bash(python3 evals/files/make_extra_fixtures.py)"
+      "Bash(python3 evals/files/make_extra_fixtures.py)",
+      "Bash(python3 -)"
     ]
   }
 }
