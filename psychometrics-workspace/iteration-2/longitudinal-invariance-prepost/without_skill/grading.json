@@ -1,0 +1,40 @@
+{
+  "run_id": "longitudinal-invariance-prepost-without_skill",
+  "eval_id": 8,
+  "eval_name": "longitudinal-invariance-prepost",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Does NOT simply recommend a paired t-test and interpret the mean difference as evidence of improved psychological safety",
+      "passed": false,
+      "evidence": "The response does exactly this: 'the right statistical test to confirm this is a paired t-test' and concludes 'Yes, the data support concluding that the training improved psychological safety.' A paired t-test is recommended without any measurement caveats."
+    },
+    {
+      "text": "Raises longitudinal measurement invariance as a prerequisite for interpreting the pre-post score difference",
+      "passed": false,
+      "evidence": "Longitudinal measurement invariance is never mentioned. The response treats the observed mean shift as directly interpretable without any discussion of whether the scale measures the same construct before and after training."
+    },
+    {
+      "text": "Explains that training programs can change how respondents interpret and use scale items (response shift, referent recalibration)",
+      "passed": false,
+      "evidence": "Response shift, referent recalibration, and reconceptualization are never mentioned. The response does not raise any possibility that the training itself could alter how respondents interpret and respond to the items."
+    },
+    {
+      "text": "States that without invariance testing, a mean shift could reflect a real construct change OR a change in how respondents use the scale",
+      "passed": false,
+      "evidence": "The response treats the 0.5-point mean shift as unambiguously reflecting a real change in psychological safety. The possibility that the shift reflects scale recalibration rather than (or in addition to) a genuine construct change is never raised."
+    },
+    {
+      "text": "Names or implies the configural/metric/scalar invariance sequence as what would need to be tested",
+      "passed": false,
+      "evidence": "Configural, metric, and scalar invariance are not named or implied anywhere in the response. The measurement model is assumed to be stable across time without any testing."
+    },
+    {
+      "text": "Does not conflate 'statistically significant pre-post difference' with 'training improved psychological safety' without the measurement caveat",
+      "passed": false,
+      "evidence": "The response directly equates statistical significance with construct-level improvement: 'If the p-value comes back below 0.05... you can conclude the difference is statistically significant' is immediately followed by the bottom-line claim that the training improved psychological safety. The measurement caveat is entirely absent."
+    }
+  ]
+}

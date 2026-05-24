@@ -1,0 +1,812 @@
+{
+  "metadata": {
+    "skill_name": "psychometrics",
+    "skill_path": "/Users/jacobelder/Documents/GitHub/jakes-skills/psychometrics/psychometrics.skill",
+    "executor_model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-24T13:40:46.872743Z",
+    "evals_run": [
+      "alpha-threshold-adequate",
+      "construct-definition-gate",
+      "factor-score-indeterminacy",
+      "grm-for-polytomous-irt",
+      "longitudinal-invariance-prepost",
+      "pca-not-efa",
+      "reverse-item-method-factor",
+      "testretest-state-anxiety"
+    ],
+    "runs_per_configuration": 1,
+    "iteration": 2,
+    "eval_design_note": "Iteration-2 evals target discriminating scenarios \u2014 prompts with 'traps' where a weaker response validates the wrong approach or fails to proactively flag a problem. Designed to surface gaps not caught by iteration-1's broadly-correct evals."
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "pca-not-efa",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 38.4,
+        "tokens": 3850,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Distinguishes PCA from EFA \u2014 states they are fundamentally different analyses (PCA models total variance; EFA models common/latent variance attributed to latent factors)",
+          "passed": true,
+          "evidence": "PCA models total variance. Each component is a weighted linear combination of all observed items... EFA (common factor analysis) models common variance only. It separates variance that is shared among items (attributable to latent factors) from variance that is unique to each item (specific + error). Item variance decomposes as \u03c3\u00b2 = h\u00b2 (communality) + u\u00b2 (uniqueness)."
+        },
+        {
+          "text": "Does not endorse using PCA components as subscales for a latent-variable measurement model without flagging this limitation",
+          "passed": true,
+          "evidence": "interpreting PCA components as subscales for a latent-variable measurement model is a category error... do not present its components as subscales in a measurement model without flagging this loudly."
+        },
+        {
+          "text": "Warns that varimax (orthogonal) rotation is inappropriate when constructs are expected to be correlated \u2014 recommends oblique rotation instead",
+          "passed": true,
+          "evidence": "Varimax is an orthogonal rotation: it mathematically constrains the resulting factors/components to be uncorrelated with each other. That is almost never the right assumption for psychological constructs... Use an oblique rotation instead \u2014 promax or oblimin."
+        },
+        {
+          "text": "Warns against or questions the eigenvalue > 1 rule for selecting the number of components/factors",
+          "passed": true,
+          "evidence": "Kaiser's eigenvalue-greater-than-1 criterion is a convenient heuristic from 1960 that is known to systematically overestimate the number of factors/components, often badly. It has no principled statistical justification."
+        },
+        {
+          "text": "Recommends EFA with oblique rotation and polychoric correlations as the appropriate analysis for developing subscales from Likert items",
+          "passed": true,
+          "evidence": "fa(your_data, nfactors = 3, fm = 'minres', rotate = 'oblimin', cor = 'poly') ... polychoric correlations for Likert items ... uses an appropriate correlation matrix for ordinal data, and allows subscales to correlate as they likely do."
+        },
+        {
+          "text": "Does not simply validate the advisor's PCA recommendation without raising the PCA vs. EFA distinction",
+          "passed": true,
+          "evidence": "Not quite \u2014 there are three substantive problems with this approach, and I'd push back on your advisor's recommendation as stated."
+        }
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "pca-not-efa",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 6,
+        "total": 6,
+        "time_seconds": 12.1,
+        "tokens": 1240,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Distinguishes PCA from EFA \u2014 states they are fundamentally different analyses (PCA models total variance; EFA models common/latent variance attributed to latent factors)",
+          "passed": false,
+          "evidence": "The response never mentions EFA or the common/latent variance distinction. It treats PCA as the appropriate analysis without raising the conceptual difference: 'PCA with varimax rotation is a standard exploratory technique in social science research.'"
+        },
+        {
+          "text": "Does not endorse using PCA components as subscales for a latent-variable measurement model without flagging this limitation",
+          "passed": false,
+          "evidence": "The response endorses computing subscale scores directly from PCA components without flagging the latent-variable modeling limitation: 'computing subscale scores as simple sum scores (or averages) of the items with the highest loadings on each component is a very common and defensible approach.'"
+        },
+        {
+          "text": "Warns that varimax (orthogonal) rotation is inappropriate when constructs are expected to be correlated \u2014 recommends oblique rotation instead",
+          "passed": false,
+          "evidence": "The response mentions oblique rotation only as an optional check with equivocal framing: 'try both and seeing if the solutions differ.' It does not warn that varimax is inappropriate or recommend oblique as the default for correlated psychological constructs."
+        },
+        {
+          "text": "Warns against or questions the eigenvalue > 1 rule for selecting the number of components/factors",
+          "passed": false,
+          "evidence": "The response validates the eigenvalue > 1 rule without criticism: 'using eigenvalue > 1 (the Kaiser criterion) is the most common method for deciding how many components to retain.' It does not mention parallel analysis, MAP, or the known tendency of the K1 rule to overextract."
+        },
+        {
+          "text": "Recommends EFA with oblique rotation and polychoric correlations as the appropriate analysis for developing subscales from Likert items",
+          "passed": false,
+          "evidence": "The response never mentions EFA, polychoric correlations, or frames oblique rotation as the primary recommended approach. The recommendation is to use PCA with optional oblique rotation as a check, not as the main analysis."
+        },
+        {
+          "text": "Does not simply validate the advisor's PCA recommendation without raising the PCA vs. EFA distinction",
+          "passed": false,
+          "evidence": "The response opens by validating the advisor: 'It sounds like you're on the right track! PCA with varimax rotation is a very common and widely accepted approach.' The PCA vs. EFA distinction is never raised anywhere in the response."
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "reverse-item-method-factor",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 38,
+        "tokens": 6800,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Does not simply validate the 10/10 split as best practice without substantive caveats",
+          "passed": true,
+          "evidence": "'standard' and 'good' are two different things here, and this particular standard has a well-documented empirical problem you need to plan around before you collect a single response."
+        },
+        {
+          "text": "Warns that negatively-worded reverse-scored items frequently form a separate method factor in EFA/CFA, creating artificial multidimensionality",
+          "passed": true,
+          "evidence": "what you very often get is not one clean personality factor. You get two factors: the substantive construct you were trying to measure, and a method factor defined almost entirely by item wording direction."
+        },
+        {
+          "text": "Notes that this method factor can suggest more dimensions than actually exist in the construct",
+          "passed": true,
+          "evidence": "You'll conclude you measured a two-dimensional construct when you set out to measure one. Your factor count is now wrong, and any downstream analyses (subscale scoring, structural models) will be built on that error."
+        },
+        {
+          "text": "Mentions that reverse-coded items often show lower factor loadings, worse discrimination, or worse fit than positively-worded items",
+          "passed": true,
+          "evidence": "your reverse-coded items may have lower factor loadings, lower corrected item-total correlations, and higher residual variances than your positive items. They're doing worse measurement work, not better."
+        },
+        {
+          "text": "Suggests alternatives or recommends planning to test for and account for the method factor (e.g., adding a method factor in CFA)",
+          "passed": true,
+          "evidence": "Plan to test and model the method factor explicitly. In your CFA, specify a priori that negatively-worded items may share residual covariance (a method factor), and compare: (a) one-factor model, (b) one-factor model with a method factor for negatively-worded items, (c) two-factor model."
+        },
+        {
+          "text": "Does not describe reverse-scoring as a reliable or robust solution to acquiescence bias",
+          "passed": true,
+          "evidence": "The acquiescence-control benefit of reverse-keyed items is much smaller than traditionally assumed, while the method-factor cost is real and often substantial... the 10/10 split is a reflex from an older literature. The empirical record since the mid-1990s says it often creates more measurement problems than it solves."
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "reverse-item-method-factor",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 6,
+        "total": 6,
+        "time_seconds": 18,
+        "tokens": 3200,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Does not simply validate the 10/10 split as best practice without substantive caveats",
+          "passed": false,
+          "evidence": "your plan to include 10 positively-worded and 10 negatively-worded items is a sound and standard approach for a 20-item personality scale... a 50/50 split, as you've planned, is a reasonable and common choice."
+        },
+        {
+          "text": "Warns that negatively-worded reverse-scored items frequently form a separate method factor in EFA/CFA, creating artificial multidimensionality",
+          "passed": false,
+          "evidence": "No mention of method factors or artificial multidimensionality anywhere in the response."
+        },
+        {
+          "text": "Notes that this method factor can suggest more dimensions than actually exist in the construct",
+          "passed": false,
+          "evidence": "No mention of spurious dimensionality or inflated factor counts anywhere in the response."
+        },
+        {
+          "text": "Mentions that reverse-coded items often show lower factor loadings, worse discrimination, or worse fit than positively-worded items",
+          "passed": false,
+          "evidence": "The only acknowledgment is a brief 'Occasionally, negatively-worded items don't perform as well' with no detail on factor loadings, discrimination, or fit."
+        },
+        {
+          "text": "Suggests alternatives or recommends planning to test for and account for the method factor (e.g., adding a method factor in CFA)",
+          "passed": false,
+          "evidence": "No alternatives to the 10/10 design are suggested and no recommendation to model or test for a method factor is provided."
+        },
+        {
+          "text": "Does not describe reverse-scoring as a reliable or robust solution to acquiescence bias",
+          "passed": false,
+          "evidence": "By including both positively- and negatively-worded items, you can detect and partially cancel out this bias \u2014 presented as a straightforward benefit with no qualification about its empirical limitations."
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "alpha-threshold-adequate",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 38,
+        "tokens": 2850,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Does not simply validate alpha = 0.73 as meeting the 0.70 threshold and conclude the matter is settled",
+          "passed": true,
+          "evidence": "Response explicitly states 'alpha = 0.73 is not adequate reliability evidence, even if it meets the threshold. The threshold itself is the first problem, and alpha is the second.' It does not endorse the threshold as settling the matter."
+        },
+        {
+          "text": "States or explains that alpha assumes tau-equivalence (all items load equally on the construct), which is rarely true",
+          "passed": true,
+          "evidence": "Problem 2 directly explains: 'Cronbach's alpha is a lower bound on reliability only under tau-equivalence \u2014 the assumption that all items have identical true-score loadings on the construct' and notes 'this is a strong, rarely-met assumption.'"
+        },
+        {
+          "text": "Recommends computing McDonald's omega in addition to or instead of alpha, with a reason",
+          "passed": true,
+          "evidence": "Response recommends omega explicitly ('The modern substitute is McDonald's omega'), provides the formula, R code for psych::omega() and semTools::compRelSEM(), and explains why: omega uses actual factor loadings and doesn't require tau-equivalence."
+        },
+        {
+          "text": "Notes that the 0.70 cutoff from Nunnally (1978) was intended for early-stage research, not as a universal applied standard",
+          "passed": true,
+          "evidence": "Problem 1 states: 'The alpha \u2265 0.70 cutoff traces to Nunnally (1978), who explicitly said 0.70 was appropriate for early-stage, exploratory research. He set 0.80+ for applied research and 0.90+ for individual-level decisions. That context got stripped away...'"
+        },
+        {
+          "text": "Frames reliability as sample-specific (alpha in this sample) rather than a fixed property of the scale",
+          "passed": true,
+          "evidence": "Problem 4 explicitly addresses this: 'Alpha in your thesis sample is alpha in that sample, not a property of the scale... Your thesis should say alpha was .73 in this sample (N = X) \u2014 not the scale has reliability of .73.'"
+        },
+        {
+          "text": "Raises or flags that dimensionality should be verified before reporting reliability \u2014 alpha does not distinguish low reliability from multidimensionality",
+          "passed": true,
+          "evidence": "Problem 3 states: 'Alpha is not a measure of unidimensionality... Before reporting alpha or omega, you need to verify that the scale is approximately unidimensional.' Includes EFA/parallel analysis code and explains that multidimensional scales can produce high alpha regardless."
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "alpha-threshold-adequate",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 6,
+        "total": 6,
+        "time_seconds": 12,
+        "tokens": 620,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Does not simply validate alpha = 0.73 as meeting the 0.70 threshold and conclude the matter is settled",
+          "passed": false,
+          "evidence": "Response opens with 'Yes, alpha = 0.73 is generally considered adequate reliability evidence' and explicitly states 'Your committee is right to be satisfied.' The matter is treated as fully settled by threshold-passing."
+        },
+        {
+          "text": "States or explains that alpha assumes tau-equivalence (all items load equally on the construct), which is rarely true",
+          "passed": false,
+          "evidence": "No mention of tau-equivalence, congeneric measurement, or the assumptions underlying alpha anywhere in the response."
+        },
+        {
+          "text": "Recommends computing McDonald's omega in addition to or instead of alpha, with a reason",
+          "passed": false,
+          "evidence": "McDonald's omega is not mentioned. The response recommends only optional CI reporting as an addition, not omega."
+        },
+        {
+          "text": "Notes that the 0.70 cutoff from Nunnally (1978) was intended for early-stage research, not as a universal applied standard",
+          "passed": false,
+          "evidence": "The 0.70 cutoff is presented as 'the widely accepted threshold' with no attribution to Nunnally, no context about its original scope, and no caveat about its misapplication."
+        },
+        {
+          "text": "Frames reliability as sample-specific (alpha in this sample) rather than a fixed property of the scale",
+          "passed": false,
+          "evidence": "Response treats alpha = 0.73 as a general descriptor of the scale ('your scale'), not as a sample-specific estimate. No mention of sample-specificity."
+        },
+        {
+          "text": "Raises or flags that dimensionality should be verified before reporting reliability \u2014 alpha does not distinguish low reliability from multidimensionality",
+          "passed": false,
+          "evidence": "No mention of dimensionality, factor structure, unidimensionality, or the risk that alpha can be inflated by multidimensional scales. The response treats reliability as a standalone, settled question."
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "factor-score-indeterminacy",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 28,
+        "tokens": 3150,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Raises the factor score indeterminacy problem \u2014 EFA factor scores are not uniquely determined; multiple sets of scores are consistent with any given factor solution",
+          "passed": true,
+          "evidence": "The response dedicates an entire section ('The indeterminacy problem') to this: 'for any given factor solution \u2014 the same loadings, the same observed covariance matrix \u2014 there are infinitely many sets of factor scores that are mathematically consistent with the model.' Explicitly names factor score indeterminacy and cites Grice (2001)."
+        },
+        {
+          "text": "Does not simply confirm 'yes, save fa()$scores and use them in regression' without addressing indeterminacy",
+          "passed": true,
+          "evidence": "Response opens with 'Not quite' and immediately flags the indeterminacy problem before giving any practical guidance. Never endorses the described workflow as-is."
+        },
+        {
+          "text": "Explains that EFA factor scores (unlike CFA latent variable scores) lack a unique mathematical solution",
+          "passed": true,
+          "evidence": "'This is not a rounding issue or a sampling artifact. It's a logical consequence of the common factor model: the factors are latent (unobserved), and the observed items underdetermine them.' Contrasts with CFA: 'CFA in lavaan... produces factor scores that are better-defined than EFA scores because the model imposes additional constraints that reduce indeterminacy.'"
+        },
+        {
+          "text": "Recommends alternatives: sum scores or unit-weighted composites of high-loading items as more transparent and reproducible",
+          "passed": true,
+          "evidence": "Option 1 explicitly recommends unit-weighted composite scores with code example, noting they are 'transparent, reproducible... don't require the factor model at all, and behave well in downstream regression.'"
+        },
+        {
+          "text": "Optionally notes that CFA with lavaan allows better-defined factor score estimation if model fit is adequate",
+          "passed": true,
+          "evidence": "Option 2 explicitly covers CFA with lavaan: 'fit that structure as a CFA' using lavPredict(), noting that CFA scores have 'additional model constraints [that] sharply reduce indeterminacy compared to EFA.' Also mentions SEM as Option 3."
+        },
+        {
+          "text": "Does not treat fa()$scores as equivalent to true factor scores or latent variable scores",
+          "passed": true,
+          "evidence": "Explicitly states: 'The problem is interpreting those scores as if they are the unique, true latent factor scores. They aren't.' Clarifies fa()$scores is 'one arbitrary choice' from an infinite family of equivalent solutions."
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "factor-score-indeterminacy",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 6,
+        "total": 6,
+        "time_seconds": 18,
+        "tokens": 1820,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Raises the factor score indeterminacy problem \u2014 EFA factor scores are not uniquely determined; multiple sets of scores are consistent with any given factor solution",
+          "passed": false,
+          "evidence": "Indeterminacy is never mentioned. The response treats fa()$scores as well-defined estimated scores with no discussion of the infinite family of solutions consistent with the factor model."
+        },
+        {
+          "text": "Does not simply confirm 'yes, save fa()$scores and use them in regression' without addressing indeterminacy",
+          "passed": false,
+          "evidence": "Response opens with 'Yes, that's a standard and reasonable workflow' and proceeds to endorse fa()$scores \u2192 regression without any caveat about indeterminacy. This is the exact naive confirmation the trap targets."
+        },
+        {
+          "text": "Explains that EFA factor scores (unlike CFA latent variable scores) lack a unique mathematical solution",
+          "passed": false,
+          "evidence": "No distinction between EFA and CFA factor scores is made. EFA scores are described as straightforward estimates computed by 'predicting each person's factor score from their item responses weighted by the factor loadings,' implying a unique, determinate solution."
+        },
+        {
+          "text": "Recommends alternatives: sum scores or unit-weighted composites of high-loading items as more transparent and reproducible",
+          "passed": false,
+          "evidence": "Sum scores and unit-weighted composites are not mentioned. The only scoring variant mentioned is Anderson-Rubin, and it is raised only to address multicollinearity among predictors, not as a response to indeterminacy."
+        },
+        {
+          "text": "Optionally notes that CFA with lavaan allows better-defined factor score estimation if model fit is adequate",
+          "passed": false,
+          "evidence": "CFA is not mentioned at all. The response stays entirely within the EFA \u2192 fa()$scores \u2192 regression framing without suggesting a better-constrained alternative."
+        },
+        {
+          "text": "Does not treat fa()$scores as equivalent to true factor scores or latent variable scores",
+          "passed": false,
+          "evidence": "fa()$scores are described as 'estimated factor scores for each observation' that 'capture the underlying latent structure,' framing them as adequate proxies for the latent variables. No acknowledgment that the scores are one arbitrary element of an infinite set."
+        }
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "grm-for-polytomous-irt",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 18,
+        "tokens": 1420,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "States clearly that 2PL is designed for binary (0/1 dichotomous) responses and is NOT appropriate for 5-point Likert items",
+          "passed": true,
+          "evidence": "Response opens with 'No \u2014 2PL is the wrong model for your burnout scale' and explicitly explains: 'The 2PL (and all dichotomous IRT models \u2014 1PL/Rasch, 2PL, 3PL) are defined for binary (0/1) responses.' It makes clear the binary response function is 'the wrong architecture entirely' for 5-category items."
+        },
+        {
+          "text": "Recommends the Graded Response Model (GRM) or Generalized Partial Credit Model (GPCM) for polytomous ordinal items",
+          "passed": true,
+          "evidence": "Response explicitly recommends both GRM (Samejima, 1969) and GPCM (Muraki, 1992) as the appropriate models, with GRM named as the default recommendation ('GRM is usually the first choice for burnout scales') and GPCM offered as a comparison."
+        },
+        {
+          "text": "Names mirt as the R package and mentions itemtype='graded' or 'gpcm'",
+          "passed": true,
+          "evidence": "R code block uses `library(mirt)`, `mirt(burnout_data, 1, itemtype = \"graded\", SE = TRUE)` for GRM and `mirt(burnout_data, 1, itemtype = \"gpcm\", SE = TRUE)` for GPCM. The note also explains '`itemtype = \"graded\"` is GRM; `itemtype = \"gpcm\"` is GPCM.'"
+        },
+        {
+          "text": "Does not recommend proceeding with 2PL for 5-point items without first correcting the model type",
+          "passed": true,
+          "evidence": "Response never suggests 2PL as a viable starting point. The bottom line explicitly states 'Don't use 2PL.' There is no hedging that 2PL could be acceptable or a reasonable approximation."
+        },
+        {
+          "text": "Explains that polytomous IRT models estimate multiple threshold (or step) parameters per item \u2014 one per response category boundary",
+          "passed": true,
+          "evidence": "Response states: 'polytomous IRT models estimate multiple threshold parameters per item \u2014 one for each response category boundary. For your 5-point scale, that's 4 thresholds per item' and describes the GRM threshold structure b\u1d62,\u2081 < b\u1d62,\u2082 < b\u1d62,\u2083 < b\u1d62,\u2084 explicitly."
+        }
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "grm-for-polytomous-irt",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.2,
+        "passed": 1,
+        "failed": 4,
+        "total": 5,
+        "time_seconds": 11,
+        "tokens": 680,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "States clearly that 2PL is designed for binary (0/1 dichotomous) responses and is NOT appropriate for 5-point Likert items",
+          "passed": false,
+          "evidence": "Response calls 2PL 'a reasonable starting point' and says 'many researchers use it even with Likert data after some recoding.' It never states unambiguously that 2PL is a binary model that is NOT appropriate for 5-point items. The hedged framing ('could be a reasonable starting point,' 'can work reasonably well in practice') directly falls into the trap described in the eval."
+        },
+        {
+          "text": "Recommends the Graded Response Model (GRM) or Generalized Partial Credit Model (GPCM) for polytomous ordinal items",
+          "passed": true,
+          "evidence": "Response does mention GRM and GPCM as models 'designed for ordered response categories' and says they would be 'the more technically appropriate choice' \u2014 though this is heavily qualified and buried after endorsing 2PL as a valid option."
+        },
+        {
+          "text": "Names mirt as the R package and mentions itemtype='graded' or 'gpcm'",
+          "passed": false,
+          "evidence": "Response mentions the `mirt` package by name but does not specify `itemtype = 'graded'` or `itemtype = 'gpcm'`. No code or specific function call syntax is provided."
+        },
+        {
+          "text": "Does not recommend proceeding with 2PL for 5-point items without first correcting the model type",
+          "passed": false,
+          "evidence": "Response explicitly validates 2PL for 5-point Likert items, stating '2PL is a good starting point and many researchers use it even with Likert data after some recoding.' This is the exact failure mode the trap is designed to catch \u2014 recommending 2PL as an acceptable approach rather than correcting the misapprehension."
+        },
+        {
+          "text": "Explains that polytomous IRT models estimate multiple threshold (or step) parameters per item \u2014 one per response category boundary",
+          "passed": false,
+          "evidence": "Response says polytomous models 'model each response category separately' but does not explain threshold parameters, the K-1 boundary structure, or anything about the parameter structure of GRM/GPCM. The conceptual explanation is absent."
+        }
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "testretest-state-anxiety",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 18,
+        "tokens": 2840,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Does NOT simply validate ICC = 0.72 as acceptable reliability for this scale",
+          "passed": true,
+          "evidence": "Response explicitly states 'ICC = 0.72 over 4 weeks is not good reliability for a state anxiety scale \u2014 it's actually a red flag' and 'Treating this as acceptable reliability would be a mistake.'"
+        },
+        {
+          "text": "Raises the conceptual problem: state anxiety is expected to fluctuate over 4 weeks, so high ICC contradicts what the construct is supposed to measure",
+          "passed": true,
+          "evidence": "Response states 'genuine state anxiety should look quite different in the same person at two points 4 weeks apart' and that high stability 'is theoretically inconsistent with what state anxiety is supposed to be.'"
+        },
+        {
+          "text": "States or implies that ICC = 0.72 over 4 weeks suggests the scale may be capturing trait-like (stable) variance rather than genuine state variance",
+          "passed": true,
+          "evidence": "Response directly states 'the scale is picking up stable between-person variance \u2014 individual differences in baseline anxiety proneness, i.e., trait anxiety \u2014 rather than within-person fluctuation in current state.' References the STAI State vs. Trait distinction."
+        },
+        {
+          "text": "Distinguishes stability (appropriate for trait constructs) from equivalence (appropriate for state constructs over short intervals)",
+          "passed": true,
+          "evidence": "Response explicitly states 'Test-retest correlation conflates two distinct things: the stability of the construct and the reliability of measurement' and contrasts trait measures (high stability appropriate) with state measures (stability inappropriate)."
+        },
+        {
+          "text": "Notes that test-retest intervals for state measures should be much shorter \u2014 same session, 24-48 hours, not weeks",
+          "passed": true,
+          "evidence": "Response states 'Same session (immediate retest), 24\u201348 hours at most' as appropriate intervals, and that at 4 weeks 'You are not measuring equivalence of the measurement procedure; you are measuring stability of a construct that, by definition, should not be stable.'"
+        },
+        {
+          "text": "Does not endorse ICC = 0.72 at a 4-week interval as evidence of good state-anxiety scale performance",
+          "passed": true,
+          "evidence": "Response concludes 'a high ICC at a 4-week interval is theoretically inconsistent with what state anxiety is supposed to be' and 'a reviewer who understands the state-trait distinction will flag it immediately.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "testretest-state-anxiety",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 6,
+        "total": 6,
+        "time_seconds": 9,
+        "tokens": 1420,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Does NOT simply validate ICC = 0.72 as acceptable reliability for this scale",
+          "passed": false,
+          "evidence": "Response opens with 'ICC = 0.72 indicates moderate-to-good reliability' and concludes 'ICC = 0.72 is a reasonable and acceptable test-retest reliability coefficient.' It fully validates the value without raising any concern."
+        },
+        {
+          "text": "Raises the conceptual problem: state anxiety is expected to fluctuate over 4 weeks, so high ICC contradicts what the construct is supposed to measure",
+          "passed": false,
+          "evidence": "Response never raises this concern. It frames the 4-week interval as a design strength ('long enough to reduce memory effects') and does not discuss whether state anxiety is expected to be stable."
+        },
+        {
+          "text": "States or implies that ICC = 0.72 over 4 weeks suggests the scale may be capturing trait-like (stable) variance rather than genuine state variance",
+          "passed": false,
+          "evidence": "Response makes no mention of trait variance contamination or the state-trait distinction. The possibility that stable scores reflect trait rather than state measurement is not raised."
+        },
+        {
+          "text": "Distinguishes stability (appropriate for trait constructs) from equivalence (appropriate for state constructs over short intervals)",
+          "passed": false,
+          "evidence": "Response treats test-retest reliability as a unitary concept with no distinction between construct stability and measurement equivalence. No mention of trait vs. state construct implications for interval choice."
+        },
+        {
+          "text": "Notes that test-retest intervals for state measures should be much shorter \u2014 same session, 24-48 hours, not weeks",
+          "passed": false,
+          "evidence": "Response affirms the 4-week interval as 'common and reasonable' without noting that state measures require much shorter intervals. The correct guidance (same session or 24-48 hours) is absent."
+        },
+        {
+          "text": "Does not endorse ICC = 0.72 at a 4-week interval as evidence of good state-anxiety scale performance",
+          "passed": false,
+          "evidence": "Response explicitly endorses the result: 'ICC = 0.72 is a reasonable and acceptable test-retest reliability coefficient for your scale' and 'your state anxiety measure is performing adequately.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "construct-definition-gate",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 18,
+        "tokens": 1847,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Does NOT immediately recommend piloting, expert review, or running EFA as the next step without first flagging the missing construct definition",
+          "passed": true,
+          "evidence": "Response opens with 'Stop. I want to help you get this right... do not touch those 40 items yet.' and explicitly defers all statistical workflow (EFA, pilot testing, expert review) until after a construct definition is established. The word 'Stop' is the first word of the response."
+        },
+        {
+          "text": "Explicitly raises that the construct ('digital wellbeing') must be clearly defined and bounded before item selection or statistical analysis",
+          "passed": true,
+          "evidence": "Response states 'You have a pool of candidate items but you do not yet have a construct. \"Digital wellbeing\" is a label, not a definition.' and instructs the user to write a clear conceptual statement as item 1 of the action plan."
+        },
+        {
+          "text": "Asks or flags: what is included in and excluded from the construct \u2014 is it unidimensional or is multidimensionality intentional?",
+          "passed": true,
+          "evidence": "Section 2 ('What is NOT digital wellbeing?') explicitly addresses boundaries and exclusions, noting that social comparison and notification stress may be antecedents rather than components. Section 3 ('Is this construct unidimensional, or is multidimensionality intentional?') directly addresses dimensionality as a required prior decision."
+        },
+        {
+          "text": "Raises the reflective vs. formative distinction: does a latent 'digital wellbeing' cause item responses (reflective), or do the items constitute and define it (formative)?",
+          "passed": true,
+          "evidence": "Section 4 ('Reflective or formative?') explains both models clearly and states: 'This is not a statistical detail \u2014 it changes the entire measurement model and how you evaluate the scale.' Both reflective and formative possibilities are defined and the implications for analysis are noted."
+        },
+        {
+          "text": "Notes that writing items before the construct is defined is the number-one mistake in scale development",
+          "passed": true,
+          "evidence": "Response states directly: 'writing items before the construct is clearly bounded and defined is the single most common \u2014 and most consequential \u2014 mistake in scale development.' Also adds: 'Sophisticated analyses downstream cannot fix this. You cannot EFA your way out of a vague construct.'"
+        },
+        {
+          "text": "Does not endorse the 40-item pool as ready for statistical analysis without first establishing a theoretical framework for the construct",
+          "passed": true,
+          "evidence": "Response explicitly withholds endorsement: 'The items you have may be useful raw material \u2014 or they may be 40 measurements of vibes about digital life. You cannot tell until you know what you are measuring.' No statistical analysis is recommended until the construct definition is complete."
+        }
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "construct-definition-gate",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 6,
+        "total": 6,
+        "time_seconds": 11,
+        "tokens": 612,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Does NOT immediately recommend piloting, expert review, or running EFA as the next step without first flagging the missing construct definition",
+          "passed": false,
+          "evidence": "Response immediately recommends expert review as Step 1 ('Share your 40 items with 4-6 subject matter experts'), cognitive interviewing as Step 2, pilot study as Step 3, and EFA as Step 4 \u2014 all without any mention of a missing construct definition. The opening line is 'Great work putting together those 40 items!'"
+        },
+        {
+          "text": "Explicitly raises that the construct ('digital wellbeing') must be clearly defined and bounded before item selection or statistical analysis",
+          "passed": false,
+          "evidence": "The response never raises the absence of a construct definition. It treats the item pool as ready for the next stage of development without questioning whether the construct itself has been specified."
+        },
+        {
+          "text": "Asks or flags: what is included in and excluded from the construct \u2014 is it unidimensional or is multidimensionality intentional?",
+          "passed": false,
+          "evidence": "No mention of construct boundaries or what should be excluded. The response does note 'you might expect a 4-factor solution, but let the data tell you,' which is the opposite of the correct approach: the dimensionality decision should be theoretically driven, not data-driven after the fact."
+        },
+        {
+          "text": "Raises the reflective vs. formative distinction: does a latent 'digital wellbeing' cause item responses (reflective), or do the items constitute and define it (formative)?",
+          "passed": false,
+          "evidence": "The reflective vs. formative distinction is never mentioned. The response implicitly assumes a reflective model (using EFA, Cronbach's alpha, McDonald's omega) without acknowledging this is a choice with substantive consequences."
+        },
+        {
+          "text": "Notes that writing items before the construct is defined is the number-one mistake in scale development",
+          "passed": false,
+          "evidence": "Not only does the response not flag this mistake, it actively validates the user's approach by saying 'Great work putting together those 40 items!' and 'You're in good shape.' The #1 mistake in scale development is praised as a strong foundation."
+        },
+        {
+          "text": "Does not endorse the 40-item pool as ready for statistical analysis without first establishing a theoretical framework for the construct",
+          "passed": false,
+          "evidence": "The response explicitly endorses the item pool as ready for the next stage: 'Having a solid initial item pool... gives you a strong foundation to build from.' and 'You're in good shape \u2014 the next step is expert review and pilot testing.' The pool is treated as a valid starting point for analysis."
+        }
+      ]
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "longitudinal-invariance-prepost",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 28,
+        "tokens": 2847,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Does NOT simply recommend a paired t-test and interpret the mean difference as evidence of improved psychological safety",
+          "passed": true,
+          "evidence": "The response opens 'not yet \u2014 and the reason isn't statistical power, it's measurement' and explicitly defers any paired t-test interpretation until after invariance testing. It states 'Run the invariance sequence before you touch a paired t-test.'"
+        },
+        {
+          "text": "Raises longitudinal measurement invariance as a prerequisite for interpreting the pre-post score difference",
+          "passed": true,
+          "evidence": "The response dedicates a full section 'What you need to test: longitudinal measurement invariance' and frames it explicitly as a prerequisite: 'Before you interpret that M = 3.9 \u2192 4.4 shift as evidence of improved psychological safety, you need to establish longitudinal measurement invariance.'"
+        },
+        {
+          "text": "Explains that training programs can change how respondents interpret and use scale items (response shift, referent recalibration)",
+          "passed": true,
+          "evidence": "The response explicitly names 'response shift, referent recalibration, reconceptualization' and explains at length how a mindfulness program can change 'how employees interpret survey items and calibrate their responses.' Also cites the Golembiewski et al. (1976) alpha/beta/gamma change taxonomy."
+        },
+        {
+          "text": "States that without invariance testing, a mean shift could reflect a real construct change OR a change in how respondents use the scale",
+          "passed": true,
+          "evidence": "The response states: 'Your observed mean difference (\u0394 = 0.5) then conflates real construct change with scale recalibration, and you can't tell which it is \u2014 or in what proportion \u2014 without testing.' Repeated in the bottom line: 'you don't know whether you're seeing a real construct change, a recalibration of how employees use the scale, or some mixture of the two.'"
+        },
+        {
+          "text": "Names or implies the configural/metric/scalar invariance sequence as what would need to be tested",
+          "passed": true,
+          "evidence": "The response explicitly names and defines all three levels: 'Configural invariance,' 'Metric (weak) invariance,' and 'Scalar (strong) invariance,' and provides working R code implementing the full configural \u2192 metric \u2192 scalar sequence with lavaan."
+        },
+        {
+          "text": "Does not conflate 'statistically significant pre-post difference' with 'training improved psychological safety' without the measurement caveat",
+          "passed": true,
+          "evidence": "Significance is addressed only conditionally ('If invariance holds at scalar level, then you're in good shape to compare latent means. At that point, you can run the latent mean comparison... and a statistically significant difference... is meaningful'). The caveat is integral throughout, not appended as an afterthought."
+        }
+      ]
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "longitudinal-invariance-prepost",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.0,
+        "passed": 0,
+        "failed": 6,
+        "total": 6,
+        "time_seconds": 12,
+        "tokens": 612,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Does NOT simply recommend a paired t-test and interpret the mean difference as evidence of improved psychological safety",
+          "passed": false,
+          "evidence": "The response does exactly this: 'the right statistical test to confirm this is a paired t-test' and concludes 'Yes, the data support concluding that the training improved psychological safety.' A paired t-test is recommended without any measurement caveats."
+        },
+        {
+          "text": "Raises longitudinal measurement invariance as a prerequisite for interpreting the pre-post score difference",
+          "passed": false,
+          "evidence": "Longitudinal measurement invariance is never mentioned. The response treats the observed mean shift as directly interpretable without any discussion of whether the scale measures the same construct before and after training."
+        },
+        {
+          "text": "Explains that training programs can change how respondents interpret and use scale items (response shift, referent recalibration)",
+          "passed": false,
+          "evidence": "Response shift, referent recalibration, and reconceptualization are never mentioned. The response does not raise any possibility that the training itself could alter how respondents interpret and respond to the items."
+        },
+        {
+          "text": "States that without invariance testing, a mean shift could reflect a real construct change OR a change in how respondents use the scale",
+          "passed": false,
+          "evidence": "The response treats the 0.5-point mean shift as unambiguously reflecting a real change in psychological safety. The possibility that the shift reflects scale recalibration rather than (or in addition to) a genuine construct change is never raised."
+        },
+        {
+          "text": "Names or implies the configural/metric/scalar invariance sequence as what would need to be tested",
+          "passed": false,
+          "evidence": "Configural, metric, and scalar invariance are not named or implied anywhere in the response. The measurement model is assumed to be stable across time without any testing."
+        },
+        {
+          "text": "Does not conflate 'statistically significant pre-post difference' with 'training improved psychological safety' without the measurement caveat",
+          "passed": false,
+          "evidence": "The response directly equates statistical significance with construct-level improvement: 'If the p-value comes back below 0.05... you can conclude the difference is statistically significant' is immediately followed by the bottom-line claim that the training improved psychological safety. The measurement caveat is entirely absent."
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 28.05,
+        "stddev": 8.7188,
+        "min": 18,
+        "max": 38.4
+      },
+      "tokens": {
+        "mean": 3200.5,
+        "stddev": 1531.3685,
+        "min": 1420,
+        "max": 6800
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.025,
+        "stddev": 0.0661,
+        "min": 0.0,
+        "max": 0.2
+      },
+      "time_seconds": {
+        "mean": 12.8875,
+        "stddev": 3.0965,
+        "min": 9,
+        "max": 18
+      },
+      "tokens": {
+        "mean": 1275.5,
+        "stddev": 843.1404,
+        "min": 612,
+        "max": 3200
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.9750",
+      "time_seconds": "+15.2",
+      "tokens": "+1925"
+    }
+  }
+}

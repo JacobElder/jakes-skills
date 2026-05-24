@@ -147,20 +147,19 @@
     {
       "id": 7,
       "name": "niftimasker_signal_extraction_tsnr",
-      "prompt": "Use evals/files/glm/bold.nii.gz (TR=7s) and evals/files/glm/brain_mask.nii.gz to extract a whole-brain timeseries matrix with NiftiMasker. Apply detrending and high-pass filtering (cutoff 0.01 Hz) but do NOT standardize (we want raw signal units for tSNR). After extraction, compute the temporal SNR map: for each voxel, tSNR = mean(timeseries) / std(timeseries). Report the median tSNR across voxels and save the tSNR map as a NIfTI and a stat-map PNG to ./tsnr_out/.",
+      "prompt": "Use evals/files/glm/bold.nii.gz (TR=7s) and evals/files/glm/brain_mask.nii.gz to compute a temporal SNR (tSNR) map. tSNR = mean(timeseries) / std(timeseries) per voxel — so you must NOT detrend or standardize before computing it (detrending removes the mean, which is the signal denominator for tSNR). Use NiftiMasker with standardize=False and detrend=False to extract the raw signal. After computing tSNR, report the median tSNR across brain voxels and save the tSNR map as a NIfTI and a stat-map PNG to ./tsnr_out/.",
       "files": [
         "evals/files/glm/bold.nii.gz",
         "evals/files/glm/brain_mask.nii.gz"
       ],
-      "expected_output": "NiftiMasker extraction with detrend=True, high_pass=0.01, t_r=7, standardize=False. tSNR computed per voxel as mean/std. Median tSNR reported. tSNR NIfTI and PNG saved.",
+      "expected_output": "NiftiMasker extraction with standardize=False, detrend=False (raw signal preserved so tSNR mean is nonzero). tSNR = mean/std per voxel. Median tSNR > 1 reported. tSNR NIfTI and PNG saved.",
       "expectations": [
         "Uses NiftiMasker with mask_img pointing to brain_mask.nii.gz",
-        "Sets t_r=7.0 on the masker",
-        "Sets detrend=True on the masker",
-        "Sets high_pass=0.01 on the masker",
-        "Sets standardize=False (we want raw signal, not z-scores)",
+        "Sets standardize=False on the masker (raw signal units, not z-scores)",
+        "Sets detrend=False on the masker (mean must be preserved for tSNR numerator)",
         "Extracted timeseries has shape (96, n_voxels) — 96 timepoints",
         "Computes tSNR = mean(axis=0) / std(axis=0) per voxel",
+        "Median tSNR across voxels is greater than 1 (synthetic data baseline ~100, noise ~5)",
         "Reports the median tSNR value in the response text",
         "Converts tSNR array back to a NIfTI image using masker.inverse_transform",
         "Saves tSNR NIfTI to ./tsnr_out/",

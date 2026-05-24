@@ -19,7 +19,7 @@
     {
       "text": "Warns that varimax (orthogonal) rotation is inappropriate when constructs are expected to be correlated — recommends oblique rotation instead",
       "passed": false,
-      "evidence": "The response mentions oblique rotation only as an optional extra check with equivocal framing: 'try both and seeing if the solutions differ.' It does not warn that varimax is inappropriate or recommend oblique as the default for correlated psychological constructs."
+      "evidence": "The response mentions oblique rotation only as an optional check with equivocal framing: 'try both and seeing if the solutions differ.' It does not warn that varimax is inappropriate or recommend oblique as the default for correlated psychological constructs."
     },
     {
       "text": "Warns against or questions the eigenvalue > 1 rule for selecting the number of components/factors",
@@ -29,7 +29,7 @@
     {
       "text": "Recommends EFA with oblique rotation and polychoric correlations as the appropriate analysis for developing subscales from Likert items",
       "passed": false,
-      "evidence": "The response never mentions EFA, polychoric correlations, or frames oblique rotation as the recommended approach. The recommendation is to use PCA with optional oblique rotation as a check, not as the primary analysis."
+      "evidence": "The response never mentions EFA, polychoric correlations, or frames oblique rotation as the primary recommended approach. The recommendation is to use PCA with optional oblique rotation as a check, not as the main analysis."
     },
     {
       "text": "Does not simply validate the advisor's PCA recommendation without raising the PCA vs. EFA distinction",
