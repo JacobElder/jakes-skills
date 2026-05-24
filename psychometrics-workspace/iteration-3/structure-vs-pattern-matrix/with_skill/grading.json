@@ -1,0 +1,35 @@
+{
+  "run_id": "structure-vs-pattern-matrix-with_skill",
+  "eval_id": 2,
+  "eval_name": "structure-vs-pattern-matrix",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "States clearly that the structure matrix is NOT the right matrix for item assignment after oblique rotation",
+      "passed": true,
+      "evidence": "Response opens with 'No — stop using the structure matrix for item assignment. That's the core mistake' and reinforces this throughout. No hedging or equivocation."
+    },
+    {
+      "text": "Explains that the structure matrix contains factor-variable correlations, which are inflated when factors are correlated with each other",
+      "passed": true,
+      "evidence": "Explicitly defines the structure matrix as 'simple bivariate correlations between each item and each factor' and provides the inflation mechanism: 'an item that cleanly loads on Factor 1 (pattern coefficient .70) ... will still show a non-trivial correlation with Factor 2 in the structure matrix — something like .70 × .50 = .35 or more — simply because Factor 2 rides along with Factor 1.'"
+    },
+    {
+      "text": "Recommends the pattern matrix for item assignment — it contains partial regression coefficients showing each item's unique association with each factor after controlling for the others",
+      "passed": true,
+      "evidence": "Defines the pattern matrix as 'standardized partial regression coefficients... the slope from regressing that item on that factor while controlling for all other factors' and explicitly directs: 'Use the pattern matrix for all item assignment decisions.' Includes R code showing `fit$loadings` (pattern matrix) as the correct output."
+    },
+    {
+      "text": "Explains why the distinction matters: with correlated factors, the structure matrix can make items appear to load substantially on multiple factors even when they cleanly belong to one",
+      "passed": true,
+      "evidence": "Directly addresses this: 'the structure matrix makes nearly every item appear to cross-load substantially onto multiple factors ... structure matrix values are routinely inflated by 0.10–0.25 loading units above the corresponding pattern coefficients.' Gives concrete numerical example of a clean item appearing to cross-load due to factor correlation."
+    },
+    {
+      "text": "Does not present using the structure matrix as a reasonable alternative or matter of preference",
+      "passed": true,
+      "evidence": "The structure matrix is called out as actively misleading for item assignment. The closest acknowledgment is 'the structure matrix can help you understand the full correlation landscape — it's not a useless quantity — but it's specifically not appropriate for deciding factor membership under oblique rotation.' This correctly frames it as useful for a different purpose, not as an alternative for item assignment."
+    }
+  ]
+}

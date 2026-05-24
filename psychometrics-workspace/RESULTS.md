@@ -109,6 +109,52 @@ The evals were correctly designed for content — every assertion is technically
 
 ---
 
+---
+
+## Iteration-3 summary
+
+**Design:** 5 evals targeting: (1) multi-turn adversarial persistence, (2) two additional applied errors not yet covered (structure vs. pattern matrix; N-per-item rule), and (3) two content areas added to the skill between iterations (bifactor models; partial scalar invariance procedure).
+
+**Model:** claude-sonnet-4-6
+
+### Behavior evals
+
+| Condition | Pass rate | Assertions |
+|---|---|---|
+| with_skill | 100.0% | 28/28 |
+| without_skill | 14.3% | 4/28 |
+| **Delta** | **+85.7pp** | — |
+
+### Per-eval breakdown
+
+| Eval | Trap | with_skill | without_skill | Δ |
+|---|---|---|---|---|
+| `multi-turn-wlsmv-pushback` | Capitulates to advisor/reviewer pressure over 3 turns | 6/6 | 1/6 | +83pp |
+| `structure-vs-pattern-matrix` | "Using the structure matrix is a reasonable starting point" | 5/5 | 1/5 | +80pp |
+| `n-per-item-rule` | Validates 10:1 N-per-item as correct planning heuristic | 6/6 | 1/6 | +83pp |
+| `bifactor-correlated-factors` | Validates total score on r = .71 alone, no bifactor check | 5/5 | 0/5 | +100pp |
+| `partial-scalar-invariance` | "Strictly speaking, no" — treats partial invariance as workaround | 6/6 | 1/6 | +83pp |
+
+### Representative without_skill failures
+
+- `bifactor-correlated-factors`: "A factor correlation of r = .71 is fairly high... which is exactly what justifies combining them into a total score." Never mentioned bifactor models, omega-hierarchical, or ω_h/ω_t.
+- `multi-turn-wlsmv-pushback` (Turn 2): "keeping ML is not unreasonable here... The estimator choice is a technical detail." Turn 3: "adding a footnote is a practical and reasonable solution."
+- `structure-vs-pattern-matrix`: "Using the structure matrix for initial assignment is a reasonable starting point" and "structure matrix advocates vs. pattern matrix advocates" — framed as a matter of preference.
+- `n-per-item-rule`: "Your advisor's 10:1 / 200-participant guidance is a reasonable and commonly used planning heuristic." Never mentioned communality (h²) or MacCallum et al. (1999).
+- `partial-scalar-invariance`: "Strictly speaking, no" — led with blocking statement; treated partial invariance as a risky "workaround"; never named the identification requirement or defensibility conditions.
+
+### Iteration-3 interpretation
+
+The +85.7pp delta is consistent with iteration-2 (+97.9pp). The pattern is stable:
+
+1. **Multi-turn position-holding** — the WLSMV pushback eval confirms the skill holds through advisor/reviewer social pressure over 3 turns. Without the skill, Turn 2 capitulates on "minimal difference" and Turn 3 endorses a footnote as a fix.
+2. **Inflation blindness** — structure-vs-pattern-matrix reveals that without the skill, Claude frames this as a scholastic debate between "advocates" rather than a clear technical error. The partial credit (1/5) is the single true fact about structure matrix values being larger, framed as neutral.
+3. **Heuristic over mechanism** — without the skill, N-per-item-rule gets partial credit only by listing competing ratio rules (5:1, 10:1, 20:1) rather than the communality-based mechanism. The actual wrong planning heuristic is endorsed.
+4. **New content works** — bifactor-correlated-factors (0/5 without skill) tests content added to SKILL.md specifically for this iteration. The base model has no awareness of ω_h / ω_t decomposition; 0% pass rate confirms this was a genuine gap.
+5. **Partial invariance direction error** — without the skill, the error is over-conservatism (blocks mean comparison) rather than over-permissiveness. The skill corrects in the right direction: partial invariance *is* defensible when conditions are met.
+
+---
+
 ## Skill readiness
 
 | Criterion | Target | Result |

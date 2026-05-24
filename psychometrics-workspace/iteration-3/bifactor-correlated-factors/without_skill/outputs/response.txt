@@ -1,0 +1,19 @@
+Yes, your advisor's recommendation makes good sense. A factor correlation of r = .71 is fairly high and indicates that hedonic and eudaimonic wellbeing are strongly related constructs — they're measuring overlapping aspects of the same broader domain (wellbeing). When two factors correlate this highly, it generally supports the idea that they are tapping into a common underlying construct, which is exactly what justifies combining them into a total score.
+
+Here's the reasoning:
+
+**High factor correlation supports a total score**
+
+In CFA, when factors correlate at r ≥ .70 or so, researchers and methodologists often treat this as evidence that the constructs are not sufficiently distinct to warrant separate scores for most purposes. The shared variance (r² = .50, or 50%) indicates the factors are more alike than different. Computing a total score by summing all 16 items essentially acknowledges this strong commonality.
+
+**Practical considerations**
+
+- A total score is simpler to use, report, and interpret — "overall wellbeing" is a coherent concept that your scale appears to measure.
+- The high factor correlation suggests that subscale scores (hedonic alone, eudaimonic alone) would be highly redundant with each other and with the total score anyway.
+- Many well-validated wellbeing scales (e.g., SWLS combined with flourishing items) use total scores precisely because hedonic and eudaimonic aspects of wellbeing are theoretically and empirically intertwined.
+
+**One caveat**
+
+If a central goal of your research is to compare hedonic vs. eudaimonic wellbeing — that is, if you need to argue they have *different* relationships with outcomes — then you'd want to keep them separate. In that case, you should acknowledge the high factor correlation as a limitation on discriminant validity.
+
+But if your goal is simply to measure wellbeing overall, computing the total score from all 16 items is reasonable and your advisor is correct to suggest it. Just report the factor correlation (r = .71) in your methods section so readers understand the two-factor structure and why you collapsed to a total score.

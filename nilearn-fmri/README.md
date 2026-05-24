@@ -1,6 +1,6 @@
 # nilearn fMRI Analysis Skill
 
-A Claude skill for running reproducible fMRI analyses with [nilearn](https://nilearn.github.io). Covers four core workflows: first- and second-level GLM, functional connectivity, MVPA decoding, and brain visualization/reporting.
+A skill for running reproducible fMRI analyses with [nilearn](https://nilearn.github.io). Covers four core workflows: first- and second-level GLM, functional connectivity, MVPA decoding, and brain visualization/reporting.
 
 ## Installation
 
@@ -25,7 +25,7 @@ Once installed, the skill triggers automatically whenever you ask about fMRI, BO
 
 > I have 3 subjects of resting-state fMRI and a 6-region label atlas (integer labels 1–6). Extract ROI timeseries and give me a correlation matrix.
 
-This is where the skill gap is largest. Without the skill, base Claude frequently uses `NiftiMapsMasker` — the masker for probabilistic (4D) atlases — on a deterministic label (3D) atlas. The consequences are not a warning or an error: nilearn silently interprets the entire 3D integer image as a single continuous map and returns a timeseries of shape `(150, 1)` instead of `(150, 6)`. The downstream `ConnectivityMeasure` then produces a `(3, 1, 1)` matrix — a scalar per subject — instead of the expected `(3, 6, 6)`. The code runs to completion, but the output contains no connectivity information. With the skill, Claude reads the references, recognizes the label atlas, uses `NiftiLabelsMasker`, sets `standardize='zscore_sample'`, applies bandpass filtering, and produces the correct `(3, 6, 6)` correlation matrices.
+This is where the skill gap is largest. Without the skill, the base model frequently uses `NiftiMapsMasker` — the masker for probabilistic (4D) atlases — on a deterministic label (3D) atlas. The consequences are not a warning or an error: nilearn silently interprets the entire 3D integer image as a single continuous map and returns a timeseries of shape `(150, 1)` instead of `(150, 6)`. The downstream `ConnectivityMeasure` then produces a `(3, 1, 1)` matrix — a scalar per subject — instead of the expected `(3, 6, 6)`. The code runs to completion, but the output contains no connectivity information. With the skill, the model reads the references, recognizes the label atlas, uses `NiftiLabelsMasker`, sets `standardize='zscore_sample'`, applies bandpass filtering, and produces the correct `(3, 6, 6)` correlation matrices.
 
 ---
 
@@ -33,7 +33,7 @@ This is where the skill gap is largest. Without the skill, base Claude frequentl
 
 > I have z-maps from 8 subjects. I want a one-sample t-test against zero (intercept-only design).
 
-Without the skill, base Claude often averages the z-maps manually via `image.mean_img` or reaches for `FirstLevelModel` a second time. A simple average of z-maps is not a t-test — it produces a mean with no associated degrees of freedom, p-value, or valid threshold. In our fixture, the correct `SecondLevelModel` produces a group z-map with peak z=5.25 and 80 voxels surviving FDR correction. The manual mean produces a peak "z" of 3.95 that cannot be statistically thresholded. With the skill, Claude instantiates `SecondLevelModel`, builds the intercept design matrix as a pandas DataFrame of ones, calls `.fit(zmaps, design_matrix=...)`, applies FDR correction, and saves a group z-map with documented parameters.
+Without the skill, the base model often averages the z-maps manually via `image.mean_img` or reaches for `FirstLevelModel` a second time. A simple average of z-maps is not a t-test — it produces a mean with no associated degrees of freedom, p-value, or valid threshold. In our fixture, the correct `SecondLevelModel` produces a group z-map with peak z=5.25 and 80 voxels surviving FDR correction. The manual mean produces a peak "z" of 3.95 that cannot be statistically thresholded. With the skill, the model instantiates `SecondLevelModel`, builds the intercept design matrix as a pandas DataFrame of ones, calls `.fit(zmaps, design_matrix=...)`, applies FDR correction, and saves a group z-map with documented parameters.
 
 ---
 
@@ -41,7 +41,7 @@ Without the skill, base Claude often averages the z-maps manually via `image.mea
 
 > Here's my z-map from a first-level GLM. Apply FDR correction at alpha=0.05 and tell me how many voxels survive and what the threshold was.
 
-Without the skill, base Claude frequently uses `plot_stat_map(threshold=3.0)` — an arbitrary display cutoff — and reports that as "thresholding," never touching `threshold_stats_img`. In our fixture, the FDR-correct threshold is z=3.48. Using an arbitrary z=3.0 instead passes 81 voxels; the FDR-correct answer is 42. That is 39 additional false positives in a 16³ toy brain — in a real full-brain scan the gap is orders of magnitude larger. With the skill, Claude calls `nilearn.glm.threshold_stats_img(z_map, alpha=0.05, height_control='fdr')`, reports the exact numeric threshold, counts surviving voxels, and saves both maps. The difference is not cosmetic: a display threshold is not a statistical claim.
+Without the skill, the base model frequently uses `plot_stat_map(threshold=3.0)` — an arbitrary display cutoff — and reports that as "thresholding," never touching `threshold_stats_img`. In our fixture, the FDR-correct threshold is z=3.48. Using an arbitrary z=3.0 instead passes 81 voxels; the FDR-correct answer is 42. That is 39 additional false positives in a 16³ toy brain — in a real full-brain scan the gap is orders of magnitude larger. With the skill, the model calls `nilearn.glm.threshold_stats_img(z_map, alpha=0.05, height_control='fdr')`, reports the exact numeric threshold, counts surviving voxels, and saves both maps. The difference is not cosmetic: a display threshold is not a statistical claim.
 
 ---
 
@@ -49,7 +49,7 @@ Without the skill, base Claude frequently uses `plot_stat_map(threshold=3.0)` �
 
 > I want a tSNR map from my BOLD file using a brain mask.
 
-Without the skill, base Claude almost always sets `detrend=True` — the standard recommendation for preprocessing. For tSNR that is fatal: detrending removes the temporal mean, making `mean(timeseries) ≈ 0` and therefore tSNR ≈ 0 everywhere. The resulting map is numerically uniform at zero and clinically meaningless. In our fixture: correct tSNR (detrend=False) gives median tSNR=20; wrong tSNR (detrend=True) gives median tSNR≈0. With the skill, Claude recognizes that tSNR requires the raw mean as numerator, sets `detrend=False`, and produces a map with physically interpretable values.
+Without the skill, the base model almost always sets `detrend=True` — the standard recommendation for preprocessing. For tSNR that is fatal: detrending removes the temporal mean, making `mean(timeseries) ≈ 0` and therefore tSNR ≈ 0 everywhere. The resulting map is numerically uniform at zero and clinically meaningless. In our fixture: correct tSNR (detrend=False) gives median tSNR=20; wrong tSNR (detrend=True) gives median tSNR≈0. With the skill, the model recognizes that tSNR requires the raw mean as numerator, sets `detrend=False`, and produces a map with physically interpretable values.
 
 ---
 

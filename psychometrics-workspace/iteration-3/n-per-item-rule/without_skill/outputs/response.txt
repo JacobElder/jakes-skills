@@ -1,0 +1,27 @@
+The 10:1 rule — 10 participants per item — is one of the most widely cited guidelines in the factor analysis literature, so your advisor is drawing on a common and generally reasonable starting point. For a 20-item questionnaire, 200 participants aligns with that heuristic.
+
+That said, the rule has nuances worth knowing:
+
+**Where the 10:1 rule comes from**
+
+The guideline has been repeated across textbooks and methodology papers for decades. It's an easy-to-apply heuristic that tends to produce adequate sample sizes for many typical research contexts. Some researchers point to it as a floor rather than a target.
+
+**Is 200 enough?**
+
+For many EFA applications, yes — 200 participants for 20 items is a reasonable starting point that should give you stable factor solutions in most cases. Some methodologists argue that an absolute minimum of N ≥ 200 is more important than any per-item ratio. Others have suggested that with a clean, well-designed questionnaire, N = 200 is adequate regardless of item count.
+
+That said, there's no single universal rule. Some researchers recommend:
+- **5:1 ratio** as an absolute minimum (100 participants for 20 items)
+- **10:1 ratio** as a standard guideline (your advisor's recommendation of 200)
+- **20:1 ratio** for more complex or novel scales
+- **N ≥ 300–500** for more complex factor structures or when high precision is required
+
+**Practical advice**
+
+Your advisor's recommendation of N = 200 is a sensible, conventional target. It's not overly conservative and reflects standard practice. If you can recruit more participants (300+), that will only strengthen the stability of your factor solution.
+
+The main risk with smaller samples is that factor solutions can be unstable — they may not replicate in a different sample. N = 200 with 20 items keeps you within widely accepted bounds.
+
+If your scale has a well-defined, simple structure (e.g., 2–3 factors with clearly distinct item clusters), 200 participants should be sufficient. If it's more complex, consider pushing toward 300.
+
+**Bottom line:** Your advisor's 10:1 / 200-participant guidance is a reasonable and commonly used planning heuristic. Aim for at least 200, and more if feasible.

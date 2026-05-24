@@ -1,6 +1,6 @@
 # Boglehead Investing Skill
 
-A Claude skill that applies the [Boglehead investing philosophy](https://www.bogleheads.org/) — John Bogle / Vanguard / index funds — to personal finance questions. It gives Claude the conviction to push back on the financial industry products and strategies that Bogleheads consistently flag as bad deals.
+A skill that applies the [Boglehead investing philosophy](https://www.bogleheads.org/) — John Bogle / Vanguard / index funds — to personal finance questions. It gives the agent the conviction to push back on the financial industry products and strategies that Bogleheads consistently flag as bad deals.
 
 ## Installation
 
@@ -26,7 +26,7 @@ To keep it up to date automatically, symlink instead of copy:
 ln -s "$(pwd)/jakes-skills/boglehead" ~/.claude/skills/boglehead
 ```
 
-Once installed, Claude will apply the skill automatically whenever you ask about investing, retirement accounts, or any of the products and scenarios it covers.
+Once installed, the skill will apply automatically whenever you ask about investing, retirement accounts, or any of the products and scenarios it covers.
 
 ---
 
@@ -35,7 +35,7 @@ Once installed, Claude will apply the skill automatically whenever you ask about
 **"Is this whole life policy a good deal?"**
 > My financial advisor says I should put $500/month into a whole life insurance policy for the tax-free growth and the death benefit. It builds cash value I can borrow against. Sounds reasonable — should I do it?
 
-This is the scenario where the gap between base Claude and the skill is most visible. Base Claude opens cautiously and later includes a section titled **"WHEN WHOLE LIFE MIGHT ACTUALLY MAKE SENSE"** — the hedging pattern Bogleheads warn against, because someone anchored on their advisor's recommendation will read that section and find their justification:
+This is the scenario where the gap between the base model and the skill is most visible. The base model opens cautiously and later includes a section titled **"WHEN WHOLE LIFE MIGHT ACTUALLY MAKE SENSE"** — the hedging pattern Bogleheads warn against, because someone anchored on their advisor's recommendation will read that section and find their justification:
 
 > This is a common recommendation from financial advisors, but it deserves careful scrutiny. The short answer for most people: whole life insurance is probably not the right choice, and there are almost certainly better ways to deploy $500/month toward your financial goals.
 >
@@ -67,7 +67,7 @@ Rather than jumping straight to fund recommendations, the skill walks through th
 **"I just want to live off dividends in retirement"**
 > I love the idea of living off dividends without touching my principal. I've been putting all my savings into SCHD and JEPI because they pay high dividends. Is this a good retirement strategy?
 
-Base Claude partially validates the approach, calling SCHD "a legitimate, well-constructed fund" that "many Bogleheads-style investors hold without controversy" — and ends by suggesting the user could keep SCHD as a "modest tilt (10–20%)" if dividend-quality exposure appeals to them:
+The base model partially validates the approach, calling SCHD "a legitimate, well-constructed fund" that "many Bogleheads-style investors hold without controversy" — and ends by suggesting the user could keep SCHD as a "modest tilt (10–20%)" if dividend-quality exposure appeals to them:
 
 > SCHD (Schwab U.S. Dividend Equity ETF) is a legitimate, well-constructed fund. It screens for dividend quality — companies with strong cash flows that have consistently paid dividends. It has solid long-term total return performance. Many Bogleheads-style investors hold SCHD without controversy, though most treat it as a tilt rather than an entire portfolio.
 
@@ -107,22 +107,22 @@ These are approximations assuming 7% nominal annual return with costs applied as
 
 ## What it does
 
-Base Claude knows Boglehead facts. The skill gives it the *conviction to act on them*. The Boglehead approach often requires Claude to:
+The base model knows Boglehead facts. The skill gives the agent the *conviction to act on them*. The Boglehead approach often requires the agent to:
 
 - **Contradict a financial advisor's recommendation** (whole life insurance, AUM fees, backwards tax placement)
 - **Reject a user's plan without hedging** (3-year DCA window, "let my winners run," dividend income strategy)
 - **Hold a position under pushback** (authority figures, sunk cost arguments, 5-year track records)
 - **Apply a full situational picture** before answering the literal question (funding waterfall, account priority order)
 
-Without the skill, Claude tends to give balanced pros-and-cons responses or soften positions under pressure — which is exactly what someone anchored on bad financial industry advice doesn't need.
+Without the skill, the model tends to give balanced pros-and-cons responses or soften positions under pressure — which is exactly what someone anchored on bad financial industry advice doesn't need.
 
-## Benchmark: skill vs. base Claude
+## Benchmark: skill vs. base model
 
 Evaluated on 19 scenarios graded against 4–5 specific assertions each. The first 10 form the original benchmark; 9 additional scenarios probe new anti-patterns, edge cases, and tax-specific traps.
 
 ```mermaid
 xychart-beta horizontal
-    title "Pass Rate by Scenario (■ with skill  □ base Claude)"
+    title "Pass Rate by Scenario (■ with skill  □ base model)"
     x-axis ["Whole life insurance", "Dividend strategy", "Market timing", "Investment waterfall", "Three-fund portfolio", "High ER active fund", "1% AUM advisor", "Tax placement", "Lump sum vs DCA", "Portfolio review", "Variable annuity", "100% equities at 25", "International skepticism", "Multi-turn pushback", "RSU sell at vest", "ESPP sell immediately", "HSA pay out-of-pocket", "Social Security timing", "NUA before rollover"]
     y-axis "Pass rate" 0 --> 1
     bar [1.0, 1.0, 1.0, 0.8, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
@@ -154,7 +154,7 @@ xychart-beta horizontal
 | ESPP sell immediately | 1.0 | 0.8 | +0.2 |
 | NUA before 401k rollover | 1.0 | 0.8 | +0.2 |
 
-### Where base Claude already gets it right
+### Where the base model already gets it right
 
 | Scenario | With skill | Without skill |
 |----------|:---:|:---:|
@@ -168,7 +168,7 @@ xychart-beta horizontal
 | HSA pay out-of-pocket (stealth retirement account) | 1.0 | 1.0 |
 | Social Security as longevity insurance | 1.0 | 1.0 |
 
-The pattern: base Claude handles *knowledge questions* and *publicly-documented Boglehead positions* well (it knows what a three-fund portfolio is, it knows variable annuities have high fees, it knows SS is longevity insurance). The skill's value concentrates on *behavioral questions* where the Boglehead view requires conviction to state directly — and on *specific action traps* where the naive answer misframes the decision (RSU holding as a "tax strategy," ESPP holding for qualifying disposition, NUA evaluation before an IRA rollover). The whole life insurance example in the [Example use cases](#example-use-cases) section shows the behavioral contrast directly with quoted responses.
+The pattern: the base model handles *knowledge questions* and *publicly-documented Boglehead positions* well (it knows what a three-fund portfolio is, it knows variable annuities have high fees, it knows SS is longevity insurance). The skill's value concentrates on *behavioral questions* where the Boglehead view requires conviction to state directly — and on *specific action traps* where the naive answer misframes the decision (RSU holding as a "tax strategy," ESPP holding for qualifying disposition, NUA evaluation before an IRA rollover). The whole life insurance example in the [Example use cases](#example-use-cases) section shows the behavioral contrast directly with quoted responses.
 
 ## Eval suite
 

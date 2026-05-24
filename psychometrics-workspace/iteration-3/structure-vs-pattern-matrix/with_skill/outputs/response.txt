@@ -1,0 +1,65 @@
+No — stop using the structure matrix for item assignment. That's the core mistake, and it's worth being direct about it before walking through why.
+
+---
+
+## What the two matrices actually are
+
+After an oblique rotation like promax, your EFA output produces two related but fundamentally different matrices:
+
+**Pattern matrix**: Standardized partial regression coefficients. Each entry is the slope from regressing that item on that factor *while controlling for all other factors*. It answers: "What is this item's unique contribution to Factor X, holding Factors Y and Z constant?"
+
+**Structure matrix**: Simple bivariate correlations between each item and each factor. Each entry is just the Pearson r (or polychoric analogue) between item i and factor j with no other controls. It answers: "How strongly does this item correlate with Factor X in the overall solution?"
+
+Those are very different questions, and for item assignment, you want the pattern matrix answer.
+
+---
+
+## Why the structure matrix misleads when factors are correlated
+
+Here's the mechanism. When your promax solution produces correlated factors — and with 3 psychological constructs they almost certainly are correlated — the structure matrix conflates two sources of association:
+
+1. The item's direct relationship with that factor
+2. The item's indirect relationship via the factor intercorrelations
+
+Suppose Factor 1 and Factor 2 correlate at r = .50. An item that cleanly loads on Factor 1 (pattern coefficient .70) and has essentially no direct relationship with Factor 2 (pattern coefficient .05) will *still* show a non-trivial correlation with Factor 2 in the structure matrix — something like .70 × .50 = .35 or more — simply because Factor 2 rides along with Factor 1. That's not measurement signal; it's a mathematical consequence of factor correlation.
+
+The result: the structure matrix makes nearly every item appear to cross-load substantially onto multiple factors. Under oblique rotation with moderately correlated factors (r ≥ .30), structure matrix values are routinely inflated by 0.10–0.25 loading units above the corresponding pattern coefficients. In a 3-factor solution with all factors intercorrelated, you'll see items that have one clean pattern-matrix home but look like reasonable candidates for two or three factors in the structure matrix. If you assign based on the structure matrix, you will misassign items — putting them where the factor correlation pulled the correlation, not where the item actually belongs.
+
+---
+
+## The practical consequence for your 20-item scale
+
+With 3 correlated factors and 20 items, the structure matrix will almost certainly show you a messier picture than reality warrants. Borderline items — the ones where your decision about which factor they "belong to" will most affect your scale's internal structure — are exactly the items the structure matrix will mislead you on most. The pattern matrix's partial coefficients cut through the shared variance and show you what each item is distinctively measuring.
+
+---
+
+## What to do instead
+
+**Use the pattern matrix** for all item assignment decisions. Look at the pattern matrix columns: assign each item to the factor on which its pattern coefficient is largest in absolute value, provided it's meaningfully sized (roughly ≥ .30 as a conventional floor, though this isn't a hard rule). If an item has a pattern coefficient of .62 on Factor 1 and .11 on Factors 2 and 3, it belongs to Factor 1, full stop.
+
+**Also report the factor correlation matrix** (the Phi matrix in promax output). This is substantively interesting — it tells you how related your constructs are — and it's the direct explanation for why your structure and pattern matrices differ. Reviewers and readers deserve to see it, and it's part of any rigorous EFA report.
+
+**In R with `psych::fa()`:**
+
+```r
+fit <- fa(your_data, nfactors = 3, fm = "minres", rotate = "promax", cor = "poly")
+
+# Pattern matrix — use this for item assignment
+print(fit$loadings, digits = 3, cutoff = 0)  # show all loadings
+
+# Factor correlations — always report with oblique rotation
+fit$Phi
+
+# Structure matrix — exists but NOT for item assignment
+fit$Structure
+```
+
+The `psych` package prints the pattern matrix by default when you call `print(fit$loadings)`, which is correct behavior. The structure matrix is accessible via `fit$Structure` if you want to examine it for reference, but it should not be your workhorse for interpretation.
+
+---
+
+## One more thing worth flagging
+
+Some older textbooks and software documentation describe using the structure matrix for "factor interpretation" or present it alongside the pattern matrix as if both are equally valid for the same purpose. That framing is problematic. The structure matrix can help you understand the full correlation landscape — it's not a useless quantity — but it's specifically *not* appropriate for deciding factor membership under oblique rotation. The psychometric consensus since Thurstone is clear on this: oblique rotation → use the pattern matrix.
+
+If you post the pattern matrix output here, I can help you work through the item assignments.

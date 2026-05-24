@@ -1,0 +1,139 @@
+{
+  "description": "Tests whether the skill loads the right reference file(s) given a prompt about a specific model family or methodological question.",
+  "evals": [
+    {
+      "id": "route_rl_to_rl_reference",
+      "prompt": "Walk me through fitting a Q-learning model with separate learning rates for positive and negative prediction errors.",
+      "expected_references_loaded": ["references/reinforcement_learning.md"],
+      "must_include": [
+        "dual-alpha model named (Frank et al. 2007 or similar attribution)",
+        "warning about trade-off between alpha+, alpha-, and beta",
+        "recommendation to do parameter recovery before interpreting asymmetry",
+        "concrete code or Stan implementation guidance"
+      ],
+      "must_not_include": [
+        "claims the asymmetry can be interpreted without recovery check"
+      ]
+    },
+    {
+      "id": "route_pt_to_pt_reference",
+      "prompt": "How does cumulative prospect theory differ from original prospect theory? Which should I use?",
+      "expected_references_loaded": ["references/prospect_theory.md"],
+      "must_include": [
+        "explanation of rank-dependent weighting in CPT",
+        "stochastic dominance violation issue in OPT",
+        "guidance: CPT for mixed/multi-outcome, OPT often fine for two-outcome same-domain"
+      ],
+      "must_not_include": []
+    },
+    {
+      "id": "route_ddm_to_ddm_reference",
+      "prompt": "My HDDM fit gave me a starting point z = 0.7 — what does that mean and is it a problem?",
+      "expected_references_loaded": ["references/drift_diffusion.md"],
+      "must_include": [
+        "interpretation: bias toward upper boundary (faster, more frequent upper-boundary responses)",
+        "mention that starting-point bias and drift bias can both produce response asymmetries",
+        "recommendation to compare a starting-point-bias model with a drift-bias model"
+      ],
+      "must_not_include": [
+        "claims z = 0.7 is automatically pathological without context"
+      ]
+    },
+    {
+      "id": "route_category_to_category_reference",
+      "prompt": "What's the difference between GCM, ALCOVE, and SUSTAIN?",
+      "expected_references_loaded": ["references/category_learning.md"],
+      "must_include": [
+        "GCM: exemplar storage, no learning",
+        "ALCOVE: exemplar storage + gradient-descent learning of attention weights",
+        "SUSTAIN: adaptive clustering, recruits new clusters when needed",
+        "guidance on when to use each"
+      ],
+      "must_not_include": []
+    },
+    {
+      "id": "route_dd_to_dd_reference",
+      "prompt": "What's the difference between hyperbolic and quasi-hyperbolic discounting?",
+      "expected_references_loaded": ["references/delay_discounting.md"],
+      "must_include": [
+        "hyperbolic: 1/(1+kd) form, one parameter, captures preference reversals",
+        "quasi-hyperbolic / beta-delta: separates present bias (beta) from baseline discounting (delta)",
+        "Laibson 1997 mentioned for quasi-hyperbolic",
+        "guidance: use beta-delta when present bias is the construct of interest"
+      ],
+      "must_not_include": []
+    },
+    {
+      "id": "route_bayesian_learning",
+      "prompt": "I see learning rates in my data are higher in volatile blocks than stable blocks. How do I model this adaptive learning rate?",
+      "expected_references_loaded": ["references/bayesian_learning.md", "references/reinforcement_learning.md"],
+      "must_include": [
+        "fixed-alpha RW can't capture block effect by design",
+        "Behrens 2007 or HGF mentioned as the canonical adaptive model",
+        "Kalman filter mentioned as a simpler alternative if appropriate",
+        "warning about HGF parameter recovery"
+      ],
+      "must_not_include": [
+        "recommends adding a dummy-coded block term to a fixed-alpha RW model as a sufficient solution"
+      ]
+    },
+    {
+      "id": "route_recovery_to_recovery_reference",
+      "prompt": "How do I check if my model's parameters can actually be recovered from data?",
+      "expected_references_loaded": ["references/recovery.md"],
+      "must_include": [
+        "described loop: sample params -> simulate -> fit -> correlate true vs recovered",
+        "Spearman correlation thresholds (>0.7 usable, >0.9 excellent)",
+        "cross-parameter correlation check for trade-offs",
+        "trial count as a key factor"
+      ],
+      "must_not_include": []
+    },
+    {
+      "id": "route_model_comparison_to_mc_reference",
+      "prompt": "What's the difference between AIC, BIC, WAIC, and LOO? Which should I use for my hierarchical Bayesian RL model?",
+      "expected_references_loaded": ["references/model_comparison.md"],
+      "must_include": [
+        "PSIS-LOO via loo / arviz as the modern Bayesian standard",
+        "WAIC as fast cross-check",
+        "AIC/BIC for MLE fits",
+        "report ELPD differences with their standard errors (not just point estimates)",
+        "Vehtari Gelman Gabry 2017 mentioned"
+      ],
+      "must_not_include": [
+        "recommends DIC without caveats",
+        "recommends Bayes factors without caveats about prior sensitivity"
+      ]
+    },
+    {
+      "id": "route_stan_to_stan_reference",
+      "prompt": "My hierarchical Stan RL model keeps diverging. What should I check?",
+      "expected_references_loaded": ["references/hierarchical_stan.md"],
+      "must_include": [
+        "non-centered parameterization recommended",
+        "adapt_delta increase (0.95 or 0.99) suggested",
+        "transform bounded parameters via Phi_approx / inv_logit",
+        "weakly informative priors check"
+      ],
+      "must_not_include": [
+        "suggests increasing iterations as primary fix"
+      ]
+    },
+    {
+      "id": "route_multi_family",
+      "prompt": "I have an Iowa Gambling Task dataset. What models can I fit and how do I compare them?",
+      "expected_references_loaded": [
+        "references/reinforcement_learning.md",
+        "references/prospect_theory.md",
+        "references/model_comparison.md"
+      ],
+      "must_include": [
+        "PVL-decay / PVL-delta / VPP family mentioned",
+        "hBayesDM igt_* mentioned",
+        "PT-style utility on top of delta-rule learning explained",
+        "recommend comparing multiple variants via LOO"
+      ],
+      "must_not_include": []
+    }
+  ]
+}

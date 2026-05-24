@@ -1,0 +1,35 @@
+{
+  "run_id": "structure-vs-pattern-matrix-without_skill",
+  "eval_id": 2,
+  "eval_name": "structure-vs-pattern-matrix",
+  "config": "without_skill",
+  "passed": 1,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "States clearly that the structure matrix is NOT the right matrix for item assignment after oblique rotation",
+      "passed": false,
+      "evidence": "Response explicitly validates the structure matrix: 'Using the structure matrix for initial assignment is a reasonable starting point' and 'The structure matrix is perfectly fine for item assignment.' This is the exact wrong answer."
+    },
+    {
+      "text": "Explains that the structure matrix contains factor-variable correlations, which are inflated when factors are correlated with each other",
+      "passed": true,
+      "evidence": "Response mentions 'They tend to be somewhat larger in magnitude than pattern matrix values when factors are correlated' — this is technically present but framed as a neutral feature rather than a distortion problem. The word 'inflated' and the mechanism (indirect paths via factor intercorrelations) are absent."
+    },
+    {
+      "text": "Recommends the pattern matrix for item assignment — it contains partial regression coefficients showing each item's unique association with each factor after controlling for the others",
+      "passed": false,
+      "evidence": "Response explicitly declines to make this recommendation, instead framing it as 'both matrices provide useful information' and endorsing the structure matrix as a primary tool. While the pattern matrix is described correctly as partial coefficients, it is not recommended over the structure matrix."
+    },
+    {
+      "text": "Explains why the distinction matters: with correlated factors, the structure matrix can make items appear to load substantially on multiple factors even when they cleanly belong to one",
+      "passed": false,
+      "evidence": "Response never explains that the structure matrix produces spurious apparent cross-loadings due to factor intercorrelations. The inflation problem is mentioned but not linked to item misassignment. The framing 'the relative pattern of which factor is highest will usually be consistent' actively downplays the problem."
+    },
+    {
+      "text": "Does not present using the structure matrix as a reasonable alternative or matter of preference",
+      "passed": false,
+      "evidence": "Response explicitly presents it as a matter of preference with 'structure matrix advocates' vs 'pattern matrix advocates,' frames both as defensible, and concludes 'Using the structure matrix for initial assignment is a reasonable starting point.' This directly violates the assertion."
+    }
+  ]
+}

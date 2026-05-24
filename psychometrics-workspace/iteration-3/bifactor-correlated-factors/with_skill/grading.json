@@ -1,0 +1,35 @@
+{
+  "run_id": "bifactor-correlated-factors-with_skill",
+  "eval_id": 4,
+  "eval_name": "bifactor-correlated-factors",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Does NOT simply validate computing a total score on the basis that r = .71 means factors are related",
+      "passed": true,
+      "evidence": "Response explicitly states 'high factor correlation in a two-factor CFA is precisely the signature of a bifactor structure hiding beneath' and warns that r = .71 'doesn't tell you how much of the total-score variance is driven by a single general wellbeing dimension versus the two group factors separately.' It declines to endorse the total score without further analysis."
+    },
+    {
+      "text": "Identifies that r = .71 is high enough to warrant examining a bifactor model",
+      "passed": true,
+      "evidence": "Response states 'r = .71 means roughly 50% of the variance in one factor is shared with the other. That's high enough that a general \"wellbeing\" factor almost certainly underlies both subscales' and links this directly to the recommendation to run a bifactor model."
+    },
+    {
+      "text": "Recommends running a bifactor model (or psych::omega()) to separate general-factor variance from group-factor variance",
+      "passed": true,
+      "evidence": "Response explicitly recommends 'Run a bifactor model and compare omega-hierarchical (ω_h) with omega-total (ω_t)' and provides R code for both psych::omega() and a lavaan bifactor CFA with compRelSEM()."
+    },
+    {
+      "text": "Explains or mentions omega-hierarchical (ω_h) as the key statistic — it captures how much of total-score variance is attributable to the general factor alone",
+      "passed": true,
+      "evidence": "Response defines ω_h as 'the proportion of total-score variance attributable to the general factor alone, after partialling out the group factors' and explicitly labels it 'the key statistic' that determines total-score interpretability."
+    },
+    {
+      "text": "States that a total score is defensible when ω_h is high (general factor dominates), but not when ω_h and ω_t diverge substantially (subscale variance contaminates total score interpretation)",
+      "passed": true,
+      "evidence": "Decision rule section explicitly covers both cases: (1) 'If ω_h is high (typically > .80) and close to ω_t (gap < .10–.15)... a total score is defensible' and (2) 'If ω_h is substantially lower than ω_t (e.g., ω_h = .55, ω_t = .90)... interpreting it as a pure wellbeing index is not defensible.'"
+    }
+  ]
+}

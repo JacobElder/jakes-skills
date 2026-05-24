@@ -63,9 +63,9 @@ Both regressions fixed. All 12 evals pass at 1.0.
 
 New evals: variable annuity rollover, 100% equities at 25, international diversification skepticism, multi-turn pushback (variable annuity).
 
-Key finding: only variable annuity showed a gap (1.0 vs 0.8 — base Claude flags concerns but hedges rather than explicitly rejecting). The other three were non-discriminating: base Claude already handles international diversification defense, supporting aggressive equity allocation at 25, and multi-turn pushback resistance at 1.0 / 1.0.
+Key finding: only variable annuity showed a gap (1.0 vs 0.8 — the base model flags concerns but hedges rather than explicitly rejecting). The other three were non-discriminating: the base model already handles international diversification defense, supporting aggressive equity allocation at 25, and multi-turn pushback resistance at 1.0 / 1.0.
 
-Pattern confirmed: **the skill discriminates on behavioral conviction, not domain knowledge.** Scenarios where Claude must directly contradict a financial industry pitch or hold a position under escalating pressure show large gaps (0.2–0.6). Scenarios that test whether Claude *knows* the right answer show near-zero gaps — base Claude's training already contains the relevant Boglehead content.
+Pattern confirmed: **the skill discriminates on behavioral conviction, not domain knowledge.** Scenarios where the model must directly contradict a financial industry pitch or hold a position under escalating pressure show large gaps (0.2–0.6). Scenarios that test whether the model *knows* the right answer show near-zero gaps — the base model's training already contains the relevant Boglehead content.
 
 ### Iteration-5: new eval expansion (5 additional scenarios, skill updated)
 

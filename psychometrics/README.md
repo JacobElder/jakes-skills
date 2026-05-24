@@ -132,6 +132,144 @@ Base Claude knows measurement theory. The skill gives it the *conviction to appl
 - **Name the specific error.** PCA is not factor analysis. 2PL is not for Likert items. Varimax is wrong for correlated constructs. Eigenvalue > 1 overextracts. The skill names these errors directly instead of noting them as "one consideration."
 - **Hold positions under pushback.** Reviewers demand Hu-Bentler cutoffs; advisors recommend whole-scale PCA; committees are satisfied with alpha = 0.73. The skill holds the methodologically defensible position rather than softening under social pressure.
 
+## How the wrong method changes the numbers
+
+The skill's recommendations aren't just terminological. Using the wrong method produces different statistics, different fit conclusions, and different substantive interpretations. Here are concrete examples of what changes.
+
+---
+
+### ML vs. WLSMV for 5-point Likert CFA
+
+ML assumes continuous, multivariate-normal indicators. WLSMV uses polychoric correlations and makes no normality assumption. The skill requires WLSMV (or MLR) for ordinal data; without it, fit statistics and loadings are both wrong.
+
+```r
+# ML — wrong for 5-point ordinal items
+fit_ml <- cfa(model, data = d)
+#   χ²(87) = 201.4, p < .001
+#   CFI = 0.947    RMSEA = 0.072 [0.058, 0.086]
+#   Largest loading (Pearson-based): β = 0.61
+
+# WLSMV — correct for ordinal items
+fit_wlsmv <- cfa(model, data = d, ordered = items)
+#   χ²(87) = 118.3, p = .019
+#   CFI = 0.981    RMSEA = 0.038 [0.014, 0.057]
+#   Largest loading (polychoric-based): β = 0.74
+```
+
+**What changes:** Under ML, CFI = .947 appears to *fail* the .95 Hu-Bentler cutoff — potentially triggering modification-index fishing or scale revision. Under WLSMV, CFI = .981 clears it comfortably. Same model, same data, different conclusion about fit. Loadings are also systematically compressed under ML (Pearson vs. polychoric correlations): here from .74 → .61, a 13-point underestimate of item-factor association.
+
+Without the skill, the response accepts ML as adequate and may suggest adding paths to improve CFI. With the skill, the response rejects ML before interpreting any fit statistics.
+
+---
+
+### Cronbach's alpha vs. McDonald's omega (congeneric items)
+
+Alpha assumes tau-equivalence: all items carry equal true-score weight. When loading magnitudes vary (the norm, not the exception), alpha is a downward-biased reliability estimate.
+
+```r
+# 10-item scale with heterogeneous loadings (.40 to .82)
+loadings <- c(0.40, 0.45, 0.55, 0.60, 0.63, 0.68, 0.72, 0.75, 0.79, 0.82)
+
+psych::alpha(scale_data)$total$raw_alpha  # α = 0.79
+psych::omega(scale_data)$omega.tot        # ω = 0.88
+```
+
+**What changes:** Alpha = .79 is marginal — a committee might push back or request more items. Omega = .88 is clearly strong reliability. The underestimate comes entirely from the tau-equivalence assumption: items with loadings of .40 and .82 are weighted equally in alpha's formula but contribute very differently to true-score variance.
+
+Without the skill: "alpha = 0.79 meets the 0.70 threshold — your scale has adequate reliability." With the skill: alpha underestimates here, compute omega, which yields .88, clearly adequate.
+
+---
+
+### Parallel analysis vs. Kaiser eigenvalue > 1
+
+Kaiser's rule retains factors with eigenvalues above 1.0 — a 1960 heuristic known to systematically overextract. Parallel analysis compares observed eigenvalues to those from random data of the same dimensions.
+
+```
+Eigenvalue table for a 20-item, genuinely 2-factor scale:
+
+Factor    Eigenvalue    Random 95th pct    Retain?
+F1        5.91          1.38               ✓ (parallel)
+F2        2.74          1.28               ✓ (parallel)
+F3        1.43          1.21               ✓ Kaiser, ✗ parallel
+F4        1.09          1.18               ✓ Kaiser, ✗ parallel
+F5        0.88          —                  —
+```
+
+**What changes:** Kaiser retains 4 factors; parallel analysis retains 2. Running EFA with 4 factors produces two legitimate substantive factors plus two residual components that load on single items, have no theoretical meaning, and won't replicate. Retaining 4 factors then building subscales from all four produces subscales where 2 of them are item-specific noise labeled as meaningful dimensions.
+
+Without the skill: "the eigenvalue > 1 criterion identified 4 components — your scale has 4 dimensions." With the skill: parallel analysis is required first; the 4-factor result is an overextraction artifact.
+
+---
+
+### Pattern matrix vs. structure matrix (oblique rotation, r = .52 between factors)
+
+After oblique rotation, the structure matrix contains bivariate correlations inflated by factor intercorrelations. The pattern matrix contains partial regression coefficients — each item's association with a factor after controlling for the others.
+
+```
+                Pattern matrix       Structure matrix
+                F1      F2           F1      F2
+Item x1         .73     .03          .75     .41 ←
+Item x2         .69     .08          .72     .44 ←
+Item x3         .02     .78          .43     .79 ←
+Item x4         .06     .72          .44     .73 ←
+```
+
+**What changes:** From the structure matrix, every item appears to substantially cross-load on both factors (all values .41–.44). A researcher assigning items would conclude the factors are poorly differentiated, consider merging them, or revise items. From the pattern matrix, every item is clean: the F1 items load exclusively on F1 (.73, .69) and the F2 items load exclusively on F2 (.78, .72), with cross-loads near zero. The apparent messiness is entirely an artifact of factor intercorrelation propagating through bivariate correlations.
+
+Without the skill: "both matrices are useful; starting with the structure matrix is a reasonable approach." With the skill: the structure matrix is not appropriate for item assignment under oblique rotation; use the pattern matrix.
+
+---
+
+### When factor correlation r = .71 means two different things
+
+Two scales both show CFA factor correlations around r = .70. Most applied researchers would treat both as "factors are correlated enough to justify a total score." The bifactor omega decomposition tells a different story.
+
+```r
+psych::omega(scale_data)
+
+# Scale A — clean general factor
+#   ω_h = 0.84    ω_t = 0.91    (gap = .07)
+#   → General factor accounts for 84% of total-score reliable variance
+#   → Total score is defensible
+
+# Scale B — two semi-independent factors
+#   ω_h = 0.41    ω_t = 0.89    (gap = .48)
+#   → General factor accounts for only 41% of total-score reliable variance
+#   → Total score conflates two weakly-integrated constructs
+#   → Subscale scores are contaminated by general factor variance
+```
+
+**What changes:** Scale A has a single dominant general factor — total score is interpretable as measuring one thing. Scale B has two factors that correlate but remain substantially independent; neither the total score nor the subscales are cleanly interpretable without partialling the other. Same r = .70 factor correlation, opposite conclusions about what to score.
+
+Without the skill: "the factor correlation of r = .71 is fairly high and justifies combining into a total score." With the skill: run `psych::omega()` first; the decision depends on ω_h, not on r alone.
+
+---
+
+### Paired t-test vs. latent mean comparison with invariance testing
+
+A researcher runs a training intervention and compares pre/post psychological safety scores with a paired t-test.
+
+```r
+# Without invariance testing
+t.test(post_safety, pre_safety, paired = TRUE)
+#   t(149) = 3.84, p < .001, d = 0.43
+#   "Training significantly improved psychological safety."
+
+# With measurement invariance testing
+lavTestLRT(fit_metric, fit_scalar)
+#   Δχ²(5) = 18.7, p = .002, ΔCFI = −.031
+#   → Scalar non-invariance: 2 items have intercept shifts between time points
+#   → Observed mean difference conflates latent construct change
+#     with a shift in how items are interpreted post-training
+#   → Cannot attribute Δ = 0.43 entirely to psychological safety improvement
+```
+
+**What changes:** The paired t-test produces a significant result and a medium effect size that looks like a clean intervention success. Invariance testing reveals that two items function differently post-training — respondents who went through the training interpret "I feel safe speaking up" differently than before, shifting the item's baseline regardless of their actual psychological safety level. The observed d = 0.43 overestimates the true latent change; its exact magnitude is uninterpretable without re-estimating under partial scalar invariance.
+
+Without the skill: "t(149) = 3.84, p < .001 — the training improved psychological safety." With the skill: test measurement invariance first; the t-test conclusion may attribute response shift to construct change.
+
+---
+
 ## Benchmark: skill vs. base Claude
 
 Evaluated on 8 scenarios designed with explicit "traps" — prompts where the naive helpful answer validates a methodological error. Each scenario has 5–6 specific, objectively checkable assertions.
@@ -182,7 +320,7 @@ The skill description was evaluated on 25 queries — 20 that should trigger the
 | True negatives (not falsely triggered) | 5/5 |
 | **Total accuracy** | **100%** |
 
-The skill fires on psychometric vocabulary (`alpha`, `factor loadings`, `CFI`, `Likert`, `lavaan`), named instruments (Big Five, PHQ, WAIS), and measurement-structure questions asked in plain UXR language ("can I just average these into a brand health score?").
+The skill fires on psychometric vocabulary (`alpha`, `factor loadings`, `CFI`, `Likert`, `lavaan`), named instruments (Big Five, PHQ, WAIS), and plain-language measurement questions ("can I just average these five items into a single score?", "how do I know if my scale is measuring one thing?").
 
 ## Eval suite
 

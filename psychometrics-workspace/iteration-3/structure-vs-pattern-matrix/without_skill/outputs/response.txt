@@ -1,0 +1,27 @@
+Great question — this is a common point of confusion when working with oblique EFA output. The short answer is: it depends on what you want to know, but many researchers do use the structure matrix for item assignment and it's a defensible approach.
+
+Here's a quick breakdown of the two matrices:
+
+**Structure matrix**: Contains the correlations between each item and each factor. These are simple bivariate correlations. They tend to be somewhat larger in magnitude than pattern matrix values when factors are correlated, because they capture the full relationship between an item and a factor.
+
+**Pattern matrix**: Contains the standardized regression-like coefficients (partial coefficients) showing each item's relationship with each factor after controlling for the other factors. Values are typically smaller in magnitude when factors are correlated.
+
+## Which to use for item assignment?
+
+Both matrices provide useful information, and different methodologists recommend different approaches:
+
+- **Structure matrix advocates** argue that because you used oblique rotation to allow factors to correlate, the structure matrix honestly reflects those correlations and gives you the complete picture of how items relate to factors in your solution. If your goal is to understand which factor an item is most strongly associated with overall, the structure matrix tells you that directly.
+
+- **Pattern matrix advocates** argue that the partial coefficients better reveal which factor uniquely "drives" each item. This can be helpful when you want cleaner factor assignments with less apparent cross-loading.
+
+In practice, many researchers report or inspect both. The structure matrix is perfectly fine for item assignment as long as you're aware of the context. If your factor correlations are modest (say r < .30), the two matrices will be very similar and the choice matters less. With higher factor correlations, you'll see more divergence.
+
+## Practical recommendation
+
+For your 3-factor promax solution with 20 items:
+
+1. Look at both matrices
+2. Assign items based on whichever factor has the highest loading — in either matrix, the relative pattern of "which factor is highest" for a given item will usually be consistent
+3. Flag any items where the two matrices disagree on which factor is the "primary" one — those are your complex items that may need closer inspection or could be candidates for removal
+
+Most statistical software (SPSS, R's `psych` package) will output both, so you have the information readily available. Using the structure matrix for initial assignment is a reasonable starting point, and you can cross-check against the pattern matrix for borderline cases.

@@ -1,0 +1,13 @@
+{
+  "eval_id": 4,
+  "eval_name": "bifactor-correlated-factors",
+  "prompt": "I ran a two-factor CFA on my 16-item wellbeing scale. The two factors (hedonic and eudaimonic wellbeing) have a correlation of r = .71 in my model. My advisor says this is expected and I should just compute a total score by summing all 16 items, since both factors measure 'wellbeing.' Is that the right call?",
+  "trap": "The base model may agree that high factor correlations justify a total score. The skill should flag that r = .71 means substantial shared variance and recommend a bifactor model to evaluate whether a total score is defensible \u2014 specifically by comparing \u03c9_h and \u03c9_t.",
+  "assertions": [
+    "Does NOT simply validate computing a total score on the basis that r = .71 means factors are related",
+    "Identifies that r = .71 is high enough to warrant examining a bifactor model",
+    "Recommends running a bifactor model (or psych::omega()) to separate general-factor variance from group-factor variance",
+    "Explains or mentions omega-hierarchical (\u03c9_h) as the key statistic \u2014 it captures how much of total-score variance is attributable to the general factor alone",
+    "States that a total score is defensible when \u03c9_h is high (general factor dominates), but not when \u03c9_h and \u03c9_t diverge substantially (subscale variance contaminates total score interpretation)"
+  ]
+}

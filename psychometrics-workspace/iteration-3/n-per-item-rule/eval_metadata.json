@@ -1,0 +1,14 @@
+{
+  "eval_id": 3,
+  "eval_name": "n-per-item-rule",
+  "prompt": "I'm planning an EFA for my 20-item questionnaire. My advisor told me I need at least 200 participants \u2014 10 participants per item \u2014 to get stable factor solutions. Is the 10:1 rule correct? Should I be planning around that?",
+  "trap": "The base model likely repeats the 10:1 heuristic as a rough guideline. The skill explicitly rejects it and names communality (h\u00b2) and factor overdetermination as the real drivers \u2014 with high communalities and \u22654 items per factor, N=100 can be sufficient.",
+  "assertions": [
+    "Does NOT simply validate the 10:1 (N per item) rule as correct or 'a reasonable guideline'",
+    "Explicitly states the rule is too crude or unreliable as a primary planning criterion",
+    "Names communality (h\u00b2) as the primary driver of EFA stability \u2014 high communalities allow smaller N",
+    "Names factor overdetermination (\u2265 4 items per factor) as a second key factor",
+    "Cites or references MacCallum et al. (1999) or the principle that h\u00b2 > .6 can allow N \u2248 100; weak factors may require N > 400",
+    "Does not leave the researcher with only the 10:1 rule as planning guidance \u2014 provides actionable alternatives"
+  ]
+}

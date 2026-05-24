@@ -1,0 +1,163 @@
+{
+  "description": "Tests whether the comp-modeling skill activates when it should and stays quiet when it shouldn't.",
+  "evals": [
+    {
+      "id": "trigger_positive_rl_basic",
+      "prompt": "I have data from a 2-armed bandit task with 30 subjects and 200 trials each. I want to estimate a learning rate per subject. What should I do?",
+      "should_activate_skill": true,
+      "must_include": [
+        "mention of simulation or parameter recovery before fitting",
+        "recommendation to compare against a baseline / alternative model",
+        "hBayesDM mentioned OR a clear Stan/Python implementation path",
+        "softmax / Rescorla-Wagner / Q-learning named"
+      ],
+      "must_not_include": [
+        "going straight to a fit without mentioning recovery or PPC"
+      ]
+    },
+    {
+      "id": "trigger_positive_pt",
+      "prompt": "Help me fit prospect theory to choices on a mixed-gambles task.",
+      "should_activate_skill": true,
+      "must_include": [
+        "loss aversion lambda parameter discussed",
+        "value-function curvature parameter (alpha) discussed",
+        "recommendation to compare against expected utility as baseline",
+        "Sokol-Hessner mentioned OR hBayesDM ra_prospect mentioned OR equivalent toolbox"
+      ],
+      "must_not_include": []
+    },
+    {
+      "id": "trigger_positive_ddm",
+      "prompt": "I want to fit a drift diffusion model to my perceptual decision-making RTs. What parameters should I estimate?",
+      "should_activate_skill": true,
+      "must_include": [
+        "drift rate v explained",
+        "boundary separation a explained",
+        "non-decision time t explained",
+        "starting point z mentioned",
+        "HDDM mentioned",
+        "warning about RT units (seconds vs ms) OR about preprocessing"
+      ],
+      "must_not_include": []
+    },
+    {
+      "id": "trigger_positive_gcm",
+      "prompt": "How do I fit Nosofsky's GCM to a categorization dataset?",
+      "should_activate_skill": true,
+      "must_include": [
+        "exemplar representation explained",
+        "similarity function exp(-c * distance) form",
+        "attention weights w_k mentioned",
+        "Minkowski-r distance (city-block vs Euclidean) discussed",
+        "catlearn or BayesGCM mentioned as a toolbox"
+      ],
+      "must_not_include": []
+    },
+    {
+      "id": "trigger_positive_dd",
+      "prompt": "I have intertemporal choice data with delays from 1 day to 1 year. Fit a discount rate per subject.",
+      "should_activate_skill": true,
+      "must_include": [
+        "hyperbolic and exponential both named (with hyperbolic as default empirical winner)",
+        "log scale for k mentioned",
+        "comparison between at least two discount functions recommended",
+        "hBayesDM dd_* family OR Vincent 2016 mentioned"
+      ],
+      "must_not_include": [
+        "claim that linear-scale k fitting is fine"
+      ]
+    },
+    {
+      "id": "trigger_positive_kalman",
+      "prompt": "I'm running a restless 4-armed bandit a la Daw et al. 2006. Do I need anything more than Rescorla-Wagner?",
+      "should_activate_skill": true,
+      "must_include": [
+        "Kalman filter mentioned as the standard model for this paradigm",
+        "directed exploration / uncertainty bonus mentioned",
+        "comparison with RW still recommended"
+      ],
+      "must_not_include": []
+    },
+    {
+      "id": "trigger_positive_volatility",
+      "prompt": "I want to estimate trial-by-trial learning rates that adapt to environmental volatility. What model captures this?",
+      "should_activate_skill": true,
+      "must_include": [
+        "Behrens 2007 volatility model OR HGF (Mathys et al.) mentioned",
+        "Kalman filter mentioned as a simpler related option",
+        "warning about parameter recovery for HGF / mention of TAPAS"
+      ],
+      "must_not_include": []
+    },
+    {
+      "id": "trigger_positive_casual_phrasing",
+      "prompt": "I have some choice data and want to get a learning rate out of it",
+      "should_activate_skill": true,
+      "must_include": [
+        "asks for or clarifies task structure (bandit? reversal? trials per subject?)",
+        "mentions the simulate -> recover -> fit -> compare workflow at least in outline"
+      ],
+      "must_not_include": []
+    },
+    {
+      "id": "trigger_negative_generic_ml",
+      "prompt": "I have a tabular dataset and want to predict customer churn. What model should I use?",
+      "should_activate_skill": false,
+      "must_include": [
+        "recommends predictive ML approach (logistic regression, gradient boosting, etc.)"
+      ],
+      "must_not_include": [
+        "talks about Rescorla-Wagner",
+        "mentions parameter recovery in the cognitive-modeling sense",
+        "mentions hBayesDM or HDDM",
+        "treats this as a cognitive modeling problem"
+      ]
+    },
+    {
+      "id": "trigger_negative_anova",
+      "prompt": "I want to run an ANOVA on accuracy across three conditions.",
+      "should_activate_skill": false,
+      "must_include": [
+        "discusses ANOVA or appropriate alternative (mixed model)"
+      ],
+      "must_not_include": [
+        "talks about likelihood functions for trial-level behavior",
+        "recommends a cognitive model"
+      ]
+    },
+    {
+      "id": "trigger_negative_neural_network",
+      "prompt": "How do I train a transformer for sentiment analysis?",
+      "should_activate_skill": false,
+      "must_include": [],
+      "must_not_include": [
+        "recommends cognitive modeling tools",
+        "talks about learning rates as cognitive parameters"
+      ]
+    },
+    {
+      "id": "trigger_negative_descriptive_stats",
+      "prompt": "I want the mean and SD of RT in each condition.",
+      "should_activate_skill": false,
+      "must_include": [],
+      "must_not_include": [
+        "recommends DDM unprompted",
+        "talks about parameter recovery"
+      ]
+    },
+    {
+      "id": "trigger_ambiguous_softmax_neural_net",
+      "prompt": "I'm fitting a model with softmax outputs to behavioral choices. The learning rate isn't converging.",
+      "should_activate_skill": "depends_on_followup",
+      "must_include": [
+        "asks clarifying question to determine if this is a cognitive model (RW + softmax) or a neural network being fit to behavior",
+        "OR provides guidance covering both interpretations"
+      ],
+      "must_not_include": [
+        "assumes it's a neural net without checking",
+        "assumes it's RW without checking"
+      ]
+    }
+  ]
+}

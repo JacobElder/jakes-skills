@@ -1,0 +1,160 @@
+{
+  "description": "Tests whether the skill produces the recommended modeling workflow and flags common pitfalls when the user is about to make a mistake.",
+  "evals": [
+    {
+      "id": "workflow_full_pipeline",
+      "prompt": "I have RL bandit data from 40 subjects, 150 trials each. I want to estimate per-subject learning rates and compare RL to a win-stay-lose-shift baseline. Walk me through start to finish.",
+      "must_include": [
+        "step 1: precise scientific question / clarification of goal",
+        "step 2: pick candidates (RW, WSLS named explicitly; at least one extra suggested)",
+        "step 3: write/specify the generative model",
+        "step 4: simulate from each model and inspect",
+        "step 5: parameter recovery on simulated data",
+        "step 6: fit to real data (HB or MAP recommended over MLE given 150 trials/subj)",
+        "step 7: model comparison (LOO or WAIC with SE)",
+        "step 8: model recovery / confusion matrix",
+        "step 9: posterior predictive checks",
+        "step 10: interpret with uncertainty"
+      ],
+      "must_not_include": [
+        "jumps to a fit without simulation/recovery steps",
+        "suggests interpreting MLE per-subject estimates without warning about boundary effects at 150 trials"
+      ]
+    },
+    {
+      "id": "pitfall_skipping_recovery",
+      "prompt": "I fit my RL model, got significant group differences in learning rate, and want to submit. Anything I'm missing?",
+      "must_include": [
+        "explicitly asks whether parameter recovery was done",
+        "explains why recovery matters even when parameters are statistically significant",
+        "asks about model recovery / confusion matrix vs alternative models",
+        "asks about posterior predictive checks"
+      ],
+      "must_not_include": [
+        "congratulates user on the result and provides only writeup advice",
+        "treats statistical significance as evidence the parameters are meaningful"
+      ]
+    },
+    {
+      "id": "pitfall_alpha_at_boundary",
+      "prompt": "When I fit Rescorla-Wagner with MLE to my data, most subjects have learning rates of 0.99 or 1.0. Is that meaningful?",
+      "must_include": [
+        "warning that boundary estimates with per-subject MLE are typically an estimator artifact, not a subject fact",
+        "recommendation to switch to MAP with weakly informative priors OR hierarchical Bayes",
+        "mention that alpha at the boundary makes beta non-identifiable",
+        "suggest checking trials per subject"
+      ],
+      "must_not_include": [
+        "interprets alpha ~ 1 as meaningful 'very fast learners' without flagging the artifact"
+      ]
+    },
+    {
+      "id": "pitfall_dd_linear_scale",
+      "prompt": "I'm fitting hyperbolic discounting with MLE in scipy, optimizing over k from 0 to 1. My fits look weird, k is always 0.001 or very large. What's wrong?",
+      "must_include": [
+        "explicit recommendation to fit on log(k) scale, not linear k",
+        "explanation: k spans orders of magnitude across subjects (10^-4 to 10^-1)",
+        "concrete code or pseudocode showing log-scale fit"
+      ],
+      "must_not_include": [
+        "suggests it's a convergence issue solvable by changing optimizer alone"
+      ]
+    },
+    {
+      "id": "pitfall_dd_lambda_gain_only",
+      "prompt": "I want to estimate loss aversion from a task where subjects only chose between gain gambles and sure gain amounts. What model do I use?",
+      "must_include": [
+        "explicit statement that loss aversion (lambda) is NOT identifiable from gain-only choices",
+        "recommendation to either fix lambda to a literature value, drop it, or run a task that includes losses"
+      ],
+      "must_not_include": [
+        "proceeds to give a model with free lambda as if it were estimable"
+      ]
+    },
+    {
+      "id": "pitfall_ddm_rt_units",
+      "prompt": "I'm running HDDM on my RT data. RTs are in milliseconds. The fits are terrible.",
+      "must_include": [
+        "RT must be in seconds for HDDM",
+        "recommend dividing by 1000 and re-fitting",
+        "explanation that the parameter priors and bounds assume second-scale RTs"
+      ],
+      "must_not_include": []
+    },
+    {
+      "id": "pitfall_model_comparison_no_baseline",
+      "prompt": "My fancy 6-parameter RL model fits significantly better than chance. The paper is basically written.",
+      "must_include": [
+        "'better than chance' is not a meaningful baseline for an RL model",
+        "recommendation to compare against simpler RL variants and a heuristic baseline (e.g., WSLS, perseveration model)",
+        "model recovery / PPC reminder before claiming the model is right"
+      ],
+      "must_not_include": [
+        "accepts 'better than chance' as adequate evidence"
+      ]
+    },
+    {
+      "id": "pitfall_gcm_minkowski_freely_fit",
+      "prompt": "Help me fit GCM with c, w, AND the Minkowski-r exponent as free parameters.",
+      "must_include": [
+        "explicit recommendation NOT to fit r freely",
+        "explanation that r is determined by stimulus type: r=1 for separable dimensions, r=2 for integral",
+        "Garner 1974 mentioned OR operational guidance for choosing"
+      ],
+      "must_not_include": [
+        "provides code to freely estimate r without flagging the issue"
+      ]
+    },
+    {
+      "id": "pitfall_two_step_overinterpretation",
+      "prompt": "My two-step task fit gave w=0.4 in healthy controls and w=0.2 in my patient group, p=0.04. So patients are more model-free.",
+      "must_include": [
+        "warning about poor test-retest reliability of w (Brown et al. 2020 or similar)",
+        "recommendation to do parameter recovery at the experiment's trial counts",
+        "note that small w differences with marginal p-values should be interpreted cautiously"
+      ],
+      "must_not_include": [
+        "endorses the interpretation as conclusively model-free in patients"
+      ]
+    },
+    {
+      "id": "pitfall_in_sample_fit",
+      "prompt": "My model's log-likelihood is way better than the alternative's on my training data. Done deal, right?",
+      "must_include": [
+        "more parameters always fit training data at least as well; this is not a meaningful comparison",
+        "recommend AIC/BIC/WAIC/LOO instead",
+        "if Bayesian, recommend PSIS-LOO with ELPD differences and SE"
+      ],
+      "must_not_include": [
+        "accepts raw log-likelihood comparison as decisive"
+      ]
+    },
+    {
+      "id": "workflow_choice_between_mle_and_hb",
+      "prompt": "I have 25 subjects with 80 trials each in a bandit task. Should I use per-subject MLE or hierarchical Bayes?",
+      "must_include": [
+        "recommendation of hierarchical Bayes given the low trial count",
+        "rationale: MLE with 80 trials/subj will hit parameter boundaries and produce noisy estimates",
+        "shrinkage benefit named explicitly",
+        "concrete suggestion of hBayesDM or Stan template"
+      ],
+      "must_not_include": [
+        "recommends per-subject MLE without caveat for this trial count"
+      ]
+    },
+    {
+      "id": "workflow_diagnose_mcmc_failure",
+      "prompt": "My Stan model has R-hat = 1.2 for the group-level alpha and 35 divergent transitions. What now?",
+      "must_include": [
+        "non-centered parameterization recommended if not already used",
+        "increase adapt_delta (e.g., 0.95 or 0.99)",
+        "tighten weakly identified priors",
+        "inspect pair plots / trace plots to diagnose specific issues",
+        "warning: do NOT just run more iterations as the fix"
+      ],
+      "must_not_include": [
+        "recommends only increasing iterations as the primary fix"
+      ]
+    }
+  ]
+}
