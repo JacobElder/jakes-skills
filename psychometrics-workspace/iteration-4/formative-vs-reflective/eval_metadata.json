@@ -1,0 +1,17 @@
+{
+  "eval_id": 3,
+  "eval_name": "formative-vs-reflective",
+  "iteration": 4,
+  "trap": "Validates CFA on a formative composite (SES from income + education + occupation) as adequate evidence of a valid latent construct",
+  "prompt": "I'm building a socioeconomic status (SES) measure for my study using three indicators: household income, years of education, and occupational prestige score. I ran a CFA with these as reflective indicators of a latent SES factor. Factor loadings are .47, .53, and .61. CFI = .94, RMSEA = .06, omega = .71. Is this adequate evidence that I have a valid latent SES construct?",
+  "expected_with_skill": "Raises the formative vs. reflective question before interpreting the CFA results. Explains SES indicators are arguably formative — they define/constitute SES rather than being caused by a latent SES. Notes that loadings of .47-.61 may reflect legitimate construct heterogeneity, not a measurement problem. States what evidence IS appropriate for a formative composite.",
+  "expected_without_skill": "Validates the CFA results, calls loadings moderate-to-adequate, accepts omega = .71 as adequate reliability, concludes the evidence supports a valid latent SES construct.",
+  "assertions": [
+    "Does NOT simply validate the CFA results as evidence of a valid latent SES construct without raising the model specification question",
+    "Raises the formative vs. reflective question — asks whether SES indicators are caused by a latent variable or whether they define/constitute SES",
+    "Explains the core reflective vs. formative distinction: reflective = latent cause produces item covariance; formative = indicators combine to define the construct, no common cause required",
+    "Notes that moderate loadings (.47-.61) on income, education, and occupation may be correct for a formative composite — they are not necessarily a measurement problem to fix",
+    "Applies or implies the diagnostic: if one indicator changes (e.g., education increases), do the others necessarily change? If not, the reflective model may be a misspecification",
+    "States what evidence IS appropriate for a formative composite (content coverage of the domain, external validity with outcomes) versus what is not appropriate (factor loadings and internal consistency as primary validity evidence)"
+  ]
+}

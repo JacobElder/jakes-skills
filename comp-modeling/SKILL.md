@@ -1,6 +1,38 @@
 ---
 name: comp-modeling
-description: Guide users through computational and cognitive modeling of behavioral data — specifying generative models, fitting them to trial-by-trial choices/RTs, comparing models, and recovering latent parameters. Use whenever the user mentions fitting a model to choice data, parameter estimation, MLE/MAP/MCMC, hierarchical Bayesian models, parameter recovery, model comparison (AIC/BIC/WAIC/LOO), or any specific cognitive model — Rescorla-Wagner, Q-learning, SARSA, model-based RL, prospect theory, cumulative prospect theory, drift-diffusion (DDM), LBA, race models, hyperbolic/exponential discounting, GCM, prototype model, SUSTAIN, COVIS, ALCOVE, Kalman filter learning, Behrens volatility model. Also trigger when the user references tools like Stan, PyMC, hBayesDM, HDDM, BayesFlow, brms, or talks about likelihood functions for behavior, softmax choice rules, learning rates, loss aversion, drift rate, boundary separation, attention weights, generalization gradients. Use it even for casual phrasings like "I want to fit a learning model to this bandit data" or "how do I get a learning rate out of these choices" — these are the bread and butter of this skill and the user benefits from the structured workflow even if they don't ask for it explicitly. Do NOT use this skill for generic ML/predictive modeling (XGBoost, neural nets for prediction), for SEM/factor analysis, or for descriptive stats on aggregate behavior — this skill is specifically about *process models* of cognition fit to *trial-level* data.
+description: >
+  Guide users through computational and cognitive modeling of behavioral data —
+  specifying generative process models, fitting them to trial-by-trial choices/RTs,
+  comparing models, and recovering latent parameters.
+
+  SCOPE — use this skill when the user:
+  - Mentions fitting a cognitive or behavioral model to trial-level data
+  - Asks about parameter estimation (MLE/MAP/MCMC/hierarchical Bayes)
+  - Names a specific cognitive model: Rescorla-Wagner, Q-learning, SARSA, model-based RL,
+    prospect theory, cumulative prospect theory, drift-diffusion (DDM), LBA, race models,
+    hyperbolic/exponential/beta-delta discounting, GCM, prototype model, SUSTAIN, COVIS,
+    ALCOVE, DIVA, Kalman filter learning, HGF, Behrens volatility model
+  - References these tools: Stan, PyMC, hBayesDM, HDDM, catlearn, BayesFlow, sbi, brms, TAPAS
+  - Uses these concepts: likelihood functions for behavior, softmax choice rules, learning
+    rates (as cognitive parameters), loss aversion, drift rate, boundary separation,
+    attention weights, generalization gradients, prediction errors, Q-values, reward
+    prediction error, parameter recovery, model comparison (AIC/BIC/WAIC/LOO)
+  - Says things like "fit a learning model to bandit data" or "get a learning rate out of
+    these choices" — casual phrasing still triggers this skill
+
+  DO NOT use this skill for:
+  - Generic ML/predictive modeling: XGBoost, random forest, neural nets for prediction,
+    transformer fine-tuning, regression for prediction, churn modeling
+  - SEM, CFA, factor analysis, latent variable structural models
+  - Descriptive statistics on aggregate behavior (means, ANOVAs, t-tests) when the user
+    has not expressed interest in a process model
+  - Deep learning, reinforcement learning for robotics/games (not human behavior)
+  - Bayesian statistics that aren't modeling cognition (e.g., Bayesian regression for
+    non-behavioral data)
+
+  EDGE CASES — when ambiguous (e.g., "I have RT data"), ask one clarifying question
+  before loading the skill: are they modeling the decision process (DDM) or just
+  summarizing condition means?
 ---
 
 # Computational & Cognitive Modeling
@@ -80,6 +112,19 @@ There are also three cross-cutting references that apply regardless of model fam
 - **Hierarchical Bayesian modeling in Stan, with reusable Stan templates** → `references/hierarchical_stan.md`
 
 Read the family file first when the user's question is about a specific model; read the cross-cutting files when the question is about diagnostics, comparison, or implementation regardless of family.
+
+## Before answering any modeling question — run this checklist
+
+Before giving a substantive answer to any modeling request, check these in your head:
+
+1. **Does the user have a scientific question, or just a dataset?** If the latter, ask what they're trying to learn (parameter estimation? model comparison? regressors for fMRI?). The question determines the workflow.
+2. **Have they simulated from the model?** If not, say so before recommending a fitting approach.
+3. **Have they done parameter recovery?** If this is any kind of "is my estimate interpretable" question and recovery hasn't been mentioned, raise it before endorsing the estimate.
+4. **Are they comparing to a baseline?** A winning model with no comparisons is not a finding.
+5. **Is the estimator appropriate for the trial count?** Per-subject MLE on <100 trials/subject will produce boundary estimates. Say so.
+6. **Are the pitfalls for this model family in play?** Check the relevant family reference for the known trade-offs and apply them.
+
+Do not skip this checklist for any question that involves interpreting parameters, claiming model fit, or proposing to publish results.
 
 ## Things to flag every time (the "always say this" list)
 

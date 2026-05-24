@@ -1,6 +1,6 @@
 # Evals for the `comp-modeling` skill
 
-These evals test that a Claude instance with this skill loaded behaves measurably better than a baseline Claude on computational/cognitive modeling questions. They're written to be run by hand and graded against the rubrics, or adapted to an automated harness.
+These evals test that a model instance with this skill loaded behaves measurably better than a baseline model on computational/cognitive modeling questions. They're written to be run by hand and graded against the rubrics, or adapted to an automated harness.
 
 There are three sections:
 
@@ -14,7 +14,7 @@ Each eval lists the prompt, what to grade on, what failure looks like, and what 
 
 ## Section 1 — Triggering evals
 
-The skill description should fire on these and *not* fire on the negative controls. Run baseline Claude and Claude-with-skill on each prompt; check whether the skill is loaded.
+The skill description should fire on these and *not* fire on the negative controls. Run the baseline model and the model-with-skill on each prompt; check whether the skill is loaded.
 
 ### T1 — Direct mention of standard model
 
@@ -22,7 +22,7 @@ The skill description should fire on these and *not* fire on the negative contro
 
 **Should:** Skill fires; reinforcement_learning.md and probably recovery.md get read.
 
-**Fail mode:** Skill doesn't fire, or Claude immediately writes a likelihood without pulling the reference.
+**Fail mode:** Skill doesn't fire, or the model immediately writes a likelihood without pulling the reference.
 
 ### T2 — Casual phrasing, no model named
 
@@ -56,7 +56,7 @@ The skill description should fire on these and *not* fire on the negative contro
 
 **Should NOT:** Fire. This is generic ML, not cognitive modeling. The skill description excludes this.
 
-**Fail mode:** Skill fires and gives a 12-step cognitive modeling lecture for an XGBoost problem.
+**Fail mode:** Skill fires and the model gives a 12-step cognitive modeling lecture for an XGBoost problem.
 
 ### T7 — Negative control: descriptive stats
 
@@ -86,7 +86,7 @@ The skill description should fire on these and *not* fire on the negative contro
 
 ## Section 2 — Routing evals
 
-Once triggered, does Claude pull the *correct* reference files? These tests check that the file structure is being used.
+Once triggered, does the model pull the *correct* reference files? These tests check that the file structure is being used.
 
 ### R1 — Pure RL question
 
@@ -108,7 +108,7 @@ Once triggered, does Claude pull the *correct* reference files? These tests chec
 
 **Expected refs:** drift_diffusion.md.
 
-**Quality check:** Claude should specifically discuss inter-trial variability in drift (`sv`) as the most likely missing component.
+**Quality check:** The model should specifically discuss inter-trial variability in drift (`sv`) as the most likely missing component.
 
 ### R4 — Category learning
 
@@ -116,7 +116,7 @@ Once triggered, does Claude pull the *correct* reference files? These tests chec
 
 **Expected refs:** category_learning.md.
 
-**Quality check:** Should specifically reference Medin-Schaffer / 5/4 task and mention that arbitrary stimuli won't dissociate the models.
+**Quality check:** The model should specifically reference Medin-Schaffer / 5/4 task and mention that arbitrary stimuli won't dissociate the models.
 
 ### R5 — Delay discounting MCQ
 
@@ -130,7 +130,7 @@ Once triggered, does Claude pull the *correct* reference files? These tests chec
 
 **Expected refs:** bayesian_learning.md, possibly reinforcement_learning.md for comparison.
 
-**Quality check:** Claude should mention that fixed-α RW *cannot* capture this by design and point to Behrens/HGF/Kalman as the appropriate model class.
+**Quality check:** The model should mention that fixed-α RW *cannot* capture this by design and point to Behrens/HGF/Kalman as the appropriate model class.
 
 ### R7 — Cross-cutting: parameter recovery
 
@@ -150,7 +150,7 @@ Once triggered, does Claude pull the *correct* reference files? These tests chec
 
 **Expected refs:** hierarchical_stan.md.
 
-**Quality check:** Claude should immediately suggest non-centered parameterization before anything else.
+**Quality check:** The model should immediately suggest non-centered parameterization before anything else.
 
 ### R10 — Multi-family question
 
@@ -162,15 +162,15 @@ Once triggered, does Claude pull the *correct* reference files? These tests chec
 
 ## Section 3 — Content / workflow evals
 
-These check that Claude actually *applies* the methodology, not just pulls the reference.
+These check that the model actually *applies* the methodology, not just pulls the reference.
 
 ### C1 — The "fit and report" trap
 
 **Prompt:** "I fit a 3-parameter RL model to 60 subjects and the group-mean learning rate is 0.34 (SE 0.04). Is that publishable?"
 
 **Pass criteria:**
-- Claude does NOT just say "looks fine."
-- Claude asks about (or proactively addresses): parameter recovery on simulated data, model comparison vs simpler/competing models, posterior predictive checks, and recovery confusion with other parameters.
+- The model does NOT just say "looks fine."
+- The model asks about (or proactively addresses): parameter recovery on simulated data, model comparison vs simpler/competing models, posterior predictive checks, and recovery confusion with other parameters.
 - Specifically mentions that "a number with an SE" is not the same as a measured quantity.
 
 **Fail:** Claude provides feedback as if learning rate is a measured value and ignores the methodological gaps.

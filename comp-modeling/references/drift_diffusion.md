@@ -197,3 +197,11 @@ HDDM has `m.plot_posterior_predictive()` for this.
 - Group-level effect sizes meaningful relative to between-subject SDs?
 
 If any of these fail, debug before reporting.
+
+---
+
+**See also:**
+- `references/recovery.md` — drift/boundary trade-off when RT range is narrow; recovery at realistic trial counts.
+- `references/model_comparison.md` — WAIC/LOO for comparing DDM variants (e.g., fixed vs variable inter-trial drift).
+- `references/hierarchical_stan.md` — Stan `wiener_lpdf` template for custom DDM likelihoods; convergence debugging.
+- `references/reinforcement_learning.md` — for RL-DDM (trial-by-trial drift from Q-value differences); `HDDMrl`.

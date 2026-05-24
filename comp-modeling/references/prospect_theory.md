@@ -137,3 +137,11 @@ If the user is starting fresh, choice tasks are easier to deploy and analyze. Us
 - Compare against expected utility (set γ = 1, α = β = 1, λ = 1, freely fit choice sensitivity) as a baseline. If PT doesn't beat EU on LOO/WAIC, you've found nothing.
 - Compare against a "linear utility with loss aversion" model (α = β = 1, λ free) to see whether nonlinear curvature is doing real work.
 - Run parameter recovery — λ recovery in particular depends critically on the gamble grid.
+
+---
+
+**See also:**
+- `references/recovery.md` — λ/μ trade-off is severe; parameter recovery before individual-difference interpretation is non-negotiable.
+- `references/model_comparison.md` — PSIS-LOO for comparing PT vs EU vs linear-loss models.
+- `references/hierarchical_stan.md` — `hBayesDM::ra_prospect` covers the standard Sokol-Hessner paradigm; roll Stan only for custom variants.
+- `references/reinforcement_learning.md` — PVL models for Iowa Gambling Task combine PT utility with RL updates.

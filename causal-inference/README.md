@@ -1,6 +1,6 @@
 # Causal Inference Skill
 
-A Claude skill that applies Pearl's framework for causal reasoning — the Ladder of Causation, DAGs, identification strategies, and the structural distinction between good and bad controls — to data analysis and experiment design questions.
+A skill that applies Pearl's framework for causal reasoning — the Ladder of Causation, DAGs, identification strategies, and the structural distinction between good and bad controls — to data analysis and experiment design questions.
 
 ## Installation
 
@@ -20,7 +20,7 @@ To keep it up to date automatically, symlink instead of copy:
 ln -s "$(pwd)/jakes-skills/causal-inference" ~/.claude/skills/causal-inference
 ```
 
-Once installed, Claude will apply the skill automatically whenever you ask about causal questions, experiment validity, or whether a data analysis supports a cause-and-effect conclusion.
+Once installed, the skill will apply automatically whenever you ask about causal questions, experiment validity, or whether a data analysis supports a cause-and-effect conclusion.
 
 ---
 
@@ -56,7 +56,7 @@ The skill confirms the concern: TWFE with staggered adoption and heterogeneous t
 
 ## What it does
 
-Base Claude knows causal inference concepts. The skill gives it the *precision to apply them correctly under pressure*. The hard cases in causal inference require Claude to:
+The base model knows causal inference concepts. The skill gives the agent the *precision to apply them correctly under pressure*. The hard cases in causal inference require the agent to:
 
 - **Reject a seemingly-valid natural experiment** (sequential user IDs aren't truly random; the identification assumption must be verified, not assumed)
 - **State that bias direction is unknown** rather than guessing it's upward (a violated exclusion restriction can bias an IV estimate in any direction — more data doesn't fix it)
@@ -65,15 +65,15 @@ Base Claude knows causal inference concepts. The skill gives it the *precision t
 - **Apply the do-operator formally** to distinguish observation from intervention (P(churn | low logins) vs P(churn | do(low logins)))
 - **Refuse to endorse a near-IV as a confounder control** (conditioning amplifies bias when unmeasured confounding is present)
 
-Without the skill, Claude tends to agree with the plausible-sounding parts of an argument, characterize violations with confident-but-wrong directionality, or miss the condition that's most commonly overlooked. These aren't subtle — they lead directly to wrong decisions.
+Without the skill, the model tends to agree with the plausible-sounding parts of an argument, characterize violations with confident-but-wrong directionality, or miss the condition that's most commonly overlooked. These aren't subtle — they lead directly to wrong decisions.
 
-## Benchmark: skill vs. base Claude
+## Benchmark: skill vs. base model
 
-Evaluated on 13 causal inference scenarios covering common applied pitfalls. Each scenario is graded on 4–5 specific assertions about whether Claude reached the correct causal conclusion.
+Evaluated on 13 causal inference scenarios covering common applied pitfalls. Each scenario is graded on 4–5 specific assertions about whether the model reached the correct causal conclusion.
 
 ```mermaid
 xychart-beta horizontal
-    title "Pass Rate by Scenario (■ with skill  □ base Claude)"
+    title "Pass Rate by Scenario (■ with skill  □ base model)"
     x-axis ["IV exclusion violation", "Simpson's paradox", "Table 2 fallacy", "Near-IV bias amplification", "Predictive vs causal", "Selection bias", "Rung identification", "DiD staggered rollout", "Front-door criterion", "LATE vs ATE rollout", "RDD manipulation", "Mediator overcontrol", "Interference / SUTVA"]
     y-axis "Pass rate" 0 --> 1
     bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
@@ -99,7 +99,7 @@ xychart-beta horizontal
 | Selection bias / power users | 1.00 | 0.75 | **+25pp** | Filtering to 90-day active users before measuring onboarding effects conditions on a collider, making the analysis uninterpretable |
 | Rung identification (sequential user IDs) | 1.00 | 0.80 | **+20pp** | Arbitrary-looking assignment ≠ independent assignment; the +4.2% estimate requires an explicit balance test before it's defensible |
 
-### Where base Claude already gets it right
+### Where the base model already gets it right
 
 | Scenario | With skill | Without skill | What it correctly handles |
 |----------|:---:|:---:|---|
@@ -110,7 +110,7 @@ xychart-beta horizontal
 | Mediator overcontrol | 1.00 | 1.00 | Post-treatment variable is a mediator; controlling blocks the mechanism; total vs. direct effect distinction |
 | Interference / SUTVA | 1.00 | 1.00 | Names SUTVA violation; explains control-group contamination; recommends cluster randomization |
 
-The pattern: base Claude handles the *structural mechanics* of causal methods reliably (it knows what the Goodman-Bacon decomposition is, it knows what SUTVA means, it knows what a mediator is). It struggles on *identification edge cases* — the specific condition that's most commonly overlooked, or the correct characterization of what happens when an assumption fails.
+The pattern: the base model handles the *structural mechanics* of causal methods reliably (it knows what the Goodman-Bacon decomposition is, it knows what SUTVA means, it knows what a mediator is). It struggles on *identification edge cases* — the specific condition that's most commonly overlooked, or the correct characterization of what happens when an assumption fails.
 
 ## Eval suite
 

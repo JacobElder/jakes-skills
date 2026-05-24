@@ -57,7 +57,7 @@ Without the skill, the base model almost always sets `detrend=True` — the stan
 
 > I have 120 trial volumes, face/house labels, and run numbers 0–5. Use SVC with leave-one-run-out.
 
-Without the skill, base Claude frequently uses `sklearn.svm.SVC` and `cross_val_score` directly. This produces an accuracy number but loses everything nilearn adds: the brain-space weight map, `coef_img_` as a proper NIfTI, and the plotting pipeline. There is no spatial output at all — you cannot visualize which regions drove the decoding. With the skill, Claude uses `nilearn.decoding.Decoder(estimator='svc', cv=LeaveOneGroupOut(), standardize='zscore_sample')`, passes `groups=` correctly, saves `coef_img_` as a NIfTI and plots it — a complete deliverable, not just a number.
+Without the skill, the base model frequently uses `sklearn.svm.SVC` and `cross_val_score` directly. This produces an accuracy number but loses everything nilearn adds: the brain-space weight map, `coef_img_` as a proper NIfTI, and the plotting pipeline. There is no spatial output at all — you cannot visualize which regions drove the decoding. With the skill, the model uses `nilearn.decoding.Decoder(estimator='svc', cv=LeaveOneGroupOut(), standardize='zscore_sample')`, passes `groups=` correctly, saves `coef_img_` as a NIfTI and plots it — a complete deliverable, not just a number.
 
 ---
 
@@ -65,7 +65,7 @@ Without the skill, base Claude frequently uses `sklearn.svm.SVC` and `cross_val_
 
 > I have a BIDS dataset with BOLD + events.tsv. TR is 2s. Fit a first-level GLM and compute the face > scrambled contrast.
 
-Without the skill, base Claude handles this task reasonably — it knows `FirstLevelModel`, sets t_r, and computes the contrast. The main gap is the HTML report: base Claude often skips `make_glm_report` or `model.generate_report()`, so the user gets a z-map file but no reviewable summary of the design matrix, HRF, VIF, and contrast. With the skill, Claude generates the full HTML report and calls out the actual z-range explicitly.
+Without the skill, the base model handles this task reasonably — it knows `FirstLevelModel`, sets t_r, and computes the contrast. The main gap is the HTML report: the base model often skips `make_glm_report` or `model.generate_report()`, so the user gets a z-map file but no reviewable summary of the design matrix, HRF, VIF, and contrast. With the skill, the model generates the full HTML report and calls out the actual z-range explicitly.
 
 ---
 
@@ -86,17 +86,17 @@ The connectivity case is the subtlest failure because nilearn raises no warning:
 
 ## The `standardize` trap
 
-The most common nilearn mistake is `standardize=True`. It was deprecated in 0.13, emits a warning, and is removed in 0.15. The correct string is `standardize='zscore_sample'`. The skill enforces this in every masker and every `Decoder` call. Base Claude, trained on older examples, defaults to `True` in the majority of connectivity and decoding scenarios.
+The most common nilearn mistake is `standardize=True`. It was deprecated in 0.13, emits a warning, and is removed in 0.15. The correct string is `standardize='zscore_sample'`. The skill enforces this in every masker and every `Decoder` call. The base model, trained on older examples, defaults to `True` in the majority of connectivity and decoding scenarios.
 
 ---
 
-## Benchmark: skill vs. base Claude
+## Benchmark: skill vs. base model
 
-Evaluated on 8 scenarios graded against 9–11 specific expectations each. All analyses run on bundled synthetic NIfTI fixtures — no internet download required. Without-skill code uses the same fixtures with documented base-Claude failure patterns (wrong masker class, deprecated arguments, incorrect model class).
+Evaluated on 8 scenarios graded against 9–11 specific expectations each. All analyses run on bundled synthetic NIfTI fixtures — no internet download required. Without-skill code uses the same fixtures with documented base-model failure patterns (wrong masker class, deprecated arguments, incorrect model class).
 
 ```mermaid
 xychart-beta horizontal
-    title "Pass Rate by Eval (■ with skill  □ base Claude)"
+    title "Pass Rate by Eval (■ with skill  □ base model)"
     x-axis ["GLM: block design", "Connectivity (3 sub)", "MVPA decoding", "GLM: FDR threshold", "Group (2nd-level) GLM", "Seed connectivity", "NiftiMasker tSNR", "Multi-run GLM"]
     y-axis "Pass rate" 0 --> 1
     bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
@@ -123,13 +123,13 @@ xychart-beta horizontal
 | Seed connectivity | 1.00 | 0.67 | **+0.33** | No `NiftiSpheresMasker`; deprecated `standardize=True` |
 | Multi-run GLM | 1.00 | 0.70 | **+0.30** | `concat_imgs` instead of list — peak z drops 0.5 units |
 
-### Where base Claude already does well
+### Where the base model already does well
 
 | Eval | With skill | Without skill |
 |------|:---:|:---:|
 | GLM: block design | 1.00 | 0.90 |
 
-The pattern: base Claude handles standard first-level GLM well — it's the most-documented nilearn workflow. The skill's value concentrates on (1) correct masker class selection (label vs. maps vs. sphere maskers), (2) statistical inference APIs (`threshold_stats_img`, `SecondLevelModel`) absent from beginner examples, (3) the `standardize` deprecation trap, and (4) gotchas where the wrong code runs silently and produces plausible-looking but wrong output.
+The pattern: the base model handles standard first-level GLM well — it's the most-documented nilearn workflow. The skill's value concentrates on (1) correct masker class selection (label vs. maps vs. sphere maskers), (2) statistical inference APIs (`threshold_stats_img`, `SecondLevelModel`) absent from beginner examples, (3) the `standardize` deprecation trap, and (4) gotchas where the wrong code runs silently and produces plausible-looking but wrong output.
 
 ---
 

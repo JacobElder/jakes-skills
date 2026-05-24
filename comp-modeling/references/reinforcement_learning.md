@@ -235,3 +235,12 @@ If the model nails LOO but misses any of these qualitatively, do not declare vic
 | Two-step Markov task | Hybrid MF/MB with `w` | hBayesDM `ts_par7` |
 | Restless 4-armed bandit | Kalman + softmax (see `bayesian_learning.md`) | custom Stan |
 | Volatility task (Behrens et al. 2007) | Hierarchical Bayesian / HGF | `bayesian_learning.md`, `hgf` package |
+
+---
+
+**See also:**
+- `references/recovery.md` — run parameter recovery before interpreting α or β as individual differences; the α/β trade-off is documented there with code.
+- `references/model_comparison.md` — LOO/WAIC for choosing among RL variants.
+- `references/hierarchical_stan.md` — non-centered Stan templates for hierarchical RL fits; hBayesDM cheat sheet.
+- `references/bayesian_learning.md` — when the environment is volatile and fixed-α RL isn't enough.
+- `references/drift_diffusion.md` — when the task also has RT data and you want RL-DDM.

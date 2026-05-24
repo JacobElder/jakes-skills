@@ -3,7 +3,9 @@
     "allow": [
       "Bash(tar -tzf comp-modeling-skill.tar.gz)",
       "Bash(tar -xzf comp-modeling/comp-modeling-skill.tar.gz --strip-components=1 -C comp-modeling/)",
-      "Bash(python *)"
+      "Bash(python *)",
+      "Bash(mkdir -p /Users/jacobelder/Documents/GitHub/jakes-skills/comp-modeling/.github/workflows)",
+      "Bash(mkdir -p /Users/jacobelder/Documents/GitHub/jakes-skills/comp-modeling/evals/results)"
     ]
   }
 }

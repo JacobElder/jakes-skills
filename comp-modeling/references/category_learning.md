@@ -139,6 +139,24 @@ When to use COVIS: when the scientific question is specifically about the dual-s
 
 Note that the dual-system theory is contested — Newell, Dunn & Kalish (2011) and others argue a single-system account fits most data equally well. Report both.
 
+## DIVA — discriminative variational autoencoder model
+
+**Kurtz (2007, 2015).** An autoencoder model where each category has its own set of reconstruction weights. Classification is based on which category's channel best reconstructs (i.e., most accurately predicts the input features) the new item. This produces exemplar-like behavior from a prototype-like representation — DIVA doesn't store exemplars; it builds a compressed reconstruction network per category.
+
+Key properties:
+- Naturally explains "inverse-base-rate" effects that are difficult for exemplar models.
+- Produces spontaneous generalization that depends on the distribution of training items.
+- Captures the *discriminability* structure of categories — not just "how similar is this to my exemplars" but "how well does each category's generative model explain this item."
+
+Free parameters per subject:
+- **`r`** — category-specific autoencoder reconstruction weights (typically solved by gradient descent during training, not fit to individual subjects in behavioral work).
+- **`β`** — response focus / determinism.
+- Learning rate on the autoencoder weights.
+
+DIVA is implemented in `catlearn::slpDIVA` (R) with a consistent interface. When the scientific question involves category abstraction that goes beyond similarity (e.g., tasks where conceptual structure, not stimulus overlap, drives learning), DIVA is worth including alongside GCM and SUSTAIN.
+
+When to use DIVA: when the design explicitly targets the *discriminative* vs *similarity-based* contrast, or when the results can't be explained by SUSTAIN's cluster mechanism. Don't reach for DIVA by default — GCM and SUSTAIN cover most cases.
+
 ## Rule-plus-exception (RPE) and rational/Bayesian models
 
 **Nosofsky, Palmeri & McKinley (1994)** — RULEX: a rule that explains most items + a list of memorized exceptions. The Davis lab has done influential work fitting variants of this and SUSTAIN to neural data from RPE tasks.

@@ -1,4 +1,4 @@
-# comp-modeling — a Claude skill for computational and cognitive modeling
+# comp-modeling — a skill for computational and cognitive modeling
 
 A skill for fitting **generative process models** of behavior — RL, prospect theory, DDM, category learning, delay discounting, Bayesian learning — to trial-by-trial choice and RT data. Built around the methodological consensus of Daw (2011), Wilson & Collins (2019), Palminteri et al. (2017), and Lee & Wagenmakers (2014).
 
@@ -52,7 +52,7 @@ The self-test in `model_recovery.py` is intentionally underpowered (200 trials, 
 
 ## How to test the skill
 
-Run the evals in `evals/`. Each JSON file lists prompts with `must_include` and `must_not_include` criteria; pass each prompt to Claude with the skill loaded and score the response. `golden_responses.md` anchors what excellent answers look like for three high-stakes prompts.
+Run the evals in `evals/`. Each JSON file lists prompts with `must_include` and `must_not_include` criteria; pass each prompt to the model with the skill loaded and score the response. `golden_responses.md` anchors what excellent answers look like for three high-stakes prompts.
 
 ## Selected references the skill is built on
 

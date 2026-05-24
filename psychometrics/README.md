@@ -1,6 +1,6 @@
 # Psychometrics Skill
 
-A Claude skill that applies rigorous measurement-theory thinking to surveys, scales, questionnaires, and latent-variable models. It gives Claude the conviction to push back on the measurement mistakes that show up in nearly every applied paper — misusing Cronbach's alpha, fetishizing fit-index cutoffs, running PCA as if it were factor analysis, skipping construct definition before writing items — and to give the opinionated, technically precise answer that a working psychometrician would give.
+A skill that applies rigorous measurement-theory thinking to surveys, scales, questionnaires, and latent-variable models. It gives the agent the conviction to push back on the measurement mistakes that show up in nearly every applied paper — misusing Cronbach's alpha, fetishizing fit-index cutoffs, running PCA as if it were factor analysis, skipping construct definition before writing items — and to give the opinionated, technically precise answer that a working psychometrician would give.
 
 ## Installation
 
@@ -14,7 +14,7 @@ Or manually:
 cp -r jakes-skills/psychometrics ~/.claude/skills/psychometrics
 ```
 
-Once installed, Claude will apply the skill automatically whenever you ask about surveys, scales, reliability coefficients, factor analysis, SEM, IRT, measurement invariance, or related topics — even when framed as a general statistics question.
+Once installed, the skill will apply automatically whenever you ask about surveys, scales, reliability coefficients, factor analysis, SEM, IRT, measurement invariance, or related topics — even when framed as a general statistics question.
 
 ---
 
@@ -24,7 +24,7 @@ Once installed, Claude will apply the skill automatically whenever you ask about
 
 > I computed test-retest reliability for my 'state anxiety' scale — it measures anxiety right now, in this moment. The two sessions were 4 weeks apart, both in a controlled lab. I got ICC = 0.72. Is this good reliability?
 
-Without the skill, Claude interprets ICC = 0.72 as "moderate-to-good" and praises the 4-week interval as a design strength:
+Without the skill, the model interprets ICC = 0.72 as "moderate-to-good" and praises the 4-week interval as a design strength:
 
 > ICC = 0.72 indicates moderate-to-good reliability for your state anxiety scale, which is a reasonable result for test-retest reliability in psychological measurement.
 >
@@ -50,7 +50,7 @@ With the skill, the response inverts the logic — high ICC at 4 weeks is a red 
 
 > For my dissertation, I want to build a new 'digital wellbeing' scale. I've already written 40 candidate items covering screen time, social media comparisons, notification stress, and online connection quality. What should I do next?
 
-Without the skill, Claude praises the existing items and jumps straight to expert review and pilot testing:
+Without the skill, the model praises the existing items and jumps straight to expert review and pilot testing:
 
 > Great work putting together those 40 items! Having a solid initial item pool covering screen time, social media comparisons, notification stress, and online connection quality gives you a strong foundation to build from.
 >
@@ -80,7 +80,7 @@ With the skill, the response stops before any of that and requires construct def
 
 > I have 15 Likert-scale items measuring 'social connection.' I ran a PCA in SPSS with varimax rotation and got 3 components with eigenvalues > 1. My advisor says these are my three subscales and I should compute subscale scores from them. Am I good to go?
 
-Without the skill, Claude validates the approach as "solid and standard":
+Without the skill, the model validates the approach as "solid and standard":
 
 > It sounds like you're on the right track! PCA with varimax rotation and the eigenvalue > 1 rule is a very common and widely accepted approach for identifying underlying structure in survey data...
 >
@@ -104,7 +104,7 @@ With the skill:
 
 > My thesis committee asked for 'reliability evidence.' I computed Cronbach's alpha = 0.73 for my 12-item scale. My committee is satisfied. Is alpha = 0.73 adequate reliability evidence for a thesis project?
 
-Without the skill:
+Without the skill, the model responds:
 
 > **Yes, alpha = 0.73 is generally considered adequate reliability evidence for a thesis project.** The widely accepted threshold for Cronbach's alpha is 0.70, and your value of 0.73 clears that bar, so your committee's satisfaction is well-founded...
 >
@@ -124,7 +124,7 @@ With the skill:
 
 ## What the skill does
 
-Base Claude knows measurement theory. The skill gives it the *conviction to apply it*. The skill's most important moves are:
+The base model knows measurement theory. The skill gives the agent the *conviction to apply it*. The skill's most important moves are:
 
 - **Correct the wrong question.** When a user asks "is my alpha good?" the psychometrician's move is: alpha is the wrong estimator; compute omega, and check dimensionality first.
 - **Invert the usual logic.** When a state measure has ICC = 0.72 over 4 weeks, that is a problem — the skill recognizes it where the base model does not.
@@ -270,13 +270,13 @@ Without the skill: "t(149) = 3.84, p < .001 — the training improved psychologi
 
 ---
 
-## Benchmark: skill vs. base Claude
+## Benchmark: skill vs. base model
 
 Evaluated on 8 scenarios designed with explicit "traps" — prompts where the naive helpful answer validates a methodological error. Each scenario has 5–6 specific, objectively checkable assertions.
 
 ```mermaid
 xychart-beta horizontal
-    title "Pass Rate by Scenario (■ with skill  □ base Claude)"
+    title "Pass Rate by Scenario (■ with skill  □ base model)"
     x-axis ["PCA as factor analysis", "Reverse-item method factor", "Alpha meets threshold", "Factor score indeterminacy", "GRM for polytomous IRT", "Test-retest: state anxiety", "Construct definition gate", "Longitudinal invariance"]
     y-axis "Pass rate" 0 --> 1
     bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
@@ -290,7 +290,7 @@ xychart-beta horizontal
 | Std deviation | 0.00 | 0.07 |
 | Min / Max | 1.0 / 1.0 | 0.0 / 0.2 |
 
-### Where base Claude fails completely
+### Where the base model fails completely
 
 | Scenario | What the trap is | With skill | Without skill |
 |----------|---|:---:|:---:|
@@ -302,13 +302,13 @@ xychart-beta horizontal
 | Construct definition gate | Opens with "Great work on your 40 items!"; jumps straight to pilot testing | 1.0 | 0.0 |
 | Longitudinal invariance | Recommends paired t-test; concludes "training improved psychological safety" | 1.0 | 0.0 |
 
-### Where base Claude partially gets it right
+### Where the base model partially gets it right
 
 | Scenario | What helps | With skill | Without skill |
 |----------|---|:---:|:---:|
 | GRM for polytomous IRT | Knows GRM/GPCM exist; still calls 2PL "reasonable" and suggests dichotomizing | 1.0 | 0.2 |
 
-The pattern: base Claude handles *factual recall* (knows GRM is a model that exists) but fails on *defaults and framing* — whether it corrects an error unambiguously vs. hedges, whether it validates the user's wrong approach before noting caveats, and whether it proactively identifies upstream problems the user didn't ask about.
+The pattern: the base model handles *factual recall* (knows GRM is a model that exists) but fails on *defaults and framing* — whether it corrects an error unambiguously vs. hedges, whether it validates the user's wrong approach before noting caveats, and whether it proactively identifies upstream problems the user didn't ask about.
 
 ### Trigger eval results
 
