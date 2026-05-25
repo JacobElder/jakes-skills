@@ -1,0 +1,36 @@
+{
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "description": "Does NOT simply validate the cross-lagged paths as clean evidence of within-person bidirectional causal dynamics",
+      "passed": true,
+      "evidence": "No, that interpretation is not sound for a standard CLPM."
+    },
+    {
+      "description": "Explains that the standard CLPM cannot separate within-person dynamics from stable between-person trait co-occurrence \u2014 the cross-lagged paths reflect a mixture of both",
+      "passed": true,
+      "evidence": "cannot separate two fundamentally different processes: Between-person stability... Within-person dynamics"
+    },
+    {
+      "description": "Names the Random Intercept Cross-Lagged Panel Model (RI-CLPM) as the appropriate model for isolating within-person effects, citing Hamaker, Kuiper and Grasman (2015) or equivalent",
+      "passed": true,
+      "evidence": "you need the Random Intercept Cross-Lagged Panel Model (RI-CLPM) (Hamaker, Kuiper & Grasman, 2015)"
+    },
+    {
+      "description": "Explains the RI-CLPM mechanism: random intercepts absorb each person's stable trait level, leaving cross-lagged paths that operate on within-person deviations from the individual's own mean",
+      "passed": true,
+      "evidence": "adds a random intercept for each variable \u2014 a latent factor that absorbs each person's stable trait level. The cross-lagged paths then operate on within-person deviations"
+    },
+    {
+      "description": "Notes that in many published datasets, RI-CLPM cross-lagged paths are substantially attenuated or become non-significant compared to CLPM estimates",
+      "passed": true,
+      "evidence": "In many published datasets where this correction has been applied, the cross-lagged paths shrink substantially or go to zero."
+    },
+    {
+      "description": "Recommends re-estimating the model as an RI-CLPM before drawing within-person causal conclusions \u2014 this may be done in lavaan or via the riclpm package",
+      "passed": true,
+      "evidence": "Running the RI-CLPM alongside the CLPM... The riclpm package from Mulder & Hamaker also provides a cleaner wrapper"
+    }
+  ]
+}

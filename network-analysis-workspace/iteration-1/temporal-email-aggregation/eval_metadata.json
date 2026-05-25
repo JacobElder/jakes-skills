@@ -1,0 +1,12 @@
+{
+  "eval_id": 5,
+  "eval_name": "temporal-email-aggregation",
+  "prompt": "I have a dataset of timestamped email exchanges between 450 employees at a tech company — about 2.3M emails over 3 years, each row is (sender, recipient, timestamp). I want to do social network analysis to understand communication patterns and find key communicators. My plan is to aggregate all emails into a weighted adjacency matrix (weight = number of emails sent) and then compute standard SNA metrics. Does that approach work?",
+  "assertions": [
+    "Output warns that aggregating to a static graph loses temporal information and conflates different time periods",
+    "Output mentions time-respecting paths (temporal paths that respect arrow of time) as a key concept",
+    "Output recommends temporal network analysis tools (pathpy, teneto, snap-temporal, or equivalent)",
+    "Output explains the difference between metrics on the static aggregate vs. metrics on the temporal network",
+    "Output does NOT simply validate the static-aggregation plan as sufficient for understanding communication dynamics"
+  ]
+}

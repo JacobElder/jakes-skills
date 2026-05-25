@@ -114,6 +114,26 @@ where `α_baseline` decreases over time within a stable run. After a change poin
 
 **When to use:** when your task has discrete, identifiable change points and you want to argue subjects detect and respond to them. Pupil dilation correlates beautifully with `Ω_t`, making this a popular model for arousal/uncertainty studies (Joshi et al. 2016; Sales et al. 2019).
 
+## Descriptive vs normative analysis of block-wise learning rates
+
+A common pattern: a user fits Rescorla-Wagner with separate α parameters for a volatile block and a stable block, finds α_volatile > α_stable, and interprets this as evidence that subjects "adapt their learning rate."
+
+**This is a descriptive finding, not a normative one.** The distinction matters:
+
+- **Descriptive claim:** "Fitting RW independently to each block yields a higher α in the volatile block." This is a summary of the data under one model. It says nothing about *why* the learning rate appears higher, and the fitted α values will shift if the model is misspecified (e.g., no perseveration term, wrong reward scaling).
+
+- **Normative claim:** "Subjects track volatility the way an optimal Bayesian agent would." This requires fitting a model with *explicit volatility inference* — one where the effective learning rate adapts as a consequence of the internal computation:
+  - **Behrens et al. (2007):** the agent estimates both reward probability `p` and volatility `v`; learning rate rises in volatile blocks because the Bayesian computation says to weight new data more heavily.
+  - **Kalman filter:** Kalman gain adapts automatically to posterior uncertainty; higher uncertainty → higher effective learning rate. Parameters: diffusion noise `σ_d` and observation noise `σ_o`.
+  - **HGF:** same logic, generalized to multiple levels of hierarchy.
+
+To make the normative claim, you must:
+1. Fit the normative model (Behrens/Kalman/HGF) to the data.
+2. Show it fits better than fixed-α RW on held-out data (PSIS-LOO or WAIC).
+3. Verify that the model's latent volatility/uncertainty tracks the block structure you designed.
+
+If you only have the per-block α comparison, you have a descriptive result — report it as such. Saying "subjects adaptively scaled learning rate" implies the normative model was tested.
+
 ## A note on the cost-benefit ratio
 
 These Bayesian models are powerful but more complicated to fit than RW or Q-learning. The decision tree:

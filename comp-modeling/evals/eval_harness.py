@@ -192,8 +192,13 @@ EVALS: list[Eval] = [
         category="content",
         rubric_keywords=["parameter recovery", "model comparison", "posterior predictive",
                          "PPC", "alternative model"],
-        rubric_must_not_have=["looks fine", "looks good", "publishable"],
-        notes="Must NOT validate the fit without discussing recovery/PPC/baselines.",
+        rubric_must_have_all=["recovery", "comparison"],
+        rubric_must_not_have=["looks fine", "looks good", "looks great",
+                              "solid learning rate", "reasonable learning rate",
+                              "sounds good", "well-identified"],
+        notes="Must require recovery + comparison before endorsing. 'publishable' removed from "
+              "must_not_have because the prompt asks 'is it publishable?' and models naturally "
+              "use the word even while requiring caveats. Check for uncritical validation instead.",
     ),
     Eval(
         id="C2",

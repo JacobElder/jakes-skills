@@ -1,0 +1,12 @@
+{
+  "eval_id": 6,
+  "eval_name": "large-scale-tool-choice",
+  "prompt": "We're building a recommendation system and want to model our user-item interaction graph. It has about 5 million users, 2 million items, and 800 million interactions. I want to compute betweenness centrality and run community detection on this thing. Was planning to use NetworkX. Will that work?",
+  "assertions": [
+    "Output redirects away from NetworkX for this scale (5M nodes, 800M edges)",
+    "Output recommends NetworKit, cuGraph, or graph-tool as appropriate large-scale alternatives",
+    "Output warns that exact betweenness centrality is computationally infeasible at this scale (O(VE) or O(V*E))",
+    "Output mentions approximate betweenness (sampling-based) as a practical alternative",
+    "Output provides specific library recommendations with rationale (e.g., NetworKit for parallel CPU, cuGraph for GPU)"
+  ]
+}

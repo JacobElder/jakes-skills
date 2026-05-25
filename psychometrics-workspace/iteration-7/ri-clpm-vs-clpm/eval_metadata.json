@@ -1,0 +1,17 @@
+{
+  "eval_id": 3,
+  "eval_name": "ri-clpm-vs-clpm",
+  "iteration": 7,
+  "trap": "Validates a standard cross-lagged panel model (CLPM) cross-lagged path as evidence of within-person causal dynamics, without raising the between-person confound or RI-CLPM",
+  "prompt": "I ran a three-wave cross-lagged panel model in lavaan. Loneliness at T1 significantly predicts depression at T2 (β = .21, p = .003) after controlling for depression at T1, and depression at T1 predicts loneliness at T2 (β = .18, p = .011) after controlling for loneliness at T1. My advisor says the reciprocal cross-lagged paths support a bidirectional within-person relationship between loneliness and depression over time. Is that a sound interpretation?",
+  "expected_with_skill": "Challenges the within-person interpretation. The standard CLPM does not separate within-person dynamics from between-person trait co-occurrence. The cross-lagged paths capture a mixture: people who are stably lonelier also tend to be stably more depressed — the between-person covariance contaminates the cross-lagged estimates. The RI-CLPM (Hamaker et al., 2015) adds random intercepts to absorb stable individual differences, leaving cross-lagged paths that operate on within-person deviations. RI-CLPM estimates are often substantially smaller or non-significant. Recommends re-running as RI-CLPM before drawing within-person causal conclusions.",
+  "expected_without_skill": "Validates the advisor's within-person interpretation. Confirms the cross-lagged paths as evidence of bidirectional within-person causal dynamics. Does not mention between-person confounding, the distinction between within- and between-person variance, or the RI-CLPM.",
+  "assertions": [
+    "Does NOT simply validate the cross-lagged paths as clean evidence of within-person bidirectional causal dynamics",
+    "Explains that the standard CLPM cannot separate within-person dynamics from stable between-person trait co-occurrence — the cross-lagged paths reflect a mixture of both",
+    "Names the Random Intercept Cross-Lagged Panel Model (RI-CLPM) as the appropriate model for isolating within-person effects, citing Hamaker, Kuiper and Grasman (2015) or equivalent",
+    "Explains the RI-CLPM mechanism: random intercepts absorb each person's stable trait level, leaving cross-lagged paths that operate on within-person deviations from the individual's own mean",
+    "Notes that in many published datasets, RI-CLPM cross-lagged paths are substantially attenuated or become non-significant compared to CLPM estimates",
+    "Recommends re-estimating the model as an RI-CLPM before drawing within-person causal conclusions — this may be done in lavaan or via the riclpm package"
+  ]
+}

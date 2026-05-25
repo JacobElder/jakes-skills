@@ -1,0 +1,17 @@
+{
+  "eval_id": 1,
+  "eval_name": "htmt-discriminant-validity",
+  "iteration": 7,
+  "trap": "Validates Fornell-Larcker criterion (AVE > squared factor correlation) as sufficient evidence for discriminant validity, without raising HTMT",
+  "prompt": "I'm running a CFA with two latent factors — emotional exhaustion and depersonalization — in lavaan. The AVE for exhaustion is .54 and for depersonalization is .51. The squared factor correlation between the two is .46. Since AVE > squared factor correlation for both constructs (.54 > .46 and .51 > .46), I've satisfied the Fornell-Larcker criterion. My co-author says this is adequate evidence for discriminant validity. Is she right?",
+  "expected_with_skill": "Challenges the co-author's claim. The Fornell-Larcker criterion is known to have low sensitivity — it frequently fails to detect discriminant validity problems that exist. The modern standard is HTMT (Heterotrait-Monotrait ratio of correlations). An HTMT below .85 (or .90 for conceptually similar constructs) is required. With a factor correlation this high (implied r ≈ .68 from the squared correlation of .46), HTMT is likely elevated and should be computed via semTools::htmt(). Clarifies that AVE > .50 is a criterion for convergent validity, not discriminant validity — conflating the two criteria is a common error.",
+  "expected_without_skill": "Validates the Fornell-Larcker criterion as the established standard for discriminant validity. Confirms the co-author's conclusion that discriminant validity is established. Does not mention HTMT or its superiority to Fornell-Larcker.",
+  "assertions": [
+    "Does NOT simply validate the Fornell-Larcker criterion as sufficient evidence for discriminant validity without raising concerns about its limitations",
+    "States that the Fornell-Larcker criterion has low sensitivity — it frequently fails to detect discriminant validity violations that exist",
+    "Names the HTMT (Heterotrait-Monotrait ratio of correlations) as the current standard for assessing discriminant validity in CFA/SEM contexts",
+    "States the HTMT threshold: values below .85 provide evidence of discriminant validity for conceptually distinct constructs (or .90 for closely related constructs)",
+    "Recommends computing HTMT — e.g., via semTools::htmt() in R — rather than relying solely on Fornell-Larcker",
+    "Clarifies that AVE > .50 is a criterion for convergent validity (each construct explains more than half the variance in its indicators), not for discriminant validity — the two criteria serve different purposes"
+  ]
+}

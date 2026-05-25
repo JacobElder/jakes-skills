@@ -1,0 +1,12 @@
+{
+  "eval_id": 7,
+  "eval_name": "community-stability-louvain",
+  "prompt": "I ran Louvain community detection on my co-authorship network (1200 authors, 4800 edges) and got 8 communities. The modularity is 0.67 which seems great. How do I report these communities in my paper? I want to name them and describe what each one represents.",
+  "assertions": [
+    "Output warns that a single Louvain run is not 'the' partition — modularity degeneracy means many solutions have near-equal quality",
+    "Output recommends running community detection many times (e.g., 100+ runs) and measuring stability/consensus",
+    "Output mentions NMI (Normalized Mutual Information) or AMI or a similar stability metric for comparing partitions",
+    "Output does NOT recommend simply reporting the single-run partition without stability analysis",
+    "Output mentions Louvain resolution limit or the alternative of SBM (Stochastic Block Model) for more principled partitioning"
+  ]
+}

@@ -1,0 +1,36 @@
+Your co-author is wrong, and this is one of the most common discriminant validity errors in applied SEM work. Here's the problem in three parts.
+
+## 1. Fornell-Larcker has documented low sensitivity
+
+Henseler, Ringle & Sarstedt (2015) ran systematic simulations showing the Fornell-Larcker criterion frequently *fails to flag* constructs that are empirically indistinguishable. The criterion compares averages (AVE is the mean of squared loadings) to a single squared correlation — and averaging masks item-level variation in ways that let real discriminant validity violations slip through. Passing Fornell-Larcker is weak evidence, not adequate evidence.
+
+## 2. AVE is a convergent validity criterion, not a discriminant one
+
+This matters because your framing ("AVE > squared factor correlation") conflates two separate things:
+- **AVE > .50** = each construct explains more than half the variance in its own indicators (convergent validity). Your values of .54 and .51 barely clear this bar.
+- **AVE > squared interconstruct correlation** = the Fornell-Larcker discriminant validity check.
+
+These are different questions. Your AVEs indicate passable convergent validity, but that doesn't do the work for discriminant validity.
+
+## 3. Use HTMT instead
+
+The current standard is the **Heterotrait-Monotrait ratio of correlations (HTMT)**:
+
+$$\text{HTMT} = \frac{\bar{r}_{heterorait}}{\sqrt{\bar{r}_{mono_1} \cdot \bar{r}_{mono_2}}}$$
+
+Threshold: < .85 for conceptually distinct constructs. Emotional exhaustion and depersonalization are both burnout facets (so closely related), so some reviewers apply the .90 threshold — but you need to actually compute and report it, not assume it passes.
+
+```r
+library(semTools)
+
+# After fitting your CFA model:
+htmt(model = your_fit)
+```
+
+This returns the HTMT matrix directly. Report the value and the threshold you're applying, with justification for which threshold fits your constructs.
+
+## One more thing to flag
+
+Your latent factor correlation is √.46 ≈ **r = .68**. That's high enough that I'd also recommend examining a **bifactor model** — one general burnout factor plus two orthogonal specific factors. Use `psych::omega()` on the raw items and compare ω_h (variance from the general factor alone) to ω_t (total). If ω_h is large, your two "factors" may largely be measuring a common burnout dimension, and the discriminant validity question becomes moot — you'd want to reconsider whether separate subscale scores are interpretable at all.
+
+**Bottom line:** Tell your co-author that Fornell-Larcker is a 1981 criterion with known sensitivity failures. Compute HTMT, report the value with the appropriate threshold, and inspect the bifactor solution given that .68 factor correlation.

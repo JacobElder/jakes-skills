@@ -1,0 +1,36 @@
+{
+  "passed": 0,
+  "total": 6,
+  "expectations": [
+    {
+      "description": "Does NOT simply validate the Fornell-Larcker criterion as sufficient evidence for discriminant validity without raising concerns about its limitations",
+      "passed": false,
+      "evidence": "No evidence extracted"
+    },
+    {
+      "description": "States that the Fornell-Larcker criterion has low sensitivity \u2014 it frequently fails to detect discriminant validity violations that exist",
+      "passed": false,
+      "evidence": "No evidence extracted"
+    },
+    {
+      "description": "Names the HTMT (Heterotrait-Monotrait ratio of correlations) as the current standard for assessing discriminant validity in CFA/SEM contexts",
+      "passed": false,
+      "evidence": "No evidence extracted"
+    },
+    {
+      "description": "States the HTMT threshold: values below .85 provide evidence of discriminant validity for conceptually distinct constructs (or .90 for closely related constructs)",
+      "passed": false,
+      "evidence": "No evidence extracted"
+    },
+    {
+      "description": "Recommends computing HTMT \u2014 e.g., via semTools::htmt() in R \u2014 rather than relying solely on Fornell-Larcker",
+      "passed": false,
+      "evidence": "No evidence extracted"
+    },
+    {
+      "description": "Clarifies that AVE > .50 is a criterion for convergent validity (each construct explains more than half the variance in its indicators), not for discriminant validity \u2014 the two criteria serve different purposes",
+      "passed": false,
+      "evidence": "No evidence extracted"
+    }
+  ]
+}

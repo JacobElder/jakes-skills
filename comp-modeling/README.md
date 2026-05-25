@@ -32,89 +32,95 @@ Once installed, the skill fires when you ask about fitting cognitive models, est
 
 ## Example use cases
 
-### "I fit the model and the learning rate looks reasonable."
+### "The parameters look great."
 
-**Prompt:** *"I fit a 3-parameter RL model to 60 subjects and the group-mean learning rate is 0.34 (SE 0.04). Is that publishable?"*
+**Prompt:** *"I fit cumulative prospect theory to my gambles data and the parameters look great."*
 
-The base model reads the question charitably and responds to what was asked:
+The base model accepts this as a milestone and asks what to do next:
 
-> That looks like a reasonable learning rate estimate. The SE of 0.04 gives you a 95% CI of roughly 0.26–0.42, which suggests the estimate is well-identified. Whether it's publishable depends on your journal standards and how it connects to the theoretical narrative.
+> Great! CPT parameter fitting is a solid checkpoint. What's your next step — do you want to validate the fit quality, visualize the results, incorporate this into the skill/eval pipeline, or something else?
 
-With the skill, the estimate is treated as a claim that needs validation rather than a number that needs narrative context:
+With the skill, "the parameters look great" triggers a checklist before any celebration:
 
-> Not yet — there are four things you need before that number means anything.
+> Before you celebrate, let's check what you're actually seeing. The field consensus (Wilson & Collins 2019, Daw 2011) is that "parameters look great" alone is not sufficient evidence. Here's what you should triangulate:
 >
-> **Parameter recovery.** A learning rate with an SE is not a measured quantity; it's an estimate. The question is whether your design can actually recover α to the precision implied by that SE. Run the simulation loop: sample 100 (α, β) pairs, simulate 60 subjects at your trial count, fit them back, compute Spearman ρ between true and recovered. ρ > 0.7 is the minimum for individual estimates; ρ < 0.4 means the number you're reporting is noise, regardless of its SE.
+> **What do you mean by "look great"?** Are you saying the parameters are in plausible ranges (e.g., risk aversion γ ∈ [0.5, 1.5], loss aversion λ ∈ [1.5, 3])? The fit beats a baseline or alternative model? Convergence diagnostics are clean?
 >
-> **Model comparison.** Did you compare to a simpler baseline — win-stay-lose-shift, RW without the third parameter, a perseveration model? "The best of one model" is not a comparison result. Use PSIS-LOO and report the ELPD difference with its SE.
+> **More critically, have you done:**
+> 1. **Parameter recovery?** Simulate data with known CPT parameters across the realistic range, refit, and check that recovered parameters correlate with the truth (Spearman ρ > ~0.7). This is the only way to know whether your parameters are even interpretable on this design.
+> 2. **Model comparison?** Fit at least one alternative — e.g., expected utility (no probability distortion), a simpler value function, or a baseline like a simple logit on the gamble EV. Report the comparison with uncertainty (SE of the elpd difference).
+> 3. **Posterior predictive checks?** Simulate behavior from your fitted model and compare to held-out behavioral summaries (choice curves by payoff, proportion of risky choices, etc.).
 >
-> **Model recovery.** Even if your model wins LOO, can your design distinguish it from the competitors on simulated data? Build the confusion matrix. A model can win on real data for the same reason it's confused in simulation.
+> If you've done all three, you have a real result. If not, you have parameters that fit the data, which is a much weaker claim.
+
+---
+
+### "Can I just put λ in the utility function?"
+
+**Prompt:** *"I want to estimate loss aversion (λ) from a gain-only task with gambles like $10 vs sure $5."*
+
+The base model acknowledges the problem but pivots to workarounds — assuming λ from the literature, combining datasets, or reframing outcomes:
+
+> Loss aversion (λ) estimates the relative sensitivity to losses versus gains. The core problem: **a gain-only task doesn't directly identify λ** because λ only applies to the loss domain.
 >
-> **Posterior predictive checks.** Simulate behavior from the fitted model and compare to actual data on learning curves, win-stay/lose-shift rates, choice autocorrelation. A tight SE on a parameter that doesn't reproduce the phenomenon is a story about your likelihood, not your subjects.
+> Here are your options:
+> **1. Assume λ from the literature (simplest)**
+> Fix λ = 2.25 (Tversky & Kahneman's 1992 estimate) or another published value, then estimate other parameters...
+
+With the skill, the non-identifiability is the first and only thing said:
+
+> You've hit a fundamental **identification problem**: loss aversion (λ) cannot be estimated from a gain-only task.
 >
-> That's 1–2 more weeks. The review process will find all of this; better to find it now.
+> Loss aversion in prospect theory captures the asymmetry between losses and gains — it's literally the ratio of value sensitivity for losses vs gains: value for gains is v(x) = x^α; value for losses is v(x) = −λ|x|^α (where λ > 1 means losses loom larger). Without **both** gain and loss frames in your task, λ is unidentified. A gain-only design has no data to anchor the loss side of the asymmetry. You can fit it, but the parameter will be uninterpretable — it may just absorb noise or be poorly recovered.
+>
+> **What you *can* estimate from gain-only gambles:** risk aversion α (concavity of the value function), probability weighting γ (if modeling CPT), and inverse temperature β.
+>
+> **If you need loss aversion**, redesign the task to include loss gambles or mixed gambles. Then you can fit λ separately and get a meaningful comparison.
 
 ---
 
 ### "My learning rates are piling up at the boundary."
 
-**Prompt:** *"When I fit Rescorla-Wagner with MLE, most subjects have α = 0.99 or 1.0. The inverse temperature is all over the place. LOO looks okay though."*
+**Prompt:** *"I have a bunch of subjects whose fitted learning rate is essentially 1.0 (at the upper bound), and inverse temperature β is all over the place. The model fit is okay on LOO."*
 
-The base model often frames boundary estimates as theoretically meaningful:
+The base model frames boundary estimates as theoretically meaningful and asks clarifying questions:
 
-> Learning rates close to 1 suggest subjects are heavily weighting the most recent outcome. This could reflect a high-uncertainty environment or limited working memory capacity. The variable inverse temperatures might indicate individual differences in response stochasticity.
-
-With the skill, the boundary pileup triggers a named diagnosis:
-
-> This is the α/β identification problem, not a subject characteristic.
+> This pattern suggests **parameter non-identifiability or compensation** — the learning rate and β are likely trading off to achieve similar fits, and the model can fit equally well with many different (η, β) combinations. Since LOO is reasonable, your model is generalizing, but individual parameters are unstable.
 >
-> Three things are happening together: (1) With your trial count, the likelihood surface is flat near α = 1 — any α in (0.7, 1.0) fits about equally well, and the optimizer slides to the boundary. (2) When α ≈ 1, choice probability is dominated by the last outcome, so β can be anything — the parameters are completely non-identifiable in this regime. Your β estimates when α ≈ 1 are noise. (3) If subjects have a perseveration bias (common in bandit data), an RL model without a perseveration term inflates α to absorb the stay-tendency, pushing estimates further toward 1.
+> A few diagnostics to check: Are η and β correlated across subjects? How many trials per subject? Are you fitting hierarchically or separately per subject?
+
+With the skill, the boundary pileup triggers a named diagnosis with specific next steps:
+
+> This is the **softmax inverse temperature / learning rate trade-off** — a classic non-identifiability problem in RL models.
 >
-> LOO looking okay doesn't rescue this — a model can have competitive LOO with non-identified parameters. The fit is telling you the model predicts behavior at roughly the right frequency; it says nothing about whether α = 0.99 is the right value.
+> **What's happening:** When α approaches 1, the agent is effectively using only the most recent outcome. In this regime, the prediction error signal becomes sensitive to scaling. A high β paired with low α can produce nearly identical choice curves to a low β paired with high α. The model fits choices reasonably well, but the parameters are confounded — they're not independently interpretable quantities.
 >
-> Switch to MAP with a Beta(2,2) prior on α (same compute as MLE, dramatically more stable). Better: `hBayesDM::bandit2arm_delta` where hierarchical shrinkage keeps individual estimates off the boundary. Then test a perseveration-augmented variant and see if α drops to a more interpretable range (~0.1–0.4).
-
----
-
-### "λ should be in here somewhere."
-
-**Prompt:** *"I want to estimate loss aversion from a gain-only task — subjects choose between sure $5 and a 50/50 gamble for $10 or $0. Can I just put λ in the utility function?"*
-
-The base model will often write the model and provide code:
-
-> You can include λ in the utility function. For each trial, `U_gamble = 0.5 * 10^α`. Since outcomes are gains, set `U_sure = 5^α`, and the acceptance probability follows a softmax. Here's the implementation...
-
-With the skill, the non-identifiability is flagged before any code appears:
-
-> No — λ is not identifiable from this task, and putting it in the model will give you a number that has nothing to do with loss aversion.
+> **Why LOO fit is okay:** The model can still predict held-out choices because it's capturing *something* about how each subject chooses. The confounded parameters just mean you can't interpret which component (learning or choice sharpness) is driving individual differences.
 >
-> λ is the ratio of the slope around the reference point on the loss side to the slope on the gain side. For it to be estimable from choices, subjects need to face outcomes that straddle the reference point — some gains and some losses. When every outcome is a gain, the loss term in the utility function (`-λ · (-x)^β`) is never evaluated. The model can absorb any λ by rescaling α or the choice sensitivity, and your optimizer will return whichever value it started near.
->
-> The $0 outcome doesn't save you — $0 is not a loss unless the reference point is positive (e.g., an expected endowment), which this task doesn't establish.
->
-> To estimate λ, you need mixed gambles: choices where one branch is a gain and one is a loss. The Sokol-Hessner paradigm — 50/50 between +G and −L with the gain/loss magnitudes varying across trials — is the standard for isolating λ cleanly. Either redesign the task or fix λ to a literature value (Tversky-Kahneman median is 2.25, but individual variation is large).
+> **Next steps:** (1) Parameter recovery first — simulate datasets with α and β varying independently, fit back, build the correlation matrix. If off-diagonal correlations are > ~0.4–0.5, the parameters trade off and this design can't separate them. (2) If recovery confirms the trade-off: constrain one parameter, reparameterize, or redesign the task to dissociate them. (3) If recovery shows α and β *are* recoverable, something else is wrong — check for bugs in the likelihood.
 
 ---
 
 ## Benchmark: skill vs. base model
 
-Evaluated against 39 prompts across three categories. Scores are from analytical rubric review — checking that each eval's `rubric_keywords` and `rubric_must_have_all` criteria are addressable from `SKILL.md` + the relevant reference file.
+Content evals were run live against the `claude` CLI (haiku model) with and without the skill appended as a system prompt. Triggering evals are from analytical rubric review. Routing evals were partially affected by a rate limit mid-run (see note).
 
 ```mermaid
 xychart-beta horizontal
-    title "Pass rate by eval category (■ with skill  □ est. base model)"
-    x-axis ["Triggering (10)", "Routing (12)", "Content (17)"]
+    title "Pass rate by eval category (■ with skill  □ base model)"
+    x-axis ["Triggering (10, analytical)", "Content (17, live API)"]
     y-axis "Pass rate" 0 --> 1
-    bar [0.90, 0.92, 0.88]
-    bar [0.80, 0.58, 0.47]
+    bar [0.90, 0.82]
+    bar [0.80, 0.41]
 ```
 
-| | With skill | Est. base model | Gap |
+| | With skill | Base model | Gap |
 |--|:---:|:---:|:---:|
-| **Triggering (10 evals)** | **9/10 (90%)** | ~8/10 (80%) | +10pp |
-| **Routing (12 evals)** | **11/12 (92%)** | ~7/12 (58%) | +33pp |
-| **Content (17 evals)** | **15/17 (88%)** | ~8/17 (47%) | +41pp |
-| **Overall (39)** | **35/39 (90%)** | ~23/39 (59%) | **+31pp** |
+| **Triggering (10 evals, analytical)** | **9/10 (90%)** | ~8/10 (80%) | +10pp |
+| **Routing (12 evals, live API)†** | 7/12 (58%) | 7/12 (58%) | 0pp† |
+| **Content (17 evals, live API)** | **14/17 (82%)** | 7/17 (41%) | **+41pp** |
+
+† Five routing evals hit a Claude.ai rate limit mid-run — both conditions returned "You've hit your limit" and scored identically. Analytical review of routing scored 11/12 (92%) with skill vs ~7/12 (58%) without.
 
 The skill's impact concentrates on content evals — the cases where the correct response requires pushing back on a premature interpretation or naming a specific identification issue before providing code.
 

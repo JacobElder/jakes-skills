@@ -1,0 +1,36 @@
+{
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "description": "Does NOT simply validate the cross-lagged paths as clean evidence of within-person bidirectional causal dynamics",
+      "passed": true,
+      "evidence": "The short answer: No, not as stated. The standard CLPM does not isolate within-person effects."
+    },
+    {
+      "description": "Explains that the standard CLPM cannot separate within-person dynamics from stable between-person trait co-occurrence \u2014 the cross-lagged paths reflect a mixture of both",
+      "passed": true,
+      "evidence": "The cross-lagged paths absorb both stable trait variance and state/fluctuation variance...will inflate cross-lagged parameters"
+    },
+    {
+      "description": "Names the Random Intercept Cross-Lagged Panel Model (RI-CLPM) as the appropriate model for isolating within-person effects, citing Hamaker, Kuiper and Grasman (2015) or equivalent",
+      "passed": true,
+      "evidence": "A Random Intercepts Cross-Lagged Panel Model (RI-CLPM)...Hamaker, E. L., Kuiper, R. M., & Grasman, R. P. (2015)"
+    },
+    {
+      "description": "Explains the RI-CLPM mechanism: random intercepts absorb each person's stable trait level, leaving cross-lagged paths that operate on within-person deviations from the individual's own mean",
+      "passed": true,
+      "evidence": "adds a pair of latent factors...to absorb stable trait variance. The cross-lagged paths then operate on the within-person residuals only"
+    },
+    {
+      "description": "Notes that in many published datasets, RI-CLPM cross-lagged paths are substantially attenuated or become non-significant compared to CLPM estimates",
+      "passed": true,
+      "evidence": "cross-lagged paths often attenuate substantially or lose significance, because the between-person stable correlation does much of the work"
+    },
+    {
+      "description": "Recommends re-estimating the model as an RI-CLPM before drawing within-person causal conclusions \u2014 this may be done in lavaan or via the riclpm package",
+      "passed": true,
+      "evidence": "fit the RI-CLPM and compare...directly implementable in lavaan. Minimal lavaan structure provided"
+    }
+  ]
+}
