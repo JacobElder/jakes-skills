@@ -5,22 +5,22 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 evals = [
-    ("GLM: block design",          1.00, 0.75),
-    ("Connectivity (3 sub)",        1.00, 0.36),
-    ("MVPA decoding",               1.00, 0.60),
-    ("GLM: FDR threshold",          1.00, 0.44),
-    ("Group (2nd-level) GLM",       1.00, 0.38),
-    ("Seed connectivity",           1.00, 0.67),
-    ("NiftiMasker tSNR",            1.00, 0.60),
-    ("Multi-run GLM",               1.00, 0.70),
-    ("Atlas space mismatch",        1.00, 0.67),
-    ("Multi-contrast GLM",          1.00, 0.78),
-    ("DecoderRegressor",            1.00, 0.50),
+    ("GLM: block design",          1.00, 0.67),
+    ("Connectivity (3 sub)",        1.00, 0.64),
+    ("MVPA decoding",               1.00, 0.70),
+    ("GLM: FDR threshold",          1.00, 0.33),
+    ("Group (2nd-level) GLM",       1.00, 0.25),
+    ("Seed connectivity",           1.00, 0.78),
+    ("NiftiMasker tSNR",            1.00, 0.70),
+    ("Multi-run GLM",               1.00, 0.80),
+    ("Atlas space mismatch",        1.00, 0.78),
+    ("Multi-contrast GLM",          1.00, 0.55),
+    ("DecoderRegressor",            1.00, 0.30),
     ("Tangent connectivity",        1.00, 0.44),
-    ("Cluster-level threshold",     1.00, 0.38),
-    ("first_level_from_bids",       1.00, 0.67),
+    ("Cluster-level threshold",     1.00, 0.30),
+    ("first_level_from_bids",       1.00, 0.33),
     ("Interactive HTML viz",        1.00, 0.38),
-    ("get_clusters_table peaks",    1.00, 0.25),
+    ("get_clusters_table peaks",    1.00, 0.30),
 ]
 
 labels = [e[0] for e in evals]
