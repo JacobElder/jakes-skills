@@ -125,14 +125,14 @@ xychart-beta horizontal
 | Eval | With skill | Without skill | Gap | Primary failure mode |
 |------|:---:|:---:|:---:|---|
 | Group (2nd-level) GLM | 1.00 | 0.25 | **+0.75** | `image.mean_img` instead of `SecondLevelModel` — 6/8 expectations fail |
-| GLM: FDR thresholding | 1.00 | 0.33 | **+0.67** | `plot_stat_map(threshold=3.0)` instead of `threshold_stats_img` — 6/9 expectations fail |
-| DecoderRegressor | 1.00 | 0.30 | **+0.70** | `Decoder` (classification) on continuous labels — errors or wrong metric |
+| DecoderRegressor | 1.00 | 0.30 | **+0.70** | `Decoder` (classification) on continuous labels — wrong estimator, no R², no NIfTI |
 | Cluster-level threshold | 1.00 | 0.30 | **+0.70** | No `get_clusters_table` — only `threshold_stats_img`, no cluster DataFrame |
 | get_clusters_table peaks | 1.00 | 0.30 | **+0.70** | No `get_clusters_table` knowledge — can't produce paper Table 1 |
+| GLM: FDR thresholding | 1.00 | 0.33 | **+0.67** | `plot_stat_map(threshold=3.0)` instead of `threshold_stats_img` — 6/9 expectations fail |
 | first_level_from_bids | 1.00 | 0.33 | **+0.67** | Manual `Path.glob` — 6/9 API-specific expectations fail |
+| Interactive HTML viz | 1.00 | 0.38 | **+0.62** | Static PNG only — no `view_img(...).save_as_html()` |
 | Tangent connectivity | 1.00 | 0.44 | **+0.56** | `kind='correlation'` instead of `kind='tangent'`; diagonal misunderstood |
 | Multi-contrast GLM | 1.00 | 0.55 | **+0.45** | F-contrast skipped; `stat_type='F'` not used; t vs F not distinguished |
-| Interactive HTML viz | 1.00 | 0.38 | **+0.62** | Static PNG only — no `view_img(...).save_as_html()` |
 | GLM: block design | 1.00 | 0.67 | **+0.33** | Deprecated `make_glm_report`; no design matrix plot; smoothing undocumented |
 
 ### Where the base model already does reasonably well
@@ -204,6 +204,7 @@ nilearn-fmri/
 │   └── make_report.py
 └── evals/
     ├── evals.json                # 16 tests covering all four workflows
+    ├── run_without_skill.py      # empirical harness: runs base-model code, grades expectations
     └── files/
         ├── make_fixtures.py      # generates core synthetic NIfTIs
         ├── make_extra_fixtures.py# generates second_level + multirun fixtures
