@@ -1,0 +1,40 @@
+{
+  "run_id": "g-theory-vs-alpha-with_skill",
+  "eval_id": 1,
+  "eval_name": "g-theory-vs-alpha",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Does NOT simply endorse alpha = .81 as adequate reliability evidence for a multi-facet crossed design",
+      "passed": true,
+      "evidence": "Your advisor is not right — and the problem is not the value of alpha (.81 is fine on its face), it's that alpha is the wrong statistic entirely for the design you ran."
+    },
+    {
+      "text": "Explains that Cronbach's alpha is designed for a single-facet (items-only) design and conflates rater variance, session variance, and their interactions into a single undifferentiated error term when applied here",
+      "passed": true,
+      "evidence": "Cronbach's alpha is designed for a single-facet design: persons × items only... When you compute alpha on item scores averaged across raters and sessions, you are collapsing rater variance, session variance, the rater × item interaction, the rater × session interaction, the session × item interaction, and their higher-order interactions all into a single undifferentiated error term."
+    },
+    {
+      "text": "Names generalizability theory (G theory) as the correct framework for multi-facet designs",
+      "passed": true,
+      "evidence": "The correct framework: Generalizability Theory. Generalizability theory (G theory; Cronbach, Gleser, Nanda & Rajaratnam, 1972) was built precisely for this situation."
+    },
+    {
+      "text": "Explains the G study / D study distinction: G study estimates variance components for each facet; D study uses those to compute the G coefficient and predict reliability under different design configurations",
+      "passed": true,
+      "evidence": "G study. Fit a fully crossed random-effects model to estimate variance components for each main effect and interaction... D study. The decision study uses the G-study variance components to predict reliability-like coefficients under different design configurations — any combination of n_i items, n_r raters, and n_s sessions you might consider deploying."
+    },
+    {
+      "text": "Notes the practical value of the D study: it tells you whether precision is better improved by adding raters, items, or sessions — a question alpha cannot answer",
+      "passed": true,
+      "evidence": "The practical value of the D study is decisive for design optimization. You can answer: 'Does my G coefficient improve more if I go from 3 to 5 raters, or from 2 to 3 sessions?' This is a question alpha cannot answer, because alpha has already collapsed rater and session variance into a single error residual."
+    },
+    {
+      "text": "Names at least one R implementation: the gtheory package or lme4 for extracting variance components",
+      "passed": true,
+      "evidence": "Two approaches: Option 1: gtheory package (purpose-built for G theory)... Option 2: lme4 for variance components, then compute G and Phi by hand"
+    }
+  ]
+}

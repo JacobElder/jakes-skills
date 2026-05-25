@@ -1,0 +1,68 @@
+Your advisor is half right and half wrong, and the distinction matters a lot for what you can claim about your model.
+
+**What your advisor got right:** Freeing correlated residuals is technically permissible in CFA, and it is something many applied researchers do. It is not a procedural violation.
+
+**What your advisor got wrong — and this is the critical part:** Doing it based on MI magnitude alone, without a substantive account for why each pair of items shares variance beyond the factor, is not sound psychometric practice. It is capitalization on chance dressed up as confirmatory analysis.
+
+---
+
+## What a modification index tells you — and what it doesn't
+
+A modification index of 24.3 for items 3 and 7 tells you one thing: if you freed that residual covariance, the model chi-square would drop by approximately 24.3 units. That is a statistical signal that those two items share variance your factor model is not capturing.
+
+It tells you nothing about *why* they share that variance.
+
+That "why" is your entire job. A correlated residual between items 3 and 7 means those items covary above and beyond what the latent factor explains. There are many possible reasons:
+
+- They share a wording pattern (both negatively worded, both containing the same key phrase, both using a specific exemplar)
+- They share a referent time window ("in the past week" only appears in items 3 and 7 while other items ask generally)
+- They tap the same sub-facet of the construct that the factor does not fully represent
+- They were presented adjacently in the questionnaire, producing a contrast or halo effect
+- They share a method artifact (both use a vignette format, both involve imagery)
+
+A large MI is equally consistent with all of these accounts. Until you can specify which of these applies — and ideally demonstrate it by pointing to the item text — you do not have a justification for freeing the residual. You have a post-hoc model modification in search of a rationale.
+
+The same logic applies to items 5 and 9 (MI = 18.1). What do those two items share that the other items don't?
+
+---
+
+## Your model is now exploratory, not confirmatory
+
+This is the deeper problem with proceeding as if everything is fine: once you use MIs to guide model modifications, you are no longer doing confirmatory factor analysis in the meaningful sense. You started with a hypothesis (a specified factor structure), the data did not fully support it, and you modified the model to improve fit. That is exploratory model building.
+
+This is not automatically bad science — EFA and exploratory model building have their place. But calling the result a "CFA" and reporting CFI = .96 as if it confirms your original structure is misleading. The improved fit is partly a statistical artifact of adding parameters that were selected because they fit this sample. In a different sample, those same residuals may not be large.
+
+The Hu & Bentler cutoffs people use (CFI > .95, RMSEA < .06) were derived under conditions that assumed the model was specified a priori. Applying them to a post-hoc modified model overstates the evidence.
+
+---
+
+## What you need before proceeding
+
+1. **A substantive account for each freed residual.** Look at the actual text of items 3 and 7. Look at the actual text of items 5 and 9. Write down — in one or two sentences for each pair — what these items share that the other items do not. If you cannot produce that account, you should not free the residuals. If you can produce it, report it explicitly in your method section.
+
+2. **Honest labeling of the model.** If you proceed with the two freed residuals, report the model as an empirically modified CFA or as an exploratory model. Do not describe it as a confirmatory test of your original structure.
+
+3. **Replication.** Results from an MI-modified model need cross-validation before they can be reported as anything more than preliminary. The standard approach is a split-sample design (modify in one half, confirm in the other) or replication in an independent sample. If your analysis is on a single pooled sample with no holdout, you have a hypothesis for future work, not a confirmed finding.
+
+---
+
+## On the fit improvement itself
+
+The jump from CFI = .91 / RMSEA = .07 to CFI = .96 / RMSEA = .05 is real and worth acknowledging — I am not dismissing it. It tells you the freed residuals are doing genuine work in the model, which is consistent with there being real local misspecification your factor structure is not capturing. That is useful diagnostic information.
+
+But fit improvement alone is not justification. A model with enough added parameters will always fit better. The question is whether the added parameters are theoretically meaningful — and that requires the substantive account described above.
+
+If your advisor's response to this is "everyone does it, reviewers accept it" — that may be true of some journals, and you can make a pragmatic decision about how to proceed. But you should do so with eyes open: the result is an exploratory model with improved fit in this sample, not a confirmed measurement structure.
+
+---
+
+## The bottom line
+
+Do not proceed as if this is settled. Before your next draft:
+
+1. Pull up items 3, 7, 5, and 9. Identify specifically what each correlated pair shares.
+2. If you can make a credible substantive case, free the residuals and document the rationale in your method section.
+3. Label the model as post-hoc modified, not purely confirmatory.
+4. Plan for replication — at minimum, note the limitation and ideally split your sample or obtain new data.
+
+If you cannot identify what items 3-7 and 5-9 share, the honest move is to report the original model (CFI = .91, RMSEA = .07), note the MIs as pointing to local misspecification, and treat that as a finding to investigate rather than a problem to paper over with freed parameters.

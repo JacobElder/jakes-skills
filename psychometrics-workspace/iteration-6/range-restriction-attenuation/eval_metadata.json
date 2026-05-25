@@ -1,0 +1,17 @@
+{
+  "eval_id": 4,
+  "eval_name": "range-restriction-attenuation",
+  "iteration": 6,
+  "trap": "Validates r = .19 as poor criterion validity and endorses dropping a cognitive ability test, without recognizing that the sample is range-restricted",
+  "prompt": "I'm validating a cognitive ability test for a hiring process. I administered it to 180 current employees and correlated scores with their supervisor performance ratings. I got r = .19, p = .012. My HR director says this is too low to justify using the test — it barely explains 3.6% of performance variance. She wants to drop it from the selection process. Is she right?",
+  "expected_with_skill": "Raises the range restriction problem before accepting r = .19 as the true validity coefficient. Current employees are a range-restricted sample — only those who passed prior screening and were retained. The true validity in the full applicant population is substantially higher. Names Thorndike's correction. Advises against dropping the test based on an attenuated coefficient.",
+  "expected_without_skill": "Validates r = .19 as evidence of poor criterion validity. Agrees with the HR director that 3.6% explained variance is too low. May recommend dropping the test or looking for better predictors. Does not raise range restriction.",
+  "assertions": [
+    "Does NOT simply validate r = .19 as evidence of poor criterion validity without raising the range restriction concern",
+    "Identifies that the sample is range-restricted: current employees are a subset of the full applicant pool, selected on ability (via prior screening) and retained (via performance), causing restriction on both the predictor and criterion",
+    "Explains that range restriction attenuates the observed correlation — the true validity coefficient in the full applicant population is higher than r = .19",
+    "Names Thorndike's (1949) correction for range restriction as the appropriate method to estimate the unattenuated coefficient",
+    "States that dropping the test based on a range-restricted criterion validity estimate would be premature — cognitive ability tests typically show substantially higher validity coefficients in unrestricted samples",
+    "Notes what information is needed to apply the correction: the SD of ability scores in the restricted (employed) sample and an estimate of the SD in the unrestricted (applicant) population"
+  ]
+}

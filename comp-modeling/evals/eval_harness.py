@@ -307,6 +307,56 @@ EVALS: list[Eval] = [
         rubric_keywords=["Rhat", "1.01", "convergence", "ESS", "n_eff", "more iter"],
         notes="Should engage with the actual diagnostics, not say 'looks great'.",
     ),
+
+    # ------- Gap-fill evals (added post-review) -------
+
+    Eval(
+        id="C16",
+        prompt=(
+            "I want to fit a category learning model that uses discriminative reconstruction "
+            "rather than exemplar similarity. What's the right model?"
+        ),
+        category="content",
+        expected_files=["category_learning.md"],
+        rubric_keywords=["DIVA", "Kurtz", "discriminat", "catlearn", "reconstruction"],
+        notes="Should mention DIVA (Kurtz 2007) as the reconstruction-based alternative to GCM/SUSTAIN.",
+    ),
+
+    Eval(
+        id="C17",
+        prompt=(
+            "I have a complex collapsing-bound accumulator model with no closed-form likelihood. "
+            "How do I fit it to behavioral data?"
+        ),
+        category="content",
+        expected_files=["hierarchical_stan.md"],
+        rubric_keywords=["simulation-based", "sbi", "BayesFlow", "SBI", "intractable",
+                         "amortized", "summary stat"],
+        notes="Should recommend sbi or BayesFlow for models without tractable likelihoods.",
+    ),
+
+    Eval(
+        id="R11",
+        prompt=(
+            "What's the difference between GCM, ALCOVE, SUSTAIN, and DIVA for category learning?"
+        ),
+        category="routing",
+        expected_files=["category_learning.md"],
+        rubric_keywords=["DIVA", "Kurtz", "discriminat", "reconstruction", "catlearn"],
+        notes="Should route to category_learning.md and cover all four models including DIVA.",
+    ),
+
+    Eval(
+        id="R12",
+        prompt=(
+            "My accumulator model doesn't have a closed-form likelihood — it requires "
+            "simulation. What's the modern fitting approach?"
+        ),
+        category="routing",
+        expected_files=["hierarchical_stan.md"],
+        rubric_keywords=["sbi", "BayesFlow", "simulation-based inference", "SBI"],
+        notes="Should route to hierarchical_stan.md and name SBI toolboxes.",
+    ),
 ]
 
 

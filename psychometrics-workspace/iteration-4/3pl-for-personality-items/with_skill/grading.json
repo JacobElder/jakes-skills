@@ -1,0 +1,40 @@
+{
+  "run_id": "3pl-for-personality-items-with_skill",
+  "eval_id": 4,
+  "eval_name": "3pl-for-personality-items",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Rejects 3PL for personality/attitude items on conceptual grounds — not just on fit or complexity penalties",
+      "passed": true,
+      "evidence": "Reject the 3PL on two grounds: (1) the c parameter has no psychological interpretation for self-reported personality ratings — respondents don't guess on Likert items"
+    },
+    {
+      "text": "Explains that the lower asymptote (guessing) parameter c has no psychological interpretation for personality ratings — respondents are not guessing on Likert items about their own behavior or traits",
+      "passed": true,
+      "evidence": "Now consider a conscientiousness item: 'I am careful and diligent in completing tasks.' On a 5-point Likert scale from 'strongly disagree' to 'strongly agree,' what does it mean for a respondent with very low conscientiousness to have a non-zero floor probability of endorsing the item? They're not guessing. They're not retrieving information. They're rating their own habitual behavior and traits. There is no guessing process operating here, and the c parameter has no interpretable psychological referent for this kind of item."
+    },
+    {
+      "text": "States that better AIC/BIC fit alone is not sufficient justification — parameter interpretability is a requirement for IRT model selection",
+      "passed": true,
+      "evidence": "Better fit alone is not sufficient justification. AIC and BIC reward parsimony, but they don't adjudicate between models on substantive grounds. Parameter interpretability is a prerequisite for IRT model selection, not an optional add-on."
+    },
+    {
+      "text": "Notes that 3PL overfits lower-tail response patterns on personality items, absorbing what is likely response style or acquiescence rather than true guessing",
+      "passed": true,
+      "evidence": "What the 3PL will actually do is absorb idiosyncratic lower-tail response patterns — acquiescence bias, extreme responding, random careless responses — and attribute them to a 'guessing' process that doesn't exist. That's not a robustness improvement; that's a misspecification that happens to fit the data better by mopping up noise with an extra parameter."
+    },
+    {
+      "text": "Flags that for 5-point Likert items, binary IRT models (2PL or 3PL) are the wrong family entirely — polytomous IRT models (GRM or GPCM) are the correct choice because items have more than two response categories",
+      "passed": true,
+      "evidence": "This is the more fundamental issue: you're comparing 2PL vs. 3PL, but both are binary IRT models — they model a dichotomous response (correct/incorrect, yes/no). Your items have five ordered response categories. Fitting binary IRT to polytomous items requires you to either collapse the response categories (losing information and introducing arbitrary dichotomization) or treat the model as misspecified from the start."
+    },
+    {
+      "text": "Recommends mirt with itemtype = 'graded' (GRM) or 'gpcm' as the appropriate starting point for polytomous personality items",
+      "passed": true,
+      "evidence": "model_grm <- mirt(data = your_data, model = 1, itemtype = \"graded\") ... model_gpcm <- mirt(data = your_data, model = 1, itemtype = \"gpcm\")"
+    }
+  ]
+}

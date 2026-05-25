@@ -1,0 +1,55 @@
+There are two serious problems with using 3PL here, and they compound each other. Let me address both directly.
+
+---
+
+**Problem 1: The 3PL guessing parameter has no psychological meaning for personality items**
+
+The lower asymptote parameter c in the 3PL model exists to capture a real phenomenon in ability testing: on a multiple-choice knowledge or ability item, even a respondent with very low theta has a non-zero probability of answering correctly by guessing. That's a genuine response strategy that happens in the real world.
+
+Now consider a conscientiousness item: "I am careful and diligent in completing tasks." On a 5-point Likert scale from "strongly disagree" to "strongly agree," what does it mean for a respondent with very low conscientiousness to have a non-zero floor probability of endorsing the item? They're not guessing. They're not retrieving information. They're rating their own habitual behavior and traits. There is no guessing process operating here, and the c parameter has no interpretable psychological referent for this kind of item. What the 3PL will actually do is absorb idiosyncratic lower-tail response patterns — acquiescence bias, extreme responding, random careless responses — and attribute them to a "guessing" process that doesn't exist. That's not a robustness improvement; that's a misspecification that happens to fit the data better by mopping up noise with an extra parameter.
+
+Better fit alone is not sufficient justification. AIC and BIC reward parsimony, but they don't adjudicate between models on substantive grounds. If you add a parameter with no psychological meaning and it absorbs lower-tail noise, you will often see improved AIC/BIC — and still have the wrong model. Parameter interpretability is a prerequisite for IRT model selection, not an optional add-on. You need to be able to say what each parameter means in terms of the underlying response process. The 3PL c parameter for conscientiousness items doesn't pass that test.
+
+---
+
+**Problem 2: Binary IRT models are the wrong family entirely for 5-point Likert items**
+
+This is the more fundamental issue: you're comparing 2PL vs. 3PL, but both are binary IRT models — they model a dichotomous response (correct/incorrect, yes/no). Your items have five ordered response categories. Fitting binary IRT to polytomous items requires you to either collapse the response categories (losing information and introducing arbitrary dichotomization) or treat the model as misspecified from the start.
+
+For a 5-point Likert personality scale, the correct IRT family is polytomous IRT:
+
+- **Graded Response Model (GRM; Samejima, 1969)** — Models the probability of responding in category k or above as a function of theta, with separate threshold parameters for each category boundary. This is almost always the right starting point for ordered Likert items measuring a continuous trait. It assumes the discrimination parameter is constant across category thresholds for a given item (equal slopes), which is usually defensible for personality items.
+
+- **Generalized Partial Credit Model (GPCM; Muraki, 1992)** — A more flexible alternative that allows different step parameters across category boundaries. Can fit better but uses more parameters.
+
+In R with mirt, you want:
+
+```r
+library(mirt)
+
+# Graded Response Model — appropriate starting point for 5-point Likert
+model_grm <- mirt(data = your_data, model = 1, itemtype = "graded")
+
+# Inspect item parameters: a (discrimination), b1-b4 (threshold parameters)
+coef(model_grm, IRTpars = TRUE, simplify = TRUE)
+
+# Item information functions — where on the conscientiousness continuum is each item precise?
+plot(model_grm, type = "infotrace")
+
+# Test information function
+plot(model_grm, type = "info")
+
+# If you want to compare GRM vs. GPCM
+model_gpcm <- mirt(data = your_data, model = 1, itemtype = "gpcm")
+anova(model_grm, model_gpcm)  # likelihood ratio test; GRM is nested in GPCM
+```
+
+The GRM will give you a discrimination parameter (a) and four threshold parameters (b1–b4) for each item — one for each of the four category boundaries on a 5-point scale. Those parameters are directly interpretable: the b parameters tell you the theta levels at which a respondent has a 50% probability of endorsing category 2 or above, 3 or above, and so on. That's a meaningful description of how the item functions across the conscientiousness continuum.
+
+---
+
+**Summary**
+
+Reject the 3PL on two grounds: (1) the c parameter has no psychological interpretation for self-reported personality ratings — respondents don't guess on Likert items — and the apparent fit improvement reflects overfitting to lower-tail response noise, not recovery of a real guessing process; (2) binary IRT models are misspecified for 5-point items regardless of which one fits better.
+
+The right comparison is GRM vs. GPCM, run in mirt with itemtype = "graded" or "gpcm". Start with the GRM — it's the standard for ordered polytomous personality items — and check whether the extra flexibility of GPCM is warranted via a likelihood ratio test.

@@ -1,0 +1,40 @@
+{
+  "run_id": "formative-vs-reflective-with_skill",
+  "eval_id": 3,
+  "eval_name": "formative-vs-reflective",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Does NOT simply validate the CFA results as evidence of a valid latent SES construct without raising the model specification question",
+      "passed": true,
+      "evidence": "Before interpreting those fit indices and loadings, there's a more fundamental question you need to answer: are income, education, and occupational prestige reflective indicators of SES, or formative ones? The answer determines whether running a CFA was the right move at all — and it almost certainly changes how you read these results."
+    },
+    {
+      "text": "Raises the formative vs. reflective question — asks whether SES indicators are caused by a latent variable or whether they define/constitute SES",
+      "passed": true,
+      "evidence": "A formative model says the indicators define or constitute the construct — there's no separate latent cause sitting upstream and pushing all three measures. Instead, you sum or combine them to operationalize the concept. SES is the canonical textbook example of a formative construct."
+    },
+    {
+      "text": "Explains the core reflective vs. formative distinction: reflective = latent cause produces item covariance; formative = indicators combine to define the construct, no common cause required",
+      "passed": true,
+      "evidence": "A reflective model says a latent variable causes the observed indicators... A formative model says the indicators define or constitute the construct — there's no separate latent cause sitting upstream and pushing all three measures."
+    },
+    {
+      "text": "Notes that moderate loadings (.47-.61) on income, education, and occupation may be correct for a formative composite — they are not necessarily a measurement problem to fix",
+      "passed": true,
+      "evidence": "Loadings of .47, .61, and .53 are not a problem. For a reflective scale, moderate loadings suggest items are measuring the latent construct imprecisely... But for a formative composite, the indicators are supposed to be heterogeneous — income, education, and occupational prestige are conceptually distinct components that don't need to correlate tightly to be valid components of SES."
+    },
+    {
+      "text": "Applies or implies the diagnostic: if one indicator changes (e.g., education increases), do the others necessarily change? If not, the reflective model may be a misspecification",
+      "passed": true,
+      "evidence": "Here's the test: if someone's education level increases by four years, does their household income necessarily change? Does their occupational prestige necessarily change? The answer is: not necessarily... These three indicators are not constrained to covary because they're caused by the same underlying thing — they can move independently."
+    },
+    {
+      "text": "States what evidence IS appropriate for a formative composite (content coverage of the domain, external validity with outcomes) versus what is not appropriate (factor loadings and internal consistency as primary validity evidence)",
+      "passed": true,
+      "evidence": "Content coverage: Do income, education, and occupational prestige together adequately represent the socioeconomic domain?... External validity: Do weighted composites of these three indicators predict relevant outcomes... This is the right validity question for a formative composite — criterion-related evidence, not internal structure evidence... Internal consistency is not the appropriate evidence for a formative composite."
+    }
+  ]
+}

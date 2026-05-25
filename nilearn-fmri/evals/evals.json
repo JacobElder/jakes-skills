@@ -231,8 +231,10 @@
         "Fits model with events.tsv containing both 'face' and 'house' trial_types",
         "Computes face > house contrast using string formula ('face - house') or contrast vector",
         "Computes house > face contrast",
-        "Computes an F-contrast testing both face and house vs baseline — not just a t-test on 'face + house'",
-        "F-contrast uses a 2D numpy contrast matrix (two rows) or the 'effects of interest' string with stat_type='F'",
+        "Computes an F-contrast testing both face and house vs baseline — not just a second t-test",
+        "F-contrast uses a 2D numpy contrast matrix (two rows) or 'effects of interest' string with stat_type='F' — not compute_contrast('face + house') which is a t-test",
+        "Passes stat_type='F' explicitly to compute_contrast for the F-contrast (not 't')",
+        "Correctly distinguishes between t-contrasts (directional, signed) and the F-contrast (omnibus, unsigned) in the response text",
         "Saves at least 3 stat map .nii.gz files to ./multicontrast_out/",
         "Saves glass-brain PNGs for at least 2 contrasts to ./multicontrast_out/",
         "Reports peak stat for face > house in response text"

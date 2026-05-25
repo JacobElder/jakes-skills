@@ -165,3 +165,11 @@ Wilson & Collins (2019) Box 4, Box 5, Box 6 are the templates worth emulating.
 6. **Is the issue fundamentally non-identifiable?** Some parameters simply can't be recovered from some task structures (e.g., loss aversion from gain-only gambles). No amount of fitting fixes this. Either change the task or fix the parameter.
 
 If you've gone through this list and recovery is still bad, the paper-writing implication is: report the parameter at the *group level only*, or don't report it as an individual-difference measure. The data don't support the claim.
+
+---
+
+**See also:**
+- `references/model_comparison.md` — model recovery and parameter recovery together constitute the diagnostic story; always run both before reporting.
+- `references/reinforcement_learning.md` — α/β trade-off details and perseveration confound.
+- `references/category_learning.md` — c/w trade-off in GCM; strategy heterogeneity.
+- `references/hierarchical_stan.md` — hierarchical Bayesian fitting often improves recovery substantially vs per-subject MLE.

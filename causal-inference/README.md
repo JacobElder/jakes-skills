@@ -4,7 +4,7 @@ A skill that applies Pearl's framework for causal reasoning — the Ladder of Ca
 
 ## Installation
 
-Copy the skill into your Claude skills directory:
+Copy the skill into your skills directory:
 
 ```bash
 # Clone the repo (or pull if you already have it)
@@ -85,11 +85,11 @@ xychart-beta horizontal
 | **Mean pass rate** | **1.00** | 0.81 |
 | Assertions passed | 54 / 54 | 44 / 54 |
 
-**+19 percentage points overall.** The skill's impact concentrates on the cases where a specific piece of domain knowledge is easy to miss — not on the structural mechanics that base Claude handles reliably.
+**+19 percentage points overall.** The skill's impact concentrates on the cases where a specific piece of domain knowledge is easy to miss — not on the structural mechanics that the base model handles reliably.
 
 ### Where the skill makes the biggest difference
 
-| Scenario | With skill | Without skill | Gap | What base Claude misses |
+| Scenario | With skill | Without skill | Gap | What the base model misses |
 |----------|:---:|:---:|:---:|---|
 | IV exclusion restriction violation | 1.00 | 0.50 | **+50pp** | Bias direction is *unknown*, not just upward — a direct Z→Y effect can go either way; more data doesn't fix it |
 | Simpson's paradox | 1.00 | 0.50 | **+50pp** | Whether to disaggregate depends on whether the split variable is a confounder or a mediator — the aggregate result can be the correct one |

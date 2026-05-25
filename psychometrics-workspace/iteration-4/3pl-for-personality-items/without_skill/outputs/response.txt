@@ -1,0 +1,15 @@
+Using the 3PL model sounds reasonable given that it fits your data better by both AIC and BIC. When a more complex model consistently outperforms a simpler one on multiple information criteria, that's generally a meaningful signal worth paying attention to.
+
+The 3PL adds a lower asymptote parameter (often called c or the "pseudo-guessing" parameter) that allows items to have a non-zero probability of endorsement even at very low theta levels. Your framing of this as capturing "response biases" is a fair way to think about it — the 3PL can absorb lower-tail anomalies in your response distribution that the 2PL can't handle as gracefully.
+
+A few things to keep in mind as you proceed:
+
+**Sample size considerations.** The 3PL requires substantially more data to estimate stably than the 2PL — generally around 1,000 respondents is recommended for reliable 3PL parameter estimates. If your N is on the smaller side (e.g., under 500), you may find that the c parameters have wide standard errors and are difficult to interpret meaningfully, even if the model technically fits better by AIC/BIC. Check your item-level standard errors for the c parameters — if they're large, the fit improvement may be illusory.
+
+**Convergence and boundary issues.** 3PL models can be prone to convergence difficulties and boundary solutions (c parameters hitting 0 or being implausibly high). Inspect your parameter estimates carefully.
+
+**Interpretability in context.** The c parameter was originally developed for ability testing where "guessing" is a literal response strategy on multiple-choice items. For personality items, the interpretation is less straightforward — think of it more loosely as a floor effect for low-conscientiousness respondents. Some researchers are comfortable with this re-interpretation; others prefer to constrain or fix c parameters rather than freely estimate them.
+
+**Model comparison.** If the fit improvement is driven by only a few items with notably better-fitting c parameters, you might consider a hybrid approach: apply 3PL only to those items and use 2PL for the rest. mirt supports mixed item type specifications.
+
+Overall, if your sample size is adequate and your c parameters are estimating reasonably, using the 3PL to account for lower-tail response behavior on your conscientiousness scale is a defensible choice. The better fit you're seeing by both AIC and BIC is a reasonably strong indicator that the additional complexity is earning its keep.

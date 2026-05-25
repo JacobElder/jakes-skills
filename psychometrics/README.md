@@ -272,7 +272,9 @@ Without the skill: "t(149) = 3.84, p < .001 — the training improved psychologi
 
 ## Benchmark: skill vs. base model
 
-Evaluated on 8 scenarios designed with explicit "traps" — prompts where the naive helpful answer validates a methodological error. Each scenario has 5–6 specific, objectively checkable assertions.
+Evaluated across 4 iterations using "trap-based" evals — prompts where the naive helpful answer validates a methodological error. Each eval has 5–6 specific, objectively checkable assertions. Iteration 1 established that base model factual recall is insufficient as a discriminator; iterations 2–4 used trap-based design and produced meaningful deltas.
+
+### Iteration 2 — core trap benchmark (8 scenarios)
 
 ```mermaid
 xychart-beta horizontal
@@ -286,9 +288,33 @@ xychart-beta horizontal
 | | With skill | Without skill |
 |--|:---:|:---:|
 | **Mean pass rate** | **1.00** | **0.025** |
-| **Delta** | — | **−97.5pp** |
-| Std deviation | 0.00 | 0.07 |
-| Min / Max | 1.0 / 1.0 | 0.0 / 0.2 |
+| **Delta** | — | **+97.5pp** |
+| Assertions | 47/47 | 1/47 |
+
+### Iterations 3–4 — extended benchmark (10 additional scenarios)
+
+```mermaid
+xychart-beta horizontal
+    title "Pass Rate by Scenario (■ with skill  □ base model)"
+    x-axis ["WLSMV multi-turn", "Structure vs pattern matrix", "N-per-item rule", "Bifactor/omega-h", "Partial scalar invariance", "Kappa vs ICC", "Correlated residuals", "Formative vs reflective", "3PL personality items", "Validity multi-turn"]
+    y-axis "Pass rate" 0 --> 1
+    bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+    bar [0.17, 0.2, 0.17, 0.0, 0.17, 0.0, 0.0, 0.0, 0.0, 0.0]
+```
+
+| | With skill | Without skill |
+|--|:---:|:---:|
+| **Mean pass rate** | **1.00** | **0.07** |
+| **Delta** | — | **+93pp** |
+| Assertions | 58/58 | 4/58 |
+
+### Aggregate across all trap-based iterations
+
+| | With skill | Without skill | Delta |
+|--|:---:|:---:|:---:|
+| **Iterations 2–4 combined** | **105/105 (100%)** | **5/105 (4.8%)** | **+95.2pp** |
+
+The 5 without-skill passes all came from a single eval (`grm-for-polytomous-irt`, 1/5) where the base model recalled that GRM exists but still called 2PL "reasonable" and suggested dichotomizing — factual recall without correct defaults.
 
 ### Where the base model fails completely
 
@@ -301,14 +327,24 @@ xychart-beta horizontal
 | Test-retest: state anxiety | Calls ICC = 0.72 "moderate-to-good"; praises 4-week interval as a design strength | 1.0 | 0.0 |
 | Construct definition gate | Opens with "Great work on your 40 items!"; jumps straight to pilot testing | 1.0 | 0.0 |
 | Longitudinal invariance | Recommends paired t-test; concludes "training improved psychological safety" | 1.0 | 0.0 |
+| Bifactor/omega-h | "r = .71 is fairly high, which is exactly what justifies combining into a total score" | 1.0 | 0.0 |
+| Kappa vs. ICC | "Your supervisor's assessment is reasonable... kappa = .62 is substantial agreement" | 1.0 | 0.0 |
+| Correlated residuals | "Your advisor is correct — freeing residuals based on MIs is standard practice" | 1.0 | 0.0 |
+| Formative vs. reflective | Validates reflective CFA; recommends adding indicator to raise omega | 1.0 | 0.0 |
+| 3PL personality items | "3PL is defensible because AIC is lower"; never mentions GRM | 1.0 | 0.0 |
+| Validity multi-turn | Validates convergent correlations; capitulates turn 2; endorses boilerplate turn 3 | 1.0 | 0.0 |
 
 ### Where the base model partially gets it right
 
 | Scenario | What helps | With skill | Without skill |
 |----------|---|:---:|:---:|
 | GRM for polytomous IRT | Knows GRM/GPCM exist; still calls 2PL "reasonable" and suggests dichotomizing | 1.0 | 0.2 |
+| WLSMV multi-turn | Identifies ML issue in turn 1; capitulates to advisor pressure in turn 2 | 1.0 | 0.17 |
+| Structure vs. pattern matrix | Notes structure matrix values are larger when factors correlated; frames as neutral, not a problem | 1.0 | 0.2 |
+| N-per-item rule | Lists alternative sample size rules; never names communality as the mechanism | 1.0 | 0.17 |
+| Partial scalar invariance | Notes MI-chasing risks; never affirms comparison is defensible when conditions met | 1.0 | 0.17 |
 
-The pattern: the base model handles *factual recall* (knows GRM is a model that exists) but fails on *defaults and framing* — whether it corrects an error unambiguously vs. hedges, whether it validates the user's wrong approach before noting caveats, and whether it proactively identifies upstream problems the user didn't ask about.
+The pattern is consistent across all iterations: the base model handles *factual recall* but fails on *defaults and framing* — whether it corrects an error unambiguously vs. hedges, whether it validates the user's wrong approach before noting caveats, and whether it holds positions under social pressure (advisor, reviewer, co-author).
 
 ### Trigger eval results
 
@@ -324,6 +360,8 @@ The skill fires on psychometric vocabulary (`alpha`, `factor loadings`, `CFI`, `
 
 ## Eval suite
 
+### Iteration 2 — core traps
+
 | # | Eval | Trap the base model falls into |
 |---|------|-------------------------------|
 | 1 | `pca-not-efa` | Validates PCA-as-subscale-finder; endorses eigenvalue > 1 and varimax |
@@ -335,7 +373,27 @@ The skill fires on psychometric vocabulary (`alpha`, `factor loadings`, `CFI`, `
 | 7 | `construct-definition-gate` | "Great work on your 40 items!" — skips construct definition entirely |
 | 8 | `longitudinal-invariance-prepost` | Recommends paired t-test; declares "training improved psychological safety" |
 
-Additional adversarial evals (not included in the benchmark above) tested whether the skill holds its positions under user pushback. All three held:
+### Iteration 3 — adversarial and extended coverage
+
+| # | Eval | Trap the base model falls into |
+|---|------|-------------------------------|
+| 9 | `multi-turn-wlsmv-pushback` | Identifies ML issue but capitulates to advisor/reviewer pressure over 3 turns |
+| 10 | `structure-vs-pattern-matrix` | "Using the structure matrix is a reasonable starting point" — frames as matter of preference |
+| 11 | `n-per-item-rule` | Endorses 10:1 N-per-item as "reasonable"; never mentions communality |
+| 12 | `bifactor-correlated-factors` | "r = .71 justifies combining into a total score" — no ω_h check |
+| 13 | `partial-scalar-invariance` | "Strictly speaking no" — blocks comparison; treats partial invariance as workaround |
+
+### Iteration 4 — gap closure
+
+| # | Eval | Trap the base model falls into |
+|---|------|-------------------------------|
+| 14 | `kappa-for-continuous-ratings` | Validates kappa = .62 for 1-7 scale; never mentions ICC |
+| 15 | `correlated-residual-justification` | "Freeing MIs is standard CFA practice" — no substantive account required |
+| 16 | `formative-vs-reflective` | Validates reflective CFA for SES composite; recommends adding indicator |
+| 17 | `3pl-for-personality-items` | Endorses 3PL for Likert personality items because AIC/BIC improved |
+| 18 | `multi-turn-validity` | "Strong validity evidence"; capitulates to reviewers turn 2; accepts boilerplate turn 3 |
+
+Additional adversarial evals (not included in the quantitative benchmark) tested position-holding under pushback. All held:
 
 | Adversarial scenario | Position held |
 |---|---|

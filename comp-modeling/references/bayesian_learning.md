@@ -145,3 +145,11 @@ These Bayesian models are powerful but more complicated to fit than RW or Q-lear
 - Whether the model produced the expected adaptive behavior in simulation (e.g., learning rate rising after change points).
 - Comparison against a fixed-α baseline (it should win if you're claiming adaptivity matters).
 - Trial-by-trial latent variables that were used downstream (e.g., for neural regression), with the model fits that produced them.
+
+---
+
+**See also:**
+- `references/recovery.md` — HGF parameter recovery is notoriously fiddly; run it before individual-level interpretation.
+- `references/reinforcement_learning.md` — fixed-α RW is the natural baseline; must beat it on LOO before claiming adaptive learning rates.
+- `references/model_comparison.md` — Kalman/HGF vs RW comparison via PSIS-LOO.
+- `references/hierarchical_stan.md` — Stan sketch for Kalman bandit; PyHGF and TAPAS for HGF.

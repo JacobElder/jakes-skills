@@ -1,0 +1,40 @@
+{
+  "run_id": "kappa-for-continuous-ratings-with_skill",
+  "eval_id": 1,
+  "eval_name": "kappa-for-continuous-ratings",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "States clearly that Cohen's kappa (weighted or unweighted) is not appropriate for ordinal/continuous ratings on a 1-7 scale",
+      "passed": true,
+      "evidence": "Cohen's kappa — even weighted kappa — is not appropriate for a 1-7 hostility scale. You should be computing an intraclass correlation coefficient (ICC), not kappa."
+    },
+    {
+      "text": "Explains WHY kappa is wrong — treats the scale as nominal, discards ordinal information, penalizes 1-vs-7 disagreement the same as 1-vs-2",
+      "passed": true,
+      "evidence": "kappa treats a disagreement of 1 vs. 7 identically to a disagreement of 3 vs. 4. Both are 'disagreements,' so both penalize the kappa coefficient equally. That's absurd for a scale where the whole point is that the numbers represent graded levels of severity."
+    },
+    {
+      "text": "Recommends ICC as the correct statistic for continuous or ordinal rater agreement",
+      "passed": true,
+      "evidence": "For continuous or ordinal ratings like a 1-7 scale, the correct statistic is the intraclass correlation coefficient."
+    },
+    {
+      "text": "Names at least one specific ICC variant to use and explains why (e.g., ICC(2,1) two-way random absolute agreement when raters are a random sample; ICC(3,1) two-way mixed consistency when raters are fixed)",
+      "passed": true,
+      "evidence": "ICC(2,1) — Two-way random effects, single rater, absolute agreement. Use this when your two raters are a random sample from a larger pool of raters you'd want to generalize to... ICC(3,1) — Two-way mixed effects, single rater, consistency. Use this when your two specific raters are fixed..."
+    },
+    {
+      "text": "Does NOT endorse kappa = .62 as adequate evidence of interrater reliability for a 1-7 scale without flagging that the statistic is wrong",
+      "passed": true,
+      "evidence": "Your supervisor calling kappa = .62 'acceptable' is not a defensible measurement decision — not because .62 is low, but because kappa is measuring the wrong thing on this scale."
+    },
+    {
+      "text": "Mentions the kappa paradox or notes kappa can be misleadingly low even when raters have near-perfect rank-order agreement",
+      "passed": true,
+      "evidence": "There's also the kappa paradox to know about: kappa is mathematically sensitive to the marginal distributions of the ratings... You can have ICC > .90 and kappa < .40 in the same dataset."
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+Your co-author is half-right — r = .71 is certainly consistent with the two scales measuring related constructs, and you'd be worried if it were near zero. But calling it "strong convergent validity evidence" overstates what same-method, same-session data can actually tell you. Here's why, and what would make a stronger case.
+
+---
+
+**The problem: common method variance inflation**
+
+When two self-report Likert scales are administered in the same online survey, their observed correlation is not a pure estimate of the relationship between the underlying constructs. It is inflated by several sources of shared variance that have nothing to do with the constructs themselves:
+
+- **Shared response style**: respondents who use the top of scales on one measure tend to do so on the next
+- **Acquiescence bias**: a general tendency to agree with positively-worded items inflates correlations between any two scales with similar item framing
+- **Measurement context**: fatigue, mood state, and implicit comparison between consecutive scales all create covariance that is method-specific, not trait-specific
+
+The result is that the r = .71 is an overestimate of the true relationship between emotional exhaustion and burnout as latent constructs. How much of an overestimate? That's the problem — you can't tell from a single-method study. The inflation could be modest or substantial. The observed correlation is an upper bound on the trait-level relationship, not an estimate of it.
+
+---
+
+**What the field requires: Campbell & Fiske's MTMM framework**
+
+The right framework here is the multitrait-multimethod (MTMM) matrix, introduced by Campbell and Fiske (1959) — still the foundation of convergent and discriminant validity evaluation. The core logic is:
+
+- **Convergent validity** requires that the same trait measured by *different* methods correlates highly. A "monotrait-heteromethod" correlation should be substantial.
+- **Discriminant validity** requires that different traits measured by the same method (the "heterotrait-monomethod" correlation) are lower than the convergent correlations — and ideally lower than the monotrait-heteromethod correlations too.
+
+If your only evidence is a single-method correlation, you cannot separate trait variance from method variance. You have one cell in the MTMM matrix — the monotrait-monomethod entry — which is the *easiest* cell to get right and the least informative about construct validity.
+
+The modern version of this is CFA-MTMM (Widaman, 1985; Marsh & Grayson, 1995), where you explicitly model trait factors and method factors simultaneously and test whether the trait factors show expected convergent and discriminant pattern.
+
+---
+
+**What r = .71 actually tells you**
+
+The observed correlation is still useful — it rules out the worst-case scenario where the scales are completely unrelated. That matters. A near-zero correlation would be devastating. So this is a *necessary* starting point, not a worthless one.
+
+What it does not tell you:
+
+1. How much of the covariance is shared construct variance vs. shared method variance
+2. Whether the constructs are distinguishable — emotional exhaustion and burnout likely share substantial true-score variance, and without a multi-method design you cannot assess discriminant validity either
+3. Whether the correlation would survive in a heteromethod context (e.g., self-report exhaustion vs. supervisor-rated burnout, or self-report vs. a behavioral or physiological indicator)
+
+---
+
+**What stronger evidence requires**
+
+At minimum, you need a second measurement method. Practical options:
+
+- **Observer or supervisor ratings** of burnout/exhaustion symptoms (not a second self-report — that is still single-method)
+- **Behavioral outcomes** correlated with the scale score (absenteeism records, performance data)
+- **Physiological or biomarker data** if the context permits
+- **Temporal separation**: administering the two scales in separate sessions months apart weakens some (not all) common method sources, but does not substitute for a different method
+
+With two methods, you can construct at least a partial MTMM: the monotrait-heteromethod correlation between your new scale and a behavioral measure of exhaustion is a more credible convergent validity coefficient than the same-method r = .71. If that heteromethod correlation is, say, r = .45, and the heterotrait-heteromethod correlation (burnout-behavioral × exhaustion-other-method) is r = .28, you've learned something.
+
+---
+
+**How to frame this in your manuscript**
+
+Acknowledge the correlation and its limitation honestly: "Convergent validity was initially examined via same-method correlation (r = .71), which is consistent with shared construct variance but likely inflated by common method variance (Podsakoff et al., 2003; Campbell & Fiske, 1959). Multi-method evidence is needed to isolate trait from method variance; this is an acknowledged limitation and a target for future validation work."
+
+Podsakoff, MacKenzie, Lee & Podsakoff (2003) in JPSP is the applied paper your reviewers will cite if you don't cite it yourself. Get ahead of it.
+
+---
+
+**Bottom line**
+
+r = .71 between two same-method, same-session scales is a promising finding, not a conclusion. Your co-author's framing will draw a flag from any reviewer who knows measurement — and MTMM literacy has increased significantly among reviewers in applied psychology and organizational behavior journals. The evidence is necessary but not sufficient for the convergent validity claim. The path forward is a second method, not a bigger N on the same design.

@@ -1,0 +1,17 @@
+{
+  "eval_id": 1,
+  "eval_name": "mtmm-common-method-variance",
+  "iteration": 6,
+  "trap": "Validates r = .71 between two self-report Likert scales in the same survey session as strong convergent validity evidence",
+  "prompt": "I'm validating a new scale measuring emotional exhaustion at work. I administered it alongside an established burnout measure (both self-report Likert scales) in a single online survey. The correlation between them is r = .71, p < .001. My co-author says this is strong convergent validity evidence. Is it?",
+  "expected_with_skill": "Does not simply validate r = .71 as strong convergent validity. Raises the common method variance concern: same-method, same-session administration inflates correlations through shared response style and acquiescence. Names the MTMM framework. States that same-method convergent evidence is necessary but not sufficient. Describes what stronger evidence requires.",
+  "expected_without_skill": "Validates r = .71 as strong convergent validity. May note it is 'expected' that related constructs correlate highly. Does not raise common method variance or name MTMM.",
+  "assertions": [
+    "Does NOT simply endorse r = .71 as strong convergent validity without raising the common method variance concern",
+    "Explains that same-method, same-session correlations are inflated by shared response style, acquiescence bias, and measurement context — not just shared construct variance",
+    "Names the MTMM framework (Campbell & Fiske, 1959) as the appropriate design for disentangling trait from method variance",
+    "States that same-method convergent correlations are necessary but not sufficient evidence — the r = .71 is an overestimate of the true trait relationship",
+    "Describes what stronger evidence would require: at minimum a second method (observer ratings, behavioral measure, physiological indicator) or a multi-method CFA",
+    "Does not tell the researcher to discard the correlation — contextualizes it as a starting point that needs multi-method corroboration"
+  ]
+}

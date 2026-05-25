@@ -15,7 +15,7 @@ There's also a `golden_responses.md` with hand-crafted ideal answers to a few hi
 These are prompt-level evals; they don't run themselves. The expected workflow is:
 
 1. Pick an eval JSON.
-2. For each item, run the prompt through Claude (with the skill loaded).
+2. For each item, run the prompt through the model (with the skill loaded).
 3. Score the response against the `must_include` and `must_not_include` criteria.
 4. Aggregate per-category and per-criterion pass rates.
 

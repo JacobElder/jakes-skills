@@ -1,6 +1,6 @@
 # Manual eval review — iteration 1
 
-Method: For each behavior eval, I read the SKILL.md and references, generated a response to the prompt, then graded against the listed expectations. This is the Claude.ai-mode lightweight version of the eval workflow — no subagents, no automated grading, but a structured pass/fail per expectation.
+Method: For each behavior eval, I read the SKILL.md and references, generated a response to the prompt, then graded against the listed expectations. This is the lightweight manual version of the eval workflow — no subagents, no automated grading, but a structured pass/fail per expectation.
 
 ## Summary
 
@@ -23,12 +23,12 @@ This is a self-administered eval: I wrote the skill AND graded the responses, so
 
 ## What might fail in the wild
 
-A few weak spots to watch for, based on areas where the skill is opinionated and a different invocation of Claude might soften:
+A few weak spots to watch for, based on areas where the skill is opinionated and a different model invocation might soften:
 
-1. **Hedging on alpha vs. omega.** A different Claude run might "see both sides" rather than landing on omega as the modern default. The SKILL.md is pushy on this; hopefully it holds.
-2. **Hu & Bentler cutoffs.** The skill warns against fetishizing them but applied reviewers want a cutoff. Claude might split the difference rather than picking a stance.
-3. **Reverse-coded items.** The skill takes a stronger position against reflexive reverse-coding than many textbooks. A Claude run might fall back to "include them for acquiescence detection" without the empirical caveat.
-4. **EFA + CFA on same sample.** The skill labels this double-dipping; some practitioners do it routinely. Claude might endorse the practice in a friendly response.
+1. **Hedging on alpha vs. omega.** A different model run might "see both sides" rather than landing on omega as the modern default. The SKILL.md is pushy on this; hopefully it holds.
+2. **Hu & Bentler cutoffs.** The skill warns against fetishizing them but applied reviewers want a cutoff. The model might split the difference rather than picking a stance.
+3. **Reverse-coded items.** The skill takes a stronger position against reflexive reverse-coding than many textbooks. A model run might fall back to "include them for acquiescence detection" without the empirical caveat.
+4. **EFA + CFA on same sample.** The skill labels this double-dipping; some practitioners do it routinely. The model might endorse the practice in a friendly response.
 5. **Construct definition step.** Easy to skip in a fast response. Pre-flight check: did the response mention construct definition / boundaries / dimensionality theory before diving into analysis?
 
 ## Suggested next steps

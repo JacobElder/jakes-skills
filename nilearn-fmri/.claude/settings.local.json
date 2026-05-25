@@ -7,7 +7,13 @@
       "Bash(python3 -)",
       "Bash(python3 -c \" import zipfile z = zipfile.ZipFile\\('nilearn-fmri.skill'\\) for f in sorted\\(z.namelist\\(\\)\\): if f.endswith\\('.md'\\) and 'references' in f: print\\('=====', f\\) print\\(z.read\\(f\\).decode\\('utf-8', errors='replace'\\)[:3000]\\) print\\(\\) \")",
       "Bash(grep -E \"^=====|##|###|\\\\`\\\\`\\\\`\")",
-      "Bash(python3 *)"
+      "Bash(python3 *)",
+      "Bash(python make_eval_plot.py)",
+      "Bash(zip -r nilearn-fmri.skill SKILL.md references/ scripts/ evals/ -x \"*.pyc\" -x \"*/__pycache__/*\")",
+      "Bash(unzip -l nilearn-fmri.skill)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(python -c ' *)"
     ]
   }
 }

@@ -231,3 +231,10 @@ When publishing a category-modeling result:
 - Model comparison results (relative fit) plus PPC (absolute fit).
 - Parameter and model recovery on simulated data with the same trial structure.
 - Strategy heterogeneity check — what fraction of subjects are best fit by each model?
+
+---
+
+**See also:**
+- `references/recovery.md` — parameter recovery for category models is harder than for RL; c/w trade-off in GCM must be checked before interpreting individual estimates.
+- `references/model_comparison.md` — AIC/BIC for per-subject MLE fits; LOO for Bayesian fits.
+- `references/hierarchical_stan.md` — for Bayesian GCM or SUSTAIN variants; `catlearn` R package for standard non-Bayesian fits.

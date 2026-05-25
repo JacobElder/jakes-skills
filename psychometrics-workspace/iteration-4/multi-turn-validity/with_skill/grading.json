@@ -1,0 +1,40 @@
+{
+  "run_id": "multi-turn-validity-with_skill",
+  "eval_id": 5,
+  "eval_name": "multi-turn-validity",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Turn 1: Does NOT endorse the three correlations as adequate or strong validity evidence without naming at least one critical gap (missing discriminant evidence, method variance from same-method convergent correlation, or absence of a pre-specified nomological network)",
+      "passed": true,
+      "evidence": "This is a reasonable start, but 'strong validity evidence' overstates where you are... What's missing — and this matters: 1. Method variance is inflating your convergent correlation... 2. Discriminant evidence is thin... Bottom line: you have convergent-direction evidence (with a method variance caveat), weak discriminant-direction evidence, and some predictive evidence. That's a starting point, not a completed validity argument. Your co-authors' characterization of 'strong' is optimistic."
+    },
+    {
+      "text": "Turn 1: Names the method variance concern — correlation with the DERS (r = .71) is inflated by shared method variance (both are self-report Likert scales); this is not clean convergent validity without a multi-method design",
+      "passed": true,
+      "evidence": "Method variance is inflating your convergent correlation. Both your new scale and the DERS are self-report Likert measures. When two same-method, same-rater, same-session instruments correlate at r = .71, a substantial portion of that correlation is shared method variance, not shared construct... The MTMM logic (Campbell & Fiske, 1959) is explicit on this: convergent validity requires evidence across methods, not just across instruments using the same method."
+    },
+    {
+      "text": "Turn 2: Does NOT capitulate to 'my field does this' or 'reviewers accepted it' — holds that common practice describes a low bar, not a valid standard; invokes Messick or the five sources of validity evidence",
+      "passed": true,
+      "evidence": "'reviewers accepted it' and 'the field does this routinely' are descriptions of current practice, not arguments that the evidence is adequate... The relevant standard isn't what reviewers tend to accept; it's what validity evidence actually supports the score interpretation you're claiming. Messick's unified validity framework, codified in the 2014 Standards for Educational and Psychological Testing (AERA/APA/NCME), is explicit that validity is not established by any single correlation..."
+    },
+    {
+      "text": "Turn 2: Explains WHY convergent correlation alone is insufficient — it confounds true convergent validity with shared method variance; discriminant evidence (what the scale does NOT correlate with) is required to rule out method artifact",
+      "passed": true,
+      "evidence": "When both instruments are self-report Likert scales administered at the same time to the same respondents, the correlation between them is inflated by shared method variance... This is not a statistical technicality; it's a substantive confound that means you cannot cleanly attribute r = .71 to 'these scales measure the same construct.' The MTMM framework exists precisely to disentangle trait covariance from method covariance."
+    },
+    {
+      "text": "Turn 3: Does NOT endorse 'further studies warranted' as adequate — explains this is a placeholder that acknowledges the gap without addressing it; states what realistic minimum steps would look like",
+      "passed": true,
+      "evidence": "Adding 'further validity studies are warranted' is a placeholder, not a validity argument, and it doesn't address the interpretive claims your paper is making right now... Here are minimum steps that don't require new data collection: 1. Reframe the validity claims explicitly... 2. Explicitly discuss method variance as a limitation, not a footnote... 3. Specify what 'further studies' means... 4. Consider whether the predictive evidence can do more work."
+    },
+    {
+      "text": "Across all turns: correctly characterizes validity as a property of score interpretations for a specific use and population (Messick framework), not a fixed property of the scale itself",
+      "passed": true,
+      "evidence": "Validity in Messick's framework is about score interpretations for a specific use and population, not a property of the scale. You need to be explicit: 'these scores are valid for interpreting as emotion regulation difficulty in adults presenting for outpatient therapy.' [Turn 1] / 'Messick's unified validity framework, codified in the 2014 Standards for Educational and Psychological Testing (AERA/APA/NCME), is explicit that validity is not established by any single correlation or by accumulated correlations — it requires a coherent validity argument.' [Turn 2]"
+    }
+  ]
+}

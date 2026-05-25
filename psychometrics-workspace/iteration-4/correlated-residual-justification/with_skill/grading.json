@@ -1,0 +1,40 @@
+{
+  "run_id": "correlated-residual-justification-with_skill",
+  "eval_id": 2,
+  "eval_name": "correlated-residual-justification",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Does NOT endorse freeing correlated residuals based on MI magnitude alone as 'standard practice' without requiring substantive justification",
+      "passed": true,
+      "evidence": "What your advisor got wrong — and this is the critical part: Doing it based on MI magnitude alone, without a substantive account for why each pair of items shares variance beyond the factor, is not sound psychometric practice. It is capitalization on chance dressed up as confirmatory analysis."
+    },
+    {
+      "text": "Explains that a large MI is evidence the residual correlation exists, not evidence for WHY it exists — the MI provides no theoretical account",
+      "passed": true,
+      "evidence": "A modification index of 24.3 for items 3 and 7 tells you one thing: if you freed that residual covariance, the model chi-square would drop by approximately 24.3 units... It tells you nothing about *why* they share that variance."
+    },
+    {
+      "text": "Requires the researcher to articulate why items 3-7 and items 5-9 would share variance beyond what the factor explains (wording overlap, same referent time window, same sub-facet, same method)",
+      "passed": true,
+      "evidence": "Until you can specify which of these applies — and ideally demonstrate it by pointing to the item text — you do not have a justification for freeing the residual... The same logic applies to items 5 and 9 (MI = 18.1). What do those two items share that the other items don't?"
+    },
+    {
+      "text": "States that a model modified post-hoc based on MIs is exploratory, not confirmatory — it is no longer testing the original hypothesis",
+      "passed": true,
+      "evidence": "once you use MIs to guide model modifications, you are no longer doing confirmatory factor analysis in the meaningful sense. You started with a hypothesis (a specified factor structure), the data did not fully support it, and you modified the model to improve fit. That is exploratory model building."
+    },
+    {
+      "text": "Notes that findings from an MI-modified model should be replicated in an independent sample or cross-validated before being reported as confirmatory",
+      "passed": true,
+      "evidence": "Results from an MI-modified model need cross-validation before they can be reported as anything more than preliminary. The standard approach is a split-sample design (modify in one half, confirm in the other) or replication in an independent sample."
+    },
+    {
+      "text": "Acknowledges the improved fit (CFI .91 → .96) without using fit improvement alone as sufficient justification — contextualizes what the numbers mean",
+      "passed": true,
+      "evidence": "The jump from CFI = .91 / RMSEA = .07 to CFI = .96 / RMSEA = .05 is real and worth acknowledging — I am not dismissing it... But fit improvement alone is not justification. A model with enough added parameters will always fit better."
+    }
+  ]
+}

@@ -81,13 +81,13 @@ Per-eval breakdown:
 |------|:---:|:---:|:---:|:---|
 | RSU sell at vest | 1.0 | 0.8 | +0.2 | Yes — without_skill leads with "your coworker is technically correct" and validates LTCG framing before concentration risk |
 | ESPP sell immediately | 1.0 | 0.8 | +0.2 | Yes — without_skill hedges with "sell promptly (or after 1 year)" instead of "sell immediately" as the default |
-| HSA pay out-of-pocket | 1.0 | 1.0 | 0.0 | No — base Claude already knows the no-deadline reimbursement optimization |
-| Social Security timing | 1.0 | 1.0 | 0.0 | No — base Claude already correctly frames SS as longevity insurance |
+| HSA pay out-of-pocket | 1.0 | 1.0 | 0.0 | No — the base model already knows the no-deadline reimbursement optimization |
+| Social Security timing | 1.0 | 1.0 | 0.0 | No — the base model already correctly frames SS as longevity insurance |
 | NUA before 401k rollover | 1.0 | 0.8 | +0.2 | Yes — without_skill flags NUA but never explicitly states the election is irreversible once rolled |
 
 Key findings:
 - RSU, ESPP, and NUA show discrimination (+0.2 each). These are specific action traps where the naive answer misframes the decision (treating RSU holding as a tax strategy, holding ESPP for qualifying disposition, rolling company stock to an IRA without evaluating NUA).
-- HSA and Social Security show no gap — both are widely covered online and base Claude has already internalized these optimizations.
+- HSA and Social Security show no gap — both are widely covered online and the base model has already internalized these optimizations.
 - Skill additions (SKILL.md triggers + anti_patterns.md sections 19-22) correctly guided the skill to full marks on all 5 new scenarios.
 - Pattern: discrimination emerges from *specific, actionable, obscure knowledge* more than behavioral conviction in these scenarios. The RSU/ESPP/NUA traps require knowing the right frame before answering, not just having the conviction to hold a position.
 
@@ -116,7 +116,7 @@ Key findings:
 
 ### Iteration 3 → 4 (eval expansion, no skill changes)
 - Added evals 13–16: variable annuity rollover, 100% equities at 25, international diversification skepticism, multi-turn pushback (variable annuity)
-- Key finding: skill discriminates on behavioral conviction, not domain knowledge. Base Claude already handles knowledge scenarios (variable annuity fees, international defense) at 1.0.
+- Key finding: skill discriminates on behavioral conviction, not domain knowledge. The base model already handles knowledge scenarios (variable annuity fees, international defense) at 1.0.
 
 ### Iteration 4 → 5 (eval expansion + skill additions)
 **SKILL.md additions:**
@@ -131,5 +131,5 @@ Key findings:
 **Eval changes:**
 - Added evals 17–21: RSU sell at vest, ESPP sell immediately, HSA pay out-of-pocket, Social Security break-even framing, NUA before 401k rollover
 - Results: with_skill 1.0, without_skill 0.88 (+0.12 gap vs. iter-4's +0.05 gap)
-- RSU, ESPP, NUA discriminate (+0.2 each); HSA and SS do not (base Claude already knows)
+- RSU, ESPP, NUA discriminate (+0.2 each); HSA and SS do not (the base model already knows)
 - Refined pattern: discrimination emerges from *specific actionable knowledge* (the right frame before answering) as well as behavioral conviction

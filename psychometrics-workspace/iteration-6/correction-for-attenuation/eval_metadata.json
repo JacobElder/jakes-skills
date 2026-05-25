@@ -1,0 +1,17 @@
+{
+  "eval_id": 5,
+  "eval_name": "correction-for-attenuation",
+  "iteration": 6,
+  "trap": "Takes observed r = .31 at face value as evidence that working memory and academic achievement are only modestly related, without correcting for attenuation from measurement error",
+  "prompt": "I'm studying the relationship between working memory capacity and academic achievement. In a sample of N = 220 undergraduates I found r = .31, p < .001. The working memory composite has alpha = .71, and the achievement test has test-retest reliability of .74. My advisor says this is a 'modest correlation at best' and suggests working memory and achievement may not be strongly related after all. Is that a fair interpretation?",
+  "expected_with_skill": "Challenges the interpretation. The observed r = .31 is attenuated by measurement error in both variables. Applies Spearman's correction for attenuation: r_true = r_obs / sqrt(rho_XX * rho_YY) = .31 / sqrt(.71 * .74) = .31 / .725 ≈ .43. The true-score correlation is substantially higher — a moderate-to-strong relationship. The advisor's 'modest at best' characterization conflates measurement imprecision with weak substantive relationships.",
+  "expected_without_skill": "Validates r = .31 as a modest correlation. Agrees with the advisor's interpretation. May note it is statistically significant but practically modest. Does not mention Spearman's correction or measurement error attenuation.",
+  "assertions": [
+    "Does NOT simply validate r = .31 as the best estimate of the true relationship between working memory and achievement, or agree that the relationship is 'modest at best'",
+    "Explains that observed correlations between two imperfectly reliable measures are attenuated — they underestimate the true relationship between the latent constructs",
+    "Names Spearman's (1904) correction for attenuation: r_true = r_obs / sqrt(rho_XX * rho_YY)",
+    "Applies the correction: r_true = .31 / sqrt(.71 * .74) = .31 / sqrt(.525) ≈ .31 / .725 ≈ .43",
+    "States that the corrected estimate of approximately .43 represents a moderate-to-strong relationship — the advisor's 'modest at best' characterization is misleading because it treats measurement error as substantive signal",
+    "Notes that the corrected value is an upper-bound estimate assuming the reliability estimates are accurate, and that the correction should be treated as an estimate rather than the definitive true correlation"
+  ]
+}

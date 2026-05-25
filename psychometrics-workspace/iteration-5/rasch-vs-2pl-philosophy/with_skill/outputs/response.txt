@@ -1,0 +1,67 @@
+Your professor isn't being stubborn — she's defending a substantive position, and the LRT doesn't actually win the argument you think it does. Let me explain why.
+
+---
+
+## Rasch vs. 2PL is a measurement philosophy, not a fit competition
+
+The core issue is that these two models come from fundamentally different traditions with different commitments about what measurement is for.
+
+**The Rasch/Andrich tradition** treats the Rasch model as a measurement target. Equal discrimination across items isn't just a statistical convenience — it's the precondition for *specific objectivity*: the property that person parameters (reading ability estimates) are invariant across which subset of items you use, and item parameters are invariant across which subsample of persons you draw. This is what allows you to say "this student scored at θ = 0.8 on reading comprehension" in a way that generalizes — that score doesn't depend on which 15 of your 30 items happened to be administered, or which mix of high- and low-ability readers your calibration sample included.
+
+**The Birnbaum/Lord tradition** takes the opposite stance: items empirically vary in discrimination, we should model that, and constraining all discriminations to be equal is a mis-specification we should correct for.
+
+Both are coherent. The LRT and AIC tell you which tradition your data are more consistent with — they do not tell you which tradition is *right* for your purpose.
+
+---
+
+## What your LRT result actually means
+
+Delta-chi-sq = 87.4, df = 29, p < .001 means that releasing the discrimination parameters (going from Rasch to 2PL) significantly improved model fit. In plain language: **your 30 items do not all discriminate equally well**. Some items are doing more of the work separating high from low readers than others.
+
+That is a finding about your items, not a verdict on your measurement model.
+
+---
+
+## The Rasch response to this finding
+
+A committed Rasch analyst would ask: *which items are misfitting, and why?*
+
+Item fit statistics (infit/outfit mean-squares in `eRm`, or item-level S-chi-sq in `mirt`) will tell you which specific items have discriminations that deviate enough to cause problems. The Rasch response is not "switch models" — it's "investigate and revise." Items with very low discrimination may be poorly written, ambiguous, or measuring a tangential sub-skill. Items with very high discrimination might be duplicating each other or capitalizing on incidental features. Both are candidates for revision or removal.
+
+This is actually the more principled move for a reading comprehension test you're developing: if the goal is a test where item performance generalizes across test forms and populations (important for any assessment that will be used comparatively), you want items that all contribute roughly equally to the construct. Misfitting items are signal for improving the instrument.
+
+---
+
+## What accepting 2PL actually commits you to
+
+Switching to 2PL means accepting variable item weights in measuring the construct. An item with discrimination a = 2.1 is weighted roughly twice as heavily in producing theta estimates as an item with a = 1.0. This has real consequences:
+
+1. **Score generalizability is reduced.** If you swap out high-discrimination items for similar-content replacements in a future form, your theta scale shifts unless you re-equate carefully. Rasch scores are more portable across item substitutions.
+
+2. **Subtest and total score interpretability changes.** In Rasch, every correct answer adds the same amount of information (after adjusting for difficulty). In 2PL, getting a hard but high-discrimination item right tells you more about the respondent than getting an easy low-discrimination item right. This isn't necessarily wrong — it may better reflect reality — but it's a different kind of score.
+
+3. **Specific objectivity is lost.** If you want to compare two students who took partially overlapping item sets (a common situation in adaptive or matrix-sampled designs), Rasch gives you this cleanly. 2PL requires more careful equating.
+
+---
+
+## Where the genuine debate sits
+
+This isn't a case where one side is obviously right. The Rasch position is defensible and your professor is not wrong to prefer it. The Birnbaum position is also defensible, and for some purposes (maximizing precision at a cutpoint, building a CAT item bank where item quality varies widely) the 2PL is clearly better suited.
+
+The right question for your reading comprehension test is: **what are the scores going to be used for?**
+
+- If this is a classroom assessment where test forms will vary across years and you want student scores to be comparable without full equating, Rasch is attractive.
+- If this is a one-time assessment being used to rank-order students and you don't need cross-form generalizability, 2PL may be fine.
+- If you're building an item bank for CAT or adaptive testing, you may want to keep Rasch as the measurement target precisely because it supports the linking you'll need.
+
+---
+
+## The practical move
+
+Before deciding, I'd do two things:
+
+1. **Run item fit for the Rasch model** (`eRm::RSM()` or `mirt(data, 1, itemtype = "Rasch")`; then `itemfit()`). Find which items are driving the misfit. If it's 3–4 items with unusual discrimination, revise those items and refit. If the misfit is spread across 20 of 30 items, you have a real problem with the Rasch assumption and 2PL becomes a stronger case.
+
+2. **Look at the actual discrimination range in the 2PL solution.** If discriminations range from a = 0.8 to a = 2.5, that's substantial heterogeneity and switching has real implications. If they range from 0.9 to 1.4, the practical difference between Rasch and 2PL is small and sticking with Rasch on philosophical grounds is very defensible.
+
+The LRT says the data are inconsistent with equal discriminations. It does not say "abandon Rasch." Your professor is not being sentimental — she's defending a measurement commitment that your LRT result has interrogated but not refuted.

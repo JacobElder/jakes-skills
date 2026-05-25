@@ -1,0 +1,53 @@
+Before interpreting those fit indices and loadings, there's a more fundamental question you need to answer: are income, education, and occupational prestige reflective indicators of SES, or formative ones? The answer determines whether running a CFA was the right move at all — and it almost certainly changes how you read these results.
+
+---
+
+## Reflective vs. Formative: the core distinction
+
+A **reflective model** says a latent variable causes the observed indicators. Think of depression causing low mood, poor sleep, and loss of appetite — those symptoms covary because they share a latent cause, and removing one symptom doesn't change the underlying construct. CFA, alpha, and omega all assume this structure. For this model to be appropriate, if latent SES goes up, income, education, and occupational prestige should all tend to go up together — because the latent cause is driving them.
+
+A **formative model** says the indicators *define or constitute* the construct — there's no separate latent cause sitting upstream and pushing all three measures. Instead, you sum or combine them to operationalize the concept. SES is the canonical textbook example of a formative construct. Income, education, and occupational prestige are components that together constitute someone's socioeconomic position; the construct doesn't exist independently of those components in the way that depression exists independently of any single symptom.
+
+---
+
+## The diagnostic question
+
+Here's the test: if someone's education level increases by four years, does their household income necessarily change? Does their occupational prestige necessarily change? The answer is: not necessarily. Someone can get an advanced degree and remain in a poorly paid field. Income can rise through investments with no change in education or occupational prestige. These three indicators are not constrained to covary because they're caused by the same underlying thing — they can move independently.
+
+That's the hallmark of a formative composite, not a reflective one. The indicators combine to constitute SES; they are not symptoms or manifestations of it.
+
+---
+
+## What this means for your CFA results
+
+Running a reflective CFA on formative indicators is a model misspecification. The model does not test whether SES is "real" — it only tests whether the three indicators covary sufficiently. That's a much weaker claim, and arguably the wrong claim.
+
+On this reading, your results reframe substantially:
+
+**Loadings of .47, .61, and .53 are not a problem.** For a reflective scale, moderate loadings suggest items are measuring the latent construct imprecisely or with substantial unique variance. But for a formative composite, the indicators are *supposed* to be heterogeneous — income, education, and occupational prestige are conceptually distinct components that don't need to correlate tightly to be valid components of SES. Low-to-moderate inter-indicator correlations are expected and correct. Trying to improve those loadings by revising your measures (e.g., dropping income because it loads lowest) would mean omitting a central component of the construct, which is the opposite of good measurement practice.
+
+**CFI = .94 and RMSEA = .06** describe how well a one-factor reflective model fits the covariance structure among three indicators. With only three indicators, a single-factor model is just-identified (df = 0) or near-identified, so fit indices can look decent by default. This doesn't validate the reflective structure; it just means the three indicators correlate with each other, which is consistent with either a reflective or a formative structure.
+
+**Omega = .71** is a reliability estimate for a reflective factor score. If the construct is formative, omega is the wrong statistic. Internal consistency is not the appropriate evidence for a formative composite — it's appropriate for a reflective scale where all items are measuring the same latent thing. For SES as formative, the question isn't "how consistently do these indicators covary?" but "do these components jointly and completely define the construct?"
+
+---
+
+## What evidence IS appropriate for a formative SES composite
+
+If you conclude (as the literature largely supports) that SES is formative, here's what you should be presenting instead:
+
+1. **Content coverage**: Do income, education, and occupational prestige together adequately represent the socioeconomic domain? This is a conceptual and theoretical argument, not a statistical one. Is there an important component you've omitted (e.g., wealth/assets, neighborhood resources)?
+
+2. **Absence of multicollinearity**: Unlike reflective models where item correlation is desirable, in a formative model you want the indicators to be distinct. Check that they aren't so highly intercorrelated that they're redundant components.
+
+3. **External validity**: Do weighted composites of these three indicators predict relevant outcomes (educational attainment of children, health disparities, voting behavior, occupational mobility)? This is the right validity question for a formative composite — criterion-related evidence, not internal structure evidence.
+
+4. **Weights if needed**: If you want a weighted composite rather than an unweighted sum, derive weights from a regression-based or PLS (partial least squares) approach rather than factor loadings from a reflective CFA.
+
+---
+
+## Bottom line
+
+The CFA you ran does not provide adequate evidence of a valid latent SES construct, but not because of the loadings or fit — those are in a defensible range. The problem is that the reflective CFA is likely the wrong model for SES. The more defensible interpretation of SES in the measurement literature (Edwards & Bagozzi, 2000; Bollen & Bauldry, 2011) treats it as a formative composite. If you proceed with a reflective CFA, you need to make an explicit theoretical argument for why a latent variable causes income, education, and occupational prestige to covary — and that argument is harder to make than it might seem.
+
+The practical fix: use a weighted or unweighted composite, document the content coverage of your three components, and validate against external criteria. Don't interpret omega and CFA loadings as your primary validity evidence for this construct.

@@ -301,3 +301,50 @@ printFit(fit, ic = "looic")
 ```
 
 If hBayesDM does what you need, use it. Saves a day's work and avoids Stan-bug-creation.
+
+## Simulation-based inference (SBI) — when the likelihood is intractable
+
+Some cognitive models don't have a tractable likelihood — complex accumulator variants (LCA, collapsing-bound DDM), joint neural-behavioral models, or anything requiring simulation to generate predictions. For these, simulation-based inference (SBI) is the modern answer.
+
+**Two main tools:**
+
+`sbi` (Python — Tejero-Cantero et al. 2020, `mackelab/sbi`):
+
+```python
+from sbi import inference as sbi_inference
+from sbi.utils import posterior_nn
+
+# Define prior and simulator
+prior = sbi_inference.prepare_for_sbi(prior, simulator)
+inference = sbi_inference.SNPE(prior=prior)
+
+theta, x = sbi_inference.simulate_for_sbi(simulator, prior, num_simulations=10_000)
+density_estimator = inference.append_simulations(theta, x).train()
+posterior = inference.build_posterior(density_estimator)
+
+# Condition on observed summary statistics
+x_obs = compute_summary_stats(real_data)
+samples = posterior.sample((10_000,), x=x_obs)
+```
+
+`BayesFlow` (Python — Radev et al. 2020, `stefanradev93/BayesFlow`): amortized inference via normalizing flows trained on simulated data. Faster at inference time once trained; useful when fitting many subjects.
+
+**When to reach for SBI:**
+- The likelihood is analytically unavailable and simulation is fast.
+- You have a complex accumulator model (LCA, Usher-McClelland, collapsing bounds) where HDDM's closed-form DDM doesn't fit.
+- You want posterior approximation for a mechanistic model with no convenient sufficient statistics.
+
+**When NOT to reach for SBI:**
+- The model has a tractable likelihood — Stan/PyMC will be more accurate and easier to debug.
+- You only have a handful of subjects — amortized inference requires many simulated datasets.
+- You're still validating the model — SBI is harder to debug than explicit likelihoods.
+
+SBI is becoming standard for complex accumulator models and joint behavioral-neural fits, but it's less battle-tested than Stan for the standard RL/DDM/PT cases. Verify against Stan on a subset before trusting an SBI posterior for a publication.
+
+---
+
+**See also:**
+- `references/recovery.md` — non-centered parameterization often improves recovery; hierarchical Bayes improves individual recovery vs MLE.
+- `references/model_comparison.md` — `log_lik` in `generated quantities` to enable LOO/WAIC.
+- `references/drift_diffusion.md` — HDDM for standard DDM; Stan `wiener_lpdf` for custom DDM.
+- `references/reinforcement_learning.md` — RL Stan template cross-reference.

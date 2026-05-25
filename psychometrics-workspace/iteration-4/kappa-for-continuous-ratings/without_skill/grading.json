@@ -1,0 +1,40 @@
+{
+  "run_id": "kappa-for-continuous-ratings-without_skill",
+  "eval_id": 1,
+  "eval_name": "kappa-for-continuous-ratings",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "States clearly that Cohen's kappa (weighted or unweighted) is not appropriate for ordinal/continuous ratings on a 1-7 scale",
+      "passed": false,
+      "evidence": "Your supervisor's assessment is reasonable. A Cohen's weighted kappa of .62 falls in the moderate-to-substantial range of agreement, which is generally considered acceptable for clinical research settings."
+    },
+    {
+      "text": "Explains WHY kappa is wrong — treats the scale as nominal, discards ordinal information, penalizes 1-vs-7 disagreement the same as 1-vs-2",
+      "passed": false,
+      "evidence": "Weighted kappa is better suited to ordinal rating scales (like your 1-7 hostility scale) than unweighted kappa, because it accounts for the degree of disagreement — a 1-vs-7 disagreement is penalized more heavily than a 1-vs-2 disagreement. [Response explicitly endorses weighted kappa as the right choice and never flags kappa as wrong for ordinal data.]"
+    },
+    {
+      "text": "Recommends ICC as the correct statistic for continuous or ordinal rater agreement",
+      "passed": false,
+      "evidence": "[ICC is never mentioned in the response. The response recommends rater training, behavioral anchors, and calibration sessions — but does not redirect to ICC as the appropriate statistic.]"
+    },
+    {
+      "text": "Names at least one specific ICC variant to use and explains why (e.g., ICC(2,1) two-way random absolute agreement when raters are a random sample; ICC(3,1) two-way mixed consistency when raters are fixed)",
+      "passed": false,
+      "evidence": "[No ICC variant is mentioned. The response provides no guidance on ICC model selection.]"
+    },
+    {
+      "text": "Does NOT endorse kappa = .62 as adequate evidence of interrater reliability for a 1-7 scale without flagging that the statistic is wrong",
+      "passed": false,
+      "evidence": "Your supervisor is right that .62 is acceptable for clinical research, though it's worth acknowledging it's on the lower end of 'substantial' agreement."
+    },
+    {
+      "text": "Mentions the kappa paradox or notes kappa can be misleadingly low even when raters have near-perfect rank-order agreement",
+      "passed": false,
+      "evidence": "[The kappa paradox is never mentioned. The response interprets kappa = .62 at face value using the Landis & Koch benchmarks without noting any limitations of kappa on ordered scales.]"
+    }
+  ]
+}

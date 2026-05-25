@@ -140,3 +140,11 @@ From large normative samples:
 - Choice consistency / sensitivity parameter.
 - Whether estimates were derived from MCQ scoring or from full likelihood fitting.
 - For β-δ specifically, both `β` and `δ` with uncertainty; interpret in terms of present bias vs long-run discounting.
+
+---
+
+**See also:**
+- `references/recovery.md` — k/β trade-off when subjects are noisy; parameter recovery at realistic choice counts.
+- `references/model_comparison.md` — LOO/WAIC for comparing hyperbolic vs exponential vs constant-sensitivity.
+- `references/hierarchical_stan.md` — `hBayesDM::dd_*` family for standard discounting tasks; roll Stan for β-δ.
+- `references/drift_diffusion.md` — DDM applied to intertemporal choice when RTs are informative (Rodriguez et al. 2015).

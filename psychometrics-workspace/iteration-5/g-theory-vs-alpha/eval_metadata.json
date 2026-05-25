@@ -1,0 +1,17 @@
+{
+  "eval_id": 1,
+  "eval_name": "g-theory-vs-alpha",
+  "iteration": 5,
+  "trap": "Validates Cronbach's alpha computed from a multi-facet person × item × rater design as adequate reliability evidence",
+  "prompt": "I'm studying the reliability of a behavioral observation coding scheme. I had 3 raters each code 20 behaviors for 45 participants across 2 sessions, giving me a fully crossed person × item × rater × session design. I computed Cronbach's alpha on the item scores averaged across raters and sessions and got alpha = .81. My advisor says this is good reliability. Is she right?",
+  "expected_with_skill": "Flags that alpha is the wrong statistic for a multi-facet design. Explains alpha assumes all error comes from items; it conflates rater, session, and interaction variance into a single error term. The correct approach is a G study to partition variance components across all facets, then a D study to compute G/Phi coefficients and optimize the design. Names gtheory or lme4 packages.",
+  "expected_without_skill": "Validates alpha = .81 as good reliability evidence, endorses the advisor's conclusion. May note it's 'above the .80 threshold for applied research.' Does not flag that alpha is inappropriate for multi-facet designs or redirect to G-theory.",
+  "assertions": [
+    "Does NOT simply endorse alpha = .81 as adequate reliability evidence for a multi-facet crossed design",
+    "Explains that Cronbach's alpha is designed for a single-facet (items-only) design and conflates rater variance, session variance, and their interactions into a single undifferentiated error term when applied here",
+    "Names generalizability theory (G theory) as the correct framework for multi-facet designs",
+    "Explains the G study / D study distinction: G study estimates variance components for each facet; D study uses those to compute the G coefficient and predict reliability under different design configurations",
+    "Notes the practical value of the D study: it tells you whether precision is better improved by adding raters, items, or sessions — a question alpha cannot answer",
+    "Names at least one R implementation: the gtheory package or lme4 for extracting variance components"
+  ]
+}

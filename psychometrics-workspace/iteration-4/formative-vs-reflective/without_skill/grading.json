@@ -1,0 +1,40 @@
+{
+  "run_id": "formative-vs-reflective-without_skill",
+  "eval_id": 3,
+  "eval_name": "formative-vs-reflective",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Does NOT simply validate the CFA results as evidence of a valid latent SES construct without raising the model specification question",
+      "passed": false,
+      "evidence": "Taken together, your CFA results provide reasonable evidence supporting the interpretation of a latent SES construct. The factor loadings are moderate but acceptable, the model fit meets common applied standards, and omega is in the adequate range."
+    },
+    {
+      "text": "Raises the formative vs. reflective question — asks whether SES indicators are caused by a latent variable or whether they define/constitute SES",
+      "passed": false,
+      "evidence": "The response never raises the formative vs. reflective distinction. It treats the CFA specification as given and proceeds to interpret the fit statistics at face value."
+    },
+    {
+      "text": "Explains the core reflective vs. formative distinction: reflective = latent cause produces item covariance; formative = indicators combine to define the construct, no common cause required",
+      "passed": false,
+      "evidence": "No mention of formative vs. reflective models anywhere in the response. The response assumes reflective measurement throughout without examination."
+    },
+    {
+      "text": "Notes that moderate loadings (.47-.61) on income, education, and occupation may be correct for a formative composite — they are not necessarily a measurement problem to fix",
+      "passed": false,
+      "evidence": "Your loadings fall in the moderate range. While they're not as high as you might hope — the conventional benchmark is ≥ .70 for a 'strong' indicator — loadings in the .40–.65 range are commonly encountered in social science constructs... Income's loading of .47 is the weakest and suggests it captures somewhat more unique variance, but it's still acceptable for inclusion."
+    },
+    {
+      "text": "Applies or implies the diagnostic: if one indicator changes (e.g., education increases), do the others necessarily change? If not, the reflective model may be a misspecification",
+      "passed": false,
+      "evidence": "No diagnostic question is raised. The response never prompts the researcher to consider whether the indicators are causally downstream of a latent variable or whether they independently define SES."
+    },
+    {
+      "text": "States what evidence IS appropriate for a formative composite (content coverage of the domain, external validity with outcomes) versus what is not appropriate (factor loadings and internal consistency as primary validity evidence)",
+      "passed": false,
+      "evidence": "Consider whether a fourth indicator (assets, wealth, neighborhood SES) could strengthen the construct coverage and bring omega above .80... To strengthen validity evidence, examine how your latent SES factor correlates with expected outcomes — the response recommends expanding the reflective CFA model rather than reconsidering the measurement framework."
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+Based on your results, the data clearly support switching to the 2PL model. Here's why:
+
+## The statistics make a strong case for 2PL
+
+Your likelihood ratio test is highly compelling: delta-chi-sq = 87.4 with 29 degrees of freedom (p < .001) is not a marginal result — it's a decisive rejection of the Rasch model's constraint that all items have equal discrimination. The AIC difference of 31 points in favor of 2PL reinforces this. As a general guideline, AIC differences greater than 10 are considered strong evidence for the better-fitting model.
+
+The Rasch model imposes a restriction — equal item discrimination — and your test strongly rejects that restriction. When nested model comparisons and information criteria both point in the same direction, that's about as clear a signal as you get in IRT.
+
+## What this means practically
+
+The 2PL model fits better because your items genuinely differ in how well they distinguish high-ability from low-ability readers. Some items are steeper (more discriminating) and some are flatter. Forcing them all to have the same slope, as Rasch does, distorts your ability estimates. You'll get more accurate theta estimates for your students under 2PL because the model actually represents what your items are doing.
+
+## On your professor's preference
+
+Your professor's attachment to Rasch may reflect historical convention in some psychometric traditions — the Rasch model has a dedicated following, particularly in educational measurement circles in Europe and Australia. But from a model fit standpoint, you have clear evidence that the 2PL is the better description of your data.
+
+The principle of "letting the data guide model selection" is well-established in statistics. When you have a formal hypothesis test — which is exactly what the LRT provides — you use it. The LRT is the principled statistical tool for comparing nested IRT models, and it has spoken unambiguously here.
+
+## Practical steps for switching
+
+1. Fit the 2PL in `mirt`: `fit_2pl <- mirt(data, 1, itemtype = "2PL")`
+2. Inspect item parameters — flag items with very low discrimination (a < 0.5) as potentially weak items worth reviewing
+3. Plot the test information function: `plot(fit_2pl, type = "info")` to see where your test is most precise
+4. Use EAP scoring: `fscores(fit_2pl, method = "EAP")`
+
+The 2PL gives you a richer representation of your items, better fit, and more accurate ability estimates. The evidence strongly supports making the switch.

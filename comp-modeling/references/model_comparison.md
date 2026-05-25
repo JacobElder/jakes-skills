@@ -166,3 +166,10 @@ For MLE fits:
 - Same PPC and recovery caveats apply.
 
 A bare "we used AIC and model X won" is not a model comparison — it's a citation of having done one.
+
+---
+
+**See also:**
+- `references/recovery.md` — model recovery (confusion matrix) is as important as the comparison criterion; always run it.
+- `references/hierarchical_stan.md` — `log_lik` generated quantities in Stan for LOO/WAIC; `loo` R package and `arviz` Python patterns.
+- Model-family references for PPC guidance: `reinforcement_learning.md`, `drift_diffusion.md`, etc.
