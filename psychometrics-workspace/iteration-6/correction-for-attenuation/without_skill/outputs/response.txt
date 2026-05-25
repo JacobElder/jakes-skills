@@ -1,0 +1,23 @@
+Your advisor's characterization is reasonable. An r = .31 is conventionally described as a small-to-modest correlation, and it's worth unpacking what that means for your study.
+
+**What r = .31 tells you**
+
+By Cohen's (1988) benchmarks — r = .10 small, r = .30 medium, r = .50 large — your correlation sits at the lower end of the "medium" range, which is consistent with your advisor calling it "modest at best." In terms of explained variance, r² = .31² ≈ .096, meaning working memory scores account for roughly 9.6% of the variance in academic achievement. That leaves 90% of the variance explained by other factors — study habits, prior knowledge, motivation, socioeconomic background, test-taking skills, and so on.
+
+**The statistical significance piece**
+
+The p < .001 result at N = 220 tells you the correlation is reliably different from zero — you're not looking at a chance finding. But statistical significance and practical significance are different things. With N = 220, you have enough power to detect even small correlations reliably. The fact that a correlation is significant doesn't mean it's large or practically important.
+
+**Putting r = .31 in context**
+
+Working memory is generally considered an important cognitive predictor of academic performance, and correlations in the .20–.40 range are typical in the literature for this relationship (Daneman & Carpenter, 1980; Gathercole et al., 2008). So your r = .31 is in the expected range — not surprising, but not pointing to a uniquely strong connection either.
+
+Your advisor's suggestion that the two may "not be strongly related" is perhaps slightly overstated — a moderate correlation does indicate a real relationship — but the practical implication is fair: working memory alone is not a powerful predictor of academic achievement, and any intervention or assessment model relying primarily on working memory capacity would explain relatively little variance in outcomes.
+
+**Recommendations**
+
+1. Report both the r value and r² so readers can interpret effect size in terms of explained variance.
+2. Consider whether there are moderating variables (e.g., academic domain, task demands) that might strengthen or attenuate the relationship in subgroups.
+3. If you are building a predictive model, working memory would likely need to be combined with other predictors (executive function measures, prior GPA, domain knowledge) to achieve meaningful predictive accuracy.
+
+Overall, r = .31 is a meaningful and statistically robust finding, but your advisor is right that "modest" is a fair description of its magnitude.

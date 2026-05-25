@@ -1,0 +1,40 @@
+{
+  "run_id": "difference-score-reliability-with_skill",
+  "eval_id": 2,
+  "eval_name": "difference-score-reliability",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Does NOT simply validate the colleague's claim that alpha = .83 at both time points means the change score is reliable",
+      "passed": true,
+      "evidence": "\"Your colleague is wrong, and this is one of the most consequential measurement mistakes in intervention research.\""
+    },
+    {
+      "text": "Explains that difference score reliability depends on both the component reliabilities AND the pre-post correlation — it is not simply inherited from the components",
+      "passed": true,
+      "evidence": "\"The variable that does all the damage is r_xy — the pre-post correlation... reliability of that difference is *not* the reliability of either component score. It follows a specific formula: ρ(X−Y) = (ρ_x·σ²_x + ρ_y·σ²_y − 2r_xy·σ_x·σ_y) / (σ²_x + σ²_y − 2r_xy·σ_x·σ_y)\""
+    },
+    {
+      "text": "States the direction of the effect: as the pre-post correlation rises (which it typically does in intervention studies), difference score reliability falls — often dramatically",
+      "passed": true,
+      "evidence": "\"As r_xy rises, the denominator of the formula shrinks dramatically while the numerator remains roughly constant, collapsing the reliability of the difference.\""
+    },
+    {
+      "text": "Provides a concrete illustration: with alpha = .83 and a typical pre-post correlation of, say, r = .70, change score reliability falls to roughly .43 — well below acceptable thresholds",
+      "passed": true,
+      "evidence": "\"ρ(diff) ≈ (.83 − .70) / (1 − .70) = .13 / .30 ≈ 0.43 ... Your DV — the quantity you are actually using in your analysis — has reliability of approximately .43, which is well below the .70 threshold\""
+    },
+    {
+      "text": "Names at least one preferred alternative: ANCOVA on post-scores (controls for baseline without subtracting it) or latent change score model in SEM",
+      "passed": true,
+      "evidence": "\"ANCOVA on post-scores (recommended first option)... Latent change score model in SEM (recommended if you want to model change explicitly).\""
+    },
+    {
+      "text": "Does not simply tell the researcher to abandon change scores without explaining why and offering a concrete path forward",
+      "passed": true,
+      "evidence": "Response provides the difference-score reliability formula with worked example, then offers two specific alternatives (ANCOVA and latent change score model) with implementation guidance and a citation to Cronbach & Furby (1970)."
+    }
+  ]
+}

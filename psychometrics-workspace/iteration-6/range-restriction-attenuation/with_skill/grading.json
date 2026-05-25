@@ -1,0 +1,40 @@
+{
+  "run_id": "range-restriction-attenuation-with_skill",
+  "eval_id": 4,
+  "eval_name": "range-restriction-attenuation",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Does NOT simply validate r = .19 as evidence of poor criterion validity without raising the range restriction concern",
+      "passed": true,
+      "evidence": "Your HR director's conclusion is premature, and the reason is a classic validity study design problem: range restriction."
+    },
+    {
+      "text": "Identifies that the sample is range-restricted: current employees are a subset of the full applicant pool, selected on ability (via prior screening) and retained (via performance), causing restriction on both the predictor and criterion",
+      "passed": true,
+      "evidence": "That sample is restricted in two ways: 1. Predictor restriction: Employees were already screened using (presumably) some ability-related criteria during hiring... 2. Criterion restriction: Employees who performed poorly were likely managed out or left voluntarily over time."
+    },
+    {
+      "text": "Explains that range restriction attenuates the observed correlation — the true validity coefficient in the full applicant population is higher than r = .19",
+      "passed": true,
+      "evidence": "Both forces narrow the variance in both the predictor (cognitive ability scores) and the criterion (supervisor ratings). And when variance is compressed in either variable, the observed correlation shrinks — even if the underlying relationship is strong. This is the attenuation effect of range restriction. Your r = .19 is almost certainly understating the true validity of this test against the full applicant distribution."
+    },
+    {
+      "text": "Names Thorndike's (1949) correction for range restriction as the appropriate method to estimate the unattenuated coefficient",
+      "passed": true,
+      "evidence": "The standard remedy is Thorndike's correction for range restriction (his Case 2, direct restriction on the predictor): r_corrected = r_obs · (SD_u / SD_r) / √(1 − r²_obs + r²_obs · (SD_u / SD_r)²)"
+    },
+    {
+      "text": "States that dropping the test based on a range-restricted criterion validity estimate would be premature — cognitive ability tests typically show substantially higher validity coefficients in unrestricted samples",
+      "passed": true,
+      "evidence": "Do not drop the test based on this coefficient alone. The r = .19 estimate has a known downward bias whose magnitude you haven't yet quantified... Dropping a cognitively predictive test based on an attenuated coefficient from an incumbent sample is a common and costly mistake in applied selection."
+    },
+    {
+      "text": "Notes what information is needed to apply the correction: the SD of ability scores in the restricted (employed) sample and an estimate of the SD in the unrestricted (applicant) population",
+      "passed": true,
+      "evidence": "To apply this, you need two numbers: the SD from your current-employee sample, and an estimate of the SD in the full applicant pool (test publishers typically provide this; alternatively, if you have historical applicant data, use that)."
+    }
+  ]
+}

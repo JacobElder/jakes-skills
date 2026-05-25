@@ -272,7 +272,7 @@ Without the skill: "t(149) = 3.84, p < .001 — the training improved psychologi
 
 ## Benchmark: skill vs. base model
 
-Evaluated across 4 iterations using "trap-based" evals — prompts where the naive helpful answer validates a methodological error. Each eval has 5–6 specific, objectively checkable assertions. Iteration 1 established that base model factual recall is insufficient as a discriminator; iterations 2–4 used trap-based design and produced meaningful deltas.
+Evaluated across 6 iterations using "trap-based" evals — prompts where the naive helpful answer validates a methodological error. Each eval has 5–6 specific, objectively checkable assertions. Iteration 1 established that base model factual recall is insufficient as a discriminator; iterations 2–6 used trap-based design and produced meaningful deltas.
 
 ### Iteration 2 — core trap benchmark (8 scenarios)
 
@@ -312,9 +312,9 @@ xychart-beta horizontal
 
 | | With skill | Without skill | Delta |
 |--|:---:|:---:|:---:|
-| **Iterations 2–4 combined** | **105/105 (100%)** | **5/105 (4.8%)** | **+95.2pp** |
+| **Iterations 2–6 combined** | **147/147 (100%)** | **5/147 (3.4%)** | **+96.6pp** |
 
-The 5 without-skill passes all came from a single eval (`grm-for-polytomous-irt`, 1/5) where the base model recalled that GRM exists but still called 2PL "reasonable" and suggested dichotomizing — factual recall without correct defaults.
+The 5 without-skill passes all came from a single eval (`grm-for-polytomous-irt`, 1/5) where the base model recalled that GRM exists but still called 2PL "reasonable" and suggested dichotomizing — factual recall without correct defaults. Every other eval across all 6 iterations produced 0 without-skill passes.
 
 ### Where the base model fails completely
 
@@ -392,6 +392,23 @@ The skill fires on psychometric vocabulary (`alpha`, `factor loadings`, `CFI`, `
 | 16 | `formative-vs-reflective` | Validates reflective CFA for SES composite; recommends adding indicator |
 | 17 | `3pl-for-personality-items` | Endorses 3PL for Likert personality items because AIC/BIC improved |
 | 18 | `multi-turn-validity` | "Strong validity evidence"; capitulates to reviewers turn 2; accepts boilerplate turn 3 |
+
+### Iteration 5 — multi-facet and IRT philosophy
+
+| # | Eval | Trap the base model falls into |
+|---|------|-------------------------------|
+| 19 | `g-theory-vs-alpha` | Validates alpha = .81 from a crossed person × item × rater × session design; never questions single-facet assumption |
+| 20 | `rasch-vs-2pl-philosophy` | "LRT and BIC both favor 2PL — the data are clear"; dismisses Rasch as attachment to convention |
+
+### Iteration 6 — attenuation, method variance, and reliability corrections
+
+| # | Eval | Trap the base model falls into |
+|---|------|-------------------------------|
+| 21 | `mtmm-common-method-variance` | Validates r = .71 between same-session self-report scales as "strong convergent validity" |
+| 22 | `difference-score-reliability` | "Change scores inherit alpha = .83 from component scales" — ignores pre-post correlation dependence |
+| 23 | `spearman-brown-split-half` | Treats split-half r = .64 as full-scale reliability; endorses item revision to fix a non-existent problem |
+| 24 | `range-restriction-attenuation` | Endorses dropping a cognitive ability test based on r = .19 in a range-restricted employee sample |
+| 25 | `correction-for-attenuation` | Validates "modest at best" for r = .31; ignores alpha = .71 and test-retest = .74 entirely |
 
 Additional adversarial evals (not included in the quantitative benchmark) tested position-holding under pushback. All held:
 

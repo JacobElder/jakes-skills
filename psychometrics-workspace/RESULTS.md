@@ -238,6 +238,52 @@ Both evals match the iter-4 pattern: 0/6 without skill confirms these were genui
 
 ---
 
+## Iteration-6 summary
+
+**Design:** 5 evals targeting error types not yet covered: MTMM / common method variance, difference score reliability collapse, Spearman-Brown split-half correction, range restriction attenuation (Thorndike), and Spearman's (1904) correction for attenuation. All five stances added to SKILL.md before running.
+
+**Model:** claude-sonnet-4-6
+
+### Behavior evals
+
+| Condition | Pass rate | Assertions |
+|---|---|---|
+| with_skill | 100.0% | 30/30 |
+| without_skill | 0.0% | 0/30 |
+| **Delta** | **+100.0pp** | — |
+
+### Per-eval breakdown
+
+| Eval | Trap | with_skill | without_skill | Δ |
+|---|---|---|---|---|
+| `mtmm-common-method-variance` | Validates r = .71 between same-session self-report scales as "strong convergent validity" | 6/6 | 0/6 | +100pp |
+| `difference-score-reliability` | "Change scores inherit alpha = .83 reliability from the component scales" | 6/6 | 0/6 | +100pp |
+| `spearman-brown-split-half` | Treats split-half r = .64 as full-scale reliability; concludes scale fails .70 threshold | 6/6 | 0/6 | +100pp |
+| `range-restriction-attenuation` | Validates r = .19 in current-employee sample; endorses dropping the cognitive ability test | 6/6 | 0/6 | +100pp |
+| `correction-for-attenuation` | Validates advisor's "modest at best" for r = .31; ignores reliability values in the prompt | 6/6 | 0/6 | +100pp |
+
+### Representative without_skill failures
+
+- `mtmm-common-method-variance`: "This provides strong convergent validity evidence" — applied a Cohen's-r heuristic (r = .71 > .50 = large) and conflated theoretical expectation with validity. Common method variance, MTMM, and Campbell & Fiske never mentioned.
+- `difference-score-reliability`: "Your colleague makes a reasonable point... change scores are defensible." Treated alpha = .83 at both time points as the full reliability story. The pre-post correlation and the difference-score reliability formula were completely absent.
+- `spearman-brown-split-half`: "Your advisor's recommendation is sound guidance." Provided a 5-step item revision plan to fix a reliability problem that doesn't exist once the Spearman-Brown correction is applied.
+- `range-restriction-attenuation`: "Your HR director's concern is justified... recommend replacing the test." Accepted r² = 3.6% framing, pivoted to structured interviews as alternatives. Range restriction, attenuation, and Thorndike never mentioned.
+- `correction-for-attenuation`: "Your advisor is right that 'modest' is a fair description." Used r² = 9.6% as the interpretive anchor. Reliability values in the prompt (alpha = .71, test-retest = .74) were fully ignored.
+
+### Iteration-6 interpretation
+
+Fifth consecutive iteration with 0% without-skill pass rate (0/30). Key observations:
+
+1. **Measurement error is invisible to the base model.** Both attenuation evals (correction-for-attenuation, range-restriction-attenuation) produced responses that ignored reliability coefficients explicitly provided in the prompt. The model's default is to treat observed statistics as the substantive effect.
+
+2. **Split-half correction is a definitional error, not a subtlety.** The without-skill response produced a detailed, confidently-wrong 5-step remediation plan. The base model knows what Spearman-Brown is factually but doesn't recognize that skipping it invalidates the whole comparison.
+
+3. **Common method variance requires explicit framing.** The without-skill response applied a plausible heuristic (Cohen's large-effect threshold) and concluded correctly by that standard. The error is using the wrong standard entirely — same-method correlations require MTMM decomposition, not a magnitude benchmark.
+
+4. **Difference score reliability requires specific formula awareness.** The base model's response was not wrong by omission — it actively endorsed the colleague's claim. Without the formula (ρ_diff depends on r_xy, not just component alphas), there's no way to recognize the error.
+
+---
+
 ## Cumulative across all iterations
 
 | Iteration | Evals | with_skill | without_skill | Delta |
@@ -247,7 +293,8 @@ Both evals match the iter-4 pattern: 0/6 without skill confirms these were genui
 | 3 (extended + adversarial) | 5 | 28/28 (100%) | 4/28 (14.3%) | +85.7pp |
 | 4 (gap closure) | 5 | 30/30 (100%) | 0/30 (0%) | +100pp |
 | 5 (final gaps) | 2 | 12/12 (100%) | 0/12 (0%) | +100pp |
-| **Trap-based total (iter 2–5)** | **20** | **117/117 (100%)** | **5/117 (4.3%)** | **+95.7pp** |
+| 6 (attenuation + method variance) | 5 | 30/30 (100%) | 0/30 (0%) | +100pp |
+| **Trap-based total (iter 2–6)** | **25** | **147/147 (100%)** | **5/147 (3.4%)** | **+96.6pp** |
 
 ---
 

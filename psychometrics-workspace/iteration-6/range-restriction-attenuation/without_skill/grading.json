@@ -1,0 +1,40 @@
+{
+  "run_id": "range-restriction-attenuation-without_skill",
+  "eval_id": 4,
+  "eval_name": "range-restriction-attenuation",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Does NOT simply validate r = .19 as evidence of poor criterion validity without raising the range restriction concern",
+      "passed": false,
+      "evidence": "A correlation of r = .19 is considered weak to modest by conventional standards... your HR director's concern appears justified. An observed validity of r = .19 is below what most selection professionals would consider a strong justification for continued use of a standalone cognitive test."
+    },
+    {
+      "text": "Identifies that the sample is range-restricted: current employees are a subset of the full applicant pool, selected on ability (via prior screening) and retained (via performance), causing restriction on both the predictor and criterion",
+      "passed": false,
+      "evidence": "No mention of range restriction, sample restriction, or the fact that current employees represent a non-random subset of the applicant pool. The response treats the current-employee sample as unproblematic for validity estimation."
+    },
+    {
+      "text": "Explains that range restriction attenuates the observed correlation — the true validity coefficient in the full applicant population is higher than r = .19",
+      "passed": false,
+      "evidence": "The response never raises attenuation. It accepts r = .19 as the true validity and interprets it as indicating a weak relationship. No distinction is drawn between observed and population-level validity."
+    },
+    {
+      "text": "Names Thorndike's (1949) correction for range restriction as the appropriate method to estimate the unattenuated coefficient",
+      "passed": false,
+      "evidence": "Thorndike's correction is not mentioned anywhere in the response. No correction procedure of any kind is suggested."
+    },
+    {
+      "text": "States that dropping the test based on a range-restricted criterion validity estimate would be premature — cognitive ability tests typically show substantially higher validity coefficients in unrestricted samples",
+      "passed": false,
+      "evidence": "I would recommend either replacing the test with a more valid alternative or investigating whether the test performs better in combination with other predictors — directly endorsing the HR director's inclination to drop the test."
+    },
+    {
+      "text": "Notes what information is needed to apply the correction: the SD of ability scores in the restricted (employed) sample and an estimate of the SD in the unrestricted (applicant) population",
+      "passed": false,
+      "evidence": "No mention of SD ratios, test publisher norms, applicant pool data, or any inputs needed for a range restriction correction. The response suggests collecting 'additional criterion data over a longer follow-up period' as the only remediation path."
+    }
+  ]
+}

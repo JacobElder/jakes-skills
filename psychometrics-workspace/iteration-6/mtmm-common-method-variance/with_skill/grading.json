@@ -1,0 +1,40 @@
+{
+  "run_id": "mtmm-common-method-variance-with_skill",
+  "eval_id": 1,
+  "eval_name": "mtmm-common-method-variance",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Does NOT simply endorse r = .71 as strong convergent validity without raising the common method variance concern",
+      "passed": true,
+      "evidence": "Your co-author is half-right, but the claim needs to be qualified carefully before it appears in a manuscript — because a single-method design creates a ceiling on what r = .71 can actually tell you."
+    },
+    {
+      "text": "Explains that same-method, same-session correlations are inflated by shared response style, acquiescence bias, and measurement context — not just shared construct variance",
+      "passed": true,
+      "evidence": "Response style effects (e.g., a person who consistently endorses higher scale points), acquiescence bias (tendency to agree regardless of content), and general negative affectivity all create covariance between your scales that inflates the observed correlation beyond what the true trait relationship would produce. The r = .71 is a trait-plus-method correlation."
+    },
+    {
+      "text": "Names the MTMM framework (Campbell & Fiske, 1959) as the appropriate design for disentangling trait from method variance",
+      "passed": true,
+      "evidence": "Campbell and Fiske (1959) introduced the multitrait-multimethod (MTMM) matrix precisely to address this... The MTMM framework requires at least two different methods to begin separating trait variance from method variance."
+    },
+    {
+      "text": "States that same-method convergent correlations are necessary but not sufficient evidence — the r = .71 is an overestimate of the true trait relationship",
+      "passed": true,
+      "evidence": "r = .71 from a same-method, same-session design is necessary but not sufficient evidence for convergent validity... Your true-construct correlation could plausibly be substantially lower than .71."
+    },
+    {
+      "text": "Describes what stronger evidence would require: at minimum a second method (observer ratings, behavioral measure, physiological indicator) or a multi-method CFA",
+      "passed": true,
+      "evidence": "A second measurement method: Supervisor or observer ratings of exhaustion or burnout, a behavioral indicator (absenteeism records, performance data), or a physiological measure (cortisol, HRV)... A CFA-MTMM model: If you collect data from two methods on both constructs, a confirmatory factor analytic version of the MTMM design (Widaman, 1985; Marsh & Grayson, 1995) lets you explicitly model trait factors and method factors."
+    },
+    {
+      "text": "Does not tell the researcher to discard the correlation — contextualizes it as a starting point that needs multi-method corroboration",
+      "passed": true,
+      "evidence": "Do not discard the r = .71 — report it as preliminary convergent evidence with appropriate hedging... This is a meaningful and necessary starting point — a correlation near zero would be a serious problem."
+    }
+  ]
+}
