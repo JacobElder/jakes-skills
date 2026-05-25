@@ -41,11 +41,17 @@ ALL_REFS = "\n\n---\n\n".join(
 SKILL_WITH_REFS = SKILL_MD + "\n\n" + ALL_REFS
 
 
-# ── eval definitions (subset focused on content + routing) ───────────────────
+# ── eval definitions ──────────────────────────────────────────────────────────
 from eval_harness import EVALS, score_response
 
-# Run content + routing evals (triggering requires observing file-load events)
-RUNNABLE = [e for e in EVALS if e.category in ("content", "routing")]
+# Content evals: baseline vs SKILL.md-only (the always-loaded layer).
+# This tests whether the instruction layer changes behavior — the core question.
+#
+# Routing evals test file-loading mechanics that only work in a real skill
+# install; skip them here.
+CONTENT_EVALS  = [e for e in EVALS if e.category == "content"]
+ROUTING_EVALS  = [e for e in EVALS if e.category == "routing"]
+RUNNABLE = CONTENT_EVALS   # default: content only
 
 
 # ── runner ────────────────────────────────────────────────────────────────────
@@ -60,18 +66,20 @@ def call_claude(prompt: str, system_extra: str | None = None,
     return result.stdout.strip()
 
 
-def run_all(model: str = "haiku", delay: float = 1.5) -> dict:
+def run_all(model: str = "haiku", delay: float = 4.0,
+            evals: list | None = None) -> dict:
+    evals = evals or RUNNABLE
     results = {"model": model, "evals": {}}
-    total = len(RUNNABLE)
-    for i, ev in enumerate(RUNNABLE, 1):
+    total = len(evals)
+    for i, ev in enumerate(evals, 1):
         print(f"  [{i}/{total}] {ev.id} ...", end=" ", flush=True)
 
-        # baseline
+        # baseline — no extra context
         base_resp = call_claude(ev.prompt, system_extra=None, model=model)
         time.sleep(delay)
 
-        # with skill
-        skill_resp = call_claude(ev.prompt, system_extra=SKILL_WITH_REFS, model=model)
+        # with skill — SKILL.md only (always-loaded layer; refs are progressive)
+        skill_resp = call_claude(ev.prompt, system_extra=SKILL_MD, model=model)
         time.sleep(delay)
 
         base_score  = score_response(ev, base_resp)
@@ -106,12 +114,29 @@ def summarize(results: dict) -> dict:
 
 # ── main ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    model = sys.argv[1] if len(sys.argv) > 1 else "haiku"
-    print(f"\nRunning {len(RUNNABLE)} evals (baseline vs with-skill) on {model}...\n")
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model", default="haiku")
+    ap.add_argument("--delay", type=float, default=4.0,
+                    help="Seconds between API calls")
+    ap.add_argument("--ids", nargs="*",
+                    help="Run only specific eval IDs, e.g. C1 C2 C3")
+    args = ap.parse_args()
 
-    results = run_all(model=model)
+    subset = [e for e in CONTENT_EVALS
+              if not args.ids or e.id in args.ids]
 
-    out_path = RESULTS_DIR / f"run_live_{model}.json"
+    print(f"\nRunning {len(subset)} content evals "
+          f"(baseline vs with-skill, model={args.model})...\n")
+
+    results = run_all(model=args.model, delay=args.delay, evals=subset)
+
+    out_path = RESULTS_DIR / f"run_live_{args.model}.json"
+    # merge with any prior run
+    if out_path.exists():
+        prior = json.loads(out_path.read_text())
+        prior["evals"].update(results["evals"])
+        results = prior
     out_path.write_text(json.dumps(results, indent=2))
     print(f"\nResults saved → {out_path}")
 

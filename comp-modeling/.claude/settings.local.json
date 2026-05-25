@@ -7,7 +7,9 @@
       "Bash(mkdir -p /Users/jacobelder/Documents/GitHub/jakes-skills/comp-modeling/.github/workflows)",
       "Bash(mkdir -p /Users/jacobelder/Documents/GitHub/jakes-skills/comp-modeling/evals/results)",
       "Bash(claude -p \"Say just: pong\" --model haiku)",
-      "Bash(claude -p \"I fit a 3-parameter RL model to 60 subjects. Is that publishable?\" --model haiku --append-system-prompt \"You are a cognitive modeling expert. Always ask about parameter recovery before endorsing any model fit.\")"
+      "Bash(claude -p \"I fit a 3-parameter RL model to 60 subjects. Is that publishable?\" --model haiku --append-system-prompt \"You are a cognitive modeling expert. Always ask about parameter recovery before endorsing any model fit.\")",
+      "Bash(python3 *)",
+      "Bash(claude *)"
     ]
   }
 }

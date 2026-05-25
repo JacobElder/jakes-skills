@@ -38,7 +38,8 @@
       "Read(//private/tmp/psychometrics-unzip/psychometrics/references/**)",
       "Read(//private/tmp/psychometrics-unzip/**)",
       "Bash(unzip -l /Users/jacobelder/Documents/GitHub/jakes-skills/psychometrics/psychometrics.skill)",
-      "Bash(zip -r /Users/jacobelder/Documents/GitHub/jakes-skills/psychometrics/psychometrics.skill psychometrics/)"
+      "Bash(zip -r /Users/jacobelder/Documents/GitHub/jakes-skills/psychometrics/psychometrics.skill psychometrics/)",
+      "Bash(git push *)"
     ]
   }
 }

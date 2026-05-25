@@ -13,7 +13,9 @@
       "Bash(unzip -l nilearn-fmri.skill)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(python -c ' *)"
+      "Bash(python -c ' *)",
+      "Bash(python *)",
+      "Bash(git push *)"
     ]
   }
 }
