@@ -217,13 +217,14 @@ print(table)
 table.to_csv("clusters.csv", index=False)
 ```
 
-The returned DataFrame has columns: `X`, `Y`, `Z` (peak MNI coordinates in mm), `Peak Stat` (z- or t-value at peak), `Cluster Size (mm3)` (volume of cluster), and `Parent Cluster` (0 for main cluster, 1+ for sub-peaks). This is the table that goes into a paper's "Table 1."
+The returned DataFrame has columns: `Cluster ID` (integer for main cluster peak, `"1a"/"1b"` etc. for sub-peaks within the same cluster), `X`, `Y`, `Z` (peak MNI coordinates in mm), `Peak Stat` (z- or t-value at peak), `Cluster Size (mm3)` (volume; only populated for main cluster rows). This is the table that goes into a paper's "Table 1."
 
 ```python
-# Typical usage: filter to main clusters only
-main_clusters = table[table["Parent Cluster"] == 0]
+# Filter to main cluster peaks only (integer Cluster ID, not sub-peaks like "1a")
+import pandas as pd
+main_clusters = table[table["Cluster ID"].apply(lambda x: str(x).isdigit())]
 print(f"Found {len(main_clusters)} clusters")
-print(main_clusters[["X", "Y", "Z", "Peak Stat", "Cluster Size (mm3)"]].to_string())
+print(main_clusters[["Cluster ID", "X", "Y", "Z", "Peak Stat", "Cluster Size (mm3)"]].to_string())
 ```
 
 ## Common pitfalls
