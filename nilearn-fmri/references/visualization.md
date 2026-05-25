@@ -209,12 +209,21 @@ from nilearn.reporting import get_clusters_table
 table = get_clusters_table(
     z_map,
     stat_threshold=3.1,
-    cluster_threshold=10,    # min voxels
+    cluster_threshold=10,    # min cluster size in voxels
     two_sided=True,
 )
 print(table)
 # Save as CSV
 table.to_csv("clusters.csv", index=False)
+```
+
+The returned DataFrame has columns: `X`, `Y`, `Z` (peak MNI coordinates in mm), `Peak Stat` (z- or t-value at peak), `Cluster Size (mm3)` (volume of cluster), and `Parent Cluster` (0 for main cluster, 1+ for sub-peaks). This is the table that goes into a paper's "Table 1."
+
+```python
+# Typical usage: filter to main clusters only
+main_clusters = table[table["Parent Cluster"] == 0]
+print(f"Found {len(main_clusters)} clusters")
+print(main_clusters[["X", "Y", "Z", "Peak Stat", "Cluster Size (mm3)"]].to_string())
 ```
 
 ## Common pitfalls

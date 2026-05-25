@@ -144,7 +144,7 @@ matrices = measure.fit_transform(all_timeseries)
 - `"partial correlation"` — controls for all other regions (more conservative)
 - `"covariance"` — raw covariance
 - `"precision"` — inverse covariance (sparse inverse covariance estimation; identifies direct connections)
-- `"tangent"` — operates in the tangent space of the manifold of covariance matrices; recommended for downstream ML on connectivity matrices, but only meaningful when computed across many subjects
+- `"tangent"` — projects covariance matrices to the tangent space at the group geometric mean. **Diagonal elements are approximately zero** (unlike correlation/covariance where diagonal=1 or variance). Recommended for downstream ML on connectivity matrices because it removes the mean structure and is better-conditioned. Only meaningful when computed across many subjects (needs a group to define the reference point). The returned matrices look very different from correlation matrices — off-diagonal values are typically small and the sign has a different interpretation.
 
 ## Step 4: Visualize
 
@@ -241,4 +241,18 @@ plotting.plot_stat_map(seed_map, threshold=0.3, title="DMN seed connectivity")
 
 **Coordinates for connectome plots**: `plot_connectome` needs (x, y, z) MNI coordinates for each ROI. `find_parcellation_cut_coords` is for deterministic atlases, `find_probabilistic_atlas_cut_coords` for probabilistic. Both return arrays of shape (n_regions, 3).
 
-**Atlas resampling at fit**: maskers resample the atlas to the data's space on `fit()`. This is fine but slow; if you're processing many subjects with the same template, pre-resample once with `resample_to_img` and pass the resampled atlas in.
+**Atlas resampling — required when affines differ**: if the atlas is at a different resolution than the BOLD (e.g., atlas at 2mm, BOLD at 4mm), you must resample before masking:
+
+```python
+from nilearn.image import resample_to_img
+
+atlas_resampled = resample_to_img(
+    atlas_img, bold_img,
+    interpolation="nearest",   # REQUIRED for label atlases — nearest-neighbor preserves integer labels
+)
+masker = NiftiLabelsMasker(labels_img=atlas_resampled, ...)
+```
+
+Use `interpolation="nearest"` for discrete label atlases. Using `"continuous"` or `"linear"` will corrupt the integer labels into fractional values and yield garbage region assignments. For probabilistic atlases use `"continuous"`.
+
+While `NiftiLabelsMasker` will attempt auto-resampling, it can silently fail or produce wrong results when the affine difference is large. Explicit pre-resampling is safer and faster for multi-subject loops.
