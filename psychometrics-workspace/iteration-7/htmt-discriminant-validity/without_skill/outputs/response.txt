@@ -1,1 +1,71 @@
-You've hit your limit · resets 2pm (America/New_York)
+## Your co-author is technically correct but methodologically incomplete — and the margins here warrant real concern.
+
+The Fornell-Larcker criterion *is* satisfied by the numbers. But the current SEM literature has largely moved past treating it as sufficient evidence of discriminant validity. Here's a precise breakdown of why, and what you should actually do.
+
+---
+
+### What the Fornell-Larcker Criterion Actually Tests
+
+Fornell & Larcker (1981) operationalized discriminant validity as: each construct's AVE should exceed the *squared* inter-construct correlation (i.e., the shared variance between factors should be less than each factor's average shared variance with its own indicators). Your numbers pass:
+
+| Construct | AVE | Squared *r* | Margin |
+|---|---|---|---|
+| Exhaustion | .54 | .46 | +.08 |
+| Depersonalization | .51 | .46 | **+.05** |
+
+Those margins are thin — especially for depersonalization. A margin of .05 is functionally trivial, and given sampling variability in your loadings and factor correlation, this likely wouldn't hold under small perturbations to the data.
+
+---
+
+### Why the Criterion Is No Longer Considered Sufficient
+
+Henseler, Ringle, & Sarstedt (2015, *JAMS*) ran an extensive simulation study demonstrating that the Fornell-Larcker criterion has **poor sensitivity** — it fails to detect discriminant validity problems even when constructs are empirically indistinguishable, particularly when factor loadings are roughly equal across constructs (which they often are when scales are carefully developed). This paper has become a methodological benchmark, and reviewers at top journals (e.g., *JPSP*, *OBHDP*, *JAP*) now routinely expect something beyond Fornell-Larcker.
+
+---
+
+### What You Should Report Instead: HTMT
+
+The **Heterotrait-Monotrait ratio of correlations (HTMT)** is now the preferred discriminant validity criterion. It's the ratio of the average heteromethod-heterotrait correlations to the average heteromethod-monotrait correlations. Thresholds:
+
+- **HTMT < .85** — conservative criterion (Kline, 2016; conceptually distinct constructs)
+- **HTMT < .90** — liberal criterion (Henseler et al., 2015; theoretically related constructs)
+- **HTMT ≥ 1.0** — discriminant validity definitively fails
+
+Given that your factor correlation is **r ≈ .68** (√.46), your HTMT will likely land somewhere in the **.72–.82 range** depending on the heterotrait correlations — potentially close to or above the .85 threshold. You need to compute it explicitly.
+
+In lavaan, you don't get HTMT natively, but you can:
+```r
+# Option 1: semTools package
+library(semTools)
+htmt(model, data = your_data)
+
+# Option 2: Manually from the correlation matrix
+# HTMT = mean(off-diagonal heteroblock) / sqrt(mean(diagonal A) * mean(diagonal B))
+```
+
+---
+
+### Additional Evidence Worth Reporting
+
+1. **Bootstrap CI on HTMT** — If the 90% CI excludes 1.0, that's formal support for discriminant validity (Henseler et al., 2015). `semTools::htmt()` can return confidence intervals via bootstrapping.
+
+2. **Factor correlation CI** — Does the 95% CI around *r* = .68 exclude 1.0? It almost certainly does, but reporting this is a low-cost supplement.
+
+3. **Model comparison (Δχ²)** — Compare your freely estimated model against a model with the factor correlation constrained to 1.0. A significant Δχ² supports discriminant validity. *Caveat:* this test is sensitive to sample size and doesn't perform well with large N.
+
+---
+
+### A Note on These Specific Constructs
+
+Emotional exhaustion and depersonalization are the two affective core dimensions of the Maslach Burnout Inventory. A factor correlation of ~.68 is substantively high and sits in the range where discriminant validity arguments require more than just clearing a threshold — reviewers will expect theoretical justification for why these are genuinely separable constructs (which, fortunately, there is a large literature supporting), *combined with* HTMT evidence.
+
+---
+
+### Bottom Line
+
+Tell your co-author: **Fornell-Larcker is a necessary but no longer sufficient condition.** With margins this thin (.05 for depersonalization) and a factor correlation of .68, you are in exactly the zone where Henseler et al.'s critique bites hardest. Compute and report HTMT with bootstrap CIs. If HTMT < .85, your discriminant validity case is solid. If it falls between .85–.90, you'll need to lean on theoretical distinctiveness. If it exceeds .90, you have a real problem to address before submission.
+
+**Key references to cite:**
+- Fornell & Larcker (1981), *JMR* — the original criterion
+- Henseler, Ringle & Sarstedt (2015), *JAMS* — the critique and HTMT proposal
+- Voorhees et al. (2016), *JAMS* — comprehensive guidance on best practices

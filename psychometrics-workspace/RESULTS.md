@@ -284,6 +284,45 @@ Fifth consecutive iteration with 0% without-skill pass rate (0/30). Key observat
 
 ---
 
+## Iteration-7 summary
+
+**Design:** 4 evals targeting: HTMT vs. Fornell-Larcker for discriminant validity, IRT local dependence (Yen's Q3), RI-CLPM vs. CLPM for within-person longitudinal dynamics (Hamaker et al., 2015), and latent moderation in SEM (LMS / modsem). All four stances added to SKILL.md before running.
+
+**Model:** claude-sonnet-4-6
+
+### Behavior evals
+
+| Condition | Pass rate | Assertions |
+|---|---|---|
+| with_skill | 95.8% | 23/24 |
+| without_skill | 91.7% | 22/24 |
+| **Delta** | **+4.2pp** | — |
+
+### Per-eval breakdown
+
+| Eval | Trap | with_skill | without_skill | Δ |
+|---|---|---|---|---|
+| `htmt-discriminant-validity` | Validates Fornell-Larcker criterion as sufficient discriminant validity evidence without HTMT | 5/6 | 5/6 | +0pp |
+| `irt-local-dependence` | Treats good global IRT fit as confirming all IRT assumptions including local independence | 6/6 | 5/6 | +17pp |
+| `ri-clpm-vs-clpm` | Interprets standard CLPM cross-lagged paths as within-person causal dynamics | 6/6 | 6/6 | +0pp |
+| `latent-moderation-sem` | Accepts product-of-composites as a valid test of latent moderation in SEM | 6/6 | 6/6 | +0pp |
+
+### Iteration-7 interpretation — a ceiling effect on well-known topics
+
+**The pattern here is different from iterations 2–6.** Three of four evals show zero delta because the base model already knows the correct answer unprompted:
+
+1. **RI-CLPM vs. CLPM (0pp delta):** The base model fully rejects the CLPM's within-person interpretation, names Hamaker et al. (2015) by citation, explains the random-intercept mechanism, and recommends the RI-CLPM in lavaan — all without the skill. This is a topic with a highly-cited 2015 paper that is well-represented in training data.
+
+2. **Latent moderation in SEM (0pp delta):** The base model correctly rejects composite products as latent moderation, cites Klein & Moosbrugger (2000), names modsem and LMS, and gives working code — all without the skill. Again, the underlying methodological error is discussed extensively in the literature.
+
+3. **HTMT (0pp delta on the same assertion):** Both conditions fail assertion 6 (explicitly distinguishing AVE as a *convergent* validity criterion from HTMT as a *discriminant* validity criterion). Both conditions correctly name HTMT and flag Fornell-Larcker's low sensitivity. The failing assertion is a fine-grained distinction that neither condition covers explicitly.
+
+4. **IRT local dependence (+17pp delta):** The one genuine gap: the base model correctly names local independence and Q3, but does not provide a specific decision threshold (|Q3| > .20). The skill's explicit threshold triggers that final assertion pass.
+
+**What this means for the skill:** The skill's value is concentrated in the traps where the base model defaults to validating errors (iterations 2–6). For topics where the base model has robust prior training data (well-cited methods papers), the skill adds less value. The appropriate use of iteration-7 content in SKILL.md is as a scaffold for the few users whose base-model responses happen to miss these topics.
+
+---
+
 ## Cumulative across all iterations
 
 | Iteration | Evals | with_skill | without_skill | Delta |
@@ -294,7 +333,8 @@ Fifth consecutive iteration with 0% without-skill pass rate (0/30). Key observat
 | 4 (gap closure) | 5 | 30/30 (100%) | 0/30 (0%) | +100pp |
 | 5 (final gaps) | 2 | 12/12 (100%) | 0/12 (0%) | +100pp |
 | 6 (attenuation + method variance) | 5 | 30/30 (100%) | 0/30 (0%) | +100pp |
-| **Trap-based total (iter 2–6)** | **25** | **147/147 (100%)** | **5/147 (3.4%)** | **+96.6pp** |
+| 7 (advanced topics — ceiling effect) | 4 | 23/24 (95.8%) | 22/24 (91.7%) | +4.2pp |
+| **Trap-based total (iter 2–7)** | **29** | **170/171 (99.4%)** | **27/171 (15.8%)** | **+83.6pp** |
 
 ---
 

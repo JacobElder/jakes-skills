@@ -1,0 +1,84 @@
+## No — This Is Not a Valid Test of Latent Moderation
+
+What you've implemented is **manifest-variable moderation with composite scores** — which is statistically equivalent to a multiple regression with a product term. It is not latent moderation, and the non-significant result cannot be taken as evidence that no latent interaction exists. Here's a precise breakdown of why.
+
+---
+
+## The Core Problem: Measurement Error Compounds in Product Terms
+
+When you average items into composites, each composite retains measurement error. When you multiply two error-contaminated composites, the product term's reliability degrades multiplicatively:
+
+> ρ<sub>XZ</sub> ≈ ρ<sub>X</sub> · ρ<sub>Z</sub> + (additional bias terms from non-normality)
+
+If neuroticism has reliability .80 and stress has reliability .75, the product term's effective reliability is roughly **.60 or below**. This produces **systematic attenuation bias** in the interaction coefficient — the very parameter you're testing is biased toward zero by construction. A non-significant β = .08 could be a true null or a Type II error; your design cannot distinguish them.
+
+---
+
+## Specific Methodological Violations
+
+| Issue | What You Did | Why It Matters |
+|---|---|---|
+| **No measurement model for the moderator** | Neuroticism entered as a composite, not a latent variable | Measurement error in the moderator is not partialled out |
+| **No measurement model for the predictor** | Same for stress | Errors in both components inflate error in the product |
+| **Product term ≠ latent interaction** | XZ computed from observed scores | The latent interaction term requires a non-linear structural model; a simple product of composites does not approximate it without strong assumptions |
+| **Non-normal product distribution** | Assumed normality via ML estimation | The product of two (approximately) normal variables follows a non-normal distribution; standard ML SEs are incorrect for interaction terms |
+| **lavaan has no native LMS/QML** | Path model in lavaan | lavaan's `*` operator creates product *indicators*, not a latent interaction term via the correct distributional machinery |
+
+---
+
+## What Valid Latent Moderation Actually Requires
+
+There are several defensible approaches, ordered by rigor:
+
+### 1. Latent Moderated Structural Equations (LMS) — Gold Standard
+Developed by Klein & Moosbrugger (2000). Correctly handles the non-normal distribution of the latent product and estimates the interaction at the factor level. **Available in Mplus** (`TYPE = RANDOM; ALGORITHM = INTEGRATION`).
+
+### 2. Quasi-Maximum Likelihood (QML)
+Klein & Muthén (2007). Computationally lighter than LMS, robust under non-normality. Also **Mplus-native**.
+
+### 3. `modsem` Package in R
+Directly integrates with lavaan syntax and supports multiple estimators:
+
+```r
+library(modsem)
+
+model <- '
+  # Measurement models
+  neuroticism =~ n1 + n2 + n3 + n4 + n5
+  stress      =~ s1 + s2 + s3 + s4
+  burnout     =~ b1 + b2 + b3 + b4 + b5
+
+  # Structural model with latent interaction
+  burnout ~ neuroticism + stress + neuroticism:stress
+'
+
+# LMS estimation (most rigorous)
+fit <- modsem(model, data = your_data, method = "lms")
+summary(fit)
+```
+
+`modsem` supports `method = "ca"` (constrained approach), `"uca"` (unconstrained), `"dblcent"` (double-mean-centering), and `"lms"`.
+
+### 4. Product Indicator Approaches (if LMS is unavailable)
+The **matched-pair** or **unconstrained** product indicator method (Marsh et al., 2004) creates a set of product indicators for the latent interaction term. More tractable in lavaan but less statistically principled than LMS.
+
+---
+
+## What Your Current Result Does and Doesn't Tell You
+
+| Claim | Validity |
+|---|---|
+| "No observed-score interaction between composite neuroticism and composite stress predicting burnout" | ✅ Technically supported |
+| "Neuroticism does not moderate the stress-burnout relationship" (at the latent level) | ❌ Not supported — power and attenuation bias preclude this inference |
+| "SEM showed no moderation" | ❌ Misleading framing — this was not an SEM test of latent moderation |
+
+---
+
+## Practical Recommendation
+
+1. **Respecify the model in `modsem`** with full measurement models for all three constructs and a latent `neuroticism:stress` interaction term using `method = "lms"`.
+2. **Check your sample size** — latent moderation tests are notoriously underpowered; simulations suggest N ≥ 500–800 is often needed to detect small-to-medium latent interactions (Marsh et al., 2004; Kelava et al., 2011).
+3. **If you must use composites**, at minimum apply reliability correction (disattenuation) to the product term, and acknowledge you are testing manifest — not latent — moderation.
+4. **Report what you actually tested**: if composites were used, call it a "path model with observed composites," not SEM or latent moderation.
+
+The non-significant result is currently uninterpretable with respect to latent moderation — it may reflect a true null, insufficient power, or attenuation from measurement error. You need the right estimator before drawing any substantive conclusion.

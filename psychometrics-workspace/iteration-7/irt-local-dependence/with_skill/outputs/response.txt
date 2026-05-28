@@ -1,0 +1,86 @@
+This is an important methodological issue worth pushing back on carefully. The conclusion overstates what those fit statistics actually demonstrate. Here's a precise breakdown:
+
+---
+
+## What M2, RMSEA.IRT, and CFI Actually Test
+
+These are **global model-data fit** statistics. They assess how well your 2PL model reproduces the observed univariate and bivariate response patterns (M2 is a limited-information statistic operating on item-pair marginals). Good fit means:
+
+> "The 2PL model is not inconsistent with the data at the level of item pairs."
+
+That is **not** the same as:
+
+> "The data are unidimensional."
+
+A model can fit well on these indices and still be multidimensional — particularly when dimensions are moderately correlated (ρ ≥ .5 is common in cognitive data), because correlated factors produce response patterns that a dominant-factor model can approximate without badly misreproducing bivariate marginals.
+
+---
+
+## The Core Logical Problem
+
+Your advisor's inference runs:
+
+> Model fits → unidimensionality confirmed
+
+But the correct framing is:
+
+> Unidimensionality violated → model should misfit
+
+The contrapositive of the second is "good fit → no severe violation," which is weaker than "confirmed unidimensional." Good fit is a **necessary but not sufficient** condition.
+
+---
+
+## What You Actually Need
+
+To make a defensible unidimensionality claim, you need **converging evidence from methods specifically designed to assess dimensionality**:
+
+### 1. Eigenvalue Structure of the Tetrachoric Correlation Matrix
+- Conduct **parallel analysis** (`psych::fa.parallel()` on tetrachoric correlations)
+- The **ratio of λ₁ to λ₂** is critical — a ratio of ≥ 4:1 is a commonly cited heuristic for essential unidimensionality
+- Inspect the full scree plot, not just the first eigenvalue
+
+### 2. DIMTEST (Stout's Nonparametric Test)
+```r
+# Available directly in mirt
+mirt::DIMTEST(data, which.items = 1:20)
+```
+This is a significance test explicitly designed for the unidimensionality hypothesis. Nonsignificant M2 ≠ nonsignificant DIMTEST.
+
+### 3. Bifactor Model Comparison
+Fit a bifactor model (one general factor + content-based group factors) and compare:
+- Does it fit significantly better?
+- What is **ωh** (omega-hierarchical)? Values ≥ .80 support the general factor carrying most reliable variance
+
+### 4. Local Dependence Diagnostics
+Global fit masking local dependence (LD) is a real risk on cognitive tests with item clusters:
+```r
+# Residual correlations after conditioning on θ
+residuals(fit_2pl, type = "Q3")
+```
+|Q3| > .20 flags item pairs that share variance beyond θ — a violation that can exist even when M2 looks fine.
+
+### 5. DETECT Statistic
+A nonparametric dimensionality index; values < 1.0 indicate approximate simple structure, < 0.20 indicates essential unidimensionality.
+
+---
+
+## What Your Results Do and Don't Tell You
+
+| Statistic | What it tells you | What it doesn't tell you |
+|---|---|---|
+| M2(170) = 189.3, p = .153 | Model-implied bivariate margins fit observed data | Whether one vs. multiple dimensions generated the data |
+| RMSEA.IRT = .021 | Close fit in a limited-information sense | Dimensionality of the latent space |
+| CFI = .982 | Good relative fit vs. a baseline model | Whether a 2-factor model would fit substantially better |
+
+---
+
+## Practical Recommendation
+
+Before proceeding to person parameter estimation, run at minimum:
+
+1. **Parallel analysis** on tetrachoric correlations — report λ₁/λ₂
+2. **DIMTEST** — report test statistic and p-value
+3. **Q3 residuals** — flag any pairs with |Q3| > .20
+4. Optionally, a **bifactor model** with ωh
+
+If those converge on a dominant general factor with no meaningful secondary structure, *then* you can make a defensible unidimensionality argument — and your good M2/RMSEA/CFI results serve as corroborating evidence, not as primary proof. The current evidence supports "the 2PL is not badly misspecified," which is a reasonable starting point, but it's one step short of what your advisor is claiming.

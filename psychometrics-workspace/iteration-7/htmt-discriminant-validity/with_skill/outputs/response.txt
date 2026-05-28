@@ -1,36 +1,80 @@
-Your co-author is wrong, and this is one of the most common discriminant validity errors in applied SEM work. Here's the problem in three parts.
+## Your co-author is only partially right — and the margins here should make you cautious
 
-## 1. Fornell-Larcker has documented low sensitivity
+You've correctly applied the Fornell-Larcker (FL) criterion, and you do technically pass it. But "technically passes FL" and "adequate evidence for discriminant validity" are meaningfully different claims. Here's why the distinction matters for your specific values.
 
-Henseler, Ringle & Sarstedt (2015) ran systematic simulations showing the Fornell-Larcker criterion frequently *fails to flag* constructs that are empirically indistinguishable. The criterion compares averages (AVE is the mean of squared loadings) to a single squared correlation — and averaging masks item-level variation in ways that let real discriminant validity violations slip through. Passing Fornell-Larcker is weak evidence, not adequate evidence.
+---
 
-## 2. AVE is a convergent validity criterion, not a discriminant one
+### The core problem with the Fornell-Larcker criterion
 
-This matters because your framing ("AVE > squared factor correlation") conflates two separate things:
-- **AVE > .50** = each construct explains more than half the variance in its own indicators (convergent validity). Your values of .54 and .51 barely clear this bar.
-- **AVE > squared interconstruct correlation** = the Fornell-Larcker discriminant validity check.
+Henseler, Ringle, & Sarstedt (2015, *JAMS*) demonstrated via simulation that the FL criterion has **poor sensitivity** — it routinely fails to flag discriminant validity problems, especially when factor correlations are moderate-to-high. It was derived in 1981 for a different SEM context and is now widely considered a **necessary but insufficient** condition.
 
-These are different questions. Your AVEs indicate passable convergent validity, but that doesn't do the work for discriminant validity.
+In plain terms: passing FL tells you the situation isn't catastrophically bad, not that discriminant validity is established.
 
-## 3. Use HTMT instead
+---
 
-The current standard is the **Heterotrait-Monotrait ratio of correlations (HTMT)**:
+### Your specific numbers are a red flag, not a green light
 
-$$\text{HTMT} = \frac{\bar{r}_{heterorait}}{\sqrt{\bar{r}_{mono_1} \cdot \bar{r}_{mono_2}}}$$
+Work through what these values actually represent:
 
-Threshold: < .85 for conceptually distinct constructs. Emotional exhaustion and depersonalization are both burnout facets (so closely related), so some reviewers apply the .90 threshold — but you need to actually compute and report it, not assume it passes.
+| | Value |
+|---|---|
+| AVE (exhaustion) | .54 |
+| AVE (depersonalization) | .51 |
+| Squared factor correlation (φ²) | .46 |
+| Implied factor correlation (φ) | **.68** |
+| FL margin for exhaustion | .54 − .46 = **.08** |
+| FL margin for depersonalization | .51 − .46 = **.05** |
 
+Two things stand out:
+
+1. **The factor correlation is .68.** These two constructs share 46% of their variance with each other — nearly as much as each shares with its own indicators. For burnout subdimensions (Maslach's MBI), some correlation is expected, but this level invites scrutiny.
+2. **The margins are razor-thin.** An FL margin of .05 means that any reasonable sampling variability, alternative indicator set, or slightly different scoring could flip the result. You're not comfortably above the threshold; you're barely clearing it.
+
+---
+
+### What you should also report (or check before claiming victory)
+
+**1. The HTMT ratio (Heterotrait-Monotrait)**
+This is the current best-practice criterion (Henseler et al., 2015). It compares the average hetero-trait/hetero-method correlations to the geometric mean of the average mono-trait/hetero-method correlations. Thresholds:
+- HTMT < .85 (strict; conceptually distinct constructs)
+- HTMT < .90 (liberal; conceptually related constructs)
+
+In lavaan, you can extract this manually from the correlation matrix, or use the `semTools` package:
 ```r
 library(semTools)
-
-# After fitting your CFA model:
-htmt(model = your_fit)
+htmt(model, data = yourdata)
 ```
+Given your factor correlation of .68, your HTMT is likely elevated. If it exceeds .85 (or approaches .90), your co-author's confidence is not warranted.
 
-This returns the HTMT matrix directly. Report the value and the threshold you're applying, with justification for which threshold fits your constructs.
+**2. Chi-square difference test (model comparison)**
+Fit a constrained model where φ is fixed to 1.0, and compare it to your freely estimated model:
+```r
+# Free model (your current model)
+fit_free <- cfa(model, data = yourdata)
 
-## One more thing to flag
+# Constrained model
+model_constrained <- '...' # same model, with factor correlation fixed to 1
+fit_constrained <- cfa(model_constrained, data = yourdata, 
+                        orthogonal = FALSE)
 
-Your latent factor correlation is √.46 ≈ **r = .68**. That's high enough that I'd also recommend examining a **bifactor model** — one general burnout factor plus two orthogonal specific factors. Use `psych::omega()` on the raw items and compare ω_h (variance from the general factor alone) to ω_t (total). If ω_h is large, your two "factors" may largely be measuring a common burnout dimension, and the discriminant validity question becomes moot — you'd want to reconsider whether separate subscale scores are interpretable at all.
+# Test
+lavTestLRT(fit_free, fit_constrained)
+```
+A significant Δχ² indicates the factors are statistically distinguishable. This is a direct test the FL criterion never performs.
 
-**Bottom line:** Tell your co-author that Fornell-Larcker is a 1981 criterion with known sensitivity failures. Compute HTMT, report the value with the appropriate threshold, and inspect the bifactor solution given that .68 factor correlation.
+**3. HTMT confidence interval (bootstrap)**
+Bootstrap a 95% CI around the HTMT ratio. If the CI excludes 1.0, that's positive evidence. If it doesn't, you have a problem regardless of FL.
+
+---
+
+### Bottom line
+
+| Criterion | Your status | Adequacy |
+|---|---|---|
+| Fornell-Larcker | ✅ Pass (barely) | Necessary, not sufficient |
+| Factor correlation magnitude (.68) | ⚠️ Elevated | Warrants further scrutiny |
+| FL margin | ⚠️ .05–.08 | Uncomfortably thin |
+| HTMT ratio | ❓ Unknown | **Run this — it's now the standard** |
+| Δχ² test | ❓ Unknown | Recommended supplemental test |
+
+Your co-author is right that you've cleared the traditional threshold, but stopping there is not best practice by current methodological standards. Given how close your AVEs and squared correlation are, I'd strongly recommend reporting the HTMT and at minimum the model comparison test before claiming discriminant validity is "adequate." Reviewers familiar with Henseler et al. (2015) or Voorhees et al. (2016, *JAMS*) will ask for exactly this.

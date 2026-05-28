@@ -1,0 +1,40 @@
+{
+  "run_id": "latent-moderation-sem-without_skill",
+  "eval_id": 4,
+  "eval_name": "latent-moderation-sem",
+  "config": "without_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "description": "Does NOT accept the product-of-composites approach as a valid test of latent moderation in SEM without raising its fundamental limitation",
+      "passed": true,
+      "evidence": "The response explicitly states 'What you've implemented is manifest-variable moderation with composite scores \u2014 which is statistically equivalent to a multiple regression with a product term. It is not latent moderation' and dedicates an entire section to 'The Core Problem: Measurement Error Compounds in Product Terms,' explaining systematic attenuation bias. The table of 'Specific Methodological Violations' and the section on what results 'Do and Don't Tell You' all directly flag the fundamental limitation of the product-of-composites approach."
+    },
+    {
+      "description": "Explains that multiplying observed composites (or factor scores) is observed-variable moderation regression, not latent moderation \u2014 it fails to account for measurement error in the product term",
+      "passed": true,
+      "evidence": "The response explicitly states 'What you've implemented is manifest-variable moderation with composite scores \u2014 which is statistically equivalent to a multiple regression with a product term. It is not latent moderation' and explains that 'When you multiply two error-contaminated composites, the product term's reliability degrades multiplicatively' causing 'systematic attenuation bias in the interaction coefficient.'"
+    },
+    {
+      "description": "States that the product of two error-containing observed scores carries substantially more measurement error than either component alone, which attenuates the interaction estimate toward zero and produces false negatives",
+      "passed": true,
+      "evidence": "The response explicitly states: 'When you multiply two error-contaminated composites, the product term's reliability degrades multiplicatively... If neuroticism has reliability .80 and stress has reliability .75, the product term's effective reliability is roughly .60 or below. This produces systematic attenuation bias in the interaction coefficient \u2014 the very parameter you're testing is biased toward zero by construction.'"
+    },
+    {
+      "description": "Concludes that a non-significant product-term result from this approach does NOT rule out a genuine latent moderation effect",
+      "passed": true,
+      "evidence": "The response explicitly states 'the non-significant result cannot be taken as evidence that no latent interaction exists' and explains that 'A non-significant \u03b2 = .08 could be a true null or a Type II error; your design cannot distinguish them.' The table also marks the claim 'Neuroticism does not moderate the stress-burnout relationship (at the latent level)' as invalid, and the conclusion states 'The non-significant result is currently uninterpretable with respect to latent moderation \u2014 it may reflect a true null, insufficient power, or attenuation from measurement error.'"
+    },
+    {
+      "description": "Names at least one correct approach for testing latent moderation in SEM: Latent Moderated Structural Equations (LMS; Klein & Moosbrugger, 2000), unconstrained product indicators (Marsh et al., 2004), or a Bayesian SEM approach",
+      "passed": true,
+      "evidence": "The response names LMS (Klein & Moosbrugger, 2000) as 'Gold Standard', unconstrained product indicators (Marsh et al., 2004), and QML (Klein & Muth\u00e9n, 2007) as valid approaches for testing latent moderation in SEM."
+    },
+    {
+      "description": "Notes that the modsem R package or a similar tool implements LMS within a lavaan-compatible syntax, providing a practical path forward",
+      "passed": true,
+      "evidence": "The response explicitly mentions the `modsem` package in R, notes it 'Directly integrates with lavaan syntax and supports multiple estimators' including LMS, and provides a complete working code example showing how to implement latent moderation using `modsem` with `method = \"lms\"` \u2014 satisfying the assertion about a lavaan-compatible tool implementing LMS as a practical path forward."
+    }
+  ]
+}

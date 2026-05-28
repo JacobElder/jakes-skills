@@ -1,0 +1,66 @@
+This is a common and consequential misinterpretation in applied IRT work. Your advisor's conclusion is **not** fair, for several interlocking reasons. Here is a precise breakdown:
+
+---
+
+## The Core Problem: Global Fit ≠ Dimensionality Test
+
+The M2, RMSEA.IRT, and CFI are **global fit** statistics. They assess whether your unidimensional model adequately reproduces the observed **bivariate item relationships** (marginal proportions and pairwise associations). Passing this test tells you the model is *not grossly wrong*. It does not tell you it is *dimensionally correct*.
+
+A correlated two-factor model or bifactor model would often pass the exact same global fit thresholds — sometimes with *better* fit. Global fit statistics cannot distinguish between a genuinely unidimensional structure and a multidimensional structure that your model is approximating well enough to avoid gross misfit.
+
+---
+
+## Specific Technical Gaps in the Current Evidence
+
+### 1. No direct dimensionality analysis
+Unidimensionality should be evaluated *before or alongside* IRT model fitting using:
+- **Parallel analysis** on the tetrachoric correlation matrix (not Pearson — your items are binary/ordinal)
+- **EFA** on tetrachoric correlations: examine eigenvalue ratios. A strong general factor shows a dominant first eigenvalue dwarfing the second; a ratio of roughly ≥ 4:1 is a common (though not universal) heuristic
+- **DIMTEST** or **DETECT** — designed specifically to detect IRT-based multidimensionality
+- A **bifactor model** comparison (unidimensional vs. bifactor via AIC/BIC or likelihood ratio test)
+
+### 2. No local dependence (LD) check
+The local independence assumption is foundational to IRT person parameter estimation. Global fit can look fine while specific item pairs exhibit substantial LD (e.g., item pairs sharing a passage, a theme, or a sub-skill). In `mirt` you can extract:
+
+```r
+residuals(mod, type = "Q3")        # Yen's Q3 statistic for all item pairs
+residuals(mod, type = "LD")        # Chen & Thissen LD χ² statistics
+```
+
+Q3 values > .20 (above the baseline-adjusted mean) signal meaningful LD. Even a few pairs with high LD can inflate reliability estimates and bias θ̂ (person parameter) precision — exactly what you're about to estimate.
+
+### 3. "Confirms" is statistically incoherent
+Null hypothesis logic applies here. Your M2 test is:
+
+- **H₀**: The unidimensional 2PL model fits the data
+- **Result**: Fail to reject H₀ (p = .153)
+
+Failing to reject H₀ is **not** confirmation of H₀. It means the data are *consistent with* the model, given your sample size and the test's power. A small or moderate sample will routinely fail to detect real multidimensionality with these statistics.
+
+---
+
+## What You Should Do Before Proceeding
+
+| Check | Tool in `mirt` / R | What to look for |
+|---|---|---|
+| Parallel analysis | `psych::fa.parallel()` on `psych::tetrachoric()` | How many factors above the simulated scree? |
+| EFA on tetrachoric r | `psych::fa(..., cor="tet")` | Eigenvalue ratio λ₁/λ₂; factor loadings on residual factors |
+| Bifactor model fit | `mirt(..., model=bifactor_spec)` | AIC/BIC vs. unidimensional; ωh |
+| Local dependence | `residuals(mod, type="Q3")` | Pairs with Q3 > .20 (adjusted) |
+| McDonald's ωh | `psych::omega()` on tetrachoric r | ωh ≥ .70–.80 supports a dominant general factor |
+| Model comparison | `anova(mod1d, mod_bifactor)` | LRT p-value + ΔAIC/ΔBIC |
+
+---
+
+## The Bottom Line
+
+Your global fit results are **encouraging** — they suggest no catastrophic model misfit — but they are **insufficient** to confirm unidimensionality or to justify skipping local dependence diagnostics. The appropriate statement is:
+
+> *"The unidimensional 2PL model shows acceptable global fit. We additionally conducted parallel analysis, examined Q3 residuals for local dependence, and compared the unidimensional model to a bifactor alternative to evaluate the plausibility of the unidimensionality assumption."*
+
+Proceeding directly to person parameter estimation without these checks risks:
+- **Biased θ̂ estimates** if a meaningful secondary dimension exists
+- **Overestimated precision** (underestimated SEs) if local dependence is present
+- **Construct validity problems** if the "general factor" is not as general as assumed
+
+Push back on your advisor gently but firmly — the global fit story is incomplete.

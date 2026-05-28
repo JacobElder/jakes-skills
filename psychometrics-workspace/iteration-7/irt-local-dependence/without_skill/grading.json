@@ -1,0 +1,40 @@
+{
+  "run_id": "irt-local-dependence-without_skill",
+  "eval_id": 2,
+  "eval_name": "irt-local-dependence",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 6,
+  "expectations": [
+    {
+      "description": "Does NOT simply validate the advisor's conclusion that good global fit confirms all IRT assumptions are satisfied",
+      "passed": true,
+      "evidence": "The response explicitly states 'Global fit statistics cannot distinguish between a genuinely unidimensional structure and a multidimensional structure' and 'Failing to reject H\u2080 is not confirmation of H\u2080' and concludes the global fit results are 'insufficient to confirm unidimensionality or to justify skipping local dependence diagnostics.'"
+    },
+    {
+      "description": "Explains that global IRT fit statistics (M2, RMSEA.IRT, CFI) assess overall factor structure but do NOT directly test local independence between item pairs",
+      "passed": true,
+      "evidence": "The response explicitly states: 'The M2, RMSEA.IRT, and CFI are global fit statistics. They assess whether your unidimensional model adequately reproduces the observed bivariate item relationships... Passing this test tells you the model is not grossly wrong. It does not tell you it is dimensionally correct.' It also has a dedicated section 'No local dependence (LD) check' explaining that 'Global fit can look fine while specific item pairs exhibit substantial LD' and provides Q3/LD diagnostics to actually test local independence between item pairs."
+    },
+    {
+      "description": "Names local independence as a separate, distinct IRT assumption that must be checked independently of global fit",
+      "passed": true,
+      "evidence": "Section '2. No local dependence (LD) check' explicitly identifies local independence as a separate, distinct IRT assumption requiring independent checking: 'The local independence assumption is foundational to IRT person parameter estimation. Global fit can look fine while specific item pairs exhibit substantial LD' \u2014 and provides specific Q3/LD diagnostic commands distinct from the global fit statistics."
+    },
+    {
+      "description": "Names Yen's Q3 statistic as the appropriate method for detecting local dependence, and notes it is available in mirt via residuals(fit, type='Q3') or residuals(fit, type='LD')",
+      "passed": true,
+      "evidence": "The response explicitly names Yen's Q3 statistic for detecting local dependence and shows both mirt commands: `residuals(mod, type = \"Q3\")` for Q3 and `residuals(mod, type = \"LD\")` for Chen & Thissen LD statistics, matching the assertion's specification of `residuals(fit, type='Q3')` and `residuals(fit, type='LD')`."
+    },
+    {
+      "description": "States the practical consequence: undetected local dependence inflates item information functions and biases person parameter (theta) estimates",
+      "passed": true,
+      "evidence": "The response explicitly states: 'Even a few pairs with high LD can inflate reliability estimates and bias \u03b8\u0302 (person parameter) precision' and in the bottom line section: 'Overestimated precision (underestimated SEs) if local dependence is present' and 'Biased \u03b8\u0302 estimates if a meaningful secondary dimension exists'. This directly addresses both consequences: LD inflating item information (overestimated precision/underestimated SEs) and biasing person parameter estimates (biased \u03b8\u0302)."
+    },
+    {
+      "description": "States a decision rule or threshold for flagging problematic item pairs (e.g., Q3 values above approximately |.20| warrant investigation)",
+      "passed": false,
+      "evidence": "parse error: {\"passed\": true, \"evidence\": \"Q3 values > .20 (above the baseline-adjusted mean) signal meaningful LD\" and the table ent"
+    }
+  ]
+}

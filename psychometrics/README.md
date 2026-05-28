@@ -313,8 +313,9 @@ xychart-beta horizontal
 | | With skill | Without skill | Delta |
 |--|:---:|:---:|:---:|
 | **Iterations 2–6 combined** | **147/147 (100%)** | **5/147 (3.4%)** | **+96.6pp** |
+| **Iterations 2–7 combined** | **170/171 (99.4%)** | **27/171 (15.8%)** | **+83.6pp** |
 
-The 5 without-skill passes all came from a single eval (`grm-for-polytomous-irt`, 1/5) where the base model recalled that GRM exists but still called 2PL "reasonable" and suggested dichotomizing — factual recall without correct defaults. Every other eval across all 6 iterations produced 0 without-skill passes.
+The 5 without-skill passes in iterations 2–6 all came from `grm-for-polytomous-irt` (1/5), where the base model recalled GRM exists but still called 2PL "reasonable." In iteration 7, the base model scored 22/24 without the skill — reflecting a ceiling effect on three well-published topics (RI-CLPM, latent moderation via LMS, HTMT) where the base model already has robust prior knowledge from the methods literature. The one genuine remaining gap was IRT local dependence threshold specificity (+17pp).
 
 ### Where the base model fails completely
 
@@ -409,6 +410,15 @@ The skill fires on psychometric vocabulary (`alpha`, `factor loadings`, `CFI`, `
 | 23 | `spearman-brown-split-half` | Treats split-half r = .64 as full-scale reliability; endorses item revision to fix a non-existent problem |
 | 24 | `range-restriction-attenuation` | Endorses dropping a cognitive ability test based on r = .19 in a range-restricted employee sample |
 | 25 | `correction-for-attenuation` | Validates "modest at best" for r = .31; ignores alpha = .71 and test-retest = .74 entirely |
+
+### Iteration 7 — advanced topics (HTMT, local dependence, RI-CLPM, latent moderation)
+
+| # | Eval | Trap / finding |
+|---|------|-------------------------------|
+| 26 | `htmt-discriminant-validity` | Validates Fornell-Larcker as sufficient; base model also knows HTMT — 0pp delta |
+| 27 | `irt-local-dependence` | Treats global IRT fit as confirming local independence; base model partially knows Q3 — +17pp delta |
+| 28 | `ri-clpm-vs-clpm` | Interprets CLPM paths as within-person; base model fully knows RI-CLPM — 0pp delta |
+| 29 | `latent-moderation-sem` | Accepts composite products as latent moderation; base model fully knows LMS — 0pp delta |
 
 Additional adversarial evals (not included in the quantitative benchmark) tested position-holding under pushback. All held:
 

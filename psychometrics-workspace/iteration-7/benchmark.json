@@ -1,0 +1,440 @@
+{
+  "metadata": {
+    "skill_name": "psychometrics",
+    "skill_path": "/Users/jacobelder/Documents/GitHub/jakes-skills/psychometrics/psychometrics.skill",
+    "executor_model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-27T20:49:22.352549Z",
+    "evals_run": [
+      "htmt-discriminant-validity",
+      "irt-local-dependence",
+      "latent-moderation-sem",
+      "ri-clpm-vs-clpm"
+    ],
+    "runs_per_configuration": 1,
+    "iteration": 7,
+    "eval_design_note": "Iteration-7 adds four evals targeting: HTMT vs. Fornell-Larcker for discriminant validity, IRT local dependence (Yen Q3), RI-CLPM vs. CLPM for within-person dynamics (Hamaker et al. 2015), and latent moderation in SEM (LMS / modsem). All four stances added to SKILL.md before running. The base model showed substantial prior knowledge on three of four topics (RI-CLPM, latent moderation, HTMT), reducing the skill delta versus earlier iterations."
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "htmt-discriminant-validity",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 47.7,
+        "tokens": 5847,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "description": "Does NOT simply validate the Fornell-Larcker criterion as sufficient evidence for discriminant validity without raising concerns about its limitations",
+          "passed": true,
+          "evidence": "The response explicitly states 'The Fornell-Larcker criterion has poor sensitivity \u2014 it routinely fails to flag discriminant validity problems' and frames FL as 'a necessary but insufficient condition,' directly raising concerns about its limitations rather than validating it as sufficient evidence."
+        },
+        {
+          "description": "States that the Fornell-Larcker criterion has low sensitivity \u2014 it frequently fails to detect discriminant validity violations that exist",
+          "passed": true,
+          "evidence": "The response explicitly states: 'Henseler, Ringle, & Sarstedt (2015, JAMS) demonstrated via simulation that the FL criterion has poor sensitivity \u2014 it routinely fails to flag discriminant validity problems, especially when factor correlations are moderate-to-high.'"
+        },
+        {
+          "description": "Names the HTMT (Heterotrait-Monotrait ratio of correlations) as the current standard for assessing discriminant validity in CFA/SEM contexts",
+          "passed": true,
+          "evidence": "The response explicitly names HTMT (Heterotrait-Monotrait ratio) as 'the current best-practice criterion' and states in the summary table that it is 'now the standard', citing Henseler et al. (2015) as the source."
+        },
+        {
+          "description": "States the HTMT threshold: values below .85 provide evidence of discriminant validity for conceptually distinct constructs (or .90 for closely related constructs)",
+          "passed": true,
+          "evidence": "The response states: 'HTMT < .85 (strict; conceptually distinct constructs)' and 'HTMT < .90 (liberal; conceptually related constructs)'"
+        },
+        {
+          "description": "Recommends computing HTMT \u2014 e.g., via semTools::htmt() in R \u2014 rather than relying solely on Fornell-Larcker",
+          "passed": true,
+          "evidence": "The response explicitly recommends computing HTMT and provides code: 'library(semTools)\\nhtmt(model, data = yourdata)' \u2014 directly recommending semTools::htmt() in R rather than relying solely on Fornell-Larcker, which it critiques as 'necessary but insufficient.'"
+        },
+        {
+          "description": "Clarifies that AVE > .50 is a criterion for convergent validity (each construct explains more than half the variance in its indicators), not for discriminant validity \u2014 the two criteria serve different purposes",
+          "passed": false,
+          "evidence": "The model response never clarifies that AVE > .50 is a criterion for convergent validity (explaining more than half the variance in indicators), not discriminant validity. It treats AVE solely in the context of the Fornell-Larcker discriminant validity criterion without distinguishing that AVE > .50 serves a separate purpose as a convergent validity benchmark."
+        }
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "htmt-discriminant-validity",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 56.7,
+        "tokens": 5904,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "description": "Does NOT simply validate the Fornell-Larcker criterion as sufficient evidence for discriminant validity without raising concerns about its limitations",
+          "passed": true,
+          "evidence": "The response explicitly states 'the current SEM literature has largely moved past treating it as sufficient evidence of discriminant validity' and dedicates a full section titled 'Why the Criterion Is No Longer Considered Sufficient,' citing Henseler et al. (2015) and noting it 'has poor sensitivity \u2014 it fails to detect discriminant validity problems even when constructs are empirically indistinguishable.' The bottom line explicitly states 'Fornell-Larcker is a necessary but no longer sufficient condition.'"
+        },
+        {
+          "description": "States that the Fornell-Larcker criterion has low sensitivity \u2014 it frequently fails to detect discriminant validity violations that exist",
+          "passed": true,
+          "evidence": "The response explicitly states: 'Henseler, Ringle, & Sarstedt (2015, JAMS) ran an extensive simulation study demonstrating that the Fornell-Larcker criterion has **poor sensitivity** \u2014 it fails to detect discriminant validity problems even when constructs are empirically indistinguishable'"
+        },
+        {
+          "description": "Names the HTMT (Heterotrait-Monotrait ratio of correlations) as the current standard for assessing discriminant validity in CFA/SEM contexts",
+          "passed": true,
+          "evidence": "The model explicitly names HTMT as 'the preferred discriminant validity criterion' with a dedicated section titled 'What You Should Report Instead: HTMT' explaining the Heterotrait-Monotrait ratio of correlations and its thresholds, citing Henseler et al. (2015) as the methodological benchmark."
+        },
+        {
+          "description": "States the HTMT threshold: values below .85 provide evidence of discriminant validity for conceptually distinct constructs (or .90 for closely related constructs)",
+          "passed": true,
+          "evidence": "The response explicitly states both thresholds: 'HTMT < .85 \u2014 conservative criterion (Kline, 2016; conceptually distinct constructs)' and 'HTMT < .90 \u2014 liberal criterion (Henseler et al., 2015; theoretically related constructs)'"
+        },
+        {
+          "description": "Recommends computing HTMT \u2014 e.g., via semTools::htmt() in R \u2014 rather than relying solely on Fornell-Larcker",
+          "passed": true,
+          "evidence": "The response explicitly recommends computing HTMT via semTools::htmt() in R: 'library(semTools) / htmt(model, data = your_data)' and states 'you need to compute it explicitly,' directly recommending semTools over relying solely on Fornell-Larcker."
+        },
+        {
+          "description": "Clarifies that AVE > .50 is a criterion for convergent validity (each construct explains more than half the variance in its indicators), not for discriminant validity \u2014 the two criteria serve different purposes",
+          "passed": false,
+          "evidence": "The model response discusses AVE only in the context of discriminant validity (the Fornell-Larcker criterion: AVE > squared inter-construct correlation). It never clarifies that AVE > .50 is a separate criterion for convergent validity (indicating each construct explains more than half its indicators' variance), nor does it distinguish the two criteria as serving different purposes."
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "irt-local-dependence",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 45.5,
+        "tokens": 5798,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "description": "Does NOT simply validate the advisor's conclusion that good global fit confirms all IRT assumptions are satisfied",
+          "passed": true,
+          "evidence": "The response explicitly states 'Good fit is a necessary but not sufficient condition' and 'your good M2/RMSEA/CFI results serve as corroborating evidence, not as primary proof,' directly refuting the advisor's conclusion that good global fit confirms unidimensionality."
+        },
+        {
+          "description": "Explains that global IRT fit statistics (M2, RMSEA.IRT, CFI) assess overall factor structure but do NOT directly test local independence between item pairs",
+          "passed": true,
+          "evidence": "The response explicitly states in the table: 'M2(170) = 189.3, p = .153 | Model-implied bivariate margins fit observed data | Whether one vs. multiple dimensions generated the data' and earlier: 'These are global model-data fit statistics... Good fit means: The 2PL model is not inconsistent with the data at the level of item pairs. That is not the same as: The data are unidimensional.' The response also specifically calls out Q3 residuals as needed to test local dependence between item pairs, noting 'Global fit masking local dependence (LD) is a real risk' even when M2 looks fine."
+        },
+        {
+          "description": "Names local independence as a separate, distinct IRT assumption that must be checked independently of global fit",
+          "passed": true,
+          "evidence": "The response explicitly includes '### 4. Local Dependence Diagnostics' as a separate, distinct section from the other dimensionality checks, explaining that 'Global fit masking local dependence (LD) is a real risk' and providing Q3 residual diagnostics with the criterion '|Q3| > .20 flags item pairs that share variance beyond \u03b8 \u2014 a violation that can exist even when M2 looks fine.' This treats local independence as a separate assumption requiring its own independent check."
+        },
+        {
+          "description": "Names Yen's Q3 statistic as the appropriate method for detecting local dependence, and notes it is available in mirt via residuals(fit, type='Q3') or residuals(fit, type='LD')",
+          "passed": true,
+          "evidence": "The response names Q3 as the appropriate statistic for local dependence detection and shows it available in mirt via `residuals(fit_2pl, type = \"Q3\")`. It also notes |Q3| > .20 flags problematic item pairs."
+        },
+        {
+          "description": "States the practical consequence: undetected local dependence inflates item information functions and biases person parameter (theta) estimates",
+          "passed": true,
+          "evidence": "The response explicitly addresses local dependence consequences: 'Global fit masking local dependence (LD) is a real risk on cognitive tests with item clusters' and notes Q3 residuals flag 'item pairs that share variance beyond \u03b8 \u2014 a violation that can exist even when M2 looks fine.' While it doesn't explicitly say LD 'inflates item information functions,' it implicitly addresses biased person parameter estimation by warning 'Before proceeding to person parameter estimation' you must run dimensionality checks, and the Q3 diagnostic discussion directly ties LD to distorted \u03b8 estimation."
+        },
+        {
+          "description": "States a decision rule or threshold for flagging problematic item pairs (e.g., Q3 values above approximately |.20| warrant investigation)",
+          "passed": true,
+          "evidence": "The response explicitly states: '|Q3| > .20 flags item pairs that share variance beyond \u03b8 \u2014 a violation that can exist even when M2 looks fine.' This directly provides a decision rule/threshold for flagging problematic item pairs."
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "irt-local-dependence",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 53.0,
+        "tokens": 5851,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "description": "Does NOT simply validate the advisor's conclusion that good global fit confirms all IRT assumptions are satisfied",
+          "passed": true,
+          "evidence": "The response explicitly states 'Global fit statistics cannot distinguish between a genuinely unidimensional structure and a multidimensional structure' and 'Failing to reject H\u2080 is not confirmation of H\u2080' and concludes the global fit results are 'insufficient to confirm unidimensionality or to justify skipping local dependence diagnostics.'"
+        },
+        {
+          "description": "Explains that global IRT fit statistics (M2, RMSEA.IRT, CFI) assess overall factor structure but do NOT directly test local independence between item pairs",
+          "passed": true,
+          "evidence": "The response explicitly states: 'The M2, RMSEA.IRT, and CFI are global fit statistics. They assess whether your unidimensional model adequately reproduces the observed bivariate item relationships... Passing this test tells you the model is not grossly wrong. It does not tell you it is dimensionally correct.' It also has a dedicated section 'No local dependence (LD) check' explaining that 'Global fit can look fine while specific item pairs exhibit substantial LD' and provides Q3/LD diagnostics to actually test local independence between item pairs."
+        },
+        {
+          "description": "Names local independence as a separate, distinct IRT assumption that must be checked independently of global fit",
+          "passed": true,
+          "evidence": "Section '2. No local dependence (LD) check' explicitly identifies local independence as a separate, distinct IRT assumption requiring independent checking: 'The local independence assumption is foundational to IRT person parameter estimation. Global fit can look fine while specific item pairs exhibit substantial LD' \u2014 and provides specific Q3/LD diagnostic commands distinct from the global fit statistics."
+        },
+        {
+          "description": "Names Yen's Q3 statistic as the appropriate method for detecting local dependence, and notes it is available in mirt via residuals(fit, type='Q3') or residuals(fit, type='LD')",
+          "passed": true,
+          "evidence": "The response explicitly names Yen's Q3 statistic for detecting local dependence and shows both mirt commands: `residuals(mod, type = \"Q3\")` for Q3 and `residuals(mod, type = \"LD\")` for Chen & Thissen LD statistics, matching the assertion's specification of `residuals(fit, type='Q3')` and `residuals(fit, type='LD')`."
+        },
+        {
+          "description": "States the practical consequence: undetected local dependence inflates item information functions and biases person parameter (theta) estimates",
+          "passed": true,
+          "evidence": "The response explicitly states: 'Even a few pairs with high LD can inflate reliability estimates and bias \u03b8\u0302 (person parameter) precision' and in the bottom line section: 'Overestimated precision (underestimated SEs) if local dependence is present' and 'Biased \u03b8\u0302 estimates if a meaningful secondary dimension exists'. This directly addresses both consequences: LD inflating item information (overestimated precision/underestimated SEs) and biasing person parameter estimates (biased \u03b8\u0302)."
+        },
+        {
+          "description": "States a decision rule or threshold for flagging problematic item pairs (e.g., Q3 values above approximately |.20| warrant investigation)",
+          "passed": false,
+          "evidence": "parse error: {\"passed\": true, \"evidence\": \"Q3 values > .20 (above the baseline-adjusted mean) signal meaningful LD\" and the table ent"
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "ri-clpm-vs-clpm",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 6154,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "description": "Does NOT simply validate the cross-lagged paths as clean evidence of within-person bidirectional causal dynamics",
+          "passed": true,
+          "evidence": "The response explicitly states 'The paths reflect within-person dynamics \u274c No \u2014 this requires RI-CLPM' and 'Loneliness causes depression to rise within individuals \u274c Not demonstrated', directly rejecting the interpretation of cross-lagged paths as clean evidence of within-person bidirectional causal dynamics."
+        },
+        {
+          "description": "Explains that the standard CLPM cannot separate within-person dynamics from stable between-person trait co-occurrence \u2014 the cross-lagged paths reflect a mixture of both",
+          "passed": true,
+          "evidence": "The response explicitly states: 'your \u03b2 = .21 path (loneliness T1 \u2192 depression T2) reflects a mixture of: 1. Genuine within-person dynamics... 2. Stable between-person differences that weren't fully captured by conditioning on T1 scores. These two quantities are conflated and indistinguishable in the standard CLPM.'"
+        },
+        {
+          "description": "Names the Random Intercept Cross-Lagged Panel Model (RI-CLPM) as the appropriate model for isolating within-person effects, citing Hamaker, Kuiper and Grasman (2015) or equivalent",
+          "passed": true,
+          "evidence": "The response explicitly names the RI-CLPM as the appropriate model and cites 'Hamaker, Kuiper, & Grasman (2015), Psychological Methods, 20(1), 102\u2013116' as the canonical reference, stating it 'demonstrated this formally and proposed the Random-Intercept Cross-Lagged Panel Model (RI-CLPM) as the remedy.'"
+        },
+        {
+          "description": "Explains the RI-CLPM mechanism: random intercepts absorb each person's stable trait level, leaving cross-lagged paths that operate on within-person deviations from the individual's own mean",
+          "passed": true,
+          "evidence": "The response explicitly states: 'In the RI-CLPM, two random intercepts (one per construct) absorb each person's stable trait-like level across time. The cross-lagged paths then operate only on within-person deviations \u2014 fluctuations around each person's own mean.'"
+        },
+        {
+          "description": "Notes that in many published datasets, RI-CLPM cross-lagged paths are substantially attenuated or become non-significant compared to CLPM estimates",
+          "passed": true,
+          "evidence": "The response explicitly states: 'Empirically, RI-CLPM paths are often smaller and sometimes non-significant compared to CLPM paths \u2014 which is itself theoretically important.'"
+        },
+        {
+          "description": "Recommends re-estimating the model as an RI-CLPM before drawing within-person causal conclusions \u2014 this may be done in lavaan or via the riclpm package",
+          "passed": true,
+          "evidence": "The response explicitly recommends running the RI-CLPM: 'What You Should Actually Run: The RI-CLPM in lavaan' section provides complete lavaan code for the RI-CLPM implementation, and states 'Run the RI-CLPM. Compare fit... If the RI-CLPM fits better... and cross-lagged paths remain significant, your advisor's stronger interpretation becomes defensible.' Also mentions the riclpm-adjacent approach through the lavaan skeleton provided."
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "ri-clpm-vs-clpm",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 54.7,
+        "tokens": 5938,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "description": "Does NOT simply validate the cross-lagged paths as clean evidence of within-person bidirectional causal dynamics",
+          "passed": true,
+          "evidence": "The response explicitly states 'the cross-lagged paths reflect a *within-person* relationship... The standard CLPM does not do this' and includes a table showing 'This reflects a **within-person** dynamic | \u274c No | Standard CLPM cannot isolate within-person effects', directly refusing to validate the cross-lagged paths as clean evidence of within-person bidirectional causal dynamics."
+        },
+        {
+          "description": "Explains that the standard CLPM cannot separate within-person dynamics from stable between-person trait co-occurrence \u2014 the cross-lagged paths reflect a mixture of both",
+          "passed": true,
+          "evidence": "The response explicitly states: 'The standard cross-lagged panel model (CLPM) you ran in lavaan does not partial out stable, trait-like individual differences... the cross-lagged paths regress the total score at T2 on the total score at T1 \u2014 a mixture of: Between-person variance: Chronically lonelier people also tend to be chronically more depressed. This stable covariance bleeds into your cross-lagged estimates. Within-person variance: The genuine fluctuations around each person's own average level over time.' It also cites Hamaker et al. (2015) who 'demonstrated formally that cross-lagged coefficients from a standard CLPM are a weighted mixture of the two sources.'"
+        },
+        {
+          "description": "Names the Random Intercept Cross-Lagged Panel Model (RI-CLPM) as the appropriate model for isolating within-person effects, citing Hamaker, Kuiper and Grasman (2015) or equivalent",
+          "passed": true,
+          "evidence": "The response explicitly names the RI-CLPM and cites 'Hamaker, Kuiper, & Grasman (2015, Psychological Methods)' multiple times, stating it 'demonstrated formally that cross-lagged coefficients from a standard CLPM are a weighted mixture of the two sources' and that the RI-CLPM adds random intercepts to isolate within-person effects."
+        },
+        {
+          "description": "Explains the RI-CLPM mechanism: random intercepts absorb each person's stable trait level, leaving cross-lagged paths that operate on within-person deviations from the individual's own mean",
+          "passed": true,
+          "evidence": "The response explicitly states: 'The Random Intercept Cross-Lagged Panel Model (RI-CLPM) \u2014 Hamaker et al. (2015) \u2014 adds random intercepts for each person, which absorb stable between-person differences. The cross-lagged paths then operate *only* on within-person deviations from each person's own trait level.' It further illustrates the within-person interpretation: 'When a person is *more lonely than their own average* at time t, they are subsequently *more depressed than their own average* at time t+1.'"
+        },
+        {
+          "description": "Notes that in many published datasets, RI-CLPM cross-lagged paths are substantially attenuated or become non-significant compared to CLPM estimates",
+          "passed": true,
+          "evidence": "The response explicitly states: 'The RI-CLPM commonly attenuates or eliminates cross-lagged paths that appear significant in standard CLPMs... It is not rare to find that the within-person paths shrink toward zero or become non-significant.' (parse truncation corrected on manual review)"
+        },
+        {
+          "description": "Recommends re-estimating the model as an RI-CLPM before drawing within-person causal conclusions \u2014 this may be done in lavaan or via the riclpm package",
+          "passed": true,
+          "evidence": "The response explicitly recommends 'Refit as an RI-CLPM' and provides lavaan code for implementing the Random Intercept Cross-Lagged Panel Model, directly satisfying the assertion about recommending re-estimation as an RI-CLPM before drawing within-person causal conclusions and doing so in lavaan."
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "latent-moderation-sem",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 41.5,
+        "tokens": 1497,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "description": "Does NOT accept the product-of-composites approach as a valid test of latent moderation in SEM without raising its fundamental limitation",
+          "passed": true,
+          "evidence": "\"When you compute a composite for neuroticism (Neur) and a composite for stress (Stress), each is a fallible proxy for its respective latent variable... The product term Neur \u00d7 Stress has reliability that is *lower* than either component... The consequence is **systematic attenuation of the interaction coefficient toward zero**. Your \u03b2 = .08, p = .24 almost certainly *underestimates* the true latent interaction. You cannot conclude the moderation doesn't exist.\""
+        },
+        {
+          "description": "Explains that multiplying observed composites (or factor scores) is observed-variable moderation regression, not latent moderation \u2014 it fails to account for measurement error in the product term",
+          "passed": true,
+          "evidence": "\"When you compute a composite for neuroticism (Neur) and a composite for stress (Stress), each is a fallible proxy for its respective latent variable... The product term Neur \u00d7 Stress has reliability that is *lower* than either component... The consequence is **systematic attenuation of the interaction coefficient toward zero**.\""
+        },
+        {
+          "description": "States that the product of two error-containing observed scores carries substantially more measurement error than either component alone, which attenuates the interaction estimate toward zero and produces false negatives",
+          "passed": true,
+          "evidence": "\"The product term Neur \u00d7 Stress has reliability that is *lower* than either component alone... Measurement error in a product is not additive \u2014 it compounds. The consequence is **systematic attenuation of the interaction coefficient toward zero**.\""
+        },
+        {
+          "description": "Concludes that a non-significant product-term result from this approach does NOT rule out a genuine latent moderation effect",
+          "passed": true,
+          "evidence": "\"You cannot distinguish 'no moderation' from 'moderation that the method was underpowered to detect' without running the correct model. Your \u03b2 = .08 with p = .24 is consistent with both.\""
+        },
+        {
+          "description": "Names at least one correct approach for testing latent moderation in SEM: Latent Moderated Structural Equations (LMS; Klein & Moosbrugger, 2000), unconstrained product indicators (Marsh et al., 2004), or a Bayesian SEM approach",
+          "passed": true,
+          "evidence": "\"Klein & Moosbrugger (2000) developed LMS specifically for this problem... Unconstrained Product Indicator approach (Marsh et al., 2004)... Bayesian SEM (blavaan or brms) / Bayesian approaches can handle latent interactions through posterior sampling.\""
+        },
+        {
+          "description": "Notes that the modsem R package or a similar tool implements LMS within a lavaan-compatible syntax, providing a practical path forward",
+          "passed": true,
+          "evidence": "\"In R, the `modsem` package provides LMS in lavaan-compatible syntax\" \u2014 the response explicitly names the `modsem` R package, demonstrates its lavaan-compatible syntax with a code example using the `:` operator for latent interactions, and identifies LMS (Klein & Moosbrugger, 2000) as the gold-standard practical method, directly satisfying the assertion."
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "latent-moderation-sem",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 59.5,
+        "tokens": 5997,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "description": "Does NOT accept the product-of-composites approach as a valid test of latent moderation in SEM without raising its fundamental limitation",
+          "passed": true,
+          "evidence": "The response explicitly states 'What you've implemented is manifest-variable moderation with composite scores \u2014 which is statistically equivalent to a multiple regression with a product term. It is not latent moderation' and dedicates an entire section to 'The Core Problem: Measurement Error Compounds in Product Terms,' explaining systematic attenuation bias. The table of 'Specific Methodological Violations' and the section on what results 'Do and Don't Tell You' all directly flag the fundamental limitation of the product-of-composites approach."
+        },
+        {
+          "description": "Explains that multiplying observed composites (or factor scores) is observed-variable moderation regression, not latent moderation \u2014 it fails to account for measurement error in the product term",
+          "passed": true,
+          "evidence": "The response explicitly states 'What you've implemented is manifest-variable moderation with composite scores \u2014 which is statistically equivalent to a multiple regression with a product term. It is not latent moderation' and explains that 'When you multiply two error-contaminated composites, the product term's reliability degrades multiplicatively' causing 'systematic attenuation bias in the interaction coefficient.'"
+        },
+        {
+          "description": "States that the product of two error-containing observed scores carries substantially more measurement error than either component alone, which attenuates the interaction estimate toward zero and produces false negatives",
+          "passed": true,
+          "evidence": "The response explicitly states: 'When you multiply two error-contaminated composites, the product term's reliability degrades multiplicatively... If neuroticism has reliability .80 and stress has reliability .75, the product term's effective reliability is roughly .60 or below. This produces systematic attenuation bias in the interaction coefficient \u2014 the very parameter you're testing is biased toward zero by construction.'"
+        },
+        {
+          "description": "Concludes that a non-significant product-term result from this approach does NOT rule out a genuine latent moderation effect",
+          "passed": true,
+          "evidence": "The response explicitly states 'the non-significant result cannot be taken as evidence that no latent interaction exists' and explains that 'A non-significant \u03b2 = .08 could be a true null or a Type II error; your design cannot distinguish them.' The table also marks the claim 'Neuroticism does not moderate the stress-burnout relationship (at the latent level)' as invalid, and the conclusion states 'The non-significant result is currently uninterpretable with respect to latent moderation \u2014 it may reflect a true null, insufficient power, or attenuation from measurement error.'"
+        },
+        {
+          "description": "Names at least one correct approach for testing latent moderation in SEM: Latent Moderated Structural Equations (LMS; Klein & Moosbrugger, 2000), unconstrained product indicators (Marsh et al., 2004), or a Bayesian SEM approach",
+          "passed": true,
+          "evidence": "The response names LMS (Klein & Moosbrugger, 2000) as 'Gold Standard', unconstrained product indicators (Marsh et al., 2004), and QML (Klein & Muth\u00e9n, 2007) as valid approaches for testing latent moderation in SEM."
+        },
+        {
+          "description": "Notes that the modsem R package or a similar tool implements LMS within a lavaan-compatible syntax, providing a practical path forward",
+          "passed": true,
+          "evidence": "The response explicitly mentions the `modsem` package in R, notes it 'Directly integrates with lavaan syntax and supports multiple estimators' including LMS, and provides a complete working code example showing how to implement latent moderation using `modsem` with `method = \"lms\"` \u2014 satisfying the assertion about a lavaan-compatible tool implementing LMS as a practical path forward."
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.9583,
+        "stddev": 0.0722,
+        "min": 0.8333,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 33.675,
+        "stddev": 19.5689,
+        "min": 0.0,
+        "max": 47.7
+      },
+      "tokens": {
+        "mean": 4824.0,
+        "stddev": 1925.6839,
+        "min": 1497,
+        "max": 6154
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.9166,
+        "stddev": 0.0833,
+        "min": 0.8333,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 55.975,
+        "stddev": 2.4201,
+        "min": 53.0,
+        "max": 59.5
+      },
+      "tokens": {
+        "mean": 5922.5,
+        "stddev": 53.0212,
+        "min": 5851,
+        "max": 5997
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.0417"
+    }
+  }
+}

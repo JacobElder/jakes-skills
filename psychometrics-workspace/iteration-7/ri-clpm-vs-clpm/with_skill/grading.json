@@ -1,36 +1,40 @@
 {
+  "run_id": "ri-clpm-vs-clpm-with_skill",
+  "eval_id": 3,
+  "eval_name": "ri-clpm-vs-clpm",
+  "config": "with_skill",
   "passed": 6,
   "total": 6,
   "expectations": [
     {
       "description": "Does NOT simply validate the cross-lagged paths as clean evidence of within-person bidirectional causal dynamics",
       "passed": true,
-      "evidence": "No, that interpretation is not sound for a standard CLPM."
+      "evidence": "The response explicitly states 'The paths reflect within-person dynamics \u274c No \u2014 this requires RI-CLPM' and 'Loneliness causes depression to rise within individuals \u274c Not demonstrated', directly rejecting the interpretation of cross-lagged paths as clean evidence of within-person bidirectional causal dynamics."
     },
     {
       "description": "Explains that the standard CLPM cannot separate within-person dynamics from stable between-person trait co-occurrence \u2014 the cross-lagged paths reflect a mixture of both",
       "passed": true,
-      "evidence": "cannot separate two fundamentally different processes: Between-person stability... Within-person dynamics"
+      "evidence": "The response explicitly states: 'your \u03b2 = .21 path (loneliness T1 \u2192 depression T2) reflects a mixture of: 1. Genuine within-person dynamics... 2. Stable between-person differences that weren't fully captured by conditioning on T1 scores. These two quantities are conflated and indistinguishable in the standard CLPM.'"
     },
     {
       "description": "Names the Random Intercept Cross-Lagged Panel Model (RI-CLPM) as the appropriate model for isolating within-person effects, citing Hamaker, Kuiper and Grasman (2015) or equivalent",
       "passed": true,
-      "evidence": "you need the Random Intercept Cross-Lagged Panel Model (RI-CLPM) (Hamaker, Kuiper & Grasman, 2015)"
+      "evidence": "The response explicitly names the RI-CLPM as the appropriate model and cites 'Hamaker, Kuiper, & Grasman (2015), Psychological Methods, 20(1), 102\u2013116' as the canonical reference, stating it 'demonstrated this formally and proposed the Random-Intercept Cross-Lagged Panel Model (RI-CLPM) as the remedy.'"
     },
     {
       "description": "Explains the RI-CLPM mechanism: random intercepts absorb each person's stable trait level, leaving cross-lagged paths that operate on within-person deviations from the individual's own mean",
       "passed": true,
-      "evidence": "adds a random intercept for each variable \u2014 a latent factor that absorbs each person's stable trait level. The cross-lagged paths then operate on within-person deviations"
+      "evidence": "The response explicitly states: 'In the RI-CLPM, two random intercepts (one per construct) absorb each person's stable trait-like level across time. The cross-lagged paths then operate only on within-person deviations \u2014 fluctuations around each person's own mean.'"
     },
     {
       "description": "Notes that in many published datasets, RI-CLPM cross-lagged paths are substantially attenuated or become non-significant compared to CLPM estimates",
       "passed": true,
-      "evidence": "In many published datasets where this correction has been applied, the cross-lagged paths shrink substantially or go to zero."
+      "evidence": "The response explicitly states: 'Empirically, RI-CLPM paths are often smaller and sometimes non-significant compared to CLPM paths \u2014 which is itself theoretically important.'"
     },
     {
       "description": "Recommends re-estimating the model as an RI-CLPM before drawing within-person causal conclusions \u2014 this may be done in lavaan or via the riclpm package",
       "passed": true,
-      "evidence": "Running the RI-CLPM alongside the CLPM... The riclpm package from Mulder & Hamaker also provides a cleaner wrapper"
+      "evidence": "The response explicitly recommends running the RI-CLPM: 'What You Should Actually Run: The RI-CLPM in lavaan' section provides complete lavaan code for the RI-CLPM implementation, and states 'Run the RI-CLPM. Compare fit... If the RI-CLPM fits better... and cross-lagged paths remain significant, your advisor's stronger interpretation becomes defensible.' Also mentions the riclpm-adjacent approach through the lavaan skeleton provided."
     }
   ]
 }
