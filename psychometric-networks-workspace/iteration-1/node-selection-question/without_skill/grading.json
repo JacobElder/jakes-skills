@@ -1,0 +1,36 @@
+{
+  "run_id": "node-selection-question-without_skill",
+  "eval_id": 6,
+  "eval_name": "node-selection-question",
+  "config": "without_skill",
+  "passed": 2,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Acknowledges that node selection is a substantive theoretical choice, not a neutral one, and that network structure depends on which items are included",
+      "passed": true,
+      "evidence": "\"node selection is not cosmetic; it determines whether your network represents a causal system or just a correlation structure with circles drawn around it\" and \"the resulting network topology partly reflects scale construction choices rather than disorder structure\""
+    },
+    {
+      "text": "References Fried's work on node selection, depression symptom heterogeneity, or the 'What are good depression symptoms' / '52 symptoms' line of work \u2014 OR makes the equivalent substantive point without the citation",
+      "passed": true,
+      "evidence": "\"the Haslbeck/Fried critique: many published psychopathology networks are estimated from scales originally designed as reflective measures, so the resulting network topology partly reflects scale construction choices rather than disorder structure\" \u2014 substantive point made with partial attribution"
+    },
+    {
+      "text": "Mentions node redundancy / topological overlap as a methodological concern (near-duplicate items inflate edge weights)",
+      "passed": false,
+      "evidence": "The response raises concerns about correlated items (e.g., 'Time occupied by obsessions' and 'distress from obsessions') reflecting shared method variance, but never explicitly frames this as node redundancy inflating edge weights \u2014 it attributes the correlation to shared severity rather than treating redundant nodes as a distinct topological/network-estimation problem"
+    },
+    {
+      "text": "Suggests checking for redundant nodes (e.g., networktools, goldbricker) or justifying selection theoretically",
+      "passed": false,
+      "evidence": "No mention of networktools, goldbricker, or any analogous procedure for detecting redundant nodes; the response suggests alternative instruments (OCI-R subscales, symptom checklist items) and theoretical reframing, but not redundancy-checking tools or methods"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 2,
+    "total": 4,
+    "pass_rate": 0.5
+  }
+}

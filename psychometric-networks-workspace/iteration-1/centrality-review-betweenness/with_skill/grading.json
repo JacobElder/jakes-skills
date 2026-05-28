@@ -1,0 +1,46 @@
+{
+  "run_id": "centrality-review-betweenness-with_skill",
+  "eval_id": 2,
+  "eval_name": "centrality-review-betweenness",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Identifies that betweenness centrality is generally not recommended for psychometric networks",
+      "passed": true,
+      "evidence": "\"Betweenness centrality should not be reported as the primary index in a psychometric network\" and \"the field has an explicit published consensus on this\""
+    },
+    {
+      "text": "Gives a substantive reason why betweenness is inappropriate here (e.g. the flow/shortest-path interpretation doesn't transfer to dense weighted partial-correlation graphs; or instability of betweenness in this setting). Citing Bringmann et al. (2019) is nice but not required if the substantive point is made.",
+      "passed": true,
+      "evidence": "\"betweenness was designed for sparse, unweighted graphs where 'flow' passes through intermediary nodes... A GGM of anxiety items is a dense, weighted, partial-correlation graph\" and \"Betweenness is also the least stable of the standard centrality indices under bootstrapping\""
+    },
+    {
+      "text": "Notes that centrality stability (CS-coefficient) is not reported and should be",
+      "passed": true,
+      "evidence": "\"Case-dropping subset bootstrap to compute the CS-coefficient (centrality stability coefficient)\" and \"CS \u2265 0.5 is acceptable; CS < 0.25 means do not interpret centrality at all. Without running this, there is literally no way to know whether 'restlessness has the highest betweenness' is a stable structural feature\""
+    },
+    {
+      "text": "Flags that the causal claim about treatment targeting is not warranted from cross-sectional centrality",
+      "passed": true,
+      "evidence": "\"centrality is not causal importance, and a cross-sectional GGM does not support intervention recommendations\" and \"It does not tell you: that the symptom drives others... that intervening on this symptom will change others\""
+    },
+    {
+      "text": "Recommends Strength or Expected Influence as more appropriate centrality indices",
+      "passed": true,
+      "evidence": "\"Strength (sum of absolute edge weights) is the defensible default\" and \"Expected Influence (Robinaugh, Millner & McNally, 2016) is preferable because it preserves sign information\""
+    },
+    {
+      "text": "Mentions that N=180 may be insufficient for stable centrality with 15 nodes",
+      "passed": true,
+      "evidence": "\"N=180 for 15 nodes is not obviously catastrophic... but the field has moved away from rules of thumb\" and \"betweenness in particular degrades quickly\" and \"Epskamp et al. (2018) note that 'several hundred cases' are typically needed for stable centrality\""
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

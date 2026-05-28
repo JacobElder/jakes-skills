@@ -1,0 +1,12 @@
+{
+  "eval_id": 4,
+  "eval_name": "centrality-process",
+  "prompt": "I'm a PM at a consulting firm and we ran an internal 'advice network' survey — 200 employees answered who they go to for work advice. I want to identify the most central/influential people in this network to figure out who should be our internal knowledge champions and who we should loop in early when rolling out a new initiative. Can you tell me how to compute centrality and who would be the best targets?",
+  "expectations": [
+    "Output distinguishes between multiple centrality measures and explains they answer different questions",
+    "Output asks about or discusses the substantive process (diffusion speed vs. brokerage vs. prestige/status) before recommending a single centrality",
+    "Output explicitly warns that eigenvector centrality is undefined or unreliable on directed networks without a strongly-connected component, and recommends Katz or PageRank instead",
+    "Output does NOT simply recommend degree centrality or betweenness as 'the' answer without process-based justification",
+    "Output provides specific centrality recommendations tied to specific use cases (e.g., PageRank/in-degree for knowledge prestige, betweenness for brokerage role)"
+  ]
+}

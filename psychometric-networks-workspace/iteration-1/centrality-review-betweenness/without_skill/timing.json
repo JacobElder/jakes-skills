@@ -1,0 +1,6 @@
+{
+  "eval_name": "centrality-review-betweenness",
+  "config": "without_skill",
+  "executor_duration_seconds": 67.59,
+  "total_duration_seconds": 67.59
+}

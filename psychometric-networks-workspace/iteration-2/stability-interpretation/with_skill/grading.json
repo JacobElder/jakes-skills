@@ -1,0 +1,41 @@
+{
+  "run_id": "stability-interpretation-with_skill",
+  "eval_id": 5,
+  "eval_name": "stability-interpretation",
+  "config": "with_skill",
+  "passed": 0,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Correctly applies the CS-coefficient thresholds (0.25 minimum, 0.5 acceptable)",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Concludes that Closeness and Betweenness should not be interpreted given the CS values",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Concludes that Strength and Expected Influence are interpretable but with caution",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Recommends focusing on edge ordering rather than absolute edge values when CIs are wide",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Recommends the bootstrapped difference test before making specific edge or node comparisons",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 5,
+    "total": 5,
+    "pass_rate": 0.0
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "eval_name": "hairball-gamma-tuning",
+  "config": "with_skill",
+  "executor_duration_seconds": 9.3,
+  "total_duration_seconds": 9.3
+}

@@ -1,0 +1,6 @@
+{
+  "eval_name": "negative-trigger-generic-network",
+  "config": "with_skill",
+  "executor_duration_seconds": 3.64,
+  "total_duration_seconds": 3.64
+}

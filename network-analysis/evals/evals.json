@@ -4,51 +4,51 @@
     {
       "id": 1,
       "prompt": "I'm a PhD student in sociology studying adolescent smoking behavior. I have a cross-sectional dataset from one school — 312 students, and I have their friendship nominations (who they named as close friends) and whether each student smokes. I ran a regression: smoking ~ mean_friends_smoking + gender + grade + SES. The coefficient on mean_friends_smoking is 0.43 and highly significant (p < 0.001). My advisor says this shows peer influence on smoking. Can you help me interpret this result and figure out what to do next?",
-      "expected_output": "Should raise Manski reflection problem and Shalizi-Thomas confound. Should NOT accept the regression as identifying peer influence. Should recommend SAOM, randomized designs, or IV approaches. Should explain that cross-sectional data cannot separate influence from homophily/selection.",
+      "expected_output": "Raises Manski and Shalizi-Thomas. Does NOT accept regression as identifying peer influence. Correctly specifies that SAOM requires longitudinal panel data (multiple waves). Recommends Bramoulle IV as cross-sectional alternative.",
       "files": [],
       "expectations": [
         "Output mentions Manski reflection problem or the linear-in-means identification failure",
         "Output mentions Shalizi-Thomas confounding or the homophily-contagion confound",
         "Output does NOT claim the regression identifies causal peer effects",
-        "Output recommends at least one method that addresses identification (SAOM/RSiena, instrumental variables, randomized peer assignment, or double negative controls)",
-        "Output explains that cross-sectional data makes causal peer effect claims non-credible"
+        "Output correctly specifies that SAOM/RSiena requires longitudinal panel data with at least 2 waves AND observable network change between waves — NOT just cross-sectional data",
+        "Output mentions Bramoullé et al. IV/GMM or friends-of-friends instruments as a cross-sectional identification strategy (not just 'use SAOM')"
       ]
     },
     {
       "id": 2,
       "prompt": "Hey — I have a bipartite dataset of 800 employees and ~150 internal projects they've worked on together (so edge = person participated in project). I want to find communities of employees who collaborate together. My plan is to project this onto a person-person network (edge weight = number of shared projects) and then run Louvain community detection on it. Does this sound right? I already have the NetworkX code ready to go.",
-      "expected_output": "Should flag the bipartite projection pathology — clique inflation, inflated weights, co-membership artifacts. Should recommend backbone extraction (SDSM/FDSM) or direct bipartite community detection (bipartite SBM, biSBM). Should NOT just say 'sure, sounds good'.",
+      "expected_output": "Flags bipartite projection pathology. Recommends SDSM/FDSM backbone extraction (not disparity filter). Recommends direct bipartite SBM as cleaner alternative. Does NOT validate the plan.",
       "files": [],
       "expectations": [
         "Output flags the bipartite projection pathology (clique inflation, co-membership artifacts, inflated clustering)",
-        "Output recommends backbone extraction (SDSM, FDSM, disparity filter) before running community detection on the projection",
+        "Output recommends SDSM or FDSM backbone extraction specifically — NOT the disparity filter (which ignores bipartite structure and is wrong here)",
         "Output mentions direct bipartite community detection as an alternative (bipartite SBM, biSBM, graph-tool bipartite)",
         "Output does NOT simply validate the Louvain-on-projection plan without warnings",
-        "Output explains why edge weights from bipartite projection are not the same as relationship strength"
+        "Output explains why edge weights from bipartite projection are not the same as relationship strength (co-membership count confounds project size and individual activity)"
       ]
     },
     {
       "id": 3,
       "prompt": "I'm fitting an ERGM to a friendship network of 180 college students collected in one wave. I want to model transitivity (friends of friends become friends), popularity effects, and gender homophily. Here's my R code:\n\nlibrary(statnet)\nfit <- ergm(net ~ edges + triangle + kstar(2) + nodematch('gender'))\nsummary(fit)\n\nThe model ran and I got significant coefficients on everything including triangle (coef = 0.85, p < 0.001). Should I report these results?",
-      "expected_output": "Should flag ERGM degeneracy — triangle and kstar(2) terms are almost always degenerate. Should recommend GWESP and GWDEGREE instead. Should recommend mcmc.diagnostics() and gof() as required steps before reporting anything.",
+      "expected_output": "Warns triangle/kstar degenerate. Explains WHY gwesp prevents degeneracy (decreasing marginal returns). Recommends gwesp, gwdegree. Requires mcmc.diagnostics and gof. States p-values from degenerate model are invalid.",
       "files": [],
       "expectations": [
         "Output warns that triangle and kstar(2) terms are almost always degenerate in ERGMs",
-        "Output recommends replacing triangle with gwesp and kstar with gwdegree (or gwdsp)",
+        "Output recommends replacing triangle with gwesp AND explains WHY gwesp prevents degeneracy (decreasing marginal returns / each additional shared partner contributes less / curved exponential family)",
         "Output recommends running mcmc.diagnostics() to check MCMC convergence",
         "Output recommends running gof() as a required step before reporting results",
-        "Output does NOT tell the user it is safe to report the current results as-is"
+        "Output explicitly states that the p-values from the degenerate model (including the triangle p < 0.001) are untrustworthy artifacts, not valid evidence"
       ]
     },
     {
       "id": 4,
       "prompt": "I'm a PM at a consulting firm and we ran an internal 'advice network' survey — 200 employees answered who they go to for work advice. I want to identify the most central/influential people in this network to figure out who should be our internal knowledge champions and who we should loop in early when rolling out a new initiative. Can you tell me how to compute centrality and who would be the best targets?",
-      "expected_output": "Should NOT just default to degree or betweenness. Should ask about or discuss the difference between 'influential in what way' — for information diffusion vs. knowledge brokerage vs. rapid reach. Should explain that advice networks are directed and the right centrality depends on the process (PageRank/Katz for prestige, betweenness for brokerage, etc.).",
+      "expected_output": "Distinguishes process-based centralities. Handles directed-graph issues correctly including eigenvector failure on non-strongly-connected digraphs. Ties recommendations to specific use cases.",
       "files": [],
       "expectations": [
         "Output distinguishes between multiple centrality measures and explains they answer different questions",
         "Output asks about or discusses the substantive process (diffusion speed vs. brokerage vs. prestige/status) before recommending a single centrality",
-        "Output notes that this is a directed network and handles directed-network caveats (e.g., in-degree vs out-degree, directed betweenness, eigenvector undefined for non-strongly-connected digraphs)",
+        "Output explicitly warns that eigenvector centrality is undefined or unreliable on directed networks without a strongly-connected component, and recommends Katz or PageRank instead",
         "Output does NOT simply recommend degree centrality or betweenness as 'the' answer without process-based justification",
         "Output provides specific centrality recommendations tied to specific use cases (e.g., PageRank/in-degree for knowledge prestige, betweenness for brokerage role)"
       ]
@@ -56,53 +56,53 @@
     {
       "id": 5,
       "prompt": "I have a dataset of timestamped email exchanges between 450 employees at a tech company — about 2.3M emails over 3 years, each row is (sender, recipient, timestamp). I want to do social network analysis to understand communication patterns and find key communicators. My plan is to aggregate all emails into a weighted adjacency matrix (weight = number of emails sent) and then compute standard SNA metrics. Does that approach work?",
-      "expected_output": "Should flag that aggregating to a static graph loses temporal information and recommend temporal network analysis. Should mention time-respecting paths, temporal centrality, burstiness. Should recommend pathpy, teneto, or similar. Should distinguish what the static aggregation answers vs. what temporal analysis answers.",
+      "expected_output": "Warns static aggregation loses temporal information. Mentions time-respecting paths. Recommends pathpy/teneto or equivalent. Distinguishes static aggregate metrics from temporal network metrics. Does NOT validate static-only plan.",
       "files": [],
       "expectations": [
         "Output warns that aggregating to a static graph loses temporal information and conflates different time periods",
-        "Output mentions time-respecting paths (temporal paths that respect arrow of time) as a key concept",
+        "Output mentions time-respecting paths (temporal paths that respect arrow of time) as a key concept — and explains that paths in the aggregate can be causally impossible if timestamps are out of order",
         "Output recommends temporal network analysis tools (pathpy, teneto, snap-temporal, or equivalent)",
-        "Output explains the difference between metrics on the static aggregate vs. metrics on the temporal network",
+        "Output explains that static betweenness and temporal betweenness can rank nodes in qualitatively different orders, not just quantitatively",
         "Output does NOT simply validate the static-aggregation plan as sufficient for understanding communication dynamics"
       ]
     },
     {
       "id": 6,
       "prompt": "We're building a recommendation system and want to model our user-item interaction graph. It has about 5 million users, 2 million items, and 800 million interactions. I want to compute betweenness centrality and run community detection on this thing. Was planning to use NetworkX. Will that work?",
-      "expected_output": "Should redirect from NetworkX — betweenness on 5M+ nodes is computationally infeasible even in C. Should recommend NetworKit or cuGraph for large-scale work, or igraph as a middle ground. Should also note that exact betweenness is O(V*E) and may need approximation.",
+      "expected_output": "Redirects from NetworkX. Recommends scale-appropriate tools. Warns betweenness infeasible at this scale. Recognizes bipartite structure of user-item graph and warns that standard community detection conflates user and item nodes.",
       "files": [],
       "expectations": [
         "Output redirects away from NetworkX for this scale (5M nodes, 800M edges)",
         "Output recommends NetworKit, cuGraph, or graph-tool as appropriate large-scale alternatives",
         "Output warns that exact betweenness centrality is computationally infeasible at this scale (O(VE) or O(V*E))",
-        "Output mentions approximate betweenness (sampling-based) as a practical alternative",
-        "Output provides specific library recommendations with rationale (e.g., NetworKit for parallel CPU, cuGraph for GPU)"
+        "Output recognizes that this is a bipartite (user-item) graph and warns that running standard community detection on it would conflate user and item nodes into mixed communities",
+        "Output mentions approximate betweenness (sampling-based) or questions whether betweenness is the right metric for a recommendation system"
       ]
     },
     {
       "id": 7,
       "prompt": "I ran Louvain community detection on my co-authorship network (1200 authors, 4800 edges) and got 8 communities. The modularity is 0.67 which seems great. How do I report these communities in my paper? I want to name them and describe what each one represents.",
-      "expected_output": "Should flag that a single Louvain run is unreliable — modularity degeneracy means many different partitions have near-equal modularity. Should recommend running many times, computing stability (NMI, AMI), and reporting a consensus partition. Should also mention resolution limit for small communities.",
+      "expected_output": "Warns about modularity degeneracy (not just stochasticity). Requires stability analysis BEFORE naming/interpretation. Recommends 100+ runs with ARI/NMI. Compares Q to null. Mentions SBM alternative.",
       "files": [],
       "expectations": [
-        "Output warns that a single Louvain run is not 'the' partition — modularity degeneracy means many solutions have near-equal quality",
-        "Output recommends running community detection many times (e.g., 100+ runs) and measuring stability/consensus",
-        "Output mentions NMI (Normalized Mutual Information) or AMI or a similar stability metric for comparing partitions",
-        "Output does NOT recommend simply reporting the single-run partition without stability analysis",
-        "Output mentions Louvain's resolution limit or the alternative of SBM (Stochastic Block Model) for more principled partitioning"
+        "Output warns that a single Louvain run reflects modularity DEGENERACY — many qualitatively different partitions have near-equal modularity (Good et al.) — not just random stochasticity",
+        "Output frames stability analysis as a PREREQUISITE before naming or interpreting communities, not as an optional improvement step",
+        "Output recommends running community detection many times (e.g., 100+ runs) and measuring pairwise stability with ARI, NMI, or similar",
+        "Output recommends comparing Q = 0.67 against a configuration-model null (random graphs with the same degree sequence) rather than accepting it at face value",
+        "Output mentions Louvain resolution limit or the alternative of SBM (Stochastic Block Model) for more principled partitioning"
       ]
     },
     {
       "id": 8,
       "prompt": "I'm working on a link prediction model for a social network — trying to predict which friendships will form in the next 6 months. My dataset has ~50k nodes and ~300k existing edges. I split the edges randomly 80/20, trained a GNN on the 80%, and got AUROC = 0.94 on the 20% holdout. My advisor says this is too good to be true. Is she right? How do I know if my evaluation is valid?",
-      "expected_output": "Should flag the random edge split as data leakage — easy negative sampling (random non-edges) inflates AUROC dramatically. Should recommend hard negative sampling (structurally similar non-edges) and proper temporal splits. Should recommend comparing to Adamic-Adar or common-neighbors baseline.",
+      "expected_output": "Identifies random negative sampling as inflating AUROC. Identifies GNN message-passing leakage specifically. Recommends temporal split, hard negatives, Adamic-Adar baseline. Explains why 0.94 is misleading.",
       "files": [],
       "expectations": [
-        "Output identifies random negative sampling as a key validity problem (easy negatives inflate AUROC)",
-        "Output recommends hard negative sampling (e.g., non-edges between nodes at distance 2 or 3, or degree-matched negatives)",
-        "Output recommends a temporal train/test split (train on past, predict future) to prevent leakage",
-        "Output recommends comparing to a simple baseline (Adamic-Adar, Jaccard, Common Neighbors) before celebrating GNN performance",
-        "Output explains why 0.94 AUROC with random negatives is misleading (the task is too easy — most random pairs are obviously dissimilar)"
+        "Output identifies random negative sampling as a key validity problem (easy negatives inflate AUROC by 10-20pp)",
+        "Output specifically identifies GNN message-passing leakage: test edges are visible in the message-passing graph during node encoding, so the model effectively 'sees' the test answers while training",
+        "Output recommends a temporal train/test split (train on edges before time T, evaluate on edges after T) as the correct evaluation for the stated temporal forecasting goal",
+        "Output recommends comparing to a simple structural baseline (Adamic-Adar, Jaccard, or Common Neighbors) as a required sanity check",
+        "Output recommends hard negative sampling (distance-2 non-edges or structurally similar non-edges) as a required fix"
       ]
     }
   ]

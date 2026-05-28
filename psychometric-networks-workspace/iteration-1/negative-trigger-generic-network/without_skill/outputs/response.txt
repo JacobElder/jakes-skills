@@ -1,0 +1,54 @@
+## Betweenness Centrality
+
+**Betweenness centrality** measures how often a node acts as a *bridge* along the shortest path between other nodes in a network. It quantifies a node's role as an intermediary or broker.
+
+### The Formula (intuitively)
+
+For each node *v*, you ask: *"Of all the shortest paths between every pair of other nodes, what fraction of them pass through v?"*
+
+$$C_B(v) = \sum_{s \neq v \neq t} \frac{\sigma_{st}(v)}{\sigma_{st}}$$
+
+Where:
+- σ_st = total number of shortest paths from node *s* to node *t*
+- σ_st(v) = how many of those paths pass through *v*
+
+A high score means the node sits at many critical junctions. A low score means the network can route around it easily.
+
+---
+
+### How It Differs from Other Centrality Measures
+
+| Measure | Asks… |
+|---|---|
+| **Degree centrality** | How many direct connections does a node have? |
+| **Closeness centrality** | How quickly can a node reach all others? |
+| **Betweenness centrality** | How much does a node *control flow* between others? |
+
+---
+
+### A Concrete Example: Identifying Infrastructure Vulnerabilities
+
+Imagine a city's **subway network**. Most stations connect to a few nearby lines, but a handful of transfer hubs (e.g., a central interchange station) sit on *every* cross-city route.
+
+- That hub has **high betweenness centrality** — even if it doesn't have the most direct connections (degree) or is near the geographic center (closeness).
+- If that station closes, huge numbers of commuters lose their shortest path across the city.
+
+This makes betweenness centrality the right tool when you care about **fragility and bottlenecks**, not just popularity.
+
+---
+
+### Other Classic Use Cases
+
+- **Social networks** — identifying "brokers" who connect otherwise separate communities (e.g., someone who bridges two professional circles)
+- **Internet routing** — finding routers whose failure would fragment the network
+- **Supply chains** — spotting single-vendor dependencies that create systemic risk
+- **Neuroscience** — finding brain regions that mediate communication between different functional areas
+- **Citation networks** — finding papers that bridge disparate research fields
+
+---
+
+### Key Intuition
+
+> A node can have *few* connections and still have *high* betweenness — what matters is whether it occupies a **structurally unique position** that others depend on to communicate.
+
+This is why betweenness centrality is especially valuable in **resilience analysis**: the nodes you most need to protect (or that adversaries would most want to attack) are often not the most connected, but the most *irreplaceable*.

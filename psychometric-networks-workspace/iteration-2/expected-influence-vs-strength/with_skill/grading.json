@@ -1,0 +1,41 @@
+{
+  "run_id": "expected-influence-vs-strength-with_skill",
+  "eval_id": 2,
+  "eval_name": "expected-influence-vs-strength",
+  "config": "with_skill",
+  "passed": 0,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Recommends Expected Influence over Strength, or recommends both with Expected Influence as the primary index for this network",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Explains the substantive reason: Strength sums absolute edge weights and loses sign information, so nodes with large positive and large negative edges get inflated Strength scores that don't reflect their net influence",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Notes that negative edges between positive and negative affect items are structurally expected in an affect network, making sign information important",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Attributes Expected Influence to Robinaugh et al. (2016) OR makes the equivalent point that EI was developed specifically to handle networks with negative edges without the attribution",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Notes that for unipolar networks (where all edges are positive), Strength and Expected Influence are equivalent OR does not contradict this",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 5,
+    "total": 5,
+    "pass_rate": 0.0
+  }
+}

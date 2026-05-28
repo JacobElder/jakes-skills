@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Output flags the bipartite projection pathology (clique inflation, co-membership artifacts, inflated clustering)",
+      "passed": true,
+      "evidence": "Problem 1 explicitly states: 'every project of size d contributes a clique of size d to the projected graph (all d(d-1)/2 person-pairs who co-participated get an edge)' and 'Clustering coefficients are artificially inflated' and 'Community detection finds the affiliations, not the collaborations: Louvain will essentially re-discover your project groupings.'"
+    },
+    {
+      "text": "Output recommends SDSM or FDSM backbone extraction specifically — NOT the disparity filter (which ignores bipartite structure and is wrong here)",
+      "passed": true,
+      "evidence": "The 'Fix' section explicitly names both SDSM (Neal 2014) and FDSM (Godard & Neal 2022) with descriptions, and includes a bolded warning: 'Do not use the disparity filter here. The disparity filter...operates only on the projected edge weights and ignores the bipartite structure entirely...SDSM and FDSM dominate disparity for bipartite projections.'"
+    },
+    {
+      "text": "Output mentions direct bipartite community detection as an alternative (bipartite SBM, biSBM, graph-tool bipartite)",
+      "passed": true,
+      "evidence": "'Alternative: Skip the projection entirely' section recommends bipartite SBM in graph-tool with exact code: 'gt.minimize_nested_blockmodel_dl(g, state_args=dict(deg_corr=True, pclabel=g.vp.kind))' and also mentions bipartite modularity (Barber 2007) via cdlib."
+    },
+    {
+      "text": "Output does NOT simply validate the Louvain-on-projection plan without warnings",
+      "passed": true,
+      "evidence": "The response opens with 'the plan as described — project → Louvain on raw edge weights — has a few specific problems worth fixing before you run anything' and structures the entire response around three named problem sections before any positive recommendation."
+    },
+    {
+      "text": "Output explains why edge weights from bipartite projection are not the same as relationship strength (co-membership count confounds project size and individual activity)",
+      "passed": true,
+      "evidence": "Problem 2 is dedicated to this: 'The edge weight (number of shared projects) is not the same as how strongly two people collaborate' with a concrete Alice/Bob/Carol example illustrating how a 5-person project vs. a 200-person all-hands initiative both produce edge weight=1, and 'The raw co-membership count conflates project size and individual activity level.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 5821,
+    "total_tool_calls": 3,
+    "total_steps": 4,
+    "errors_encountered": 0
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

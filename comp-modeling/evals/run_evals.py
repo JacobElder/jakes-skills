@@ -3,10 +3,12 @@ Run comp-modeling skill evals against the claude CLI.
 
 Two conditions:
   baseline  -- claude -p "<prompt>"
-  with_skill -- claude -p "<prompt>" --append-system-prompt "<SKILL.md + relevant refs>"
+  with_skill -- claude -p "<prompt>" --append-system-prompt "<SKILL.md>"
 
-For routing evals, appends the full reference set so we can check routing logic.
-For content evals, appends SKILL.md only (the always-loaded layer).
+Only content evals are runnable here. Routing evals test file-loading mechanics
+(which references the agent actually reads), and those only work inside a real
+skill install where the agent can invoke Read on the reference files. Passing
+routing IDs via --ids will print an explanatory message and exit cleanly.
 """
 
 import json
@@ -68,7 +70,7 @@ def call_claude(prompt: str, system_extra: str | None = None,
 
 def run_all(model: str = "haiku", delay: float = 4.0,
             evals: list | None = None) -> dict:
-    evals = evals or RUNNABLE
+    evals = RUNNABLE if evals is None else evals
     results = {"model": model, "evals": {}}
     total = len(evals)
     for i, ev in enumerate(evals, 1):
@@ -125,6 +127,14 @@ if __name__ == "__main__":
 
     subset = [e for e in CONTENT_EVALS
               if not args.ids or e.id in args.ids]
+
+    if not subset:
+        known_routing = [e.id for e in ROUTING_EVALS]
+        hint = ""
+        if args.ids and all(i in known_routing for i in args.ids):
+            hint = " (routing eval IDs were passed — this harness only runs content evals)"
+        print(f"No content evals matched {args.ids}.{hint}")
+        sys.exit(0)
 
     print(f"\nRunning {len(subset)} content evals "
           f"(baseline vs with-skill, model={args.model})...\n")

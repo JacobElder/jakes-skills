@@ -77,7 +77,25 @@
       "Bash(launchctl getenv *)",
       "Bash(security dump-keychain *)",
       "Bash(git -C ~/Documents/GitHub/Competing-Motives ls-files)",
-      "Bash(python run_htmt_eval.py)"
+      "Bash(python run_htmt_eval.py)",
+      "Bash(xargs ls *)",
+      "Bash(git -C ~/Documents/GitHub/Competing-Motives status)",
+      "Bash(git -C ~/Documents/GitHub/Competing-Motives log --oneline -5)",
+      "Bash(git -C ~/Documents/GitHub/Competing-Motives fetch)",
+      "Bash(git -C ~/Documents/GitHub/Competing-Motives rev-list --left-right --count origin/main...HEAD)",
+      "Bash(git -C ~/Documents/GitHub/jakes-skills log --oneline -3)",
+      "Bash(git -C ~/Documents/GitHub/jakes-skills rev-list --count @{u}..HEAD)",
+      "Bash(git -C ~/Documents/GitHub/capital-gains-optimizer rev-list --count @{u}..HEAD)",
+      "Bash(git -C ~/Documents/GitHub/Competing-Motives log --oneline origin/main..HEAD)",
+      "Bash(git -C ~/Documents/GitHub/Competing-Motives log --oneline HEAD..origin/main)",
+      "Bash(python -m scripts.aggregate_benchmark /Users/jacobelder/Documents/GitHub/jakes-skills/network-analysis-workspace/iteration-1 --skill-name network-analysis)",
+      "Bash(git -C ~/Documents/GitHub/Competing-Motives pull --rebase)",
+      "Bash(git -C ~/Documents/GitHub/Competing-Motives push)",
+      "Bash(git -C ~/Documents/GitHub/Competing-Motives stash)",
+      "Bash(git -C ~/Documents/GitHub/Competing-Motives stash pop)",
+      "Bash(unzip -o files.zip)",
+      "Bash(echo \"PID: $!\")",
+      "Bash(open *)"
     ]
   }
 }

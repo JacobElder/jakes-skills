@@ -1,0 +1,67 @@
+## Interpreting Your bootnet Results
+
+This is a common situation in network psychometrics and worth unpacking carefully, because the CS-coefficients and the bootstrapped edge CIs are telling you two different (but related) things.
+
+---
+
+### CS-Coefficients: What They Mean
+
+The CS-coefficient answers: *"How much of my sample can I drop and still recover the same centrality ordering?"* Epskamp et al. (2018) set thresholds at **≥ 0.25 minimum** and **≥ 0.50 preferred**.
+
+| Metric | CS | Verdict |
+|---|---|---|
+| Betweenness | 0.05 | ❌ Do not interpret |
+| Closeness | 0.13 | ❌ Do not interpret |
+| Strength | 0.36 | ⚠️ Interpret cautiously |
+| Expected Influence | 0.44 | ✅ Most defensible |
+
+**Betweenness and closeness are effectively noise here.** This is not unusual — both are notoriously unstable in psychological networks even with large samples, and Betweenness = 0.05 means the ranking falls apart when you drop even a small fraction of cases. Do not make substantive claims about which nodes are "bridges" or "gatekeepers" based on these metrics.
+
+**Strength (0.36)** passes the minimum bar but not the preferred bar. You can report the relative ordering of nodes by strength, but you should qualify that the ranking has limited reproducibility.
+
+**Expected Influence (0.44)** is your most reliable centrality metric. It's approaching the preferred threshold and correctly handles negative edges that Strength ignores. Lead with this.
+
+---
+
+### Wide, Overlapping Edge CIs: What This Tells You
+
+Wide, overlapping bootstrapped CIs on edge weights indicate the network is **underdetermined given your sample size**. With an 18-node GGM (potentially up to 153 edge parameters), you need substantial N to estimate weights precisely — typically N > 250 at minimum, N > 500 preferred.
+
+This means:
+
+- **Edge weights are uncertain**, not necessarily wrong. EBIC-glasso already shrinks near-zero edges to zero, so the retained edges are the ones that survived regularization — but their precise magnitudes are noisy.
+- **You cannot rank edges reliably.** If CIs overlap heavily, you cannot claim "Edge A is stronger than Edge B."
+- **Signs are more trustworthy than magnitudes.** Positive vs. negative relationships are generally more stable than the specific weight.
+
+---
+
+### What You Can Responsibly Report
+
+**Report fully and transparently:**
+- All four CS-coefficients with the interpretation guidelines
+- The bootstrapped CIs for edge weights (in a figure, not just the point estimates)
+- The bootstrapped difference tests for centrality — `plot(boot2, "strength", order = "sample", decreasing = TRUE)` tells you which node differences are reliable
+
+**Claim:**
+- The overall network topology (which edges are present/absent, general positive/negative patterning)
+- Expected Influence ordering with appropriate uncertainty language
+- Strength ordering with the caveat that it is moderately stable
+
+**Do not claim:**
+- Betweenness or closeness rankings are meaningful
+- Specific edge weights are precise
+- Node A is significantly more central than Node B unless the difference bootstrap explicitly supports it
+
+---
+
+### Suggested Write-Up Language
+
+> *"Network stability was assessed using case-dropping subset bootstraps (Epskamp et al., 2018). Expected Influence showed adequate stability (CS = 0.44), and node Strength showed acceptable stability (CS = 0.36). Closeness (CS = 0.13) and Betweenness (CS = 0.05) fell below the recommended minimum threshold of 0.25 and are not interpreted. Bootstrapped confidence intervals for edge weights were wide, indicating that precise edge magnitudes should be interpreted with caution; we therefore focus on the presence, absence, and sign of edges rather than specific weight values."*
+
+---
+
+### One Practical Next Step
+
+Run `plot(bootnet_obj, order = "sample", labels = TRUE)` for the **bootstrapped difference test** on Expected Influence. This will show you which node-to-node differences in EI are actually distinguishable given your data — that becomes the evidentiary floor for any centrality claim you make.
+
+The overall picture: your network structure is estimable, your EI and Strength orderings are usable with caveats, and your betweenness/closeness results should be set aside entirely. Frame the analysis as exploratory and let the bootstraps speak for themselves in the figures.

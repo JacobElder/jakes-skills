@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Output distinguishes between multiple centrality measures and explains they answer different questions",
+      "passed": true,
+      "evidence": "Response covers in-degree, betweenness, PageRank/Katz, closeness, and out-degree, each with distinct explanations of what they capture (e.g., 'Betweenness centrality — Measures how often a person sits on the shortest path between two others... these people are critical for information flow across silos' vs. 'PageRank... are the people who consult you themselves influential?')"
+    },
+    {
+      "text": "Output asks about or discusses the substantive process (diffusion speed vs. brokerage vs. prestige/status) before recommending a single centrality",
+      "passed": true,
+      "evidence": "'The right centrality depends on what you're trying to do' — followed by a table mapping each goal (knowledge champions, rollout speed, cross-silo reach, informal influencers) to a different measure before giving final recommendations"
+    },
+    {
+      "text": "Output explicitly warns that eigenvector centrality is undefined or unreliable on directed networks without a strongly-connected component, and recommends Katz or PageRank instead",
+      "passed": true,
+      "evidence": "'Eigenvector centrality is mathematically unstable on directed networks unless the network has a strongly connected component... most real-world advice networks don't satisfy this... eigenvector centrality will assign zero scores to large portions of the network, making it unreliable. Use PageRank or Katz centrality instead'"
+    },
+    {
+      "text": "Output does NOT simply recommend degree centrality or betweenness as 'the' answer without process-based justification",
+      "passed": true,
+      "evidence": "Degree and betweenness are each recommended only for specific use cases with explicit reasoning (e.g., betweenness for cross-silo brokerage, not as a general default). The response explicitly frames all recommendations as conditional on the goal."
+    },
+    {
+      "text": "Output provides specific centrality recommendations tied to specific use cases (e.g., PageRank/in-degree for knowledge prestige, betweenness for brokerage role)",
+      "passed": true,
+      "evidence": "Table and prose both map: PageRank/in-degree -> knowledge champions/prestige; closeness -> rollout diffusion speed; betweenness -> cross-silo brokerage. Final section gives two explicit use-case recommendations: 'Knowledge champions: Start with PageRank' and 'Early loop-in for initiative rollout: Combine betweenness... with closeness'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 3891,
+    "total_tool_calls": 2,
+    "total_steps": 3,
+    "errors_encountered": 0
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

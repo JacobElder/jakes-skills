@@ -1,0 +1,12 @@
+{
+  "eval_id": 3,
+  "eval_name": "ergm-degeneracy",
+  "prompt": "I'm fitting an ERGM to a friendship network of 180 college students collected in one wave. I want to model transitivity (friends of friends become friends), popularity effects, and gender homophily. Here's my R code:\n\nlibrary(statnet)\nfit <- ergm(net ~ edges + triangle + kstar(2) + nodematch('gender'))\nsummary(fit)\n\nThe model ran and I got significant coefficients on everything including triangle (coef = 0.85, p < 0.001). Should I report these results?",
+  "expectations": [
+    "Output warns that triangle and kstar(2) terms are almost always degenerate in ERGMs",
+    "Output recommends replacing triangle with gwesp AND explains WHY gwesp prevents degeneracy (decreasing marginal returns / each additional shared partner contributes less / curved exponential family)",
+    "Output recommends running mcmc.diagnostics() to check MCMC convergence",
+    "Output recommends running gof() as a required step before reporting results",
+    "Output explicitly states that the p-values from the degenerate model (including the triangle p < 0.001) are untrustworthy artifacts, not valid evidence"
+  ]
+}

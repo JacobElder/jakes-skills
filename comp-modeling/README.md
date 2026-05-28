@@ -103,38 +103,38 @@ With the skill, the boundary pileup triggers a named diagnosis with specific nex
 
 ## Benchmark: skill vs. base model
 
-Content evals were run live against the `claude` CLI (haiku model) with and without the skill appended as a system prompt. Triggering evals are from analytical rubric review. Routing evals were partially affected by a rate limit mid-run (see note).
+Content evals were run live against the `claude` CLI (haiku model) with and without the skill appended as a system prompt. Triggering evals are from analytical rubric review. Routing evals require actual skill installation (file-loading mechanics) and were scored analytically.
 
 ```mermaid
 xychart-beta horizontal
     title "Pass rate by eval category (■ with skill  □ base model)"
-    x-axis ["Triggering (10, analytical)", "Content (17, live API)"]
+    x-axis ["Triggering (10, analytical)", "Routing (12, analytical)", "Content (23, live API)"]
     y-axis "Pass rate" 0 --> 1
-    bar [0.90, 0.82]
-    bar [0.80, 0.41]
+    bar [0.90, 0.92, 1.00]
+    bar [0.80, 0.58, 0.70]
 ```
 
 | | With skill | Base model | Gap |
 |--|:---:|:---:|:---:|
 | **Triggering (10 evals, analytical)** | **9/10 (90%)** | ~8/10 (80%) | +10pp |
-| **Routing (12 evals, live API)†** | 7/12 (58%) | 7/12 (58%) | 0pp† |
-| **Content (17 evals, live API)** | **14/17 (82%)** | 7/17 (41%) | **+41pp** |
-
-† Five routing evals hit a Claude.ai rate limit mid-run — both conditions returned "You've hit your limit" and scored identically. Analytical review of routing scored 11/12 (92%) with skill vs ~7/12 (58%) without.
+| **Routing (12 evals, analytical)** | **11/12 (92%)** | ~7/12 (58%) | +33pp |
+| **Content (23 evals, live API)** | **23/23 (100%)** | 16/23 (70%) | **+30pp** |
 
 The skill's impact concentrates on content evals — the cases where the correct response requires pushing back on a premature interpretation or naming a specific identification issue before providing code.
 
 ### Where the skill makes the biggest difference
 
-| Eval | What the skill adds |
-|------|---------------------|
-| C1 fit-and-report trap | Refuses to validate α=0.34 without recovery, comparison, PPC |
-| C2 α/β boundary | Names three mechanisms; immediate MAP/HB recommendation |
-| C3 λ from gain-only | Flags non-identifiability before writing any code |
-| C7 "just fit it" | Simulation + recovery + baseline before calling any fit valid |
-| C8 best WAIC=50 | SE + PPC + model recovery required before endorsing winner |
-| R6 volatile block | Notes that fixed-α RW *cannot* capture the block effect by design |
-| R9 Stan divergent | Non-centered parameterization first, not "run more iterations" |
+These are the 7 content evals where the base model failed on the live run:
+
+| Eval | Base model failure | What the skill does instead |
+|------|--------------------|-----------------------------|
+| C1 fit-and-report | Validates the estimate without requiring recovery, comparison, or PPC | Requires all three diagnostics before endorsing |
+| C7 "just fit it" | Asks for the CSV without questioning the workflow | Asks about scientific goal, insists on simulation first |
+| C8 ΔWAIC = 50 | Accepts the comparison without checking model recovery or PPC | Requires model recovery confusion matrix + PPC before endorsing |
+| C10 per-block α | Treats fitting separate α per block as evidence of adaptation | Distinguishes descriptive (per-block α) from normative (Behrens/Kalman/HGF) |
+| C11 30 trials MLE | Asks what model to fit without warning about trial count | Immediately flags boundary estimates; recommends MAP or hierarchical Bayes |
+| C18 negative α | Hedges — "could suggest opposite learning directions" | Identifies it as a model bug (sign error, unconstrained parameter) immediately |
+| C23 ε-greedy | Discusses style tradeoffs without naming the degenerate likelihood | Identifies the degenerate likelihood problem and recommends softmax |
 
 ### Where the base model already gets it right
 
@@ -144,13 +144,15 @@ The skill's impact concentrates on content evals — the cases where the correct
 | T7 t-test negative control | Descriptive stats don't get process-model treatment |
 | T8 CFA negative control | SEM is a well-known distinct family |
 | C4 HDDM RT units | ms-vs-seconds is documented in every HDDM tutorial |
+| C9 GCM parameters | Asks about task structure before endorsing c and w |
 | C13 drift by condition | "One drift per condition" is standard HDDM practice |
+| C15 Stan Rhat=1.04 | Engages with convergence diagnostics directly |
 
 ---
 
 ## Eval suite
 
-39 evals across three categories.
+45 evals across three categories.
 
 ### Triggering (10)
 
@@ -184,7 +186,7 @@ The skill's impact concentrates on content evals — the cases where the correct
 | R11 | DIVA vs GCM/ALCOVE/SUSTAIN | category_learning.md |
 | R12 | Intractable-likelihood accumulator | hierarchical_stan.md (SBI section) |
 
-### Content / workflow (17)
+### Content / workflow (23)
 
 | # | The trap | What the skill catches |
 |---|----------|------------------------|
@@ -205,6 +207,12 @@ The skill's impact concentrates on content evals — the cases where the correct
 | C15 | Stan output Rhat=1.04 | Engages with actual diagnostic values |
 | C16 | Discriminative reconstruction model | Routes to DIVA (Kurtz 2007) |
 | C17 | Intractable-likelihood accumulator | Routes to sbi / BayesFlow |
+| C18 | α = −0.08 "suggests aversive learning" | Identifies sign error / unconstrained parameter as a model bug |
+| C19 | Pool all subjects into one sequence | Flags violation of trial independence; hierarchical Bayes instead |
+| C20 | Fit model to block-level accuracy curves | Requires trial-by-trial likelihood; aggregation discards RPE sequence |
+| C21 | Cue shifts drift v → "evidence accumulation" | Must also test starting-point z-bias model and compare |
+| C22 | β = 5.2 vs β = 0.04 across reward scales | β is not scale-invariant; direct comparison invalid without normalization |
+| C23 | ε-greedy for behavioral fitting | Degenerate likelihood; no gradient from non-greedy choices; use softmax |
 
 ---
 
@@ -228,7 +236,7 @@ comp-modeling/
 │   ├── model_recovery.py             ← confusion + inversion matrices
 │   └── posterior_predictive.py       ← PPC runner with bandit and DDM summary stats
 └── evals/
-    ├── eval_harness.py               ← 39 structured evals with rubric scoring
+    ├── eval_harness.py               ← 45 structured evals with rubric scoring
     ├── evals.md                      ← long-form rubric descriptions
     ├── golden_responses.md           ← ideal answers for 3 high-stakes prompts
     ├── triggering.json               ← trigger/negative-control evals

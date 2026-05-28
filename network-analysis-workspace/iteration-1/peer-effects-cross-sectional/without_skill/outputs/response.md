@@ -1,86 +1,106 @@
-# Interpreting Your Peer Effects Regression: Issues and Next Steps
+# Interpreting Cross-Sectional Peer Effects on Adolescent Smoking
 
-## What Your Result Says — and Doesn't Say
+## Your Result and What It Actually Shows
 
-Your regression coefficient of 0.43 (p < 0.001) on `mean_friends_smoking` means that a one-unit increase in the proportion of friends who smoke is associated with a 0.43-unit increase in smoking (or, if smoking is binary, a 0.43 increase in the probability of smoking). The result is statistically significant and practically sizeable. That part is solid.
+Your coefficient of 0.43 (p < 0.001) on `mean_friends_smoking` says: students whose friends smoke at higher rates are themselves more likely to smoke, even after adjusting for gender, grade, and SES. That's a real association, and it's worth taking seriously. But your advisor's claim — that this *shows peer influence* — is almost certainly too strong. The core problem is that a cross-sectional regression cannot disentangle three fundamentally different processes that all produce the same coefficient:
 
-**The problem:** Your advisor's interpretation — that this shows *peer influence* — is not warranted from a cross-sectional design. This is one of the most well-known identification problems in social network research, first formalized by Charles Manski (1993) as the "reflection problem." There are three distinct processes that can produce the pattern you observe, and your data cannot distinguish among them:
+1. **Peer influence (social contagion):** Adolescents adopt the smoking behavior of their friends. This is what your advisor wants to claim.
+2. **Homophily (selection):** Adolescents who already smoke (or are inclined to) preferentially befriend other smokers. The association exists even if nobody ever influenced anyone.
+3. **Shared contextual factors (confounding):** Friends who share the same neighborhood, school corridor, extracurricular activity, or family background are exposed to the same environmental pressures — adult smoking in the household, tobacco availability, local norms — that independently drive both their friendship ties and their smoking.
 
-### The Three Competing Explanations
+Your regression controls for grade and SES, which partially addresses confounding, but these are crude proxies. Shared micro-environments (the specific friend group's social context) are not captured by individual-level controls.
 
-1. **Peer influence (social contagion):** Students adopt the smoking behavior of their friends. This is what your advisor wants to conclude.
+This identification problem is sometimes called the **reflection problem** (Manski, 1993): in a cross-section, the individual's outcome, their peers' outcomes, and shared background are all simultaneously determined, and you cannot tell which caused which.
 
-2. **Homophily (selection):** Smokers tend to befriend other smokers, and non-smokers befriend non-smokers. The correlation between ego and alter behavior arises from who chooses to be friends with whom, not from influence after the friendship forms. This is extremely well-documented in adolescent social networks.
+---
 
-3. **Shared contextual exposure (correlated effects):** Students who are friends also share environments — the same neighborhood, the same teachers, the same social spaces. Some third factor (e.g., a neighborhood with high adult smoking norms, a school context where smoking is tolerated) drives both the friendship formation and the smoking behavior simultaneously.
+## Why the Coefficient Is Likely Biased
 
-With a single cross-section, you observe everyone at one moment in time. You cannot tell whether Student A smokes *because* their friend B smokes (influence), or whether A and B became friends *because* they both smoke (selection), or whether A and B both smoke because they both live in the same high-risk neighborhood (context). All three mechanisms produce a positive correlation between ego smoking and mean friend smoking.
+**Toward overestimation:**
+- Smokers select into friendships with other smokers (homophily inflates the coefficient).
+- Unmeasured shared contexts (e.g., both friends hang out near a convenience store that sells to minors) create spurious correlation.
 
-### Why This Matters for Your Coefficient
+**Toward underestimation:**
+- Friendship nominations are asymmetric and noisy. Your `mean_friends_smoking` averages over all nominated friends, but influence may flow from specific close ties, not all nominees equally.
+- Reverse causation (your own smoking affecting who nominates you) is folded into the estimate.
 
-The 0.43 you estimated is almost certainly an upward-biased estimate of the true peer influence effect, because it conflates influence, selection, and contextual effects. This has been demonstrated empirically in longitudinal studies that can separate the mechanisms: when selection is accounted for, peer influence effects on adolescent smoking are typically substantially smaller than cross-sectional estimates suggest.
+The net direction of bias is empirically uncertain, but the simulation literature (e.g., Shalizi & Thomas, 2011) shows that even under pure homophily with zero true influence, OLS on cross-sectional network data will recover a substantial positive coefficient. You cannot rule that out here.
 
 ---
 
 ## What to Do Next
 
-### 1. Reframe Your Claim (Immediately)
+### 1. Reframe the claim (immediately, no new data needed)
 
-At minimum, revise your interpretation. A defensible claim is: "Students whose friends smoke at higher rates are significantly more likely to smoke themselves (b = 0.43, p < 0.001), consistent with peer socialization or homophilic selection processes." Do not claim directional influence without longitudinal data.
+Change "this shows peer influence" to "this shows that smoking is socially clustered among friends, consistent with peer influence, homophily, or shared contexts." This is defensible; the stronger causal claim is not.
 
-### 2. Collect or Obtain Longitudinal Data
+### 2. Examine the network structure descriptively
 
-This is the most important methodological step. If you can obtain data at two or more time points — even just a second wave — you can begin to separate influence from selection. The key design:
-- Wave 1: friendship nominations + smoking status
-- Wave 2 (e.g., 6 months later): same measures
+Before any causal modeling, characterize the friendship network:
+- Calculate network-level statistics: density, clustering coefficient, average degree.
+- Plot the network with nodes colored by smoking status. Visual clustering tells you whether homophily is concentrated in specific cliques or diffuse.
+- Compute observed assortativity (e.g., Moran's I or a simple correlation of smoking with mean neighbor smoking) and compare to a permutation null that randomizes smoking labels while holding network structure fixed. This tells you whether the clustering is stronger than chance.
 
-This allows you to model whether Wave 2 smoking is predicted by Wave 1 friends' smoking, controlling for Wave 1 ego smoking (lagged dependent variable approach). This substantially reduces, though does not eliminate, confounding from homophily.
+These descriptives belong in your paper regardless of what modeling approach you take.
 
-### 3. Use Stochastic Actor-Based Models (SABMs) if Longitudinal Data Exist
+### 3. Test the selection vs. influence question with stochastic actor-based models (if you can get longitudinal data)
 
-If you have two or more waves, the gold-standard approach for simultaneously estimating influence and selection in network data is **Stochastic Actor-Based Modeling**, implemented in the R package `RSiena`. SABMs model the co-evolution of network ties and behavior:
-- A **network dynamics** submodel estimates who befriends whom (captures homophily)
-- A **behavior dynamics** submodel estimates how behavior changes given network position (captures influence)
+The gold standard for peer influence vs. selection is a **stochastic actor-based model (SABM)**, implemented in the R package `RSiena`. SABMs model the co-evolution of the friendship network and behavior simultaneously, with separate parameters for:
+- **Selection:** Do smokers preferentially form ties with smokers?
+- **Influence:** Do individuals shift their behavior toward their friends' behavior, net of selection?
 
-This lets you test whether influence effects on smoking remain significant after accounting for the tendency of smokers to select into friendships with other smokers.
+This requires at least two waves of data (network + behavior at T1 and T2). If you can go back to the school and collect a second wave, or access archival data from a second time point, this is the most credible path. Mercken et al. (2010) apply exactly this framework to adolescent smoking and are a direct model for your study.
 
-### 4. Instrumental Variables (If Longitudinal Data Are Unavailable)
+### 4. If you're stuck with one wave: partial remedies
 
-If you're stuck with cross-sectional data, an instrumental variables (IV) approach can in principle identify peer influence by finding an instrument that affects friends' smoking but is unrelated to ego's smoking except through the peer channel. In practice, finding valid instruments in closed school networks is very difficult. One approach used in the literature: use **friends-of-friends** smoking rates as an instrument for friends' smoking (the logic being that your friends' friends influence your friends, but affect you only through your friends). This is not bulletproof but is defensible.
+Cross-sectional data limits you severely, but these steps add rigor:
 
-### 5. Consider Propensity Score Matching or Selection Models
+**Contextual/structural controls:** Add node-level network controls (degree, betweenness centrality) to your regression. If the `mean_friends_smoking` coefficient drops substantially, this suggests network position itself is confounding the estimate.
 
-If your data include rich pre-treatment covariates (family smoking history, personality measures, prior smoking onset), you can use matching methods or Heckman-style selection corrections to partial out selection bias. These are partial solutions at best but strengthen your identification argument.
+**Alter characteristics beyond smoking:** If you have data on friends' other attributes (parental smoking, risk-taking attitudes, sports participation), ask whether the effect of `mean_friends_smoking` survives controlling for these. Persistence is at least consistent with influence, though not proof.
 
-### 6. Descriptive Network Analysis (Strengthen the Paper Now)
+**Sensitivity analysis for homophily:** Use the approach from Shalizi & Thomas (2011) or VanderWeele et al. (2012) to bound the peer influence estimate under varying assumptions about unmeasured homophily.
 
-While pursuing better identification, you can strengthen your current paper with descriptive network analyses that characterize the structure of smoking-related clustering:
+**Instrumental variables:** Find a variable that affects peer smoking but is unrelated to your own smoking propensity except through peers. One instrument used in the literature: smoking rates of friends-of-friends (alters not in your direct network). Whether a valid instrument exists in your specific data is an empirical question, and this approach requires strong theoretical justification.
 
-- **Assortativity / segregation index:** Quantify how much smokers cluster with other smokers beyond chance. Newman's assortativity coefficient or the E-I index (Krackhardt & Stern) are standard.
-- **Visualization:** Network sociograms with smoking status coded by node color show reviewers and readers the clustering pattern directly.
-- **Moran's I on the network:** A spatial autocorrelation statistic adapted to network adjacency shows whether smoking is clustered non-randomly in the network.
+### 5. Strengthen the regression you already have
 
-These don't prove influence, but they document that the social structure of smoking is non-random, which motivates the research question.
-
-### 7. Review Key Literature to Situate Your Findings
-
-You should engage explicitly with the identification problem in your write-up:
-- **Manski (1993)** — "Identification of endogenous social effects: The reflection problem" — the foundational statement of why cross-sectional peer effects are hard to identify
-- **Snijders et al. (2010)** — "Introduction to stochastic actor-based models for network dynamics" — the SABM framework
-- **Mercken et al. (2010)** — "Dynamics of adolescent friendship networks and smoking behavior" — an applied SABM paper on adolescent smoking specifically
-- **Christakis & Fowler (2008)** — "The collective dynamics of smoking in a large social network" — influential but methodologically controversial; good to know the debate
+Even within the cross-sectional framing:
+- Use **robust standard errors**, since binary outcomes with linear probability models produce heteroskedastic residuals.
+- If smoking is binary, consider **logistic regression** and report both odds ratios and average marginal effects.
+- Report whether the coefficient on `mean_friends_smoking` changes when you add network structural controls (degree, clustering coefficient of ego's neighborhood). Changes signal confounding by network position.
+- Test for heterogeneity by grade and gender — peer influence mechanisms in the smoking literature often show developmental and gender-specific patterns.
 
 ---
 
-## Summary of What You Have and What It Supports
+## How to Frame This in Your Paper
+
+A defensible framing for a cross-sectional study:
+- Lead with the descriptive finding: smoking is significantly clustered among friends, even after adjusting for individual demographic and socioeconomic factors.
+- Acknowledge the three competing mechanisms and state explicitly that cross-sectional data cannot adjudicate among them.
+- Position your study as establishing that the association exists and motivating longitudinal follow-up.
+- Cite the methodological literature on peer effects identification (Manski 1993; Shalizi & Thomas 2011) to demonstrate you understand the limits.
+
+This framing is honest, methodologically sound, and will survive peer review. The strong causal claim will not.
+
+---
+
+## Summary Table
 
 | Claim | Supported by your data? |
 |---|---|
-| Smoking is socially clustered in this school | Yes |
+| Smoking is socially clustered among friends in this school | Yes |
 | Students with more smoking friends are more likely to smoke | Yes |
-| Friends *cause* students to take up smoking | No — requires longitudinal data + selection controls |
-| The coefficient 0.43 is an unbiased estimate of peer influence | Almost certainly not |
+| Peer influence *causes* students to take up smoking | No — requires longitudinal data + selection controls |
+| The 0.43 coefficient is an unbiased estimate of peer influence | Almost certainly not |
 
-Your result is a real finding — social clustering of smoking is substantively important regardless of mechanism. But your next step is either (a) reframe the contribution as documenting social clustering and argue for the need for longitudinal study, or (b) obtain longitudinal data and apply SABMs to actually test the influence vs. selection question.
+---
 
-If you're writing a dissertation chapter, option (b) is strongly preferred. If this is a conference paper or pilot study, option (a) with honest acknowledgment of the limitation is defensible and publishable.
+## Key References
+
+- Manski, C. F. (1993). Identification of endogenous social effects: The reflection problem. *Review of Economic Studies, 60*(3), 531–542.
+- Shalizi, C. R., & Thomas, A. C. (2011). Homophily and contagion are generically confounded in observational social network studies. *Sociological Methods & Research, 40*(2), 211–239.
+- Snijders, T. A. B., van de Bunt, G. G., & Steglich, C. E. G. (2010). Introduction to stochastic actor-based models for network dynamics. *Social Networks, 32*(1), 44–60.
+- Mercken, L., Snijders, T. A. B., Steglich, C., Vartiainen, E., & de Vries, H. (2010). Dynamics of adolescent friendship networks and smoking behavior. *Social Networks, 32*(1), 72–81.
+- VanderWeele, T. J., Ogburn, E. L., & Tchetgen Tchetgen, E. J. (2012). Why and when "flawed" social network analyses still yield valid tests of no contagion. *Statistics, Politics and Policy, 3*(1).
+- Christakis, N. A., & Fowler, J. H. (2008). The collective dynamics of smoking in a large social network over 32 years. *New England Journal of Medicine, 358*(21), 2249–2258. (Influential but methodologically contested — read alongside Lyons 2011 for the debate.)

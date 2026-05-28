@@ -1,0 +1,98 @@
+{
+  "expectations": [
+    {
+      "text": "Output warns that a single Louvain run is not 'the' partition — modularity degeneracy means many solutions have near-equal quality",
+      "passed": false,
+      "evidence": "Section 6 warns about Louvain's stochasticity ('two runs can produce different partitions') but frames it as randomness/instability, not as modularity degeneracy. The response never states that many alternative partitions share near-equal modularity scores — it actually implies Q is stable across runs ('show Q is stable even if exact partition membership varies'), which understates the degeneracy problem. The core concept — that the modularity landscape has many near-optimal solutions — is absent."
+    },
+    {
+      "text": "Output recommends running community detection many times (e.g., 100+ runs) and measuring stability/consensus",
+      "passed": true,
+      "evidence": "Section 6 Option B: 'Use the co-occurrence matrix (how often do pairs of authors land in the same community across 100+ runs?)'. The Methods example sentence also says 'We ran the algorithm 100 times with different random seeds.' Both the 100+ threshold and the stability/consensus concept are explicitly present."
+    },
+    {
+      "text": "Output mentions NMI (Normalized Mutual Information) or AMI or a similar stability metric for comparing partitions",
+      "passed": true,
+      "evidence": "Section 6 Option C explicitly states: 'Report normalized mutual information (NMI) between runs to quantify partition stability.' NMI is named directly as a partition comparison metric."
+    },
+    {
+      "text": "Output does NOT recommend simply reporting the single-run partition without stability analysis",
+      "passed": true,
+      "evidence": "The response never suggests a single run is sufficient. The Methods example defaults to 100 runs, Section 6 explicitly lists three options for addressing instability (all involving multiple runs), and the pre-submission checklist mandates 'Stability of partition addressed (SD of Q across runs at minimum).' No path to single-run reporting without stability analysis is offered."
+    },
+    {
+      "text": "Output mentions Louvain resolution limit or the alternative of SBM (Stochastic Block Model) for more principled partitioning",
+      "passed": true,
+      "evidence": "Section 7 Caveats states: 'Resolution limit: Louvain with γ = 1.0 may merge small, tight communities or split large diffuse ones. If some communities seem unexpectedly large or small, mention that you checked sensitivity to γ.' The resolution limit is explicitly named and explained. SBM is not mentioned, but the expectation is satisfied by either condition."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.80
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 0,
+      "Write": 3,
+      "Bash": 2
+    },
+    "total_tool_calls": 5,
+    "total_steps": 4,
+    "errors_encountered": 0,
+    "output_chars": 8075,
+    "transcript_chars": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 96.20,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 96.20
+  },
+  "claims": [
+    {
+      "claim": "Modularity Q = 0.67 is 'solid' and 'generally considered strong evidence of meaningful community structure'",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Q > 0.6 is broadly accepted in the literature as indicating strong community structure (Clauset et al., Newman conventions). This framing is reasonable."
+    },
+    {
+      "claim": "The response covered stability analysis including SD of Q, consensus partitions, and NMI",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Section 6 confirms all three are present: SD of Q (Option A), consensus partition via co-occurrence matrix (Option B), NMI (Option C)."
+    },
+    {
+      "claim": "The response treats stability analysis as optional (framed as Options A/B/C)",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Section 6 presents stability analysis as a tiered set of options ('minimum bar' to 'strongest'), which could mislead a researcher into thinking Option A (SD of Q only) is sufficient. The checklist at the end reinforces this with 'at minimum.' A stronger response would position multiple-run consensus analysis as the baseline, not the aspirational ceiling."
+    },
+    {
+      "claim": "Response recommends running Louvain 100 times",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Both the Methods example sentence and Section 6 Option B explicitly reference 100 runs."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Output warns that a single Louvain run is not 'the' partition — modularity degeneracy means many solutions have near-equal quality",
+        "reason": "The expectation conflates two related but distinct concepts: (1) stochasticity (different runs produce different partitions) and (2) modularity degeneracy (many partitions share near-equal Q regardless of seed). The base model addressed (1) but missed (2). The assertion should be split into: 'warns about stochasticity' and 'explains that modularity degeneracy creates a flat landscape of near-equal solutions.' This is the most important conceptual distinction — degeneracy is why stability analysis matters even when Q is high."
+      },
+      {
+        "reason": "No assertion checks whether the response warns against over-interpreting community labels as ground truth. The base model's naming framework (Section 3) encourages confident labeling without noting that Louvain communities are algorithmic constructs sensitive to resolution, seed, and graph sparsity — not definitive disciplinary groupings. This is a meaningful omission for a paper-reporting context."
+      },
+      {
+        "reason": "The SBM alternative in expectation 5 is an 'or' condition satisfied by mentioning the resolution limit. Consider making SBM (or Leiden) a separate assertion, since recommending a principled alternative (not just acknowledging a caveat) is a meaningfully higher bar and a key differentiator a network-analysis skill should provide."
+      }
+    ],
+    "overall": "The evals are directionally sound but expectation 1 fails to cleanly distinguish stochasticity from modularity degeneracy — the more important and commonly missed concept. Splitting that assertion and adding an SBM/Leiden recommendation check would make the eval more discriminating."
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "skill_name": "psychometric-networks",
+  "evals": [
+    {
+      "id": 1,
+      "name": "ggm-estimation-likert",
+      "prompt": "I have cross-sectional data from 412 participants on a 21-item depression scale (PHQ-9 plus 12 additional items, all on a 0-4 Likert). I want to estimate a network model showing how the symptoms relate to each other. Walk me through the analysis in R.",
+      "expected_output": "R code using bootnet::estimateNetwork with default='EBICglasso', corMethod='cor_auto' (because items are ordinal/Likert), tuning=0.5 as default gamma. Should plot with qgraph and at minimum mention strength centrality. Should NOT recommend Pearson correlations on Likert data. Should mention that follow-up stability checks via bootnet() are required, not optional.",
+      "expectations": [
+        "Recommends bootnet::estimateNetwork or qgraph::EBICglasso as the estimation function",
+        "Uses or recommends corMethod='cor_auto' or polychoric correlations (not Pearson) for the Likert items",
+        "Mentions tuning parameter / gamma (typically 0.5) for EBIC",
+        "Recommends accuracy and stability checks via bootnet() bootstrapping as a required next step, not optional",
+        "Refers to the canonical tutorial paper (Epskamp, Borsboom & Fried 2018 in Behavior Research Methods) OR points the user to a comparable canonical resource (e.g. Isvoranu et al. 2022 textbook). Naming any of these authors in a substantive way counts.",
+        "Does NOT recommend reporting closeness or betweenness centrality without caveat"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "expected-influence-vs-strength",
+      "prompt": "I'm estimating a network of 8 affect items — four positive (enthusiastic, active, inspired, alert) and four negative (distressed, upset, hostile, afraid). My centrality plot shows Strength and Expected Influence. Should I report Strength, Expected Influence, or both? What's the practical difference and which is more appropriate here?",
+      "expected_output": "Should recommend Expected Influence over Strength (or EI as the primary index) for this mixed-valence network. The key reason: Strength sums absolute edge weights, which loses sign — a node with large positive and large negative edges will have high Strength but cancel out in its net activating influence. In an affect network with positive and negative items, negative edges are expected between positive and negative items, so sign matters. Robinaugh, Millner & McNally (2016) introduced Expected Influence precisely for this case. Should also note that for unipolar networks (all-positive edges), Strength and EI are equivalent.",
+      "expectations": [
+        "Recommends Expected Influence over Strength, or recommends both with Expected Influence as the primary index for this network",
+        "Explains the substantive reason: Strength sums absolute edge weights and loses sign information, so nodes with large positive and large negative edges get inflated Strength scores that don't reflect their net influence",
+        "Notes that negative edges between positive and negative affect items are structurally expected in an affect network, making sign information important",
+        "Attributes Expected Influence to Robinaugh et al. (2016) OR makes the equivalent point that EI was developed specifically to handle networks with negative edges without the attribution",
+        "Notes that for unipolar networks (where all edges are positive), Strength and Expected Influence are equivalent OR does not contradict this"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "bootstrap-ci-vs-difference-test",
+      "prompt": "My centrality plot shows node A has Strength = 0.42 (bootstrapped 95% CI: [0.18, 0.61]) and node B has Strength = 0.39 (CI: [0.17, 0.58]). My co-author says the heavily overlapping CIs mean A and B aren't significantly different in centrality and I shouldn't say either is 'more central'. Is that right? How do I actually test whether their centrality difference is real?",
+      "expected_output": "The co-author's reasoning is wrong. Overlapping bootstrapped CIs do not imply the difference is non-significant — the CI for a difference between two estimates is generally narrower than the apparent gap between their individual intervals would suggest. The correct approach is the bootstrapped difference test from bootnet, which directly tests whether the pairwise difference between two centrality values is statistically distinguishable. Should note the practical consequence: in most real networks, few centrality pairs are statistically distinguishable, and this is normal — it means centrality ordering is more interpretable than absolute centrality values.",
+      "expectations": [
+        "Correctly identifies the co-author's reasoning as wrong — overlapping bootstrapped CIs do not imply the difference is not statistically significant",
+        "Explains the logic: the CI for the difference between two statistics is not derived from the overlap of their individual CIs; they are separate quantities",
+        "Recommends the bootstrapped difference test (from bootnet, via differenceTest() or the plot method) as the correct tool for assessing pairwise centrality distinguishability",
+        "Notes the practical implication: in most psychometric networks, few centrality pairs are statistically distinguishable; this is the expected finding, not evidence of a problem",
+        "Does NOT recommend a standard t-test or z-test on the point estimates as the solution"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "hairball-gamma-tuning",
+      "prompt": "I ran EBICglasso on my 15-node depression item network (N=210) using bootnet with default settings and got 91 edges out of a possible 105. Almost everything connects to everything — it's a hairball. Is this typical? What's going wrong and how do I make the network interpretable?",
+      "expected_output": "The EBIC gamma (tuning) parameter is the primary lever. Higher gamma imposes more penalty on model complexity, producing sparser graphs. The default in bootnet is gamma=0.5; values up to 1.0 are used for more conservative estimation. Should also check whether cor_auto / polychoric correlations are being used — raw Pearson correlations on Likert items inflate bivariate correlations, making it harder for the graphical lasso to shrink edges to zero. Node redundancy is a third possibility: near-duplicate items survive regularization because their mutual partial correlation is near-perfect. Should NOT simply say 'dense networks are fine' without engaging with the gamma issue.",
+      "expectations": [
+        "Identifies the EBIC gamma (tuning) parameter as the primary lever for controlling network sparsity",
+        "States the field convention: default gamma = 0.5; recommend trying higher values (e.g., 0.5 → 1.0) to see how sparsity changes",
+        "Flags that Pearson correlations on ordinal Likert items can inflate edge weights — recommends checking that cor_auto or polychoric correlations are being used",
+        "Mentions node redundancy or near-duplicate items as a possible cause of dense networks (spuriously strong partial correlations that survive regularization)",
+        "Does NOT conclude that a near-complete graph is acceptable without any action or investigation"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "stability-interpretation",
+      "prompt": "I ran bootnet on my 18-node GGM and got these CS-coefficients: Strength = 0.36, Closeness = 0.13, Betweenness = 0.05, Expected Influence = 0.44. Edge weight bootstrapped CIs are wide and overlap a lot. How should I interpret this and what can I responsibly report?",
+      "expected_output": "Should interpret CS-coefficients against the field thresholds: ≥0.5 acceptable, ≥0.25 minimum to interpret at all, <0.25 do not interpret. So: Strength (0.36) and Expected Influence (0.44) are interpretable but not strongly; Closeness (0.13) and Betweenness (0.05) should NOT be interpreted. Wide overlapping edge CIs mean focus on edge ORDERING and use the bootstrapped difference test for specific comparisons rather than treating individual edge values as precise. Recommend running the bootstrapped difference test before interpreting any specific edge or pair of centrality values.",
+      "expectations": [
+        "Correctly applies the CS-coefficient thresholds (0.25 minimum, 0.5 acceptable)",
+        "Concludes that Closeness and Betweenness should not be interpreted given the CS values",
+        "Concludes that Strength and Expected Influence are interpretable but with caution",
+        "Recommends focusing on edge ordering rather than absolute edge values when CIs are wide",
+        "Recommends the bootstrapped difference test before making specific edge or node comparisons"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "node-selection-question",
+      "prompt": "I'm planning a network analysis of OCD using the Y-BOCS items. A reviewer asked me to justify why I'm using these specific items as nodes. How should I think about node selection and what's the conceptual issue here?",
+      "expected_output": "Should address that node selection is not a neutral choice — work by Fried and colleagues on depression heterogeneity (e.g. Fried 2017 'The 52 symptoms of major depression: Consequences for the network approach'; Fried & Nesse 2015 'Depression is not a consistent syndrome'; Fried, Epskamp, Nesse, Tuerlinckx & Borsboom 2016 'What are good depression symptoms?') makes the case that DSM/clinical symptom items are theoretically loaded and the resulting network structure depends on which items were included. Node redundancy is a concern (e.g., near-duplicate items will produce spurious strong edges). Should recommend justifying node selection theoretically, possibly running networktools / goldbricker for redundancy checks, and acknowledging the choice as a limitation.",
+      "expectations": [
+        "Acknowledges that node selection is a substantive theoretical choice, not a neutral one, and that network structure depends on which items are included",
+        "References Fried's work on node selection, depression symptom heterogeneity, or the 'What are good depression symptoms' / '52 symptoms' line of work — OR makes the equivalent substantive point without the citation",
+        "Mentions node redundancy / topological overlap as a methodological concern (near-duplicate items inflate edge weights)",
+        "Suggests checking for redundant nodes (e.g., networktools, goldbricker) or justifying selection theoretically"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "negative-trigger-generic-network",
+      "prompt": "Can you explain what betweenness centrality measures in a network and give an example of when it's useful?",
+      "expected_output": "This is a generic graph-theory question with no psychometric context. The ideal response answers the actual question — what betweenness measures and when it's useful — as a general network/graph concept. The psychometric-networks skill should not dominate this response. Adding a brief side-note that betweenness is contested specifically in psychometric networks would be fine and even useful, but the core of the answer must be a general explanation. Failure modes to flag: (a) the answer is reframed around symptom networks or psychopathology; (b) most of the answer is about why betweenness is bad rather than what it is and when it's useful; (c) the 'useful' example given is exclusively psychometric.",
+      "expectations": [
+        "Directly answers the asked question with a general explanation of what betweenness centrality measures (paths/shortest paths/brokerage)",
+        "Provides at least one useful-case example from a domain OTHER than psychometric/symptom networks (e.g. social networks, infrastructure, information flow, transportation)",
+        "If the psychometric caveat is mentioned, it appears after the main answer and does not carry a prominent section header or dominate the response length",
+        "The response is not predominantly about psychopathology, symptom networks, or Bringmann's critique"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "reporting-standards-checklist",
+      "prompt": "I've finished a GGM network analysis of anxiety symptoms (N=340, 12 nodes, EBICglasso with gamma=0.5 and polychoric correlations). A previous reviewer criticized my write-up for not following current reporting standards. What should my methods and results sections include to meet those standards for a cross-sectional psychometric network paper?",
+      "expected_output": "Should reference Burger et al. (2023) 'Reporting standards for psychological network analyses in cross-sectional data' in Psychological Methods as the authoritative checklist. Minimum required elements: (1) node selection rationale; (2) estimator details — EBICglasso, gamma, correlation method (polychoric/cor_auto); (3) spring layout specification; (4) edge-weight matrix or supplementary table; (5) bootstrapped edge-weight CIs and bootstrapped difference test for any specifically interpreted edges or nodes; (6) CS-coefficients for any centrality indices reported; (7) explicit statement of cross-sectional/causal limitations. Should NOT present betweenness or closeness as required centrality elements.",
+      "expectations": [
+        "References Burger et al. (2023) in Psychological Methods by name OR describes the specific required reporting elements in enough detail to reflect familiarity with published standards (not just generic 'report your methods' advice)",
+        "States that bootstrapped edge-weight CIs must be reported, and that the bootstrapped difference test is required for any specifically interpreted edge or node comparisons",
+        "States that CS-coefficients must be reported for any centrality indices that are interpreted",
+        "Specifies the estimation details that must be documented: estimator (EBICglasso), gamma/tuning parameter, and correlation method (polychoric or cor_auto)",
+        "Includes explicit acknowledgment of cross-sectional / causal-inference limitations as a required element"
+      ]
+    }
+  ]
+}

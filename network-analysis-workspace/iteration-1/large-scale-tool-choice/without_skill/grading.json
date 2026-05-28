@@ -1,0 +1,104 @@
+{
+  "expectations": [
+    {
+      "text": "Output redirects away from NetworkX for this scale (5M nodes, 800M edges)",
+      "passed": true,
+      "evidence": "response.md opens: 'No. NetworkX will not work for a graph with 5 million users, 2 million items, and 800 million interactions. It will exhaust available memory before you can run any algorithms.' Summary table also marks loading 800M edge graph as 'Fails (OOM)' for NetworkX."
+    },
+    {
+      "text": "Output recommends NetworKit, cuGraph, or graph-tool as appropriate large-scale alternatives",
+      "passed": true,
+      "evidence": "response.md recommends RAPIDS cuGraph ('For GPU-accelerated workloads') and graph-tool ('For CPU-only large-graph work') with dedicated sections. NetworKit is not mentioned, but two of the three named alternatives in the expectation are present with substantive rationale."
+    },
+    {
+      "text": "Output warns that exact betweenness centrality is computationally infeasible at this scale (O(VE) or O(V*E))",
+      "passed": true,
+      "evidence": "response.md: 'Exact betweenness centrality is infeasible for virtually any tool.' Complexity stated as '7M source nodes × BFS traversing up to 800M edges each' with estimated runtime 'years, not hours'. Also in summary table: 'Exact betweenness centrality — Infeasible (years)'."
+    },
+    {
+      "text": "Output mentions approximate betweenness (sampling-based) as a practical alternative",
+      "passed": true,
+      "evidence": "Dedicated 'Approximate Betweenness Centrality' section in response.md: 'Pick k random pivot nodes (k = 1,000–10,000 depending on desired accuracy). Run BFS from each pivot and aggregate scores. Runtime: O(k × E) instead of O(V × E).' cuGraph example also shows `k=1000` parameter."
+    },
+    {
+      "text": "Output provides specific library recommendations with rationale (e.g., NetworKit for parallel CPU, cuGraph for GPU)",
+      "passed": true,
+      "evidence": "response.md provides: cuGraph with rationale ('Runs entirely on GPU memory... Handles hundreds of millions of edges per GPU; scales across multiple GPUs'), graph-tool with rationale ('C++ / Boost Graph Library backend, ~100x faster than NetworkX'), igraph with rationale, GraphX/GraphFrames for distributed, and a decision table mapping constraints to recommended paths."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 2,
+      "Write": 2,
+      "Bash": 3
+    },
+    "total_tool_calls": 7,
+    "total_steps": 5,
+    "errors_encountered": 0,
+    "output_chars": 5680,
+    "transcript_chars": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 86.68,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 86.68
+  },
+  "claims": [
+    {
+      "claim": "NetworkX will exhaust memory before loading the graph (~320–400 GB for edges alone)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Memory estimate is plausible: 800M edges × ~400–500 bytes per edge in Python dict overhead = ~320–400 GB. This is consistent with known NetworkX benchmarks and widely cited in graph library documentation."
+    },
+    {
+      "claim": "Exact betweenness centrality runtime would be 'years, not hours'",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Brandes algorithm is O(V*E). At 7M nodes × 800M edges = 5.6×10^15 operations. Even at 10^9 ops/sec this is ~5.6M seconds (~65 days) single-threaded in C; in single-threaded Python it would be orders of magnitude slower. 'Years' is a reasonable characterization for NetworkX."
+    },
+    {
+      "claim": "cuGraph code snippet provided for approximate BC and Louvain",
+      "type": "process",
+      "verified": true,
+      "evidence": "response.md contains a working Python code block using cugraph.betweenness_centrality(G, k=1000) and cugraph.louvain(G)."
+    },
+    {
+      "claim": "Leiden algorithm is better than Louvain for community detection",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Accurately stated: 'Leiden guarantees well-connected communities (Louvain can produce disconnected ones)' — this matches the published literature (Traag et al. 2019)."
+    },
+    {
+      "claim": "No skill files or reference files were read during execution",
+      "type": "process",
+      "verified": true,
+      "evidence": "Transcript confirms: 'No skill was loaded; response reflects base model knowledge only. No skill files, reference files, or domain-specific documentation were read.' Tool calls show only reads of response.md and metrics.json (executor bookkeeping files)."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Output recommends NetworKit, cuGraph, or graph-tool as appropriate large-scale alternatives",
+        "reason": "The assertion lists NetworKit as an example alternative but the output does not mention NetworKit at all. The assertion passes because cuGraph and graph-tool are present, but if the intent was specifically to test for NetworKit awareness (e.g., because it is the primary recommendation in the skill), the assertion should name it explicitly rather than burying it in an 'or' list. Consider separating into per-library assertions or requiring NetworKit specifically if the skill emphasizes it."
+      },
+      {
+        "reason": "No assertion checks whether the output correctly handles the bipartite nature of the user-item graph (5M users + 2M items = 7M nodes, not 5M nodes). The response correctly identifies 7M nodes internally but the prompt says '5 million users' — an assertion testing whether the model correctly reasons about bipartite structure and the combined node count would be more discriminating."
+      },
+      {
+        "reason": "No assertion checks whether the output questions the appropriateness of betweenness centrality for a recommendation use case. The response includes a valuable section on whether global BC is the right signal at all (recommending GNN embeddings / LightGCN / PinSage instead), which is arguably the most practically important advice. If the skill is meant to surface this, an expectation covering it would distinguish a skill-guided response from a generic one."
+      }
+    ],
+    "overall": "All five expectations pass with strong evidence. The evals cover the core correctness requirements well. Main gaps: the NetworKit ambiguity in expectation 2, the missing bipartite-graph reasoning check, and no assertion for the 'question whether you need BC at all' advice that the response (correctly) includes."
+  }
+}

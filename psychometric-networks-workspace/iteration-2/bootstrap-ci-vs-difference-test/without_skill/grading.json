@@ -1,0 +1,41 @@
+{
+  "run_id": "bootstrap-ci-vs-difference-test-without_skill",
+  "eval_id": 3,
+  "eval_name": "bootstrap-ci-vs-difference-test",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Correctly identifies the co-author's reasoning as wrong \u2014 overlapping bootstrapped CIs do not imply the difference is not statistically significant",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Explains the logic: the CI for the difference between two statistics is not derived from the overlap of their individual CIs; they are separate quantities",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Recommends the bootstrapped difference test (from bootnet, via differenceTest() or the plot method) as the correct tool for assessing pairwise centrality distinguishability",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Notes the practical implication: in most psychometric networks, few centrality pairs are statistically distinguishable; this is the expected finding, not evidence of a problem",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Does NOT recommend a standard t-test or z-test on the point estimates as the solution",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 5,
+    "total": 5,
+    "pass_rate": 0.0
+  }
+}

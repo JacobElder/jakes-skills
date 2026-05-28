@@ -1,0 +1,91 @@
+## Model Recommendation: Multilevel Vector Autoregressive (mlVAR)
+
+Your design is a textbook case for **multilevel VAR**, specifically the `mlVAR` package in R (Epskamp et al., 2018). Here's the full picture:
+
+---
+
+### Why mlVAR
+
+You have two problems simultaneously:
+1. **Temporal dynamics** — emotions at time *t* predicting emotions at *t+1* (requires VAR)
+2. **Nested data** — 70 time points per person, 80 people (requires multilevel structure)
+
+mlVAR handles both. It estimates a lag-1 VAR model for each person using a multilevel framework, so you get **group-level (fixed) effects** plus **random effects** capturing individual variation in dynamics.
+
+A pure N=1 VAR per person is tempting but inadvisable here — 70 observations estimating 8×8 = 64 lagged parameters leaves almost no degrees of freedom. The multilevel partial pooling is doing real work.
+
+---
+
+### The Three Networks You'll Get
+
+mlVAR produces three networks, each answering a different question:
+
+| Network | What it captures | Edge type |
+|---|---|---|
+| **Temporal** | Does emotion X at *t* predict emotion Y at *t+1*, controlling for all others? | Directed, weighted |
+| **Contemporaneous** | Are emotions X and Y correlated *within the same beep*, after removing lagged effects? | Undirected, partial correlations |
+| **Between-persons** | Do people high on trait X tend to be high on trait Y? | Undirected, from random effect means |
+
+The temporal network is your primary object of inference for "how emotions influence each other over time."
+
+---
+
+### Critical Pre-Processing Decisions
+
+These need to be explicit in your methods:
+
+**1. Handle day boundaries**
+The lag between Day 1 beep 5 and Day 2 beep 1 involves an overnight gap — it's not the same interval as within-day lags. Standard practice: include a variable that flags these cross-day transitions and pass it to mlVAR as the `dayvar` argument so those lags are excluded from estimation.
+
+**2. Person-mean center your items**
+Before fitting, subtract each person's mean from their own time series. This removes stable between-person differences (person A is generally happier than person B) and focuses the VAR on *within-person* fluctuations, which is what you want. mlVAR does this internally by default — make sure it's on.
+
+**3. Confirm lag-1 is appropriate**
+With 5x/day spacing (~2–3 hour intervals), lag-1 is standard and theoretically defensible. You could fit lag-2 as a sensitivity check, but models get sparse fast.
+
+---
+
+### What to Report
+
+**Model specification section:**
+- Software: `mlVAR` version X in R; REML estimation
+- Lag order (1), how day boundaries were handled, whether person-mean centering was applied
+- Number of usable observations after dropping cross-day lags (will be ~80 persons × 4 within-day lags × 14 days = ~4,480 lagged observations)
+
+**Temporal network:**
+- Fixed-effect lagged coefficients (the 8×8 matrix) — report as a network figure with directed edges, weighted by coefficient magnitude, thresholded at some principled cutoff (e.g., |β| > 0.05 or FDR-corrected)
+- **Autoregressive effects** (diagonal): how much does each affect item predict itself? High AR coefficients = emotional inertia
+- **Cross-lagged effects** (off-diagonal): the between-emotion predictive relationships
+- Node-level centrality: **out-strength** (how much does this emotion drive others?) and **in-strength** (how much is this emotion driven by others?) — avoid betweenness/closeness, which are unreliable in small signed networks
+- Variance of random effects for each fixed effect — quantifies how much individual differences in dynamics exist
+
+**Contemporaneous network:**
+- Estimated from partial correlations of within-time residuals
+- Same visualization approach; report node centrality (strength)
+
+**Between-persons network:**
+- Estimated from the random intercept means across participants
+- Useful for situating your temporal findings: does the trait-level structure match the dynamic structure?
+
+**Model stability:**
+- Report the **stability of the VAR** by checking that all eigenvalues of the fixed-effect coefficient matrix lie inside the unit circle (implies the process is stationary). The `qgraph` package can compute this. If eigenvalues are near 1.0, flag it — the system may be approaching instability, which is theoretically interesting in affect research.
+
+**Individual differences:**
+- Variance components (random effect SDs) for key paths
+- Optionally: correlate individual AR coefficient estimates (extracted via `$results`) with person-level traits if you have them
+
+---
+
+### Alternative Worth Knowing: DSEM in Mplus
+
+If you have substantial missing data (>15–20% of beeps), or want to model covariates of the lagged effects (e.g., "does neuroticism moderate emotional inertia?"), **Dynamic SEM** in Mplus handles this more gracefully. It's more work to set up but gives you full latent-variable flexibility. For a clean ESM dataset focused on network structure, mlVAR is the right call.
+
+---
+
+### Key Citations
+
+- Epskamp, S., Waldorp, L. J., Mõttus, R., & Borsboom, D. (2018). The Gaussian graphical model in cross-sectional and time-series data. *Multivariate Behavioral Research*, 53, 453–480. ← the mlVAR paper
+- Hamaker, E. L., & Wichers, M. (2017). No time like the present. *Current Directions in Psychological Science*, 26, 10–15. ← accessible conceptual intro to ESM dynamics
+- Bringmann, L. F., et al. (2016). Selecting a central symptom as target for treatment does matter. *PLOS ONE*. ← good applied example with reporting template
+
+Want me to sketch out the R code for the full mlVAR pipeline, including the day-boundary handling and network visualization?

@@ -1,0 +1,41 @@
+{
+  "run_id": "latent-vs-network-debate-without_skill",
+  "eval_id": 3,
+  "eval_name": "latent-vs-network-debate",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Pushes back on the framing that networks have replaced or disproved latent variable models",
+      "passed": true,
+      "evidence": "The response opens by stating the claim is 'significantly overstated' and the bottom line explicitly says 'The network approach hasn't disproved latent variable models.'"
+    },
+    {
+      "text": "Notes that statistical/mathematical equivalence (or near-equivalence) exists between network models and latent variable models in important cases \u2014 e.g. between Ising networks and IRT/unidimensional latent models, or between GGMs and factor models that fit the same data. Naming Marsman, van der Maas, or related authors counts as a stronger signal.",
+      "passed": true,
+      "evidence": "Explicitly cites 'Marsman et al. (2018) showed the Ising model (used in binary symptom networks) is equivalent to a multidimensional IRT model,' 'van der Maas et al. (2006) showed a mutualism network model fits IQ data as well as the g-factor model,' and Epskamp on the algebraic relationship between partial correlation networks and factor models."
+    },
+    {
+      "text": "Distinguishes between the statistical model and the substantive/causal claim about how disorders arise",
+      "passed": true,
+      "evidence": "'Borsboom's theoretical claim is fundamentally about causal dynamics... But the vast majority of published network studies use cross-sectional data... The empirical work and the theoretical claim are operating at different levels.'"
+    },
+    {
+      "text": "Frames Borsboom's network theory of psychopathology as a theoretical/philosophical claim, not a proven finding (citing Borsboom 2017 World Psychiatry is a plus but not required)",
+      "passed": true,
+      "evidence": "Describes Borsboom's position as a 'theoretical claim' and 'theoretical/philosophical challenge,' references his 2008 Psychological Inquiry paper, and frames the network approach as having 'opened important theoretical questions' rather than settled empirical findings."
+    },
+    {
+      "text": "Mentions replication issues, weaker-than-hoped cross-sectional network replicability, or the Forbes/Wright critique",
+      "passed": true,
+      "evidence": "'There are serious replication problems with network structures \u2014 the same disorder in different samples often produces quite different networks, raising questions about stability.' No Forbes/Wright named, but the substantive point is made."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

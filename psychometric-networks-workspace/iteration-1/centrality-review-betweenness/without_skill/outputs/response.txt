@@ -1,0 +1,71 @@
+This manuscript has several serious and well-documented methodological problems. Here they are in order of severity:
+
+---
+
+## 1. Betweenness Centrality Is the Wrong Metric — and the Least Stable One
+
+This is the most critical error. Betweenness centrality measures how often a node lies on the *shortest path* between other node pairs. In psychological symptom networks this metric has three compounding problems:
+
+**Instability.** Epskamp, Borsboom & Fried (2018, *Psychological Methods*) and Jones, Ma & McNally (2019) consistently find that betweenness centrality has the lowest case-dropping stability of all centrality indices — CS-coefficients frequently fall below 0.10, well under the minimum acceptable threshold of 0.25. In a 15-node network at N=180, this will almost certainly be the case. The ranking the authors are staking a clinical claim on is likely noise.
+
+**Conceptual mismatch.** Betweenness is borrowed from social network analysis where "information broker" nodes have clear meaning (think: a person who bridges two social cliques). In a symptom network, what does it mean for *restlessness* to be on many shortest paths between, say, *concentration difficulty* and *worry*? There is no established theoretical mechanism. **Strength centrality** (sum of absolute edge weights) and **expected influence** (signed sum) are more interpretable and far more stable.
+
+**Dense-network pathology.** Regularized psychological networks are typically dense enough that many near-equivalent shortest paths exist. Betweenness becomes particularly erratic under these conditions because small perturbations in edge weights redirect shortest paths, causing large rank-order swings.
+
+---
+
+## 2. The Sample Size Is Inadequate for a 15-Node GGM
+
+A 15-node Gaussian Graphical Model has **105 unique partial correlations** to estimate (15 × 14 / 2). With N=180, that is approximately **1.7 observations per parameter** before regularization even begins. Even with graphical LASSO (EBICglasso, γ=0.5), simulation work by Fried et al. (2018) and Epskamp et al. (2018) shows that:
+
+- Edge weight estimates have wide confidence intervals at this sample size
+- Centrality rankings are highly susceptible to reordering across bootstrap samples
+- The network topology (which edges survive regularization) is itself unstable
+
+The literature recommends **N ≥ 250–500** for networks in this size range to obtain reasonably stable estimates. N=180 can support exploratory network description with strong caveats; it cannot support clinical recommendations about specific nodes.
+
+---
+
+## 3. No Stability Analyses Were Reported — This Is a Disqualifying Omission
+
+The `bootnet` package (Epskamp et al., 2018) exists specifically to address what the authors skipped. The complete stability battery requires three components:
+
+| Analysis | What It Tests | Tool |
+|---|---|---|
+| Nonparametric edge-weight bootstrap | CI width around each edge weight; whether edges are distinguishable from zero | `bootnet(..., nBoots=1000)` |
+| Case-dropping subset bootstrap + CS-coefficient | Whether centrality rankings hold up as N shrinks; minimum acceptable CS=0.25 | `bootnet(..., type="case")` |
+| Centrality difference tests | Whether *restlessness*'s betweenness is *significantly higher* than the 2nd-ranked node | `differenceTest()` |
+
+Without the CS-coefficient for betweenness, there is literally no basis for the claim that restlessness is meaningfully more central than any other node. In networks this size, two nodes whose centrality *point estimates* differ by 2× can have completely overlapping bootstrap distributions.
+
+---
+
+## 4. Cross-Sectional GGM ≠ Causal/Dynamic Network
+
+The network theory underlying symptom targeting (Borsboom & Cramer, 2013) is explicitly about **within-person causal dynamics**: symptom A activates symptom B over time within an individual. Cross-sectional GGMs estimate **between-person conditional independence** — they tell you about co-variation patterns across people at a single time point, not about how symptoms interact causally within a person.
+
+This distinction matters enormously for treatment claims. Molenaar (2004), Hamaker (2012), and Haslbeck et al. (2021) have all shown that between-person and within-person network structures routinely diverge — sometimes dramatically. A node that appears central in a cross-sectional network may have low within-person influence, and vice versa. Recommending a treatment target from a cross-sectional GGM conflates these two things.
+
+---
+
+## 5. The "Most Central Node → Best Treatment Target" Inference Is Not Supported
+
+Even granting a perfectly stable, well-estimated network, **centrality does not straightforwardly index treatability**. Dablander & Hinne (2019) and Bringmann et al. (2019) both make this point explicitly. A highly central symptom may be:
+
+- **Downstream** of the actual causal drivers (high centrality can reflect being affected by many things, not causing them)
+- **Less malleable to intervention** than a peripheral symptom — clinical accessibility matters as much as network position
+- **An artifact** of item content overlap rather than genuine psychological coupling (e.g., two items that are near-paraphrases will share an edge for psychometric, not causal, reasons)
+
+Treatment targeting requires either longitudinal/ESM network data, experimental intervention data, or at minimum explicit theoretical justification for why betweenness centrality indexes a causally manipulable mechanism. None of these are present.
+
+---
+
+## Summary of Required Remediation
+
+1. **Replace betweenness centrality** with strength and expected influence as primary indices; report betweenness only as supplementary with explicit instability caveats
+2. **Run the full `bootnet` stability battery** — CS-coefficients, edge-weight CIs, centrality difference tests — and report them per Epskamp et al. (2018) reporting guidelines
+3. **Reframe conclusions** from causal/clinical to descriptive/exploratory, with explicit N limitation acknowledgment
+4. **Add a cross-sectional limitation section** distinguishing between-person GGMs from within-person dynamics
+5. **Remove or heavily caveat the treatment recommendation** pending longitudinal or idiographic replication
+
+The core finding may survive with proper analysis, but the manuscript as described is not currently defensible as a basis for clinical recommendations.

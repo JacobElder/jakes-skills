@@ -1,0 +1,46 @@
+{
+  "run_id": "centrality-review-betweenness-without_skill",
+  "eval_id": 2,
+  "eval_name": "centrality-review-betweenness",
+  "config": "without_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Identifies that betweenness centrality is generally not recommended for psychometric networks",
+      "passed": true,
+      "evidence": "Section 1 explicitly states 'Betweenness Centrality Is the Wrong Metric' and explains it is borrowed from social network analysis where it has clear meaning but lacks established theoretical mechanism in symptom networks. The response recommends strength and expected influence instead."
+    },
+    {
+      "text": "Gives a substantive reason why betweenness is inappropriate here (e.g. the flow/shortest-path interpretation doesn't transfer to dense weighted partial-correlation graphs; or instability of betweenness in this setting). Citing Bringmann et al. (2019) is nice but not required if the substantive point is made.",
+      "passed": true,
+      "evidence": "Two substantive reasons are given: (1) Conceptual mismatch \u2014 'In a symptom network, what does it mean for restlessness to be on many shortest paths between...concentration difficulty and worry? There is no established theoretical mechanism.' (2) Dense-network pathology \u2014 'Regularized psychological networks are typically dense enough that many near-equivalent shortest paths exist. Betweenness becomes particularly erratic under these conditions.'"
+    },
+    {
+      "text": "Notes that centrality stability (CS-coefficient) is not reported and should be",
+      "passed": true,
+      "evidence": "Section 3 explicitly states 'No Stability Analyses Were Reported \u2014 This Is a Disqualifying Omission' and specifically mentions CS-coefficient in the table: 'Case-dropping subset bootstrap + CS-coefficient... minimum acceptable CS=0.25' and 'Without the CS-coefficient for betweenness, there is literally no basis for the claim.'"
+    },
+    {
+      "text": "Flags that the causal claim about treatment targeting is not warranted from cross-sectional centrality",
+      "passed": true,
+      "evidence": "Section 4 states 'Cross-Sectional GGM \u2260 Causal/Dynamic Network' and explicitly notes cross-sectional GGMs estimate 'between-person conditional independence...not about how symptoms interact causally within a person.' Section 5 further states 'centrality does not straightforwardly index treatability' and 'Treatment targeting requires either longitudinal/ESM network data, experimental intervention data, or at minimum explicit theoretical justification.'"
+    },
+    {
+      "text": "Recommends Strength or Expected Influence as more appropriate centrality indices",
+      "passed": true,
+      "evidence": "'Strength centrality (sum of absolute edge weights) and expected influence (signed sum) are more interpretable and far more stable.' Also in Summary point 1: 'Replace betweenness centrality with strength and expected influence as primary indices.'"
+    },
+    {
+      "text": "Mentions that N=180 may be insufficient for stable centrality with 15 nodes",
+      "passed": true,
+      "evidence": "Section 2 explicitly addresses this: 'A 15-node Gaussian Graphical Model has 105 unique partial correlations to estimate...With N=180, that is approximately 1.7 observations per parameter' and 'The literature recommends N \u2265 250\u2013500 for networks in this size range to obtain reasonably stable estimates.'"
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

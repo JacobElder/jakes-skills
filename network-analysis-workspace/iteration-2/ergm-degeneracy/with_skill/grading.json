@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Output warns that triangle and kstar(2) terms are almost always degenerate in ERGMs",
+      "passed": true,
+      "evidence": "\"The terms `triangle` and `kstar(2)` are well-known to produce degenerate ERGMs. 'Degenerate' means the probability distribution implied by the model puts almost all its mass on either the empty graph (no ties) or the complete graph (everyone connected to everyone)...\""
+    },
+    {
+      "text": "Output recommends replacing triangle with gwesp AND explains WHY gwesp prevents degeneracy (decreasing marginal returns / each additional shared partner contributes less / curved exponential family)",
+      "passed": true,
+      "evidence": "\"It captures transitivity/closure but avoids degeneracy because the contribution of each additional shared partner decays by a factor controlled by the decay parameter α (typically 0.25–0.75). The 10th shared partner contributes far less than the 1st — this breaks the explosive feedback loop that makes `triangle` degenerate. Mathematically, `gwesp` is a member of the curved exponential family (Efron 1975): the natural parameter is a non-linear function of what you actually estimate.\""
+    },
+    {
+      "text": "Output recommends running mcmc.diagnostics() to check MCMC convergence",
+      "passed": true,
+      "evidence": "Dedicated section under 'Required diagnostic steps' with code `mcmc.diagnostics(fit)` and explanation: \"Trace plots should look like stationary noise around a horizontal mean (not drifting, not bouncing between extremes). Autocorrelation should decay. If chains drift toward empty/complete graph values, you still have degeneracy and must respecify further.\""
+    },
+    {
+      "text": "Output recommends running gof() as a required step before reporting results",
+      "passed": true,
+      "evidence": "\"Both of these are non-negotiable steps... GoF must pass before you can conclude the model captures what you intend.\" Code block with `gof_obj <- gof(fit)` and `plot(gof_obj)` is included with explanation of what it checks."
+    },
+    {
+      "text": "Output explicitly states that the p-values from the degenerate model (including the triangle p < 0.001) are untrustworthy artifacts, not valid evidence",
+      "passed": true,
+      "evidence": "\"all reported estimates, standard errors, and p-values become meaningless artifacts of the numerical failure, not valid statistical evidence\" and \"The p < 0.001 on your triangle term is almost certainly an artifact, not evidence of transitivity.\""
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 4812,
+    "total_tool_calls": 3,
+    "total_steps": 4,
+    "errors_encountered": 0
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "expectations": [
+    {
+      "text": "Output mentions Manski reflection problem or the linear-in-means identification failure",
+      "passed": true,
+      "evidence": "Full section titled 'The reflection problem (Manski 1993)' explains the linear-in-means model and its unidentifiability. Summary table row: 'What identification problem does your regression hit? | The Manski reflection problem and the Shalizi-Thomas confound'. Also cited in the advisor-language block: '(Manski 1993; Shalizi & Thomas 2011)'."
+    },
+    {
+      "text": "Output mentions Shalizi-Thomas confounding or the homophily-contagion confound",
+      "passed": true,
+      "evidence": "Full section titled 'The Shalizi-Thomas confound' describes the Shalizi & Thomas (2011) result — that homophily and contagion are generically confounded even with longitudinal data, and that a cross-sectional design makes the problem worse. Named again in the summary table and in the key references section."
+    },
+    {
+      "text": "Output does NOT claim the regression identifies causal peer effects",
+      "passed": true,
+      "evidence": "The response explicitly states: 'The coefficient of 0.43 (p < 0.001) is real, but it does not identify peer influence.' And: 'Your advisor's claim is premature. The coefficient is consistent with peer influence but is also fully consistent with homophily.' And in the advisor script: 'cross-sectional data cannot separate peer influence from selection of similar friends or shared environmental exposures.' No causal claim is made anywhere in the output."
+    },
+    {
+      "text": "Output recommends at least one method that addresses identification (SAOM/RSiena, instrumental variables, randomized peer assignment, or double negative controls)",
+      "passed": true,
+      "evidence": "Two identification methods are recommended with full R/Python code: (A) SAOM using RSiena — 'The most defensible observational approach for your exact question is a Stochastic Actor-Oriented Model (SAOM) using RSiena'; (B) Bramoullé IV — 'you can attempt identification using the network structure' with an ivreg code example. Both methods are specifically listed in the expectation."
+    },
+    {
+      "text": "Output explains that cross-sectional data makes causal peer effect claims non-credible",
+      "passed": true,
+      "evidence": "Section 'The Shalizi-Thomas confound' states: 'With a single cross-sectional wave, you have neither [time-precedence evidence nor exogenous variation in tie formation].' The advisor script reads: 'cross-sectional data cannot separate peer influence from selection of similar friends or shared environmental exposures.' The summary table also says: 'Does β = 0.43 show peer influence? | No; it shows network autocorrelation in smoking, which is consistent with peer influence, homophily, or shared environment'."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 2,
+      "Write": 3,
+      "Bash": 3
+    },
+    "total_tool_calls": 8,
+    "total_steps": 6,
+    "errors_encountered": 0,
+    "output_chars": 13068,
+    "transcript_chars": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 189.51,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 189.51
+  },
+  "claims": [
+    {
+      "claim": "The coefficient β = 0.43 represents a descriptive association, not a causal estimate",
+      "type": "quality",
+      "verified": true,
+      "evidence": "The response is consistent throughout: 'This is a descriptive association.' The contrast between what the coefficient means and does not mean is spelled out precisely."
+    },
+    {
+      "claim": "SAOM requires at least 3 waves of data",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The response states 'at least 2 more waves of data (3+ total)' and this matches the standard SAOM/RSiena requirement documented in Snijders et al. (2010)."
+    },
+    {
+      "claim": "Bramoullé et al. (2009) show intransitive triads provide valid instruments",
+      "type": "factual",
+      "verified": true,
+      "evidence": "This is the correct citation and finding. The response accurately describes the identification condition: 'the matrices I, G, G² must be linearly independent'."
+    },
+    {
+      "claim": "Shalizi & Thomas (2011) prove homophily and contagion are generically confounded even with longitudinal data",
+      "type": "factual",
+      "verified": true,
+      "evidence": "This correctly characterizes the Shalizi & Thomas (2011) result published in Sociological Methods & Research 40: 211–239, as cited in the references section."
+    },
+    {
+      "claim": "The response was produced from skill reference material in peer_effects.md",
+      "type": "process",
+      "verified": true,
+      "evidence": "Transcript Step 2 documents reading references/peer_effects.md and lists the key findings that appear verbatim in the response (four-mechanism decomposition, reflection problem, Shalizi-Thomas, recommended methods)."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "reason": "No assertion checks whether the response avoids the symmetric failure mode: being so hedged that it provides no actionable guidance. A response that only said 'you cannot identify peer effects, seek a statistician' would pass all five assertions. Consider adding: 'Output recommends at least one concrete method with enough detail to act on (e.g., names the package, describes the data requirement, or provides code).'"
+      },
+      {
+        "assertion": "Output recommends at least one method that addresses identification (SAOM/RSiena, instrumental variables, randomized peer assignment, or double negative controls)",
+        "reason": "This assertion passes even if the recommendation is cursory — a single sentence mentioning RSiena would satisfy it. The actual output goes much further (full code examples, data requirements, ranked options). Adding a 'with actionable detail' qualifier would make the assertion more discriminating."
+      },
+      {
+        "reason": "No assertion checks whether the output correctly characterizes what the cross-sectional OLS result CAN legitimately claim (descriptive clustering / network autocorrelation). A response that simply said 'your analysis is invalid' would pass all assertions but would be unhelpfully dismissive. An assertion like 'Output acknowledges the descriptive finding has value (network autocorrelation or clustering is real)' would catch that failure mode."
+      }
+    ],
+    "overall": "All five assertions pass with strong, specific evidence. The evals are well-targeted at the core identification pitfalls. The main gap is that the assertions are one-sided — they check that bad claims are absent and good recommendations are present, but none verify the output is actionably useful rather than just technically correct. Adding assertions about constructive framing and actionable next steps would raise the discriminating power."
+  }
+}

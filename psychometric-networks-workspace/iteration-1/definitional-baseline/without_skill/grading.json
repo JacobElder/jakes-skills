@@ -1,0 +1,36 @@
+{
+  "run_id": "definitional-baseline-without_skill",
+  "eval_id": 8,
+  "eval_name": "definitional-baseline",
+  "config": "without_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Correctly defines a psychometric network as nodes-as-variables (items/symptoms) with edges as conditional/partial associations",
+      "passed": true,
+      "evidence": "\"A network model (typically a Gaussian Graphical Model, or GGM) treats items as directly interacting nodes connected by edges representing partial correlations \u2014 the association between two items after conditioning on all other items in the system.\" and \"Edges = partial correlations (in a GGM), estimated via regularized regression (e.g., LASSO/glasso)\""
+    },
+    {
+      "text": "Identifies the key contrast with factor models as common-cause-latent-variable vs direct-interactions-among-items, not merely 'a different visualization' or 'a different statistical tool'",
+      "passed": true,
+      "evidence": "Dedicated sections contrast 'Common Cause Logic' (latent variable causes item responses) vs 'Mutual Reinforcement Logic' (items directly influence each other). Table row explicitly: 'Latent variable \u2192 items' vs 'Items \u2194 items (mutual influence)'. The causal mechanism is foregrounded throughout."
+    },
+    {
+      "text": "Notes that the two models can be statistically difficult or impossible to distinguish from cross-sectional data alone, making the choice partly theoretical",
+      "passed": true,
+      "evidence": "\"the two models can fit the same data equally well. A one-factor model and a network model can be statistically equivalent representations of the same covariance matrix...The difference is theoretical, not always empirical\""
+    },
+    {
+      "text": "Does not overclaim that networks have superseded or empirically refuted factor models",
+      "passed": true,
+      "evidence": "Response explicitly notes the debate is \"genuinely unresolved for many constructs\" and that network psychometrics \"is sometimes criticized as redescription rather than discovery.\" Factor models are presented as legitimate for reflective constructs throughout."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

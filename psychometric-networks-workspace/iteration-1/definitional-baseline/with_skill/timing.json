@@ -1,0 +1,6 @@
+{
+  "eval_name": "definitional-baseline",
+  "config": "with_skill",
+  "executor_duration_seconds": 24.05,
+  "total_duration_seconds": 24.05
+}

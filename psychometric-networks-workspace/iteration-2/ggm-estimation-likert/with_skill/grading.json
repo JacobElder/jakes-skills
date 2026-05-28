@@ -1,0 +1,46 @@
+{
+  "run_id": "ggm-estimation-likert-with_skill",
+  "eval_id": 1,
+  "eval_name": "ggm-estimation-likert",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "text": "Recommends bootnet::estimateNetwork or qgraph::EBICglasso as the estimation function",
+      "passed": true,
+      "evidence": "Step 2 explicitly uses `estimateNetwork(data, default = 'EBICglasso', ...)` from the bootnet package."
+    },
+    {
+      "text": "Uses or recommends corMethod='cor_auto' or polychoric correlations (not Pearson) for the Likert items",
+      "passed": true,
+      "evidence": "`corMethod = 'cor_auto'` is specified in the estimateNetwork call, and the response explains: 'auto-detects ordinal \u2192 polychoric; critical for 0-4 Likert' and 'Running Pearson correlations on bounded Likert data is one of the most common errors in this literature \u2014 cor_auto protects you.'"
+    },
+    {
+      "text": "Mentions tuning parameter / gamma (typically 0.5) for EBIC",
+      "passed": true,
+      "evidence": "`tuning = 0.5` is included in the estimateNetwork call with the annotation 'EBIC gamma; 0.5 is the field default', and the response further notes the sensitivity analysis suggestion of trying 0.25 and 0.75."
+    },
+    {
+      "text": "Recommends accuracy and stability checks via bootnet() bootstrapping as a required next step, not optional",
+      "passed": true,
+      "evidence": "Steps 5 and 6 both use `bootnet()` for nonparametric and case-dropping bootstraps respectively. Step 6 is explicitly labeled 'non-negotiable': 'This is the non-negotiable second step.'"
+    },
+    {
+      "text": "Refers to the canonical tutorial paper (Epskamp, Borsboom & Fried 2018 in Behavior Research Methods) OR points the user to a comparable canonical resource (e.g. Isvoranu et al. 2022 textbook). Naming any of these authors in a substantive way counts.",
+      "passed": true,
+      "evidence": "The key references section explicitly cites: 'Epskamp, Borsboom & Fried (2018) Behavior Research Methods \u2014 the methods tutorial (freely available; cite for your estimation procedure)'."
+    },
+    {
+      "text": "Does NOT recommend reporting closeness or betweenness centrality without caveat",
+      "passed": true,
+      "evidence": "Step 4 states: 'Do not report Closeness or Betweenness. They were designed for flow/distance problems on sparse unweighted graphs and are almost always unstable and misleading in dense weighted partial-correlation networks of psych items (Bringmann et al., 2019).' This is an outright prohibition with a substantive caveat and citation."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6,
+    "pass_rate": 1.0
+  }
+}

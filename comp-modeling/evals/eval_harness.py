@@ -252,8 +252,12 @@ EVALS: list[Eval] = [
         category="content",
         rubric_keywords=["SE", "standard error", "se_diff", "posterior predictive",
                          "PPC", "model recovery", "confusion"],
-        rubric_must_not_have=["great", "ship it", "go with A"],
-        notes="Should not validate the choice without diagnostics.",
+        rubric_must_have_all=["model recovery", "posterior predictive"],
+        rubric_must_not_have=["ship it", "go with A", "you're good to go",
+                              "sounds good", "looks good"],
+        notes="Should require PPC + model recovery before endorsing ΔWAIC. "
+              "must_not_have checks only for flat unconditional endorsements; "
+              "conditional 'if X then clear winner' is acceptable.",
     ),
     Eval(
         id="C9",
@@ -338,6 +342,129 @@ EVALS: list[Eval] = [
         rubric_keywords=["simulation-based", "sbi", "BayesFlow", "SBI", "intractable",
                          "amortized", "summary stat"],
         notes="Should recommend sbi or BayesFlow for models without tractable likelihoods.",
+    ),
+
+    # ------- New content evals (modeling traps not covered above) -------
+
+    Eval(
+        id="C18",
+        prompt=(
+            "My per-subject MLE gives α = 0.15 in condition A and α = −0.08 in condition B. "
+            "The negative value in condition B suggests aversive or avoidance learning. Right?"
+        ),
+        category="content",
+        expected_files=["reinforcement_learning.md"],
+        rubric_keywords=["sign error", "bug", "reversed", "bounded", "constraint",
+                         "unconstrained", "likelihood"],
+        rubric_must_have_all=["bug"],
+        rubric_must_not_have=["not necessarily", "could suggest opposite",
+                              "could indicate aversive", "consistent with avoidance",
+                              "might mean aversive"],
+        notes="Negative α is a model/coding bug, not a psychological finding. "
+              "Must say 'bug' explicitly. 'aversive/avoidance learning' removed from "
+              "must_not_have — both correct and incorrect responses use these words in "
+              "denial context. 'not necessarily' catches the base model's hedge instead.",
+    ),
+
+    Eval(
+        id="C19",
+        prompt=(
+            "I have 50 subjects with 80 trials each. I'm going to pool all their trials "
+            "into one 4000-trial sequence and fit a single (α, β) pair. "
+            "More data means more stable estimates, right?"
+        ),
+        category="content",
+        expected_files=["reinforcement_learning.md"],
+        rubric_keywords=["individual", "hierarchical", "per-subject",
+                         "pseudo-replication", "independence", "pooling",
+                         "between-subject", "variability"],
+        rubric_must_not_have=["good idea", "more stable", "that works",
+                              "more data is better", "reasonable approach"],
+        notes="Pooled fitting violates trial independence, erases individual differences, "
+              "and produces uninterpretable parameters. Hierarchical Bayes is the fix.",
+    ),
+
+    Eval(
+        id="C20",
+        prompt=(
+            "I'm fitting my RL model to block-level accuracy — I calculated the proportion "
+            "correct in each 10-trial block, then fit the model to those 20 accuracy values. "
+            "Is that okay?"
+        ),
+        category="content",
+        expected_files=["reinforcement_learning.md"],
+        rubric_keywords=["trial-level", "trial-by-trial", "likelihood",
+                         "aggregat", "information", "RPE", "prediction error"],
+        rubric_must_not_have=["that's fine", "that works", "valid approach",
+                              "reasonable", "one approach"],
+        notes="Block-level fitting discards the trial-by-trial likelihood and RPE sequence. "
+              "Parameters cannot be interpreted. Must fit to the full trial sequence.",
+    ),
+
+    # ------- Further iteration evals (DDM v/z bias, β scale, ε-greedy) -------
+
+    Eval(
+        id="C21",
+        prompt=(
+            "I have a cued response-bias task — a cue makes one response option more likely "
+            "correct. My HDDM fit shows drift rate v shifts toward the cued option. "
+            "I'm concluding that the cue influences evidence accumulation — subjects are "
+            "interpreting the cue as evidence. Is that justified?"
+        ),
+        category="content",
+        expected_files=["drift_diffusion.md"],
+        rubric_keywords=["starting point", "z", "starting-point", "response bias",
+                         "both models", "compare", "both variants", "z-bias",
+                         "prior", "alternative"],
+        rubric_must_have_all=["z"],
+        rubric_must_not_have=["yes, that's justified", "that's right",
+                              "supports evidence accumulation interpretation",
+                              "confirms evidence accumulation"],
+        notes="v-shift and z-shift both produce response-option asymmetry. Must flag starting "
+              "point z as an alternative and recommend fitting and comparing both model variants. "
+              "Must say 'z' explicitly.",
+    ),
+
+    Eval(
+        id="C22",
+        prompt=(
+            "I fitted an RL model to a bandit task with 0/1 rewards and got β = 5.2. "
+            "My colleague ran the same paradigm with 0–100 point rewards and got β = 0.04. "
+            "She's concluding her subjects are less exploitative than mine. Is that a valid "
+            "comparison?"
+        ),
+        category="content",
+        expected_files=["reinforcement_learning.md"],
+        rubric_keywords=["scale", "reward magnitude", "rescal", "normalize",
+                         "not comparable", "reward scale", "100×", "100x",
+                         "magnitude", "units"],
+        rubric_must_not_have=["her comparison is valid", "she's right",
+                              "yes, that's a valid comparison",
+                              "that comparison holds", "valid cross-study"],
+        notes="β is not comparable across reward scales. β × reward_magnitude determines "
+              "exploitativeness; β = 5.2 on {0,1} ≈ β = 0.052 on {0,100}. Must flag "
+              "the comparison as invalid without normalization.",
+    ),
+
+    Eval(
+        id="C23",
+        prompt=(
+            "My ML collaborator recommends ε-greedy for modeling exploration in my bandit task. "
+            "Should I use it instead of softmax for fitting behavioral data?"
+        ),
+        category="content",
+        expected_files=["reinforcement_learning.md"],
+        rubric_keywords=["degenerate", "likelihood", "gradient", "smooth",
+                         "differentiable", "uniform", "softmax", "non-differentiable",
+                         "equal probability", "non-greedy"],
+        rubric_must_have_all=["likelihood"],
+        rubric_must_not_have=["yes, use ε-greedy", "either works equally",
+                              "same result", "interchangeable",
+                              "no meaningful difference", "both are fine"],
+        notes="ε-greedy assigns equal probability to all non-greedy choices — the likelihood "
+              "is degenerate (no gradient for which non-greedy option was chosen). Softmax "
+              "provides a smooth, differentiable likelihood. Skill should name the likelihood "
+              "issue and recommend softmax for behavioral fitting.",
     ),
 
     Eval(

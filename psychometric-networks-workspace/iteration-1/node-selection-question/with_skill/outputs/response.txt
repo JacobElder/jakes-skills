@@ -1,0 +1,35 @@
+This is one of the most important conceptual questions in psychometric network analysis, and your reviewer is asking exactly the right thing. The skill has a direct flag on this: node selection shapes the network's structure at least as much as the estimation algorithm does. Let me work through the specific issues for the Y-BOCS.
+
+## The general problem
+
+Nodes in a psychometric network are not neutral observables — they are theoretically loaded choices. The network you estimate is a model of *the variables you decided to include*, and a different set of nodes would produce a different network and different centrality rankings, even in the same sample, even with the same estimation method. This is Fried's core argument across several papers (most directly in Fried et al., 2016, "What are 'good' depression symptoms?" and Fried, 2017 on the 52 symptoms of depression — the logic transfers directly to OCD).
+
+The practical implication: your network is not a picture of OCD. It is a picture of *the symptom/item space you sampled*, as expressed in your sample. The reviewer wants to know whether that space was sampled well and for theoretically defensible reasons.
+
+## Y-BOCS–specific issues to address
+
+**1. Severity dimensions vs. symptom content.** The Y-BOCS's 10 items (5 obsession + 5 compulsion) measure severity along five parallel dimensions — Time, Interference, Distress, Resistance, Control — applied twice. They are not asking *what* the person's obsessions or compulsions are, only *how bad* they are along those dimensions. This is conceptually different from using the Y-BOCS Symptom Checklist, where nodes would be symptom types (contamination, harm, symmetry, etc.).
+
+So before anything else, be explicit: are you arguing that the severity dimensions are the right nodes for the causal story you're telling? A network of severity dimensions answers a different question than a network of symptom types or a network mixing both. McNally et al. (2015, *Psychol Sci*) used OCD symptoms (from a structured interview) as nodes precisely because they were interested in symptom relationships, not severity dimension relationships.
+
+**2. The parallel structure problem.** The Y-BOCS was designed with deliberate symmetry: the obsessions subscale and compulsions subscale have identical item stems. This means a network of Y-BOCS items may show strong cross-domain edges (e.g., Obsession-Distress ↔ Compulsion-Distress) not because distress from obsessions causally drives compulsion-distress in OCD, but because people who rate one type of distress highly tend to rate the other highly — a response style artifact baked into the instrument's architecture. Your network structure will partially reflect the scale's design, not just OCD's pathology.
+
+**3. Within-subscale dependencies.** The five items within each subscale (time/interference/distress/resistance/control) are conceptually overlapping severity facets that tend to co-vary strongly. In a network context, these dense within-subscale partial correlations may suppress edges across subscales, and vice versa. Whether the graphical lasso correctly handles this depends on whether the within-block structure is partialled out cleanly — worth checking the adjacency matrix for the within- vs. across-subscale patterning.
+
+**4. What's excluded determines what you can claim.** With 10 Y-BOCS items, you have no nodes for OCD-relevant constructs like symptom dimensions (contamination/harm/symmetry/taboo), insight, avoidance, or comorbid anxiety/depression items that are causally entangled with OCD in most theoretical accounts. Any centrality claim — e.g., "Interference is the most central symptom" — is relative to this constrained node set. Central among what? Among ten severity items on a scale that wasn't designed to represent OCD's causal structure.
+
+## How to frame your justification
+
+A strong node selection justification does three things:
+
+**State the theoretical question your nodes are designed to answer.** If your question is about within-OCD severity dynamics — what aspects of OCD severity are most interconnected — Y-BOCS items are defensible. If your question is about which symptom types activate which others, you need the Symptom Checklist or a diagnostic interview.
+
+**Acknowledge the instrument's structural constraints and what they imply for interpretation.** This is not a fatal flaw; it's an honest scope limitation. Say explicitly that your network estimates relationships among severity dimensions as operationalized by the Y-BOCS, and that this is a different model than a network of symptom content.
+
+**Cite precedent and consistency.** If prior published OCD networks used the Y-BOCS items (Ruzzano et al., 2015; Rees et al., 2015; Boelen et al., and others), cite them and note that your node choice enables direct replication comparison. Consistency across studies is a genuine scientific value, even if the original choice was imperfect.
+
+## What not to do
+
+Don't justify node selection purely on practical grounds ("the Y-BOCS is the standard measure") without addressing the conceptual question. That's circular — it tells the reviewer the scale is widely used but doesn't say whether its items are appropriate network nodes. The reviewer knows it's widely used; the question is whether widespread use as a severity scale means its items are theoretically appropriate as network nodes.
+
+The references to anchor this in your response to the reviewer: Fried et al. (2016) for the general node selection argument, Borsboom (2017) for the theoretical stakes of what a node is supposed to represent, and the existing Y-BOCS network papers for empirical precedent.

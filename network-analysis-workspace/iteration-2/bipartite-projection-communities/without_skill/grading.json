@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Output flags the bipartite projection pathology (clique inflation, co-membership artifacts, inflated clustering)",
+      "passed": true,
+      "evidence": "Explicitly described clique inflation: 'every person who shared a project gets connected to every other person in that project. If a large project had 50 employees, that single project creates a clique of 50 nodes — 50×49/2 = 1,225 edges.' Also mentioned 'Clustering coefficients and community structure in the projected graph are heavily inflated by these artifacts.'"
+    },
+    {
+      "text": "Output recommends SDSM or FDSM backbone extraction specifically — NOT the disparity filter (which ignores bipartite structure and is wrong here)",
+      "passed": true,
+      "evidence": "Named both explicitly: 'The Stochastic Degree Sequence Model (SDSM) or Fixed Degree Sequence Model (FDSM) are the correct null models for bipartite-projected networks.' Also warned: 'Do NOT use the disparity filter here — it was designed for general weighted networks and ignores the bipartite structure that generates the weights, so it will give you wrong significance estimates.'"
+    },
+    {
+      "text": "Output mentions direct bipartite community detection as an alternative (bipartite SBM, biSBM, graph-tool bipartite)",
+      "passed": true,
+      "evidence": "Section 'Direct bipartite community detection' states: 'you can run community detection directly on the bipartite graph. Options include the bipartite Stochastic Block Model (biSBM), available in graph-tool.'"
+    },
+    {
+      "text": "Output does NOT simply validate the Louvain-on-projection plan without warnings",
+      "passed": true,
+      "evidence": "Response begins with 'Your plan is a common starting point, but there are some important caveats worth knowing before you run it.' Multiple substantial warnings and alternatives are provided. Louvain is only mentioned in the context of 'if you must' with prerequisite steps."
+    },
+    {
+      "text": "Output explains why edge weights from bipartite projection are not the same as relationship strength (co-membership count confounds project size and individual activity)",
+      "passed": true,
+      "evidence": "Dedicated section 'The edge weight ≠ relationship strength problem' with a concrete numerical example: 'A highly active person who joined 30 projects will have high-weight edges to hundreds of colleagues, most of whom never meaningfully interacted.' Also: 'raw weight suggests A–B have a stronger relationship, but the 100-person project contributes almost nothing to either relationship in practice.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 2847,
+    "total_tool_calls": 2,
+    "total_steps": 3,
+    "errors_encountered": 0
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

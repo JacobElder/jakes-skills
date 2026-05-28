@@ -1,0 +1,105 @@
+{
+  "expectations": [
+    {
+      "text": "Output identifies random negative sampling as a key validity problem (easy negatives inflate AUROC)",
+      "passed": true,
+      "evidence": "Section 'Negative Sample Contamination': 'If you sample negatives randomly from all non-existing pairs, many of those negatives will be between nodes that have no structural connection whatsoever — trivially easy to distinguish from test positives that share many common neighbors. This inflates AUROC dramatically.' Step 2 checklist also flags 'Random non-edges from full graph' as a red flag."
+    },
+    {
+      "text": "Output recommends hard negative sampling (e.g., non-edges between nodes at distance 2 or 3, or degree-matched negatives)",
+      "passed": true,
+      "evidence": "Step 2 of validation: 'Harder and more realistic: Negative samples drawn from node pairs at distance 2 (i.e., pairs that share at least one common neighbor). These are structurally similar to positives and much harder to distinguish.' The concrete checklist also lists 'Distance-2 vs. random non-edges' as the correct approach."
+    },
+    {
+      "text": "Output recommends a temporal train/test split (train on past, predict future) to prevent leakage",
+      "passed": true,
+      "evidence": "Step 1 of validation: 'Temporal split. Since you're predicting friendships in the next 6 months, you should be training on edges that exist at time T and predicting edges that form between T and T+6 months. This is the only split that matches your actual deployment scenario.' Reinforced in 'What a Valid Evaluation Looks Like': 'Split by time: Train on edges formed before month 0, test on edges formed in months 1–6.'"
+    },
+    {
+      "text": "Output recommends comparing to a simple baseline (Adamic-Adar, Jaccard, Common Neighbors) before celebrating GNN performance",
+      "passed": true,
+      "evidence": "Step 3: 'Before trusting your GNN score, compute AUROC using only a simple structural heuristic — no learning involved: Common Neighbors score, Adamic-Adar index, Jaccard coefficient. If a purely structural heuristic... achieves AUROC of, say, 0.88, and your GNN achieves 0.94, your GNN is adding only marginal value — and both scores are likely inflated by the same leakage.'"
+    },
+    {
+      "text": "Output explains why 0.94 AUROC with random negatives is misleading (the task is too easy — most random pairs are obviously dissimilar)",
+      "passed": true,
+      "evidence": "Two converging explanations: (1) 'Negative Sample Contamination' section explains that random non-edges are structurally distant pairs, making them trivially easy to distinguish from test positives; (2) Step 2 diagnoses the mechanism: 'If your AUROC drops substantially (e.g., to 0.70–0.80), that's diagnostic of easy-negative inflation.' The summary also explicitly attributes 0.94 to 'inflated by easy negative samples.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 3,
+      "Write": 0,
+      "Edit": 3,
+      "Bash": 4
+    },
+    "total_tool_calls": 10,
+    "total_steps": 10,
+    "errors_encountered": 1,
+    "output_chars": 7335,
+    "transcript_chars": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 156.28,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 156.28
+  },
+  "claims": [
+    {
+      "claim": "Random edge splitting causes structural data leakage because train and test edges share nodes and their neighborhoods",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Accurately described in 'Structural Leakage' and 'Node Representation Leakage' sections. This is a well-established problem in graph ML evaluation literature."
+    },
+    {
+      "claim": "Legitimate link prediction benchmarks typically yield AUROC in the range of 0.75–0.88 for strong GNN models",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Plausible and consistent with published literature on social network link prediction with proper temporal evaluation (e.g., OGB leaderboard scores). The claim is directionally correct."
+    },
+    {
+      "claim": "Under rigorous evaluation, AUROC should fall to 0.72–0.85",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Specific range given in 'What a Valid Evaluation Looks Like.' Directionally consistent with published temporal-split benchmarks, though the exact range depends heavily on the dataset."
+    },
+    {
+      "claim": "The response was generated from general knowledge without reading any skill or reference files",
+      "type": "process",
+      "verified": true,
+      "evidence": "Transcript confirms 'Answered the question directly from general knowledge without reading any skill or reference files.' Tool calls show only Bash (directory operations), Read (existing files), and Edit (output files) — no skill-specific reference reads."
+    },
+    {
+      "claim": "1 error was encountered during execution",
+      "type": "process",
+      "verified": true,
+      "evidence": "metrics.json records errors_encountered: 1. The transcript lists 9 tool call steps without flagging an error explicitly — likely an initial file-not-found that was handled gracefully."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "reason": "All five expectations are satisfied by the base model without the skill. This means these assertions do not discriminate between with-skill and without-skill performance — they will not capture any lift the skill provides. If the base model passes 5/5 and the skill also passes 5/5, the eval produces no signal. Consider adding expectations that target deeper or more precise guidance the skill is designed to inject (e.g., specific code snippets for temporal splitting, explicit recommendation to re-run with OGB benchmark protocol, or a quantitative minimum margin over baseline that the skill enforces)."
+      },
+      {
+        "assertion": "Output explains why 0.94 AUROC with random negatives is misleading (the task is too easy — most random pairs are obviously dissimilar)",
+        "reason": "This expectation is closely related to expectation 1 (random negatives inflate AUROC). Both are satisfied by the same passage in the response. Consider merging them or making expectation 5 test something distinct — e.g., that the output quantifies the magnitude of inflation or gives a concrete example of how much AUROC could drop."
+      },
+      {
+        "reason": "No expectation checks whether the output gives actionable, runnable guidance (e.g., actual NetworkX or PyG code for distance-2 negative sampling, or a concrete temporal split implementation). The response is conceptually correct but stays at the level of descriptions. If the skill is meant to improve practical implementation guidance, an eval that checks for code or pseudocode would be more discriminating."
+      }
+    ],
+    "overall": "The response is high-quality and covers all five expectations clearly. However, because the base model already achieves 5/5, these evals provide no discriminating signal between with-skill and without-skill runs. The primary improvement needed is expectations that are harder to satisfy without the skill."
+  }
+}

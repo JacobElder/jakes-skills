@@ -1,0 +1,41 @@
+{
+  "run_id": "hairball-gamma-tuning-without_skill",
+  "eval_id": 4,
+  "eval_name": "hairball-gamma-tuning",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Identifies the EBIC gamma (tuning) parameter as the primary lever for controlling network sparsity",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "States the field convention: default gamma = 0.5; recommend trying higher values (e.g., 0.5 \u2192 1.0) to see how sparsity changes",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Flags that Pearson correlations on ordinal Likert items can inflate edge weights \u2014 recommends checking that cor_auto or polychoric correlations are being used",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Mentions node redundancy or near-duplicate items as a possible cause of dense networks (spuriously strong partial correlations that survive regularization)",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Does NOT conclude that a near-complete graph is acceptable without any action or investigation",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 5,
+    "total": 5,
+    "pass_rate": 0.0
+  }
+}

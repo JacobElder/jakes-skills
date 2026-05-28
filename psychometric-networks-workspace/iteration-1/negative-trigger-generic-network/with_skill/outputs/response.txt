@@ -1,0 +1,35 @@
+## Betweenness Centrality
+
+### What it measures
+
+Betweenness centrality quantifies how often a node sits on the **shortest path** between two other nodes. Formally, for node *v*:
+
+$$BC(v) = \sum_{s \neq v \neq t} \frac{\sigma_{st}(v)}{\sigma_{st}}$$
+
+where σ*ₛₜ* is the total number of shortest paths from node *s* to node *t*, and σ*ₛₜ*(*v*) is how many of those paths pass through *v*. A high-betweenness node is a **broker or bottleneck** — remove it, and many pairs of nodes lose their most efficient route to each other.
+
+### Where it's genuinely useful
+
+The canonical use cases share two properties: *flow is real*, and *paths are meaningful*.
+
+- **Infrastructure / logistics** — a router, highway interchange, or airport hub through which actual traffic must pass. If O'Hare closes, many flight routes become longer. Betweenness directly models disruption risk.
+- **Social network analysis (communication/information flow)** — a person who bridges otherwise-disconnected cliques controls information passing between them (Burt's "structural holes"). In org-network studies, high-betweenness employees are often informal gatekeepers.
+- **Biological networks (protein–protein interaction, metabolic pathways)** — enzymes or proteins on many regulatory paths are candidate drug targets because disabling them disrupts many downstream processes.
+
+In all these cases the metaphor is right: something (packets, people, metabolites) *travels along paths*, and betweenness captures the load-bearing nodes.
+
+---
+
+### The psychometric network caveat — important
+
+For **psychological item/symptom networks** (GGMs, Ising models), betweenness centrality is generally **not recommended** and increasingly not reported in methodology-aware outlets. The reasons:
+
+1. **The flow metaphor doesn't transfer.** A GGM edge is a partial correlation — a conditional statistical association, not a channel through which anything travels. "Shortest path" in a partial-correlation graph has no clear substantive meaning.
+
+2. **It's statistically unstable.** Betweenness is highly sensitive to small changes in edge weights and to sampling variation. CS-coefficients for betweenness are routinely below the 0.25 floor that makes centrality interpretable at all.
+
+3. **It was designed for sparse, unweighted graphs.** Psychological item networks are typically dense and weighted, precisely the conditions under which betweenness behaves most erratically.
+
+The reference here is **Bringmann et al. (2019), "What do centrality measures measure in psychological networks?" in *Journal of Abnormal Psychology***, which worked through these issues systematically.
+
+For symptom/item networks, the defensible defaults are **Strength** (sum of absolute edge weights) and, when edges can be negative (e.g., mixed-valence affect networks), **Expected Influence** (Robinaugh et al., 2016). Drop betweenness unless you have a specific, argued reason it applies to your data-generating process.

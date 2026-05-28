@@ -1,0 +1,192 @@
+## Psychometric network analysis: full R walkthrough
+
+Your setup — 412 participants, 21 ordinal items (0–4), cross-sectional — is a clean GGM-via-EBICglasso job. Here's the complete pipeline from raw data to a publishable set of results.
+
+---
+
+### 1. Install and load packages
+
+```r
+install.packages(c("bootnet", "qgraph", "psych"))
+
+library(bootnet)
+library(qgraph)
+library(psych)   # for descriptives / polychoric diagnostics
+```
+
+`bootnet` wraps `qgraph` and handles estimation + all the accuracy machinery. You rarely need to call `qgraph::EBICglasso` directly.
+
+---
+
+### 2. Check your data before touching a network
+
+Always run diagnostics first. Network estimation will silently absorb bad data.
+
+```r
+# Assumes your data frame is called `df`, items in columns 1–21
+dim(df)              # should be 412 × 21
+sapply(df, range, na.rm = TRUE)   # confirm 0–4 range on every item
+colSums(is.na(df))                # count NAs per item
+
+# Univariate distributions — floor/ceiling effects matter
+describe(df)         # psych package; check skew, kurtosis, mean
+
+# Are any items near-constant? That breaks polychoric estimation.
+sapply(df, function(x) length(unique(x)))
+```
+
+**Flag before proceeding:** if any item has ≤ 2 unique values in your sample, or if missingness > ~5%, address those before estimating. Listwise deletion is the `cor_auto` default; imputation or FIML is a separate step.
+
+---
+
+### 3. Estimate the network
+
+```r
+net <- estimateNetwork(
+  df,
+  default   = "EBICglasso",
+  corMethod = "cor_auto",   # detects ordinal → polychoric; critical for Likert data
+  tuning    = 0.5           # EBIC gamma; field default
+)
+```
+
+**Why `cor_auto`?** Items with ≤ 7 unique integer values are treated as ordinal and polychoric correlations are computed via `lavaan`. With 0–4 scales, Pearson correlations systematically underestimate the associations — this is one of the most common errors in published networks. `cor_auto` handles it automatically.
+
+**Why `tuning = 0.5`?** The EBIC gamma controls sparsity. At 0, the penalty is pure BIC (liberal, denser graph). At 1 it's maximally conservative. 0.5 is the field default per Epskamp & Fried (2018) and what reviewers expect unless you have a strong reason to deviate.
+
+---
+
+### 4. Plot the network
+
+```r
+plot(net,
+     layout      = "spring",      # Fruchterman-Reingold; standard in this field
+     theme       = "colorblind",  # accessible palette
+     labels      = names(df),     # use your actual item abbreviations
+     vsize       = 6,
+     label.cex   = 0.8,
+     edge.labels = FALSE)         # TRUE can be useful for small networks
+```
+
+Green edges = positive partial correlations (symptoms activate each other). Red edges = negative (rare in depression scales, but possible after controlling for other nodes). Edge thickness = weight magnitude. Zero-edges are suppressed — that's the lasso at work.
+
+To extract and inspect the edge weight matrix:
+
+```r
+net$graph          # adjacency matrix (partial correlations after regularization)
+summary(net)
+```
+
+---
+
+### 5. Centrality
+
+Report **Strength** and **Expected Influence**. Do not report closeness or betweenness — they are inappropriate for weighted partial-correlation graphs and typically unstable (Bringmann et al., 2019).
+
+```r
+centralityPlot(
+  net,
+  include   = c("Strength", "ExpectedInfluence"),
+  orderBy   = "Strength"
+)
+```
+
+**Strength** = sum of absolute edge weights incident to a node.  
+**Expected Influence** = sum of *signed* edge weights. Prefer this when you want to distinguish nodes that are strongly connected via positive edges from those connected via a mix of positive and negative ones — relevant for affect networks, less so for pure symptom scales, but worth including regardless.
+
+Get the raw numbers too:
+
+```r
+centralityTable(net) |>
+  dplyr::filter(measure %in% c("Strength", "ExpectedInfluence"))
+```
+
+---
+
+### 6. Edge accuracy — non-negotiable step 1
+
+Bootstrapped confidence intervals around each edge weight. This tells you how precisely the edges are estimated.
+
+```r
+boot_edge <- bootnet(
+  net,
+  nBoots = 1000,
+  type   = "nonparametric",
+  nCores = 4             # use parallel cores if available
+)
+
+# Plot CIs for all edges, ordered by weight
+plot(boot_edge, order = "sample", labels = FALSE)
+
+# Bootstrapped difference test: which edges are distinguishably different?
+plot(boot_edge, "edge", plot = "difference", onlyNonZero = TRUE, order = "sample")
+```
+
+**Critical interpretation note:** non-overlapping CIs ≠ significant difference. The difference test is the correct tool for pairwise comparisons. With 21 items (210 possible edges), you'll almost certainly find that many edges cannot be distinguished — that's normal and should be reported honestly.
+
+---
+
+### 7. Centrality stability — non-negotiable step 2
+
+Case-dropping subset bootstrap. This assesses how stable the centrality *ordering* is as you progressively remove random subsets of participants.
+
+```r
+boot_case <- bootnet(
+  net,
+  nBoots          = 1000,
+  type            = "case",
+  statistics      = c("Strength", "ExpectedInfluence"),
+  nCores          = 4
+)
+
+plot(boot_case, statistics = c("Strength", "ExpectedInfluence"))
+
+# The CS-coefficient: largest drop proportion keeping r ≥ 0.7 with full-sample order
+corStability(boot_case)
+```
+
+**Interpreting CS-coefficients:**
+
+| CS value | Interpretation |
+|---|---|
+| ≥ 0.5 | Good — safe to interpret centrality order |
+| 0.25 – 0.49 | Acceptable — interpret cautiously |
+| < 0.25 | Do not interpret centrality ordering |
+
+With 412 participants and 21 nodes, you'll likely land in the acceptable-to-good range for Strength, but run the check — don't assume.
+
+---
+
+### 8. Edge difference tests for centrality
+
+```r
+plot(boot_edge, "strength", plot = "difference")
+```
+
+This shows which pairs of nodes have *statistically distinguishable* Strength values. A common mistake is to name the "most central" node when it isn't actually distinguishable from the 3rd or 4th — this test prevents that.
+
+---
+
+### 9. Putting it together: what to report
+
+Following Burger et al. (2023, *Psychological Methods*) reporting standards:
+
+1. **Sample and nodes**: N = 412; 21 items from [your scale], all rated 0–4.
+2. **Estimator**: GGM estimated via EBICglasso (gamma = 0.5); polychoric correlations computed with `cor_auto` given the ordinal item format.
+3. **Network plot**: spring layout, with edge weights and color coding.
+4. **Edge weight table**: full 21×21 adjacency matrix in supplement.
+5. **Accuracy**: bootstrapped CIs (1000 nonparametric bootstrap samples); bootstrapped difference tests for focal edges.
+6. **Centrality**: Strength and Expected Influence with CS-coefficients from case-dropping bootstrap (1000 samples).
+7. **Limitations**: cross-sectional design; network structure is descriptive, not causal; results should be replicated in an independent sample before interpretation.
+
+---
+
+### 10. Two things to watch for with your specific setup
+
+**PHQ-9 + 12 extra items:** Node selection is a substantive choice. The field (Fried, 2017; Fried & Nesse, 2015) has shown that which items you include meaningfully changes network structure. Be prepared to justify why these 21 items constitute a coherent node set — a reviewer will ask. If the 12 additional items are from a different conceptual domain (e.g., anxiety, rumination), you may want to run a sensitivity analysis without them.
+
+**21 nodes, 412 cases:** You have 210 possible edges. The effective ratio here is reasonable but not generous. Prioritize stability metrics over point estimates of edge weights — report the CS-coefficient prominently and use the difference tests before claiming any one node is "most central."
+
+---
+
+The canonical reference for the full pipeline is Epskamp, Borsboom & Fried (2018) in *Behavior Research Methods* (freely available) — worth keeping open alongside this as you work through it.

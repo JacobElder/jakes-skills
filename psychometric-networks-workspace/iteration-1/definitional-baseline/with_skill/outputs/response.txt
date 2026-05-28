@@ -1,0 +1,61 @@
+## Psychometric networks vs. factor models
+
+Both are models of the same raw material — a correlation matrix among psychological items — but they differ in their **generative story**, which changes everything downstream.
+
+---
+
+### The factor model: common cause
+
+A factor model says the correlations among items exist *because* a latent variable causes all of them. Depression items co-occur — sad mood, sleep disturbance, concentration problems — because an underlying disease entity (or trait) drives them all in parallel. Remove the latent variable, and the items become independent. The latent variable is real; the item intercorrelations are just its shadow.
+
+```
+        F (latent)
+       /  |  \
+      i1  i2  i3   ← items are conditionally independent given F
+```
+
+The model's parameters are **factor loadings** — how strongly each item reflects the latent cause.
+
+---
+
+### The psychometric network: direct interactions
+
+A network model says the correlations exist because items *directly activate each other*. Sad mood causes fatigue; fatigue causes concentration problems; concentration problems cause hopelessness. There's no underlying entity — the disorder *is* the pattern of interactions among symptoms at equilibrium. The model's parameters are **partial correlations** (in the Gaussian case) — the association between two nodes after conditioning out every other node.
+
+```
+      i1 — i2
+      |  ×  |      ← items are directly connected; no hidden layer
+      i3 — i4
+```
+
+---
+
+### The estimation difference
+
+| | Factor model | Psychometric network (GGM) |
+|---|---|---|
+| **Estimated parameters** | Loadings on latent variable(s) | Pairwise partial correlations |
+| **Zeros mean** | No relationship to the factor | No direct relationship between nodes |
+| **Key regularization** | Fit indices (CFI, RMSEA) | Graphical lasso + EBIC tuning |
+| **What you interpret** | Factor scores, loadings | Edge weights, centrality (strength) |
+
+---
+
+### The uncomfortable mathematical fact
+
+Here's the important caveat: **you often cannot distinguish them statistically from cross-sectional data alone.** A unidimensional factor model and an Ising network model can be mathematically equivalent given the right parameters (Marsman et al., 2018). A GGM and a factor model can fit the same correlation matrix with similar adequacy.
+
+The network claim is therefore **more philosophical than statistical** — it's an assertion about the causal generative process (direct interactions rather than a common cause), not something you can read off a model fit index. Distinguishing them requires intervention data, longitudinal designs, or strong theory.
+
+---
+
+### Why it matters practically
+
+The distinction has real consequences for clinical reasoning:
+
+- **Factor logic**: if items are just reflections of a latent disease, you treat the disease and all items remit together.
+- **Network logic**: if items are directly connected, the network has its own dynamics — some nodes are more "central" (strongly connected to everything else), and targeting those could be a better intervention point than treating a latent entity that may not exist.
+
+This is why Borsboom (2017, *World Psychiatry*) introduced network models as a substantive alternative — not just a different visualization of the same structure, but a different theory of what mental disorders are.
+
+The honest summary: same data, very different stories, and the data alone usually can't adjudicate between them.

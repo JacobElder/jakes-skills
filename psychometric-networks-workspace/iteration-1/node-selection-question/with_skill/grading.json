@@ -1,0 +1,36 @@
+{
+  "run_id": "node-selection-question-with_skill",
+  "eval_id": 6,
+  "eval_name": "node-selection-question",
+  "config": "with_skill",
+  "passed": 2,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Acknowledges that node selection is a substantive theoretical choice, not a neutral one, and that network structure depends on which items are included",
+      "passed": true,
+      "evidence": "\"Nodes in a psychometric network are not neutral observables \u2014 they are theoretically loaded choices. The network you estimate is a model of the variables you decided to include, and a different set of nodes would produce a different network and different centrality rankings, even in the same sample, even with the same estimation method.\""
+    },
+    {
+      "text": "References Fried's work on node selection, depression symptom heterogeneity, or the 'What are good depression symptoms' / '52 symptoms' line of work \u2014 OR makes the equivalent substantive point without the citation",
+      "passed": true,
+      "evidence": "\"This is Fried's core argument across several papers (most directly in Fried et al., 2016, 'What are good depression symptoms?' and Fried, 2017 on the 52 symptoms of depression \u2014 the logic transfers directly to OCD).\""
+    },
+    {
+      "text": "Mentions node redundancy / topological overlap as a methodological concern (near-duplicate items inflate edge weights)",
+      "passed": false,
+      "evidence": "The response discusses within-subscale covariance ('conceptually overlapping severity facets that tend to co-vary strongly') but frames the consequence as suppressing cross-subscale edges, not inflating edge weights between redundant nodes. The specific node redundancy concern \u2014 that near-duplicate items produce artifactually inflated edges between them \u2014 is never stated."
+    },
+    {
+      "text": "Suggests checking for redundant nodes (e.g., networktools, goldbricker) or justifying selection theoretically",
+      "passed": false,
+      "evidence": "The response suggests 'worth checking the adjacency matrix for the within- vs. across-subscale patterning' but does not mention goldbricker, networktools, or any equivalent tool for detecting redundant nodes. The theoretical justification framework is described generally but is not framed specifically as an alternative to redundancy checking."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 2,
+    "total": 4,
+    "pass_rate": 0.5
+  }
+}

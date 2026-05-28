@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Output redirects away from NetworkX for this scale (5M nodes, 800M edges)",
+      "passed": true,
+      "evidence": "NetworkX is a pure-Python library that stores graphs as Python dictionaries. For a graph with 7 million nodes and 800 million edges, you are looking at roughly 60–100 GB of RAM just to hold the graph in memory — before any algorithm runs. On most machines, loading this graph into NetworkX will either exhaust memory or take hours."
+    },
+    {
+      "text": "Output recommends NetworKit, cuGraph, or graph-tool as appropriate large-scale alternatives",
+      "passed": true,
+      "evidence": "Comparison table explicitly lists NetworKit ('Handles billions of edges; has approximate betweenness built in'), cuGraph/RAPIDS ('Can process 800M-edge graphs in minutes on modern GPUs'), and graph-tool ('excellent for BISBM'). Summary states: 'Use NetworKit or cuGraph for scalable graph analytics.'"
+    },
+    {
+      "text": "Output warns that exact betweenness centrality is computationally infeasible at this scale (O(VE) or O(V*E))",
+      "passed": true,
+      "evidence": "Exact betweenness centrality has time complexity O(V * E) — for your graph that is roughly 7 million × 800 million ≈ 5.6 × 10¹⁵ operations. Even on fast hardware, exact betweenness is computationally infeasible at this scale. It would take months to years to complete."
+    },
+    {
+      "text": "Output recognizes that this is a bipartite (user-item) graph and warns that running standard community detection on it would conflate user and item nodes into mixed communities",
+      "passed": true,
+      "evidence": "Your graph is bipartite: one partition contains users, the other contains items... Running them on the full bipartite graph will produce communities that intermix users and items arbitrarily — a community might be 'some users + some items,' which is hard to interpret and often not what you want."
+    },
+    {
+      "text": "Output mentions approximate betweenness (sampling-based) or questions whether betweenness is the right metric for a recommendation system",
+      "passed": true,
+      "evidence": "Both addressed: (1) 'Approximate betweenness via sampling (e.g., Brandes' algorithm with random pivot sampling). You sample k source nodes rather than all V, bringing complexity to O(k * E).' (2) 'Question whether betweenness is the right metric. In a user-item recommendation graph... For recommendation systems, degree centrality, PageRank, or item co-occurrence strength are usually more interpretable and actionable.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 3891,
+    "total_tool_calls": 2,
+    "total_steps": 3,
+    "errors_encountered": 0
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

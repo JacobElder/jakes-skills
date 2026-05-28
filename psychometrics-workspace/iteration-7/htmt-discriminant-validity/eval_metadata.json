@@ -2,16 +2,16 @@
   "eval_id": 1,
   "eval_name": "htmt-discriminant-validity",
   "iteration": 7,
-  "trap": "Validates Fornell-Larcker criterion (AVE > squared factor correlation) as sufficient evidence for discriminant validity, without raising HTMT",
-  "prompt": "I'm running a CFA with two latent factors — emotional exhaustion and depersonalization — in lavaan. The AVE for exhaustion is .54 and for depersonalization is .51. The squared factor correlation between the two is .46. Since AVE > squared factor correlation for both constructs (.54 > .46 and .51 > .46), I've satisfied the Fornell-Larcker criterion. My co-author says this is adequate evidence for discriminant validity. Is she right?",
-  "expected_with_skill": "Challenges the co-author's claim. The Fornell-Larcker criterion is known to have low sensitivity — it frequently fails to detect discriminant validity problems that exist. The modern standard is HTMT (Heterotrait-Monotrait ratio of correlations). An HTMT below .85 (or .90 for conceptually similar constructs) is required. With a factor correlation this high (implied r ≈ .68 from the squared correlation of .46), HTMT is likely elevated and should be computed via semTools::htmt(). Clarifies that AVE > .50 is a criterion for convergent validity, not discriminant validity — conflating the two criteria is a common error.",
-  "expected_without_skill": "Validates the Fornell-Larcker criterion as the established standard for discriminant validity. Confirms the co-author's conclusion that discriminant validity is established. Does not mention HTMT or its superiority to Fornell-Larcker.",
+  "trap": "Validates discriminant validity based on HTMT point estimate below threshold (.87 < .90), ignoring that the bootstrapped 95% CI [.79, 1.03] crosses 1.0",
+  "prompt": "I'm running a two-factor CFA in lavaan for a burnout scale (emotional exhaustion and depersonalization subscales). I computed HTMT using semTools::htmt() and got HTMT = .87. I also bootstrapped 95% confidence intervals and got HTMT CI = [.79, 1.03]. My co-author says HTMT = .87 falls below the .90 threshold we're using for conceptually related constructs, so discriminant validity is confirmed. Is she right?",
+  "expected_with_skill": "Rejects the co-author's conclusion. The point estimate (HTMT = .87 < .90) is not the right diagnostic when the bootstrapped CI crosses 1.0. A CI of [.79, 1.03] means the constructs cannot be statistically distinguished from a single latent factor — discriminant validity is not established regardless of where the point estimate falls. The threshold comparison is only meaningful when the entire CI falls below it. Recommends testing a single-factor model as a comparison, revising items, or at minimum being transparent about the discriminant validity failure.",
+  "expected_without_skill": "Validates the co-author's conclusion. Treats HTMT = .87 < .90 as passing the threshold. Either ignores the CI entirely or treats it as a minor issue. Concludes discriminant validity is confirmed.",
   "assertions": [
-    "Does NOT simply validate the Fornell-Larcker criterion as sufficient evidence for discriminant validity without raising concerns about its limitations",
-    "States that the Fornell-Larcker criterion has low sensitivity — it frequently fails to detect discriminant validity violations that exist",
-    "Names the HTMT (Heterotrait-Monotrait ratio of correlations) as the current standard for assessing discriminant validity in CFA/SEM contexts",
-    "States the HTMT threshold: values below .85 provide evidence of discriminant validity for conceptually distinct constructs (or .90 for closely related constructs)",
-    "Recommends computing HTMT — e.g., via semTools::htmt() in R — rather than relying solely on Fornell-Larcker",
-    "Clarifies that AVE > .50 is a criterion for convergent validity (each construct explains more than half the variance in its indicators), not for discriminant validity — the two criteria serve different purposes"
+    "Does NOT simply validate the co-author's conclusion that HTMT = .87 < .90 confirms discriminant validity",
+    "Identifies the bootstrapped CI [.79, 1.03] crossing 1.0 as the critical problem — not the point estimate",
+    "Explains that when the HTMT confidence interval includes or crosses 1.0, the constructs cannot be empirically distinguished from a single factor, regardless of where the point estimate falls",
+    "States that proper HTMT inference requires the entire bootstrapped CI to fall below the threshold — the point estimate alone is insufficient",
+    "Notes that comparing the HTMT point estimate (.87) to the .90 threshold is irrelevant when the CI upper bound is 1.03 — the threshold comparison only applies when the CI is entirely below it",
+    "Recommends at least one concrete path forward: testing a single-factor model as comparison, revising items to improve construct differentiation, or being transparent about the discriminant validity failure in the paper"
   ]
 }

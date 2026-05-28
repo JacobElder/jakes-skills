@@ -1,0 +1,105 @@
+{
+  "expectations": [
+    {
+      "text": "Output flags the bipartite projection pathology (clique inflation, co-membership artifacts, inflated clustering)",
+      "passed": false,
+      "evidence": "The response identifies the 'hub-and-spoke inflation problem' and notes that large projects create 'a dense clique of 200 employees all connected to each other.' However, it treats this as a tunable pitfall rather than a fundamental structural pathology. It does not mention inflated clustering coefficients, co-membership artifacts as a systematic bias, or the broader problem that projection irreversibly conflates direct and indirect ties. The framing is 'watch for this' not 'this is a structural problem with the approach.'"
+    },
+    {
+      "text": "Output recommends backbone extraction (SDSM, FDSM, disparity filter) before running community detection on the projection",
+      "passed": false,
+      "evidence": "The response recommends filtering large projects before projecting and thresholding weak edges afterward, but does not mention any backbone extraction method — SDSM, FDSM, disparity filter, or any null-model-based edge significance test. These are the standard statistical tools for this exact problem and are entirely absent."
+    },
+    {
+      "text": "Output mentions direct bipartite community detection as an alternative (bipartite SBM, biSBM, graph-tool bipartite)",
+      "passed": false,
+      "evidence": "The response does not mention direct bipartite community detection at any point. There is no reference to bipartite SBM, biSBM, graph-tool, or any method that avoids projection altogether. The response treats projection as the only viable path and only discusses mitigations within that approach."
+    },
+    {
+      "text": "Output does NOT simply validate the Louvain-on-projection plan without warnings",
+      "passed": true,
+      "evidence": "The response explicitly lists four pitfalls: hub-and-spoke inflation from large projects, Louvain's resolution limit, noisy weak edges, and isolated nodes. It recommends checking project size distribution before running, and suggests hyperbolic weighting and edge thresholding. It does not give an unqualified green light to the plan."
+    },
+    {
+      "text": "Output explains why edge weights from bipartite projection are not the same as relationship strength",
+      "passed": false,
+      "evidence": "The response implicitly touches on one reason weights can be misleading (large all-hands projects inflate counts), but it does not make the general conceptual argument that co-occurrence frequency is not equivalent to pairwise relationship strength. In fact, the opening section explicitly validates the approach: 'Weighting edges by the number of shared projects is a sensible choice — it captures collaboration intensity.' This is the opposite of the expected explanation. The structural reasons why projection weights are biased proxies (shared-membership confound, common-neighbor inflation, dependence on project portfolio size) are not discussed."
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 4,
+    "total": 5,
+    "pass_rate": 0.20
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 0,
+      "Write": 3,
+      "Bash": 1
+    },
+    "total_tool_calls": 4,
+    "total_steps": 5,
+    "errors_encountered": 0,
+    "output_chars": 3987,
+    "transcript_chars": 789
+  },
+  "timing": {
+    "executor_duration_seconds": 80.76,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": 80.76
+  },
+  "claims": [
+    {
+      "claim": "Weighting edges by shared project count 'captures collaboration intensity, not just binary co-participation'",
+      "type": "quality",
+      "verified": false,
+      "evidence": "This is the exact misconception expectation 5 tests for. Raw co-participation count does not cleanly measure collaboration intensity — it is confounded by project size, number of projects per employee, and base-rate differences across the organization. The claim is stated as a validation rather than a caveat."
+    },
+    {
+      "claim": "Bipartite projection to a person-person network is 'a standard, well-understood approach for this problem'",
+      "type": "factual",
+      "verified": true,
+      "evidence": "True that it is widely used. However, the response omits that direct bipartite community detection is generally preferred in the literature precisely because projection loses information and introduces artifacts. The claim is accurate but incomplete in a way that misleads."
+    },
+    {
+      "claim": "Louvain on the projected graph is 'a solid default'",
+      "type": "quality",
+      "verified": false,
+      "evidence": "Without addressing backbone extraction or the structural inflation inherent in projection, calling Louvain-on-projection a 'solid default' is overclaiming. The response's own pitfall list implicitly contradicts this framing."
+    },
+    {
+      "claim": "Hyperbolic weighting (1 / (size_k - 1)) mitigates large-project inflation",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Hyperbolic weighting is a recognized heuristic for down-weighting large-group co-memberships (Newman 2001 formulation). The claim is technically correct, though it is a heuristic rather than a statistically principled test."
+    },
+    {
+      "claim": "No skill files were read; response generated from general knowledge",
+      "type": "process",
+      "verified": true,
+      "evidence": "metrics.json shows Read=0 tool calls. Transcript confirms 'No skill files were read.'"
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Output does NOT simply validate the Louvain-on-projection plan without warnings",
+        "reason": "This assertion is too easy to satisfy. Any response that mentions even one caveat passes, regardless of whether it endorses the overall plan. The response here passes this assertion while still opening with 'Your plan is reasonable and will work' and closing with 'Your plan is on the right track.' A stronger version would check that the response does not net-endorse the Louvain-on-projection approach, or specifically requires the response to recommend against running the plan as-stated without backbone extraction or direct bipartite methods."
+      },
+      {
+        "reason": "No assertion checks whether the response endorses the projection approach without mentioning its information loss. The response says projection is 'standard and well-understood' without noting that it discards the bipartite structure and conflates direct and indirect co-memberships. This gap (projection as lossy transformation) is conceptually central to the skill being tested but falls between the existing assertions."
+      },
+      {
+        "assertion": "Output explains why edge weights from bipartite projection are not the same as relationship strength",
+        "reason": "This assertion is well-targeted and caught real failure: the response actively asserts the opposite ('captures collaboration intensity'). Worth keeping as-is."
+      }
+    ],
+    "overall": "The eval is well-targeted at the core failure modes (backbone extraction gap, direct bipartite alternative gap, weight-interpretation misconception). The one weak assertion is expectation 4, which a response can pass by appending any cautionary note while still validating the flawed approach. Consider tightening it to check for absence of net-endorsement, not just presence of warnings."
+  }
+}

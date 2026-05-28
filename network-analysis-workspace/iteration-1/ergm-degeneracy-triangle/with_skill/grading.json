@@ -1,0 +1,107 @@
+{
+  "expectations": [
+    {
+      "text": "Output warns that triangle and kstar(2) terms are almost always degenerate in ERGMs",
+      "passed": true,
+      "evidence": "response.md line 6: 'Your model specification contains two terms — `triangle` and `kstar(2)` — that are well-documented causes of ERGM degeneracy.' Line 24 adds: 'The `triangle` and raw `kstar` terms are listed in the canonical literature as almost always degenerate for networks with the densities and clustering levels typical of friendship data.'"
+    },
+    {
+      "text": "Output recommends replacing triangle with gwesp and kstar with gwdegree (or gwdsp)",
+      "passed": true,
+      "evidence": "response.md provides corrected R code with `gwesp(decay = 0.5, fixed = TRUE)` (replacing triangle) and `gwdegree(decay = 0.5, fixed = TRUE)` (replacing kstar(2)), and a term-by-term substitution table explicitly labeling the replacements."
+    },
+    {
+      "text": "Output recommends running mcmc.diagnostics() to check MCMC convergence",
+      "passed": true,
+      "evidence": "response.md lines 38–41: `mcmc.diagnostics(fit)` appears both in the diagnostic section and in the corrected code with the comment '# not optional'. A detailed list of signs of degeneracy to look for in mcmc.diagnostics output is provided."
+    },
+    {
+      "text": "Output recommends running gof() as a required step before reporting results",
+      "passed": true,
+      "evidence": "response.md includes `gof_obj <- gof(fit); plot(gof_obj)` in both the diagnostic and corrected-code sections. The incremental workflow (Step 5) states 'Only interpret coefficients if ... GoF plots show simulated networks that resemble your observed network.' The summary checklist also includes '[ ] Run `gof()` and verify simulated networks resemble your observed network.'"
+    },
+    {
+      "text": "Output does NOT tell the user it is safe to report the current results as-is",
+      "passed": true,
+      "evidence": "response.md opens with: 'Short answer: No, do not report these results as valid.' The response is unambiguous throughout that the current model is degenerate and coefficients are invalid."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 2,
+      "Write": 3,
+      "Bash": 3
+    },
+    "total_tool_calls": 8,
+    "total_steps": 5,
+    "errors_encountered": 0,
+    "output_chars": 8779,
+    "transcript_chars": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 109.26,
+    "grader_duration_seconds": null,
+    "total_duration_seconds": null,
+    "total_tokens": 24904
+  },
+  "claims": [
+    {
+      "claim": "triangle and kstar(2) are well-documented causes of ERGM degeneracy, confirmed by Handcock (2003) and Schweinberger (2011)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "These are canonical citations in the ERGM literature. Handcock (2003) and Schweinberger (2011) are real works that characterize the degeneracy problem."
+    },
+    {
+      "claim": "GWESP replaces triangle and GWDEGREE replaces kstar, from Snijders et al. (2006) and Hunter & Handcock (2006)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Correct. These are the standard replacements recommended in the ERGM literature. References are accurate."
+    },
+    {
+      "claim": "mcmc.diagnostics() and gof() are 'not optional'",
+      "type": "quality",
+      "verified": true,
+      "evidence": "The response uses this exact phrase in a code comment and the surrounding text emphasizes it strongly, consistent with the skill's stated principle."
+    },
+    {
+      "claim": "A significant triangle coefficient of 0.85 with p < 0.001 in a degenerate model is meaningless",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Consistent with the degeneracy literature: MCMLE may converge to estimates describing the collapse dynamics rather than the data-generating process."
+    },
+    {
+      "claim": "Decay parameter of 0.5 is a reasonable starting point (typical range 0.25–0.75)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Consistent with standard practice in the ERGM literature; 0.5 is a commonly used default."
+    },
+    {
+      "claim": "Single-wave data is appropriate for ERGM but not SAOM",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Correct: SAOM (Snijders' SIENA model) requires longitudinal panel data with multiple waves. ERGM is appropriate for a single cross-sectional network."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "reason": "No assertion checks whether the output explicitly advises against interpreting the existing p-values or coefficients as meaningful. The response does this well ('A triangle coefficient of 0.85 with p < 0.001 in a degenerate model is meaningless'), but no expectation catches a response that warns about degeneracy yet still presents the existing estimates as partially valid. Adding an assertion like 'Output explicitly states the current coefficients should not be interpreted' would close this gap."
+      },
+      {
+        "reason": "No assertion checks the quality of the replacement specification provided. A response could satisfy expectation 2 by merely naming gwesp/gwdegree without providing usable R syntax. The response here gives correct syntax with appropriate control parameters, but the assertion would pass even for a vague mention. Consider: 'Output provides R code using gwesp() and gwdegree() with the fixed= argument.'"
+      }
+    ],
+    "overall": "All five assertions are satisfied with genuine, substantive evidence. The evals are well-targeted for this task. The two suggestions above identify discriminating gaps: one around the treatment of existing coefficients, one around the quality of the recommended code."
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "run_id": "esm-temporal-network-without_skill",
+  "eval_id": 4,
+  "eval_name": "esm-temporal-network",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Recommends a graphical VAR approach (mlVAR for multilevel, graphicalVAR for single-subject)",
+      "passed": true,
+      "evidence": "Response explicitly recommends mlVAR: 'Your design is a textbook case for multilevel VAR, specifically the `mlVAR` package in R (Epskamp et al., 2018).' The multilevel VAR approach is the central recommendation throughout."
+    },
+    {
+      "text": "Distinguishes between temporal (lagged) and contemporaneous networks",
+      "passed": true,
+      "evidence": "Response contains an explicit table distinguishing three networks including 'Temporal \u2014 Does emotion X at t predict emotion Y at t+1, controlling for all others?' (directed) and 'Contemporaneous \u2014 Are emotions X and Y correlated within the same beep, after removing lagged effects?' (undirected partial correlations)."
+    },
+    {
+      "text": "Mentions multilevel structure given the data has multiple participants",
+      "passed": true,
+      "evidence": "'Nested data \u2014 70 time points per person, 80 people (requires multilevel structure)' and 'mlVAR handles both. It estimates a lag-1 VAR model for each person using a multilevel framework, so you get group-level (fixed) effects plus random effects capturing individual variation in dynamics.'"
+    },
+    {
+      "text": "Notes assumptions about stationarity and/or detrending",
+      "passed": true,
+      "evidence": "Under 'Model stability': 'Report the stability of the VAR by checking that all eigenvalues of the fixed-effect coefficient matrix lie inside the unit circle (implies the process is stationary).' Person-mean centering is also discussed as removing stable between-person level differences."
+    },
+    {
+      "text": "Does NOT recommend a simple cross-sectional GGM on the aggregated data as the primary analysis",
+      "passed": true,
+      "evidence": "The response never recommends a cross-sectional GGM on aggregated data. The primary recommendation is mlVAR throughout. The between-persons network is described as one component of mlVAR output, not a standalone cross-sectional analysis."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

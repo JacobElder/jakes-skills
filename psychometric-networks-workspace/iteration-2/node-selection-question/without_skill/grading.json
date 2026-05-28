@@ -1,0 +1,36 @@
+{
+  "run_id": "node-selection-question-without_skill",
+  "eval_id": 6,
+  "eval_name": "node-selection-question",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Acknowledges that node selection is a substantive theoretical choice, not a neutral one, and that network structure depends on which items are included",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "References Fried's work on node selection, depression symptom heterogeneity, or the 'What are good depression symptoms' / '52 symptoms' line of work \u2014 OR makes the equivalent substantive point without the citation",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Mentions node redundancy / topological overlap as a methodological concern (near-duplicate items inflate edge weights)",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Suggests checking for redundant nodes (e.g., networktools, goldbricker) or justifying selection theoretically",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 4,
+    "total": 4,
+    "pass_rate": 0.0
+  }
+}
