@@ -1,0 +1,41 @@
+{
+  "run_id": "reporting-standards-checklist-without_skill",
+  "eval_id": 8,
+  "eval_name": "reporting-standards-checklist",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "References Burger et al. (2023) in Psychological Methods by name OR describes the specific required reporting elements in enough detail to reflect familiarity with published standards (not just generic 'report your methods' advice)",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "States that bootstrapped edge-weight CIs must be reported, and that the bootstrapped difference test is required for any specifically interpreted edge or node comparisons",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "States that CS-coefficients must be reported for any centrality indices that are interpreted",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Specifies the estimation details that must be documented: estimator (EBICglasso), gamma/tuning parameter, and correlation method (polychoric or cor_auto)",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Includes explicit acknowledgment of cross-sectional / causal-inference limitations as a required element",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 5,
+    "total": 5,
+    "pass_rate": 0.0
+  }
+}
