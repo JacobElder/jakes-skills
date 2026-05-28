@@ -1,0 +1,36 @@
+{
+  "run_id": "negative-trigger-generic-network-without_skill",
+  "eval_id": 7,
+  "eval_name": "negative-trigger-generic-network",
+  "config": "without_skill",
+  "passed": 0,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Directly answers the asked question with a general explanation of what betweenness centrality measures (paths/shortest paths/brokerage)",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "Provides at least one useful-case example from a domain OTHER than psychometric/symptom networks (e.g. social networks, infrastructure, information flow, transportation)",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "If the psychometric caveat is mentioned, it appears after the main answer and does not carry a prominent section header or dominate the response length",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    },
+    {
+      "text": "The response is not predominantly about psychopathology, symptom networks, or Bringmann's critique",
+      "passed": false,
+      "evidence": "GRADING_FAILED"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 4,
+    "total": 4,
+    "pass_rate": 0.0
+  }
+}
