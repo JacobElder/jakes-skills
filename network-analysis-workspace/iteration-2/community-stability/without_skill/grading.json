@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Output warns that a single Louvain run reflects modularity DEGENERACY — many qualitatively different partitions have near-equal modularity (Good et al.) — not just random stochasticity",
+      "passed": false,
+      "evidence": "Response mentioned that 'results can vary between runs due to randomness in the greedy optimization' and recommended a fixed random seed, but did not identify or name modularity degeneracy as a conceptual problem — the idea that many structurally different partitions share near-equal Q. Good et al. was not referenced."
+    },
+    {
+      "text": "Output frames stability analysis as a PREREQUISITE before naming or interpreting communities, not as an optional improvement step",
+      "passed": false,
+      "evidence": "Stability was mentioned only as a brief caveat in step 7 ('Louvain is a heuristic algorithm and results can vary'), placed after extensive naming/reporting guidance. The response proceeded immediately to naming instructions without requiring stability to be established first."
+    },
+    {
+      "text": "Output recommends running community detection many times (e.g., 100+ runs) and measuring pairwise stability with ARI, NMI, or similar",
+      "passed": false,
+      "evidence": "No recommendation to run the algorithm multiple times was made. ARI, NMI, and similar partition-agreement metrics were not mentioned at all."
+    },
+    {
+      "text": "Output recommends comparing Q = 0.67 against a configuration-model null (random graphs with the same degree sequence) rather than accepting it at face value",
+      "passed": false,
+      "evidence": "The response called Q = 0.67 'quite high' and accepted it at face value. No comparison against a configuration-model null or randomized baseline was suggested."
+    },
+    {
+      "text": "Output mentions Louvain resolution limit or the alternative of SBM (Stochastic Block Model) for more principled partitioning",
+      "passed": true,
+      "evidence": "The response explicitly mentioned the resolution limit: 'Modularity optimization can exhibit a resolution limit (Fortunato & Barthélemy, 2007), meaning very small tightly-knit subgroups within larger communities may be merged.' SBM was not mentioned."
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 4,
+    "total": 5,
+    "pass_rate": 0.2
+  },
+  "execution_metrics": {
+    "output_chars": 3021,
+    "total_tool_calls": 2,
+    "total_steps": 3,
+    "errors_encountered": 0
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

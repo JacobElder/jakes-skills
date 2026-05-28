@@ -1,0 +1,71 @@
+Your co-author is **not correct**, and the confidence interval is actually the more damning piece of evidence here. Let me break this down precisely.
+
+---
+
+## The Two-Part HTMT Evaluation Framework
+
+HTMT-based discriminant validity assessment requires **both** criteria to be satisfied simultaneously. Your co-author is applying only one of them.
+
+| Criterion | Your Values | Satisfied? |
+|---|---|---|
+| Point estimate < threshold (.90 for related constructs) | HTMT = .87 | ✅ Yes |
+| 95% bootstrapped CI excludes 1.0 | CI = [.79, **1.03**] | ❌ **No** |
+
+---
+
+## Why the CI Is the Decisive Test
+
+The bootstrapped CI answers a specific inferential question: **Can we statistically rule out that the two latent factors are perfectly correlated (i.e., the same construct)?**
+
+- If the CI **excludes** 1.0 → Yes, you can rule it out → discriminant validity supported
+- If the CI **includes** 1.0 → No, you cannot rule it out → discriminant validity **not** established
+
+Your CI upper bound of **1.03 exceeds 1.0**, which means:
+
+1. You fail to reject H₀: HTMT = 1.0
+2. The data are statistically consistent with emotional exhaustion and depersonalization being a **single undifferentiated construct**
+3. An HTMT > 1.0 is itself a red flag — it can indicate near-collinear factors, suggest a Heywood case lurking in the model, or reflect that the inter-factor correlation estimate is bumping against its boundary
+
+---
+
+## The Core Error in Your Co-Author's Reasoning
+
+She is treating the threshold (.90) as the only evaluative criterion and ignoring the CI-based inferential test entirely. This conflates two distinct questions:
+
+- *"Is the point estimate small enough?"* → Threshold question (.87 < .90 ✅)
+- *"Is the latent correlation statistically distinguishable from 1.0?"* → Inferential question (CI includes 1.03 ❌)
+
+**Both must pass.** A point estimate below .90 with a CI crossing 1.0 is not discriminant validity — it's an ambiguous result with the inferential test actively **contra-indicating** it.
+
+---
+
+## What You Should Do
+
+**1. Run a model comparison test.** A two-factor CFA vs. a one-factor CFA (or a constrained model with the inter-factor correlation fixed to 1.0) is a direct test of whether the two-factor structure is warranted:
+
+```r
+# Two-factor model
+fit_2f <- cfa(model_2f, data = data, estimator = "MLR")
+
+# One-factor model (all items load on one factor)
+fit_1f <- cfa(model_1f, data = data, estimator = "MLR")
+
+# Chi-square difference test (use lavTestLRT for MLR)
+lavTestLRT(fit_1f, fit_2f)
+
+# Also compare CFI/RMSEA/SRMR
+```
+
+A ΔCFI > .01 favoring the two-factor model, combined with better RMSEA/SRMR, would provide convergent evidence — but even then, the CI result must be disclosed.
+
+**2. Report honestly.** The correct write-up acknowledges the tension:
+
+> *"The HTMT point estimate (.87) fell below the .90 threshold recommended for conceptually related constructs (Henseler et al., 2015); however, the bootstrapped 95% CI [.79, 1.03] included 1.0, indicating that discriminant validity between emotional exhaustion and depersonalization cannot be unambiguously established on this criterion alone. Model comparison results (below) are therefore presented as supplementary evidence."*
+
+**3. Consider whether the finding is theoretically meaningful.** In burnout research, very high EE–DP correlations are not unusual, and reviewers at good journals will push back if you claim discriminant validity with a CI that overshoots 1.0. Being transparent about this limitation is far stronger than overclaiming.
+
+---
+
+## Bottom Line
+
+The point estimate criterion (.87 < .90) is necessary but not sufficient. The CI [.79, 1.03] crossing 1.0 is a **direct inferential failure** of discriminant validity, and it overrides the threshold-based conclusion. Your co-author's claim is not defensible as written.

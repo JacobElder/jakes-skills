@@ -1,0 +1,40 @@
+{
+  "run_id": "htmt-discriminant-validity-with_skill",
+  "eval_id": 1,
+  "eval_name": "htmt-discriminant-validity",
+  "config": "with_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "description": "Does NOT simply validate the co-author's conclusion that HTMT = .87 < .90 confirms discriminant validity",
+      "passed": true,
+      "evidence": "The response explicitly states the co-author is 'only half right' and that 'The CI [.79, 1.03] contains 1.0, which is the threshold that matters for the confirmatory test of discriminant validity. The correct conclusion is that discriminant validity is not confirmed under the full HTMT framework.' It does not validate the co-author's conclusion."
+    },
+    {
+      "description": "Identifies the bootstrapped CI [.79, 1.03] crossing 1.0 as the critical problem \u2014 not the point estimate",
+      "passed": true,
+      "evidence": "The response explicitly identifies the bootstrapped CI [.79, 1.03] crossing 1.0 as the critical problem: 'An upper bound of 1.03 > 1.0 means you cannot statistically distinguish your two factors from a single factor' and 'The CI [.79, 1.03] contains 1.0, which is the threshold that matters for the confirmatory test of discriminant validity.' The table also clearly marks the CI criterion as the failing one (\u274c Fail) while the point estimate passes (\u2705 Pass)."
+    },
+    {
+      "description": "Explains that when the HTMT confidence interval includes or crosses 1.0, the constructs cannot be empirically distinguished from a single factor, regardless of where the point estimate falls",
+      "passed": true,
+      "evidence": "An upper bound of 1.03 > 1.0 means you cannot statistically distinguish your two factors from a single factor at the 95% confidence level... if the CI includes 1.0, discriminant validity is not supported, regardless of where the point estimate sits."
+    },
+    {
+      "description": "States that proper HTMT inference requires the entire bootstrapped CI to fall below the threshold \u2014 the point estimate alone is insufficient",
+      "passed": true,
+      "evidence": "The response explicitly states 'you need *both* to confirm discriminant validity' and that 'The point estimate below .90 tells you your *sample estimate* is in an acceptable range, but the CI tells you the **true population value could plausibly be \u2265 1.0**' \u2014 directly asserting that the point estimate alone is insufficient and the entire bootstrapped CI must exclude 1.0."
+    },
+    {
+      "description": "Notes that comparing the HTMT point estimate (.87) to the .90 threshold is irrelevant when the CI upper bound is 1.03 \u2014 the threshold comparison only applies when the CI is entirely below it",
+      "passed": true,
+      "evidence": "The response explicitly states 'The point estimate below .90 tells you your *sample estimate* is in an acceptable range, but the CI tells you the **true population value could plausibly be \u2265 1.0**' and 'you need *both* to confirm discriminant validity. Failing the CI criterion is a substantive finding, not a technicality.' It directly notes that the CI upper bound of 1.03 exceeding 1.0 overrides the point estimate comparison, making clear the threshold comparison only matters when the CI is entirely below it."
+    },
+    {
+      "description": "Recommends at least one concrete path forward: testing a single-factor model as comparison, revising items to improve construct differentiation, or being transparent about the discriminant validity failure in the paper",
+      "passed": true,
+      "evidence": "The response recommends multiple concrete paths forward: (1) 'Consider a bifactor or higher-order model' as an alternative model structure, (2) 'Be explicit in the limitations section' and acknowledge discriminant validity evidence is mixed (transparency about failure), and (3) 'Report both pieces honestly' including the CI failure. These constitute concrete paths including model revision alternatives and transparency about the discriminant validity failure."
+    }
+  ]
+}

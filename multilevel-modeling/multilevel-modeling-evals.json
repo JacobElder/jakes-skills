@@ -1,0 +1,137 @@
+{
+  "skill_name": "multilevel-modeling",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I have reading times from 40 participants who each read 80 sentences. Half of the sentences had a syntactic ambiguity. I want to test whether ambiguous sentences take longer to read. What model should I fit?",
+      "expected_output": "Claude recognizes this as a crossed subjects × items design with a within-subjects, within-items manipulation, and recommends a maximal model with by-subject and by-item random slopes for the ambiguity manipulation — not a random-intercept-only model.",
+      "expectations": [
+        "Identifies subjects and items as crossed random effects, not nested",
+        "Includes a by-subject random slope for the ambiguity manipulation",
+        "Includes a by-item random slope for the ambiguity manipulation",
+        "Does NOT recommend a random-intercepts-only model like (1 | subject)",
+        "References the rationale for random slopes for within-cluster manipulations (Barr et al. 2013 / inflated Type I error / Keep It Maximal)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "I have data on 1500 students from 25 schools, with 3 measurements per student over time. I'm trying to figure out if a school-level intervention affected math scores. Should I just use OLS with cluster-robust standard errors?",
+      "expected_output": "Claude recognizes this is a three-level structure (occasions in students in schools), notes that the small number of schools (25) is the binding constraint for inference about a school-level effect, suggests MLM (potentially Bayesian for small cluster n at level 3), and engages with the OLS-with-CRSE alternative honestly rather than dismissing it.",
+      "expectations": [
+        "Identifies the three-level nested structure",
+        "Flags that 25 schools is small for level-3 inference",
+        "Suggests MLM as preferred but engages with the OLS+CRSE alternative honestly",
+        "Mentions Bayesian estimation as an option for small-cluster regimes, OR Kenward-Roger / small-sample corrections"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "I'm planning a study where 30 clinics will each enroll about 20 patients, and the treatment is randomized at the clinic level. How do I figure out if this is enough?",
+      "expected_output": "Claude recognizes this as a power-analysis question for a cluster-randomized trial, points out that the binding constraint is the 30 clinics (not 600 patients), recommends simulation-based power (simr or equivalent) rather than naive formulas, and asks about or specifies key inputs (ICC, effect size, design effect).",
+      "expectations": [
+        "Identifies this as a cluster-randomized / cluster-RCT design",
+        "Notes that the relevant n is the number of clusters (30), not total patients",
+        "Recommends simulation-based power analysis (e.g., simr) or otherwise gives MLM-appropriate power guidance — NOT a t-test power calculator",
+        "Mentions ICC as an input to power",
+        "Asks for or specifies an assumed effect size rather than computing power on a pilot estimate uncritically"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I fit lmer(rt ~ condition + (1 | subject)) on my reaction-time data where condition was manipulated within subjects. The condition effect is p = 0.02. Is this analysis defensible?",
+      "expected_output": "Claude flags that the model is under-specified — a within-subjects manipulation needs a by-subject random slope — and explains that omitting it inflates Type I error, so the p-value is anti-conservative and the analysis is NOT defensible as-is. Claude does NOT validate the analysis or only mention slopes as an optional refinement.",
+      "expectations": [
+        "Identifies that the model is missing a by-subject random slope for condition",
+        "Explains that this inflates Type I error for the within-subjects effect",
+        "States or strongly implies that the analysis as-fit is not defensible",
+        "References the relevant literature (Barr et al. / Schielzeth & Forstmeier / Keep It Maximal) OR the specific Type I inflation finding",
+        "Recommends refitting with (1 + condition | subject) or similar"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "My lme4 model is giving me a 'boundary (singular) fit' warning. The random-effects correlation for one of the slopes is -1.00. Should I just drop random effects until it stops?",
+      "expected_output": "Claude walks through principled troubleshooting — cheap fixes first (scaling predictors, sum coding, alternative optimizers), then inspection (VarCorr, rePCA), then principled simplification starting with dropping the correlation (||) rather than dropping the slope, with Bayesian fitting as an alternative. Claude does NOT recommend reflexive simplification.",
+      "expectations": [
+        "Walks through diagnosis before simplification",
+        "Mentions at least one upstream fix (predictor scaling, contrast coding change, alternative optimizer like bobyqa/allFit)",
+        "Recommends dropping correlation parameters (||) before dropping random slopes",
+        "Mentions principled simplification order (correlations first, then interaction slopes, etc.)",
+        "Mentions Bayesian fitting with priors as an alternative for keeping the maximal structure"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I have students nested in classrooms, with student IDs that go 1-30 within each classroom. Can I just write (1|classroom) + (1|student_id) in lme4?",
+      "expected_output": "Claude flags the ID uniqueness problem — student 1 in classroom A and student 1 in classroom B would be treated as the same person — and recommends either recoding IDs to be globally unique, or using the explicit nesting syntax (1|classroom/student_id) or (1|classroom) + (1|classroom:student_id).",
+      "expectations": [
+        "Identifies the non-unique-ID problem",
+        "Explains that the naive syntax would conflate students with the same ID across classrooms",
+        "Recommends either globally unique IDs or the explicit nesting syntax (e.g., classroom/student_id or classroom:student_id)"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "I fit a 2x2 within-subjects MLM with treatment-coded factors and an interaction. The main effect of condition is significant. Can I report that as the average effect of condition?",
+      "expected_output": "Claude flags that with treatment coding, the 'main effect of condition' in an interaction model is the simple effect of condition at the reference level of the other factor, not the average effect. Claude recommends sum or (-0.5, +0.5) contrast coding to get true main effects, or computing the average effect via emmeans/marginaleffects.",
+      "expectations": [
+        "Identifies that treatment-coded 'main effects' in interaction models are simple effects, not average effects",
+        "Explains what the coefficient actually represents (effect at reference level of the other factor)",
+        "Recommends either sum/contrast coding for the factors, OR using emmeans/marginaleffects to get the marginalized average effect",
+        "References Schad et al. OR explains the issue clearly enough that the recommendation makes sense"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "I'm running a regression on my A/B test results. I have 50,000 trial-level observations from 5,000 users across 12 countries. The treatment was randomized at the user level. Quick sanity check on lm(outcome ~ treatment, data=d)?",
+      "expected_output": "Claude flags that the OLS specification ignores clustering at the user level (and possibly country level). Multiple trials per user violate independence; the treatment was assigned at the user level, so users are the unit of randomization. Claude recommends MLM with random effects for users (and considers country), or at minimum cluster-robust SEs at the user level.",
+      "expectations": [
+        "Identifies non-independence due to multiple trials per user",
+        "Recommends multilevel modeling with at least a user-level random effect, OR cluster-robust SEs clustered at the user level as a minimum alternative",
+        "Engages with the role of country as a possible additional grouping factor (cross-classified or as a 3rd level), even if to say it's optional"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "I have my brms model fit. summary() gives me a coefficient of 0.45 with credible interval [0.12, 0.79]. Can I report this as p < 0.05?",
+      "expected_output": "Claude explains that Bayesian credible intervals and frequentist p-values are different objects, and recommends reporting the posterior summary and credible interval directly (and optionally the probability of direction), rather than converting to a p-value or framing the CrI as a significance test.",
+      "expectations": [
+        "Notes that Bayesian credible intervals are not the same as frequentist p-values",
+        "Recommends reporting the posterior estimate and credible interval directly",
+        "Optionally mentions probability of direction (P(beta > 0 | data)) as a Bayesian-native alternative",
+        "Does NOT just say 'yes, p < 0.05'"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "I fit a logistic GLMM predicting whether participants chose option A. The coefficient on my treatment variable is 0.6 on the log-odds scale. How do I explain this to my non-technical stakeholders?",
+      "expected_output": "Claude explains the log-odds → odds ratio → probability translation, AND notes the conditional-vs-marginal distinction (the coefficient is cluster-specific, not population-averaged). Recommends using emmeans or marginaleffects on the response scale, ideally with marginalization over random effects for the population-average effect.",
+      "expectations": [
+        "Explains the log-odds scale and how to convert to odds ratio or probability",
+        "Recommends emmeans or marginaleffects (or equivalent post-estimation tooling) for response-scale predictions",
+        "Mentions the conditional-vs-marginal effect distinction in GLMMs, OR shows how to get population-average probabilities (re.form=NA or equivalent)"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "What's the ICC?",
+      "expected_output": "Claude answers the definitional question directly — proportion of variance at the cluster (between-group) level — without unnecessary preamble. Brief, direct response.",
+      "expectations": [
+        "Defines ICC as the proportion of total variance attributable to between-cluster (level-2) variation",
+        "Gives the formula sigma^2_u / (sigma^2_u + sigma^2_e) or equivalent",
+        "Response is concise — does not launch into the full MLM workflow",
+        "Does NOT ask for clarification before defining the term"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "I have repeated measures from 60 participants who each completed the task 5 times. I want to compare time 1 to time 5. Can I just do a paired t-test?",
+      "expected_output": "Claude notes that with only 2 time points compared, a paired t-test is OK in the balanced complete-data case, but flags that MLM is more general (handles missing data, lets you model the full trajectory with all 5 time points, adds covariates). The recommendation is reasonable to do MLM, but doesn't dismiss the t-test for the specific narrow question.",
+      "expectations": [
+        "Acknowledges that a paired t-test is defensible for the specific comparison of two time points with complete data",
+        "Notes that MLM is more general and recommends it for the broader question or when assumptions are violated",
+        "Does NOT reflexively over-engineer — engages with the user's actual question"
+      ]
+    }
+  ]
+}

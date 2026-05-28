@@ -95,7 +95,11 @@
       "Bash(git -C ~/Documents/GitHub/Competing-Motives stash pop)",
       "Bash(unzip -o files.zip)",
       "Bash(echo \"PID: $!\")",
-      "Bash(open *)"
+      "Bash(open *)",
+      "Bash(unzip -l /Users/jacobelder/Documents/GitHub/jakes-skills/multilevel-modeling.skill)",
+      "Bash(unzip -l /Users/jacobelder/Documents/GitHub/jakes-skills/multilevel-modeling/multilevel-modeling.skill)",
+      "Bash(python /tmp/skill_inspect/sequence-analysis-hmm/scripts/fit_hmm_demo.py)",
+      "Bash(pip show *)"
     ]
   }
 }

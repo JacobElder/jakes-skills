@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "Output identifies random negative sampling as a key validity problem (easy negatives inflate AUROC by 10-20pp)",
+      "passed": true,
+      "evidence": "Problem 2 states: 'random negative sampling reliably inflates AUROC 10–20 percentage points relative to realistic evaluation' and explains the mechanism: in a sparse graph (~0.024% density) randomly sampled non-edges are nearly always obviously non-adjacent pairs sharing zero neighbors, making the discrimination task trivial."
+    },
+    {
+      "text": "Output specifically identifies GNN message-passing leakage: test edges are visible in the message-passing graph during node encoding, so the model effectively 'sees' the test answers while training",
+      "passed": true,
+      "evidence": "Problem 1 states: 'unless you explicitly mask validation and test edges from the message-passing graph, the node encodings computed during training are conditioned on the full adjacency, including your held-out 20%... The model has effectively seen the answers during encoding.' It also explains the aggregation mechanism: 'the embedding of node A absorbs signals from all of A's neighbors during aggregation, including neighbors connected only via test edges.'"
+    },
+    {
+      "text": "Output recommends a temporal train/test split (train on edges before time T, evaluate on edges after T) as the correct evaluation for the stated temporal forecasting goal",
+      "passed": true,
+      "evidence": "Problem 3 explicitly states: 'Choose a cutoff time T — e.g., the 80th percentile of edge timestamps. Train on edges formed before T; evaluate on edges formed after T.' The section frames this as the correction for the mismatch between the user's temporal forecasting goal and their static recovery evaluation."
+    },
+    {
+      "text": "Output recommends comparing to a simple structural baseline (Adamic-Adar, Jaccard, or Common Neighbors) as a required sanity check",
+      "passed": true,
+      "evidence": "Problem 4 explicitly requires Adamic-Adar and resource allocation baselines, includes Python code using nx.adamic_adar_index and nx.resource_allocation_index, cites Ghasemian et al. 2020 PNAS, and gives two specific interpretive tests: if Adamic-Adar also scores 0.94 the task is trivially easy; if the gap is large, leakage is the most likely explanation."
+    },
+    {
+      "text": "Output recommends hard negative sampling (distance-2 non-edges or structurally similar non-edges) as a required fix",
+      "passed": true,
+      "evidence": "Problem 2 recommends: 'non-edges between nodes that are structurally similar — specifically, pairs at graph distance 2 (nodes who share at least one common neighbor but do not yet have a direct edge).' The fix section also says 'sample negatives as distance-2 non-edges from the training graph.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 6847,
+    "total_tool_calls": 3,
+    "total_steps": 4,
+    "errors_encountered": 0
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "run_id": "htmt-discriminant-validity-without_skill",
+  "eval_id": 1,
+  "eval_name": "htmt-discriminant-validity",
+  "config": "without_skill",
+  "passed": 6,
+  "total": 6,
+  "expectations": [
+    {
+      "description": "Does NOT simply validate the co-author's conclusion that HTMT = .87 < .90 confirms discriminant validity",
+      "passed": true,
+      "evidence": "The response explicitly states the co-author is 'not correct' and identifies her error as 'treating the threshold (.90) as the only evaluative criterion and ignoring the CI-based inferential test entirely.' It directly refutes the conclusion that HTMT=.87<.90 alone confirms discriminant validity."
+    },
+    {
+      "description": "Identifies the bootstrapped CI [.79, 1.03] crossing 1.0 as the critical problem \u2014 not the point estimate",
+      "passed": true,
+      "evidence": "The response explicitly states 'the CI [.79, 1.03] crossing 1.0 is a direct inferential failure of discriminant validity' and frames the CI criterion as 'the Decisive Test' while noting the point estimate (.87 < .90) is 'necessary but not sufficient' \u2014 directly identifying the bootstrapped CI crossing 1.0 as the critical problem rather than the point estimate."
+    },
+    {
+      "description": "Explains that when the HTMT confidence interval includes or crosses 1.0, the constructs cannot be empirically distinguished from a single factor, regardless of where the point estimate falls",
+      "passed": true,
+      "evidence": "The response explicitly states: 'If the CI includes 1.0 \u2192 No, you cannot rule it out \u2192 discriminant validity not established' and 'The data are statistically consistent with emotional exhaustion and depersonalization being a single undifferentiated construct' \u2014 directly explaining that a CI crossing 1.0 means the constructs cannot be empirically distinguished regardless of the point estimate (.87) falling below the threshold."
+    },
+    {
+      "description": "States that proper HTMT inference requires the entire bootstrapped CI to fall below the threshold \u2014 the point estimate alone is insufficient",
+      "passed": true,
+      "evidence": "The response explicitly states 'Both must pass. A point estimate below .90 with a CI crossing 1.0 is not discriminant validity' and 'The point estimate criterion (.87 < .90) is necessary but not sufficient. The CI [.79, 1.03] crossing 1.0 is a direct inferential failure of discriminant validity, and it overrides the threshold-based conclusion.'"
+    },
+    {
+      "description": "Notes that comparing the HTMT point estimate (.87) to the .90 threshold is irrelevant when the CI upper bound is 1.03 \u2014 the threshold comparison only applies when the CI is entirely below it",
+      "passed": true,
+      "evidence": "The response explicitly states: 'A point estimate below .90 with a CI crossing 1.0 is not discriminant validity' and frames the two criteria as both required, noting the co-author 'is treating the threshold (.90) as the only evaluative criterion and ignoring the CI-based inferential test entirely.' It directly addresses that the threshold comparison (.87 < .90) is insufficient when the CI upper bound (1.03) exceeds 1.0."
+    },
+    {
+      "description": "Recommends at least one concrete path forward: testing a single-factor model as comparison, revising items to improve construct differentiation, or being transparent about the discriminant validity failure in the paper",
+      "passed": true,
+      "evidence": "The response recommends: (1) testing a single-factor model as comparison ('Run a model comparison test. A two-factor CFA vs. a one-factor CFA'), (2) being transparent about the discriminant validity failure ('Report honestly' with explicit language acknowledging 'discriminant validity between emotional exhaustion and depersonalization cannot be unambiguously established'), and (3) considering theoretical meaningfulness of the finding. All three concrete paths forward are present."
+    }
+  ]
+}
