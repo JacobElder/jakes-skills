@@ -174,7 +174,7 @@ For a fuller pipeline (label-switch resolution, model selection sweep, diagnosti
 
 **`HMMER`** — the answer for protein/nucleotide profile HMMs. Command-line tool (`hmmbuild`, `hmmsearch`, `hmmscan`, `jackhmmer`); not a Python library, but `pyhmmer` provides Python bindings. If the user is doing anything involving Pfam, protein families, or remote homology — they want HMMER, not hmmlearn. See `references/bioinformatics.md`.
 
-**`dynamax`** — modern JAX-based state-space modeling library from the Linderman lab. Excellent for HMMs and Kalman-filter-family models, vectorized, GPU/TPU-ready, supports HSMMs and more complex variants. Use when you need speed at scale or want to compose with other JAX/probabilistic code.
+**`dynamax`** — modern JAX-based state-space modeling library from the probml group (Murphy, Linderman et al.; published JOSS 2025). Excellent for HMMs and Kalman-filter-family models, vectorized, GPU/TPU-ready, supports HSMMs and more complex variants. Use when you need speed at scale or want to compose with other JAX/probabilistic code.
 
 **`PyMC` / `NumPyro` / `Stan`** — fully Bayesian HMMs. Use when you genuinely need posterior uncertainty over parameters, are doing hierarchical modeling across many sequences, or want to handle label switching properly via constrained priors. Heavier weight; only reach for these when MLE plus a few random restarts isn't enough.
 
