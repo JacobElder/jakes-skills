@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Output warns that aggregating to a static graph loses temporal information and conflates different time periods",
+      "passed": true,
+      "evidence": "\"Collapsing 3 years into a single matrix treats an email sent on day 1 the same as one sent on day 1095. For communication patterns and key communicators, this matters a lot\""
+    },
+    {
+      "text": "Output mentions time-respecting paths (temporal paths that respect arrow of time) as a key concept — and explains that paths in the aggregate can be causally impossible if timestamps are out of order",
+      "passed": false,
+      "evidence": "The response only briefly mentions 'temporal paths' in passing ('Use temporal network analysis methods if you want to study dynamic reachability and temporal paths') but never names 'time-respecting paths' or a clear synonym, and never explains that aggregate paths can be causally impossible when timestamps are out of order."
+    },
+    {
+      "text": "Output recommends temporal network analysis tools (pathpy, teneto, snap-temporal, or equivalent)",
+      "passed": false,
+      "evidence": "The response recommends 'temporal network analysis methods' generically but names no specific tool or library (no pathpy, teneto, snap-temporal, Raphtory, or equivalent)."
+    },
+    {
+      "text": "Output explains that static betweenness and temporal betweenness can rank nodes in qualitatively different orders, not just quantitatively",
+      "passed": false,
+      "evidence": "The response never discusses temporal betweenness centrality or states that static and temporal betweenness can produce qualitatively different (e.g., inverted) rankings. It only notes that someone central in year 1 may appear prominent in aggregated data even if irrelevant now."
+    },
+    {
+      "text": "Output does NOT simply validate the static-aggregation plan as sufficient for understanding communication dynamics",
+      "passed": true,
+      "evidence": "The response devotes an entire section to problems with temporal aggregation, recommends multiple extensions (quarterly snapshots, decay weighting, temporal methods), and does not claim the static approach is sufficient — only that it gives 'solid, defensible results for a first analysis' while recommending temporal extensions."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 3,
+    "total": 5,
+    "pass_rate": 0.4
+  }
+}

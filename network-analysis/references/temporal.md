@@ -47,6 +47,8 @@ For each node v and time window, count the fraction of *shortest time-respecting
 
 These give different rankings. State which you're using.
 
+**Critically, static betweenness and temporal betweenness can rank nodes in qualitatively different — not merely quantitatively rescaled — orders.** A node ranked first by static betweenness may rank near the bottom by temporal betweenness if it sits on many aggregate shortest paths that don't exist as time-respecting paths. Conversely, a node that appears peripheral statically may be a consistent temporal bridge at exactly the right moments and rank highly by temporal betweenness. This rank inversion (not just magnitude difference) is empirically documented and is one of the primary reasons temporal analysis changes conclusions, not just precision.
+
 ### Temporal closeness
 
 Average inverse temporal distance from v to all others (with t = start of window or averaged over t). Handles unreachable pairs the way harmonic centrality does for static networks.
