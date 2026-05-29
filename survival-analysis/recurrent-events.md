@@ -67,10 +67,11 @@ from lifelines import CoxTimeVaryingFitter
 ctv = CoxTimeVaryingFitter()
 ctv.fit(recurrent_df, id_col='id', event_col='event',
         start_col='tstart', stop_col='tstop',
-        formula='treatment + age',
-        robust=True)  # robust = cluster-robust variance
+        formula='treatment + age')
 ctv.print_summary()
 ```
+
+**Limitation**: `CoxTimeVaryingFitter` does not implement `robust=True` in lifelines 0.30.x (`NotImplementedError`). Cluster-robust SEs for Andersen-Gill are not available in Python lifelines. Use R's `coxph(..., cluster(id))` for this. The point estimates from lifelines are correct; only the SEs are unprotected against within-subject correlation.
 
 ### Interpretation
 

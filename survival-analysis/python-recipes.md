@@ -269,9 +269,11 @@ from lifelines import CoxTimeVaryingFitter
 ctv = CoxTimeVaryingFitter()
 ctv.fit(recurrent_df, id_col='id', event_col='event',
         start_col='tstart', stop_col='tstop',
-        formula='treatment + age',
-        robust=True)
+        formula='treatment + age')
+ctv.print_summary()
 ```
+
+**Note**: `CoxTimeVaryingFitter` does not yet implement `robust=True` in lifelines (raises `NotImplementedError` as of 0.30.x). Cluster-robust standard errors for Andersen-Gill are not available in lifelines; use R's `coxph(..., cluster(id))` for that feature.
 
 PWP-TT / PWP-GT / WLW: not natively supported. Restructure data and use stratification via interaction terms, or fit per-event-number models with manual robust SE adjustment. R is much cleaner for this.
 

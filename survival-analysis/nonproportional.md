@@ -52,10 +52,16 @@ library(FHtest)
 FHtestrcc(Surv(time, status) ~ group, data = df, rho = 0, lambda = 1)  # FH(0,1)
 FHtestrcc(Surv(time, status) ~ group, data = df, rho = 1, lambda = 1)  # FH(1,1)
 
-# Alternative: nph package, comprehensive
+# nph package: call logrank.test once per (rho, gamma) pair
 library(nph)
-logrank.test(time = df$time, event = df$status, group = df$group,
-             rho = c(0, 0, 1, 1), gamma = c(0, 1, 0, 1))  # multiple tests at once
+logrank.test(time = df$time, event = df$status, group = df$group, rho = 0, gamma = 1)  # FH(0,1)
+logrank.test(time = df$time, event = df$status, group = df$group, rho = 1, gamma = 0)  # FH(1,0)
+# Note: logrank.test() does NOT accept vectorised rho/gamma; call once per pair.
+
+# Or use logrank.maxtest() which handles all four at once and gives the MaxCombo p-value
+mc <- logrank.maxtest(time = df$time, event = df$status, group = df$group,
+                      rho = c(0, 0, 1, 1), gamma = c(0, 1, 0, 1))
+print(mc)  # individual FH z-statistics + MaxCombo p-value
 
 # Or use the survRM2 / nphRCT packages
 ```

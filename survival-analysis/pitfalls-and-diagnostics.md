@@ -74,6 +74,39 @@ A field guide to the errors that quietly corrupt survival analyses, with how to 
 
 **Fix**: ML models are great for prediction and ranking. For causal claims about a treatment, you need either an RCT, a target-trial-emulation observational design, or explicit causal methods (g-methods, IPTW, etc.). State the claim clearly: "this variable is predictive" vs "this variable is causal."
 
+### 11. Complete (or quasi-complete) separation
+
+**The error**: one group has zero events, or all events come from only one group. `coxph` (and its Python counterparts) may report "convergence achieved" while the coefficient is actually diverging to ±∞ with an enormous standard error. The output looks like a real result; it isn't.
+
+**Symptoms to watch for**:
+- Coefficient magnitude > 5–6 on the log-HR scale (HR > 400 or < 0.002).
+- Very large SE relative to the coefficient.
+- In R: `coxph` warning about "infinite coefficient" or "Ran out of iterations and did not converge."
+- In Python (lifelines): `ConvergenceWarning` or an implausibly extreme HR.
+
+```r
+# Example: treat 0% events vs control 100% events
+# coxph gives HR ~ exp(-15) or similar nonsense
+fit <- coxph(Surv(time, status) ~ treatment, data = df)
+summary(fit)  # coefficient ~ -15, se ~ 5: the partial likelihood never converges
+
+# Fix 1: report the descriptive finding directly
+table(df$status, df$treatment)  # "0% events in treatment, 100% in control"
+
+# Fix 2: Firth penalized Cox (penalization pulls extreme coefficients toward finite values)
+# install.packages("coxphf")
+library(coxphf)
+fit_firth <- coxphf(Surv(time, status) ~ treatment, data = df)
+print(fit_firth)  # finite HR with a CI via profile likelihood; note it is still very large
+
+# Fix 3: exact conditional logistic regression or penalized regression
+# (for n small enough that exact methods are tractable)
+```
+
+**When it comes up**: small studies with strong predictors, rare events with an imbalanced covariate, or early termination of a trial with no events in one arm. Also common in simulation code that accidentally creates separation by construction.
+
+**Don't**: report the divergent Cox coefficient as a real HR. Do: describe the separation plainly and, if regression is needed, use Firth penalization and label the result explicitly as Firth-penalized.
+
 ## Diagnostics — what to run, always
 
 ### For any survival analysis

@@ -54,6 +54,7 @@ Users almost never say "I need Fine-Gray subdistribution regression." They descr
 - Two outcomes that can't both happen to the same subject in the relevant window.
 - Any "cause-specific mortality" or "primary endpoint vs secondary endpoint that ends follow-up" framing.
 - → Reach for cause-specific Cox and/or Fine-Gray; never naive KM treating one event as censoring.
+- **Exception — fixed finite horizon with near-zero censoring**: if the observation window is hard-capped at a known time T (e.g., a 14-day free trial) and virtually everyone is observed through T, the competing events may not generate meaningful censoring. In that case, standard logistic regression on "event A by day T, yes/no" can be defensible and simpler. Ask whether there is substantial censoring *before* T; if not, survival methods add complexity without benefit. If there is, use Aalen-Johansen CIFs and Fine-Gray.
 
 **Signals of recurrent events** (event can repeat for same subject):
 - "Crashes," "readmissions," "purchases," "logins," "failures," "attacks," "incidents."
