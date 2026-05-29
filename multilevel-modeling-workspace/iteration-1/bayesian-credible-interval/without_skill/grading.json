@@ -1,0 +1,31 @@
+{
+  "response": "No, you cannot directly report a credible interval as p < 0.05 — these come from fundamentally different statistical frameworks.\n\nA Bayesian 95% credible interval means there is a 95% posterior probability that the true parameter lies within [0.12, 0.79]. This is a statement about your beliefs about the parameter given the data.\n\nA frequentist p-value asks: 'If the null hypothesis were true, how often would we see data at least this extreme?' The two are conceptually distinct and not interchangeable, even when they sometimes produce numerically similar results.\n\nWhat you should report instead: Report the posterior estimate and credible interval directly — this is the appropriate Bayesian summary. For example: 'β = 0.45, 95% CrI [0.12, 0.79].' This is interpretable on its own terms and doesn't require translation into frequentist language.\n\nBayesian-native alternatives to p-values: If you want a probability-based statement analogous to a p-value, consider: (1) Probability of direction (pd): P(β > 0 | data). Since your entire credible interval is above zero, pd ≈ 1.0 here, which you can compute with bayestestR::p_direction(). (2) ROPE (Region of Practical Equivalence): Test whether the credible interval overlaps with a null region you define as practically equivalent to zero. (3) Bayes factors: Compare evidence for the null vs. alternative directly.\n\nThe fact that your 95% CrI excludes zero is meaningful and worth reporting, but frame it as 'the 95% credible interval excludes zero' rather than 'p < 0.05.'",
+  "expectations": [
+    {
+      "text": "Notes that Bayesian credible intervals are not the same as frequentist p-values",
+      "passed": true,
+      "evidence": "Response explicitly distinguishes the two frameworks: 'A Bayesian 95% credible interval means there is a 95% posterior probability that the true parameter lies within [0.12, 0.79]' vs frequentist p-values which ask about long-run frequency under the null. States they are 'conceptually distinct and not interchangeable.'"
+    },
+    {
+      "text": "Recommends reporting the posterior estimate and credible interval directly",
+      "passed": true,
+      "evidence": "Response explicitly recommends: 'Report the posterior estimate and credible interval directly — this is the appropriate Bayesian summary. For example: β = 0.45, 95% CrI [0.12, 0.79].'"
+    },
+    {
+      "text": "Optionally mentions probability of direction (P(beta > 0 | data)) as a Bayesian-native alternative",
+      "passed": true,
+      "evidence": "Response mentions 'Probability of direction (pd): P(β > 0 | data)' and even references the bayestestR::p_direction() function for computing it in R."
+    },
+    {
+      "text": "Does NOT just say 'yes, p < 0.05'",
+      "passed": true,
+      "evidence": "Response begins with 'No, you cannot directly report a credible interval as p < 0.05' and provides extensive explanation of why the frameworks differ."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,124 @@
+# HMMs vs. Related Models
+
+When the user asks "what's the difference between HMM and X" — or, more often, when you need to decide whether HMM is even the right tool — this is the reference. Each comparison is structured the same way: what the other model does, when it beats HMM, when HMM beats it.
+
+## HMM vs. Markov chain
+
+**Markov chain**: states are directly observed. The model is just the transition matrix A (plus initial π). Estimation is trivial: count transitions, normalize. No EM needed.
+
+**Use a plain Markov chain when** the categorical sequence you have *is* the thing you care about (web navigation paths, text on a known alphabet, DNA bases without any hidden structure). Don't reach for HMM machinery if there's no latent structure to recover.
+
+**HMM wins when** the categories you observe are noisy or downstream from the categories you actually want to reason about.
+
+## HMM vs. Mixture model (e.g., GMM)
+
+**Mixture model**: each observation belongs to a latent class, but classes are *independent* across observations. No transition structure. Fit by EM. K-means is a hard-assignment special case.
+
+**Mixture wins when** sequence order doesn't matter — you just want to cluster i.i.d. observations.
+
+**HMM wins when** sequence order matters and adjacent observations are likely to share a state. Conceptually, an HMM is a mixture model with a Markov structure on the latent class assignments.
+
+Practical tell: if you fit a GMM to time-series data and the cluster assignments are noisy (rapid flipping between clusters at each timestep), an HMM with sticky transitions will smooth this out.
+
+## HMM vs. Conditional Random Field (CRF)
+
+**CRF** (linear-chain): directly models P(Z | X) using a log-linear function of arbitrary features. Same Markov structure on labels (Z), but observations (X) can be arbitrarily complex feature vectors with no independence assumptions.
+
+**CRF wins when** you have labeled training data and rich features of the observations. CRFs typically beat HMMs by a few points on POS tagging, NER, etc., because they can incorporate overlapping features (suffix, gazetteer membership, etc.) that an HMM's "P(word | tag)" emission can't represent.
+
+**HMM wins when** you don't have labeled data (HMMs train unsupervised via Baum-Welch; CRFs require labels), or when you genuinely need P(X, Z) — e.g., to sample, to compute marginal likelihood for model comparison, to do anomaly detection by likelihood.
+
+Mnemonic: HMM is generative, CRF is discriminative. Generative gives you more (you can sample), but the modeling capacity is "spent" on P(X).
+
+## HMM vs. Kalman filter / linear-Gaussian state space model
+
+**Kalman filter**: continuous latent state evolving via linear-Gaussian dynamics; continuous observations as linear-Gaussian function of latent state. Closed-form Bayesian filtering and smoothing.
+
+**Kalman wins when** the latent variable is genuinely continuous — position, velocity, an underlying price level, a slowly varying trend. Discretizing continuous state into a discrete HMM throws away information.
+
+**HMM wins when** the latent state is genuinely discrete — modes, regimes, categorical behaviors. Forcing a continuous Kalman to model regime switches goes badly (the linear-Gaussian assumption breaks at the transitions).
+
+**Common compromise**: switching state-space models (SLDS, switching Kalman filter) where a discrete state controls which linear-Gaussian dynamics are active. Best of both, with exact inference being intractable so you use approximations.
+
+## HMM vs. Particle filter (sequential Monte Carlo)
+
+**Particle filter**: represents the posterior over a continuous (or hybrid) latent state with a weighted set of samples. Handles nonlinear, non-Gaussian dynamics that Kalman can't.
+
+**Particle filter wins when** the latent state is continuous and the dynamics or observation model is nonlinear/non-Gaussian. Robotics localization is the classic example.
+
+**HMM wins when** the discrete-state assumption is appropriate and you want exact inference (and the closed-form algorithms that come with it).
+
+## HMM vs. Hidden semi-Markov model (HSMM)
+
+**HSMM**: like an HMM, but with an explicit duration distribution per state. Once you enter state i, you sample a duration d from D_i, then emit d observations, then transition.
+
+**HSMM wins when** state durations are tightly distributed (peaked, far from geometric) — phonemes (50-150ms), gait cycles, certain regime-switching settings.
+
+**HMM wins when** durations are roughly geometric, or when you don't have enough data to fit a duration distribution per state (HSMMs have more parameters), or when you need the speed (HSMM inference is heavier).
+
+Implementation: `pomegranate` supports HSMMs cleanly; `hmmlearn` does not. `dynamax` does.
+
+## HMM vs. Change-point detection
+
+**Change-point methods** (e.g., Bayesian online change-point detection from Adams & MacKay 2007, the `ruptures` library, PELT): assume the sequence is generated by a piecewise-stationary process with abrupt changes. Estimate where the changes occur.
+
+**Change-point wins when** you expect a small number of *distinct* regimes that don't recur — a one-off intervention, a structural break, an A/B test going live. You care about where the change happened, not about a small set of recurring modes.
+
+**HMM wins when** you have a small number of *recurring* states the system switches among — bull/bear regimes that come back, sleep stages that cycle, activity modes that the wearer keeps re-entering.
+
+Both can be used for "segmentation"; HMM is the natural choice when the same states recur.
+
+## HMM vs. Topic models (LDA and friends)
+
+Topic models assume a document is a bag of words from a mixture of topics, where topic proportions vary across documents but words are exchangeable within a document. No sequence structure.
+
+**Topic model wins when** word order doesn't matter and the data is documents (or bag-of-things in general).
+
+**HMM wins when** position-in-sequence matters and you want temporal state structure. There are hybrid models (HMM-LDA, content HMM) that model both topical content and local syntactic state.
+
+## HMM vs. RNN / LSTM
+
+**RNN/LSTM**: continuous-state, nonlinear, deterministic-given-input recurrent network. Trained by backprop on a task loss (typically supervised).
+
+**RNN wins** for supervised sequence labeling and sequence-to-sequence with moderate-to-large datasets, and for capturing long-range dependencies the Markov assumption can't.
+
+**HMM wins** for unsupervised structure discovery, calibrated probabilities, very small data, and interpretability. Also for cases where exact inference (forward-backward) matters — RNN posteriors are approximate.
+
+Conceptually: an HMM is a *very* shallow, linear, probabilistic RNN with discrete state. Lots of the inference machinery generalizes (CTC is HMM forward-backward applied to RNN outputs).
+
+## HMM vs. Transformer
+
+**Transformer**: attention-based, no recurrence, very expressive, hungry for data.
+
+**Transformer wins** for almost any large-data supervised NLP/speech task. For sequence labeling, sequence-to-sequence, translation, ASR, anything where you have lots of labels and lots of compute, transformers are the answer.
+
+**HMM wins** in the regimes where it's always won: small data, interpretability, generative modeling, scientific applications where the latent structure has a meaning you want to recover. Bioinformatics profile HMMs are not going to be replaced by transformers any time soon for protein family classification — different task, different requirements.
+
+## HMM vs. Bayesian network / Markov random field
+
+A linear-chain HMM is a directed graphical model — a specific simple case of Bayesian networks. A CRF is a Markov random field of a specific shape. The general graphical-models framework subsumes all of these.
+
+**Use a more general graphical model when** you have richer structure — multiple latent variables per timestep, factorial state spaces (FHMM), tree-structured dependencies, etc. The cost is that exact inference is no longer guaranteed; you may need loopy belief propagation, variational methods, or MCMC.
+
+**Stick with HMM when** the linear-chain assumption fits. The closed-form inference is too good to give up casually.
+
+## A decision tree, roughly
+
+```
+Is the latent variable discrete?
+├── No → continuous: Kalman (linear-Gaussian) or particle filter (nonlinear)
+└── Yes:
+    ├── Is sequence order meaningful?
+    │   ├── No → mixture model (GMM, LDA, etc.)
+    │   └── Yes:
+    │       ├── Is the latent variable observed directly?
+    │       │   ├── Yes → plain Markov chain
+    │       │   └── No:
+    │       │       ├── Have labels + want to use rich obs features → CRF (or neural model)
+    │       │       ├── Want unsupervised learning → HMM
+    │       │       ├── Durations matter and aren't geometric → HSMM
+    │       │       ├── Lots of data, need prediction quality → neural (RNN/Transformer)
+    │       │       └── Default → HMM
+```
+
+The decision tree is a starting point, not gospel. The honest answer is often "try the simplest thing first; complicate only when it doesn't work."

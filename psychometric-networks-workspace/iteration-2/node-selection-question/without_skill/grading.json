@@ -3,34 +3,34 @@
   "eval_id": 6,
   "eval_name": "node-selection-question",
   "config": "without_skill",
-  "passed": 0,
+  "passed": 3,
   "total": 4,
   "expectations": [
     {
       "text": "Acknowledges that node selection is a substantive theoretical choice, not a neutral one, and that network structure depends on which items are included",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "The response explicitly states 'Node selection is a theoretical commitment, not merely a measurement decision' and argues that different granularities 'produces a different network with different edges, different centrality estimates, and potentially different clinical implications.'"
     },
     {
       "text": "References Fried's work on node selection, depression symptom heterogeneity, or the 'What are good depression symptoms' / '52 symptoms' line of work \u2014 OR makes the equivalent substantive point without the citation",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "The response cites 'Fried & Nesse (2015) \u2014 on why item-level analysis matters' and makes the equivalent substantive point: 'The Y-BOCS does not capture symptom content heterogeneity (contamination, harm obsessions, symmetry, etc.); networks built on the Symptom Checklist would tell a different story about OCD's architecture.'"
     },
     {
       "text": "Mentions node redundancy / topological overlap as a methodological concern (near-duplicate items inflate edge weights)",
       "passed": false,
-      "evidence": "GRADING_FAILED"
+      "evidence": "The response mentions 'measurement overlap' in passing ('some edges may reflect measurement overlap rather than causal relationships') but frames this as a latent variable vs. network debate issue rather than specifically addressing node redundancy or topological overlap as a concern that inflates edge weights or centrality estimates."
     },
     {
       "text": "Suggests checking for redundant nodes (e.g., networktools, goldbricker) or justifying selection theoretically",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "The response provides an extensive 'How to Justify the Choice' section with four distinct theoretical justification strategies, satisfying the 'justifying selection theoretically' prong of this OR expectation. No empirical tools (networktools, goldbricker) are mentioned."
     }
   ],
   "summary": {
-    "passed": 0,
-    "failed": 4,
+    "passed": 3,
+    "failed": 1,
     "total": 4,
-    "pass_rate": 0.0
+    "pass_rate": 0.75
   }
 }

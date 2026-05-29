@@ -3,39 +3,39 @@
   "eval_id": 3,
   "eval_name": "bootstrap-ci-vs-difference-test",
   "config": "with_skill",
-  "passed": 0,
+  "passed": 4,
   "total": 5,
   "expectations": [
     {
       "text": "Correctly identifies the co-author's reasoning as wrong \u2014 overlapping bootstrapped CIs do not imply the difference is not statistically significant",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "Response opens: 'Your co-author is making a very common mistake... Overlapping individual CIs do not imply a non-significant difference.'"
     },
     {
       "text": "Explains the logic: the CI for the difference between two statistics is not derived from the overlap of their individual CIs; they are separate quantities",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "Response states 'The CI on the *difference* A \u2212 B is what matters' and provides the variance formula Var(A\u2212B) = Var(A) + Var(B) \u2212 2\u00b7Cov(A,B), explaining that positive covariance from the shared dataset makes the difference CI narrower than individual CI overlap would suggest."
     },
     {
       "text": "Recommends the bootstrapped difference test (from bootnet, via differenceTest() or the plot method) as the correct tool for assessing pairwise centrality distinguishability",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "Response explicitly provides: `differenceTest(boot_np, 'A', 'B', statistic = 'Strength')` and `plot(boot_np, statistics = 'Strength', plot = 'difference')`, both from bootnet."
     },
     {
       "text": "Notes the practical implication: in most psychometric networks, few centrality pairs are statistically distinguishable; this is the expected finding, not evidence of a problem",
       "passed": false,
-      "evidence": "GRADING_FAILED"
+      "evidence": "The response does not mention that non-distinguishability is the norm in most psychometric networks, nor frames it as an expected finding rather than a problem. It discusses what to say in either outcome but never contextualizes the base rate of distinguishable pairs."
     },
     {
       "text": "Does NOT recommend a standard t-test or z-test on the point estimates as the solution",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "No t-test or z-test is mentioned anywhere in the response; the bootstrapped difference test is the only inferential approach recommended."
     }
   ],
   "summary": {
-    "passed": 0,
-    "failed": 5,
+    "passed": 4,
+    "failed": 1,
     "total": 5,
-    "pass_rate": 0.0
+    "pass_rate": 0.8
   }
 }

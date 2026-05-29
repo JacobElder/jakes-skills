@@ -3,39 +3,39 @@
   "eval_id": 8,
   "eval_name": "reporting-standards-checklist",
   "config": "without_skill",
-  "passed": 0,
+  "passed": 4,
   "total": 5,
   "expectations": [
     {
       "text": "References Burger et al. (2023) in Psychological Methods by name OR describes the specific required reporting elements in enough detail to reflect familiarity with published standards (not just generic 'report your methods' advice)",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "The response cites 'Burger, J., Isvoranu, A. M., Lunansky, G., Haslbeck, J. M. B., Epskamp, S., Hoekstra, R. H. A., Fried, E. I., Borsboom, D., & Blanken, T. F. (2022). Reporting standards for psychological network analyses in cross-sectional data. Psychological Methods, 27(4), 742\u2013762' directly by name and provides highly specific checklist-level detail (CS-coefficients, difference tests, density, gamma justification, package versions) clearly reflecting familiarity with published standards."
     },
     {
       "text": "States that bootstrapped edge-weight CIs must be reported, and that the bootstrapped difference test is required for any specifically interpreted edge or node comparisons",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "Under 'Edge Weight Accuracy': 'Run bootnet(..., nBoots = 1000, type = \"nonparametric\")' and 'Plot bootstrapped 95% CIs around each edge weight.' Under 'Edge Weight Difference Tests': 'test whether edge weights are significantly different from zero and from each other' and 'Plot the edge difference matrix.' Both elements explicitly required."
     },
     {
       "text": "States that CS-coefficients must be reported for any centrality indices that are interpreted",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "'Calculate the CS-coefficient for each centrality index via corStability()... If Betweenness/Closeness have CS < 0.25, you should not interpret them \u2014 drop them or relegate to a note.' The response also provides example reporting language and explicit thresholds (CS \u2265 0.25 minimum, CS \u2265 0.50 preferred)."
     },
     {
       "text": "Specifies the estimation details that must be documented: estimator (EBICglasso), gamma/tuning parameter, and correlation method (polychoric or cor_auto)",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "The table under 'Estimation Method \u2014 Full Specification' explicitly lists: 'Estimation procedure: EBICglasso (graphical LASSO with EBIC model selection)', 'Tuning parameter (\u03b3): \u03b3 = 0.5', and 'Correlation type: Polychoric', all marked as required to state and justify."
     },
     {
       "text": "Includes explicit acknowledgment of cross-sectional / causal-inference limitations as a required element",
       "passed": false,
-      "evidence": "GRADING_FAILED"
+      "evidence": "The response does not mention cross-sectional limitations or the inability to infer causal directionality from GGM networks at any point. There is no discussion of causal inference constraints, temporal dynamics limitations, or the requirement to include such caveats in the manuscript."
     }
   ],
   "summary": {
-    "passed": 0,
-    "failed": 5,
+    "passed": 4,
+    "failed": 1,
     "total": 5,
-    "pass_rate": 0.0
+    "pass_rate": 0.8
   }
 }

@@ -1,0 +1,42 @@
+{
+  "expectations": [
+    {
+      "text": "Output distinguishes between multiple centrality measures and explains they answer different questions",
+      "passed": true,
+      "evidence": "Response covers four distinct measures — in-degree, betweenness, eigenvector/PageRank, and closeness — each with a separate section explaining what it measures and what decision it is best suited for."
+    },
+    {
+      "text": "Output asks about or discusses the substantive process (diffusion speed vs. brokerage vs. prestige/status) before recommending a single centrality",
+      "passed": true,
+      "evidence": "The response explicitly frames closeness as 'diffuse information quickly,' betweenness as identifying 'brokers who bridge otherwise disconnected groups,' and PageRank as 'prestige/status' amplified through high-influence advisors — all discussed before any single recommendation is made."
+    },
+    {
+      "text": "Output explicitly warns that eigenvector centrality is undefined or unreliable on directed networks without a strongly-connected component, and recommends Katz or PageRank instead",
+      "passed": false,
+      "evidence": "The response says only that PageRank 'handles directed networks more robustly than plain eigenvector centrality.' It does not name the specific failure mode (eigenvector scores become zero or undefined when there is no strongly-connected component), and it does not mention Katz centrality as an alternative. The warning is a vague comparative statement, not an explicit description of the structural failure condition."
+    },
+    {
+      "text": "Output does NOT simply recommend degree centrality or betweenness as 'the' answer without process-based justification",
+      "passed": true,
+      "evidence": "No single metric is presented as the universal answer. Every recommendation is conditional on a stated goal (e.g., betweenness for cross-functional rollout, in-degree for existing knowledge champions), and the workflow explicitly advises looking for overlap across multiple metrics."
+    },
+    {
+      "text": "Output provides specific centrality recommendations tied to specific use cases (e.g., PageRank/in-degree for knowledge prestige, betweenness for brokerage role)",
+      "passed": true,
+      "evidence": "The response includes an explicit table mapping goals to primary and secondary metrics (in-degree/PageRank for knowledge champions, betweenness/closeness for cross-functional rollout, PageRank/in-degree for early briefing), and the narrative reinforces these pairings with process rationale."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  },
+  "execution_metrics": {
+    "output_chars": 7917,
+    "total_tool_calls": 3
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

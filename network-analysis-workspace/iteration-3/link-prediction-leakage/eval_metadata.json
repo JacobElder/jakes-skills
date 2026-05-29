@@ -1,0 +1,12 @@
+{
+  "eval_id": 8,
+  "eval_name": "link-prediction-leakage",
+  "prompt": "I'm working on a link prediction model for a social network — trying to predict which friendships will form in the next 6 months. My dataset has ~50k nodes and ~300k existing edges. I split the edges randomly 80/20, trained a GNN on the 80%, and got AUROC = 0.94 on the 20% holdout. My advisor says this is too good to be true. Is she right? How do I know if my evaluation is valid?",
+  "expectations": [
+    "Output identifies random negative sampling as a key validity problem (easy negatives inflate AUROC by 10-20pp)",
+    "Output specifically identifies GNN message-passing leakage: test edges are visible in the message-passing graph during node encoding, so the model effectively 'sees' the test answers while training",
+    "Output recommends a temporal train/test split (train on edges before time T, evaluate on edges after T) as the correct evaluation for the stated temporal forecasting goal",
+    "Output recommends comparing to a simple structural baseline (Adamic-Adar, Jaccard, or Common Neighbors) as a required sanity check",
+    "Output recommends hard negative sampling (distance-2 non-edges or structurally similar non-edges) as a required fix"
+  ]
+}

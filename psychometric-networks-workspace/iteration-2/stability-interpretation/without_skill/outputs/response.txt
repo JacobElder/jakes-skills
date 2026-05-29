@@ -1,1 +1,70 @@
-You've hit your limit · resets 1:30am (America/Los_Angeles)
+Great question — bootnet results require careful interpretation, and your pattern is actually a textbook case of why you shouldn't just report all four centrality indices uncritically. Here's a systematic breakdown:
+
+---
+
+## Understanding CS-Coefficients
+
+The CS-coefficient (Correlation Stability coefficient) reflects the maximum proportion of cases you can drop while still maintaining ≥ 0.70 correlation between the original centrality order and the subset order (across 95% of bootstrap samples). Epskamp et al. (2018, *Behavior Research Methods*) give these thresholds:
+
+| CS-coefficient | Interpretation |
+|---|---|
+| < 0.25 | **Do not interpret** — ranking is unreliable |
+| 0.25 – 0.50 | **Interpret cautiously** — order is moderately stable |
+| > 0.50 | **Interpret with confidence** |
+
+---
+
+## Your Specific Results
+
+| Metric | CS | Verdict |
+|---|---|---|
+| **Expected Influence** | 0.44 | ✅ Cautious interpretation okay — your most reliable metric |
+| **Strength** | 0.36 | ⚠️ Cautious interpretation — acknowledge instability |
+| **Closeness** | 0.13 | ❌ **Do not interpret** — below threshold |
+| **Betweenness** | 0.05 | ❌ **Do not interpret** — essentially noise |
+
+Closeness and Betweenness instability is extremely common in psychological network studies. Betweenness especially is known to be volatile in weighted, dense GGMs. This is not a flaw in your analysis — it's a finding about the limits of your data.
+
+---
+
+## The Wide, Overlapping Edge Weight CIs
+
+This tells you individual edge weights are **imprecisely estimated**. Likely culprits:
+
+- **Sample size relative to model complexity** — an 18-node GGM has up to 153 potential edges; if N isn't substantially larger than that, estimates will be noisy
+- **High multicollinearity** among nodes inflating variance
+- **Regularization doing heavy lifting** — glasso/EBIC-glasso suppresses many edges to zero, but surviving edges still carry uncertainty
+
+Wide overlapping CIs mean you should **not claim specific edge weights are meaningfully different from each other**. The overall sparsity structure (which edges are zeroed out) is more defensible than the precise magnitude ordering.
+
+---
+
+## What You Can Responsibly Report
+
+**Do report:**
+- The network structure itself (edge presence/absence from regularization) — framed as a regularized estimate, not ground truth
+- Expected Influence node rankings, explicitly noting CS = 0.44 and that rankings should be treated as provisional
+- Strength rankings with similar caveats (CS = 0.36)
+- The bootstrapped CI figure as a transparency measure — show the uncertainty, don't hide it
+- The CS-coefficient table for all four indices, letting readers evaluate reliability themselves
+
+**Do not report as meaningful:**
+- Closeness or Betweenness rankings — state explicitly that CS-coefficients fell below the 0.25 interpretability threshold
+- Specific edge weight comparisons (e.g., "edge A is stronger than edge B") when CIs overlap substantially
+
+**Use the difference tests:**
+Run `differenceTest()` in bootnet for centrality comparisons. Even for Strength/EI, adjacent nodes in a ranking may not be significantly different from each other — only report ordered differences that survive this test.
+
+---
+
+## Suggested Reporting Language
+
+> "We assessed the accuracy and stability of the network using the bootnet package (Epskamp et al., 2018). Bootstrapped confidence intervals for edge weights were wide, indicating that individual edge weight estimates should be interpreted with caution. Centrality stability was evaluated via CS-coefficients from case-dropping subset bootstraps. Expected Influence (CS = 0.44) and Strength (CS = 0.36) met the minimum threshold for cautious interpretation; Closeness (CS = 0.13) and Betweenness (CS = 0.05) fell below the recommended threshold of 0.25 and are not interpreted further (Epskamp et al., 2018)."
+
+---
+
+## One More Consideration
+
+With 18 nodes and imprecise edge weights, it's worth asking: **is the network structure itself replicable?** If you have access to an independent sample (or can split your sample), a Network Comparison Test (NCT) or cross-validation approach would substantially strengthen any claims about the network's meaning. Without that, frame the whole analysis explicitly as exploratory.
+
+The pattern you're seeing — moderate EI/Strength stability, low Closeness/Betweenness — is honest and publishable. The key is being explicit about what the instability means rather than smoothing over it.

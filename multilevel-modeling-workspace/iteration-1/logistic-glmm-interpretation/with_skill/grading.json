@@ -1,0 +1,26 @@
+{
+  "response": "The coefficient of 0.6 is on the log-odds (logit) scale, which is not intuitive for stakeholders. Here's how to translate it — and a critical nuance to be aware of.\n\nStep 1: Convert to an odds ratio\n\nexp(0.6) ≈ 1.82\n\nThis means the odds of choosing option A are about 82% higher in the treatment condition than the reference condition. Odds ratios are somewhat more interpretable, but still abstract for most audiences.\n\nStep 2: Convert to probability — but do it right\n\nDo not plug the coefficient directly into the logistic function at a single baseline probability (e.g., plogis(0.6) = 0.65). That gives you the predicted probability only when all other predictors are zero, and it ignores the clustered structure of the data.\n\nInstead, use emmeans or marginaleffects to generate predicted probabilities on the response scale, marginalized over the covariate distribution in your data:\n\n```r\nlibrary(emmeans)\nemm <- emmeans(fit, ~ treatment, type = \"response\")\ncontrast(emm, \"pairwise\")\n# Returns probability-scale predicted means per treatment arm and the difference\n\n# Or:\nlibrary(marginaleffects)\navg_predictions(fit, by = \"treatment\")   # marginal predicted probabilities\navg_comparisons(fit, variables = \"treatment\")  # marginal effect in probability units\n```\n\nThese give you: 'In the treatment group, the average probability of choosing option A was X%; in the control group it was Y%.' That's what stakeholders can understand.\n\nStep 3: The conditional-vs-marginal distinction\n\nThis is the subtle but important nuance specific to GLMMs. The coefficient of 0.6 is a cluster-conditional (subject-specific) effect — it describes the change in log-odds for a given individual/cluster at its specific random-effect value. This is not the same as the population-average effect (how much the choice probability shifts averaged across all individuals in the population).\n\nFor most stakeholder communication, you want the population-average probability — what the treatment does on average, not conditional on any particular random intercept. To get this:\n\n```r\navg_predictions(fit, re.form = NA)              # marginaleffects: ignore random effects\nemmeans(fit, ~ treatment, type=\"response\",\n        at = list(random_effect = 0))           # approximate population average\n```\n\nThe re.form = NA approach sets all random effects to zero (their population mean), which gives population-average predictions suitable for stakeholder communication.\n\nBottom line for stakeholders: 'Participants in the treatment group chose option A about X% of the time, compared to Y% in the control group — a difference of Z percentage points.'",
+  "expectations": [
+    {
+      "text": "Explains the log-odds scale and how to convert to odds ratio or probability",
+      "passed": true,
+      "evidence": "Step 1 converts to odds ratio (exp(0.6) ≈ 1.82 with interpretation), Step 2 discusses probability conversion with caveats about doing it correctly."
+    },
+    {
+      "text": "Recommends emmeans or marginaleffects (or equivalent post-estimation tooling) for response-scale predictions",
+      "passed": true,
+      "evidence": "Step 2 provides explicit code for both emmeans(fit, ~ treatment, type = 'response') and marginaleffects avg_predictions() and avg_comparisons()."
+    },
+    {
+      "text": "Mentions the conditional-vs-marginal effect distinction in GLMMs, OR shows how to get population-average probabilities (re.form=NA or equivalent)",
+      "passed": true,
+      "evidence": "Step 3 is dedicated to this: 'The coefficient of 0.6 is a cluster-conditional (subject-specific) effect' vs. 'population-average effect.' Shows avg_predictions(fit, re.form = NA) explicitly."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  }
+}

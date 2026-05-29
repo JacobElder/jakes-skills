@@ -1,0 +1,36 @@
+{
+  "response": "A -1.00 correlation is a boundary singularity, but 'drop random effects until it stops' is almost never the right response — and it can make things worse by giving you an under-specified model with inflated Type I error. Work through this in order.\n\nStep 1: Diagnose first, simplify second.\n\n```r\nisSingular(model)\nVarCorr(model)          # which variance component is zero or at boundary?\nrePCA(model)            # principal components of the RE covariance — near-zero eigenvalue = problem\n```\n\nA -1.00 correlation almost always means one of two things: (a) you have too few observations to estimate the full covariance structure, or (b) a predictor is on a very different scale from the others, making the covariance numerically ill-conditioned.\n\nStep 2: Upstream fixes — try these before touching the random-effects structure.\n\n1. Scale your predictors (especially continuous ones): `scale()` each continuous predictor so it's in ~unit-variance range. Unscaled predictors (e.g., reaction time in milliseconds vs. a 0/1 indicator) create extreme variance ratios that destabilize the covariance estimator.\n\n2. Switch to sum/effect coding if you're using treatment coding: `contr.sum()` centers the predictor at zero, which reduces correlation between the intercept and slope random effects.\n\n3. Try alternative optimizers with `allFit()`: lme4 defaults to one optimizer (bobyqa or Nelder_Mead); sometimes another optimizer finds a non-singular solution:\n\n```r\nall_fits <- allFit(model)\nsummary(all_fits)$which.OK\n```\n\nIf any optimizer gives a non-singular fit with equivalent likelihood, use that one.\n\nStep 3: If upstream fixes fail, drop the correlation parameter before dropping the slope.\n\nUse the `||` syntax to fit uncorrelated random effects:\n\n```r\n# Before (correlated — this is where the -1.00 correlation lives):\nlmer(y ~ x + (1 + x | group))\n\n# After (uncorrelated — zero correlation assumed, no longer estimated):\nlmer(y ~ x + (1 + x || group))\n```\n\nThe uncorrelated model is less general but still includes the variance in slopes. It is a much smaller concession than dropping the slope entirely.\n\nStep 4: Principled simplification order if you still need to simplify further.\n\nFollow this order (Bates et al. 2015; Matuschek et al. 2017):\n1. Drop correlation parameters (|| syntax) — already done in Step 3\n2. Drop interaction-term random slopes (if any)\n3. Drop main-effect random slopes for weaker effects\n4. Never drop the random intercept\n\nDo not drop the slope for the primary predictor of interest without first exhausting Steps 1–3.\n\nStep 5: Bayesian fitting with priors as an alternative to simplification.\n\nIf you want to keep the full random-effects structure without parameter-estimate boundary issues, brms with regularizing priors on the covariance matrix is a principled alternative:\n\n```r\nlibrary(brms)\nmodel_bayes <- brm(\n  y ~ x + (1 + x | group),\n  data = d,\n  prior = c(\n    prior(lkj(2), class = cor),            # LKJ(2) shrinks extreme correlations\n    prior(student_t(3, 0, 2.5), class = sd) # regularizes random-effect SDs\n  ),\n  chains = 4, cores = 4\n)\n```\n\nThe LKJ(2) prior places mass away from ±1 correlations, so you get a well-conditioned posterior even in data-sparse settings. This is especially useful when the correlation boundary fit is due to a small number of groups rather than a genuinely zero-variance slope.",
+  "expectations": [
+    {
+      "text": "Walks through diagnosis before simplification",
+      "passed": true,
+      "evidence": "Step 1 is explicitly labeled 'Diagnose first, simplify second' with isSingular(), VarCorr(), and rePCA() code. Framed as mandatory before any simplification."
+    },
+    {
+      "text": "Mentions at least one upstream fix (predictor scaling, contrast coding change, alternative optimizer like bobyqa/allFit)",
+      "passed": true,
+      "evidence": "All three covered in Step 2: scale() for predictors, contr.sum() for coding, and allFit() with specific mention of bobyqa and Nelder_Mead optimizers."
+    },
+    {
+      "text": "Recommends dropping correlation parameters (||) before dropping random slopes",
+      "passed": true,
+      "evidence": "Step 3 is dedicated to this: 'drop the correlation parameter before dropping the slope' with before/after code showing the || syntax."
+    },
+    {
+      "text": "Mentions principled simplification order (correlations first, then interaction slopes, etc.)",
+      "passed": true,
+      "evidence": "Step 4 gives explicit numbered list: (1) drop correlation parameters, (2) drop interaction-term slopes, (3) drop main-effect slopes for weaker effects, (4) never drop intercept. Cites Bates et al. 2015 and Matuschek et al. 2017."
+    },
+    {
+      "text": "Mentions Bayesian fitting with priors as an alternative for keeping the maximal structure",
+      "passed": true,
+      "evidence": "Step 5 provides complete brms code with lkj(2) and student_t priors, explained as 'a principled alternative to simplification' that 'keeps the full random-effects structure without parameter-estimate boundary issues.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,1 +1,123 @@
-You've hit your limit · resets 1:30am (America/Los_Angeles)
+91 out of 105 edges (87% density) is not typical of a well-specified EBICglasso network — the whole point of the graphical LASSO is sparsity. Something is almost certainly wrong upstream of the regularization. Here's a diagnostic hierarchy:
+
+---
+
+## Why This Happens: Most Likely Causes in Order
+
+### 1. Pearson correlations on ordinal Likert items (most common culprit)
+
+bootnet's default `corMethod` is Pearson. On 5- or 7-point Likert items, this attenuates correlations unevenly and distorts the covariance structure that glasso is trying to regularize. The algorithm then sees a poorly conditioned matrix and can't find a sparse solution.
+
+**Fix:** Use `cor_auto` which auto-detects ordinality and switches to polychoric:
+
+```r
+net <- estimateNetwork(data,
+                       default    = "EBICglasso",
+                       corMethod  = "cor_auto",   # <-- critical
+                       tuning     = 0.5)
+```
+
+### 2. Bloated specifics / near-synonym items
+
+Depression scales (PHQ-9, BDI-II, CESD, etc.) routinely include items that are near-paraphrases of each other ("sad," "unhappy," "blue"). These have huge partial correlations that survive glasso regularization because the signal is genuine. This is a *measurement design* problem, not an estimation problem.
+
+**Diagnose it:**
+
+```r
+library(EGAnet)
+# Unique Variable Analysis — flags near-redundant items
+uva_result <- UVA(data, method = "wTO", cut.off = 0.25)
+print(uva_result)
+```
+
+Items flagged as redundant should be combined or one dropped before network estimation.
+
+### 3. Gamma (tuning) too low — or already at default and insufficient
+
+With `tuning = 0.5` (the default), you're already at the standard upper bound of the EBIC hyperparameter. But you can push further:
+
+```r
+# Explore the full regularization path manually
+library(qgraph)
+S   <- cor_auto(data)
+res <- EBICglasso(S, n = nrow(data), gamma = 0.5, returnAllResults = TRUE)
+
+# How does density vary across lambdas?
+lam  <- res$results$lambda
+dens <- sapply(res$results$networks, function(W) mean(W[upper.tri(W)] != 0))
+plot(lam, dens, type = "l", xlab = "Lambda", ylab = "Edge density",
+     main = "Regularization path")
+abline(v = res$optLambda, col = "red", lty = 2)
+```
+
+If the curve barely drops before the selected lambda, regularization is being overwhelmed by the correlation structure.
+
+### 4. N = 210 is borderline for 15 nodes
+
+You have 105 potential edges and 210 observations — a 2:1 ratio. glasso can work here, but its model selection becomes unreliable. You'll want bootstrapped stability checks regardless.
+
+---
+
+## Full Diagnostic + Fix Sequence
+
+```r
+library(bootnet); library(qgraph); library(EGAnet); library(psych)
+
+# Step 1: Look at the raw correlation matrix
+S_pearson   <- cor(data, use = "pairwise")
+S_polychoric <- cor_auto(data)          # compare these visually
+print(round(S_polychoric, 2))
+
+# Step 2: Check for redundant items BEFORE network estimation
+uva <- UVA(data, method = "wTO", cut.off = 0.25)
+# Drop or combine flagged items, then re-run
+
+# Step 3: Re-estimate with corrected inputs
+net <- estimateNetwork(data_pruned,
+                       default   = "EBICglasso",
+                       corMethod = "cor_auto",
+                       tuning    = 0.5)
+plot(net, layout = "spring")
+
+# Step 4: Bootstrap stability — never trust a network without this
+boot_nonparam <- bootnet(net, nBoots = 1000, type = "nonparametric")
+boot_case     <- bootnet(net, nBoots = 1000, type = "case")
+
+# Edge stability
+plot(boot_nonparam, labels = FALSE, order = "sample")
+
+# CS-coefficient for centrality (want > 0.25, ideally > 0.5)
+corStability(boot_case)
+```
+
+---
+
+## If It's Still Dense After All That
+
+Consider alternative estimators:
+
+| Estimator | Package | When to use |
+|---|---|---|
+| Bayesian GGM | `BGGM` | Better uncertainty quantification; works well with small N |
+| eLasso with cross-validation | `huge` | Alternative lambda selection, less sensitive to gamma choice |
+| EGA community detection | `EGAnet` | If you want structure without assuming sparse partial correlations |
+
+```r
+# BGGM alternative (handles ordinal natively)
+library(BGGM)
+fit <- estimate(data, type = "ordinal", iter = 5000)
+sel <- select(fit, cred = 0.95)   # 95% credible interval excludes zero
+plot(sel)
+```
+
+---
+
+## Bottom Line
+
+In rough priority order:
+1. **Switch to `corMethod = "cor_auto"`** — this alone often halves density
+2. **Run UVA** and remove/combine redundant items before re-estimating
+3. **Inspect the regularization path** to confirm lambda selection makes sense
+4. **Bootstrap everything** — with N=210, many of your 91 edges are likely noise edges with wide confidence intervals that cross zero
+
+The hairball is almost certainly a combination of Pearson correlations on ordinal data plus item redundancy, not a fundamental property of your depression data.

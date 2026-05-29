@@ -1,0 +1,32 @@
+{
+  "expectations": [
+    {
+      "text": "Output flags the bipartite projection pathology (clique inflation, co-membership artifacts, inflated clustering)",
+      "passed": true,
+      "evidence": "Issue 1 explicitly describes how large projects create cliques, calls it 'an artifact of co-membership, not evidence of a tight-knit collaboration group,' and states it 'will inflate clustering coefficients, inflate modularity scores, and bias community detection toward absorbing those large-project cliques.'"
+    },
+    {
+      "text": "Output recommends SDSM or FDSM backbone extraction specifically — NOT the disparity filter (which ignores bipartite structure and is wrong here)",
+      "passed": true,
+      "evidence": "Response names both methods explicitly: 'The standard method for bipartite projections is the SDSM (Stochastic Degree Sequence Model) or the FDSM (Fixed Degree Sequence Model).' The disparity filter is never mentioned. The bipartite-specific rationale is given."
+    },
+    {
+      "text": "Output mentions direct bipartite community detection as an alternative (bipartite SBM, biSBM, graph-tool bipartite)",
+      "passed": true,
+      "evidence": "Section 'If you want a more principled approach' states: 'since your data is bipartite, you can skip projection entirely and run a bipartite SBM directly on the person × project graph' with working graph-tool code using pclabel."
+    },
+    {
+      "text": "Output does NOT simply validate the Louvain-on-projection plan without warnings",
+      "passed": true,
+      "evidence": "Opening says 'on the right track conceptually, but there are two issues to fix before running Louvain — one that will meaningfully distort your results.' Concerns are co-presented with the partial acknowledgment, not afterthoughts."
+    },
+    {
+      "text": "Output explains why edge weights from bipartite projection are not the same as relationship strength (co-membership count confounds project size and individual activity)",
+      "passed": true,
+      "evidence": "Project-size confounding illustrated with 40-employee example. Individual-activity confounding addressed through SDSM/FDSM null framing. Both confounds substantively covered."
+    }
+  ],
+  "summary": {"passed": 5, "failed": 0, "total": 5, "pass_rate": 1.0},
+  "execution_metrics": {"output_chars": 0, "total_tool_calls": 3},
+  "timing": {"total_duration_seconds": null}
+}

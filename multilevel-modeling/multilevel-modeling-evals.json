@@ -8,7 +8,7 @@
       "expectations": [
         "Identifies subjects and items as crossed random effects, not nested",
         "Includes a by-subject random slope for the ambiguity manipulation",
-        "Includes a by-item random slope for the ambiguity manipulation",
+        "Includes a by-item random slope for the ambiguity manipulation IF items appear in both conditions (within-items design), OR correctly explains that a by-item slope is not estimable because ambiguity is a between-items property in this design",
         "Does NOT recommend a random-intercepts-only model like (1 | subject)",
         "References the rationale for random slopes for within-cluster manipulations (Barr et al. 2013 / inflated Type I error / Keep It Maximal)"
       ]

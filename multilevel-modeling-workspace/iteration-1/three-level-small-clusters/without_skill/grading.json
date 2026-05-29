@@ -1,0 +1,31 @@
+{
+  "response": "OLS with cluster-robust standard errors (CRSE) is a reasonable starting point, but your data structure raises several issues that make multilevel modeling (MLM) the more principled choice here.\n\nThe structure you have is three-level nested: measurements (level 1) are nested within students (level 2), who are nested within schools (level 3). OLS with CRSE, even if you cluster at the school level, collapses this hierarchy and doesn't properly partition variance across the three levels. You'd be ignoring the student-level clustering when estimating residuals, and you won't get estimates of between-student versus between-school variance components, which matter for understanding where the intervention effect operates.\n\nThe bigger concern is that 25 schools is a small number of level-3 units. For school-level inference — which is exactly what you want, since the intervention is at the school level — standard asymptotic justifications for CRSE require many clusters. The common rule of thumb is at least 30–50 clusters for CRSE to behave well; at 25, the sandwich estimator can be badly biased downward, leading to anti-conservative inference. This is a known problem: Cameron & Miller (2015) and others document that CRSE with few clusters produces undersized standard errors and inflated t-statistics. You could apply bias-corrected CRSE (e.g., CR2/HC3 variants, the 'BRL' correction from Pustejovsky & Tipton), but you're still pushing the limits of the asymptotic framework.\n\nMLM is the preferred approach here. A three-level mixed model — with random intercepts (and possibly slopes) for students and schools — correctly accounts for the nested structure, allows you to model the intervention as a fixed effect at the school level, and gives you valid likelihood-based inference on variance components. With 1500 students across 25 schools (60 students per school on average) and 3 time points, you have reasonable level-1 and level-2 sample sizes; the weakness is at level 3 (25 schools).\n\nWith only 25 level-3 units, standard REML-based MLM also has limitations. The number of schools is too small for reliable asymptotic inference on school-level fixed effects using default t/z tests. You should apply Kenward-Roger (KR) degrees-of-freedom corrections (available in lme4 + pbkrtest, or SAS PROC MIXED), which adjust standard errors and use approximate finite-sample t-distributions rather than z-tests. Alternatively, Bayesian estimation (e.g., brms/Stan) is well-suited here: it doesn't rely on asymptotic normality for the level-3 parameters, handles small cluster counts gracefully, and lets you place weakly informative priors on variance components to stabilize estimates when data are sparse at the top level.\n\nSummary: Don't rely on plain OLS+CRSE — the three-level structure and small number of schools both work against it. Use a three-level MLM with KR corrections or Bayesian estimation. If you insist on CRSE as a robustness check, use CR2-corrected standard errors, but treat it as secondary to the MLM results.",
+  "expectations": [
+    {
+      "text": "Identifies the three-level nested structure",
+      "passed": true,
+      "evidence": "Response explicitly labels the three levels: measurements (level 1) nested within students (level 2) nested within schools (level 3), and notes that OLS+CRSE collapses this hierarchy and cannot partition variance across levels."
+    },
+    {
+      "text": "Flags that 25 schools is small for level-3 inference",
+      "passed": true,
+      "evidence": "Response directly states '25 schools is a small number of level-3 units,' references the 30–50 cluster rule of thumb, cites Cameron & Miller (2015), and explains that the sandwich estimator is unreliable at n=25 clusters."
+    },
+    {
+      "text": "Suggests MLM as preferred but engages with the OLS+CRSE alternative honestly",
+      "passed": true,
+      "evidence": "Response calls MLM 'the preferred approach,' explains why, but also engages honestly with CRSE: acknowledges it as 'a reasonable starting point,' describes the specific failure mode (downward bias at small cluster counts), and suggests CR2-corrected CRSE as an acceptable robustness check rather than dismissing it entirely."
+    },
+    {
+      "text": "Mentions Bayesian estimation as an option for small-cluster regimes, OR Kenward-Roger / small-sample corrections",
+      "passed": true,
+      "evidence": "Response mentions both: Kenward-Roger degrees-of-freedom corrections (with specific software references: lme4 + pbkrtest, SAS PROC MIXED) and Bayesian estimation via brms/Stan, with explanation of why each is appropriate for small level-3 sample sizes."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

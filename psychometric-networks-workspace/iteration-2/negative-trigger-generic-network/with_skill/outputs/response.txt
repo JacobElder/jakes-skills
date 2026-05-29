@@ -1,1 +1,47 @@
-You've hit your limit · resets 1:30am (America/Los_Angeles)
+## Betweenness Centrality
+
+**Betweenness centrality** measures how often a node sits on the *shortest path* between other pairs of nodes in the network. Formally, for a node *v*:
+
+$$BC(v) = \sum_{s \neq v \neq t} \frac{\sigma_{st}(v)}{\sigma_{st}}$$
+
+where σ\_st is the total number of shortest paths from node *s* to node *t*, and σ\_st(*v*) is the number of those paths that pass through *v*.
+
+In plain terms: **a node with high betweenness is a bridge or bottleneck — information, traffic, or influence flowing across the network tends to pass through it.**
+
+---
+
+### Intuitive example
+
+Imagine a small airline route map:
+
+```
+NYC ── Chicago ── Denver ── LA
+          |
+        Dallas
+```
+
+Chicago sits on nearly every path between eastern and western cities. If Chicago's airport closes, many routes are severed. Chicago has high betweenness; Dallas, a leaf node, has low betweenness even if it's well-connected locally.
+
+---
+
+### When betweenness is most useful
+
+| Domain | What it reveals |
+|---|---|
+| **Transportation/logistics** | Identifying infrastructure bottlenecks (roads, airports, pipelines) |
+| **Social networks** | Finding brokers or gatekeepers who bridge otherwise disconnected communities |
+| **Internet/communication networks** | Routers that, if removed, would fragment the network |
+| **Supply chains** | Single-supplier chokepoints |
+| **Citation/knowledge networks** | Papers that connect disparate research areas |
+
+The classic applied case is **network attack / robustness analysis**: if you want to disrupt a network efficiently, removing high-betweenness nodes tends to fragment it faster than removing high-degree nodes.
+
+---
+
+### A few caveats worth knowing
+
+- Betweenness assumes traffic literally travels along shortest paths, which is often a simplification. In real systems (e.g., electrical grids, social influence), flow doesn't always take the geodesic route.
+- It's computationally expensive on large graphs — O(VE) for unweighted graphs via Brandes' algorithm.
+- In **dense, weighted graphs** (as opposed to sparse, binary ones), betweenness can behave counterintuitively because "shortest path" becomes sensitive to how edge weights are defined. For those settings, degree-based or flow-based centrality measures are often more interpretable.
+
+For sparse, clearly-structured networks with meaningful path semantics — transportation, social brokerage, communication — betweenness is one of the most insightful centrality measures available.

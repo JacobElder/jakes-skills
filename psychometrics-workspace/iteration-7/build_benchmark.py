@@ -8,7 +8,7 @@ WORKSPACE = "/Users/jacobelder/Documents/GitHub/jakes-skills/psychometrics-works
 ITER7_DIR = f"{WORKSPACE}/iteration-7"
 
 EVALS = [
-    ("htmt-discriminant-validity", 1),
+    ("ceiling-effect-reliability", 1),
     ("irt-local-dependence", 2),
     ("ri-clpm-vs-clpm", 3),
     ("latent-moderation-sem", 4),

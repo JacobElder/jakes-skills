@@ -1,0 +1,31 @@
+{
+  "response": "No, you cannot report that coefficient as the average effect of condition. In a model with an interaction and treatment coding, what looks like a 'main effect' is actually a simple effect — specifically, the effect of condition when the other factor is at its reference level (0 in treatment coding), not averaged across levels.\n\nHere's why: with treatment coding, the intercept and 'main effects' are estimated at the reference category of all other predictors. So the 'main effect' of condition in your model is the effect of condition *when your other factor equals its reference level*. If there's a meaningful interaction, this simple effect could look quite different from the average (marginal) effect of condition across all levels of the other factor.\n\nWhat the coefficient actually represents: It is the effect of condition for participants/observations in the reference category of the other 2x2 factor — not an average over both levels. This is a simple effect, not a main effect in the ANOVA sense.\n\nWhat to do instead:\n\n1. Recode to sum/effects coding (±0.5 or ±1): With deviation or sum coding, the 'main effect' coefficient *does* represent the effect of condition averaged over levels of the other factor, which is the typical ANOVA-style interpretation. This is what Schad et al. (2020, Journal of Memory and Language) recommend for factorial designs.\n\n2. Use emmeans or marginaleffects: Compute estimated marginal means from your treatment-coded model and then derive the contrast. emmeans(model, ~ condition) will average over the other factor appropriately and give you the true average effect. marginaleffects::avg_comparisons() does the same.\n\nThe Schad et al. (2020) paper 'How to capitalize on a priori contrasts in linear (mixed) models' is the canonical reference here — it explicitly shows that treatment-coded 'main effects' in interaction models are simple effects and argues for contrast coding that aligns with theoretical hypotheses.\n\nBottom line: Either refit with sum/contrast coding, or use emmeans/marginaleffects on your current model to get the properly marginalized average effect. Reporting the treatment-coded coefficient as a main effect would be misleading when there's an interaction in the model.",
+  "expectations": [
+    {
+      "text": "Identifies that treatment-coded 'main effects' in interaction models are simple effects, not average effects",
+      "passed": true,
+      "evidence": "Response explicitly states 'what looks like a main effect is actually a simple effect' and explains that treatment coding gives the effect at the reference level, not the average."
+    },
+    {
+      "text": "Explains what the coefficient actually represents (effect at reference level of the other factor)",
+      "passed": true,
+      "evidence": "Response states: 'It is the effect of condition for participants/observations in the reference category of the other 2x2 factor — not an average over both levels.' This correctly describes the simple effect interpretation."
+    },
+    {
+      "text": "Recommends either sum/contrast coding for the factors, OR using emmeans/marginaleffects to get the marginalized average effect",
+      "passed": true,
+      "evidence": "Response recommends both: (1) recoding to sum/effects coding (±0.5 or ±1), and (2) using emmeans(model, ~ condition) or marginaleffects::avg_comparisons() to obtain the marginalized average effect."
+    },
+    {
+      "text": "References Schad et al. OR explains the issue clearly enough that the recommendation makes sense",
+      "passed": true,
+      "evidence": "Response explicitly cites 'Schad et al. (2020, Journal of Memory and Language)' and the paper title 'How to capitalize on a priori contrasts in linear (mixed) models'. Additionally, the explanation of simple effects vs. average effects is clear and correct on its own."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

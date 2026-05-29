@@ -1,1 +1,168 @@
-You've hit your limit · resets 1:30am (America/Los_Angeles)
+Great question — this is a well-defined area with an authoritative checklist. Here's a comprehensive breakdown organized by section, keyed to current standards.
+
+---
+
+## The Authoritative Standard to Cite
+
+The primary reference you should anchor to is:
+
+> **Burger, J., Isvoranu, A. M., Lunansky, G., Haslbeck, J. M. B., Epskamp, S., Hoekstra, R. H. A., Fried, E. I., Borsboom, D., & Blanken, T. F. (2022).** Reporting standards for psychological network analyses in cross-sectional data. *Psychological Methods, 27*(4), 742–762. https://doi.org/10.1037/met0000471
+
+Also foundational:
+> **Epskamp, S., Borsboom, D., & Fried, E. I. (2018).** Estimating psychological networks and their accuracy: A tutorial paper. *Behavior Research Methods, 50*, 195–212.
+
+> **Epskamp, S., & Fried, E. I. (2018).** A tutorial on regularized partial correlation networks. *Psychological Methods, 23*(4), 617–634.
+
+---
+
+## Methods Section — Required Elements
+
+### 1. Software & Package Versions
+State your full software environment. Reviewers will check this. Minimally:
+
+- R version
+- `qgraph` (network estimation & visualization)
+- `bootnet` (accuracy and stability)
+- `igraph` (if used for community detection)
+- `psychotools` or `psych` (if used for polychoric estimation)
+
+Example phrasing:
+> *"All analyses were conducted in R (v4.3.x) using the qgraph (v1.9.x), bootnet (v1.5.x), and igraph (v1.5.x) packages."*
+
+---
+
+### 2. Estimation Method — Full Specification
+You need to fully justify and describe the estimation chain. With your setup, cover:
+
+| Element | What to Report | Your Status |
+|---|---|---|
+| Network model | Gaussian Graphical Model (GGM) | ✅ |
+| Estimation procedure | EBICglasso (graphical LASSO with EBIC model selection) | ✅ |
+| Tuning parameter (γ) | γ = 0.5 (standard; note it penalizes complexity more than γ = 0) | ✅ state and justify |
+| Correlation type | Polychoric | ✅ state and justify |
+| Justification for polychoric | Ordinal item-level data; polychoric correlations recover the assumed latent normal distribution | add this |
+| Edge weights | Partial correlations | state explicitly |
+
+**Gamma justification** is commonly requested: γ = 0.5 is the conventional default balancing parsimony and sensitivity; lower values (e.g., 0) produce denser networks.
+
+---
+
+### 3. Node Specification
+- List all 12 nodes with labels and what construct each represents
+- Provide the scale/instrument they come from
+- Specify response format (e.g., Likert 0–3)
+- Note whether any items were reverse-coded
+
+---
+
+### 4. Pre-analysis Decisions
+- Missing data handling (listwise deletion? imputation?)
+- Any item screening (e.g., removing near-zero variance nodes)
+- Whether the correlation matrix or raw data was passed to EBICglasso
+
+---
+
+### 5. Stability Analysis Plan
+State upfront that you will conduct:
+- **Bootstrap accuracy analysis** for edge weights (typically *n* = 1,000 or 2,500 bootstraps; case-dropping *and* nonparametric)
+- **Bootstrap stability analysis** for centrality indices (case-dropping subset bootstrap)
+- Report which centrality indices will be assessed and why (see Results section)
+
+---
+
+## Results Section — Required Elements
+
+### 1. Network Description
+- Number of nodes (*k* = 12) and estimated edges
+- **Network density** (proportion of possible edges that are non-zero): `(# non-zero edges) / (k(k−1)/2)`
+- Range and mean of non-zero edge weights
+- Whether the network is entirely positive-edge or contains negative edges (negative edges get special interpretive attention)
+
+---
+
+### 2. Network Visualization
+- Figure with labeled nodes, edge widths proportional to |partial correlation|, positive edges in one color (green), negative in another (red)
+- State the layout algorithm (typically Fruchterman-Reingold / spring layout via `qgraph`)
+- Include a full edge weight matrix — typically as a supplementary table, but reviewers expect it to exist
+
+---
+
+### 3. Centrality Indices — Report Selectively and Justify
+This is where many papers get criticized. Current standards (post-2019) say:
+
+**Report:**
+- **Strength** (sum of absolute edge weights) — most stable, most interpretable
+- **Expected Influence** (signed sum of edge weights) — preferred if negative edges are present, as it preserves sign information
+
+**Be cautious with:**
+- **Betweenness** and **Closeness** — these are now routinely flagged by reviewers because they are empirically unstable in small-to-medium samples and may not have clear psychological interpretations. If you include them, cite evidence of their stability from your bootstrap analysis. Many papers now omit them or relegate them to supplements.
+
+**Cite the instability concern:**
+> Epskamp, S., Haslbeck, J. M. B., Isvoranu, A. M., & van Borkulo, C. D. (2022). Psychological network analysis. In *Methodology in the Social Sciences.*
+
+Present centrality as a **standardized bar plot** (the standard `qgraph` output), not just tables.
+
+---
+
+### 4. Stability Analyses — The Section Most Often Missing or Inadequate
+
+This is almost certainly what your reviewer was flagging. You need all three of these:
+
+#### A. Edge Weight Accuracy (Nonparametric Bootstrap CIs)
+- Run `bootnet(..., nBoots = 1000, type = "nonparametric")`
+- Plot bootstrapped 95% CIs around each edge weight
+- Narrow CIs around large edges = good accuracy
+- Report: *"Bootstrapped confidence intervals for edge weights indicated that [X] edges were estimated with good accuracy, as reflected by narrow CIs."*
+
+#### B. Edge Weight Difference Tests
+- Using the same bootstrap object, test whether edge weights are significantly different from zero and from each other
+- Plot the edge difference matrix (red = different, grey = not)
+- This tells readers which edge weight comparisons are reliable
+
+#### C. Centrality Stability (CS-Coefficient)
+- Run `bootnet(..., nBoots = 1000, type = "case")`
+- Calculate the **CS-coefficient** for each centrality index via `corStability()`
+- **Minimum acceptable threshold: CS ≥ 0.25**
+- **Preferred threshold: CS ≥ 0.50**
+- If Betweenness/Closeness have CS < 0.25, you should not interpret them — drop them or relegate to a note
+
+Report like:
+> *"The CS-coefficient for strength was 0.67, indicating robust stability. Betweenness demonstrated poor stability (CS = 0.18) and is not interpreted further."*
+
+---
+
+### 5. Predictability (Optional but Increasingly Expected)
+Haslbeck & Fried (2017) introduced **node predictability** (R² analog): the proportion of each node's variance explained by its neighbors. This is increasingly expected in psychopathology networks:
+
+> Haslbeck, J. M. B., & Fried, E. I. (2017). How predictable are symptoms in psychopathological networks? *European Journal of Psychopathology, 28*(2), 1–8.
+
+Computed via the `mgm` package. Report as a pie chart overlay on the network plot.
+
+---
+
+## Common Gaps That Draw Reviewer Criticism
+
+| Gap | Fix |
+|---|---|
+| No bootstrap stability reported | Run `bootnet` case-dropping bootstrap; report CS-coefficients |
+| Betweenness/closeness interpreted without stability checks | Drop or caveat with CS-coefficient |
+| No edge weight CIs | Run nonparametric bootstrap; plot CIs |
+| Gamma not reported | State γ = 0.5 explicitly |
+| No justification for polychoric | One sentence: ordinal data → polychoric recovers latent normal distribution |
+| Edge weight matrix absent | Add as supplementary table |
+| Package versions missing | Add to Methods |
+| Density not reported | Calculate and report |
+| No difference tests | Run `differenceTest()` in bootnet; include plot |
+
+---
+
+## Reproducibility Expectations
+
+Top journals now expect:
+- Full analysis code (OSF or GitHub)
+- Either raw data or the correlation/partial correlation matrix
+- A statement in the paper pointing to the repository
+
+---
+
+With N = 340 and 12 nodes, your sample-to-parameter ratio is reasonable, which should work in your favor in the stability analyses. The CS-coefficients for strength centrality should be solid; betweenness may be the weak point to watch. Good luck with the revision.

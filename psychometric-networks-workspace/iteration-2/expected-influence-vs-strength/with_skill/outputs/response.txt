@@ -1,73 +1,63 @@
 ## Strength vs. Expected Influence for your affect network
 
-The short answer: **report Expected Influence as your primary index**, and consider reporting both — because the *divergence* between them is substantively informative in a mixed-valence network like yours.
+The short answer for your specific data: **report Expected Influence as your primary index**, and either drop Strength or relegate it to supplementary material. Here's the reasoning.
 
 ---
 
 ### The core difference
 
-| Index | Formula | What it captures |
+| Index | Formula | What it ignores |
 |---|---|---|
-| **Strength** | Σ \|w_ij\| | Total connectivity — treats a strong positive edge and a strong negative edge identically |
-| **Expected Influence** | Σ w_ij (signed) | Net activating influence — negative edges *subtract*, so the sign of the relationship matters |
+| **Strength** | Σ \|w_ij\| | Sign of each edge |
+| **Expected Influence** | Σ w_ij | Nothing — signed sum |
 
-Expected Influence was introduced by Robinaugh, Millner & McNally (2016, *J Abnormal Psychology*) precisely because Strength conflates nodes that strongly *excite* their neighbors with nodes that strongly *inhibit* them.
-
----
-
-### Why this distinction bites in your specific network
-
-Your 8 items form two natural valence clusters:
-
-```
-Positive: enthusiastic — active — inspired — alert
-Negative: distressed — upset — hostile — afraid
-```
-
-You will almost certainly have **negative cross-cluster edges** — positive affect items partially suppress negative affect items and vice versa, especially in GGM estimation on ordinal/Likert items. That means:
-
-- A node like **distressed** will have positive edges *within* the negative cluster and negative edges toward the positive cluster.
-- **Strength** sums all of those absolute values → distressed looks maximally central.
-- **Expected Influence** subtracts the negative cross-cluster weights → distressed's net influence is lower, which is arguably the more interpretable quantity.
-
-Strength will systematically inflate the apparent centrality of nodes that sit at the *boundary* between your two clusters (the bridge items), because it treats their inhibitory connections as equally central-making as their excitatory ones.
+Strength treats a strong *negative* edge and a strong *positive* edge identically: both inflate a node's centrality. Expected Influence preserves direction, so negative edges *reduce* a node's EI rather than inflate it.
 
 ---
 
-### Practical diagnostic to run first
+### Why this matters for your specific network
 
-Before deciding, look at your edge weight matrix:
+Your 8-item design almost guarantees negative edges. In a GGM of PANAS-type items, EBICglasso will typically produce:
 
-```r
-# Get signed adjacency
-net$graph  # or getWmat(net) in older qgraph
+- **Positive edges within the PA cluster** (enthusiastic–inspired, active–alert, etc.)
+- **Positive edges within the NA cluster** (distressed–upset, hostile–afraid, etc.)
+- **Negative edges across clusters** (e.g., inspired–distressed, alert–afraid)
 
-# Quick check: are there any negative edges?
-sum(net$graph < 0)
+This is the canonical case where Strength misleads. Consider what happens to a node like **distressed**:
 
-# Compare the two rankings side by side
-library(qgraph)
-s  <- centrality(net)$ShortestPathLengths  # ignore this
-ei <- expectedInfluence(net)               # from networktools or qgraph
+- It has strong positive edges to upset, hostile, and afraid → these inflate Strength *and* EI
+- It has moderate negative edges to enthusiastic, active, inspired, alert → these inflate Strength but *reduce* EI
 
-cbind(Strength = sort(centrality(net)$OutDegree, decreasing=TRUE),
-      EI       = sort(ei, decreasing=TRUE))
-```
-
-If the rankings are nearly identical, your between-cluster edges are sparse or near-zero (plausible in cross-sectional data where PA and NA are relatively orthogonal after conditioning), and either index is fine. If the rankings diverge — especially if mid-valence or more ambiguous items (e.g., "alert" can read either positive or anxious) shift substantially — that divergence is itself a finding worth reporting.
+Strength would make distressed look more central than it is in terms of net network influence. EI correctly captures that distressed has a partially dampening relationship with the other half of the network.
 
 ---
 
-### Reporting recommendation
+### Practical interpretation guide
 
-**Report Expected Influence as primary**, Strength as secondary/supplementary, with a sentence explaining why:
+**Expected Influence** answers: *If this node were activated (or elevated), what is the net directional push on the rest of the network?*
 
-> "Because the network included negative edges between positive and negative affect items, we report Expected Influence as the primary centrality index (Robinaugh et al., 2016), which accounts for the direction of each edge weight. Strength is reported for comparison."
+- High positive EI → node activation tends to activate neighbors (net positive)
+- EI near zero → activation effects roughly cancel across positive and negative connections
+- Negative EI → counterintuitive but interpretable: this node's connections run mostly opposite-sign to the dominant direction (rare, but possible for bridge nodes)
 
-If you're short on space and the rankings are nearly identical, a footnote noting the convergence is sufficient.
+**Strength** answers: *How densely connected is this node, ignoring direction?*
+
+This is a reasonable question if you only care about overall involvement in the network, but in a mixed-valence affect network it conflates two very different things — co-activation within a valence cluster and cross-cluster suppression — into one number.
 
 ---
 
-### One thing to flag
+### Practical steps before finalizing
 
-"Alert" sits at a conceptual boundary — in the PANAS literature it loads positive affect, but phenomenologically it can reflect anxious arousal. If it has a meaningfully different Strength vs. EI profile compared to the other positive items, that's worth noting explicitly: it may be functioning as a bridge node between your two clusters, which has interpretive consequences for what it means to be "alert" in your sample's affect dynamics.
+1. **Inspect your edge matrix.** Confirm negative edges actually appear (they almost certainly do). If by chance your regularization is aggressive enough that all cross-cluster edges dropped to zero, the Strength/EI distinction collapses and you have a different problem (likely over-regularization).
+
+2. **Check your CS-coefficients for both indices.** With only 8 nodes you may actually have adequate stability for EI, but confirm — the case-dropping bootstrap is the check, not node count alone.
+
+3. **Consider bridge centrality.** With a clean PA/NA community structure, `networktools::bridge()` may tell you more than EI alone — it quantifies which specific nodes sit at the interface between the two clusters. This is a natural complement to EI for your design and directly connects to the question of which affect states might serve as bridges between positive and negative mood spirals.
+
+---
+
+### Reporting language
+
+> "We report Expected Influence (Robinaugh et al., 2016) as the primary centrality index, as the network contains theoretically meaningful negative edges between positive- and negative-affect items; Strength, which sums absolute edge weights, would conflate within-valence co-activation with cross-valence suppression."
+
+That one sentence is all you need to justify the choice to reviewers.

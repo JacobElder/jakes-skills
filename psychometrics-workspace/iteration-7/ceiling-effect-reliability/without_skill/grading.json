@@ -1,40 +1,40 @@
 {
-  "run_id": "htmt-discriminant-validity-without_skill",
+  "run_id": "ceiling-effect-reliability-without_skill",
   "eval_id": 1,
-  "eval_name": "htmt-discriminant-validity",
+  "eval_name": "ceiling-effect-reliability",
   "config": "without_skill",
   "passed": 6,
   "total": 6,
   "expectations": [
     {
-      "description": "Does NOT simply validate the co-author's conclusion that HTMT = .87 < .90 confirms discriminant validity",
+      "description": "Does NOT validate the supervisor's conclusion that lower alpha in the inpatient sample means the scale performs less reliably or should be restricted to mild-to-moderate populations",
       "passed": true,
-      "evidence": "The response explicitly states the co-author is 'not correct' and identifies her error as 'treating the threshold (.90) as the only evaluative criterion and ignoring the CI-based inferential test entirely.' It directly refutes the conclusion that HTMT=.87<.90 alone confirms discriminant validity."
+      "evidence": "The response explicitly states 'The drop in \u03b1 shows the scale is less reliable in severe populations' is 'Overstated' and explains that 'The drop likely reflects ceiling effects and range restriction, not true reliability failure.' It further clarifies that calling it a 'reliability failure conflates two distinct constructs' and that the supervisor's mechanistic explanation is 'incomplete and can mislead.'"
     },
     {
-      "description": "Identifies the bootstrapped CI [.79, 1.03] crossing 1.0 as the critical problem \u2014 not the point estimate",
+      "description": "Identifies the ceiling effect as the cause: the inpatient mean of 26.4/30 indicates nearly everyone scores near the maximum, compressing variance and suppressing alpha regardless of item quality",
       "passed": true,
-      "evidence": "The response explicitly states 'the CI [.79, 1.03] crossing 1.0 is a direct inferential failure of discriminant validity' and frames the CI criterion as 'the Decisive Test' while noting the point estimate (.87 < .90) is 'necessary but not sufficient' \u2014 directly identifying the bootstrapped CI crossing 1.0 as the critical problem rather than the point estimate."
+      "evidence": "The response explicitly identifies the ceiling effect: 'Your inpatient sample has a mean of 26.4 out of 30 on a 10-item scale... Individual items have almost no room left to vary. When nearly everyone endorses most items at their maximum, item variances collapse. Collapsed item variances \u2192 attenuated inter-item correlations \u2192 lower \u03b1. This is a floor/ceiling artifact, not evidence of measurement failure in any fundamental sense.'"
     },
     {
-      "description": "Explains that when the HTMT confidence interval includes or crosses 1.0, the constructs cannot be empirically distinguished from a single factor, regardless of where the point estimate falls",
+      "description": "Explains the mechanism: alpha depends on inter-item correlations, which are attenuated when everyone endorses items at the same high level \u2014 this is a variance problem, not an item-quality problem",
       "passed": true,
-      "evidence": "The response explicitly states: 'If the CI includes 1.0 \u2192 No, you cannot rule it out \u2192 discriminant validity not established' and 'The data are statistically consistent with emotional exhaustion and depersonalization being a single undifferentiated construct' \u2014 directly explaining that a CI crossing 1.0 means the constructs cannot be empirically distinguished regardless of the point estimate (.87) falling below the threshold."
+      "evidence": "The response explicitly states: 'Collapsed item variances \u2192 attenuated inter-item correlations \u2192 lower \u03b1. This is a floor/ceiling artifact' and 'Range restriction reliably depresses observed correlations \u2014 this is a statistical artifact' and formula shows \u03b1 depends on ratio of item variances to total variance. The mechanism (variance restriction \u2192 attenuated correlations \u2192 lower alpha) is clearly explained as a variance/artifact problem distinct from item quality."
     },
     {
-      "description": "States that proper HTMT inference requires the entire bootstrapped CI to fall below the threshold \u2014 the point estimate alone is insufficient",
+      "description": "States that the causal direction of the supervisor's inference is backwards: lower alpha in severe samples is an expected artifact of ceiling effects, not evidence that the scale works worse in that population",
       "passed": true,
-      "evidence": "The response explicitly states 'Both must pass. A point estimate below .90 with a CI crossing 1.0 is not discriminant validity' and 'The point estimate criterion (.87 < .90) is necessary but not sufficient. The CI [.79, 1.03] crossing 1.0 is a direct inferential failure of discriminant validity, and it overrides the threshold-based conclusion.'"
+      "evidence": "The response explicitly states: 'The drop likely reflects ceiling effects and range restriction, not true reliability failure' and frames the supervisor's reasoning as backwards \u2014 lower alpha in severe samples is an artifact of ceiling effects and range restriction ('floor/ceiling artifact'), not evidence the scale works worse. The table explicitly labels the supervisor's claim as 'Overstated' and explains the causal direction: collapsed item variances \u2192 attenuated inter-item correlations \u2192 lower \u03b1, driven by statistical artifacts of truncated range."
     },
     {
-      "description": "Notes that comparing the HTMT point estimate (.87) to the .90 threshold is irrelevant when the CI upper bound is 1.03 \u2014 the threshold comparison only applies when the CI is entirely below it",
+      "description": "Notes that reliability is a property of scores in a specific sample \u2014 a scale can have valid items that perform well in severe populations but still show low alpha due to ceiling-effect range restriction",
       "passed": true,
-      "evidence": "The response explicitly states: 'A point estimate below .90 with a CI crossing 1.0 is not discriminant validity' and frames the two criteria as both required, noting the co-author 'is treating the threshold (.90) as the only evaluative criterion and ignoring the CI-based inferential test entirely.' It directly addresses that the threshold comparison (.87 < .90) is insufficient when the CI upper bound (1.03) exceeds 1.0."
+      "evidence": "The response explicitly states: 'Cronbach's \u03b1 is not a fixed property of a scale. It is a function of both the items and the score variance in the specific sample' and explains that range restriction 'reliably depresses observed correlations \u2014 this is a statistical artifact, not a signal that the items are measuring something incoherent.' It also notes 'If you drew a random subsample from your community sample and artificially truncated it to only those scoring 24\u201330, you would almost certainly see a similar drop in \u03b1, with the same scale and same items, simply because of reduced variance' \u2014 directly addressing that reliability is sample-dependent and that valid items can show low alpha due to ceiling-effect range restriction."
     },
     {
-      "description": "Recommends at least one concrete path forward: testing a single-factor model as comparison, revising items to improve construct differentiation, or being transparent about the discriminant validity failure in the paper",
+      "description": "Recommends IRT as the appropriate method for evaluating scale performance at the severe end of the trait: item information functions show where on the theta range items are most discriminating, regardless of floor/ceiling issues in a specific sample",
       "passed": true,
-      "evidence": "The response recommends: (1) testing a single-factor model as comparison ('Run a model comparison test. A two-factor CFA vs. a one-factor CFA'), (2) being transparent about the discriminant validity failure ('Report honestly' with explicit language acknowledging 'discriminant validity between emotional exhaustion and depersonalization cannot be unambiguously established'), and (3) considering theoretical meaningfulness of the finding. All three concrete paths forward are present."
+      "evidence": "The response explicitly recommends IRT analysis: 'IRT analysis (e.g., Graded Response Model) \u2014 plot the test information function across the latent trait continuum. You'll likely find the scale has high information in the mild-to-moderate range and drops off sharply in the severe range, which is the real story.' It also mentions item information functions conceptually when discussing that '\u03b1 reflects average reliability across the full score range, but what you really want to know is whether the scale provides good measurement precision (test information) in the severe range.'"
     }
   ]
 }

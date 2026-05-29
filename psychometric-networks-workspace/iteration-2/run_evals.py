@@ -38,8 +38,15 @@ Output valid JSON only — no markdown, no code fences. Schema:
 }"""
 
 
-def run_claude(prompt: str, system: str) -> tuple[str, float]:
+INTER_CALL_DELAY = 15  # seconds between API calls to avoid rate limits
+
+
+def run_claude(prompt: str, system: str, is_grader: bool = False) -> tuple[str, float]:
     """Run claude CLI via stdin to avoid shell escaping issues."""
+    if not is_grader:
+        # Pace response calls; grader calls follow immediately after their response
+        time.sleep(INTER_CALL_DELAY)
+
     t0 = time.time()
     result = subprocess.run(
         ["claude", "--print", "--model", MODEL, "--system-prompt", system],
@@ -49,14 +56,18 @@ def run_claude(prompt: str, system: str) -> tuple[str, float]:
         timeout=180,
     )
     duration = time.time() - t0
-    # stderr may contain AVX warning noise; only fail on non-zero exit + no stdout
-    if result.returncode != 0 and not result.stdout.strip():
+    out = result.stdout.strip()
+
+    # Detect rate-limit message
+    if "hit your limit" in out or "hit your limit" in result.stderr:
+        raise RuntimeError(f"Rate limit hit. Response: {out[:120]}")
+
+    if result.returncode != 0 and not out:
         raise RuntimeError(
             f"claude CLI failed (rc={result.returncode})\n"
-            f"stderr: {result.stderr[:800]}\n"
-            f"stdout: {result.stdout[:200]}"
+            f"stderr: {result.stderr[:800]}\nstdout: {out[:200]}"
         )
-    return result.stdout.strip(), duration
+    return out, duration
 
 
 def grade_response(eval_name, prompt, expectations, response_text, config) -> dict:
@@ -68,7 +79,7 @@ def grade_response(eval_name, prompt, expectations, response_text, config) -> di
         f"EXPECTATIONS:\n{json.dumps(expectations, indent=2)}\n\n"
         "Grade each expectation. Return valid JSON only — no markdown fences."
     )
-    raw, _ = run_claude(grader_prompt, GRADER_SYSTEM)
+    raw, _ = run_claude(grader_prompt, GRADER_SYSTEM, is_grader=True)
 
     # Strip markdown fences if present
     if "```" in raw:
@@ -104,7 +115,7 @@ def grade_response(eval_name, prompt, expectations, response_text, config) -> di
             "Return ONLY a corrected valid JSON object, no other text:\n\n" + raw[:3000]
         )
         for _ in range(2):
-            fixed, _ = run_claude(retry_prompt, "You output only valid JSON objects.")
+            fixed, _ = run_claude(retry_prompt, "You output only valid JSON objects.", is_grader=True)
             start = fixed.find("{")
             if start != -1:
                 fixed = fixed[start:]

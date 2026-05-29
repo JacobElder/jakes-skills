@@ -1,0 +1,42 @@
+{
+  "expectations": [
+    {
+      "text": "Output mentions Manski reflection problem or the linear-in-means identification failure",
+      "passed": true,
+      "evidence": "### Problem 1: The reflection problem (Manski 1993)\n\nThe coefficient on `mean_friends_smoking` does not cleanly identify influence because of **simultaneous determination**..."
+    },
+    {
+      "text": "Output mentions Shalizi-Thomas confounding or the homophily-contagion confound",
+      "passed": true,
+      "evidence": "Shalizi and Thomas (2011) proved formally that in observational cross-sectional data, **influence and homophily are generically confounded** — the statistical signature of 'my friends smoke so I smoke' and 'I became friends with smokers because I was already inclined to smoke' are indistinguishable without time ordering or exogenous variation."
+    },
+    {
+      "text": "Output does NOT claim the regression identifies causal peer effects",
+      "passed": true,
+      "evidence": "You cannot separate these with a cross-sectional OLS regression. [...] The honest framing: 'This is consistent with peer influence, but also with homophily... The cross-sectional design does not permit identification of the causal mechanism.'"
+    },
+    {
+      "text": "Output correctly specifies that SAOM/RSiena requires longitudinal panel data with at least 2 waves AND observable network change between waves — NOT just cross-sectional data",
+      "passed": true,
+      "evidence": "The key requirements: Minimum 2 waves, ideally 3+; Meaningful network change between waves (RSiena checks this); Meaningful behavior change between waves. [Option B explicitly contrasts: 'If you are stuck with cross-sectional data, there is still an identification strategy...']"
+    },
+    {
+      "text": "Output mentions Bramoullé et al. IV/GMM or friends-of-friends instruments as a cross-sectional identification strategy (not just 'use SAOM')",
+      "passed": true,
+      "evidence": "### Option B: Use network structure as instruments (Bramoullé et al. 2009)\n\nBramoullé, Djebbari & Fortin (2009) show that if your friendship network contains **intransitive triads**... then the smoking behavior of **friends-of-friends** provides a valid instrument for friends' smoking."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 14527,
+    "total_tool_calls": 3
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

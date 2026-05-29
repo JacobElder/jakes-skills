@@ -1,0 +1,42 @@
+{
+  "expectations": [
+    {
+      "text": "Output redirects away from NetworkX for this scale (5M nodes, 800M edges)",
+      "passed": true,
+      "evidence": "Response opens with 'Short answer: no, NetworkX will not work for this.' and dedicates an entire section ('Why NetworkX will not work at this scale') explaining that memory footprint would be 'several hundred gigabytes' and computation would take 'days to weeks', explicitly calling it 'the wrong tool category'."
+    },
+    {
+      "text": "Output recommends NetworKit, cuGraph, or graph-tool as appropriate large-scale alternatives",
+      "passed": true,
+      "evidence": "All three tools are explicitly recommended with code examples: NetworKit ('best starting point for your hardware budget'), cuGraph ('strong option if you have GPU hardware'), and graph-tool ('minimize_blockmodel_dl(bipartite=True) for bipartite SBM'). leidenalg is also mentioned as a supplemental option."
+    },
+    {
+      "text": "Output warns that exact betweenness centrality is computationally infeasible at this scale (O(VE) or O(V*E))",
+      "passed": true,
+      "evidence": "Response states 'Betweenness centrality is O(VE)' and 'Exact betweenness on 7M nodes and 800M edges is not tractable on any single machine regardless of library.' Step 5 of the recommended sequence explicitly says 'Approximate betweenness, do not compute exact.'"
+    },
+    {
+      "text": "Output recognizes that this is a bipartite (user-item) graph and warns that running standard community detection on it would conflate user and item nodes into mixed communities",
+      "passed": true,
+      "evidence": "The first section ('First: your graph is bipartite, and that changes everything') explicitly identifies the graph as bipartite and states: 'Community detection on the raw bipartite graph will return communities that contain both users and items. These mixed communities are usually uninterpretable.' It also flags this as 'one of the most common errors in recommendation-system graph analysis'."
+    },
+    {
+      "text": "Output mentions approximate betweenness (sampling-based) or questions whether betweenness is the right metric for a recommendation system",
+      "passed": true,
+      "evidence": "Response recommends the 'Brandes-Pich approximation (randomized sampling of pivot nodes)' with a code example using `ApproxBetweenness(G, epsilon=0.1, delta=0.1)`. It also questions the metric choice: 'PageRank over the bipartite graph... gives item popularity weighted by user diversity, which is often more useful in recommendation contexts.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 10392,
+    "total_tool_calls": 0
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "response": "Short answer: not quite — and the distinction matters.\n\nA Bayesian 95% credible interval (CrI) and a frequentist p-value are answering different questions, and you can't directly translate one into the other.\n\nWhat your output actually tells you\n\nThe coefficient of 0.45 with 95% CrI [0.12, 0.79] means: given your model and your data, there is a 95% probability that the true parameter lies between 0.12 and 0.79. That is a posterior probability statement about the parameter itself.\n\nA frequentist p < 0.05 means: if the null hypothesis (β = 0) were true, the probability of observing data at least as extreme as yours is less than 5%. That is a statement about hypothetical repeated sampling, not about the parameter.\n\nWhy you cannot simply say 'p < 0.05'\n\nThe fact that your 95% CrI excludes zero does not make it equivalent to p < 0.05. This analogy is imprecise and will draw methodological criticism. Reviewers familiar with Bayesian methods will flag the conflation.\n\nWhat you should report instead\n\nReport the Bayesian quantities directly:\n> The posterior estimate for the effect was 0.45 (95% CrI [0.12, 0.79]).\n\nIf you want a Bayesian-native directional summary, compute the probability of direction — P(β > 0 | data) — via bayestestR::pd(fit). With the full posterior above zero, P(β > 0 | data) will be very high (likely > 0.99). Report it as: '99% of the posterior mass was above zero.' This is a legitimate Bayesian directional claim, not a p-value.\n\nRecommended language: 'The posterior median effect was 0.45 (95% CrI [0.12, 0.79]), with [X]% of the posterior mass above zero.'",
+  "expectations": [
+    {
+      "text": "Notes that Bayesian credible intervals are not the same as frequentist p-values",
+      "passed": true,
+      "evidence": "Explicitly explains: CrI is 'a posterior probability statement about the parameter itself' while p < 0.05 is 'a statement about hypothetical repeated sampling, not about the parameter.' Notes the analogy 'is imprecise and will draw methodological criticism.'"
+    },
+    {
+      "text": "Recommends reporting the posterior estimate and credible interval directly",
+      "passed": true,
+      "evidence": "'Report the Bayesian quantities directly' with explicit template: 'The posterior estimate for the effect was 0.45 (95% CrI [0.12, 0.79]).'"
+    },
+    {
+      "text": "Optionally mentions probability of direction (P(beta > 0 | data)) as a Bayesian-native alternative",
+      "passed": true,
+      "evidence": "Dedicated paragraph: 'compute the probability of direction — P(β > 0 | data) — via bayestestR::pd(fit)' with example reporting language."
+    },
+    {
+      "text": "Does NOT just say 'yes, p < 0.05'",
+      "passed": true,
+      "evidence": "Response opens 'Short answer: not quite' and never affirms the p < 0.05 framing."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

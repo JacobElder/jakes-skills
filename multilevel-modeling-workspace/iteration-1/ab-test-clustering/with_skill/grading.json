@@ -1,0 +1,26 @@
+{
+  "response": "Not quite — there are two non-independence problems in your data that lm() ignores entirely, and fixing them matters a lot for the validity of your inference.\n\nThe core issue: trials are not independent observations\n\nYou have 50,000 trials from 5,000 users, so each user contributes an average of 10 observations. Trials from the same user are correlated — they share that user's baseline propensity, engagement level, device, behavior patterns, and so on. lm(outcome ~ treatment, data=d) treats all 50,000 rows as independent, which deflates the standard error of your treatment estimate (pseudo-replication), making it anti-conservative. In cluster-randomized A/B tests, this is one of the most common and consequential analysis errors.\n\nBecause treatment was randomized at the user level — not the trial level — the effective sample size for your treatment contrast is determined by the number of users (5,000), not the number of trials (50,000).\n\nMinimum fix: cluster-robust standard errors at the user level\n\nIf you want to stay with a marginal/population-average model, at minimum cluster your standard errors at the unit of randomization (the user):\n\n```r\nlibrary(sandwich)\nlibrary(lmtest)\n\nfit <- lm(outcome ~ treatment, data = d)\ncoeftest(fit, vcov = vcovCL(fit, cluster = ~user_id))\n```\n\nBetter fix: multilevel model with a user-level random effect\n\n```r\nlibrary(lme4)\nlibrary(lmerTest)\n\nfit_mlm <- lmer(outcome ~ treatment + (1 | user_id), data = d)\nsummary(fit_mlm)\n```\n\nThis explicitly partitions variance into a user-level component (ICC) and a trial-level component. Because treatment is between-user, no random slope for treatment is possible — (1 | user_id) is the correct and complete specification at the user level.\n\nWhat about the 12 countries?\n\nYou have a third source of non-independence worth considering: users are nested within (or at least clustered by) country. Whether this matters depends on your goals:\n\n- If users are nested within countries, you have a three-level structure: trials → users → countries. Adding a country-level random effect accounts for cross-country heterogeneity:\n\n```r\nfit_3level <- lmer(outcome ~ treatment + (1 | country_id/user_id), data = d)\n```\n\n- With only 12 countries, you could also include country as a fixed effect (11 dummies), but the random effect approach pools sensibly and avoids overfitting.\n\n- If treatment randomization was stratified by country, check for a treatment × country interaction.\n\nPractical recommendation: Use lmer(outcome ~ treatment + (1 | user_id), data=d) as your primary model and add (1 | country_id) as a second random effect if you want to generalize across countries.",
+  "expectations": [
+    {
+      "text": "Identifies non-independence due to multiple trials per user",
+      "passed": true,
+      "evidence": "'You have 50,000 trials from 5,000 users, so each user contributes an average of 10 observations. Trials from the same user are correlated... lm() treats all 50,000 rows as independent, which deflates the standard error (pseudo-replication).'"
+    },
+    {
+      "text": "Recommends multilevel modeling with at least a user-level random effect, OR cluster-robust SEs clustered at the user level as a minimum alternative",
+      "passed": true,
+      "evidence": "Both given: cluster-robust SEs as 'minimum fix' with vcovCL(fit, cluster = ~user_id) code; MLM as 'better fix' with lmer(outcome ~ treatment + (1 | user_id), data = d) code."
+    },
+    {
+      "text": "Engages with the role of country as a possible additional grouping factor (cross-classified or as a 3rd level), even if to say it's optional",
+      "passed": true,
+      "evidence": "Full section 'What about the 12 countries?' addresses this with three-level formula lmer(outcome ~ treatment + (1 | country_id/user_id)) and discusses when country matters."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  }
+}

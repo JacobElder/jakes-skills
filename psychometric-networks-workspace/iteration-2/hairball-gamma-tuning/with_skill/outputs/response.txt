@@ -1,1 +1,119 @@
-You've hit your limit · resets 1:30am (America/Los_Angeles)
+A density of 87% (91/105) is not typical — most published GGMs on depression data land somewhere between 20–50% density with `EBICglasso` at `gamma = 0.5`. Something is mis-specified. Here's how to diagnose it systematically.
+
+---
+
+## Step 1 — Check the most likely culprits first
+
+### 1a. Confirm gamma is actually 0.5
+
+This is the single most common cause of hairball networks. Run:
+
+```r
+net <- estimateNetwork(
+  data,
+  default   = "EBICglasso",
+  corMethod = "cor_auto",
+  tuning    = 0.5          # be explicit — don't rely on the default
+)
+```
+
+If you called `qgraph::EBICglasso()` directly rather than `bootnet::estimateNetwork()`, the `gamma` argument defaults to **0** in some versions, which is pure BIC and produces maximally dense graphs. `bootnet` wraps this correctly at 0.5, but it's worth verifying:
+
+```r
+# Check what gamma was actually used
+net$estimationArguments$tuning
+```
+
+If that returns 0, you've found the problem. Try gamma = 0.5, then 0.75 for comparison:
+
+```r
+net_75 <- estimateNetwork(data, default = "EBICglasso",
+                          corMethod = "cor_auto", tuning = 0.75)
+```
+
+### 1b. Confirm you're using polychoric correlations
+
+Feeding Pearson correlations on Likert items into EBICglasso can distort the input correlation matrix in ways that inflate retained edges. `cor_auto` (from `qgraph`) automatically applies polychoric correlations to integer variables with ≤7 unique values:
+
+```r
+# Verify cor_auto is doing what you expect
+library(qgraph)
+check <- cor_auto(data)
+# Inspect: should show polychoric/polyserial, not Pearson
+```
+
+---
+
+## Step 2 — The most likely *structural* cause: node redundancy
+
+For a 15-item **depression** scale specifically, this is very probably the real issue. Depression inventories routinely include near-synonym items — "sad," "depressed," "down," "hopeless," "worthless" are conceptually and statistically near-identical. In a GGM, near-redundant items have nearly the same conditioning set, so they can't be made conditionally independent of each other, producing strong edges that *survive regularization* and inflate those nodes' centrality.
+
+Run `goldbricker` before any further estimation:
+
+```r
+library(networktools)
+gb <- goldbricker(data, p = 0.05, method = "hittner2003",
+                  threshold = 0.25, corMethod = "pearson")
+gb
+```
+
+`goldbricker` flags item pairs whose bivariate correlation profiles are so similar that the network likely can't distinguish them. **If it flags several pairs, prune or combine those items before re-estimating.** This is not optional cosmetic work — node selection is a precondition for valid network inference. Fried et al. (2016, "What are 'good' depression symptoms?") showed that keeping redundant nodes materially changes the estimated graph.
+
+Which scale are you using? If it's the BDI-II, CESD-20, or a composite of multiple measures (PHQ + GAD, etc.), the redundancy risk is high and worth checking first.
+
+---
+
+## Step 3 — Visual vs. model density
+
+Make sure you're looking at model density, not just the default plot. `qgraph` by default plots all non-zero edges regardless of weight. Some may be tiny but non-zero. Check:
+
+```r
+# How many edges are actually substantive?
+library(qgraph)
+w <- getWmat(net$graph)
+sum(abs(w[upper.tri(w)]) > 0)       # total non-zero
+sum(abs(w[upper.tri(w)]) > 0.05)    # above |0.05|
+sum(abs(w[upper.tri(w)]) > 0.10)    # above |0.10|
+```
+
+If the 91 edges collapse to ~30 above |0.05|, the model is actually sparse — it just doesn't look it. **You can set a display threshold without altering the model:**
+
+```r
+plot(net, layout = "spring", minimum = 0.05, theme = "colorblind")
+```
+
+Be clear in write-up that this is a visualization threshold, not a significance cut. The model is still the regularized one.
+
+---
+
+## Step 4 — If it's still too dense after the above
+
+Some depression instruments *genuinely* produce dense networks because most items are weakly but robustly conditionally dependent. If after fixing gamma, correlation method, and pruning redundant nodes you still have >60% density, consider:
+
+**4a. Use EGA to check dimensionality**
+
+```r
+library(EGAnet)
+ega <- EGA(data, model = "glasso", algorithm = "walktrap")
+plot(ega)
+```
+
+EGA will tell you whether the items actually load cleanly onto separable communities. If everything clusters into one community, the scale is highly internally coherent — the dense network is real, not artifactual, and you should interpret it as such.
+
+**4b. Report the edge-weight distribution, not just count**
+
+A dense GGM where most edges are in the |0.02|–|0.08| range is theoretically and practically different from one where edges are |0.15|–|0.40|. The former likely has a small-world structure with many weak regularized edges; the latter suggests genuine conditional dependence throughout.
+
+---
+
+## Summary: ordered diagnostic steps
+
+| Check | How | Likely impact |
+|---|---|---|
+| Gamma = 0 not 0.5 | `net$estimationArguments$tuning` | Can reduce edges by 50%+ |
+| Pearson instead of polychoric | `cor_auto(data)` | Moderate effect |
+| Node redundancy | `goldbricker(data)` | Often the main structural cause on depression scales |
+| Visual vs. model density | Edge weight distribution | Might already be fine |
+| EGA dimensionality check | `EGAnet::EGA(data)` | Contextualizes the density |
+
+Fix gamma and correlation method first (quick), then run `goldbricker` (the probable root cause for depression items), then re-estimate. Report the CS-coefficients from the case-dropping stability bootstrap regardless — N=210 for 15 nodes is workable but stability of centrality will be modest.

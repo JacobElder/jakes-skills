@@ -1,0 +1,43 @@
+{
+  "eval_id": 1,
+  "eval_name": "peer-effects",
+  "condition": "without_skill",
+  "expectations": [
+    {
+      "id": 1,
+      "description": "Output mentions Manski reflection problem or the linear-in-means identification failure",
+      "passed": true,
+      "evidence": "Dedicated section titled 'Reflection problem (Manski, 1993)': 'If you regress individual behavior on group mean behavior, and group membership is endogenous, the coefficient is not identified... Manski's \"reflection problem\" is the canonical framing here.' Also cited in references as Manski (1993) 'The foundational paper on why peer effects are hard to identify.'"
+    },
+    {
+      "id": 2,
+      "description": "Output mentions Shalizi-Thomas confounding or the homophily-contagion confound",
+      "passed": true,
+      "evidence": "The response explicitly discusses the homophily-contagion confound (lines 14–19: 'Your regression cannot separate these three mechanisms') and cites Shalizi & Thomas (2011) in references: 'A rigorous proof that homophily and contagion are not separable from cross-sectional data.'"
+    },
+    {
+      "id": 3,
+      "description": "Output does NOT claim the regression identifies causal peer effects",
+      "passed": true,
+      "evidence": "'But this is an association, not a causal effect.' The response consistently frames the 0.43 coefficient as an association and recommends: 'We find a strong positive association... While consistent with peer influence on smoking, this cross-sectional result cannot rule out selection... or correlated contextual effects.'"
+    },
+    {
+      "id": 4,
+      "description": "Output correctly specifies that SAOM/RSiena requires longitudinal panel data with at least 2 waves AND observable network change between waves — NOT just cross-sectional data",
+      "passed": false,
+      "evidence": "The response states RSiena 'requires panel data with at least two waves of both network and behavior measures' — this satisfies the 2-waves condition but does not explicitly state that observable change between waves is required. The phrase 'observable change between waves' is absent; the response only specifies the data collection requirement (two waves), not the modeling assumption that change must be observed."
+    },
+    {
+      "id": 5,
+      "description": "Output mentions Bramoullé et al. IV/GMM or friends-of-friends instruments as a cross-sectional identification strategy (not just 'use SAOM')",
+      "passed": false,
+      "evidence": "The response mentions IV generically: 'Natural experiments or instrumental variables... IV approaches require a valid instrument: something that affects who a student is friends with but does not independently affect their smoking behavior.' Bramoullé et al. is not cited, 'friends-of-friends instruments' are not mentioned, and 'network IV' is not named. The IV mention lacks any reference to the network structure instrument that defines the Bramoullé approach."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 2,
+    "total": 5,
+    "pass_rate": 0.6
+  }
+}

@@ -1,6 +1,6 @@
 {
   "eval_name": "stability-interpretation",
   "config": "with_skill",
-  "executor_duration_seconds": 5.0,
-  "total_duration_seconds": 5.0
+  "executor_duration_seconds": 38.88,
+  "total_duration_seconds": 38.88
 }

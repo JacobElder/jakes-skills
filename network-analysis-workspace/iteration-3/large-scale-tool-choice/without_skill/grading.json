@@ -1,0 +1,42 @@
+{
+  "expectations": [
+    {
+      "text": "Output redirects away from NetworkX for this scale (5M nodes, 800M edges)",
+      "passed": true,
+      "evidence": "Response opens with 'NetworkX will not work at this scale' and devotes a full section to explaining why, with a bottom line recommending alternatives. The scale figures (5M nodes, 800M edges) are acknowledged."
+    },
+    {
+      "text": "Output recommends NetworKit, cuGraph, or graph-tool as appropriate large-scale alternatives",
+      "passed": true,
+      "evidence": "Response explicitly recommends cuGraph (NVIDIA RAPIDS) and graph-tool as large-scale alternatives. NetworKit is not mentioned, but two of the three named tools are covered."
+    },
+    {
+      "text": "Output warns that exact betweenness centrality is computationally infeasible at this scale (O(VE) or O(V*E))",
+      "passed": true,
+      "evidence": "Response states 'Exact betweenness at this scale is almost certainly the wrong goal' and cites the complexity: 'O(VE) for unweighted graphs and O(VE + V² log V) for weighted.'"
+    },
+    {
+      "text": "Output recognizes that this is a bipartite (user-item) graph and warns that running standard community detection on it would conflate user and item nodes into mixed communities",
+      "passed": false,
+      "evidence": "The response never identifies the user-item interaction graph as bipartite, never uses the word 'bipartite', and never warns that standard community detection would mix user nodes and item nodes into meaningless mixed communities. Community detection is treated as straightforwardly applicable with no structural caveat."
+    },
+    {
+      "text": "Output mentions approximate betweenness (sampling-based) or questions whether betweenness is the right metric for a recommendation system",
+      "passed": true,
+      "evidence": "Response explicitly recommends 'Approximate betweenness with sampling' as the first option, describing Brandes' algorithm with pivot sampling at k=1000 source nodes. It also states 'Exact betweenness at this scale is almost certainly the wrong goal.'"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  },
+  "execution_metrics": {
+    "output_chars": 4581,
+    "total_tool_calls": 3
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

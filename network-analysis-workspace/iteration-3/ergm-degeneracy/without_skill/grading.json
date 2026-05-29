@@ -1,0 +1,42 @@
+{
+  "expectations": [
+    {
+      "text": "Output warns that triangle and kstar(2) terms are almost always degenerate in ERGMs",
+      "passed": true,
+      "evidence": "Response states 'The `triangle` term is well-known to cause near-certain degeneracy in ERGMs' and 'Higher-order `kstar` terms are also known to produce degenerate models.'"
+    },
+    {
+      "text": "Output recommends replacing triangle with gwesp AND explains WHY gwesp prevents degeneracy (decreasing marginal returns / each additional shared partner contributes less / curved exponential family)",
+      "passed": true,
+      "evidence": "Response recommends gwesp and explains: 'with diminishing returns for each additional shared partner. This prevents the explosive feedback that causes degeneracy.'"
+    },
+    {
+      "text": "Output recommends running mcmc.diagnostics() to check MCMC convergence",
+      "passed": true,
+      "evidence": "Response explicitly shows `mcmc.diagnostics(fit)` code and explains trace plots, mixing, and sample statistics to look for."
+    },
+    {
+      "text": "Output recommends running gof() as a required step before reporting results",
+      "passed": true,
+      "evidence": "Revised Workflow step 3: 'Run `gof(fit)` — confirm the model reproduces degree distribution, edgewise shared partners distribution, and geodesic distance distribution'"
+    },
+    {
+      "text": "Output explicitly states that the p-values from the degenerate model (including the triangle p < 0.001) are untrustworthy artifacts, not valid evidence",
+      "passed": true,
+      "evidence": "Response states 'The standard errors and p-values are invalid' and in the summary: 'The significant p-values and the triangle coefficient of 0.85 should not be reported as substantive findings. They are artifacts of a model that almost certainly did not converge to a proper distribution.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 4851,
+    "total_tool_calls": 3
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

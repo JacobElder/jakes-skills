@@ -1,0 +1,36 @@
+{
+  "response": "Given your design — 40 subjects each reading 80 sentences, with ambiguity status varying across sentences — you have a classic **crossed random effects** structure: subjects and items (sentences) are both random factors, and each subject sees each item (or at least items from both conditions). You should fit a **linear mixed-effects model** (e.g., using `lme4::lmer` in R or `mixedlm`/`MixedLM` in Python).\n\n**Model structure:**\n\n```r\nlmer(RT ~ ambiguity + (1 + ambiguity | subject) + (1 | item), data = dat)\n```\n\nA few points on why:\n\n1. **Crossed, not nested, random effects.** Subjects and items are crossed because every subject reads multiple items, and every item is read by multiple subjects. This is the standard psycholinguistics design (Clark, 1973; Baayen et al., 2008). Do *not* nest items within subjects.\n\n2. **By-subject random slope for ambiguity.** Ambiguity is a within-subject manipulation — every participant reads both ambiguous and unambiguous sentences. This means the effect of ambiguity can vary across participants (some may be more slowed by ambiguity than others). Omitting this slope and using only `(1 | subject)` would inflate Type I error for the ambiguity fixed effect, because the model would incorrectly treat the within-subject ambiguity contrast as if it were independent across observations. Barr et al. (2013, *Journal of Memory and Language*) show formally that random-intercept-only models for within-cluster manipulations produce anti-conservative tests; they recommend fitting the **maximal random effects structure** justified by the design (\"Keep It Maximal\").\n\n3. **By-item random slope for ambiguity — not estimable in this design.** Each sentence is *fixed* as either ambiguous or unambiguous — ambiguity is a between-items property. A given item does not appear in both conditions, so there is no within-item variance in ambiguity to estimate a slope over. Including `(1 + ambiguity | item)` would be asking the model to estimate how the effect of ambiguity varies across items that only ever experienced one level of the factor — this is not identified. A by-item random intercept `(1 | item)` is correct and sufficient: it accounts for the fact that some sentences are intrinsically faster or slower to read regardless of ambiguity status.\n\n**Full recommended model:**\n\n```r\nm <- lmer(log(RT) ~ ambiguity + (1 + ambiguity | subject) + (1 | item),\n          data = dat, REML = TRUE)\n```\n\n(Log-transforming RT is standard practice to address right-skewed distributions.)\n\nIf the by-subject random slope model fails to converge, consider simplifying to:\n\n```r\nlmer(log(RT) ~ ambiguity + (1 + ambiguity || subject) + (1 | item), data = dat)\n```\n\n(This removes the correlation between the by-subject intercept and slope, which is often the source of convergence issues.)",
+  "expectations": [
+    {
+      "text": "Identifies subjects and items as crossed random effects, not nested",
+      "passed": true,
+      "evidence": "Response explicitly states 'subjects and items are crossed because every subject reads multiple items, and every item is read by multiple subjects' and uses (1 + ambiguity | subject) + (1 | item) syntax, explicitly warning 'Do not nest items within subjects.'"
+    },
+    {
+      "text": "Includes a by-subject random slope for the ambiguity manipulation",
+      "passed": true,
+      "evidence": "Response includes (1 + ambiguity | subject) in the recommended model and explains the rationale: ambiguity is within-subject so slope heterogeneity across participants must be modeled."
+    },
+    {
+      "text": "Includes a by-item random slope for the ambiguity manipulation IF items appear in both conditions (within-items design), OR correctly explains that a by-item slope is not estimable because ambiguity is a between-items property in this design",
+      "passed": true,
+      "evidence": "Response explicitly explains: 'Each sentence is fixed as either ambiguous or unambiguous — ambiguity is a between-items property. A given item does not appear in both conditions, so there is no within-item variance in ambiguity to estimate a slope over... Including (1 + ambiguity | item) would be asking the model to estimate how the effect of ambiguity varies across items that only ever experienced one level of the factor — this is not identified.' This is a correct and complete explanation."
+    },
+    {
+      "text": "Does NOT recommend a random-intercepts-only model like (1 | subject)",
+      "passed": true,
+      "evidence": "Response recommends (1 + ambiguity | subject), explicitly warns against (1 | subject) only: 'Omitting this slope and using only (1 | subject) would inflate Type I error for the ambiguity fixed effect.'"
+    },
+    {
+      "text": "References the rationale for random slopes for within-cluster manipulations (Barr et al. 2013 / inflated Type I error / Keep It Maximal)",
+      "passed": true,
+      "evidence": "Response cites 'Barr et al. (2013, Journal of Memory and Language)' by name, mentions 'inflate Type I error', and quotes the 'Keep It Maximal' principle directly."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

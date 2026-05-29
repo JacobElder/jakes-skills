@@ -1,6 +1,6 @@
 {
   "eval_name": "expected-influence-vs-strength",
   "config": "with_skill",
-  "executor_duration_seconds": 48.7,
-  "total_duration_seconds": 48.7
+  "executor_duration_seconds": 44.39,
+  "total_duration_seconds": 44.39
 }

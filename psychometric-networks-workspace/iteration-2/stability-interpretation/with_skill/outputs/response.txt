@@ -1,1 +1,62 @@
-You've hit your limit · resets 1:30am (America/Los_Angeles)
+Good data to work with — your results are actually a textbook illustration of why the stability checks exist. Here's a precise read of each number and what it authorizes you to say.
+
+---
+
+## CS-coefficient interpretation
+
+The cutoffs from Epskamp, Borsboom & Fried (2018) are:
+
+| Index | Your CS | Verdict |
+|---|---|---|
+| **Expected Influence** | **0.44** | ✅ Interpretable — approaching the 0.50 "good" threshold |
+| **Strength** | **0.36** | ⚠️ Interpretable with caveats — above the 0.25 floor, below 0.50 |
+| **Closeness** | **0.13** | ❌ Do not interpret — below the 0.25 minimum |
+| **Betweenness** | **0.05** | ❌ Do not interpret — well below 0.25, and the field has additional grounds to drop this entirely |
+
+The CS-coefficient tells you the largest proportion of cases droppable while keeping centrality *order* correlated ≥ 0.70 with the full-sample order (95% probability). A CS of 0.13 for Closeness means the ranking falls apart after removing only ~13% of cases — that's sampling noise, not signal.
+
+Betweenness has a double problem: (a) CS = 0.05 makes it empirically indefensible, and (b) Bringmann et al. (2019, *J Abnormal Psychol*) established it is conceptually mismatched to dense weighted partial-correlation graphs regardless of sample size. **Drop both Closeness and Betweenness entirely** — don't even report the CS values as a hedge. Reporting them flags to reviewers that you know they're unstable but included them anyway.
+
+---
+
+## Edge weights — what wide, overlapping CIs mean
+
+Wide bootstrapped CIs with heavy overlap tell you three things:
+
+1. **Absolute edge values are unreliable** — don't interpret magnitudes (e.g., "the edge between X and Y is strong at 0.28").
+2. **Ordinal ranking of edges is limited** — because the bootstrapped difference test (not just CI overlap inspection) will show most adjacent pairs are statistically indistinguishable. Run `differenceTest(boot_object)` explicitly and see how few edge pairs you can actually rank.
+3. **The graph *structure* (which edges are non-zero) may be more stable than the weights** — the regularization in EBICglasso means the presence/absence of an edge is a different question from its precise weight. You can often say "these edges are reliably present in the network" even when you can't rank them.
+
+The responsible framing: report the network as **exploratory and hypothesis-generating**. You have a plausible structure, but not the precision to rank most edges or centrality indices.
+
+---
+
+## What you can responsibly report
+
+**Report:**
+- The network plot with edge weights (structure is still informative even when weights are imprecise)
+- Edge-weight bootstrapped CIs in supplementary material, with explicit language that most pairs are not statistically distinguishable
+- Centrality plot for **Expected Influence only** (CS = 0.44 clears the bar), with a sentence noting that Strength (CS = 0.36) shows similar but somewhat less stable ordering
+- The CS-coefficients for all four indices in a table — transparency about what you dropped and why
+- The bootstrapped difference tests for the two or three edge pairs and centrality nodes you do want to highlight
+
+**Do not report:**
+- Specific numeric edge weight rankings beyond the top vs. bottom contrast
+- Closeness or Betweenness in any form
+- Centrality-as-intervention-target claims (the cross-sectional design can't support that regardless of stability)
+
+**Recommended language for the paper:**
+
+> *Edge-weight bootstrapped confidence intervals were wide and largely overlapping, indicating that precise edge-weight magnitudes and rankings should be interpreted with caution (see Figure S1). CS-coefficients indicated that Expected Influence (CS = 0.44) and Strength (CS = 0.36) were sufficiently stable for ordinal interpretation, while Closeness (CS = 0.13) and Betweenness (CS = 0.05) fell below the recommended 0.25 threshold (Epskamp et al., 2018) and are not reported. These results should be treated as exploratory.*
+
+---
+
+## The honest diagnosis
+
+With 18 nodes, wide CIs, and CS values in this range, you're likely underpowered for stable centrality estimation. A few options if this is a work-in-progress rather than a final manuscript:
+
+- **Run a power/sample-size simulation** via the `bootnet` simulation functions (Constantin, Schuurman & Vermunt, 2022 in *Psychological Methods* is the current reference) to see what N you'd need for CS ≥ 0.50 on Strength/EI given your observed density.
+- **Consider EGA** (`EGAnet::EGA`) as a complementary or alternative analysis — it's more focused on dimensionality than centrality, and may be more stable at your sample size.
+- **Reframe the contribution** around network structure (which edges exist, which communities emerge) rather than centrality if the stability won't support the latter.
+
+The fact that EI > Strength in stability is itself a meaningful result worth a sentence — it suggests your network has edges with heterogeneous signs that matter for interpretation, which is exactly when EI is the right index to use.

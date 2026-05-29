@@ -1,6 +1,6 @@
 {
   "eval_name": "bootstrap-ci-vs-difference-test",
   "config": "without_skill",
-  "executor_duration_seconds": 4.08,
-  "total_duration_seconds": 4.08
+  "executor_duration_seconds": 46.37,
+  "total_duration_seconds": 46.37
 }

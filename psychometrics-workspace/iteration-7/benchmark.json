@@ -3,9 +3,9 @@
     "skill_name": "psychometrics",
     "skill_path": "/Users/jacobelder/Documents/GitHub/jakes-skills/psychometrics/psychometrics.skill",
     "executor_model": "claude-sonnet-4-6",
-    "timestamp": "2026-05-27T20:49:22.352549Z",
+    "timestamp": "2026-05-28T11:38:58.837899Z",
     "evals_run": [
-      "htmt-discriminant-validity",
+      "ceiling-effect-reliability",
       "irt-local-dependence",
       "latent-moderation-sem",
       "ri-clpm-vs-clpm"
@@ -17,95 +17,95 @@
   "runs": [
     {
       "eval_id": 1,
-      "eval_name": "htmt-discriminant-validity",
+      "eval_name": "ceiling-effect-reliability",
       "configuration": "with_skill",
       "run_number": 1,
       "result": {
-        "pass_rate": 0.8333,
-        "passed": 5,
-        "failed": 1,
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
         "total": 6,
-        "time_seconds": 47.7,
-        "tokens": 5847,
+        "time_seconds": 58.5,
+        "tokens": 5937,
         "errors": 0
       },
       "expectations": [
         {
-          "description": "Does NOT simply validate the Fornell-Larcker criterion as sufficient evidence for discriminant validity without raising concerns about its limitations",
+          "description": "Does NOT validate the supervisor's conclusion that lower alpha in the inpatient sample means the scale performs less reliably or should be restricted to mild-to-moderate populations",
           "passed": true,
-          "evidence": "The response explicitly states 'The Fornell-Larcker criterion has poor sensitivity \u2014 it routinely fails to flag discriminant validity problems' and frames FL as 'a necessary but insufficient condition,' directly raising concerns about its limitations rather than validating it as sufficient evidence."
+          "evidence": "The response explicitly states 'Your supervisor's conclusion is understandable but psychometrically imprecise' and argues the low alpha 'is almost certainly an artifact of this range restriction, not evidence that the scale measures depression less reliably in severe patients.' It reframes the issue as a ceiling/discriminative validity problem rather than reliability failure, and directly challenges the restriction recommendation: 'The issue isn't that the scale *fails* in severe populations \u2014 it's that it was probably never designed to *discriminate within* the severe range.'"
         },
         {
-          "description": "States that the Fornell-Larcker criterion has low sensitivity \u2014 it frequently fails to detect discriminant validity violations that exist",
+          "description": "Identifies the ceiling effect as the cause: the inpatient mean of 26.4/30 indicates nearly everyone scores near the maximum, compressing variance and suppressing alpha regardless of item quality",
           "passed": true,
-          "evidence": "The response explicitly states: 'Henseler, Ringle, & Sarstedt (2015, JAMS) demonstrated via simulation that the FL criterion has poor sensitivity \u2014 it routinely fails to flag discriminant validity problems, especially when factor correlations are moderate-to-high.'"
+          "evidence": "The response explicitly identifies the ceiling effect as the cause: 'Your inpatient sample has a mean of 26.4 out of 30 \u2014 sitting at 88% of the scale maximum. That is a severe ceiling effect... The total score distribution is heavily compressed toward the ceiling, drastically reducing \u03c3\u00b2_T. This mechanically deflates alpha even if the items are measuring depression perfectly consistently.'"
         },
         {
-          "description": "Names the HTMT (Heterotrait-Monotrait ratio of correlations) as the current standard for assessing discriminant validity in CFA/SEM contexts",
+          "description": "Explains the mechanism: alpha depends on inter-item correlations, which are attenuated when everyone endorses items at the same high level \u2014 this is a variance problem, not an item-quality problem",
           "passed": true,
-          "evidence": "The response explicitly names HTMT (Heterotrait-Monotrait ratio) as 'the current best-practice criterion' and states in the summary table that it is 'now the standard', citing Henseler et al. (2015) as the source."
+          "evidence": "The response explicitly explains: 'inter-item correlations are attenuated by range restriction. Less spread in scores \u2192 lower item correlations \u2192 lower alpha. This is a mechanical statistical artifact, not evidence of poor reliability.' It also notes 'Most items are being endorsed at or near their maximum by most patients... This mechanically deflates alpha even if the items are measuring depression perfectly consistently' \u2014 directly addressing that this is a variance problem, not an item-quality problem."
         },
         {
-          "description": "States the HTMT threshold: values below .85 provide evidence of discriminant validity for conceptually distinct constructs (or .90 for closely related constructs)",
+          "description": "States that the causal direction of the supervisor's inference is backwards: lower alpha in severe samples is an expected artifact of ceiling effects, not evidence that the scale works worse in that population",
           "passed": true,
-          "evidence": "The response states: 'HTMT < .85 (strict; conceptually distinct constructs)' and 'HTMT < .90 (liberal; conceptually related constructs)'"
+          "evidence": "The response explicitly states 'the reasoning has the causal arrow pointing in the wrong direction' and explains that lower alpha in the inpatient sample 'is almost certainly an artifact of this range restriction, not evidence that the scale measures depression less reliably in severe patients.' It directly contrasts the supervisor's claim ('Scale is unreliable in severe populations') against the correct interpretation ('Score variance collapses near the ceiling'), establishing that ceiling effects mechanically deflate alpha rather than indicating the scale works worse in that population."
         },
         {
-          "description": "Recommends computing HTMT \u2014 e.g., via semTools::htmt() in R \u2014 rather than relying solely on Fornell-Larcker",
+          "description": "Notes that reliability is a property of scores in a specific sample \u2014 a scale can have valid items that perform well in severe populations but still show low alpha due to ceiling-effect range restriction",
           "passed": true,
-          "evidence": "The response explicitly recommends computing HTMT and provides code: 'library(semTools)\\nhtmt(model, data = yourdata)' \u2014 directly recommending semTools::htmt() in R rather than relying solely on Fornell-Larcker, which it critiques as 'necessary but insufficient.'"
+          "evidence": "The response explicitly states: 'Alpha is not an intrinsic property of a scale. It is a function of the sample you compute it in' and 'This mechanically deflates alpha even if the items are measuring depression perfectly consistently' \u2014 directly noting that reliability is sample-dependent. It further explains that the ceiling effect in the severe inpatient sample (mean 26.4/30) causes range restriction that 'mechanically deflates alpha' even when items are valid, satisfying the assertion that a scale can have valid items that perform well in severe populations but show low alpha due to ceiling-effect range restriction."
         },
         {
-          "description": "Clarifies that AVE > .50 is a criterion for convergent validity (each construct explains more than half the variance in its indicators), not for discriminant validity \u2014 the two criteria serve different purposes",
-          "passed": false,
-          "evidence": "The model response never clarifies that AVE > .50 is a criterion for convergent validity (explaining more than half the variance in indicators), not discriminant validity. It treats AVE solely in the context of the Fornell-Larcker discriminant validity criterion without distinguishing that AVE > .50 serves a separate purpose as a convergent validity benchmark."
+          "description": "Recommends IRT as the appropriate method for evaluating scale performance at the severe end of the trait: item information functions show where on the theta range items are most discriminating, regardless of floor/ceiling issues in a specific sample",
+          "passed": true,
+          "evidence": "IRT test information function \u2014 This directly shows you *where on the severity spectrum* the scale provides reliable measurement. You will almost certainly see high information in the mid-range and rapid degradation near the ceiling. This is the right tool for the recommendation you're trying to make."
         }
       ]
     },
     {
       "eval_id": 1,
-      "eval_name": "htmt-discriminant-validity",
+      "eval_name": "ceiling-effect-reliability",
       "configuration": "without_skill",
       "run_number": 1,
       "result": {
-        "pass_rate": 0.8333,
-        "passed": 5,
-        "failed": 1,
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
         "total": 6,
-        "time_seconds": 56.7,
-        "tokens": 5904,
+        "time_seconds": 59.6,
+        "tokens": 6064,
         "errors": 0
       },
       "expectations": [
         {
-          "description": "Does NOT simply validate the Fornell-Larcker criterion as sufficient evidence for discriminant validity without raising concerns about its limitations",
+          "description": "Does NOT validate the supervisor's conclusion that lower alpha in the inpatient sample means the scale performs less reliably or should be restricted to mild-to-moderate populations",
           "passed": true,
-          "evidence": "The response explicitly states 'the current SEM literature has largely moved past treating it as sufficient evidence of discriminant validity' and dedicates a full section titled 'Why the Criterion Is No Longer Considered Sufficient,' citing Henseler et al. (2015) and noting it 'has poor sensitivity \u2014 it fails to detect discriminant validity problems even when constructs are empirically indistinguishable.' The bottom line explicitly states 'Fornell-Larcker is a necessary but no longer sufficient condition.'"
+          "evidence": "The response explicitly states 'The drop in \u03b1 shows the scale is less reliable in severe populations' is 'Overstated' and explains that 'The drop likely reflects ceiling effects and range restriction, not true reliability failure.' It further clarifies that calling it a 'reliability failure conflates two distinct constructs' and that the supervisor's mechanistic explanation is 'incomplete and can mislead.'"
         },
         {
-          "description": "States that the Fornell-Larcker criterion has low sensitivity \u2014 it frequently fails to detect discriminant validity violations that exist",
+          "description": "Identifies the ceiling effect as the cause: the inpatient mean of 26.4/30 indicates nearly everyone scores near the maximum, compressing variance and suppressing alpha regardless of item quality",
           "passed": true,
-          "evidence": "The response explicitly states: 'Henseler, Ringle, & Sarstedt (2015, JAMS) ran an extensive simulation study demonstrating that the Fornell-Larcker criterion has **poor sensitivity** \u2014 it fails to detect discriminant validity problems even when constructs are empirically indistinguishable'"
+          "evidence": "The response explicitly identifies the ceiling effect: 'Your inpatient sample has a mean of 26.4 out of 30 on a 10-item scale... Individual items have almost no room left to vary. When nearly everyone endorses most items at their maximum, item variances collapse. Collapsed item variances \u2192 attenuated inter-item correlations \u2192 lower \u03b1. This is a floor/ceiling artifact, not evidence of measurement failure in any fundamental sense.'"
         },
         {
-          "description": "Names the HTMT (Heterotrait-Monotrait ratio of correlations) as the current standard for assessing discriminant validity in CFA/SEM contexts",
+          "description": "Explains the mechanism: alpha depends on inter-item correlations, which are attenuated when everyone endorses items at the same high level \u2014 this is a variance problem, not an item-quality problem",
           "passed": true,
-          "evidence": "The model explicitly names HTMT as 'the preferred discriminant validity criterion' with a dedicated section titled 'What You Should Report Instead: HTMT' explaining the Heterotrait-Monotrait ratio of correlations and its thresholds, citing Henseler et al. (2015) as the methodological benchmark."
+          "evidence": "The response explicitly states: 'Collapsed item variances \u2192 attenuated inter-item correlations \u2192 lower \u03b1. This is a floor/ceiling artifact' and 'Range restriction reliably depresses observed correlations \u2014 this is a statistical artifact' and formula shows \u03b1 depends on ratio of item variances to total variance. The mechanism (variance restriction \u2192 attenuated correlations \u2192 lower alpha) is clearly explained as a variance/artifact problem distinct from item quality."
         },
         {
-          "description": "States the HTMT threshold: values below .85 provide evidence of discriminant validity for conceptually distinct constructs (or .90 for closely related constructs)",
+          "description": "States that the causal direction of the supervisor's inference is backwards: lower alpha in severe samples is an expected artifact of ceiling effects, not evidence that the scale works worse in that population",
           "passed": true,
-          "evidence": "The response explicitly states both thresholds: 'HTMT < .85 \u2014 conservative criterion (Kline, 2016; conceptually distinct constructs)' and 'HTMT < .90 \u2014 liberal criterion (Henseler et al., 2015; theoretically related constructs)'"
+          "evidence": "The response explicitly states: 'The drop likely reflects ceiling effects and range restriction, not true reliability failure' and frames the supervisor's reasoning as backwards \u2014 lower alpha in severe samples is an artifact of ceiling effects and range restriction ('floor/ceiling artifact'), not evidence the scale works worse. The table explicitly labels the supervisor's claim as 'Overstated' and explains the causal direction: collapsed item variances \u2192 attenuated inter-item correlations \u2192 lower \u03b1, driven by statistical artifacts of truncated range."
         },
         {
-          "description": "Recommends computing HTMT \u2014 e.g., via semTools::htmt() in R \u2014 rather than relying solely on Fornell-Larcker",
+          "description": "Notes that reliability is a property of scores in a specific sample \u2014 a scale can have valid items that perform well in severe populations but still show low alpha due to ceiling-effect range restriction",
           "passed": true,
-          "evidence": "The response explicitly recommends computing HTMT via semTools::htmt() in R: 'library(semTools) / htmt(model, data = your_data)' and states 'you need to compute it explicitly,' directly recommending semTools over relying solely on Fornell-Larcker."
+          "evidence": "The response explicitly states: 'Cronbach's \u03b1 is not a fixed property of a scale. It is a function of both the items and the score variance in the specific sample' and explains that range restriction 'reliably depresses observed correlations \u2014 this is a statistical artifact, not a signal that the items are measuring something incoherent.' It also notes 'If you drew a random subsample from your community sample and artificially truncated it to only those scoring 24\u201330, you would almost certainly see a similar drop in \u03b1, with the same scale and same items, simply because of reduced variance' \u2014 directly addressing that reliability is sample-dependent and that valid items can show low alpha due to ceiling-effect range restriction."
         },
         {
-          "description": "Clarifies that AVE > .50 is a criterion for convergent validity (each construct explains more than half the variance in its indicators), not for discriminant validity \u2014 the two criteria serve different purposes",
-          "passed": false,
-          "evidence": "The model response discusses AVE only in the context of discriminant validity (the Fornell-Larcker criterion: AVE > squared inter-construct correlation). It never clarifies that AVE > .50 is a separate criterion for convergent validity (indicating each construct explains more than half its indicators' variance), nor does it distinguish the two criteria as serving different purposes."
+          "description": "Recommends IRT as the appropriate method for evaluating scale performance at the severe end of the trait: item information functions show where on the theta range items are most discriminating, regardless of floor/ceiling issues in a specific sample",
+          "passed": true,
+          "evidence": "The response explicitly recommends IRT analysis: 'IRT analysis (e.g., Graded Response Model) \u2014 plot the test information function across the latent trait continuum. You'll likely find the scale has high information in the mild-to-moderate range and drops off sharply in the severe range, which is the real story.' It also mentions item information functions conceptually when discussing that '\u03b1 reflects average reliability across the full score range, but what you really want to know is whether the scale provides good measurement precision (test information) in the severe range.'"
         }
       ]
     },
@@ -395,42 +395,42 @@
   "run_summary": {
     "with_skill": {
       "pass_rate": {
-        "mean": 0.9583,
-        "stddev": 0.0722,
-        "min": 0.8333,
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
         "max": 1.0
       },
       "time_seconds": {
-        "mean": 33.675,
-        "stddev": 19.5689,
+        "mean": 36.375,
+        "stddev": 21.9214,
         "min": 0.0,
-        "max": 47.7
+        "max": 58.5
       },
       "tokens": {
-        "mean": 4824.0,
-        "stddev": 1925.6839,
+        "mean": 4846.5,
+        "stddev": 1937.9918,
         "min": 1497,
         "max": 6154
       }
     },
     "without_skill": {
       "pass_rate": {
-        "mean": 0.9166,
-        "stddev": 0.0833,
+        "mean": 0.9583,
+        "stddev": 0.0722,
         "min": 0.8333,
         "max": 1.0
       },
       "time_seconds": {
-        "mean": 55.975,
-        "stddev": 2.4201,
+        "mean": 56.7,
+        "stddev": 2.9129,
         "min": 53.0,
-        "max": 59.5
+        "max": 59.6
       },
       "tokens": {
-        "mean": 5922.5,
-        "stddev": 53.0212,
+        "mean": 5962.5,
+        "stddev": 78.3023,
         "min": 5851,
-        "max": 5997
+        "max": 6064
       }
     },
     "delta": {

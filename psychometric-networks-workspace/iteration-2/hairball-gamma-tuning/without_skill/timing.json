@@ -1,6 +1,6 @@
 {
   "eval_name": "hairball-gamma-tuning",
   "config": "without_skill",
-  "executor_duration_seconds": 3.51,
-  "total_duration_seconds": 3.51
+  "executor_duration_seconds": 76.67,
+  "total_duration_seconds": 76.67
 }

@@ -1,0 +1,36 @@
+{
+  "response": "Your design has two grouping factors — participants and sentences (items) — and they are crossed, not nested: every participant read every sentence. That structure demands a crossed random-effects model, not a simple by-subject random-intercept model.\n\nStep 1: Map the data structure\n- Unit of observation: one reading time per participant × sentence combination (40 × 80 = 3,200 rows).\n- Grouping factors: participants (N = 40) and items/sentences (N = 80). Because every participant saw every sentence, these are fully crossed — there is no hierarchy between them.\n- Fixed predictor: ambiguity (ambiguous vs. unambiguous). This manipulation varies within participants (each person saw both types) but is between items (each sentence is inherently ambiguous or not).\n\nStep 2: Random-effects structure\n\nFollowing the maximal-model principle (Barr, Levy, Scheepers & Tily, 2013 — \"Keep It Maximal\"), the random-effects structure should include everything the design supports:\n- By-participant random intercept: participants differ in baseline reading speed.\n- By-participant random slope for ambiguity: participants may differ in how much the ambiguity manipulation slows them. This is critical — omitting this slope uses the wrong error term and inflates Type I error. Barr et al. (2013) demonstrate false-positive rates of 20–50% at nominal α = .05 when random slopes are omitted for within-subjects manipulations.\n- By-item random intercept: sentences differ in baseline difficulty.\n- No by-item random slope for ambiguity: ambiguity does not vary within items (each sentence is fixed as ambiguous or unambiguous), so a by-item random slope is not estimable.\n\n```r\nlibrary(lme4)\nlibrary(lmerTest)\n\ncontrasts(d$ambiguity) <- c(-0.5, 0.5)  # sum/effect coding\n\nmodel <- lmer(RT ~ ambiguity +\n                (1 + ambiguity | participant) +\n                (1 | item),\n              data = d, REML = TRUE)\nsummary(model)\n```\n\nDo not use (1 | participant) alone — that random-intercepts-only model omits the by-participant slope, inflates Type I error, and is almost never defensible for within-subjects manipulations.",
+  "expectations": [
+    {
+      "text": "Identifies subjects and items as crossed random effects, not nested",
+      "passed": true,
+      "evidence": "Explicitly states 'they are crossed, not nested: every participant read every sentence' and uses two separate random-effect terms (1 + ambiguity | participant) + (1 | item), which is the crossed specification."
+    },
+    {
+      "text": "Includes a by-subject random slope for the ambiguity manipulation",
+      "passed": true,
+      "evidence": "Formula includes (1 + ambiguity | participant) and the text explicitly explains why this slope is necessary."
+    },
+    {
+      "text": "Includes a by-item random slope for the ambiguity manipulation IF items appear in both conditions (within-items design), OR correctly explains that a by-item slope is not estimable because ambiguity is a between-items property in this design",
+      "passed": true,
+      "evidence": "The response correctly explains that a by-item slope is not estimable: 'No by-item random slope for ambiguity: ambiguity does not vary within items (each sentence is fixed as ambiguous or unambiguous), so a by-item random slope is not estimable.' This is the correct application of the maximal-model principle — include slopes only where the predictor varies within the grouping factor. Expectation updated to accept the correct 'between-items' explanation as passing."
+    },
+    {
+      "text": "Does NOT recommend a random-intercepts-only model like (1 | subject)",
+      "passed": true,
+      "evidence": "Explicitly states 'Do not use (1 | participant) alone — that random-intercepts-only model omits the by-participant slope, inflates Type I error, and is almost never defensible for within-subjects manipulations.'"
+    },
+    {
+      "text": "References the rationale for random slopes for within-cluster manipulations (Barr et al. 2013 / inflated Type I error / Keep It Maximal)",
+      "passed": true,
+      "evidence": "Cites 'Barr, Levy, Scheepers & Tily, 2013 — Keep It Maximal' and states 'false-positive rates of 20–50% at nominal α = .05 when random slopes are omitted.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,1 +1,64 @@
-You've hit your limit · resets 1:30am (America/Los_Angeles)
+Your co-author is making a very common mistake — one that Epskamp, Borsboom & Fried (2018) explicitly warn against. **Overlapping individual CIs do not imply a non-significant difference.** The CI on the *difference* A − B is what matters, and it can easily exclude zero even when the individual CIs overlap substantially.
+
+## Why the overlap heuristic fails
+
+When two estimates come from the same dataset, they are positively correlated. That positive covariance shrinks the variance of their difference:
+
+```
+Var(A − B) = Var(A) + Var(B) − 2·Cov(A, B)
+```
+
+Because Cov(A, B) > 0 here (both estimates are drawn from the same bootstrapped networks), the CI for A − B is *narrower* than you'd predict by eyeballing the individual CIs. The visual overlap heuristic was designed for independent estimates — it breaks down badly for within-subject comparisons like this.
+
+A useful numeric anchor: two 95% CIs can overlap by about **half their half-width** and the difference can still be significant at α = .05. Your CIs — [0.18, 0.61] and [0.17, 0.58] — aren't just barely overlapping, they're almost entirely nested, so the heuristic *feels* compelling here. But you still need the actual difference test.
+
+## The correct test in `bootnet`
+
+Use the **nonparametric bootstrap** and call the difference test directly:
+
+```r
+library(bootnet)
+
+# 1. Run nonparametric bootstrap — this is NOT the case-dropping one
+boot_np <- bootnet(
+  net,
+  nBoots     = 1000,
+  type       = "nonparametric",
+  statistics = c("Strength", "ExpectedInfluence", "edge")
+)
+
+# 2. Visual difference matrix for ALL pairwise centrality comparisons
+#    Gray cell = not distinguishable; colored cell = significantly different
+plot(boot_np, statistics = "Strength", plot = "difference")
+
+# 3. Targeted test for the A vs B comparison you care about
+differenceTest(boot_np, "A", "B", statistic = "Strength")
+```
+
+`differenceTest()` returns whether the bootstrapped 95% CI of the **pairwise difference** A − B excludes zero. That's the operationally correct answer to "are these distinguishably different?"
+
+## Two bootstraps, two questions — don't mix them up
+
+| Bootstrap type | What it answers | Key output |
+|---|---|---|
+| `type = "nonparametric"` | Are individual edges / centrality values accurate? Are pairs *different* from each other? | Edge-weight CIs; difference test matrix |
+| `type = "case"` | Is the *ordering* of centrality stable if I drop cases? | CS-coefficient |
+
+Your co-author's argument conflates the first column with the second. The case-dropping bootstrap and its CS-coefficient tell you whether node A being ranked above node B is reproducible across subsamples — but even that's a separate question from whether the difference is statistically significant.
+
+## What to actually say in the paper
+
+The difference-test result will fall into one of two defensible positions:
+
+- **If the difference test is non-significant:** "Nodes A (Strength = 0.42) and B (Strength = 0.39) did not differ significantly in Strength centrality (bootstrapped difference test, *p* > .05), and neither should be preferentially interpreted as more central."
+- **If it is significant:** "Although the individual bootstrapped CIs overlapped substantially, the bootstrapped difference test indicated that A's Strength centrality was significantly higher than B's (*p* < .05), consistent with the pattern visible in the centrality plot."
+
+Either way, also report your CS-coefficients — if Strength's CS-coefficient is below 0.25 for this dataset, the ranking question is moot regardless of the difference test.
+
+## The bottom line for your co-author
+
+The rule is asymmetric:
+- **Non-overlapping CIs** → difference is significant (approximately, at a stricter α ≈ .025)
+- **Overlapping CIs** → difference *might or might not* be significant — you must run the test
+
+Your co-author has the logic backwards: overlap rules *in*, it does not rule *out*. Run `differenceTest()` and let that answer the question.

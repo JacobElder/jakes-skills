@@ -1,0 +1,661 @@
+{
+  "metadata": {
+    "skill_name": "network-analysis",
+    "skill_path": "network-analysis/SKILL.md",
+    "executor_model": "claude-sonnet-4-6",
+    "analyzer_model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-28T23:30:25Z",
+    "evals_run": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "runs_per_configuration": 1,
+    "methodology": "separate executor and grader agents \u2014 no self-grading bias"
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "peer-effects",
+      "configuration": "with_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output mentions Manski reflection problem or the linear-in-means identification failure",
+          "passed": true,
+          "evidence": "### Problem 1: The reflection problem (Manski 1993)\n\nThe coefficient on `mean_friends_smoking` does not cleanly identify influence because of **simultaneous determination**..."
+        },
+        {
+          "text": "Output mentions Shalizi-Thomas confounding or the homophily-contagion confound",
+          "passed": true,
+          "evidence": "Shalizi and Thomas (2011) proved formally that in observational cross-sectional data, **influence and homophily are generically confounded** \u2014 the statistical signature of 'my friends smoke so I smoke' and 'I became friends with smokers because I was already inclined to smoke' are indistinguishable without time ordering or exogenous variation."
+        },
+        {
+          "text": "Output does NOT claim the regression identifies causal peer effects",
+          "passed": true,
+          "evidence": "You cannot separate these with a cross-sectional OLS regression. [...] The honest framing: 'This is consistent with peer influence, but also with homophily... The cross-sectional design does not permit identification of the causal mechanism.'"
+        },
+        {
+          "text": "Output correctly specifies that SAOM/RSiena requires longitudinal panel data with at least 2 waves AND observable network change between waves \u2014 NOT just cross-sectional data",
+          "passed": true,
+          "evidence": "The key requirements: Minimum 2 waves, ideally 3+; Meaningful network change between waves (RSiena checks this); Meaningful behavior change between waves. [Option B explicitly contrasts: 'If you are stuck with cross-sectional data, there is still an identification strategy...']"
+        },
+        {
+          "text": "Output mentions Bramoull\u00e9 et al. IV/GMM or friends-of-friends instruments as a cross-sectional identification strategy (not just 'use SAOM')",
+          "passed": true,
+          "evidence": "### Option B: Use network structure as instruments (Bramoull\u00e9 et al. 2009)\n\nBramoull\u00e9, Djebbari & Fortin (2009) show that if your friendship network contains **intransitive triads**... then the smoking behavior of **friends-of-friends** provides a valid instrument for friends' smoking."
+        }
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "peer-effects",
+      "configuration": "without_skill",
+      "result": {
+        "pass_rate": 0.6,
+        "passed": 3,
+        "failed": 2,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "id": 1,
+          "description": "Output mentions Manski reflection problem or the linear-in-means identification failure",
+          "passed": true,
+          "evidence": "Dedicated section titled 'Reflection problem (Manski, 1993)': 'If you regress individual behavior on group mean behavior, and group membership is endogenous, the coefficient is not identified... Manski's \"reflection problem\" is the canonical framing here.' Also cited in references as Manski (1993) 'The foundational paper on why peer effects are hard to identify.'"
+        },
+        {
+          "id": 2,
+          "description": "Output mentions Shalizi-Thomas confounding or the homophily-contagion confound",
+          "passed": true,
+          "evidence": "The response explicitly discusses the homophily-contagion confound (lines 14\u201319: 'Your regression cannot separate these three mechanisms') and cites Shalizi & Thomas (2011) in references: 'A rigorous proof that homophily and contagion are not separable from cross-sectional data.'"
+        },
+        {
+          "id": 3,
+          "description": "Output does NOT claim the regression identifies causal peer effects",
+          "passed": true,
+          "evidence": "'But this is an association, not a causal effect.' The response consistently frames the 0.43 coefficient as an association and recommends: 'We find a strong positive association... While consistent with peer influence on smoking, this cross-sectional result cannot rule out selection... or correlated contextual effects.'"
+        },
+        {
+          "id": 4,
+          "description": "Output correctly specifies that SAOM/RSiena requires longitudinal panel data with at least 2 waves AND observable network change between waves \u2014 NOT just cross-sectional data",
+          "passed": false,
+          "evidence": "The response states RSiena 'requires panel data with at least two waves of both network and behavior measures' \u2014 this satisfies the 2-waves condition but does not explicitly state that observable change between waves is required. The phrase 'observable change between waves' is absent; the response only specifies the data collection requirement (two waves), not the modeling assumption that change must be observed."
+        },
+        {
+          "id": 5,
+          "description": "Output mentions Bramoull\u00e9 et al. IV/GMM or friends-of-friends instruments as a cross-sectional identification strategy (not just 'use SAOM')",
+          "passed": false,
+          "evidence": "The response mentions IV generically: 'Natural experiments or instrumental variables... IV approaches require a valid instrument: something that affects who a student is friends with but does not independently affect their smoking behavior.' Bramoull\u00e9 et al. is not cited, 'friends-of-friends instruments' are not mentioned, and 'network IV' is not named. The IV mention lacks any reference to the network structure instrument that defines the Bramoull\u00e9 approach."
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "bipartite-projection-communities",
+      "configuration": "with_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output flags the bipartite projection pathology (clique inflation, co-membership artifacts, inflated clustering)",
+          "passed": true,
+          "evidence": "Issue 1 explicitly describes how large projects create cliques, calls it 'an artifact of co-membership, not evidence of a tight-knit collaboration group,' and states it 'will inflate clustering coefficients, inflate modularity scores, and bias community detection toward absorbing those large-project cliques.'"
+        },
+        {
+          "text": "Output recommends SDSM or FDSM backbone extraction specifically \u2014 NOT the disparity filter (which ignores bipartite structure and is wrong here)",
+          "passed": true,
+          "evidence": "Response names both methods explicitly: 'The standard method for bipartite projections is the SDSM (Stochastic Degree Sequence Model) or the FDSM (Fixed Degree Sequence Model).' The disparity filter is never mentioned. The bipartite-specific rationale is given."
+        },
+        {
+          "text": "Output mentions direct bipartite community detection as an alternative (bipartite SBM, biSBM, graph-tool bipartite)",
+          "passed": true,
+          "evidence": "Section 'If you want a more principled approach' states: 'since your data is bipartite, you can skip projection entirely and run a bipartite SBM directly on the person \u00d7 project graph' with working graph-tool code using pclabel."
+        },
+        {
+          "text": "Output does NOT simply validate the Louvain-on-projection plan without warnings",
+          "passed": true,
+          "evidence": "Opening says 'on the right track conceptually, but there are two issues to fix before running Louvain \u2014 one that will meaningfully distort your results.' Concerns are co-presented with the partial acknowledgment, not afterthoughts."
+        },
+        {
+          "text": "Output explains why edge weights from bipartite projection are not the same as relationship strength (co-membership count confounds project size and individual activity)",
+          "passed": true,
+          "evidence": "Project-size confounding illustrated with 40-employee example. Individual-activity confounding addressed through SDSM/FDSM null framing. Both confounds substantively covered."
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "bipartite-projection-communities",
+      "configuration": "without_skill",
+      "result": {
+        "pass_rate": 0.4,
+        "passed": 2,
+        "failed": 3,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output flags the bipartite projection pathology (clique inflation, co-membership artifacts, inflated clustering)",
+          "passed": true,
+          "evidence": "The response warns that 'prolific participants inflate edge weights' due to volume not tight collaboration, that the projection produces a 'very dense graph' which causes 'trivial or noisy partitions', and recommends normalization to address this bias. The core pathology of co-membership inflating apparent relationship strength is clearly described, even though the specific term 'clique inflation' is not used."
+        },
+        {
+          "text": "Output recommends SDSM or FDSM backbone extraction specifically \u2014 NOT the disparity filter (which ignores bipartite structure and is wrong here)",
+          "passed": false,
+          "evidence": "The response never mentions SDSM (Stochastic Degree Sequence Model) or FDSM (Fixed Degree Sequence Model). It recommends Jaccard similarity and Newman hyperbolic weighting (collaboration_weighted_projected_graph) as alternatives to raw counts, and mentions 'thresholding' weak edges. No backbone extraction method specific to bipartite structure is named."
+        },
+        {
+          "text": "Output mentions direct bipartite community detection as an alternative (bipartite SBM, biSBM, graph-tool bipartite)",
+          "passed": false,
+          "evidence": "The response does mention 'direct bipartite community detection' as an alternative and cites 'the Barber bipartite modularity method or spectral approaches on the bipartite adjacency matrix.' However, it does not mention bipartite SBM, biSBM, or graph-tool specifically, which are the concrete implementations named in the expectation."
+        },
+        {
+          "text": "Output does NOT simply validate the Louvain-on-projection plan without warnings",
+          "passed": false,
+          "evidence": "The response opens with 'Your overall plan is sound and a common approach for this kind of problem' and closes the summary with 'Your plan is a standard, defensible approach.' These affirmations appear before and around the caveats, framing the plan as valid with minor refinements rather than raising serious concerns. Per strict grading rules, calling the plan 'sound' or 'standard' fails this expectation."
+        },
+        {
+          "text": "Output explains why edge weights from bipartite projection are not the same as relationship strength (co-membership count confounds project size and individual activity)",
+          "passed": true,
+          "evidence": "The response explains both confounds: individual activity ('An employee on 50 projects will share edges with many people simply because of volume, not because they collaborate tightly') and project size ('Large all-hands projects contribute less than small focused ones' \u2014 addressed by Newman hyperbolic weighting where each co-participant pair on a project of size k gets weight 1/(k-1))."
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "ergm-degeneracy",
+      "configuration": "with_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output warns that triangle and kstar(2) terms are almost always degenerate in ERGMs",
+          "passed": true,
+          "evidence": "Section 'The core problem: triangle and kstar(2) cause degeneracy' explicitly names both terms and explains the positive-feedback loop: 'more triangles \u2192 higher tie probability \u2192 more ties form \u2192 more triangles \u2192 ... \u2192 complete graph (or collapse to empty graph)'. kstar(2) is also named: 'degree-based terms with no marginal decay similarly explode.'"
+        },
+        {
+          "text": "Output recommends replacing triangle with gwesp AND explains WHY gwesp prevents degeneracy (decreasing marginal returns / each additional shared partner contributes less / curved exponential family)",
+          "passed": true,
+          "evidence": "Response recommends gwesp(decay, fixed=TRUE) and explains the mechanism in the replacement table: 'Each additional shared partner contributes geometrically less than the last \u2014 breaks the feedback loop.' Also elaborates: 'The decay parameter \u03b1 (typically 0.25\u20130.75) controls how fast the per-partner contribution diminishes.'"
+        },
+        {
+          "text": "Output recommends running mcmc.diagnostics() to check MCMC convergence",
+          "passed": true,
+          "evidence": "Section 'Diagnostics that are not optional' states: 'mcmc.diagnostics(fit) \u2014 examine trace plots for each parameter.' Also listed as step 4 in the summary: 'Run mcmc.diagnostics() \u2014 the chain must be stationary before you look at any coefficient.'"
+        },
+        {
+          "text": "Output recommends running gof() as a required step before reporting results",
+          "passed": true,
+          "evidence": "Section 'Diagnostics that are not optional' states: 'gof(fit) \u2014 simulates many graphs from your fitted model and compares their degree distributions... Both diagnostics must pass.' Also step 5 in the summary: 'Run gof() \u2014 the model must reproduce degree, shared partners, and geodesic distributions.'"
+        },
+        {
+          "text": "Output explicitly states that the p-values from the degenerate model (including the triangle p < 0.001) are untrustworthy artifacts, not valid evidence",
+          "passed": true,
+          "evidence": "Response states explicitly: 'The significant p-values you see are not evidence of transitivity. They are an artifact of a non-converged MCMC chain. The reported standard errors and p-values are meaningless when the chain has not explored the distribution correctly.' Opening also says the coefficients 'are artifacts, not estimates.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "ergm-degeneracy",
+      "configuration": "without_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output warns that triangle and kstar(2) terms are almost always degenerate in ERGMs",
+          "passed": true,
+          "evidence": "Response states 'The `triangle` term is well-known to cause near-certain degeneracy in ERGMs' and 'Higher-order `kstar` terms are also known to produce degenerate models.'"
+        },
+        {
+          "text": "Output recommends replacing triangle with gwesp AND explains WHY gwesp prevents degeneracy (decreasing marginal returns / each additional shared partner contributes less / curved exponential family)",
+          "passed": true,
+          "evidence": "Response recommends gwesp and explains: 'with diminishing returns for each additional shared partner. This prevents the explosive feedback that causes degeneracy.'"
+        },
+        {
+          "text": "Output recommends running mcmc.diagnostics() to check MCMC convergence",
+          "passed": true,
+          "evidence": "Response explicitly shows `mcmc.diagnostics(fit)` code and explains trace plots, mixing, and sample statistics to look for."
+        },
+        {
+          "text": "Output recommends running gof() as a required step before reporting results",
+          "passed": true,
+          "evidence": "Revised Workflow step 3: 'Run `gof(fit)` \u2014 confirm the model reproduces degree distribution, edgewise shared partners distribution, and geodesic distance distribution'"
+        },
+        {
+          "text": "Output explicitly states that the p-values from the degenerate model (including the triangle p < 0.001) are untrustworthy artifacts, not valid evidence",
+          "passed": true,
+          "evidence": "Response states 'The standard errors and p-values are invalid' and in the summary: 'The significant p-values and the triangle coefficient of 0.85 should not be reported as substantive findings. They are artifacts of a model that almost certainly did not converge to a proper distribution.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "centrality-process",
+      "configuration": "with_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output distinguishes between multiple centrality measures and explains they answer different questions",
+          "passed": true,
+          "evidence": "Response covers in-degree, PageRank, betweenness centrality, Burt's constraint, and harmonic centrality, each framed as answering a distinct question: prestige/status (in-degree/PageRank), brokerage/information flow (betweenness/constraint), and broadcast speed (harmonic). Step 2 header explicitly says 'Which centralities answer your specific questions' and separates them by goal."
+        },
+        {
+          "text": "Output asks about or discusses the substantive process (diffusion speed vs. brokerage vs. prestige/status) before recommending a single centrality",
+          "passed": true,
+          "evidence": "Step 0 classifies the network type (directed, one-mode, binary) before any metric is mentioned. Step 2 explicitly labels Goal A as a 'prestige/status question' and Goal B as a 'brokerage / information flow question' before recommending any specific measure. Summary section separately lists diffusion (harmonic/PageRank) vs. brokerage (betweenness/constraint) targets."
+        },
+        {
+          "text": "Output explicitly warns that eigenvector centrality is undefined or unreliable on directed networks without a strongly-connected component, and recommends Katz or PageRank instead",
+          "passed": true,
+          "evidence": "Lines 97-98 state: 'Do not use plain eigenvector centrality on this directed graph. Eigenvector centrality fails on directed networks without strong components \u2014 nodes with no in-edges receive score 0 and pass nothing upstream, breaking the computation. PageRank is the correct directed analog.' This explicitly names the failure mechanism (no strong components) and recommends PageRank as the alternative. Katz is not mentioned, but the expectation requires Katz OR PageRank."
+        },
+        {
+          "text": "Output does NOT simply recommend degree centrality or betweenness as 'the' answer without process-based justification",
+          "passed": true,
+          "evidence": "Neither in-degree nor betweenness is presented as a universal single answer. In-degree is explicitly scoped to Goal A (knowledge prestige), betweenness to Goal B (brokerage). The summary table maps each metric to a profile type with distinct interpretations and action recommendations. No metric is recommended without substantive justification tied to a specific use case."
+        },
+        {
+          "text": "Output provides specific centrality recommendations tied to specific use cases (e.g., PageRank/in-degree for knowledge prestige, betweenness for brokerage role)",
+          "passed": true,
+          "evidence": "In-degree and PageRank explicitly tied to 'knowledge champions / most sought-after advisors' (Goal A). Betweenness and Burt's constraint explicitly tied to 'early-rollout stakeholders / cross-group brokers' (Goal B). Harmonic centrality tied to fastest broadcasters. Final summary section restates these mappings clearly."
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "centrality-process",
+      "configuration": "without_skill",
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output distinguishes between multiple centrality measures and explains they answer different questions",
+          "passed": true,
+          "evidence": "Response covers four distinct measures \u2014 in-degree, betweenness, eigenvector/PageRank, and closeness \u2014 each with a separate section explaining what it measures and what decision it is best suited for."
+        },
+        {
+          "text": "Output asks about or discusses the substantive process (diffusion speed vs. brokerage vs. prestige/status) before recommending a single centrality",
+          "passed": true,
+          "evidence": "The response explicitly frames closeness as 'diffuse information quickly,' betweenness as identifying 'brokers who bridge otherwise disconnected groups,' and PageRank as 'prestige/status' amplified through high-influence advisors \u2014 all discussed before any single recommendation is made."
+        },
+        {
+          "text": "Output explicitly warns that eigenvector centrality is undefined or unreliable on directed networks without a strongly-connected component, and recommends Katz or PageRank instead",
+          "passed": false,
+          "evidence": "The response says only that PageRank 'handles directed networks more robustly than plain eigenvector centrality.' It does not name the specific failure mode (eigenvector scores become zero or undefined when there is no strongly-connected component), and it does not mention Katz centrality as an alternative. The warning is a vague comparative statement, not an explicit description of the structural failure condition."
+        },
+        {
+          "text": "Output does NOT simply recommend degree centrality or betweenness as 'the' answer without process-based justification",
+          "passed": true,
+          "evidence": "No single metric is presented as the universal answer. Every recommendation is conditional on a stated goal (e.g., betweenness for cross-functional rollout, in-degree for existing knowledge champions), and the workflow explicitly advises looking for overlap across multiple metrics."
+        },
+        {
+          "text": "Output provides specific centrality recommendations tied to specific use cases (e.g., PageRank/in-degree for knowledge prestige, betweenness for brokerage role)",
+          "passed": true,
+          "evidence": "The response includes an explicit table mapping goals to primary and secondary metrics (in-degree/PageRank for knowledge champions, betweenness/closeness for cross-functional rollout, PageRank/in-degree for early briefing), and the narrative reinforces these pairings with process rationale."
+        }
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "temporal-aggregation",
+      "configuration": "with_skill",
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output warns that aggregating to a static graph loses temporal information and conflates different time periods",
+          "passed": true,
+          "evidence": "The 'core problem with full aggregation' section explicitly lists three things lost: causal ordering, burstiness/inter-event times, and temporal change. It notes 'A 3-year window is long... Aggregating treats the network as if it were static throughout, which may obscure the very patterns you care about.'"
+        },
+        {
+          "text": "Output mentions time-respecting paths (temporal paths that respect arrow of time) as a key concept \u2014 and explains that paths in the aggregate can be causally impossible if timestamps are out of order",
+          "passed": true,
+          "evidence": "Response states: 'B can only relay information from A to C if A\u2192B happened *before* B\u2192C. In your aggregated graph, A\u2192B and B\u2192C exist as edges regardless of when they occurred, so the graph implies reachability that doesn't exist temporally.' This both defines time-respecting paths and explicitly explains that aggregate paths can be causally impossible."
+        },
+        {
+          "text": "Output recommends temporal network analysis tools (pathpy, teneto, snap-temporal, or equivalent)",
+          "passed": true,
+          "evidence": "Option B explicitly recommends 'pathpy or teneto' with a working code example using pathpy's TemporalNetwork and the comment 'pathpy will only count paths where contact timestamps are increasing.'"
+        },
+        {
+          "text": "Output explains that static betweenness and temporal betweenness can rank nodes in qualitatively different orders, not just quantitatively",
+          "passed": false,
+          "evidence": "The response says aggregate betweenness 'overstates brokerage' and that temporal betweenness identifies different employees (those in relay-enabling sequences vs. high-frequency communicators), but never explicitly states that the ranking order itself can flip \u2014 e.g., that a top-ranked static betweenness node can rank low on temporal betweenness. The framing is consistently quantitative ('overestimates,' 'more honest') rather than a qualitative rank-order inversion claim."
+        },
+        {
+          "text": "Output does NOT simply validate the static-aggregation plan as sufficient for understanding communication dynamics",
+          "passed": true,
+          "evidence": "While the response calls the plan 'a defensible first pass for descriptive questions,' it explicitly states it is 'insufficient or misleading' for claims about information flow/influence, understanding how communication evolved, and identifying brokers. The Summary section directly says temporal analysis is required for communication dynamics. The caveats are strong and not equivocal."
+        }
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "temporal-aggregation",
+      "configuration": "without_skill",
+      "result": {
+        "pass_rate": 0.6,
+        "passed": 3,
+        "failed": 2,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output warns that aggregating to a static graph loses temporal information and conflates different time periods",
+          "passed": true,
+          "evidence": "Response explicitly states: 'Temporal dynamics are discarded. Collapsing 3 years into a single matrix loses all information about when communication happened.' Also notes: 'Burstiness and recency are conflated with sustained influence. Someone who sent 500 emails in one intense two-week project sprint looks identical to someone who sent 500 emails at a steady rate of one per day.'"
+        },
+        {
+          "text": "Output mentions time-respecting paths (temporal paths that respect arrow of time) as a key concept \u2014 and explains that paths in the aggregate can be causally impossible if timestamps are out of order",
+          "passed": false,
+          "evidence": "The response never mentions 'time-respecting paths,' 'temporal paths,' or the concept that paths in the aggregate graph can be causally impossible (e.g., A\u2192B\u2192C in the aggregate may be impossible if A emailed B after B already emailed C). Temporal concerns are limited to burstiness and recency conflation, not the fundamental causal impossibility of aggregate paths."
+        },
+        {
+          "text": "Output recommends temporal network analysis tools (pathpy, teneto, snap-temporal, or equivalent)",
+          "passed": true,
+          "evidence": "Response explicitly recommends: 'Libraries like `teneto` (Python) support temporal network metrics \u2014 temporal degree, temporal betweenness, and burstiness \u2014 that operate directly on timestamped edge lists without collapsing time.'"
+        },
+        {
+          "text": "Output explains that static betweenness and temporal betweenness can rank nodes in qualitatively different orders, not just quantitatively",
+          "passed": false,
+          "evidence": "The response mentions that 'Weighted vs. unweighted results can diverge substantially,' but this is a comparison of weighted vs. unweighted static betweenness, not static vs. temporal betweenness. There is no mention of qualitative ranking differences between static and temporal betweenness centrality. The word 'qualitatively' does not appear in the response."
+        },
+        {
+          "text": "Output does NOT simply validate the static-aggregation plan as sufficient for understanding communication dynamics",
+          "passed": true,
+          "evidence": "While the response calls the plan 'a reasonable starting point,' it immediately follows with 'it has several important limitations... significant enough that they could lead you to incorrect conclusions.' The conclusion explicitly says 'treat it as a first pass rather than a final answer' and warns that 'a significant structural change mid-way through your 3-year window could substantially distort your conclusions.' The caveats are substantial enough that the plan is not validated as sufficient."
+        }
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "large-scale-tool-choice",
+      "configuration": "with_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output redirects away from NetworkX for this scale (5M nodes, 800M edges)",
+          "passed": true,
+          "evidence": "Response opens with 'Short answer: no, NetworkX will not work for this.' and dedicates an entire section ('Why NetworkX will not work at this scale') explaining that memory footprint would be 'several hundred gigabytes' and computation would take 'days to weeks', explicitly calling it 'the wrong tool category'."
+        },
+        {
+          "text": "Output recommends NetworKit, cuGraph, or graph-tool as appropriate large-scale alternatives",
+          "passed": true,
+          "evidence": "All three tools are explicitly recommended with code examples: NetworKit ('best starting point for your hardware budget'), cuGraph ('strong option if you have GPU hardware'), and graph-tool ('minimize_blockmodel_dl(bipartite=True) for bipartite SBM'). leidenalg is also mentioned as a supplemental option."
+        },
+        {
+          "text": "Output warns that exact betweenness centrality is computationally infeasible at this scale (O(VE) or O(V*E))",
+          "passed": true,
+          "evidence": "Response states 'Betweenness centrality is O(VE)' and 'Exact betweenness on 7M nodes and 800M edges is not tractable on any single machine regardless of library.' Step 5 of the recommended sequence explicitly says 'Approximate betweenness, do not compute exact.'"
+        },
+        {
+          "text": "Output recognizes that this is a bipartite (user-item) graph and warns that running standard community detection on it would conflate user and item nodes into mixed communities",
+          "passed": true,
+          "evidence": "The first section ('First: your graph is bipartite, and that changes everything') explicitly identifies the graph as bipartite and states: 'Community detection on the raw bipartite graph will return communities that contain both users and items. These mixed communities are usually uninterpretable.' It also flags this as 'one of the most common errors in recommendation-system graph analysis'."
+        },
+        {
+          "text": "Output mentions approximate betweenness (sampling-based) or questions whether betweenness is the right metric for a recommendation system",
+          "passed": true,
+          "evidence": "Response recommends the 'Brandes-Pich approximation (randomized sampling of pivot nodes)' with a code example using `ApproxBetweenness(G, epsilon=0.1, delta=0.1)`. It also questions the metric choice: 'PageRank over the bipartite graph... gives item popularity weighted by user diversity, which is often more useful in recommendation contexts.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "large-scale-tool-choice",
+      "configuration": "without_skill",
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output redirects away from NetworkX for this scale (5M nodes, 800M edges)",
+          "passed": true,
+          "evidence": "Response opens with 'NetworkX will not work at this scale' and devotes a full section to explaining why, with a bottom line recommending alternatives. The scale figures (5M nodes, 800M edges) are acknowledged."
+        },
+        {
+          "text": "Output recommends NetworKit, cuGraph, or graph-tool as appropriate large-scale alternatives",
+          "passed": true,
+          "evidence": "Response explicitly recommends cuGraph (NVIDIA RAPIDS) and graph-tool as large-scale alternatives. NetworKit is not mentioned, but two of the three named tools are covered."
+        },
+        {
+          "text": "Output warns that exact betweenness centrality is computationally infeasible at this scale (O(VE) or O(V*E))",
+          "passed": true,
+          "evidence": "Response states 'Exact betweenness at this scale is almost certainly the wrong goal' and cites the complexity: 'O(VE) for unweighted graphs and O(VE + V\u00b2 log V) for weighted.'"
+        },
+        {
+          "text": "Output recognizes that this is a bipartite (user-item) graph and warns that running standard community detection on it would conflate user and item nodes into mixed communities",
+          "passed": false,
+          "evidence": "The response never identifies the user-item interaction graph as bipartite, never uses the word 'bipartite', and never warns that standard community detection would mix user nodes and item nodes into meaningless mixed communities. Community detection is treated as straightforwardly applicable with no structural caveat."
+        },
+        {
+          "text": "Output mentions approximate betweenness (sampling-based) or questions whether betweenness is the right metric for a recommendation system",
+          "passed": true,
+          "evidence": "Response explicitly recommends 'Approximate betweenness with sampling' as the first option, describing Brandes' algorithm with pivot sampling at k=1000 source nodes. It also states 'Exact betweenness at this scale is almost certainly the wrong goal.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "community-stability",
+      "configuration": "with_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output warns that a single Louvain run reflects modularity DEGENERACY \u2014 many qualitatively different partitions have near-equal modularity (Good et al.) \u2014 not just random stochasticity",
+          "passed": true,
+          "evidence": "Response has a dedicated section titled 'The degeneracy problem (Good, De Montjoye & Clauset 2010)' and states 'The modularity landscape has exponentially many near-optimal partitions that are structurally very different from one another.' The word 'degeneracy' also appears later: 'an objective function with known degeneracy.' Explicit degeneracy concept, not just stochasticity."
+        },
+        {
+          "text": "Output frames stability analysis as a PREREQUISITE before naming or interpreting communities, not as an optional improvement step",
+          "passed": true,
+          "evidence": "The very first sentence is 'Before you name or describe these communities, there are several things that need to happen first.' The summary table closes with 'Only after steps 1 and 2 produce acceptable results should you proceed to naming communities. If stability is low (mean ARI < 0.70), switch to a Stochastic Block Model before reporting.' Naming guidance appears only in a conditional section headed 'How to report communities in your paper (conditional on passing the above).' Stability is framed as a gate, not an enhancement."
+        },
+        {
+          "text": "Output recommends running community detection many times (e.g., 100+ runs) and measuring pairwise stability with ARI, NMI, or similar",
+          "passed": true,
+          "evidence": "Step 1 code runs 100 Leiden iterations with different seeds and computes all pairwise ARI scores. Explicit thresholds are given (ARI > 0.90 = high stability; 0.70\u20130.90 = moderate; < 0.70 = unstable). The required paper elements section also says 'We ran the algorithm 100 times with different random seeds. The mean pairwise ARI across runs was 0.XX.'"
+        },
+        {
+          "text": "Output recommends comparing Q = 0.67 against a configuration-model null (random graphs with the same degree sequence) rather than accepting it at face value",
+          "passed": true,
+          "evidence": "Step 2 explicitly runs 1,000 configuration-model randomizations preserving the degree sequence, computes Q for each null graph, and recommends a z-score threshold: 'z-score of (0.67 \u2212 null_mean) / null_std > 3 is a reasonable threshold.' The required paper elements section also mandates: 'The observed modularity (Q = 0.67) substantially exceeded the mean modularity of 1,000 configuration-model null networks with the same degree sequence.'"
+        },
+        {
+          "text": "Output mentions Louvain resolution limit or the alternative of SBM (Stochastic Block Model) for more principled partitioning",
+          "passed": true,
+          "evidence": "Both are mentioned. Resolution limit: 'With m = 4800 edges, the resolution limit is \u221a(2 \u00d7 4800) \u2248 98 edges. Any community with fewer than ~98 internal edges is below the resolution limit...' Also appears in the summary table. SBM: Step 3 recommends degree-corrected SBM and nested SBM via graph-tool, noting DC-SBM 'does not suffer from the degeneracy pathology.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "community-stability",
+      "configuration": "without_skill",
+      "result": {
+        "pass_rate": 0.4,
+        "passed": 2,
+        "failed": 3,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output warns that a single Louvain run reflects modularity DEGENERACY \u2014 many qualitatively different partitions have near-equal modularity (Good et al.) \u2014 not just random stochasticity",
+          "passed": false,
+          "evidence": "The response frames the problem purely as non-determinism/seed variation: 'Louvain is non-deterministic. If you run it once and report Q = 0.67, a reviewer will ask whether this is the lucky run.' It never uses the words 'degenerate' or 'degeneracy,' and never mentions that the modularity landscape contains exponentially many near-optimal partitions that are qualitatively different (Good et al.). The concern is cast as 'does Q vary across runs?' not as a fundamental degeneracy of the objective function."
+        },
+        {
+          "text": "Output frames stability analysis as a PREREQUISITE before naming or interpreting communities, not as an optional improvement step",
+          "passed": false,
+          "evidence": "Section 2 ('Name Communities by Intellectual Content, Not by Topology') presents a full four-step naming workflow before any stability check is introduced. Stability appears in Section 3 as a reporting template and in Section 6 as a caveat under 'Multiple runs.' The structure is: name first, check stability later. Stability is never framed as a gate that must be passed before naming is meaningful."
+        },
+        {
+          "text": "Output recommends running community detection many times (e.g., 100+ runs) and measuring pairwise stability with ARI, NMI, or similar",
+          "passed": true,
+          "evidence": "Section 3 explicitly recommends 'run the algorithm 100 times with different random seeds and computed the normalized mutual information (NMI) between each pair of partitions.' Section 6 adds 'run the algorithm at least 50\u2013100 times.' NMI is named as the stability metric and Lancichinetti & Fortunato (2012) on consensus clustering is cited."
+        },
+        {
+          "text": "Output recommends comparing Q = 0.67 against a configuration-model null (random graphs with the same degree sequence) rather than accepting it at face value",
+          "passed": false,
+          "evidence": "The response opens by accepting Q = 0.67 as 'genuinely high' and 'strong' ('anything above 0.3 is conventionally considered meaningful; above 0.6 is strong'). No null model comparison is recommended anywhere in the response. The configuration model, random graph baseline, or degree-sequence-preserving null are never mentioned."
+        },
+        {
+          "text": "Output mentions Louvain resolution limit or the alternative of SBM (Stochastic Block Model) for more principled partitioning",
+          "passed": true,
+          "evidence": "Section 6 explicitly addresses the 'Resolution limit': 'Louvain with \u03b3 = 1.0 may merge small but cohesive clusters and may miss structure within large communities. If any community has more than ~400 nodes, consider whether it warrants recursive partitioning.' SBM is not mentioned, but the resolution limit is covered clearly."
+        }
+      ]
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "link-prediction-leakage",
+      "configuration": "with_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output identifies random negative sampling as a key validity problem (easy negatives inflate AUROC by 10-20pp)",
+          "passed": true,
+          "evidence": "Problem 2 section explicitly describes easy random negatives: 'most of your negatives are pairs of nodes with no common neighbors, in different communities, possibly in different components \u2014 these are trivially easy to distinguish from real friendships.' Correcting it is said to 'drop AUROC another 5\u201315 points'."
+        },
+        {
+          "text": "Output specifically identifies GNN message-passing leakage: test edges are visible in the message-passing graph during node encoding, so the model effectively 'sees' the test answers while training",
+          "passed": true,
+          "evidence": "Problem 1 section states: 'If test edge (A, B) is present in the training adjacency matrix during message passing, node A's embedding encodes information about B's neighborhood, and vice versa. When you then ask \"will A and B connect?\", the GNN already knows they are connected \u2014 it was in the training graph.' and 'The test edges are still visible to the encoder.' This precisely describes the message-passing leakage mechanism."
+        },
+        {
+          "text": "Output recommends a temporal train/test split (train on edges before time T, evaluate on edges after T) as the correct evaluation for the stated temporal forecasting goal",
+          "passed": true,
+          "evidence": "The 'Temporal validity' checklist and 'The correct evaluation pipeline' section both specify: 'Temporal split: train on edges formed before cutoff T; test on edges formed in the 6-month window after T. This is the only way to simulate real deployment.'"
+        },
+        {
+          "text": "Output recommends comparing to a simple structural baseline (Adamic-Adar, Jaccard, or Common Neighbors) as a required sanity check",
+          "passed": true,
+          "evidence": "A dedicated 'Baseline sanity check' section recommends Adamic-Adar as 'The single most informative diagnostic,' provides full Python code for computing it, and states 'Baselines to beat: Adamic-Adar and Resource Allocation on the same temporal split and same hard negatives.'"
+        },
+        {
+          "text": "Output recommends hard negative sampling (distance-2 non-edges or structurally similar non-edges) as a required fix",
+          "passed": true,
+          "evidence": "The fix for Problem 2 explicitly recommends 'hard negatives \u2014 non-edges that share at least one common neighbor' and 'sample negatives from node pairs at graph distance exactly 2 (one hop away from being connected).' The correct evaluation pipeline also specifies 'sample non-edges at-time-T with at least one common neighbor (distance-2 pairs), stratified by degree.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "link-prediction-leakage",
+      "configuration": "without_skill",
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5
+      },
+      "expectations": [
+        {
+          "text": "Output identifies random negative sampling as a key validity problem (easy negatives inflate AUROC by 10-20pp)",
+          "passed": true,
+          "evidence": "Response explicitly flags uniform random negative sampling as inflating AUROC: 'If you are sampling negatives uniformly at random from all non-edges, many of those negatives are between nodes with no structural relationship whatsoever. This makes the task easier.' Also dedicates Option 3 and Option 4 to fixing negative sampling. Does not cite the specific 10-20pp figure, but clearly identifies it as a key validity problem."
+        },
+        {
+          "text": "Output specifically identifies GNN message-passing leakage: test edges are visible in the message-passing graph during node encoding, so the model effectively 'sees' the test answers while training",
+          "passed": true,
+          "evidence": "Response explains: 'The training graph includes edges that are neighbors of your test edges \u2014 nodes that appear in test edges still have their training-set connections visible. A GNN aggregates neighborhood features across multiple hops, so node embeddings learned during training are heavily shaped by the neighborhood structure that partially encodes the existence of test edges.' This clearly describes structural entanglement where the GNN encodes test-edge information through neighborhood aggregation, matching the core mechanism even without using the exact phrase 'adjacency matrix during message-passing.'"
+        },
+        {
+          "text": "Output recommends a temporal train/test split (train on edges before time T, evaluate on edges after T) as the correct evaluation for the stated temporal forecasting goal",
+          "passed": true,
+          "evidence": "Option 1 is explicitly 'Temporal Split (Strongest Fix)' with: 'Training set: all edges with timestamp < T; Validation/test set: edges with timestamp >= T.' Also recommended in the detection section: 'Train on all edges formed before month T, evaluate on edges formed after month T.'"
+        },
+        {
+          "text": "Output recommends comparing to a simple structural baseline (Adamic-Adar, Jaccard, or Common Neighbors) as a required sanity check",
+          "passed": true,
+          "evidence": "Detection step 1: 'Compare against structural heuristics. Compute Common Neighbors, Jaccard, and Adamic-Adar on the same 80/20 split and measure their AUROC.' Named explicitly as a sanity check."
+        },
+        {
+          "text": "Output recommends hard negative sampling (distance-2 non-edges or structurally similar non-edges) as a required fix",
+          "passed": true,
+          "evidence": "Option 3 explicitly states: 'Use hard negatives: sample negative pairs from nodes that are 2-hop neighbors but not directly connected, rather than uniform random non-edges.' This names distance-2 non-edges specifically."
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.975,
+        "stddev": 0.0707,
+        "min": 0.8,
+        "max": 1.0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.7,
+        "stddev": 0.239,
+        "min": 0.4,
+        "max": 1.0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.28"
+    }
+  },
+  "notes": [
+    "Iteration-3 uses separate executor agents (write response without seeing assertions) and grader agents (grade response against assertions). This eliminates the self-grading bias observed in iteration-2.",
+    "Only failing with_skill case: temporal E4 \u2014 response says static betweenness overestimates temporal; does not say rankings can qualitatively invert. Fix: add explicit inversion language to temporal.md reference."
+  ]
+}

@@ -3,39 +3,39 @@
   "eval_id": 2,
   "eval_name": "expected-influence-vs-strength",
   "config": "without_skill",
-  "passed": 0,
+  "passed": 5,
   "total": 5,
   "expectations": [
     {
       "text": "Recommends Expected Influence over Strength, or recommends both with Expected Influence as the primary index for this network",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "\"Report both \u2014 but lead with EI for theoretical interpretation\" and \"Use EI as your primary centrality\" \u2014 explicitly makes EI the primary index while retaining Strength as complement."
     },
     {
       "text": "Explains the substantive reason: Strength sums absolute edge weights and loses sign information, so nodes with large positive and large negative edges get inflated Strength scores that don't reflect their net influence",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "\"Strength treats a strong negative edge identically to a strong positive edge\" and the 'active' example: \"Its Strength is high (sum of absolutes \u2248 1.6), but its EI is lower (net signed sum \u2248 +0.5) because the negative cross-community edges eat into it\" \u2014 directly illustrates inflated Strength for bridge nodes."
     },
     {
       "text": "Notes that negative edges between positive and negative affect items are structurally expected in an affect network, making sign information important",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "\"Between PA and NA: predominantly negative edges (the classic bipolar structure)\" and \"This creates a situation where Strength and EI can diverge substantially for bridge nodes\" \u2014 explicitly roots the sign-importance argument in the expected PA/NA cross-cluster negative edges."
     },
     {
       "text": "Attributes Expected Influence to Robinaugh et al. (2016) OR makes the equivalent point that EI was developed specifically to handle networks with negative edges without the attribution",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "Reporting template includes \"one-step Expected Influence (sum of signed edge weights; Robinaugh et al., 2016)\" \u2014 direct attribution with year."
     },
     {
       "text": "Notes that for unipolar networks (where all edges are positive), Strength and Expected Influence are equivalent OR does not contradict this",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "The response does not address unipolar networks at all and makes no claim that contradicts the equivalence of Strength and EI when all edges are positive. Nothing in the response is inconsistent with this fact."
     }
   ],
   "summary": {
-    "passed": 0,
-    "failed": 5,
+    "passed": 5,
+    "failed": 0,
     "total": 5,
-    "pass_rate": 0.0
+    "pass_rate": 1.0
   }
 }

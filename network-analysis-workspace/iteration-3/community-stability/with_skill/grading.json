@@ -1,0 +1,42 @@
+{
+  "expectations": [
+    {
+      "text": "Output warns that a single Louvain run reflects modularity DEGENERACY — many qualitatively different partitions have near-equal modularity (Good et al.) — not just random stochasticity",
+      "passed": true,
+      "evidence": "Response has a dedicated section titled 'The degeneracy problem (Good, De Montjoye & Clauset 2010)' and states 'The modularity landscape has exponentially many near-optimal partitions that are structurally very different from one another.' The word 'degeneracy' also appears later: 'an objective function with known degeneracy.' Explicit degeneracy concept, not just stochasticity."
+    },
+    {
+      "text": "Output frames stability analysis as a PREREQUISITE before naming or interpreting communities, not as an optional improvement step",
+      "passed": true,
+      "evidence": "The very first sentence is 'Before you name or describe these communities, there are several things that need to happen first.' The summary table closes with 'Only after steps 1 and 2 produce acceptable results should you proceed to naming communities. If stability is low (mean ARI < 0.70), switch to a Stochastic Block Model before reporting.' Naming guidance appears only in a conditional section headed 'How to report communities in your paper (conditional on passing the above).' Stability is framed as a gate, not an enhancement."
+    },
+    {
+      "text": "Output recommends running community detection many times (e.g., 100+ runs) and measuring pairwise stability with ARI, NMI, or similar",
+      "passed": true,
+      "evidence": "Step 1 code runs 100 Leiden iterations with different seeds and computes all pairwise ARI scores. Explicit thresholds are given (ARI > 0.90 = high stability; 0.70–0.90 = moderate; < 0.70 = unstable). The required paper elements section also says 'We ran the algorithm 100 times with different random seeds. The mean pairwise ARI across runs was 0.XX.'"
+    },
+    {
+      "text": "Output recommends comparing Q = 0.67 against a configuration-model null (random graphs with the same degree sequence) rather than accepting it at face value",
+      "passed": true,
+      "evidence": "Step 2 explicitly runs 1,000 configuration-model randomizations preserving the degree sequence, computes Q for each null graph, and recommends a z-score threshold: 'z-score of (0.67 − null_mean) / null_std > 3 is a reasonable threshold.' The required paper elements section also mandates: 'The observed modularity (Q = 0.67) substantially exceeded the mean modularity of 1,000 configuration-model null networks with the same degree sequence.'"
+    },
+    {
+      "text": "Output mentions Louvain resolution limit or the alternative of SBM (Stochastic Block Model) for more principled partitioning",
+      "passed": true,
+      "evidence": "Both are mentioned. Resolution limit: 'With m = 4800 edges, the resolution limit is √(2 × 4800) ≈ 98 edges. Any community with fewer than ~98 internal edges is below the resolution limit...' Also appears in the summary table. SBM: Step 3 recommends degree-corrected SBM and nested SBM via graph-tool, noting DC-SBM 'does not suffer from the degeneracy pathology.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 10144,
+    "total_tool_calls": 3
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

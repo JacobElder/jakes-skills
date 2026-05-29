@@ -1,0 +1,42 @@
+{
+  "expectations": [
+    {
+      "text": "Output warns that triangle and kstar(2) terms are almost always degenerate in ERGMs",
+      "passed": true,
+      "evidence": "Section 'The core problem: triangle and kstar(2) cause degeneracy' explicitly names both terms and explains the positive-feedback loop: 'more triangles → higher tie probability → more ties form → more triangles → ... → complete graph (or collapse to empty graph)'. kstar(2) is also named: 'degree-based terms with no marginal decay similarly explode.'"
+    },
+    {
+      "text": "Output recommends replacing triangle with gwesp AND explains WHY gwesp prevents degeneracy (decreasing marginal returns / each additional shared partner contributes less / curved exponential family)",
+      "passed": true,
+      "evidence": "Response recommends gwesp(decay, fixed=TRUE) and explains the mechanism in the replacement table: 'Each additional shared partner contributes geometrically less than the last — breaks the feedback loop.' Also elaborates: 'The decay parameter α (typically 0.25–0.75) controls how fast the per-partner contribution diminishes.'"
+    },
+    {
+      "text": "Output recommends running mcmc.diagnostics() to check MCMC convergence",
+      "passed": true,
+      "evidence": "Section 'Diagnostics that are not optional' states: 'mcmc.diagnostics(fit) — examine trace plots for each parameter.' Also listed as step 4 in the summary: 'Run mcmc.diagnostics() — the chain must be stationary before you look at any coefficient.'"
+    },
+    {
+      "text": "Output recommends running gof() as a required step before reporting results",
+      "passed": true,
+      "evidence": "Section 'Diagnostics that are not optional' states: 'gof(fit) — simulates many graphs from your fitted model and compares their degree distributions... Both diagnostics must pass.' Also step 5 in the summary: 'Run gof() — the model must reproduce degree, shared partners, and geodesic distributions.'"
+    },
+    {
+      "text": "Output explicitly states that the p-values from the degenerate model (including the triangle p < 0.001) are untrustworthy artifacts, not valid evidence",
+      "passed": true,
+      "evidence": "Response states explicitly: 'The significant p-values you see are not evidence of transitivity. They are an artifact of a non-converged MCMC chain. The reported standard errors and p-values are meaningless when the chain has not explored the distribution correctly.' Opening also says the coefficients 'are artifacts, not estimates.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "output_chars": 3971,
+    "total_tool_calls": 3
+  },
+  "timing": {
+    "total_duration_seconds": null
+  }
+}

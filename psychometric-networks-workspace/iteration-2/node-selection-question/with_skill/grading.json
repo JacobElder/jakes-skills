@@ -3,34 +3,34 @@
   "eval_id": 6,
   "eval_name": "node-selection-question",
   "config": "with_skill",
-  "passed": 0,
+  "passed": 4,
   "total": 4,
   "expectations": [
     {
       "text": "Acknowledges that node selection is a substantive theoretical choice, not a neutral one, and that network structure depends on which items are included",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "\"The nodes you choose *are* the theory. Choosing Y-BOCS items is choosing to model OCD as a system of severity facets, and that choice needs to be owned and defended rather than treated as a neutral data-collection decision.\" Also: \"the network approach is not a method you apply to *any* item set and read off disorder structure.\""
     },
     {
       "text": "References Fried's work on node selection, depression symptom heterogeneity, or the 'What are good depression symptoms' / '52 symptoms' line of work \u2014 OR makes the equivalent substantive point without the citation",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "\"The canonical references the reviewer is implicitly invoking are Fried (2017, *J Affect Disorders*, 'The 52 symptoms of major depression') and Fried, Epskamp, Nesse, Tuerlinckx & Borsboom (2016) 'What are good depression symptoms?' Both argue that node selection is a theoretical act with large consequences for estimated network structure.\""
     },
     {
       "text": "Mentions node redundancy / topological overlap as a methodological concern (near-duplicate items inflate edge weights)",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "\"These pairs may produce strong edges not because the underlying phenomena causally interact but because they are functionally near-duplicate items with nearly identical conditioning sets.\" The response explicitly flags the parallel obsession/compulsion item structure as a redundancy concern that distorts edge weights."
     },
     {
       "text": "Suggests checking for redundant nodes (e.g., networktools, goldbricker) or justifying selection theoretically",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "\"Run `networktools::goldbricker(data)` before estimation \u2014 you may find several flagged pairs.\" Also in the reviewer response section: \"Report goldbricker results to demonstrate you checked for node redundancy.\""
     }
   ],
   "summary": {
-    "passed": 0,
-    "failed": 4,
+    "passed": 4,
+    "failed": 0,
     "total": 4,
-    "pass_rate": 0.0
+    "pass_rate": 1.0
   }
 }

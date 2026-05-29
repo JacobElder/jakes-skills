@@ -3,39 +3,39 @@
   "eval_id": 3,
   "eval_name": "bootstrap-ci-vs-difference-test",
   "config": "without_skill",
-  "passed": 0,
+  "passed": 4,
   "total": 5,
   "expectations": [
     {
       "text": "Correctly identifies the co-author's reasoning as wrong \u2014 overlapping bootstrapped CIs do not imply the difference is not statistically significant",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "\"Your co-author is applying a well-known statistical fallacy\" and \"Overlapping individual CIs do not imply non-significance of the difference. This is one of the most common misinterpretations in applied statistics.\""
     },
     {
       "text": "Explains the logic: the CI for the difference between two statistics is not derived from the overlap of their individual CIs; they are separate quantities",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "\"A 95% CI for a single estimate addresses: does this value differ from zero? It says nothing direct about whether two values differ from each other. To test the difference, you need a CI for the quantity (A \u2212 B), not for A and B separately.\""
     },
     {
       "text": "Recommends the bootstrapped difference test (from bootnet, via differenceTest() or the plot method) as the correct tool for assessing pairwise centrality distinguishability",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "Provides full R workflow using bootnet's differenceTest() and plot method: \"differenceTest(boot, x = 'A', y = 'B', measure = 'strength')\" and \"The visual plot of the difference matrix is equally informative\""
     },
     {
       "text": "Notes the practical implication: in most psychometric networks, few centrality pairs are statistically distinguishable; this is the expected finding, not evidence of a problem",
       "passed": false,
-      "evidence": "GRADING_FAILED"
+      "evidence": "The response only addresses this specific pair's likely outcome (\"I'd predict the difference CI will comfortably include zero\") but never makes the broader field-level point that low distinguishability is typical across most psychometric networks and is expected rather than a methodological problem."
     },
     {
       "text": "Does NOT recommend a standard t-test or z-test on the point estimates as the solution",
-      "passed": false,
-      "evidence": "GRADING_FAILED"
+      "passed": true,
+      "evidence": "The response exclusively recommends the bootstrapped difference distribution approach via bootnet. No t-test or z-test is mentioned anywhere in the response."
     }
   ],
   "summary": {
-    "passed": 0,
-    "failed": 5,
+    "passed": 4,
+    "failed": 1,
     "total": 5,
-    "pass_rate": 0.0
+    "pass_rate": 0.8
   }
 }
