@@ -113,23 +113,29 @@ xychart-beta horizontal
     x-axis ["Crossed random effects", "Three-level small clusters", "Cluster-RCT power", "Random-intercept-only pushback", "Singular fit troubleshooting", "Nested ID uniqueness", "Treatment coding / simple effects", "A/B test clustering", "Bayesian credible interval", "Logistic GLMM interpretation", "ICC definition (brevity)", "Paired t-test"]
     y-axis "Pass rate" 0 --> 1
     bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-    bar [1.0, 1.0, 1.0, PLACEHOLDER_4, PLACEHOLDER_5, PLACEHOLDER_6, PLACEHOLDER_7, PLACEHOLDER_8, PLACEHOLDER_9, PLACEHOLDER_10, PLACEHOLDER_11, PLACEHOLDER_12]
+    bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
 ```
 
 | | With skill | Without skill | Delta |
 |--|:---:|:---:|:---:|
-| **Total expectations** | **48/48 (100%)** | **TBD** | **TBD** |
+| **Total expectations** | **48/48 (100%)** | **48/48 (100%)** | **+0pp** |
 
-*Benchmark in progress — without-skill run completing.*
+### Ceiling effect — iteration 1 finding
 
-### Where the skill holds the most important position
+Both configurations score 100%. This is the same pattern observed in psychometrics iteration 7: when evals are designed as direct, well-scoped questions, the base model answers them correctly. The skill's value is in **behavior modification** — whether it changes the model's *default* response when the user presents a wrong analysis rather than asking a question.
 
-| Case | What the trap is | With skill | Without skill |
-|------|---|:---:|:---:|
-| Random-intercept-only pushback | Base model may validate p=0.02 or frame slope as "optional" | 5/5 | TBD |
-| Singular fit troubleshooting | Base model may recommend dropping random effects immediately | 5/5 | TBD |
-| Logistic GLMM interpretation | Base model may miss conditional-vs-marginal distinction | 3/3 | TBD |
-| Paired t-test | Base model may reflexively push MLM for a narrow question | 3/3 | TBD |
+Iteration 1 evals asked: *"What model should I fit?"* or *"Is this defensible?"* — direct questions where the model reasons from scratch.
+
+The harder test, planned for iteration 2, uses **trap prompts**: the user presents a wrong analysis as already done and apparently acceptable, then asks for validation or next steps. Examples from the psychometrics playbook applied to MLM:
+
+| Trap | Base model default | Skill behavior |
+|------|---|---|
+| "I ran `lmer(rt ~ condition + (1\|subject))` and got p=0.02 — looks solid, right?" | Likely validates or hedges | Refuses to validate; explains the Type I inflation |
+| "My model wouldn't converge so I dropped random slopes — analysis looks clean now" | Likely accepts | Flags the under-specification; diagnosis before simplification |
+| "I aggregated to subject means before running ANOVA — standard practice, right?" | Likely agrees | Names Clark (1973); recommends crossed random effects |
+| "My reviewer said to use cluster means as the unit of analysis for my school study" | Likely complies | Flags loss of within-cluster information; explains design effect |
+
+The base model's factual knowledge on MLM is strong. Iteration 2 should isolate **pushback under apparent satisfaction** — which is exactly where the psychometrics skill showed the largest deltas (0.0 → 1.0 on nearly every trap case).
 
 ---
 

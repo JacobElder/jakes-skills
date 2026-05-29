@@ -1,0 +1,892 @@
+{
+  "metadata": {
+    "skill_name": "multilevel-modeling",
+    "skill_path": "/Users/jacobelder/Documents/GitHub/jakes-skills/multilevel-modeling/multilevel-modeling.skill",
+    "executor_model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-28T22:29:45.418953Z",
+    "evals_run": [
+      "ab-test-clustering",
+      "bayesian-credible-interval",
+      "cluster-rct-power",
+      "crossed-random-effects",
+      "icc-definition",
+      "logistic-glmm-interpretation",
+      "nested-id-uniqueness",
+      "paired-t-test",
+      "random-intercept-only-pushback",
+      "singular-fit-troubleshooting",
+      "three-level-small-clusters",
+      "treatment-coding-simple-effects"
+    ],
+    "runs_per_configuration": 1,
+    "iteration": 1,
+    "eval_design_note": "Iteration-1 uses 12 direct content-quality evals covering specification correctness, pushback on bad models, brevity calibration, and triggering. Each expectation is a specific, objectively checkable assertion. Both configurations score 100% \u2014 a full ceiling effect. The base model answers direct MLM questions correctly; the skill's behavioral value (changing defaults when a user presents a wrong analysis as apparently acceptable) is not captured by these prompts. Iteration-2 will use trap-based prompts where the user presents a flawed analysis and asks for validation."
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "crossed-random-effects",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies subjects and items as crossed random effects, not nested",
+          "passed": true,
+          "evidence": "Explicitly states 'they are crossed, not nested: every participant read every sentence' and uses two separate random-effect terms (1 + ambiguity | participant) + (1 | item), which is the crossed specification."
+        },
+        {
+          "text": "Includes a by-subject random slope for the ambiguity manipulation",
+          "passed": true,
+          "evidence": "Formula includes (1 + ambiguity | participant) and the text explicitly explains why this slope is necessary."
+        },
+        {
+          "text": "Includes a by-item random slope for the ambiguity manipulation IF items appear in both conditions (within-items design), OR correctly explains that a by-item slope is not estimable because ambiguity is a between-items property in this design",
+          "passed": true,
+          "evidence": "The response correctly explains that a by-item slope is not estimable: 'No by-item random slope for ambiguity: ambiguity does not vary within items (each sentence is fixed as ambiguous or unambiguous), so a by-item random slope is not estimable.' This is the correct application of the maximal-model principle \u2014 include slopes only where the predictor varies within the grouping factor. Expectation updated to accept the correct 'between-items' explanation as passing."
+        },
+        {
+          "text": "Does NOT recommend a random-intercepts-only model like (1 | subject)",
+          "passed": true,
+          "evidence": "Explicitly states 'Do not use (1 | participant) alone \u2014 that random-intercepts-only model omits the by-participant slope, inflates Type I error, and is almost never defensible for within-subjects manipulations.'"
+        },
+        {
+          "text": "References the rationale for random slopes for within-cluster manipulations (Barr et al. 2013 / inflated Type I error / Keep It Maximal)",
+          "passed": true,
+          "evidence": "Cites 'Barr, Levy, Scheepers & Tily, 2013 \u2014 Keep It Maximal' and states 'false-positive rates of 20\u201350% at nominal \u03b1 = .05 when random slopes are omitted.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "crossed-random-effects",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies subjects and items as crossed random effects, not nested",
+          "passed": true,
+          "evidence": "Response explicitly states 'subjects and items are crossed because every subject reads multiple items, and every item is read by multiple subjects' and uses (1 + ambiguity | subject) + (1 | item) syntax, explicitly warning 'Do not nest items within subjects.'"
+        },
+        {
+          "text": "Includes a by-subject random slope for the ambiguity manipulation",
+          "passed": true,
+          "evidence": "Response includes (1 + ambiguity | subject) in the recommended model and explains the rationale: ambiguity is within-subject so slope heterogeneity across participants must be modeled."
+        },
+        {
+          "text": "Includes a by-item random slope for the ambiguity manipulation IF items appear in both conditions (within-items design), OR correctly explains that a by-item slope is not estimable because ambiguity is a between-items property in this design",
+          "passed": true,
+          "evidence": "Response explicitly explains: 'Each sentence is fixed as either ambiguous or unambiguous \u2014 ambiguity is a between-items property. A given item does not appear in both conditions, so there is no within-item variance in ambiguity to estimate a slope over... Including (1 + ambiguity | item) would be asking the model to estimate how the effect of ambiguity varies across items that only ever experienced one level of the factor \u2014 this is not identified.' This is a correct and complete explanation."
+        },
+        {
+          "text": "Does NOT recommend a random-intercepts-only model like (1 | subject)",
+          "passed": true,
+          "evidence": "Response recommends (1 + ambiguity | subject), explicitly warns against (1 | subject) only: 'Omitting this slope and using only (1 | subject) would inflate Type I error for the ambiguity fixed effect.'"
+        },
+        {
+          "text": "References the rationale for random slopes for within-cluster manipulations (Barr et al. 2013 / inflated Type I error / Keep It Maximal)",
+          "passed": true,
+          "evidence": "Response cites 'Barr et al. (2013, Journal of Memory and Language)' by name, mentions 'inflate Type I error', and quotes the 'Keep It Maximal' principle directly."
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "three-level-small-clusters",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies the three-level nested structure",
+          "passed": true,
+          "evidence": "Explicitly maps all 3 levels: 'Level 1 = repeated measurements (time points nested within students), Level 2 = students nested within schools, Level 3 = schools (where the intervention was assigned).'"
+        },
+        {
+          "text": "Flags that 25 schools is small for level-3 inference",
+          "passed": true,
+          "evidence": "'25 schools is small for level-3 inference. CRSE is known to be unreliable below ~30\u201350 clusters; with only 25 schools the sandwich variance estimator can be anti-conservative or overly conservative.'"
+        },
+        {
+          "text": "Suggests MLM as preferred but engages with the OLS+CRSE alternative honestly",
+          "passed": true,
+          "evidence": "'MLM is preferred but CRSE is not wrong if you only want a population-average treatment effect and cluster at the school level. But it ignores the repeated-measures structure, gives no ICC/variance components, and has those small-sample weaknesses.' \u2014 honest engagement with both options."
+        },
+        {
+          "text": "Mentions Bayesian estimation as an option for small-cluster regimes, OR Kenward-Roger / small-sample corrections",
+          "passed": true,
+          "evidence": "Both covered: Kenward-Roger df via anova(fit, ddf = \"Kenward-Roger\") in lmerTest, and brms with weakly informative priors framed as 'the preferred route when cluster counts are in the 5\u201330 range.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "three-level-small-clusters",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies the three-level nested structure",
+          "passed": true,
+          "evidence": "Response explicitly labels the three levels: measurements (level 1) nested within students (level 2) nested within schools (level 3), and notes that OLS+CRSE collapses this hierarchy and cannot partition variance across levels."
+        },
+        {
+          "text": "Flags that 25 schools is small for level-3 inference",
+          "passed": true,
+          "evidence": "Response directly states '25 schools is a small number of level-3 units,' references the 30\u201350 cluster rule of thumb, cites Cameron & Miller (2015), and explains that the sandwich estimator is unreliable at n=25 clusters."
+        },
+        {
+          "text": "Suggests MLM as preferred but engages with the OLS+CRSE alternative honestly",
+          "passed": true,
+          "evidence": "Response calls MLM 'the preferred approach,' explains why, but also engages honestly with CRSE: acknowledges it as 'a reasonable starting point,' describes the specific failure mode (downward bias at small cluster counts), and suggests CR2-corrected CRSE as an acceptable robustness check rather than dismissing it entirely."
+        },
+        {
+          "text": "Mentions Bayesian estimation as an option for small-cluster regimes, OR Kenward-Roger / small-sample corrections",
+          "passed": true,
+          "evidence": "Response mentions both: Kenward-Roger degrees-of-freedom corrections (with specific software references: lme4 + pbkrtest, SAS PROC MIXED) and Bayesian estimation via brms/Stan, with explanation of why each is appropriate for small level-3 sample sizes."
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "cluster-rct-power",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies this as a cluster-randomized / cluster-RCT design",
+          "passed": true,
+          "evidence": "Opening sentence: 'Your design is a cluster-randomized trial (cluster RCT): treatment is assigned at the clinic level, not the patient level.'"
+        },
+        {
+          "text": "Notes that the relevant n is the number of clusters (30), not total patients",
+          "passed": true,
+          "evidence": "'The binding constraint is the number of clusters (clinics), not total patients.' And: 'For the treatment effect (a between-clinic effect), power scales with the number of clinics, not total N.'"
+        },
+        {
+          "text": "Recommends simulation-based power analysis (e.g., simr) or otherwise gives MLM-appropriate power guidance \u2014 NOT a t-test power calculator",
+          "passed": true,
+          "evidence": "Explicitly warns 'Do not use G*Power or similar OLS-based tools without a multilevel module' and recommends 'simr in R' by name."
+        },
+        {
+          "text": "Mentions ICC as an input to power",
+          "passed": true,
+          "evidence": "ICC appears in the design effect formula (n_eff = n_total / (1 + (m-1) \u00d7 ICC)), in the numerical example, and as a named required key input with suggested ranges."
+        },
+        {
+          "text": "Asks for or specifies an assumed effect size rather than computing power on a pilot estimate uncritically",
+          "passed": true,
+          "evidence": "'Do not rely on a pilot estimate uncritically \u2014 pilot estimates are typically noisy and upwardly biased. Power on the smallest effect that would be clinically meaningful.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "cluster-rct-power",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies this as a cluster-randomized / cluster-RCT design",
+          "passed": true,
+          "evidence": "Response explicitly states 'This is a cluster-randomized controlled trial (cluster-RCT) design \u2014 treatment is assigned at the clinic level, so the clinic is your unit of randomization.'"
+        },
+        {
+          "text": "Notes that the relevant n is the number of clusters (30), not total patients",
+          "passed": true,
+          "evidence": "Response states 'The relevant n is the number of clusters (30 clinics), not the total number of patients (600)' and explains that patients within a clinic are not independent."
+        },
+        {
+          "text": "Recommends simulation-based power analysis (e.g., simr) or otherwise gives MLM-appropriate power guidance \u2014 NOT a t-test power calculator",
+          "passed": true,
+          "evidence": "Response explicitly recommends simr for simulation-based power, also mentions clusterPower and analytic cluster-RCT formulas, and specifically says 'not a standard t-test calculator.'"
+        },
+        {
+          "text": "Mentions ICC as an input to power",
+          "passed": true,
+          "evidence": "Response devotes a full point to ICC, defines it, gives the design effect formula DEFF = 1 + (m\u22121) \u00d7 ICC, and lists it as a required input with typical value ranges."
+        },
+        {
+          "text": "Asks for or specifies an assumed effect size rather than computing power on a pilot estimate uncritically",
+          "passed": true,
+          "evidence": "Response explicitly warns 'don't just use a pilot estimate uncritically, as pilot ICCs and effect sizes are noisy' and frames effect size as something to assume based on clinical meaningfulness."
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "random-intercept-only-pushback",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies that the model is missing a by-subject random slope for condition",
+          "passed": true,
+          "evidence": "'The model lmer(rt ~ condition + (1 | subject)) is missing a by-subject random slope for condition \u2014 and condition is a within-subjects manipulation, which makes this omission consequential.'"
+        },
+        {
+          "text": "Explains that this inflates Type I error for the within-subjects effect",
+          "passed": true,
+          "evidence": "'the correct error term for testing the condition effect is the by-subject variability... A random-intercepts-only model doesn't estimate that variability; it pools residual variance incorrectly and produces a test statistic that is anti-conservative... The result is inflated Type I error.'"
+        },
+        {
+          "text": "States or strongly implies that the analysis as-fit is not defensible",
+          "passed": true,
+          "evidence": "First sentence: 'No, this analysis is not defensible as fit.' And: 'Bottom line: report the refit model, not the current one. A p-value from a misspecified model isn't a finding you can defend at review.'"
+        },
+        {
+          "text": "References the relevant literature (Barr et al. / Schielzeth & Forstmeier / Keep It Maximal) OR the specific Type I inflation finding",
+          "passed": true,
+          "evidence": "Cites both: 'Barr, Levy, Scheepers & Tily (2013) \u2014 Keep It Maximal' and 'Schielzeth & Forstmeier (2009)' with specific false-positive rates (20\u201350% at nominal \u03b1 = .05)."
+        },
+        {
+          "text": "Recommends refitting with (1 + condition | subject) or similar",
+          "passed": true,
+          "evidence": "'Refit with a by-subject random slope: lmer(rt ~ condition + (1 + condition | subject), data = d)'"
+        }
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "random-intercept-only-pushback",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies that the model is missing a by-subject random slope for condition",
+          "passed": true,
+          "evidence": "Response explicitly states: 'Omitting the by-subject random slope for condition ((1 + condition | subject)) is a meaningful modeling error' and elaborates that the model does not account for subjects differing in their condition effect."
+        },
+        {
+          "text": "Explains that this inflates Type I error for the within-subjects effect",
+          "passed": true,
+          "evidence": "Response states: 'This deflates the standard error of the condition fixed effect, inflating the t-statistic and producing anti-conservative (inflated) Type I error rates for that within-subjects effect.'"
+        },
+        {
+          "text": "States or strongly implies that the analysis as-fit is not defensible",
+          "passed": true,
+          "evidence": "Response states explicitly: 'The analysis as fit is not defensible as the primary inferential model.' Also: 'a p-value of 0.02 from this model is not trustworthy.' No hedging or validation of the p=0.02 result."
+        },
+        {
+          "text": "References the relevant literature (Barr et al. / Schielzeth & Forstmeier / Keep It Maximal) OR the specific Type I inflation finding",
+          "passed": true,
+          "evidence": "Response cites both Barr, Levy, Scheepers, & Tily (2013, 'Keep It Maximal,' Journal of Memory and Language) and Schielzeth & Forstmeier (2009, Behavioral Ecology) by name."
+        },
+        {
+          "text": "Recommends refitting with (1 + condition | subject) or similar",
+          "passed": true,
+          "evidence": "Response states: 'The correct approach is to refit with lmer(rt ~ condition + (1 + condition | subject))' and also mentions (1 + condition || subject) as a fallback if convergence fails."
+        }
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "singular-fit-troubleshooting",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Walks through diagnosis before simplification",
+          "passed": true,
+          "evidence": "Step 1 is explicitly labeled 'Diagnose first, simplify second' with isSingular(), VarCorr(), and rePCA() code. Framed as mandatory before any simplification."
+        },
+        {
+          "text": "Mentions at least one upstream fix (predictor scaling, contrast coding change, alternative optimizer like bobyqa/allFit)",
+          "passed": true,
+          "evidence": "All three covered in Step 2: scale() for predictors, contr.sum() for coding, and allFit() with specific mention of bobyqa and Nelder_Mead optimizers."
+        },
+        {
+          "text": "Recommends dropping correlation parameters (||) before dropping random slopes",
+          "passed": true,
+          "evidence": "Step 3 is dedicated to this: 'drop the correlation parameter before dropping the slope' with before/after code showing the || syntax."
+        },
+        {
+          "text": "Mentions principled simplification order (correlations first, then interaction slopes, etc.)",
+          "passed": true,
+          "evidence": "Step 4 gives explicit numbered list: (1) drop correlation parameters, (2) drop interaction-term slopes, (3) drop main-effect slopes for weaker effects, (4) never drop intercept. Cites Bates et al. 2015 and Matuschek et al. 2017."
+        },
+        {
+          "text": "Mentions Bayesian fitting with priors as an alternative for keeping the maximal structure",
+          "passed": true,
+          "evidence": "Step 5 provides complete brms code with lkj(2) and student_t priors, explained as 'a principled alternative to simplification' that 'keeps the full random-effects structure without parameter-estimate boundary issues.'"
+        }
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "singular-fit-troubleshooting",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Walks through diagnosis before simplification",
+          "passed": true,
+          "evidence": "Response explicitly calls for diagnosis first using isSingular() and VarCorr() before any simplification steps, framing the singular fit as potentially a data/specification problem rather than immediately jumping to dropping terms."
+        },
+        {
+          "text": "Mentions at least one upstream fix (predictor scaling, contrast coding change, alternative optimizer like bobyqa/allFit)",
+          "passed": true,
+          "evidence": "Response mentions all three upstream fixes: predictor scaling with scale(), contrast coding issues, and trying different optimizers via allFit() including bobyqa and Nelder_Mead."
+        },
+        {
+          "text": "Recommends dropping correlation parameters (||) before dropping random slopes",
+          "passed": true,
+          "evidence": "Response explicitly recommends using the double-bar syntax (slope || group) to drop the correlation while retaining the slope variance, and explains why this is preferable to removing slopes entirely."
+        },
+        {
+          "text": "Mentions principled simplification order (correlations first, then interaction slopes, etc.)",
+          "passed": true,
+          "evidence": "Response provides an explicit ordered list: (a) drop correlations with ||, (b) drop interaction/higher-order slopes before main-effect slopes, (c) drop less theoretically important slopes, (d) drop slopes entirely only as last resort."
+        },
+        {
+          "text": "Mentions Bayesian fitting with priors as an alternative for keeping the maximal structure",
+          "passed": true,
+          "evidence": "Response explicitly mentions brms and rstanarm with weakly informative priors on the correlation matrix (LKJ(2) prior) as a way to retain maximal structure while regularizing away from the boundary."
+        }
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "nested-id-uniqueness",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies the non-unique-ID problem",
+          "passed": true,
+          "evidence": "Response explicitly names 'ID non-uniqueness' and explains that IDs 1\u201330 within each classroom means different students share the same student_id value."
+        },
+        {
+          "text": "Explains that the naive syntax would conflate students with the same ID across classrooms",
+          "passed": true,
+          "evidence": "'lme4 treats all rows with student_id == 1 as belonging to the same random-effect level \u2014 effectively pooling students across classrooms who share a number... conflating students from different classrooms into spurious super-students.'"
+        },
+        {
+          "text": "Recommends either globally unique IDs or the explicit nesting syntax (e.g., classroom/student_id or classroom:student_id)",
+          "passed": true,
+          "evidence": "Both options given explicitly: (1 | classroom/student_id) which expands to (1 | classroom) + (1 | classroom:student_id), and creating a globally unique ID via paste(d$classroom, d$student_id, sep = \"_\")."
+        }
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "nested-id-uniqueness",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies the non-unique-ID problem",
+          "passed": true,
+          "evidence": "Explicitly states that student IDs 1\u201330 repeat across classrooms and that lme4 treats grouping factor levels as labels, so non-unique IDs cause incorrect model fitting."
+        },
+        {
+          "text": "Explains that the naive syntax would conflate students with the same ID across classrooms",
+          "passed": true,
+          "evidence": "States: 'lme4 will treat both as the same student \u2014 it has no way to know they are different people. You would effectively be fitting a model with far fewer random effects than intended, conflating students across classrooms and producing incorrect estimates.'"
+        },
+        {
+          "text": "Recommends either globally unique IDs or the explicit nesting syntax (e.g., classroom/student_id or classroom:student_id)",
+          "passed": true,
+          "evidence": "Provides both fixes: (1) creating globally unique IDs via paste(), and (2) using (1|classroom/student_id) or (1|classroom) + (1|classroom:student_id) with explanation of how the interaction term generates unique labels."
+        }
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "treatment-coding-simple-effects",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies that treatment-coded 'main effects' in interaction models are simple effects, not average effects",
+          "passed": true,
+          "evidence": "'the condition coefficient estimates the condition difference only at the reference level of time. It is a simple effect, not a marginal (average) effect.'"
+        },
+        {
+          "text": "Explains what the coefficient actually represents (effect at reference level of the other factor)",
+          "passed": true,
+          "evidence": "'the effect of A when B is at its reference level' and notes the coefficient changes with a different reference level choice, even though model predictions are unchanged."
+        },
+        {
+          "text": "Recommends either sum/contrast coding for the factors, OR using emmeans/marginaleffects to get the marginalized average effect",
+          "passed": true,
+          "evidence": "Both options given explicitly with working R code: sum/contrast coding via contrasts() and emmeans/marginaleffects with specific function calls."
+        },
+        {
+          "text": "References Schad et al. OR explains the issue clearly enough that the recommendation makes sense",
+          "passed": true,
+          "evidence": "Cites 'Schad, Vasishth, Hohenstein & Kliegl (2020, Journal of Memory and Language)' by name."
+        }
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "treatment-coding-simple-effects",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies that treatment-coded 'main effects' in interaction models are simple effects, not average effects",
+          "passed": true,
+          "evidence": "Response explicitly states 'what looks like a main effect is actually a simple effect' and explains that treatment coding gives the effect at the reference level, not the average."
+        },
+        {
+          "text": "Explains what the coefficient actually represents (effect at reference level of the other factor)",
+          "passed": true,
+          "evidence": "Response states: 'It is the effect of condition for participants/observations in the reference category of the other 2x2 factor \u2014 not an average over both levels.' This correctly describes the simple effect interpretation."
+        },
+        {
+          "text": "Recommends either sum/contrast coding for the factors, OR using emmeans/marginaleffects to get the marginalized average effect",
+          "passed": true,
+          "evidence": "Response recommends both: (1) recoding to sum/effects coding (\u00b10.5 or \u00b11), and (2) using emmeans(model, ~ condition) or marginaleffects::avg_comparisons() to obtain the marginalized average effect."
+        },
+        {
+          "text": "References Schad et al. OR explains the issue clearly enough that the recommendation makes sense",
+          "passed": true,
+          "evidence": "Response explicitly cites 'Schad et al. (2020, Journal of Memory and Language)' and the paper title 'How to capitalize on a priori contrasts in linear (mixed) models'. Additionally, the explanation of simple effects vs. average effects is clear and correct on its own."
+        }
+      ]
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "ab-test-clustering",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies non-independence due to multiple trials per user",
+          "passed": true,
+          "evidence": "'You have 50,000 trials from 5,000 users, so each user contributes an average of 10 observations. Trials from the same user are correlated... lm() treats all 50,000 rows as independent, which deflates the standard error (pseudo-replication).'"
+        },
+        {
+          "text": "Recommends multilevel modeling with at least a user-level random effect, OR cluster-robust SEs clustered at the user level as a minimum alternative",
+          "passed": true,
+          "evidence": "Both given: cluster-robust SEs as 'minimum fix' with vcovCL(fit, cluster = ~user_id) code; MLM as 'better fix' with lmer(outcome ~ treatment + (1 | user_id), data = d) code."
+        },
+        {
+          "text": "Engages with the role of country as a possible additional grouping factor (cross-classified or as a 3rd level), even if to say it's optional",
+          "passed": true,
+          "evidence": "Full section 'What about the 12 countries?' addresses this with three-level formula lmer(outcome ~ treatment + (1 | country_id/user_id)) and discusses when country matters."
+        }
+      ]
+    },
+    {
+      "eval_id": 8,
+      "eval_name": "ab-test-clustering",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Identifies non-independence due to multiple trials per user",
+          "passed": true,
+          "evidence": "Explicitly states observations from the same user are not independent due to shared user-level variance, notes OLS treats all 50,000 rows as independent inflating degrees of freedom and underestimating SEs, and highlights treatment was randomized at user level making the user (N=5,000) the effective unit."
+        },
+        {
+          "text": "Recommends multilevel modeling with at least a user-level random effect, OR cluster-robust SEs clustered at the user level as a minimum alternative",
+          "passed": true,
+          "evidence": "Recommends both: cluster-robust SEs via vcovCL or lm_robust clustered at user_id as the minimum fix, and lmer with (1 | user_id) as the better approach \u2014 providing working R code for both."
+        },
+        {
+          "text": "Engages with the role of country as a possible additional grouping factor (cross-classified or as a 3rd level), even if to say it's optional",
+          "passed": true,
+          "evidence": "Directly addresses the 12 countries, presents three options: fixed effect for country, cross-classified random effects with (1 | country), and a three-level nested model \u2014 explicitly framing it as a genuine design consideration."
+        }
+      ]
+    },
+    {
+      "eval_id": 9,
+      "eval_name": "bayesian-credible-interval",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Notes that Bayesian credible intervals are not the same as frequentist p-values",
+          "passed": true,
+          "evidence": "Explicitly explains: CrI is 'a posterior probability statement about the parameter itself' while p < 0.05 is 'a statement about hypothetical repeated sampling, not about the parameter.' Notes the analogy 'is imprecise and will draw methodological criticism.'"
+        },
+        {
+          "text": "Recommends reporting the posterior estimate and credible interval directly",
+          "passed": true,
+          "evidence": "'Report the Bayesian quantities directly' with explicit template: 'The posterior estimate for the effect was 0.45 (95% CrI [0.12, 0.79]).'"
+        },
+        {
+          "text": "Optionally mentions probability of direction (P(beta > 0 | data)) as a Bayesian-native alternative",
+          "passed": true,
+          "evidence": "Dedicated paragraph: 'compute the probability of direction \u2014 P(\u03b2 > 0 | data) \u2014 via bayestestR::pd(fit)' with example reporting language."
+        },
+        {
+          "text": "Does NOT just say 'yes, p < 0.05'",
+          "passed": true,
+          "evidence": "Response opens 'Short answer: not quite' and never affirms the p < 0.05 framing."
+        }
+      ]
+    },
+    {
+      "eval_id": 9,
+      "eval_name": "bayesian-credible-interval",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Notes that Bayesian credible intervals are not the same as frequentist p-values",
+          "passed": true,
+          "evidence": "Response explicitly distinguishes the two frameworks: 'A Bayesian 95% credible interval means there is a 95% posterior probability that the true parameter lies within [0.12, 0.79]' vs frequentist p-values which ask about long-run frequency under the null. States they are 'conceptually distinct and not interchangeable.'"
+        },
+        {
+          "text": "Recommends reporting the posterior estimate and credible interval directly",
+          "passed": true,
+          "evidence": "Response explicitly recommends: 'Report the posterior estimate and credible interval directly \u2014 this is the appropriate Bayesian summary. For example: \u03b2 = 0.45, 95% CrI [0.12, 0.79].'"
+        },
+        {
+          "text": "Optionally mentions probability of direction (P(beta > 0 | data)) as a Bayesian-native alternative",
+          "passed": true,
+          "evidence": "Response mentions 'Probability of direction (pd): P(\u03b2 > 0 | data)' and even references the bayestestR::p_direction() function for computing it in R."
+        },
+        {
+          "text": "Does NOT just say 'yes, p < 0.05'",
+          "passed": true,
+          "evidence": "Response begins with 'No, you cannot directly report a credible interval as p < 0.05' and provides extensive explanation of why the frameworks differ."
+        }
+      ]
+    },
+    {
+      "eval_id": 10,
+      "eval_name": "logistic-glmm-interpretation",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Explains the log-odds scale and how to convert to odds ratio or probability",
+          "passed": true,
+          "evidence": "Step 1 converts to odds ratio (exp(0.6) \u2248 1.82 with interpretation), Step 2 discusses probability conversion with caveats about doing it correctly."
+        },
+        {
+          "text": "Recommends emmeans or marginaleffects (or equivalent post-estimation tooling) for response-scale predictions",
+          "passed": true,
+          "evidence": "Step 2 provides explicit code for both emmeans(fit, ~ treatment, type = 'response') and marginaleffects avg_predictions() and avg_comparisons()."
+        },
+        {
+          "text": "Mentions the conditional-vs-marginal effect distinction in GLMMs, OR shows how to get population-average probabilities (re.form=NA or equivalent)",
+          "passed": true,
+          "evidence": "Step 3 is dedicated to this: 'The coefficient of 0.6 is a cluster-conditional (subject-specific) effect' vs. 'population-average effect.' Shows avg_predictions(fit, re.form = NA) explicitly."
+        }
+      ]
+    },
+    {
+      "eval_id": 10,
+      "eval_name": "logistic-glmm-interpretation",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Explains the log-odds scale and how to convert to odds ratio or probability",
+          "passed": true,
+          "evidence": "Response explains that 0.6 is on the log-odds scale, shows exp(0.6) \u2248 1.82 for the odds ratio conversion, and discusses converting to predicted probabilities for stakeholders."
+        },
+        {
+          "text": "Recommends emmeans or marginaleffects (or equivalent post-estimation tooling) for response-scale predictions",
+          "passed": true,
+          "evidence": "Response explicitly recommends both `marginaleffects` (avg_predictions, avg_comparisons) and `emmeans` (emmeans(model, ~ treatment, type = 'response')) with specific function calls, plus lme4's predict() with re.form = NA."
+        },
+        {
+          "text": "Mentions the conditional-vs-marginal effect distinction in GLMMs, OR shows how to get population-average probabilities (re.form=NA or equivalent)",
+          "passed": true,
+          "evidence": "Response explicitly distinguishes cluster-conditional (subject-specific) effects from population-average (marginal) effects in GLMMs, explains that the coefficient is cluster-conditional, notes that marginal effects are smaller due to the nonlinear sigmoid transformation, and shows re.form = NA as a method to obtain marginal/population-average predictions."
+        }
+      ]
+    },
+    {
+      "eval_id": 11,
+      "eval_name": "icc-definition",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Defines ICC as the proportion of total variance attributable to between-cluster (level-2) variation",
+          "passed": true,
+          "evidence": "'it is the proportion of total variance that is attributable to between-cluster (level-2) differences.'"
+        },
+        {
+          "text": "Gives the formula sigma^2_u / (sigma^2_u + sigma^2_e) or equivalent",
+          "passed": true,
+          "evidence": "Explicit formula: 'ICC = \u03c3\u00b2_u / (\u03c3\u00b2_u + \u03c3\u00b2_e)' with both components labeled."
+        },
+        {
+          "text": "Response is concise \u2014 does not launch into the full MLM workflow",
+          "passed": true,
+          "evidence": "Response is ~160 words, 3 short paragraphs. No model-fitting guidance, no discussion of when to use MLM, no full workflow."
+        },
+        {
+          "text": "Does NOT ask for clarification before defining the term",
+          "passed": true,
+          "evidence": "Response opens immediately with the definition, no clarifying questions asked."
+        }
+      ]
+    },
+    {
+      "eval_id": 11,
+      "eval_name": "icc-definition",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Defines ICC as the proportion of total variance attributable to between-cluster (level-2) variation",
+          "passed": true,
+          "evidence": "Response states 'measures the proportion of total variance in an outcome that is attributable to between-group (level-2) differences'"
+        },
+        {
+          "text": "Gives the formula sigma^2_u / (sigma^2_u + sigma^2_e) or equivalent",
+          "passed": true,
+          "evidence": "Response gives 'ICC = \u03c3\u00b2_u / (\u03c3\u00b2_u + \u03c3\u00b2_e)' with correct labeling of between-cluster and within-cluster variance components"
+        },
+        {
+          "text": "Response is concise \u2014 does not launch into the full MLM workflow",
+          "passed": true,
+          "evidence": "Response is ~180 words and stays focused on defining ICC and interpreting its values; does not cover model specification, random slopes, centering, or other MLM topics"
+        },
+        {
+          "text": "Does NOT ask for clarification before defining the term",
+          "passed": true,
+          "evidence": "Response immediately defines ICC without asking whether the user means ICC in measurement/reliability contexts vs. multilevel modeling"
+        }
+      ]
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "paired-t-test",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Acknowledges that a paired t-test is defensible for the specific comparison of two time points with complete data",
+          "passed": true,
+          "evidence": "Opens with: 'Yes, a paired t-test is defensible here \u2014 and for the specific question you're asking (time 1 vs. time 5 only, complete data, balanced design), it's a perfectly reasonable choice.' Closes: 'run the paired t-test. It's the right tool for that narrow question.'"
+        },
+        {
+          "text": "Notes that MLM is more general and recommends it for the broader question or when assumptions are violated",
+          "passed": true,
+          "evidence": "Three specific upgrade conditions given: missing data, full trajectory analysis, covariates. Explicit handoff: 'that's when I'd move to MLM.'"
+        },
+        {
+          "text": "Does NOT reflexively over-engineer \u2014 engages with the user's actual question",
+          "passed": true,
+          "evidence": "The paired t-test is the primary recommendation. MLM is introduced only conditionally, not as a reflexive replacement. The user's instinct is validated rather than dismissed."
+        }
+      ]
+    },
+    {
+      "eval_id": 12,
+      "eval_name": "paired-t-test",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Acknowledges that a paired t-test is defensible for the specific comparison of two time points with complete data",
+          "passed": true,
+          "evidence": "The response opens by affirming the paired t-test as 'perfectly reasonable' and 'well-suited' for the specific narrow question of comparing time 1 to time 5. It endorses the test directly and explains the mechanism."
+        },
+        {
+          "text": "Notes that MLM is more general and recommends it for the broader question or when assumptions are violated",
+          "passed": true,
+          "evidence": "The response explicitly notes that MLM (and repeated-measures ANOVA) would be appropriate if the user cares about the full trajectory across all five time points, or has missing intermediate data, or wants person-level covariates \u2014 framing MLM as the tool for the broader question."
+        },
+        {
+          "text": "Does NOT reflexively over-engineer \u2014 engages with the user's actual question",
+          "passed": true,
+          "evidence": "The response directly answers the user's question ('Yes, a paired t-test is a perfectly reasonable choice') without pivoting to MLM as the primary recommendation. The t-test is endorsed as 'the right tool' for the stated question; MLM is introduced only as a secondary option for a different, broader question the user did not ask."
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.0000"
+    },
+    "totals": {
+      "with_skill": "48/48",
+      "without_skill": "48/48"
+    }
+  }
+}
