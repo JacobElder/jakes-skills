@@ -1,0 +1,41 @@
+{
+  "run_id": "bootstrap-ci-vs-difference-test-without_skill",
+  "eval_id": 3,
+  "eval_name": "bootstrap-ci-vs-difference-test",
+  "config": "without_skill",
+  "passed": 4,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Correctly identifies the co-author's reasoning as wrong \u2014 overlapping bootstrapped CIs do not imply the difference is not statistically significant",
+      "passed": true,
+      "evidence": "\"Your co-author is invoking a very common but incorrect heuristic\" and the section header 'Why overlapping CIs \u2260 \"not significantly different\"' make this unambiguous."
+    },
+    {
+      "text": "Explains the logic: the CI for the difference between two statistics is not derived from the overlap of their individual CIs; they are separate quantities",
+      "passed": true,
+      "evidence": "\"The CI for the difference is what you need, and it has its own (often much narrower) uncertainty.\" Also gives the variance formula Var(A\u2212B) = Var(A) + Var(B) \u2212 2Cov(A,B) to show the difference has its own distributional quantity."
+    },
+    {
+      "text": "Recommends the bootstrapped difference test (from bootnet, via differenceTest() or the plot method) as the correct tool for assessing pairwise centrality distinguishability",
+      "passed": true,
+      "evidence": "Provides explicit R code using differenceTest(boot_np, \"A\", \"B\", statistic = \"strength\") and the difference plot method, with explanation of how the procedure works within bootstrap resamples."
+    },
+    {
+      "text": "Notes the practical implication: in most psychometric networks, few centrality pairs are statistically distinguishable; this is the expected finding, not evidence of a problem",
+      "passed": false,
+      "evidence": "The response only comments on the specific case ('The proper test may well confirm no significant difference'), but never makes the general claim that in most psychometric networks few centrality pairs are distinguishable and that this is the norm rather than a problem."
+    },
+    {
+      "text": "Does NOT recommend a standard t-test or z-test on the point estimates as the solution",
+      "passed": true,
+      "evidence": "The response recommends only the bootstrap difference test via differenceTest(); no t-test or z-test is mentioned anywhere."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  }
+}

@@ -115,7 +115,10 @@
       "Bash(cp -r /tmp/skill_inspect/sequence-analysis-hmm/references /Users/jacobelder/Documents/GitHub/jakes-skills/sequence-analysis-hmm/references)",
       "Bash(cp -r /tmp/skill_inspect/sequence-analysis-hmm/scripts /Users/jacobelder/Documents/GitHub/jakes-skills/sequence-analysis-hmm/scripts)",
       "Bash(python run_evals.py --model haiku --delay 3)",
-      "Bash(git *)"
+      "Bash(git *)",
+      "Bash(tar -tzf /Users/jacobelder/Documents/GitHub/jakes-skills/comp-modeling/comp-modeling-skill.tar.gz)",
+      "Bash(unzip -l /Users/jacobelder/Documents/GitHub/jakes-skills/psychometric-networks/files.zip)",
+      "Bash(unzip -l /Users/jacobelder/Documents/GitHub/jakes-skills/network-analysis/files.zip)"
     ]
   }
 }
