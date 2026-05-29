@@ -13,6 +13,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [nilearn-fmri](#nilearn-fmri) | fMRI analysis with nilearn | +42pp across 8 scenarios |
 | [psychometrics](#psychometrics) | Measurement theory & scale development | +97.5pp across 8 scenarios |
 | [comp-modeling](#comp-modeling) | Computational & cognitive modeling | Eval suite included |
+| [sequence-analysis-hmm](#sequence-analysis-hmm) | Hidden Markov Models & sequence analysis | +40pp across 10 content evals |
 
 ---
 
@@ -71,6 +72,18 @@ Fit generative process models of behavior — RL, prospect theory, drift-diffusi
 **Why it matters:** The skill enforces the simulate → recover → fit → compare → PPC workflow and flags the field-wide failure modes that separate publishable modeling from plausible-looking but unreliable results: parameter recovery before trusting estimates, model recovery before trusting comparisons, and the α/β identifiability trap that invalidates fits for subjects near the boundary.
 
 → [comp-modeling/](comp-modeling/)
+
+---
+
+## sequence-analysis-hmm
+
+Apply Hidden Markov Models and related sequence analysis techniques to problems with discrete latent structure. Covers three domains — bioinformatics (profile HMMs, HMMER, Pfam), time series (regime detection, anomaly detection, activity recognition), and NLP/speech (POS tagging, CRF comparison, ASR lineage) — plus the core algorithms (forward-backward, Viterbi, Baum-Welch) and the practical decisions that determine whether a model actually works.
+
+**Why it matters:** The base model treats casual HMM questions as an invitation to enumerate subcomponents in bold bullets, produces single-restart fits (the most common source of bad HMM answers), and misses specific pitfalls like the geometric duration assumption by name. The skill enforces prose answers for conceptual questions, mandates multi-restart fitting with held-out validation, and redirects cleanly when a Kalman filter, CRF, or change-point method is the right tool instead.
+
+**Gap:** +40pp on content evals (10/10 with skill vs. 6/10 base). Biggest wins on response formatting, code patterns, and pitfall diagnosis.
+
+→ [sequence-analysis-hmm/](sequence-analysis-hmm/)
 
 ---
 
