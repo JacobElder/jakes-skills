@@ -1,0 +1,52 @@
+Your co-author's **conclusion may well be right, but the reasoning is wrong** — and the distinction matters for how you write up the result.
+
+## Why overlapping CIs ≠ non-significant difference
+
+Each bootstrapped CI you're looking at is a *marginal* interval for one node's centrality in isolation. But Strength(A) and Strength(B) are not independent quantities — they come from the same bootstrap samples, and their estimates tend to move together (when a bootstrap resample produces a slightly denser graph, both nodes' strengths tend to rise). Because the two estimates are **positively correlated across bootstrap samples**, the CI on their *difference* is narrower than the visual overlap of the two marginal CIs would imply.
+
+The classic consequence: two estimates whose individual 95% CIs overlap by 50% can still have a difference that is "significant" at p < .05, because the relevant quantity is the distribution of (Strength_A − Strength_B) across bootstrap samples, not the union of two separate distributions.
+
+This is a field-wide known pitfall. Epskamp, Borsboom & Fried (2018) say it explicitly: *"non-overlapping confidence intervals do not equal a significant difference."*
+
+## The correct test: bootstrapped difference test in `bootnet`
+
+```r
+library(bootnet)
+
+# Run the nonparametric bootstrap (if you haven't already)
+boot_np <- bootnet(net, nBoots = 1000, type = "nonparametric", statistics = "strength")
+
+# Visual difference test — the standard output to include in papers
+plot(boot_np,
+     statistics = "strength",
+     plot        = "difference",
+     onlyNonZero = TRUE,
+     order       = "sample")   # orders nodes by sample centrality
+
+# Direct pairwise test for A vs. B specifically
+differenceTest(boot_np, "A", "B", statistics = "strength")
+```
+
+The difference plot shows, for each pair of nodes, a grey square if their centrality values **cannot** be distinguished and a colored square if they **can**. The `differenceTest()` call gives you the bootstrap p-value for the specific comparison.
+
+## What to expect with your numbers
+
+| | Node A | Node B |
+|---|---|---|
+| Strength | 0.42 | 0.39 |
+| 95% CI | [0.18, 0.61] | [0.17, 0.58] |
+| CI width | 0.43 | 0.41 |
+
+The **difference is 0.03**, and both CIs span nearly 0.4. That's a signal-to-noise ratio that will almost certainly not survive the difference test. I'd bet strongly on a non-significant result. So your co-author's bottom line — *don't claim A is more central* — is probably correct. But the justification should be "the bootstrapped difference test is non-significant," not "the CIs overlap."
+
+## Broader context worth flagging in your write-up
+
+In practice, the published psychometric-network literature finds that **very few pairs of centrality values survive the difference test** at typical sample sizes (often fewer than the top 2–3 nodes can be distinguished from the middle of the pack). This is **normal and expected**, not a sign something went wrong. The field consensus (Epskamp et al., 2018; Burger et al., 2023) is:
+
+- Report **centrality ordering** (node ranking) rather than absolute values or pairwise comparisons.
+- Report **CS-coefficients** from the case-dropping bootstrap alongside centrality plots so readers know how stable the ordering itself is.
+- Don't over-interpret small centrality differences without difference-test support.
+
+So your write-up should say something like: *"Strength centrality is plotted in Figure X. The bootstrapped difference test (Figure Y) indicated that few pairs of nodes were statistically distinguishable in centrality, which is typical for networks estimated from samples of this size. Node A and Node B did not differ significantly (bootstrapped difference test, p = .XX), and we therefore interpret the overall pattern of centrality rather than specific pairwise rankings."*
+
+That's cleaner and more defensible than either claiming a difference or justifying the absence of one with overlapping CI eyeballing.

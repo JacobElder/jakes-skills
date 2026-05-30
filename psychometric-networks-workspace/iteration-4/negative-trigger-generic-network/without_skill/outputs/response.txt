@@ -1,0 +1,48 @@
+## Betweenness Centrality
+
+**Betweenness centrality** measures how often a node sits on the *shortest path* between other pairs of nodes in a network. It answers the question: **"How much does this node act as a bridge or bottleneck?"**
+
+### The Formula (intuitively)
+
+For each node *v*, look at every pair of other nodes (*s*, *t*) and ask: what fraction of the shortest paths between *s* and *t* pass through *v*? Sum that up across all pairs.
+
+- A node with **high betweenness** sits on many shortest paths → it's a critical connector.
+- A node with **low betweenness** is on the periphery → removing it wouldn't disrupt much.
+
+---
+
+### Concrete Example: Airline Hub Networks
+
+Imagine a flight network where nodes are cities and edges are direct routes.
+
+```
+Seattle ── Chicago ── New York
+              │
+           Dallas ── Miami
+              │
+           Houston
+```
+
+**Chicago** has high betweenness centrality — nearly every cross-country trip routes through it. If Chicago's airport shuts down, travel between the coasts and the South becomes severely disrupted.
+
+This is exactly why airlines build **hub-and-spoke** models around high-betweenness cities.
+
+---
+
+### Other Real-World Use Cases
+
+| Domain | What High Betweenness Signals |
+|---|---|
+| **Social networks** | Influential "brokers" who connect otherwise separate communities |
+| **Internet infrastructure** | Routers whose failure would partition the network |
+| **Supply chains** | Suppliers or warehouses that are single points of failure |
+| **Neuroscience** | Brain regions that integrate signals across modules |
+| **Epidemiology** | "Super-spreader" individuals who bridge social clusters |
+
+---
+
+### Key Nuance
+
+Betweenness centrality is distinct from **degree centrality** (just counting connections). A node can have *few* direct connections but *enormous* betweenness if it's the only bridge between two clusters — think of a single bridge connecting two islands. That bridge has degree 2 but controls all traffic between the islands.
+
+This makes betweenness especially valuable for identifying **vulnerability** and **control** in a network, not just popularity.

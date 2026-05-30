@@ -47,7 +47,7 @@ plot(net, layout = "spring", theme = "colorblind")
 centralityPlot(net, include = c("Strength", "ExpectedInfluence"))
 ```
 
-`cor_auto` matters: items with ≤7 unique integer values are treated as ordinal and entered as polychoric correlations via `lavaan`. Forgetting this and feeding Pearson correlations on Likert data is one of the most common errors. `tuning = 0.5` (gamma) is the field default per Epskamp & Fried (2018); lower gives a denser, more exploratory graph, higher gives a sparser, more conservative one.
+`cor_auto` matters: items with ≤7 unique integer values are treated as ordinal and entered as polychoric correlations via `lavaan`. Forgetting this and feeding Pearson correlations on Likert data is one of the most common errors — Pearson correlations on ordinal data are inflated relative to their polychoric equivalents, which makes it harder for the graphical lasso to shrink edges to zero and can directly cause an artificially dense or "hairball" network. When a user reports unexpectedly high edge density, check whether polychoric correlations were used before investigating other causes. `tuning = 0.5` (gamma) is the field default per Epskamp & Fried (2018); lower gives a denser, more exploratory graph, higher gives a sparser, more conservative one.
 
 ### Intensive longitudinal data
 

@@ -1,0 +1,83 @@
+Good timing to get this right — the field has converged on a reasonably explicit checklist since Burger et al. (2023). Here's what each section needs, with the reasoning so you can defend each choice to reviewers.
+
+---
+
+## Methods section
+
+### Network estimation subsection
+
+**State everything a reader would need to reproduce your graph:**
+
+1. **Estimator and package** — "We estimated a Gaussian Graphical Model (GGM) using the EBICglasso algorithm (Friedman, Hastie & Tibshirani, 2008) as implemented in `bootnet` (v[x.x]) and visualized with `qgraph` (v[x.x]) in R (v[x.x])."
+
+2. **Correlation type** — Explicitly state that you used `cor_auto` and that items with ≤7 unique integer values were modeled with polychoric correlations via `lavaan`. This is not cosmetic — it's substantively different from Pearson and many reviewers will check.
+
+3. **Tuning parameter** — "EBIC hyperparameter γ = 0.5 (the field default; Epskamp & Fried, 2018), which produces a moderately sparse solution balancing fit and parsimony."
+
+4. **Node selection rationale** — List the 12 anxiety symptom nodes and justify why *these* nodes and not others. This is the single most underreported element in early network papers. If you used an existing validated scale, say so; if you made item-level choices (e.g., combined items, dropped an item), defend it. Also note: did you check for **node redundancy**? If you didn't run `networktools::goldbricker()`, a reviewer may ask. With 12 anxiety items there's a real risk that near-synonymous items (e.g., "worry" and "anxious thoughts") produce spuriously strong edges.
+
+5. **Sample characteristics** — N = 340, recruitment, inclusion criteria, any missing data handling.
+
+### Accuracy and stability subsection
+
+This is the section most commonly missing in critiqued papers. It needs three elements, each with its own reported statistic:
+
+| Check | Method | What to report |
+|---|---|---|
+| Edge-weight accuracy | Non-parametric bootstrap, 1,000 iterations | Bootstrapped 95% CIs around each edge weight; note which edges are distinguishable via the difference test |
+| Centrality stability | Case-dropping bootstrap, 1,000 iterations | **CS-coefficient for each centrality index reported** |
+| Difference tests | Bootstrapped edge and centrality difference tests | Which pairs of edges / centrality values are statistically distinguishable |
+
+The canonical code:
+```r
+# Edge accuracy
+boot1 <- bootnet(net, nBoots = 1000, type = "nonparametric")
+plot(boot1, labels = TRUE, order = "sample")
+
+# Centrality stability
+boot2 <- bootnet(net, nBoots = 1000, type = "case",
+                 statistics = c("strength", "expectedInfluence"))
+corStability(boot2)   # prints CS-coefficients
+
+# Difference tests
+plot(boot1, "edge", plot = "difference")
+plot(boot2, statistics = "strength")
+```
+
+If any CS-coefficient < 0.25, you **cannot interpret that centrality index** — it needs to be dropped from the results, not just flagged. CS ≥ 0.5 is the target; 0.25–0.50 is interpretable with caveats. State the thresholds you're applying and cite Epskamp, Borsboom & Fried (2018).
+
+---
+
+## Results section
+
+### Network structure
+
+1. **The graph itself** — Spring layout (`layout = "spring"`, Fruchterman-Reingold), with a colorblind-accessible theme (`theme = "colorblind"`). Edge thickness = weight magnitude; green = positive, red = negative (or a colorblind-safe equivalent). Include the number of edges estimated as non-zero vs. possible edges.
+
+2. **Edge-weight table** — Full partial-correlation matrix (or at minimum the non-zero edges) in a supplementary table. Reviewers and future meta-analysts need these numbers.
+
+3. **Global network descriptives** — At minimum: number of non-zero edges, density (proportion of possible edges that are non-zero), and whether the network contains any negative edges (which matters for centrality index choice).
+
+### Centrality
+
+4. **Report Strength and/or Expected Influence only.** Given that this is an anxiety symptom network, check whether you have negative edges. If any edges are negative, **Expected Influence** is the correct index (Robinaugh et al., 2016) because it preserves sign; Strength sums absolute values and can mislead when negative edges are present. Do not report Closeness or Betweenness — cite Bringmann et al. (2019) if a reviewer pushes back.
+
+5. **CS-coefficients in the text**, not buried in a footnote. Something like: "The CS-coefficient for Strength was 0.52, indicating stable centrality estimates (threshold: ≥ 0.50; Epskamp et al., 2018)."
+
+6. **Bootstrapped CIs figure** — A plot of edge-weight bootstrapped CIs is expected as either a main figure or supplementary figure.
+
+7. **Difference test results** — Report which specific edges or node pairs are statistically distinguishable. In practice most centrality pairs will *not* be distinguishable — that is normal, not a flaw. Say something like: "Bootstrapped difference tests indicated that few pairs of centrality estimates were statistically distinguishable, consistent with typical findings in symptom network research; therefore, we interpret the relative ordering of centrality values as more reliable than absolute values or pairwise rankings."
+
+### Limitations (can be in Discussion, but must appear somewhere)
+
+8. **Cross-sectional/causal caveat** — Required. Cross-sectional GGMs cannot establish causal direction. High centrality does not equal intervention priority. A sentence like: "Because the present network is cross-sectional, we cannot infer causal direction from edge weights or identify optimal intervention targets; temporal or experimental designs would be required to evaluate causal hypotheses."
+
+9. **Sample-size context** — N = 340 for 12 nodes is a reasonable sample (roughly 28 observations per node), but report the CS-coefficients as your empirical evidence rather than citing a rule-of-thumb.
+
+---
+
+## The single most authoritative reference to cite for all of this
+
+**Burger, J., Isvoranu, A. M., Lunansky, G., Haslbeck, J. M. B., Epskamp, S., Hoekstra, R. H. A., Fried, E. I., Borsboom, D., & Blanken, T. F. (2023). Reporting standards for psychological network analyses in cross-sectional data. *Psychological Methods*, 28(4), 806–824.**
+
+Give reviewers this citation directly — it's the field-consensus checklist paper and difficult to argue against. Epskamp, Borsboom & Fried (2018) in *Behavior Research Methods* is the second essential citation for the estimation and accuracy/stability procedures specifically.

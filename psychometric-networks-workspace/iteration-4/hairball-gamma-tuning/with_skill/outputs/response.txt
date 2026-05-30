@@ -1,0 +1,91 @@
+91/105 edges is genuinely pathological — that's 87% density on what should be a sparse partial-correlation graph. This isn't typical of a well-estimated network; it's a diagnostic signal. Here are the most likely culprits in priority order.
+
+---
+
+## 1. You're almost certainly using Pearson correlations on Likert data (primary suspect)
+
+The bootnet default for `estimateNetwork(..., default = "EBICglasso")` uses `corMethod = "cor"` — raw Pearson. Depression items are ordinal (PHQ-9 is 0–3, BDI is 0–3, CES-D is 0–3, etc.), and Pearson correlations systematically **overestimate** the true association between ordinal items relative to polychoric correlations. Inflated input correlations mean the graphical lasso has less to shrink, so it keeps edges it should zero out.
+
+Fix this first, before anything else:
+
+```r
+net <- estimateNetwork(
+  data,
+  default   = "EBICglasso",
+  corMethod = "cor_auto",   # ← this is the critical change
+  tuning    = 0.5
+)
+```
+
+`cor_auto` (from `qgraph`) inspects each variable: if it has ≤7 distinct integer values it computes polychoric correlations via lavaan, otherwise Pearson. For a 15-item depression scale this will almost always switch the entire matrix to polychoric, and you can expect a meaningfully sparser network after this single change.
+
+---
+
+## 2. Check for node redundancy with `goldbricker`
+
+Depression questionnaires are notorious for near-duplicate items. If your scale includes anything like *"I feel sad"* and *"I feel blue / depressed"*, those two items have nearly identical conditioning sets — they're measuring the same thing with different words. EBICglasso will keep a strong edge between them because the lasso can't tell a theoretically-meaningful edge from a measurement artifact.
+
+```r
+library(networktools)
+gb <- goldbricker(data, p = 0.05, method = "hittner2003")
+print(gb)  # flags pairs whose partial-correlation profiles are nearly identical
+```
+
+Any pair flagged as redundant is a candidate for removal or averaging before re-estimating. This is a theoretical decision, not just a statistical one — you need a reason to keep both items.
+
+---
+
+## 3. Try a more conservative EBIC gamma
+
+The field default is `tuning = 0.5` (gamma), but that's a *starting point*, not sacred. Higher gamma penalizes model complexity more, producing a sparser graph. After fixing the correlation method, if density is still high:
+
+```r
+net_conservative <- estimateNetwork(
+  data,
+  default   = "EBICglasso",
+  corMethod = "cor_auto",
+  tuning    = 1.0          # maximally conservative
+)
+```
+
+Report the gamma = 0.5 network as your primary result (it's what the field expects), but use gamma = 1.0 as a robustness check to see which edges survive stricter penalization. If your key substantive claims disappear at gamma = 1.0, that's important to report.
+
+---
+
+## 4. The structural problem: unidimensional scales produce legitimately hard GGM estimation problems
+
+There's a subtler issue worth understanding. Depression items on well-designed scales (PHQ-9, BDI) are *designed* to share a single strong common cause. In theory, if all variance is explained by one latent factor, the **partial correlations should all be zero** — conditioning on the other items is approximately conditioning on the latent factor. In practice, measurement error, sampling noise, and minor violations of unidimensionality mean you get small nonzero residual correlations that should be shrunk to zero but aren't always.
+
+This is one face of the latent-vs-network debate: a genuine common-cause structure is hard to distinguish from a dense interaction network on cross-sectional data, and EBICglasso on a well-designed unidimensional scale will often return a denser-than-expected graph regardless of your tuning choices. The polychoric fix and goldbricker check will help substantially, but some residual density may be real — or it may be an artifact of the common factor. You can't resolve that from a cross-sectional GGM alone.
+
+---
+
+## Recommended diagnostic sequence
+
+```r
+library(bootnet); library(qgraph); library(networktools)
+
+# Step 1: fix correlations
+net <- estimateNetwork(data, default = "EBICglasso",
+                       corMethod = "cor_auto", tuning = 0.5)
+plot(net, layout = "spring", theme = "colorblind")
+
+# Step 2: check density
+sum(net$graph != 0) / (15 * 14 / 2)   # should now be much lower
+
+# Step 3: node redundancy
+goldbricker(data, p = 0.05)
+
+# Step 4: robustness check
+net_strict <- estimateNetwork(data, default = "EBICglasso",
+                              corMethod = "cor_auto", tuning = 1.0)
+plot(net_strict, layout = "spring", theme = "colorblind")
+```
+
+---
+
+## What to expect after the fix
+
+With `cor_auto` and a 15-item depression scale at N=210, a typical well-estimated network lands in the **20–50% density range** (roughly 20–50 edges). Still fairly connected for a psych network, but interpretable — hub-like nodes become visible and edge weights vary meaningfully. If density stays above ~70% even after polychoric correlations and goldbricker pruning, the honest interpretation is that your items are too intercorrelated for a sparse GGM to be informative, and you should consider reporting that result rather than forcing sparsity by cranking gamma to an extreme value.
+
+One more thing: once you have a reasonable network, **run the stability checks before interpreting anything**. N=210 on 15 nodes is workable but not generous — run `bootnet(net, nBoots=1000, type="case")` and check CS-coefficients for centrality. If CS < 0.25 for Strength, don't interpret centrality rankings.

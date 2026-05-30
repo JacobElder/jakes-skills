@@ -1,0 +1,70 @@
+## Strength vs. Expected Influence for your affect network
+
+**Short answer: Expected Influence is more appropriate here, and you should probably report both.** The divergence between them will be substantively informative given your specific item structure.
+
+---
+
+### The core distinction
+
+| Index | Formula | Sign treatment |
+|---|---|---|
+| **Strength** | Σ \|w_ij\| | Treats negative edges as positive — sums absolute values |
+| **Expected Influence** | Σ w_ij | Preserves sign — negative edges *reduce* the index |
+
+Strength was the original convention; Expected Influence was introduced by Robinaugh, Millner & McNally (2016, *J Abnormal Psychol*) precisely because many psych networks — especially affect networks — have theoretically important negative edges that Strength silently discards.
+
+---
+
+### Why this matters for your specific data
+
+Your 8-item structure will almost certainly produce two types of edges after EBICglasso conditioning:
+
+- **Positive edges within each valence cluster** — the four PA items will partially correlate positively with each other; same for the four NA items.
+- **Negative edges across the PA/NA boundary** — e.g., *enthusiastic* and *distressed* should have a negative partial correlation, because once you condition on the rest of the items, positive affect activation suppresses negative affect and vice versa.
+
+This is a mixed-sign graph, which is exactly the scenario where Strength misleads.
+
+**A concrete illustration.** Suppose *distressed* has these edge weights:
+
+```
+  upset:         +0.40
+  hostile:       +0.28
+  afraid:        +0.31
+  enthusiastic:  −0.22
+  active:        −0.18
+  inspired:      −0.25
+  alert:         −0.15
+```
+
+```
+Strength           = 0.40 + 0.28 + 0.31 + 0.22 + 0.18 + 0.25 + 0.15 = 1.79
+Expected Influence = 0.40 + 0.28 + 0.31 − 0.22 − 0.18 − 0.25 − 0.15 = 0.19
+```
+
+Strength says *distressed* is highly central — it's strongly connected to everything. Expected Influence says its influence is largely self-canceling: activation propagates into the NA cluster but is simultaneously dampened by the PA cluster. These are genuinely different substantive claims. Strength would mislead you into treating cross-valence bridges as high-influence nodes when their net nudge on the system is actually modest.
+
+---
+
+### Practical recommendation
+
+1. **Report Expected Influence as your primary index.** It's the field default for networks with plausible negative edges, and affect networks are the paradigm case. This is noted explicitly in Robinaugh et al. (2016) and in the Isvoranu et al. (2022) textbook.
+
+2. **Report Strength alongside it.** The divergence pattern is itself interpretable: any node where Strength >> EI sits at the PA/NA boundary and is driving mutual suppression between valence clusters. Reporting both lets you show that explicitly, rather than just picking one and hiding the information.
+
+3. **Check your CS-coefficients for both.** With 8 nodes — a small network — stability may actually be decent, but with typical ESM sample sizes centrality order can still be fragile. Run:
+
+```r
+boot_case <- bootnet(net, nBoots = 1000, type = "case",
+                     statistics = c("Strength", "ExpectedInfluence"))
+corStability(boot_case)
+```
+
+   CS ≥ 0.5 for both → interpret freely; 0.25–0.5 → interpret ordering cautiously; < 0.25 → do not interpret.
+
+4. **Drop betweenness and closeness** if they're currently in your centrality plot — they're not defensible for this kind of dense weighted partial-correlation graph (Bringmann et al., 2019).
+
+---
+
+### One caveat on causal framing
+
+Even if, say, *hostile* or *distressed* comes out highest on EI, that doesn't make it a preferential intervention target — that's a causal claim your cross-sectional GGM doesn't license. Centrality here is a descriptive summary of the estimated graph structure, nothing more. Worth a sentence in your limitations.

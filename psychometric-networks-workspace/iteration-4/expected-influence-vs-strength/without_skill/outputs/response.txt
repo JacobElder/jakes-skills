@@ -1,0 +1,61 @@
+## Strength vs. Expected Influence: What to Report
+
+The short answer: **report both, but prioritize Expected Influence** for this network. Here's the full reasoning.
+
+---
+
+### What each index actually measures
+
+**Strength** (weighted degree centrality) sums the **absolute values** of all edge weights connected to a node:
+
+> S_i = Σ |w_ij|
+
+**Expected Influence (EI)** sums the **signed** edge weights:
+
+> EI_i = Σ w_ij
+
+The only difference is that absolute value. But it matters enormously in a mixed-valence network.
+
+---
+
+### Why it matters for your network
+
+Your 8-item affect network will almost certainly have **negative edges** — specifically between the PA and NA clusters (enthusiastic ↔ distressed, inspired ↔ upset, etc.). The two clusters will each have positive internal edges, with negative cross-valence edges bridging them.
+
+This creates a problem for Strength. Consider a node like *distressed*:
+- Strong **positive** edge to *upset* (+)
+- Strong **negative** edge to *enthusiastic* (−)
+
+Strength counts **both as equal evidence of centrality** — it sees a highly connected node. But EI recognizes that activating *distressed* would suppress *enthusiastic*, so its net propagating influence on the network is lower than Strength implies.
+
+**Strength inflates centrality estimates for nodes with many cross-valence connections.** In your PA/NA structure, boundary-straddling items (items with both strong within-cluster and strong between-cluster edges) will look artificially central under Strength.
+
+---
+
+### Practical decision guide
+
+| Condition | Prefer |
+|---|---|
+| All edges positive (e.g., psychopathology symptom net) | Strength (EI ≈ Strength anyway) |
+| Network has negative edges | Expected Influence |
+| You want to know *who is most connected* | Strength |
+| You want to know *who most activates the network* | Expected Influence |
+| Mixed-valence affect network like yours | **Expected Influence**, report Strength too |
+
+---
+
+### Recommended reporting approach
+
+1. **Report both** in your centrality plot (as you already have) — reviewers familiar with network psychometrics will expect to see both.
+
+2. **Lead interpretation with EI** and explain the rationale in one sentence: *"Because the network contains negative edges between PA and NA items, Expected Influence is the preferred centrality index, as it preserves edge sign and captures each node's net activating influence."*
+
+3. **Flag if they diverge.** If Strength and EI give notably different orderings for specific nodes (e.g., a node is high-Strength but low-EI), that's substantively interesting — it means that node is a strong suppressor, not just a strong connector.
+
+4. **Stabiliy is non-negotiable at n=8 nodes.** With only 8 nodes, centrality indices are unstable. Run the `bootnet` case-dropping subset bootstrap (Epskamp et al., 2018) and report CS-coefficients. Reviewers will ask. If CS-C < 0.25, temper any centrality claims substantially.
+
+---
+
+### One additional consideration: bridge centrality
+
+Given your two-cluster structure, you might also consider **bridge Expected Influence** (Jones et al., 2019) if your research question involves the PA ↔ NA interface — it specifically identifies nodes that propagate activation *across* communities rather than within them. Not required, but well-suited to this network topology.

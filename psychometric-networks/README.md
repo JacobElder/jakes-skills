@@ -36,25 +36,22 @@ Without the skill, the response lists several diagnostic possibilities but never
 >
 > **Fix 1: Use `cor_auto` for polychoric correlations... Fix 2: Increase γ... Fix 3: Switch to TMFG...**
 
-With the skill, the response leads with node redundancy, names the right tool immediately, then correctly explains gamma as the primary sparsity lever:
+With the skill, the response leads with Pearson-on-Likert as the primary suspect, then correctly names goldbricker for node redundancy and explains gamma as the sparsity lever:
 
-> 91 out of 105 edges (87% density) is pathologically dense — and it's a clear signal that something upstream is wrong before you even get to interpretation. Three culprits, roughly in order of suspicion:
+> 91/105 edges is genuinely pathological — that's 87% density on what should be a sparse partial-correlation graph. This isn't typical of a well-estimated network; it's a diagnostic signal. Here are the most likely culprits in priority order.
 >
-> **Culprit 1: Node redundancy (check this first).** Depression scales are the canonical case. Items like "sad mood," "depressed affect," and "feels empty" have nearly identical conditioning sets — every other item predicts them equally well — so they produce near-identical columns in the partial-correlation matrix. This creates a cluster of very strong edges that then propagates spurious density throughout the graph.
+> **1. You're almost certainly using Pearson correlations on Likert data (primary suspect).** The bootnet default for `estimateNetwork(..., default = "EBICglasso")` uses `corMethod = "cor"` — raw Pearson. Depression items are ordinal, and Pearson correlations systematically **overestimate** the true association between ordinal items relative to polychoric correlations. Inflated input correlations mean the graphical lasso has less to shrink, so it keeps edges it should zero out.
 >
-> Run `goldbricker` before anything else:
+> Fix this first, before anything else:
 > ```r
-> library(networktools)
-> gb <- goldbricker(data, threshold = 0.25, corMethod = "cor_auto")
-> print(gb)
+> net <- estimateNetwork(data, default = "EBICglasso",
+>                        corMethod = "cor_auto", tuning = 0.5)
 > ```
-> `goldbricker` flags pairs whose partial-correlation profiles are so similar that they likely represent redundant nodes. Any pair flagged at `threshold = 0.25` should be either dropped or combined into a composite before re-estimation.
+> `cor_auto` inspects each variable: if it has ≤7 distinct integer values it computes polychoric correlations via lavaan, otherwise Pearson. For a 15-item depression scale this will almost always switch the entire matrix to polychoric, and you can expect a meaningfully sparser network after this single change.
 >
-> **Culprit 2: Gamma is too liberal — increase it.** The EBIC tuning parameter `gamma` controls how aggressively the model penalizes edge inclusion. The default of `0.5` is fine for many settings but can be too liberal for highly correlated item sets... `gamma = 0.5` is the field default per Epskamp & Fried (2018), but for very correlated item sets values of 0.75–1.0 are defensible and commonly used.
+> **2. Check for node redundancy with `goldbricker`.** Depression questionnaires are notorious for near-duplicate items. If your scale includes anything like *"I feel sad"* and *"I feel blue / depressed"*, those two items have nearly identical conditioning sets — EBICglasso will keep a strong edge between them because the lasso can't tell a theoretically-meaningful edge from a measurement artifact. Run `networktools::goldbricker(data)` to flag redundant pairs before estimation.
 >
-> **Culprit 3: The conceptual problem.** If your 15 items are all from a single depression scale designed to measure one construct... the GGM is being asked: *"What are the pairwise conditional associations among items that all reflect the same underlying thing?"* The answer will always be "almost everything connects to everything."
->
-> Don't tune `gamma` upward until you get a "nice-looking" sparse graph and then report the result as if it were a default analysis. If you increase gamma, justify the choice and report edge counts under both gamma = 0.5 and gamma = 1.0 as a sensitivity check.
+> **3. Try a more conservative EBIC gamma.** The field default is `tuning = 0.5`, but that's a *starting point*, not sacred. Higher gamma penalizes model complexity more, producing a sparser graph. Report gamma = 0.5 as your primary result and use gamma = 1.0 as a robustness check. If your key substantive claims disappear at gamma = 1.0, that's important to report.
 
 ---
 
@@ -131,14 +128,14 @@ The base model knows the psychometric network literature. The skill gives the ag
 
 ## Benchmark: skill vs. base model
 
-Evaluated across 3 iterations. Evals are conversational prompts graded by an LLM judge against specific, objective expectations. Executor and grader are separate calls to eliminate self-grading inflation.
+Evaluated across 4 iterations. Evals are conversational prompts graded by an LLM judge against specific, objective expectations. Executor and grader are separate calls to eliminate self-grading inflation.
 
-### Iteration 3 — final results (8 scenarios, 39 total expectations)
+### Iteration 4 — final results (8 scenarios, 39 total expectations)
 
 ```
-with_skill:    97.4%  (38/39 expectations)
-without_skill: 84.6%  (33/39 expectations)
-delta:         +12.8pp
+with_skill:    100%   (39/39 expectations)
+without_skill:  84.6%  (33/39 expectations)
+delta:         +15.4pp
 ```
 
 | Eval | With skill | Without skill | Delta |
@@ -146,13 +143,13 @@ delta:         +12.8pp
 | ggm-estimation-likert | 100% | 83% | +17pp |
 | expected-influence-vs-strength | 100% | 80% | +20pp |
 | bootstrap-ci-vs-difference-test | 100% | 80% | +20pp |
-| hairball-gamma-tuning | 80% | 80% | +0pp |
+| hairball-gamma-tuning | 100% | 80% | +20pp |
 | stability-interpretation | 100% | 100% | +0pp |
 | node-selection-question | 100% | 75% | +25pp |
 | negative-trigger-generic-network | 100% | 100% | +0pp |
 | reporting-standards-checklist | 100% | 80% | +20pp |
 
-The three non-discriminating evals (hairball-gamma-tuning iter-3, stability-interpretation, negative-trigger) reflect either base-model coverage that already matches the skill or single-run variance. They remain as regression guards.
+The two non-discriminating evals (stability-interpretation, negative-trigger) reflect topics where base-model coverage already matches the skill. They remain as regression guards.
 
 ### Where the base model fails most
 
@@ -160,6 +157,7 @@ The three non-discriminating evals (hairball-gamma-tuning iter-3, stability-inte
 |---|---|:---:|:---:|
 | node-selection-question | Misses node redundancy as a concrete concern; never names `goldbricker` | 100% | 75% |
 | ggm-estimation-likert | Misses the Epskamp, Borsboom & Fried (2018) tutorial reference | 100% | 83% |
+| hairball-gamma-tuning | Uses `cor_auto` in code but never explicitly names Pearson-on-Likert as a cause of hairball density | 100% | 80% |
 | expected-influence-vs-strength | Names EI as the right index but doesn't make the unipolar-equivalence distinction | 100% | 80% |
 | bootstrap-ci-vs-difference-test | Corrects the CI fallacy but doesn't state that non-distinguishability is the norm | 100% | 80% |
 | reporting-standards-checklist | Gives a solid checklist but omits cross-sectional/causal limitations as required | 100% | 80% |
@@ -170,9 +168,10 @@ The three non-discriminating evals (hairball-gamma-tuning iter-3, stability-inte
 |---|:---:|:---:|:---:|---|
 | 1 | 92.3% | 89.7% | +2.6pp | Baseline; 5 of 8 evals non-discriminating |
 | 2 | 97.4% | 87.2% | +10.3pp | 4 evals redesigned; goldbricker + betweenness gate added to skill |
-| 3 | **97.4%** | **84.6%** | **+12.8pp** | Difference-test norm sentence added; eval 3 gap closed |
+| 3 | 97.4% | 84.6% | +12.8pp | Difference-test norm sentence added; eval 3 gap closed |
+| 4 | **100%** | **84.6%** | **+15.4pp** | Pearson-on-Likert→hairball link added; 39/39 with skill |
 
-The jump from iteration 1 to iteration 2 reflects both skill improvements (two targeted additions) and eval redesign (replacing four non-discriminating evals with harder probes). The iteration 2→3 gain reflects the single sentence added about the difference-test norm closing the bootstrap-CI eval.
+The jump from iteration 1 to iteration 2 reflects both skill improvements (two targeted additions) and eval redesign (replacing four non-discriminating evals with harder probes). Iteration 3→4 added an explicit sentence connecting Pearson-on-ordinal inflation to hairball density, closing the last with-skill gap.
 
 ---
 
