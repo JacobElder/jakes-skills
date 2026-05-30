@@ -15,9 +15,9 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [comp-modeling](#comp-modeling) | Computational & cognitive modeling | Eval suite included |
 | [sequence-analysis-hmm](#sequence-analysis-hmm) | Hidden Markov Models & sequence analysis | +40pp across 10 content evals |
 | [survival-analysis](#survival-analysis) | Time-to-event modeling (R & Python) | 26/26 analytically graded evals passing |
-| [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | Ceiling on iter-1; trap-based evals in iteration 2 |
+| [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | Iter-1 ceiling (100%/100%); 10 trap-based evals written, results pending |
 | [network-analysis](#network-analysis) | Network science & social network analysis | +32.5pp across 8 trap-based evals |
-| [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +12.8pp across 8 scenarios (intersection skill) |
+| [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +15.4pp across 8 scenarios (intersection skill) |
 
 ---
 
@@ -109,7 +109,7 @@ Apply hierarchical / multilevel / mixed-effects models correctly across the full
 
 **Why it matters:** The base model knows multilevel modeling but defaults to hedging on wrong analyses. The most consequential failure is validating or gently caveating a random-intercepts-only model when the design has within-cluster manipulations — an omission that inflates Type I error 2–5× at nominal α = .05 (Barr et al., 2013; Schielzeth & Forstmeier, 2009). The skill opens with a firm no on that case, enforces diagnosis before any simplification of singular models, and corrects the common reflex to recommend MLM for every repeated-measures question even when a paired t-test is the defensible answer.
 
-**Gap:** Iteration 1 evals hit 100% for both configurations — a ceiling that reflects the base model's strong factual coverage when asked direct questions. The harder behavioral test (trap prompts where the user presents a wrong model as already done) is the planned iteration 2. Pattern matches the psychometrics skill: large deltas appear when the user is already satisfied with a flawed analysis, not when asking from scratch.
+**Gap:** Iteration 1 evals hit 100% for both configurations — a ceiling showing the base model answers direct MLM questions correctly. Iteration 2 redesigns all evals as trap prompts (wrong analysis already done, user apparently satisfied), the format where the psychometrics skill showed deltas of 0→100% per case. Results pending.
 
 → [multilevel-modeling/](multilevel-modeling/)
 
@@ -133,7 +133,7 @@ Apply the network approach to psychological measurement — GGMs on questionnair
 
 **Why it matters:** The base model gives solid general-purpose network and psychometrics answers but misses the field-specific layer: leading with `goldbricker` for node redundancy before estimation, applying CS-coefficient thresholds precisely (≥ 0.5 acceptable, ≥ 0.25 minimum, < 0.25 do not interpret), choosing Expected Influence over Strength for mixed-valence affect networks, naming Burger et al. (2023) as the authoritative reporting checklist, and framing causal limitations as a required element of any cross-sectional GGM write-up.
 
-**Gap:** +12.8pp across 8 scenarios (97.4% with skill, 84.6% without). Largest gaps on node selection (+25pp), Expected Influence vs. Strength (+20pp), bootstrap CI vs. difference test (+20pp), and reporting standards (+20pp).
+**Gap:** +15.4pp across 8 scenarios (100% with skill, 84.6% without). Largest gaps on node selection (+25pp), Expected Influence vs. Strength (+20pp), hairball diagnosis (+20pp), bootstrap CI vs. difference test (+20pp), and reporting standards (+20pp).
 
 → [psychometric-networks/](psychometric-networks/)
 
