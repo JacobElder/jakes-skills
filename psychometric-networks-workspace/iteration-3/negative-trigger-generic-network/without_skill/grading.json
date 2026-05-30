@@ -1,0 +1,36 @@
+{
+  "run_id": "negative-trigger-generic-network-without_skill",
+  "eval_id": 7,
+  "eval_name": "negative-trigger-generic-network",
+  "config": "without_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Directly answers the asked question with a general explanation of what betweenness centrality measures (paths/shortest paths/brokerage)",
+      "passed": true,
+      "evidence": "The response opens with: 'Betweenness centrality measures how often a node sits on the shortest path between other pairs of nodes in a network. It answers the question: \"How much does this node act as a bridge or bottleneck?\"' \u2014 directly covering paths, shortest paths, and brokerage."
+    },
+    {
+      "text": "Provides at least one useful-case example from a domain OTHER than psychometric/symptom networks (e.g. social networks, infrastructure, information flow, transportation)",
+      "passed": true,
+      "evidence": "Multiple non-psychometric examples are provided: airline hub networks (transportation), social networks (brokers between communities), internet infrastructure (routers), supply chains, neuroscience, and epidemiology."
+    },
+    {
+      "text": "If the psychometric caveat is mentioned, it appears after the main answer and does not carry a prominent section header or dominate the response length",
+      "passed": true,
+      "evidence": "No psychometric caveat is mentioned anywhere in the response, so the condition is not triggered and the expectation passes vacuously."
+    },
+    {
+      "text": "The response is not predominantly about psychopathology, symptom networks, or Bringmann's critique",
+      "passed": true,
+      "evidence": "The response contains no mention of psychopathology, symptom networks, or Bringmann's critique. It focuses entirely on general network science concepts and transportation/infrastructure/social examples."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

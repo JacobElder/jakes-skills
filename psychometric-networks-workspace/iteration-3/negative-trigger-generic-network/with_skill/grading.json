@@ -1,0 +1,36 @@
+{
+  "run_id": "negative-trigger-generic-network-with_skill",
+  "eval_id": 7,
+  "eval_name": "negative-trigger-generic-network",
+  "config": "with_skill",
+  "passed": 4,
+  "total": 4,
+  "expectations": [
+    {
+      "text": "Directly answers the asked question with a general explanation of what betweenness centrality measures (paths/shortest paths/brokerage)",
+      "passed": true,
+      "evidence": "Response opens with 'Betweenness centrality quantifies how often a node sits on the shortest path between other pairs of nodes' and includes the formal definition with \u03c3 notation, plus the broker/bridge framing."
+    },
+    {
+      "text": "Provides at least one useful-case example from a domain OTHER than psychometric/symptom networks (e.g. social networks, infrastructure, information flow, transportation)",
+      "passed": true,
+      "evidence": "Multiple non-psychometric examples are given: airline hub-and-spoke network (Chicago), infrastructure/logistics (routers, power stations), social networks (structural holes), epidemiology, supply chains, and citation networks."
+    },
+    {
+      "text": "If the psychometric caveat is mentioned, it appears after the main answer and does not carry a prominent section header or dominate the response length",
+      "passed": true,
+      "evidence": "Psychometrics is never explicitly mentioned. The closest reference is a brief closing note about 'dense weighted graphs (like partial-correlation matrices)' in the final paragraph under 'Key properties', with no prominent header and occupying only a small fraction of the response."
+    },
+    {
+      "text": "The response is not predominantly about psychopathology, symptom networks, or Bringmann's critique",
+      "passed": true,
+      "evidence": "The response contains no mention of psychopathology, symptom networks, or Bringmann. The entire response focuses on general network concepts with examples from logistics, social science, epidemiology, and supply chains."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  }
+}

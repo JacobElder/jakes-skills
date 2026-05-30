@@ -1,0 +1,71 @@
+This is a genuinely important methodological question, and the reviewer is pointing at a real conceptual tension. Let me walk you through the key issues.
+
+---
+
+## The Core Problem: Node Selection Is a Theoretical Act
+
+In network psychopathology, nodes are not just "the items we happened to measure." They implicitly make a claim: **these are the causally relevant, conceptually distinct units of analysis whose mutual activation patterns constitute the disorder.** Borsboom's network theory requires that nodes represent entities capable of influencing each other — so the choice of nodes defines what kind of system you're claiming OCD *is*.
+
+A reviewer asking for justification is really asking: *why these units, at this grain, and not others?*
+
+---
+
+## The Y-BOCS–Specific Problem
+
+The Y-BOCS was designed as a **severity scale**, not a symptom inventory. Its structure reveals the issue immediately:
+
+| Obsessions | Compulsions |
+|---|---|
+| Time occupied | Time occupied |
+| Interference | Interference |
+| Distress | Distress |
+| Resistance | Resistance |
+| Control | Control |
+
+You're not building a network of *symptoms* — you're building a network of **severity dimensions** (time, distress, interference, resistance, control), each assessed twice. This creates several problems:
+
+1. **Parallel structure inflates edges.** The obsession and compulsion versions of each dimension share conceptual content (both "time occupied" items will co-vary partly by method variance, not causal influence). Edges between structurally parallel items are hard to interpret causally.
+
+2. **Symptom content heterogeneity is entirely absent.** A patient with contamination obsessions and washing compulsions and one with symmetry obsessions and ordering compulsions score identically on the Y-BOCS if severity is matched. Your network cannot distinguish these phenotypes.
+
+3. **Items are not causally homogeneous within the node.** "Interference with functioning" collapses occupational, social, and interpersonal domains — these may have distinct causal footprints and different treatment implications.
+
+---
+
+## How to Think About Node Selection More Generally
+
+A defensible node selection strategy requires addressing four questions:
+
+### 1. Granularity
+Why items rather than subscales? Why 10 nodes rather than 2 (obsessions total, compulsions total)? Or rather than symptom-checklist categories (contamination, checking, symmetry, etc.)? You need a principled argument for the level of decomposition, not just "we used all items."
+
+### 2. Causal distinctiveness
+Can the nodes in principle activate each other? For Y-BOCS items: yes, plausibly — distress can drive time occupied, resistance can suppress control, interference can amplify distress. This is your strongest argument. Spell it out explicitly using a causal story about OCD maintenance.
+
+### 3. Coverage of the symptom space
+What's *not* included matters as much as what is. Y-BOCS items cover severity dimensions but not symptom content, avoidance, insight, or functional impairment beyond interference. Acknowledge this explicitly — it bounds the claims your network can support.
+
+### 4. Precedent and replicability
+Cite prior network analyses of OCD that used Y-BOCS items (e.g., Beard et al., McNally et al., Ruzzano et al.) and argue your node set enables comparability. This is a pragmatic, not theoretical, justification — own it as such.
+
+---
+
+## How to Respond to the Reviewer
+
+Frame your justification in two layers:
+
+**Theoretical layer:** The Y-BOCS items operationalize the *maintenance cycle* of OCD — distress, resistance, time consumed, and functional interference are the proximal causal mechanisms by which obsessions and compulsions sustain each other. A network of these nodes tests how these maintenance processes are coupled, which is theoretically coherent with inhibitory learning models and appraisal-based accounts of OCD.
+
+**Scope limitation layer:** Acknowledge explicitly that Y-BOCS–based networks model the *severity structure* of OCD, not its *content heterogeneity*. Findings describe how severity dimensions relate dynamically but cannot speak to whether checking and contamination symptoms differ in their network position. This is a limitation, not a fatal flaw — but it constrains your interpretation.
+
+---
+
+## What to Avoid
+
+- Don't say "we used these items because that's what the Y-BOCS measures." That's circular.
+- Don't claim the network represents OCD broadly if your nodes only capture severity dimensions.
+- Don't ignore the parallel structure problem — if you ran an OCD network with 10 nodes and obsession–compulsion pairs appear as twins in the graph, that's partly artifactual and worth acknowledging.
+
+---
+
+The bottom line: the reviewer is right that node selection is undertheorized in most psychopathology network papers. The strongest response treats it as a *design choice with consequences*, articulates what your nodes can and cannot represent, and maps the causal story your nodes are meant to tell.

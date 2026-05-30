@@ -14,6 +14,10 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [psychometrics](#psychometrics) | Measurement theory & scale development | +97.5pp across 8 scenarios |
 | [comp-modeling](#comp-modeling) | Computational & cognitive modeling | Eval suite included |
 | [sequence-analysis-hmm](#sequence-analysis-hmm) | Hidden Markov Models & sequence analysis | +40pp across 10 content evals |
+| [survival-analysis](#survival-analysis) | Time-to-event modeling (R & Python) | 26/26 analytically graded evals passing |
+| [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | Ceiling on iter-1; trap-based evals in iteration 2 |
+| [network-analysis](#network-analysis) | Network science & social network analysis | +32.5pp across 8 trap-based evals |
+| [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +12.8pp across 8 scenarios (intersection skill) |
 
 ---
 
@@ -84,6 +88,54 @@ Apply Hidden Markov Models and related sequence analysis techniques to problems 
 **Gap:** +40pp on content evals (10/10 with skill vs. 6/10 base). Biggest wins on response formatting, code patterns, and pitfall diagnosis.
 
 → [sequence-analysis-hmm/](sequence-analysis-hmm/)
+
+---
+
+## survival-analysis
+
+Apply survival analysis (time-to-event modeling) correctly in R and Python. Covers the full workflow from Kaplan-Meier and log-rank through Cox PH, parametric AFT, Royston-Parmar splines, competing risks (cause-specific Cox and Fine-Gray), recurrent events (Andersen-Gill, PWP), frailty, multi-state models, interval censoring, and left truncation.
+
+**Why it matters:** The base model validates common errors rather than catching them. It accepts immortal-time-biased covariate definitions, treats competing events as censoring and reports 1−KM as cumulative incidence, follows up a crossing-curve KM with a standard log-rank test and reports "no significant difference," and returns `coxph` output as a real HR when complete separation makes the partial likelihood diverge. The skill names these errors by name and provides the specific fix — time-varying covariate for immortal time bias, Aalen-Johansen CIF and Fine-Gray for competing risks, MaxCombo or FH(0,1) for non-PH alternatives, Firth-penalized Cox for separation.
+
+**Gap:** 26/26 analytically graded eval prompts passing across 7 categories (method selection, pitfall detection, code correctness, communication, R/Python consistency, adversarial cases, multi-turn coherence).
+
+→ [survival-analysis/](survival-analysis/)
+
+---
+
+## multilevel-modeling
+
+Apply hierarchical / multilevel / mixed-effects models correctly across the full analysis lifecycle — data-structure diagnosis, random-effects specification, contrast coding, fitting in R (lme4, lmerTest, glmmTMB, brms) and Python (statsmodels, bambi, PyMC), convergence troubleshooting, post-estimation, power analysis, and write-up.
+
+**Why it matters:** The base model knows multilevel modeling but defaults to hedging on wrong analyses. The most consequential failure is validating or gently caveating a random-intercepts-only model when the design has within-cluster manipulations — an omission that inflates Type I error 2–5× at nominal α = .05 (Barr et al., 2013; Schielzeth & Forstmeier, 2009). The skill opens with a firm no on that case, enforces diagnosis before any simplification of singular models, and corrects the common reflex to recommend MLM for every repeated-measures question even when a paired t-test is the defensible answer.
+
+**Gap:** Iteration 1 evals hit 100% for both configurations — a ceiling that reflects the base model's strong factual coverage when asked direct questions. The harder behavioral test (trap prompts where the user presents a wrong model as already done) is the planned iteration 2. Pattern matches the psychometrics skill: large deltas appear when the user is already satisfied with a flawed analysis, not when asking from scratch.
+
+→ [multilevel-modeling/](multilevel-modeling/)
+
+---
+
+## network-analysis
+
+Apply practitioner-grade methodology to network analysis, social network analysis (SNA), and graph problems. Covers bipartite projection, community detection, peer effects, ERGMs, temporal networks, centrality, large-scale tools, and GNN link prediction.
+
+**Why it matters:** The base model knows network methods but validates common plans without flagging structural artifacts. The most dangerous defaults: calling a bipartite→projection→Louvain pipeline "standard and defensible" without naming SDSM/FDSM backbone extraction; treating Q = 0.67 as a reliability certificate and proceeding to name communities without stability analysis; naming IV generically for peer effects without identifying the Bramoullé friends-of-friends instrument that actually solves the cross-sectional identification problem; and treating static betweenness as informative about communication dynamics in a temporally aggregated network.
+
+**Gap:** +32.5pp on 8 trap-based evals (100% with skill, 67.5% without). Largest wins on bipartite projection (+60pp), community stability (+60pp), and temporal aggregation (+60pp).
+
+→ [network-analysis/](network-analysis/)
+
+---
+
+## psychometric-networks
+
+Apply the network approach to psychological measurement — GGMs on questionnaire items and clinical symptoms using EBICglasso/bootnet/qgraph — with the field-specific conventions the base model underuses. An intersection skill: assumes psychometrics and network-analysis parent skills are loaded and adds only what is specific to these methods.
+
+**Why it matters:** The base model gives solid general-purpose network and psychometrics answers but misses the field-specific layer: leading with `goldbricker` for node redundancy before estimation, applying CS-coefficient thresholds precisely (≥ 0.5 acceptable, ≥ 0.25 minimum, < 0.25 do not interpret), choosing Expected Influence over Strength for mixed-valence affect networks, naming Burger et al. (2023) as the authoritative reporting checklist, and framing causal limitations as a required element of any cross-sectional GGM write-up.
+
+**Gap:** +12.8pp across 8 scenarios (97.4% with skill, 84.6% without). Largest gaps on node selection (+25pp), Expected Influence vs. Strength (+20pp), bootstrap CI vs. difference test (+20pp), and reporting standards (+20pp).
+
+→ [psychometric-networks/](psychometric-networks/)
 
 ---
 

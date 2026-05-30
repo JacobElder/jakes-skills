@@ -1,0 +1,41 @@
+{
+  "run_id": "stability-interpretation-without_skill",
+  "eval_id": 5,
+  "eval_name": "stability-interpretation",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Correctly applies the CS-coefficient thresholds (0.25 minimum, 0.5 acceptable)",
+      "passed": true,
+      "evidence": "Response explicitly states: 'Thresholds: \u22650.50 = good, \u22650.25 = acceptable minimum, <0.25 = do not interpret' \u2014 both thresholds correctly identified and applied to each index."
+    },
+    {
+      "text": "Concludes that Closeness and Betweenness should not be interpreted given the CS values",
+      "passed": true,
+      "evidence": "Closeness (0.13) and Betweenness (0.05) are marked '\u274c Below threshold \u2014 do not interpret' and the 'Do not report/interpret' section explicitly excludes both: 'Closeness or Betweenness centrality rankings at all \u2014 flag them as unstable and exclude from substantive interpretation.'"
+    },
+    {
+      "text": "Concludes that Strength and Expected Influence are interpretable but with caution",
+      "passed": true,
+      "evidence": "Expected Influence (0.44) is labeled 'Acceptable \u2014 report with minor caveat' and Strength (0.36) is labeled 'Marginal \u2014 report cautiously, flag instability.' Both appear in the 'Report freely' or 'Report with caveats' sections."
+    },
+    {
+      "text": "Recommends focusing on edge ordering rather than absolute edge values when CIs are wide",
+      "passed": true,
+      "evidence": "Response states 'You cannot reliably rank-order most edges by magnitude,' advises avoiding claims like 'X was the strongest edge,' and recommends that 'edge presence is more stable than edge weight' \u2014 directing attention away from absolute values toward structural comparisons."
+    },
+    {
+      "text": "Recommends the bootstrapped difference test before making specific edge or node comparisons",
+      "passed": true,
+      "evidence": "Response explicitly states: 'Run `differenceTest()` in bootnet/qgraph \u2014 only edges that survive the difference test should be compared.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

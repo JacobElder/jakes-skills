@@ -58,7 +58,7 @@ candidates = []
 for seed in range(20):
     m = hmm.GaussianHMM(
         n_components=3, covariance_type="full",
-        n_iter=200, tol=1e-4, random_state=seed,
+        n_iter=500, tol=1e-4, random_state=seed,
     )
     try:
         m.fit(train_obs)

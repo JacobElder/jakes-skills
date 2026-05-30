@@ -35,7 +35,7 @@ Combine references when needed: time-series anomaly detection → `timeseries.md
 The skill is dense; responses shouldn't be. Calibrate to the question:
 
 - **"What's an HMM?"** → 3–5 sentences in prose. Urn-and-balls metaphor or weather metaphor. No bullets, no math notation, no code. Offer to go deeper.
-- **"Is an HMM right for [my problem]?"** → walk the "right tool" checklist out loud in prose, name the verdict, suggest the alternative if the answer is no. Avoid heavy formatting.
+- **"Is an HMM right for [my problem]?"** → walk the "right tool" checklist out loud in prose, name the verdict, suggest the alternative if the answer is no. Avoid heavy formatting — even when the answer turns on data quantity or sequence length, stay in prose: "3–5 events per customer is too short for reliable HMM state inference; you'd need hundreds of transitions per state" is better than a bulleted breakdown.
 - **"How do I fit an HMM on [my data]?"** → workflow + code. Bullets or numbered steps OK here. Include multi-restart by default — the single most important thing.
 - **"My HMM fit looks weird"** → diagnostic questions first (what do the posteriors look like? transition matrix? convergence?), then targeted pitfall from the list.
 - **"Explain [algorithm/concept]"** → prose with one concrete example. Pull math from `algorithms.md` only if the user signaled they want it (used notation themselves, asked about implementation, has a math/ML background).

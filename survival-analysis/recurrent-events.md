@@ -60,7 +60,11 @@ summary(fit_ag)
 
 The `cluster(id)` (or, equivalently, `+ cluster(id)` and using robust = TRUE) is **essential**. Without it, standard errors assume independence between rows from the same subject and are too small. The point estimate is unaffected.
 
-### Python (lifelines)
+### Python
+
+Two options. Use lifelines for point estimates; use `statsmodels PHReg` when you need cluster-robust SEs.
+
+**Point estimates (lifelines):**
 ```python
 from lifelines import CoxTimeVaryingFitter
 
@@ -69,9 +73,28 @@ ctv.fit(recurrent_df, id_col='id', event_col='event',
         start_col='tstart', stop_col='tstop',
         formula='treatment + age')
 ctv.print_summary()
+# robust=True raises NotImplementedError in lifelines 0.30.x — use PHReg below for robust SEs.
 ```
 
-**Limitation**: `CoxTimeVaryingFitter` does not implement `robust=True` in lifelines 0.30.x (`NotImplementedError`). Cluster-robust SEs for Andersen-Gill are not available in Python lifelines. Use R's `coxph(..., cluster(id))` for this. The point estimates from lifelines are correct; only the SEs are unprotected against within-subject correlation.
+**Cluster-robust SEs (statsmodels PHReg):**
+```python
+import statsmodels.duration.hazard_regression as smh
+
+mod = smh.PHReg(
+    endog  = recurrent_df['tstop'].values,
+    exog   = recurrent_df[['treatment', 'age']].values,
+    status = recurrent_df['event'].values,
+    entry  = recurrent_df['tstart'].values,   # counting-process start time
+)
+res_naive  = mod.fit(disp=False)                              # information-based SEs
+res_robust = mod.fit(groups=recurrent_df['id'].values, disp=False)  # sandwich-robust SEs
+
+# Point estimates identical; robust SEs are typically larger
+print(res_naive.params, res_naive.bse)
+print(res_robust.params, res_robust.bse)
+```
+
+`groups=id` applies the Lin-Wei sandwich correction for within-subject correlation, the Python equivalent of `cluster(id)` in R. Point estimates are unaffected; SEs increase to reflect that rows from the same subject carry correlated information.
 
 ### Interpretation
 

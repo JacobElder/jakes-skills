@@ -179,9 +179,10 @@ from lifelines import CoxTimeVaryingFitter
 ctv = CoxTimeVaryingFitter()
 ctv.fit(df_long, id_col='id', event_col='event',
         start_col='start', stop_col='stop',
-        formula='treatment + age + ph_ecog',
-        robust=True)
+        formula='treatment + age + ph_ecog')
 ctv.print_summary()
+# Note: robust=True raises NotImplementedError in CoxTimeVaryingFitter (lifelines 0.30.x).
+# For cluster-robust SEs with time-varying covariates, use statsmodels PHReg (see Recurrent events).
 ```
 
 Same fitter handles left-truncated data (entry/exit form) and is the basis for Andersen-Gill recurrent-event models in Python.
@@ -261,7 +262,7 @@ cph2 = CoxPHFitter().fit(df, duration_col='time', event_col='cause2_event',
 
 ## Recurrent events
 
-Andersen-Gill via `CoxTimeVaryingFitter` with counting-process data:
+**Point estimates — lifelines `CoxTimeVaryingFitter`:**
 
 ```python
 from lifelines import CoxTimeVaryingFitter
@@ -271,9 +272,43 @@ ctv.fit(recurrent_df, id_col='id', event_col='event',
         start_col='tstart', stop_col='tstop',
         formula='treatment + age')
 ctv.print_summary()
+# Point estimates are correct. robust=True is not implemented (NotImplementedError).
 ```
 
-**Note**: `CoxTimeVaryingFitter` does not yet implement `robust=True` in lifelines (raises `NotImplementedError` as of 0.30.x). Cluster-robust standard errors for Andersen-Gill are not available in lifelines; use R's `coxph(..., cluster(id))` for that feature.
+**Cluster-robust SEs — `statsmodels PHReg`:**
+
+`statsmodels.duration.hazard_regression.PHReg` supports counting-process format (`entry=`) and cluster-robust variance via `groups=` in `.fit()`. Point estimates match the lifelines result; SEs differ because `groups=` applies a sandwich correction for within-subject correlation.
+
+```python
+import statsmodels.duration.hazard_regression as smh
+import numpy as np
+
+# recurrent_df: id, tstart, tstop, event, treatment, age
+mod_naive = smh.PHReg(
+    endog  = recurrent_df['tstop'].values,
+    exog   = recurrent_df[['treatment', 'age']].values,
+    status = recurrent_df['event'].values,
+    entry  = recurrent_df['tstart'].values,
+)
+res_naive  = mod_naive.fit(disp=False)
+
+mod_robust = smh.PHReg(
+    endog  = recurrent_df['tstop'].values,
+    exog   = recurrent_df[['treatment', 'age']].values,
+    status = recurrent_df['event'].values,
+    entry  = recurrent_df['tstart'].values,
+)
+res_robust = mod_robust.fit(groups=recurrent_df['id'].values, disp=False)
+
+print("Coefs (should be identical):")
+print("  naive: ", res_naive.params)
+print("  robust:", res_robust.params)
+print("SEs (robust SEs are typically larger):")
+print("  naive: ", res_naive.bse)
+print("  robust:", res_robust.bse)
+```
+
+The point estimates are numerically identical; the `groups=` correction inflates SEs to account for within-subject correlation. Robust SEs are usually larger — undercoverage without them is the motivation for `cluster(id)` in R.
 
 PWP-TT / PWP-GT / WLW: not natively supported. Restructure data and use stratification via interaction terms, or fit per-event-number models with manual robust SE adjustment. R is much cleaner for this.
 

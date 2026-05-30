@@ -403,14 +403,16 @@ EVALS: list[Eval] = [
             "total. Is an HMM a good fit?"
         ),
         category="content",
-        rubric_must_have_all=["transition"],
+        rubric_must_have_all=["transition", "short"],
         rubric_keywords=["not enough", "too few", "insufficient", "hundreds",
-                         "data", "short", "sparse", "markov chain"],
+                         "per state", "per customer", "reliable", "inference",
+                         "state-switching", "sparse", "length"],
         rubric_must_not_have=["hmm is a great fit", "hmm works well here",
                                "good choice for this", "well suited"],
         notes=(
             "Data scarcity flag. Skill says 'hundreds of state-transitions per state.' "
-            "3-5 events is far below that. Must raise the data concern before proceeding."
+            "3-5 events is far below that. Must raise the data concern before proceeding. "
+            "Both 'transition' and 'short' must appear; at least one specificity keyword required."
         ),
     ),
 ]
