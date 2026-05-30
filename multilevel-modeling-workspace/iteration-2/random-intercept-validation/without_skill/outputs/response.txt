@@ -1,0 +1,65 @@
+Good instinct to get a second opinion — the model is on the right track, but there are two issues worth addressing before write-up.
+
+---
+
+## What's solid
+
+- `lmer` is appropriate for this structure
+- Random intercept for subject `(1 | subject)` correctly accounts for baseline differences across participants
+- The fixed effect of condition is the right estimand
+- Your stats (β, t, p) are internally plausible for this kind of effect
+
+---
+
+## Two issues to address
+
+### 1. Missing random slope for condition ⚠️
+
+This is the more important one. Condition is a **within-subjects factor** — every participant experienced both levels. Your current model:
+
+```r
+lmer(rating ~ condition + (1 | subject), data = d)
+```
+
+only lets the intercept vary by person. It implicitly assumes every participant responds to the condition manipulation with the *same* effect size — only their baseline ratings differ. That's usually not defensible. Per Barr et al. (2013), you should include a random slope:
+
+```r
+lmer(rating ~ condition + (1 + condition | subject), data = d)
+```
+
+Without the slope, your standard error for the condition effect may be anti-conservative, meaning your *t* and *p* could be overstated.
+
+> **Quick check:** If the maximal model hits a singular fit warning, you can try removing the correlation parameter: `(1 + condition || subject)`. If it's still singular with 48 subjects, report both models and note the convergence issue — don't just silently drop the slope.
+
+---
+
+### 2. Missing random effect for stimuli ⚠️
+
+You have 60 stimuli. If those stimuli are shared across participants (the typical within-subjects setup), they're a crossed random factor and belong in the model:
+
+```r
+lmer(rating ~ condition + (1 + condition | subject) + (1 | stimulus), data = d)
+```
+
+Omitting stimuli pushes their variance into the residual. That's fine for residual variance per se, but if condition is confounded with any systematic stimulus property (and it often is — stimuli were presumably *assigned* to conditions for a reason), then omitting `(1 | stimulus)` can bias the condition estimate. This is the modern heir to Clark's (1973) "language-as-fixed-effect fallacy."
+
+---
+
+## Suggested model
+
+```r
+library(lme4)
+library(lmerTest)  # for Satterthwaite p-values
+
+m_full <- lmer(rating ~ condition + (1 + condition | subject) + (1 | stimulus),
+               data = d, REML = TRUE)
+summary(m_full)
+```
+
+Run this and see how your β and *t* change. If the condition effect survives — great, you have a more defensible result. If it weakens substantially, that's important to know before write-up rather than after review.
+
+---
+
+## One small thing
+
+You reported `p = 0.004` — `lme4` doesn't compute *p*-values by default, so I assume you used `lmerTest` (Satterthwaite) or `pbkrtest` (Kenward-Roger). Just make sure to report which approximation you used in the methods section; reviewers at most journals will ask.

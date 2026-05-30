@@ -1,0 +1,42 @@
+This is a real methodological question worth thinking through carefully, because what you're describing has a specific known limitation that reviewers at most journals will flag.
+
+## What you're doing: F1-only analysis
+
+Aggregating to participant means and running a repeated-measures ANOVA is the classic **by-participants analysis (F1)**. It's been standard practice for decades — but the field has known since Clark (1973) that F1 alone is statistically insufficient.
+
+### The core problem: language as a fixed effect
+
+When you aggregate over items before modeling, you implicitly treat your 40 sentences per condition as *the* sentences — not a sample from a population of possible sentences. This means:
+
+- **Item variance is folded into error** in a way that inflates Type I error rate
+- A significant F1 tells you the effect holds across your participants, but not that it would generalize to different items
+- This is the **language-as-fixed-effect fallacy** (Clark, 1973)
+
+## What reviewers will expect
+
+**Traditional solution (still acceptable at some venues):** Run *both* F1 (by-participants) and F2 (by-items) ANOVAs, then compute **minF′** — the quasi-F statistic that combines them. If minF′ is significant, you've established the effect generalizes across both participants *and* items.
+
+**Modern gold standard:** Linear mixed-effects models (LMEMs) with **crossed random effects** for participants and items simultaneously. A single model like:
+
+```r
+lmer(RT ~ condA * condB + (1 + condA * condB | participant) + (1 | item), data = df)
+```
+
+This is what most journals (JML, Cognition, Psychological Science, JEPLMC) now expect or require.
+
+## Additional things to add regardless
+
+| Issue | What to report |
+|---|---|
+| **Effect size** | η²p or (preferably) ω²p — it's less biased |
+| **RT distribution** | Did you log-transform? RT is right-skewed; averaging over 40 items helps via CLT but doesn't fix it |
+| **Data exclusions** | Outlier trimming criteria (e.g., ±2.5 SD per participant/condition) |
+| **Error trials** | How were incorrect responses or regressions handled? |
+
+## Practical bottom line
+
+If your target journal is psycholinguistics-specific (JML, Cognition, QJEP), **reviewers will almost certainly ask for mixed-effects models.** If you're submitting to a more general psychology venue, F1+F2+minF′ may pass, but it's increasingly seen as dated.
+
+The good news: if your F1 effect is significant, it very likely survives a mixed-effects model too. Running `lmer` now before submission is far less painful than revising under review pressure.
+
+Want help setting up the LMEM, interpreting random effects structure, or thinking through what random slopes are justified given your design?

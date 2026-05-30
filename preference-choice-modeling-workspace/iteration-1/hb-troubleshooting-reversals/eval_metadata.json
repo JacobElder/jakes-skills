@@ -1,0 +1,11 @@
+{
+  "eval_id": 5,
+  "eval_name": "hb-troubleshooting-reversals",
+  "prompt": "Just ran HB on a CBC and ~4% of respondents have negative price part-worths (preferring higher prices). Is this a problem? Should I constrain monotonicity on price?",
+  "assertions": [
+    "Notes that 4% is small/typical and not immediately alarming",
+    "Does NOT default to constraining monotonicity as the primary recommendation",
+    "Presents at least two of three options: leave alone / constrain / investigate",
+    "Mentions HB shrinkage toward population mean as a plausible cause of reversals"
+  ]
+}

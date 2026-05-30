@@ -1,0 +1,33 @@
+{
+  "eval_id": 2,
+  "condition": "with_skill",
+  "prompt": "My sample is huge (2.3 million rows). Does that mean I don't have to worry about my regression assumptions anymore?",
+  "response": "Short answer: some assumptions, yes \u2014 others, absolutely not. The distinction matters a lot at 2.3M rows.\n\n## What large N genuinely buys you\n\nVia the CLT, the sampling distribution of your OLS coefficients is thoroughly normal by now, regardless of how your residuals are shaped. So:\n\n- Normality of residuals is essentially irrelevant for inference on coefficients at this N. Any normality test will reject trivially \u2014 ignore it.\n- The t- and F-statistics have accurate levels. You don't need exact-normality guarantees.\n- Heteroskedasticity doesn't bias OLS coefficients (it never did \u2014 only the SEs). With HC3 robust SEs as your default, you're covered.\n\n## What large N does not fix\n\nThis is the more important list:\n\n**Biased estimates.** Confounding, omitted variables, post-treatment controls, and collider bias all bias the *coefficient itself* \u2014 and 2.3M observations give you a very precise estimate of the wrong number. More data narrows your interval around a biased point.\n\n**Dependence.** If your rows are clustered (customers within stores, students within schools, repeated observations on the same person), the effective sample size is far smaller than 2.3M and your SEs are wrong regardless of total N. The asymptotics run on the *number of independent units*, not observations. Two million rows from 400 clusters is an N-of-400 problem for inference.\n\n**Wrong functional form.** Nonlinearity in the mean structure biases your estimates. N doesn't help \u2014 it just makes the misspecification more precisely estimated.\n\n**Wrong estimand.** If you actually want a rate ratio or an odds ratio and you're running OLS, 2.3M rows give you a very precise answer to a question you didn't ask.\n\n## What actually deserves your attention at 2.3M rows\n\n1. **Independence/clustering** \u2014 are your rows genuinely independent? If not, what's the cluster structure, and how many clusters are there?\n2. **Mean structure** \u2014 residuals-vs-fitted plot for curvature/nonlinearity (the bias bucket).\n3. **Estimand** \u2014 additive mean contrast is what OLS delivers; if you want something multiplicative or bounded, that's a GLM-family question.\n4. **Effect sizes over p-values** \u2014 at 2.3M, every coefficient will be statistically significant. Lead with magnitudes and practical interpretation, not whether p < 0.05.\n\nThe ironical thing about 2.3M rows: assumption *tests* become useless (they'll reject trivialities) while assumption *reasoning* becomes more important, because now you have the power to detect and precisely estimate any real misspecification.",
+  "assertions": [
+    {
+      "text": "States that large N helps with the level/normal-approximation of tests (CLT) but does not fix everything",
+      "type": "scored"
+    },
+    {
+      "text": "Names at least two things large N does NOT fix from: dependence/clustering, confounding/identification, model/mean misspecification, wrong estimand",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that at this N nearly everything is statistically significant and effect sizes / intervals matter more than p-values",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT claim that large N makes assumptions irrelevant wholesale",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75
+}

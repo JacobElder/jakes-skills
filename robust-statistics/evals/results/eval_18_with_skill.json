@@ -1,0 +1,45 @@
+{
+  "eval_id": 18,
+  "condition": "with_skill",
+  "prompt": "I have 500,000 rows. The outcome is a count (number of purchases in a window) and I just want the average difference between two cohorts. Do I have to use a Poisson or negative binomial model, or can I just use OLS / a t-test on the counts?",
+  "response": "No, you don't need Poisson or negative binomial for this. OLS (or equivalently, a Welch t-test) is the right tool.\n\n**Why OLS is fine here**\n\nYou want an additive mean contrast \u2014 the difference in mean purchase counts between the two cohorts. OLS estimates exactly that. At n = 500,000, the CLT has thoroughly converged: even with severe right skew in the counts, the sampling distribution of the sample mean is essentially normal. The Berry\u2013Esseen bound says the approximation error is \u221d skewness/\u221an; with \u221an \u2248 700 per group (at equal split), the residual error is negligible.\n\n**The one real issue: heteroskedasticity**\n\nCount data have a mean\u2013variance relationship \u2014 high-purchase users vary more. That doesn't bias OLS coefficients, but it makes the classical standard errors wrong. The fix is cheap: use **HC3 robust standard errors** (sandwich estimator). Your point estimate is the same OLS number; only the SE changes.\n\n```python\nimport statsmodels.formula.api as smf\n\nmodel = smf.ols(\"purchases ~ C(cohort)\", data=df).fit(cov_type=\"HC3\")\nprint(model.summary())\n```\n\nOr a Welch t-test is equivalent and even simpler:\n\n```python\nfrom scipy.stats import ttest_ind\nttest_ind(df.loc[df.cohort==\"A\", \"purchases\"],\n          df.loc[df.cohort==\"B\", \"purchases\"],\n          equal_var=False)\n```\n\n**What Poisson/NB would actually add \u2014 and it's not validity**\n\n- **A different estimand.** Poisson with a log link reports a *rate ratio*, not a mean difference. That's a multiplicative effect. You said you want an average difference, so that's the wrong answer to your question.\n- **Efficiency.** Poisson/NB uses the mean\u2013variance structure to weight observations more cleverly than OLS. At 500k rows you have precision to burn; this is irrelevant.\n- **In-bounds predictions.** Irrelevant if you're not generating predictions.\n\n**The bottom line:** OLS + HC3 SEs is valid, direct, and gives you the estimand you actually want. You'd only reach for Poisson/NB if (a) you wanted a rate ratio instead of a mean difference, or (b) you had a small sample where efficiency mattered. Neither applies here.\n\nOne thing worth checking: if observations are clustered (e.g., users within geographic markets, or repeated measures per user), swap HC3 for **cluster-robust SEs** \u2014 that's the one violation n doesn't fix.",
+  "assertions": [
+    {
+      "text": "States that for the difference in mean counts, OLS+robust SEs (or a t-test) is valid here and a GLM is not required for validity",
+      "type": "scored"
+    },
+    {
+      "text": "Attributes that validity to the CLT / large n rather than to the outcome being normal",
+      "type": "scored"
+    },
+    {
+      "text": "Identifies what a Poisson/NB model actually adds: a multiplicative/rate-ratio estimand, in-bounds predictions, and/or efficiency \u2014 not validity",
+      "type": "scored"
+    },
+    {
+      "text": "Notes the choice hinges on the estimand (additive mean difference vs rate ratio) rather than on a rule that counts 'require' a count model",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions that at this very large n the efficiency advantage of the GLM is small",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT assert that count outcomes must be modeled with Poisson/NB",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 6,
+  "total": 6,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

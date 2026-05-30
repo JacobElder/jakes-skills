@@ -1,0 +1,41 @@
+{
+  "run_id": "random-intercept-validation-with_skill",
+  "eval_id": 1,
+  "eval_name": "random-intercept-validation",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output identifies that the model is missing a by-subject random slope for condition",
+      "passed": true,
+      "evidence": "Problem 1 (Critical): Missing random slope for condition \u2014 'Your condition manipulation is within-subjects\u2026 it must have a by-subject random slope.'"
+    },
+    {
+      "text": "Output explicitly states or strongly implies that the analysis is NOT defensible as-is \u2014 does NOT validate it or describe it as 'broadly fine'",
+      "passed": true,
+      "evidence": "'This doesn't look right, and the issue is significant enough that you shouldn't write it up with this model.' and 'Your t = 2.91 and p = .004 cannot be trusted from this specification.'"
+    },
+    {
+      "text": "Output explains that omitting the by-subject slope inflates Type I error (anti-conservative p-value) for within-subjects effects",
+      "passed": true,
+      "evidence": "'The subject-by-condition interaction variance gets absorbed into the residual, which means the denominator of your test is too small and your t-statistic is too large\u2026 the Type I error rate under a random-intercepts-only model can run 2\u20135\u00d7 the nominal rate.'"
+    },
+    {
+      "text": "Output references Barr et al. (2013) / Keep It Maximal, OR Schielzeth & Forstmeier (2009), OR explains the Type I inflation mechanism (wrong error term for within-subjects test)",
+      "passed": true,
+      "evidence": "Explicitly cites both 'Barr et al., 2013' and 'Schielzeth & Forstmeier, 2009' and also explains the mechanism (residual absorbs slope variance, denominator too small)."
+    },
+    {
+      "text": "Output recommends refitting with a by-subject random slope \u2014 e.g. (1 + condition | subject) or equivalent",
+      "passed": true,
+      "evidence": "'What you need at minimum: lmer(rating ~ condition + (1 + condition | subject), data = d)'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

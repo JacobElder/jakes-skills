@@ -1,0 +1,38 @@
+{
+  "eval_id": 6,
+  "condition": "with_skill",
+  "prompt": "I want to report the difference in median household income between two neighborhoods. A colleague says just use a t-test. Is that right?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "Identifies that the question is about the median (the estimand) while a t-test targets the mean",
+      "type": "scored"
+    },
+    {
+      "text": "Frames this primarily as an estimand mismatch rather than an assumption violation",
+      "type": "scored"
+    },
+    {
+      "text": "Suggests a method that actually targets the median (quantile/median regression, or bootstrap CI for the median difference)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that Mann-Whitney does not directly estimate the median difference unless a location-shift assumption holds",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply endorse the t-test as a test of medians",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

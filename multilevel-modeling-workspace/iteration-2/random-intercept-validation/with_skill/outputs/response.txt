@@ -1,0 +1,61 @@
+This doesn't look right, and the issue is significant enough that you shouldn't write it up with this model. Your advisor's "clean" assessment almost certainly reflects the clean *output* — no warnings, a tidy significant effect — not the model *specification*, which has two serious problems.
+
+---
+
+## Problem 1 (Critical): Missing random slope for condition
+
+Your condition manipulation is **within-subjects** — every participant saw both conditions. That means condition varies *within* the subject grouping factor, which means it *must* have a by-subject random slope.
+
+**What you fit:**
+```r
+lmer(rating ~ condition + (1 | subject), data = d)
+```
+
+**What you need at minimum:**
+```r
+lmer(rating ~ condition + (1 + condition | subject), data = d)
+```
+
+**Why it matters:** Without the random slope, the model assumes the condition effect is *identical* across all 48 participants — no person-level variation in how they respond to the manipulation. The subject-by-condition interaction variance gets absorbed into the residual, which means the denominator of your test is too small and your *t*-statistic is too large. This is a well-documented source of anti-conservative inference (Barr et al., 2013; Schielzeth & Forstmeier, 2009). In within-subjects designs, the Type I error rate under a random-intercepts-only model can run 2–5× the nominal rate.
+
+Your *t* = 2.91 and *p* = .004 **cannot be trusted** from this specification. The effect may well be real — but you don't know that yet.
+
+---
+
+## Problem 2 (Likely critical): Missing by-stimulus random effects
+
+You have 60 stimuli, which are almost certainly a *sample* from a broader population of possible stimuli. If you want to generalize the condition effect beyond these specific 60 items, stimuli need their own random effect — this is the "language-as-fixed-effect fallacy" (Clark, 1973), and it applies far beyond language research.
+
+**The question to ask yourself:** If someone ran your study with a different set of 60 stimuli, would you expect the same condition effect? If yes, stimuli are a random factor and must be modeled.
+
+Assuming the same 60 stimuli appear in both conditions (fully crossed), the appropriate maximal model is:
+
+```r
+lmer(rating ~ condition + (1 + condition | subject) + (1 + condition | stimulus), data = d)
+```
+
+If that's overparameterized for your data (convergence warnings, singular fit), simplify in a principled way — typically by dropping the correlation parameter first, then random slopes for stimuli before subjects:
+
+```r
+# Step 1: remove correlation parameters
+lmer(rating ~ condition + (1 + condition || subject) + (1 + condition || stimulus), data = d)
+
+# Step 2: if still singular, drop by-stimulus slope
+lmer(rating ~ condition + (1 + condition | subject) + (1 | stimulus), data = d)
+```
+
+---
+
+## What to do now
+
+1. **Clarify the design:** Do the same stimuli appear in both conditions, or are stimuli nested within conditions (different stimuli per condition)? This determines the by-stimulus random slope structure.
+
+2. **Refit with the correct structure** and check for convergence warnings and singular fits before interpreting anything.
+
+3. **If the model converges cleanly:** Report the fixed-effect estimate, SE, *t*, and Satterthwaite or Kenward-Roger *p* (via `lmerTest`), plus variance components and ICC. The effect size β = 0.38 may survive — many within-subjects effects do — but you need the right error term to know.
+
+4. **If you get singular fits:** That's diagnostic information, not a reason to revert to the underspecified model. Post the convergence output and we can work through the simplification decision together.
+
+---
+
+The good news: the data you've collected can absolutely support the right analysis. The 48-subject, 60-stimulus fully-crossed design is actually quite well-powered for a maximal or near-maximal random-effects structure. The current model just isn't using the structure correctly.

@@ -1,0 +1,25 @@
+{
+  "eval_id": 1,
+  "condition": "baseline",
+  "prompt": "I have two groups, about 80 people each, and I want to compare their average monthly spend. The data are right-skewed and a Shapiro-Wilk test on each group rejects normality (p < .001). Can I still use a t-test, or do I have to switch to Mann-Whitney?",
+  "response": "With n \u2248 80 per group you're in reasonable shape for Welch's t-test, but the answer turns on two things people often conflate: **what hypothesis you actually want to test**, and **how heavy the tail is**.\n\n## Why the t-test is still defensible here\n\nThe normality assumption applies to the *sampling distribution of the mean*, not the raw data. By n = 80, the CLT has done most of its work for distributions with moderate skew. Shapiro-Wilk at that sample size is sensitive enough to flag trivial departures \u2014 a rejection of p < .001 tells you the data aren't perfectly normal, not that the t-test is broken.\n\n**Rule of thumb:** for right-skewed spend data, n \u2248 30\u201350 per group is usually sufficient for the CLT to cover you; n = 80 is comfortable unless you have extreme outliers or a heavy Pareto-like tail.\n\n## The thing Mann-Whitney doesn't fix\n\nMann-Whitney is not a test of means. It tests whether one group's values tend to be stochastically larger (H\u2080: P(X > Y) = 0.5). If you care about **average monthly spend**, Mann-Whitney doesn't answer that question, even if it's \"safer\" on normality. Switching tests to avoid a violation while changing the estimand is a subtle methodological error.\n\n## What to actually do\n\n| Goal | Approach |\n|---|---|\n| Test mean difference, report effect in dollars | **Welch's t-test** (handles unequal variance); check for extreme outliers separately |\n| Robustify against heavy tails | **Bootstrap CI** on the mean difference \u2014 no distributional assumption at all |\n| Analyze on a multiplicative scale (common for spend) | **Log-transform \u2192 Welch's t-test**; effect is now a ratio of geometric means |\n| Genuinely care about typical (median) user, not mean | Mann-Whitney or quantile regression is appropriate here |\n\n## Practical recommendation\n\nPlot the two distributions. If the skew is moderate and you don't have a handful of extreme values driving everything, Welch's t-test at n = 80 is defensible. If you do have heavy tails or outliers, a bootstrap CI on the mean difference gives you the same estimand with no distributional assumption \u2014 and it's easy to explain. Either way, report an effect size (Cohen's d or the raw mean difference with CI) rather than just a p-value.",
+  "assertions": [
+    "States or implies the relevant object is the sampling distribution of the mean, not the distribution of the raw data",
+    "Says the t-test is approximately valid / okay here given n~80 per group (does not forbid it)",
+    "Notes that Shapiro-Wilk rejecting at this sample size is uninformative or expected, and does not treat it as a decisive gate",
+    "Recommends or mentions Welch's t-test (or otherwise addresses unequal variances) rather than the equal-variance pretest",
+    "Notes that Mann-Whitney tests stochastic ordering / P(X>Y), not equality of means or medians in general (location-shift caveat)",
+    "Does NOT mechanically conclude 'normality rejected therefore use a nonparametric test'"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 6,
+  "total": 6,
+  "pass_rate": 1.0
+}

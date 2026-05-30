@@ -1,0 +1,38 @@
+{
+  "eval_id": 8,
+  "condition": "with_skill",
+  "prompt": "A reviewer is demanding I drop variables because my VIFs are above 5. I care about the coefficient on price, which has a VIF of 2.1. The high-VIF variables are control variables I'm not interpreting. What should I do?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "States that multicollinearity inflates standard errors of the collinear coefficients but does not bias estimates",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that collinearity among controls does not impair the coefficient of interest (price) when price itself is not highly collinear",
+      "type": "scored"
+    },
+    {
+      "text": "Warns that dropping the control variables could introduce omitted-variable bias",
+      "type": "scored"
+    },
+    {
+      "text": "Pushes back on the reflexive 'VIF > 5 so drop variables' rule rather than complying with it",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the decision in terms of the goal/estimand (the price coefficient) rather than a mechanical threshold",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

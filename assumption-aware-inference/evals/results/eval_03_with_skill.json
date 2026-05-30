@@ -1,0 +1,38 @@
+{
+  "eval_id": 3,
+  "condition": "with_skill",
+  "prompt": "I'm modeling the number of support tickets each customer files per month. Should I use Poisson or negative binomial regression?",
+  "response": "**Start with negative binomial.** Here's why, and what to verify.\n\n## Why Poisson almost certainly fails here\n\nSupport ticket counts are a textbook overdispersion scenario: customers differ in their underlying \"complain-iness\" due to product complexity, customer type, tenure, and unobserved factors you'll never fully capture. That unobserved heterogeneity in rates is precisely what generates a negative-binomial distribution \u2014 mathematically, NB is a Poisson-gamma mixture where the gamma captures the between-customer variability in true rates.\n\nWith plain Poisson on overdispersed data:\n- **Coefficients are fine** \u2014 Poisson is consistent for the mean model regardless of overdispersion\n- **Standard errors are too small** \u2014 sometimes by 2\u20133\u00d7, making p-values wildly optimistic\n\n## Poisson vs NB vs quasi-Poisson\n\nThe distinction between NB and quasi-Poisson is the **variance function**, and it's not cosmetic \u2014 they weight observations differently:\n\n| Model | Variance function | Use when |\n|---|---|---|\n| Poisson | V(\u03bc) = \u03bc | Variance \u2248 mean (rare in practice) |\n| Quasi-Poisson | V(\u03bc) = \u03c6\u03bc (linear) | Variance grows proportionally to mean |\n| Negative binomial | V(\u03bc) = \u03bc + \u03bc\u00b2/\u03b8 (quadratic) | Variance grows faster at high means |\n\nFor support tickets, NB is usually the right variance shape: heavy users tend to have *disproportionately* more variable counts, not just more of them.\n\nNB also has a proper likelihood, so you get AIC/BIC for model comparisons \u2014 quasi-Poisson does not.\n\n## What to actually check\n\n**Dispersion check:** Fit a Poisson model first, then compute the Pearson statistic / residual df. A ratio meaningfully above 1 confirms overdispersion. In R:\n\n```r\npois_fit <- glm(tickets ~ ., family = poisson, data = df)\nsum(residuals(pois_fit, \"pearson\")^2) / pois_fit$df.residual\n# >> 1 means overdispersed; 3+ is severe\n```\n\n**Variance\u2013mean plot:** Bin customers by predicted mean and plot empirical variance vs mean. Roughly linear \u2192 quasi-Poisson might suffice; growing faster \u2192 NB.\n\n**Check zeros:** If a large fraction of customers filed zero tickets, fit NB first and see if it absorbs them (it usually does via the heavy right-tail accommodation). Only reach for zero-inflated NB if you believe some customers are *structurally* incapable of filing tickets (e.g., they cancelled before the month started) \u2014 a conceptually distinct zero process, not just many non-events.\n\n## Bottom line\n\nFit NB and verify the dispersion ratio. If the ratio is close to 1 in a Poisson fit, Poisson is actually fine \u2014 but that would be a surprising finding for support ticket data. The log link gives you rate ratios as coefficients (multiplicative effects), which is the natural estimand: \"customers in segment X file tickets at 1.4\u00d7 the rate of segment Y.\"",
+  "assertions": [
+    {
+      "text": "Frames the decision around the mean-variance relationship / equidispersion vs overdispersion",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that count data like this are usually overdispersed and therefore NB or quasi-Poisson is typically preferred over plain Poisson",
+      "type": "scored"
+    },
+    {
+      "text": "Explains how to detect overdispersion (dispersion statistic relative to df, or variance-vs-mean plot)",
+      "type": "scored"
+    },
+    {
+      "text": "States that overdispersion mainly deflates the standard errors rather than biasing the point estimates (if the mean model is right)",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions at least one of: offset for exposure, NB-vs-quasi-Poisson variance shape difference, or checking excess zeros",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

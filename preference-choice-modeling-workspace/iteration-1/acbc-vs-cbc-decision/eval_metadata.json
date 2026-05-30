@@ -1,0 +1,10 @@
+{
+  "eval_id": 7,
+  "eval_name": "acbc-vs-cbc-decision",
+  "prompt": "We're studying a product with 9 attributes including a complex pricing structure (base + add-ons). Sawtooth keeps suggesting ACBC. Worth the complexity?",
+  "assertions": [
+    "Recommends ACBC for this specific case (9 attributes + complex pricing)",
+    "Mentions at least one ACBC failure mode (BYO seeding bias, unacceptable inflation, or simulator limitations)",
+    "Notes that ACBC is NOT the default for simpler studies"
+  ]
+}

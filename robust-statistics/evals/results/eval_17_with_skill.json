@@ -1,0 +1,35 @@
+{
+  "eval_id": 17,
+  "condition": "with_skill",
+  "prompt": "n = 300 in each of two independent groups, outcome roughly symmetric, I want to compare means. Anything I actually need to worry about before running a two-sample t-test?",
+  "response": "At n=300 per group with a symmetric outcome, the CLT has fully engaged and the distributional concerns are essentially zero. The t-statistic's sampling distribution will be indistinguishable from normal \u2014 symmetry means Berry-Esseen error (\u221d skewness/\u221an) is tiny, and you'd need severe skew or heavy tails for n=300 to still matter.\n\nOne thing worth doing: **use Welch's t-test rather than Student's**. Welch doesn't assume equal variances, costs you nothing meaningful when they happen to be equal, and protects you when they aren't. The common alternative \u2014 Levene's test first, then pick \u2014 is a pretest procedure with distorted operating characteristics and no real upside. Just use Welch from the start.\n\nThat's it. At this n and with this outcome shape, you don't need to check normality, you don't need a rank-based alternative, and you don't need to bootstrap. The difference in means is a sensible estimand, and the inference will be accurate.",
+  "assertions": [
+    {
+      "text": "Reassures that the t-test is fine / there is little to worry about given n=300 and symmetry",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions Welch as the sensible default and/or that an equal-variance pretest is unnecessary",
+      "type": "scored"
+    },
+    {
+      "text": "Keeps the response brief and proportionate rather than enumerating many diagnostics or alternative methods",
+      "type": "must_pass"
+    },
+    {
+      "text": "Does NOT invoke normality tests as a gate or recommend a nonparametric switch",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

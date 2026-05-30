@@ -1,0 +1,15 @@
+{
+  "skill_name": "preference-choice-modeling",
+  "evals": [
+    {"id": 1, "prompt": "I'm running a MaxDiff with 50 items, how many sets per respondent?", "should_trigger": true},
+    {"id": 2, "prompt": "What's the right sample size for a CBC with 3 segments?", "should_trigger": true},
+    {"id": 3, "prompt": "Can you help me think through anchored vs. unanchored MaxDiff?", "should_trigger": true},
+    {"id": 4, "prompt": "We have 60 features and need to prioritize them — what's the best survey design?", "should_trigger": true},
+    {"id": 5, "prompt": "My HB conjoint utilities look weird, some respondents prefer high prices", "should_trigger": true},
+    {"id": 6, "prompt": "Should we use ACBC or CBC for a pricing study?", "should_trigger": true},
+    {"id": 7, "prompt": "Building a share-of-preference simulator from CBC, how do I calibrate it?", "should_trigger": true},
+    {"id": 8, "prompt": "What's the capital of France?", "should_trigger": false},
+    {"id": 9, "prompt": "Help me write a SQL query to join two tables", "should_trigger": false},
+    {"id": 10, "prompt": "Can you analyze this CSV of survey responses for me?", "should_trigger": false}
+  ]
+}

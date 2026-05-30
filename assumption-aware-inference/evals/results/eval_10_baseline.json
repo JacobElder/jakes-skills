@@ -1,0 +1,38 @@
+{
+  "eval_id": 10,
+  "condition": "baseline",
+  "prompt": "Should I model my outcome (proportion of a budget spent on category X, between 0 and 1) with logistic regression?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "Distinguishes a continuous proportion in (0,1) from a count of successes out of trials",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends beta regression (or fractional/quasi-binomial logit) for a continuous bounded proportion",
+      "type": "scored"
+    },
+    {
+      "text": "Says plain logistic regression is appropriate when the outcome is successes out of a known number of trials",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions handling exact 0s and 1s (e.g. zero/one-inflated beta or a transformation) if beta regression is used",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply endorse logistic regression without qualification",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

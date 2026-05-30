@@ -1,0 +1,40 @@
+{
+  "eval_id": 22,
+  "condition": "with_skill",
+  "prompt": "I ran the same regression in men and women separately. In men the coefficient on treatment is 0.42 (p = 0.03). In women it's 0.31 (p = 0.12). So the treatment effect is significant in men but not women \u2014 that means the treatment works differently by sex, right?",
+  "response": "No \u2014 that conclusion doesn't follow. This is a well-documented fallacy: **a difference in significance is not a significant difference** (Gelman & Stern, 2006).\n\nWhat you've shown is that one estimate clears p < 0.05 and the other doesn't. But the two estimates (0.42 and 0.31) are actually quite close, and the significance thresholds for the individual tests are not designed to double as a test of equality between them.\n\nTo see why: under a rough back-of-envelope check, if both estimates had SEs around 0.19, the SE of their *difference* would be \u221a(0.19\u00b2 + 0.19\u00b2) \u2248 0.27, and a difference of 0.42 \u2212 0.31 = 0.11 would yield z \u2248 0.41 \u2014 nowhere near significant. The p-values of the separate models tell you almost nothing about whether the effects differ.\n\n**The correct move is to test the difference directly** \u2014 add a sex \u00d7 treatment interaction term to a joint model and test that coefficient:\n\n```\noutcome ~ treatment + sex + treatment:sex + covariates\n```\n\nThe interaction coefficient *is* the test of \"does treatment work differently by sex?\" If it's not significant, you don't have evidence of effect modification, regardless of what the split-sample p-values look like.\n\nA few practical notes:\n- Split-sample analyses also cost you power \u2014 the interaction test in the joint model uses the full sample.\n- It helps to display the two estimates with their confidence intervals side by side. Substantial overlap (which 0.42 \u00b1 ~0.38 and 0.31 \u00b1 ~0.38 would have) is a quick visual check against claiming a meaningful difference.\n- The pattern you saw \u2014 significant in one subgroup, not the other \u2014 is extremely common and extremely commonly over-interpreted. It's almost never sufficient on its own.",
+  "assertions": [
+    {
+      "text": "States that 'significant in one group, not the other' does NOT establish that the effects differ between groups",
+      "type": "must_pass"
+    },
+    {
+      "text": "States the correct test is a direct contrast or interaction term (treatment \u00d7 sex / group), not a comparison of individual p-values",
+      "type": "scored"
+    },
+    {
+      "text": "Explains why: two effects can each be (non-)significant individually while their difference has a different significance status",
+      "type": "scored"
+    },
+    {
+      "text": "Notes or implies the SE of the difference is larger than either individual SE (e.g. \u221a(SE\u2081\u00b2 + SE\u2082\u00b2) under independence)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT accept the subgroup p-value comparison as a valid test of the between-group difference",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

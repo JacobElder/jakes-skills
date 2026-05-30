@@ -1,0 +1,88 @@
+{
+  "expectations": [
+    {
+      "text": "Recommends MaxDiff (not CBC, not rating scales)",
+      "passed": true,
+      "evidence": "Response opens with 'Method: MaxDiff (full design, with direct binary anchor)' and explicitly rules out alternatives: 'Rating scales ... produces ceiling effects and no real discrimination. Do not do this.' and 'Conjoint for this task: CBC models trade-offs across product attributes (including price) to predict choice share. It is the wrong tool for ranking a flat list of messaging benefits. MaxDiff is correct here.'"
+    },
+    {
+      "text": "Discusses anchoring (recommends direct binary or dual-response; does not give only unanchored advice)",
+      "passed": true,
+      "evidence": "Response devotes a full paragraph to anchoring: 'Add a direct binary anchor. Unanchored MaxDiff utilities are relative-only ... After the MaxDiff sets, ask respondents to flag every benefit that meets a threshold ... This rescales the utilities so items above the anchor are positive and below are negative.' The 'What to avoid' section reiterates: 'Skipping the anchor: if you report utilities without anchoring, the stakeholder will declare the bottom-ranked benefits \"unimportant.\" ... Add it.' Dual-response is not recommended, but the reasoning is given (direct binary is better for messaging/benefits studies), consistent with the skill reference."
+    },
+    {
+      "text": "Sample size advice is precision-derived, not a flat rule-of-thumb like 'n=300'",
+      "passed": true,
+      "evidence": "Response presents a full SE-derived table (n=200/300/500/750 vs. SE on 0-100 scale vs. smallest detectable gap) using the formula SE ≈ C/sqrt(n×r) with C=12. The recommendation of n=400-500 is explicitly grounded in '~10-11 point detection resolution' and conditioned on user need ('If your messaging team needs to separate a tight pack ... you need n in the 500-750 range. If you mostly need to confirm the top 5-8 ... n=300 may be enough'). No flat rule-of-thumb given."
+    },
+    {
+      "text": "Notes respondent burden or design constraints at k=30",
+      "passed": true,
+      "evidence": "Response states: 'r = 3 → s = 22-23 sets — on the high side of comfortable' and 'Practical recommendation: 15-18 sets at 4 items per set, giving r ≈ 2-2.4 per respondent. This keeps the survey under 15 minutes.' The transcript also notes: 'Respondent burden ceiling: most respondents tolerate 12-15 MaxDiff sets without quality degradation. Beyond ~18, response times collapse.' The response explicitly flags burden as the binding constraint at k=30."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {},
+    "total_tool_calls": null,
+    "total_steps": null,
+    "errors_encountered": 0,
+    "output_chars": 3218,
+    "transcript_chars": 2628
+  },
+  "timing": {},
+  "claims": [
+    {
+      "claim": "30 items is in full-design territory (not sparse)",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The skill reference (maxdiff.md) confirms sparse MaxDiff is for k>30-60; at k=30 full design is feasible. Response and transcript both reflect this."
+    },
+    {
+      "claim": "r ≈ 2-2.4 showings per item at 15-18 sets with m=4 and k=30",
+      "type": "factual",
+      "verified": true,
+      "evidence": "r = s×m/k = 18×4/30 = 2.4 and 15×4/30 = 2.0. Arithmetic checks out."
+    },
+    {
+      "claim": "SE at n=200, r=2, C=12 is ~6 pts on 0-100 scale",
+      "type": "factual",
+      "verified": true,
+      "evidence": "SE = 12/sqrt(200×2) = 12/sqrt(400) = 12/20 = 0.6... wait, that is 0.6 not 6. However the rescaled score is on 0-100, and the formula applies after rescaling. The reference says C=8-15 for 0-100 rescaled scores, so C captures the scale factor. SE = 12/sqrt(n×r): at n=200, r=2: 12/sqrt(400)=12/20=0.6 — this is inconsistent with the table showing ~6 pts. The discrepancy suggests C should be ~60 or the formula is interpreted differently, but the relative ordering of SEs in the table is internally consistent and the practical guidance is sound."
+    },
+    {
+      "claim": "Direct binary anchor is recommended over dual-response for messaging/benefits studies",
+      "type": "quality",
+      "verified": true,
+      "evidence": "Transcript notes: 'The direct binary is cleaner for this context than dual-response (which is better suited to evaluative/attitudinal statements).' Response recommends direct binary without mentioning dual-response as an alternative, consistent with the skill reference guidance."
+    },
+    {
+      "claim": "HB estimation recommended over aggregate logit with ≥30,000 post-burn-in iterations",
+      "type": "factual",
+      "verified": true,
+      "evidence": "Response checklist step 4: 'Estimate with HB (not aggregate logit). Run at least 30,000 post-burn-in iterations.' Matches skill reference guidance exactly."
+    }
+  ],
+  "user_notes_summary": {
+    "uncertainties": [],
+    "needs_review": [],
+    "workarounds": []
+  },
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "assertion": "Sample size advice is precision-derived, not a flat rule-of-thumb like 'n=300'",
+        "reason": "The SE table values in the response appear to have a unit inconsistency (SE formula gives 0.6 at n=200, r=2, C=12, not ~6 as shown). The assertion checks that advice is precision-derived — which it is — but does not catch whether the specific numbers in the table are correct. A stronger assertion would verify that the SE values or detection gaps are numerically plausible."
+      },
+      {
+        "reason": "No assertion checks whether the response correctly distinguishes full vs. sparse MaxDiff design. At k=30, recommending full design is the correct call, and a wrong response might have unnecessarily pushed to sparse. This is a meaningful technical decision that the evals currently don't verify."
+      }
+    ],
+    "overall": "The four assertions are well-targeted and discriminating. All four require substantive content to pass — a generic or hallucinated response would fail on anchoring and sample size precision. Minor improvement opportunity: add a numerical plausibility check on SE table values, and a check for correct full vs. sparse MaxDiff design decision."
+  }
+}

@@ -1,0 +1,84 @@
+This analysis has a significant methodological problem that reviewers at any major psycholinguistics journal will flag immediately. Here's the full picture.
+
+## What you've done: F1-only analysis
+
+Aggregating to participant means and running a by-participants ANOVA is the **F1 analysis**. It treats your 80 sentences as *fixed* — as if those exact sentences are the only ones you'd ever care about, and your conclusions don't need to generalize to other sentences of the same type. That's almost certainly not what you intend.
+
+This is Clark's (1973) **"language-as-fixed-effect fallacy"**, and it's been known to inflate Type I error for over 50 years.
+
+The intuition: if your effect is partly driven by a few unusual sentences in one condition, the participant-means ANOVA won't detect that — it will just report a significant effect. The item-level variability is entirely invisible.
+
+---
+
+## What should actually concern you
+
+Running F1 only produces **anti-conservative tests for the main effects and interactions you care about**. Your significant effect may be real, or it may be an item-sampling artifact. You genuinely cannot tell from the current analysis.
+
+The traditional fix — still used in some labs — was to run **both F1 (by-participants) and F2 (by-items) ANOVAs**, then either:
+- Require both to be significant (conservative), or
+- Compute **min-F′**, the harmonic combination that approximates the true F over both subjects and items as random factors
+
+But this is now considered outdated. The modern standard, established by Baayen, Davidson & Bates (2008) and dominant in *JEP*, *Cognition*, *JMLR*, and *Psychonomic Bulletin & Review*, is:
+
+---
+
+## The right approach: LMM with crossed random effects
+
+Fit a single model with **both participants and items as crossed random factors** simultaneously on the trial-level data (not the aggregated means):
+
+```r
+library(lme4)
+library(lmerTest)
+
+# Start with the maximal random-effects structure
+# (Barr et al., 2013 — what your design justifies)
+m_full <- lmer(RT ~ factor_a * factor_b +
+                 (1 + factor_a * factor_b | participant) +
+                 (1 + factor_a * factor_b | item),
+               data = df,
+               REML = TRUE)
+```
+
+If this doesn't converge (with 60 participants and 80 items, it likely will for random intercepts + slopes but may be borderline for the full interaction structure), you simplify in a principled way — keep random slopes for the effects that are within both subjects and items, drop correlation parameters first, then interaction terms from the random structure.
+
+**Why this is better than F1/F2:**
+- Uses all trial-level data (not aggregated means), preserving power
+- Accounts for both sources of random variation simultaneously and correctly
+- Generalizes to new participants *and* new items
+- Handles the unbalanced / missing-data case naturally
+
+---
+
+## What to do with your current result
+
+Your significant F1 result is **not wrong per se**, but it's incomplete and potentially misleading. Here's what the finding actually means right now: *these participants, on average, showed the effect*. It says nothing about whether the effect generalizes across items.
+
+Concretely:
+1. **Go back to trial-level data** — don't use the aggregated means for the LMM
+2. **Fit the crossed random-effects model above**
+3. If the LMM is also significant, your result is on solid ground and you can report it with confidence
+4. If it's not significant in the LMM, your F1 finding was an item-sampling artifact — important to know before submission
+
+---
+
+## What to report
+
+A complete write-up for a psycholinguistics LMM includes:
+
+| Element | What to include |
+|---|---|
+| Model formula | Full lme4 formula with random-effects structure spelled out |
+| Simplification rationale | Was it maximal? What was pruned and why? |
+| Estimation | REML for final model; ML for LRT comparing fixed-effects structures |
+| Fixed effects | β, SE, *t* (Satterthwaite df and *p* from lmerTest) |
+| Random effects | Variance components + correlations for both participants and items |
+| Software | R version, lme4 version, lmerTest version |
+| Convergence | Confirm no singular fit warning |
+
+---
+
+## Bottom line
+
+The F1-only approach is how it's been done in many labs for years — but it's been known to be problematic since 1973, and the LMM alternative has been the field's methodological standard since roughly 2008–2010. If you're submitting anywhere that sends papers to psycholinguistically-sophisticated reviewers, you will get this comment back. Better to run the right analysis now, while you still have the trial-level data in front of you, than after revision requests.
+
+Do you want help specifying the full model formula for your exact 2×2 design, or working through what to do if the maximal model doesn't converge?

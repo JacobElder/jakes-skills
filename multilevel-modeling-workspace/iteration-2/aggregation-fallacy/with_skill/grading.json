@@ -1,0 +1,41 @@
+{
+  "run_id": "aggregation-fallacy-with_skill",
+  "eval_id": 3,
+  "eval_name": "aggregation-fallacy",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output identifies the language-as-fixed-effect fallacy (Clark, 1973) or equivalent \u2014 that by-subject analysis treats items as fixed rather than as a sample from a population",
+      "passed": true,
+      "evidence": "\"This is Clark's (1973) 'language-as-fixed-effect fallacy'\" and \"It treats your 80 sentences as *fixed* \u2014 as if those exact sentences are the only ones you'd ever care about, and your conclusions don't need to generalize to other sentences of the same type.\""
+    },
+    {
+      "text": "Output explains what is lost: the analysis does not generalize to other sentences/items, only to the specific 80 stimuli used",
+      "passed": true,
+      "evidence": "\"your conclusions don't need to generalize to other sentences of the same type\" and later \"It says nothing about whether the effect generalizes across items.\""
+    },
+    {
+      "text": "Output recommends crossed random effects for both subjects and items \u2014 lmer(rt ~ condition + (1 + condition | subject) + (1 + condition | item)) or equivalent",
+      "passed": true,
+      "evidence": "Provides explicit lme4 code: `lmer(RT ~ factor_a * factor_b + (1 + factor_a * factor_b | participant) + (1 + factor_a * factor_b | item), data = df, REML = TRUE)`"
+    },
+    {
+      "text": "Output does NOT describe by-subject ANOVA on means as 'standard' or recommend simply adding it as a robustness check alongside \u2014 it should recommend replacing the analysis",
+      "passed": true,
+      "evidence": "The response explicitly says the F1/F2 approach \"is now considered outdated\" and instructs: \"Go back to trial-level data \u2014 don't use the aggregated means for the LMM,\" framing LMM as a replacement, not an addition."
+    },
+    {
+      "text": "Output does NOT frame the item random effects as optional given the design",
+      "passed": true,
+      "evidence": "Item random effects are presented as a required component of the correct analysis throughout; the response never hedges by suggesting they are optional or situational."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "eval_id": 2,
+  "condition": "baseline",
+  "prompt": "My sample is huge (2.3 million rows). Does that mean I don't have to worry about my regression assumptions anymore?",
+  "response": "No \u2014 large N relaxes exactly one assumption and leaves the rest fully intact (or makes them harder to ignore).\n\n## What large N actually fixes\n\n**Normality of residuals.** The CLT ensures the sampling distribution of your coefficients is approximately normal regardless of the error distribution. With 2.3M rows, you don't need to worry about this.\n\n## What large N does NOT fix\n\n**Linearity.** If the true relationship is nonlinear, OLS returns a biased estimate regardless of N. With 2.3M rows you now have enormous power to *detect* that misspecification \u2014 which means diagnostic plots will show it clearly, but the coefficient is still wrong.\n\n**Independence / clustering.** If observations are clustered (students in schools, transactions per customer, repeated measures), your standard errors are badly underestimated. More rows of correlated data makes this *worse*, not better. You need cluster-robust SEs or a mixed model.\n\n**Omitted variable bias / endogeneity.** This is the most dangerous false security. Large N gives you a very precise estimate of a biased quantity. 2.3M rows does not make a confounder go away.\n\n**Homoscedasticity.** OLS coefficients remain consistent under heteroscedasticity, but OLS SEs are wrong. Use HC robust SEs. With 2.3M rows, tests like Breusch-Pagan will flag even trivial violations, so you'll almost certainly need them.\n\n## The practical consequence of large N\n\n**Statistical significance is useless.** Everything will be significant. Shift your attention entirely to effect sizes, practical significance, and whether the model assumptions hold \u2014 not p-values.\n\nThe short version: large N makes inference robust to non-normality, and it makes assumption violations *easier to detect*, but it does not fix violations of linearity, independence, or causal identification.",
+  "assertions": [
+    {
+      "text": "States that large N helps with the level/normal-approximation of tests (CLT) but does not fix everything",
+      "type": "scored"
+    },
+    {
+      "text": "Names at least two things large N does NOT fix from: dependence/clustering, confounding/identification, model/mean misspecification, wrong estimand",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that at this N nearly everything is statistically significant and effect sizes / intervals matter more than p-values",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT claim that large N makes assumptions irrelevant wholesale",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0
+}

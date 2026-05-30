@@ -1,0 +1,41 @@
+{
+  "run_id": "convergence-simplification-with_skill",
+  "eval_id": 2,
+  "eval_name": "convergence-simplification",
+  "config": "with_skill",
+  "passed": 4,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output does NOT simply accept the simplified model and move to write-up guidance",
+      "passed": true,
+      "evidence": "The response opens with: 'the model you've landed on is likely producing anti-conservative p-values for condition, and the write-up question is premature until this is resolved.' It explicitly refuses to proceed to write-up and diagnoses the problem first."
+    },
+    {
+      "text": "Output raises that dropping random slopes to fix convergence risks under-specifying the model and inflating Type I error",
+      "passed": true,
+      "evidence": "'Without it, the variance in condition effects across subjects gets absorbed into the residual, and the test of the fixed effect for condition uses the wrong error term \u2014 inflating Type I error, sometimes dramatically (Barr et al., 2013).'"
+    },
+    {
+      "text": "Output names at least one upstream fix that should be tried before dropping slopes \u2014 predictor scaling, sum coding, allFit() / alternative optimizers, or dropping correlation parameters with || before dropping slopes",
+      "passed": true,
+      "evidence": "'The right first simplification is to remove the correlation parameter, not the slope' with explicit code showing the `||` zero-correlation syntax as the recommended first step before dropping slopes."
+    },
+    {
+      "text": "Output recommends running VarCorr() or rePCA() to diagnose which component caused the singularity, rather than simplifying by trial and error",
+      "passed": false,
+      "evidence": "The response never calls VarCorr() by name and does not mention rePCA() at all. It does reference `summary(m2)$varcor` as a check, but this appears inside a step-by-step sequential trial-and-error procedure ('Run these in sequence and stop when you get clean convergence'), not as a prior diagnostic step to identify the offending component before simplifying."
+    },
+    {
+      "text": "Output notes that the condition slope is missing from a within-subjects design and this is the most consequential omission \u2014 not just a minor simplification",
+      "passed": true,
+      "evidence": "'In a within-subjects condition manipulation...condition varies within subjects, which means a by-subject random slope for condition is structurally justified.' The response frames this as the central issue producing anti-conservative p-values, treating it as the most critical flaw, not a minor detail."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  }
+}

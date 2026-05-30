@@ -1,0 +1,38 @@
+{
+  "eval_id": 4,
+  "condition": "baseline",
+  "prompt": "We ran a randomized A/B test on checkout flow. Someone on my team says we need to control for device type, browser, and whether the user completed onboarding, since those differ a bit between the two arms. Should I add those as covariates?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "States that in a randomized experiment the unadjusted difference is already unbiased for the causal effect and adjustment is mainly for precision",
+      "type": "scored"
+    },
+    {
+      "text": "Flags that 'completed onboarding' may be post-treatment / a mediator or collider and that controlling for it can introduce bias",
+      "type": "scored"
+    },
+    {
+      "text": "Distinguishes pre-treatment covariates (okay to adjust, ideally pre-specified) from post-treatment variables (do not adjust)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that small covariate imbalances under randomization are expected and not evidence of confounding",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT advise blindly adding all three covariates as 'more rigorous'",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

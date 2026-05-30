@@ -1,0 +1,38 @@
+{
+  "eval_id": 11,
+  "condition": "with_skill",
+  "prompt": "I'm comparing pre/post test scores for a treatment and control group that were NOT randomized. Should I analyze change scores (post minus pre) or run ANCOVA controlling for the pre-test? I got different answers from each.",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "Names or describes Lord's paradox / that the two methods target different estimands and can legitimately disagree",
+      "type": "scored"
+    },
+    {
+      "text": "States that the choice depends on the causal model and assignment mechanism, not a purely statistical rule",
+      "type": "scored"
+    },
+    {
+      "text": "Explains the difference in what each estimates (amount of change vs follow-up adjusted for baseline)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that because it is non-randomized, there is no purely statistical resolution and the causal assumptions must be made explicit",
+      "type": "scored"
+    },
+    {
+      "text": "Avoids declaring one method universally correct without reference to the causal question",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

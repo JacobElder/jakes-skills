@@ -1,0 +1,348 @@
+{
+  "metadata": {
+    "skill_name": "preference-choice-modeling",
+    "executor_model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-30T00:00:00Z",
+    "evals_run": [
+      "method-selection-maxdiff",
+      "wrong-method-pricing-maxdiff",
+      "sparse-maxdiff-design",
+      "cbc-sample-size-with-subgroups",
+      "hb-troubleshooting-reversals",
+      "anchoring-absolute-importance",
+      "acbc-vs-cbc-decision"
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "method-selection-maxdiff",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 99.3,
+        "tokens": 25529,
+        "tool_calls": 10,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Recommends MaxDiff (not CBC, not rating scales)", "passed": true, "evidence": "Response opens with explicit MaxDiff recommendation and rules out rating scales and CBC with correct reasoning."},
+        {"text": "Discusses anchoring (recommends direct binary or dual-response; does not give only unanchored advice)", "passed": true, "evidence": "Full paragraph on direct binary anchoring with rationale. 'The What to avoid section reinforces it.'"},
+        {"text": "Sample size advice is precision-derived, not a flat rule-of-thumb like 'n=300'", "passed": true, "evidence": "Presents SE-based table conditioned on detection gap needed, explicitly avoids flat rule."},
+        {"text": "Notes respondent burden or design constraints at k=30", "passed": true, "evidence": "Flags that 22-23 sets 'on the high side of comfortable,' sets ceiling of 15-18 sets."}
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "method-selection-maxdiff",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 76.8,
+        "tokens": 12710,
+        "tool_calls": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Recommends MaxDiff (not CBC, not rating scales)", "passed": true, "evidence": "Correctly recommends MaxDiff and rules out rating scales and direct ranking."},
+        {"text": "Discusses anchoring (recommends direct binary or dual-response; does not give only unanchored advice)", "passed": false, "evidence": "Never mentions anchoring at all. Also incorrectly claims unanchored MaxDiff produces 'interval-scale scores comparable across respondents.'"},
+        {"text": "Sample size advice is precision-derived, not a flat rule-of-thumb like 'n=300'", "passed": true, "evidence": "Uses informal observation-count reasoning (4400 choice observations) rather than a flat rule. Borderline pass."},
+        {"text": "Notes respondent burden or design constraints at k=30", "passed": true, "evidence": "Says '10-15 minutes, manageable' and notes 22-24 tasks per respondent."}
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "wrong-method-pricing-maxdiff",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 69.1,
+        "tokens": 21803,
+        "tool_calls": 8,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Pushes back on MaxDiff-for-pricing (does NOT enthusiastically help build the study as described)", "passed": true, "evidence": "Opens with clear 'no,' explains why it will produce misleading output, closes with 'drop the MaxDiff for this decision.'"},
+        {"text": "Recommends CBC with price as an attribute, OR Van Westendorp/Gabor-Granger as alternative", "passed": true, "evidence": "Recommends all three alternatives (Gabor-Granger, Van Westendorp, CBC) with guidance on when each applies."},
+        {"text": "Explains why: relative preference among price points does not equal WTP or demand curve", "passed": true, "evidence": "'What MaxDiff actually produces' section: no demand curve, no feature-price interaction, no revenue-maximizing price."}
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "wrong-method-pricing-maxdiff",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 52.3,
+        "tokens": 12572,
+        "tool_calls": 4,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Pushes back on MaxDiff-for-pricing (does NOT enthusiastically help build the study as described)", "passed": true, "evidence": "Opens by calling MaxDiff 'a poor fit' and never offers to help build the study. Redirection is the entire response."},
+        {"text": "Recommends CBC with price as an attribute, OR Van Westendorp/Gabor-Granger as alternative", "passed": true, "evidence": "All three explicitly named and explained, with CBC singled out as recommendation for SaaS tier pricing."},
+        {"text": "Explains why: relative preference among price points does not equal WTP or demand curve", "passed": true, "evidence": "States MaxDiff scores are 'relative' with 'no absolute zero... not willingness to pay' and separately calls out absence of demand curve output."}
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "sparse-maxdiff-design",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 128.6,
+        "tokens": 27017,
+        "tool_calls": 8,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Recommends sparse MaxDiff (not full design with 75 items)", "passed": true, "evidence": "'75 items puts you firmly in sparse MaxDiff territory. A full design would require ~94 sets per respondent.'"},
+        {"text": "Specifies items-per-respondent-subset, showings-per-item, and sets-per-respondent with actual numbers", "passed": true, "evidence": "Summary table: Items per respondent=24, Sets per respondent=18, Showings per item per respondent=3."},
+        {"text": "Discusses co-occurrence balance across the population", "passed": true, "evidence": "Step 4: every pair of items should co-occur in at least 2-3 respondents sets. Accept design only if minimum pairwise co-occurrence >= 2."},
+        {"text": "Gives sample size in the 500-1500 range with reasoning (not just a rule-of-thumb)", "passed": true, "evidence": "Derives SE formula, provides table, recommends n=800 with explicit derivation: ~768 pop showings/item -> ~4.3 pt SE."},
+        {"text": "Notes individual-level readout degrades at k=75 and recommends aggregate or segment-level", "passed": true, "evidence": "Fewer than 3 showings = extrapolating from group mean. Items 30-50 are statistically indistinguishable; report by significance groupings."}
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "sparse-maxdiff-design",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": 60.7,
+        "tokens": 13228,
+        "tool_calls": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Recommends sparse MaxDiff (not full design with 75 items)", "passed": true, "evidence": "Correctly identifies sparse design problem and recommends sparse incomplete block design."},
+        {"text": "Specifies items-per-respondent-subset, showings-per-item, and sets-per-respondent with actual numbers", "passed": true, "evidence": "18 tasks, 5 items/set, ~1.2 showings/item specified. Note: 1.2 showings/item is well below the 3-showing HB floor."},
+        {"text": "Discusses co-occurrence balance across the population", "passed": true, "evidence": "'Check orthogonality: Items should co-appear with each other approximately equally often.'"},
+        {"text": "Gives sample size in the 500-1500 range with reasoning (not just a rule-of-thumb)", "passed": false, "evidence": "Recommends 300-400 for aggregate, 400-500 for HB. Both below 500. Reasoning is observation-count based, not SE/precision-derived."},
+        {"text": "Notes individual-level readout degrades at k=75 and recommends aggregate or segment-level", "passed": true, "evidence": "'With 75 items and only ~18 tasks per respondent, individual estimates will be relatively imprecise.'"}
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "cbc-sample-size-with-subgroups",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 98.3,
+        "tokens": 26758,
+        "tool_calls": 9,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Does NOT give a single rule-of-thumb number without conditioning on precision or subgroup requirements", "passed": true, "evidence": "Section 'Deriving sample size from precision, not a rule' explicitly names approach and works through 4 named constraints."},
+        {"text": "Asks about or explicitly surfaces required precision (share difference, CI width, etc.)", "passed": true, "evidence": "'Ask: what is the smallest share difference between enterprise and SMB that your stakeholder needs to act on?' Table shows SE vs n per segment."},
+        {"text": "Discusses per-segment precision floor or minimum sample per segment", "passed": true, "evidence": "'A practical floor for clean segment-level HB utilities is n=200 per segment. Decision-grade is n=300-400 per segment.'"},
+        {"text": "Derives n in the 800-1200 range with explicit reasoning", "passed": true, "evidence": "'Target n=800-1,000 total (400-500 per segment). Driven by simulator precision, not the Orme floor or any platform default.'"}
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "cbc-sample-size-with-subgroups",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.25,
+        "passed": 1,
+        "failed": 3,
+        "total": 4,
+        "time_seconds": 53.6,
+        "tokens": 12955,
+        "tool_calls": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Does NOT give a single rule-of-thumb number without conditioning on precision or subgroup requirements", "passed": false, "evidence": "Gives 'Target ~250 per segment -> 500 total' as primary recommendation using Sawtooth minimum-cells rule-of-thumb."},
+        {"text": "Asks about or explicitly surfaces required precision (share difference, CI width, etc.)", "passed": false, "evidence": "Mentions Cohen's d qualitatively but does not surface what share difference or simulator precision the stakeholder needs. No SE discussion."},
+        {"text": "Discusses per-segment precision floor or minimum sample per segment", "passed": true, "evidence": "'150-200 respondents per segment as a working minimum for stable part-worth estimation.'"},
+        {"text": "Derives n in the 800-1200 range with explicit reasoning", "passed": false, "evidence": "Primary recommendation is n=500 total (250 per segment), below the 800-1200 range. 800+ not recommended."}
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "hb-troubleshooting-reversals",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 74.6,
+        "tokens": 19935,
+        "tool_calls": 7,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Notes that 4% is small/typical and not immediately alarming", "passed": true, "evidence": "Explicitly states 4% is 'within the normal range' and 'well within the 1-5% range statistically expected from sparse individual data.'"},
+        {"text": "Does NOT default to constraining monotonicity as the primary recommendation", "passed": true, "evidence": "Leads with 'Do not reflexively constrain monotonicity' and reserves constraining for reversal rates above 10-15%."},
+        {"text": "Presents at least two of three options: leave alone / constrain / investigate", "passed": true, "evidence": "All three options fully covered: leave alone (Category 1 shrinkage artifact), investigate (primary recommendation), constrain (dedicated section with tradeoffs)."},
+        {"text": "Mentions HB shrinkage toward population mean as a plausible cause of reversals", "passed": true, "evidence": "Full section dedicated to explaining shrinkage mechanism, including asymmetric pull toward population mean for respondents with sparse/inconsistent data."}
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "hb-troubleshooting-reversals",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 59.9,
+        "tokens": 12865,
+        "tool_calls": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Notes that 4% is small/typical and not immediately alarming", "passed": true, "evidence": "'~4% negative price part-worths is generally within the expected range for a well-run HB study.' Studies routinely report 3-8%."},
+        {"text": "Does NOT default to constraining monotonicity as the primary recommendation", "passed": true, "evidence": "'For most applications: do not constrain.' Constraining presented as option with tradeoffs."},
+        {"text": "Presents at least two of three options: leave alone / constrain / investigate", "passed": true, "evidence": "All three covered: leave alone (report aggregate), investigate (check if clusters in segment, attention metrics), constrain (Arguments FOR section)."},
+        {"text": "Mentions HB shrinkage toward population mean as a plausible cause of reversals", "passed": true, "evidence": "'Shrinkage toward the population mean: HB pulls individual estimates toward the group mean, but the normal distribution assumption allows tails that cross zero.'"}
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "anchoring-absolute-importance",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 62.9,
+        "tokens": 21617,
+        "tool_calls": 7,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Explicitly states that unanchored MaxDiff utilities cannot support absolute importance claims", "passed": true, "evidence": "'The only valid claim from unanchored MaxDiff is: Item A is more preferred than Item B. You cannot claim Item A is important or Item B is unimportant.'"},
+        {"text": "Recommends direct binary anchor as the default approach", "passed": true, "evidence": "'Direct binary anchor (recommended default)' — explicitly labeled. Describes post-MaxDiff checklist question with wording guidance."},
+        {"text": "Mentions dual-response anchor as an alternative", "passed": true, "evidence": "'Dual-response anchor (use when direct binary would feel awkward)' — explicitly described with pros and cons relative to direct binary."},
+        {"text": "Discusses reporting format (share-above-anchor, not just raw rescaled utility)", "passed": true, "evidence": "'Share above the bar — the percentage of respondents for whom each item exceeded the threshold. This is the actually important number. Items at 70%+ are broadly important.'"}
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "anchoring-absolute-importance",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.25,
+        "passed": 1,
+        "failed": 3,
+        "total": 4,
+        "time_seconds": 56.7,
+        "tokens": 12995,
+        "tool_calls": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Explicitly states that unanchored MaxDiff utilities cannot support absolute importance claims", "passed": true, "evidence": "'you cannot read absolute importance directly from the raw output' and 'standard MaxDiff gives you relative importance.'"},
+        {"text": "Recommends direct binary anchor as the default approach", "passed": false, "evidence": "Baseline describes anchored MaxDiff but frames it as dual-response (after-each-set question). Direct binary anchor (separate post-task checklist) not mentioned as default. Distinction absent."},
+        {"text": "Mentions dual-response anchor as an alternative", "passed": false, "evidence": "Baseline conflates direct binary and dual-response into one method. Describes something resembling dual-response as primary but does not name or distinguish it. No separate alternative presented."},
+        {"text": "Discusses reporting format (share-above-anchor, not just raw rescaled utility)", "passed": false, "evidence": "Mentions probability-scaled scores but does not discuss share-above-anchor as a reporting format. Anchor mark only mentioned for HB rescaling, not as stakeholder-facing deliverable."}
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "acbc-vs-cbc-decision",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 79.9,
+        "tokens": 23182,
+        "tool_calls": 7,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Recommends ACBC for this specific case (9 attributes + complex pricing)", "passed": true, "evidence": "'ACBC is the right call for 9 attributes. The complexity is real but proportionate.' Decision table also shows ACBC as primary recommendation."},
+        {"text": "Mentions at least one ACBC failure mode (BYO seeding bias, unacceptable inflation, or simulator limitations)", "passed": true, "evidence": "All three mentioned: 'BYO seeding bias', 'Unacceptable inflation risk (monitor possibility set size)', 'Simulator coverage outside consideration set.'"},
+        {"text": "Notes that ACBC is NOT the default for simpler studies", "passed": true, "evidence": "Decision table: 'Survey length is a hard constraint -> CBC with partial-profile (not ACBC).' Explicit list of conditions where CBC preferred."}
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "acbc-vs-cbc-decision",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 61.7,
+        "tokens": 13115,
+        "tool_calls": 3,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Recommends ACBC for this specific case (9 attributes + complex pricing)", "passed": true, "evidence": "'ACBC is often the right call' and 'Go with ACBC if: Your sample is general consumers.' Ultimate recommendation favors ACBC."},
+        {"text": "Mentions at least one ACBC failure mode (BYO seeding bias, unacceptable inflation, or simulator limitations)", "passed": true, "evidence": "BYO anchor contamination risk if add-on pricing not understood. Simulation coverage limitation: 'ACBC adaptive design makes this harder to control.'"},
+        {"text": "Notes that ACBC is NOT the default for simpler studies", "passed": true, "evidence": "'When to Stick with Standard CBC Instead' section gives explicit conditions."}
+      ]
+    }
+  ],
+  "summary": {
+    "with_skill": {
+      "pass_rate": {"mean": 1.0, "stddev": 0.0, "min": 1.0, "max": 1.0},
+      "time_seconds": {"mean": 87.5, "stddev": 22.1, "min": 62.9, "max": 128.6},
+      "tokens": {"mean": 23691, "stddev": 2582, "min": 19935, "max": 27017}
+    },
+    "without_skill": {
+      "pass_rate": {"mean": 0.704, "stddev": 0.322, "min": 0.25, "max": 1.0},
+      "time_seconds": {"mean": 60.2, "stddev": 8.5, "min": 52.3, "max": 76.8},
+      "tokens": {"mean": 12920, "stddev": 201, "min": 12572, "max": 13228}
+    },
+    "delta": {
+      "pass_rate": 0.296
+    }
+  },
+  "analyst_observations": [
+    "Non-discriminating evals (both configurations score 100%): eval-2 (wrong-method-pricing-maxdiff), eval-5 (hb-troubleshooting-reversals), eval-7 (acbc-vs-cbc-decision). The base model already has strong knowledge of these topics. These evals should be replaced or strengthened in future iterations.",
+    "Highly discriminating evals: eval-4 (cbc-sample-size-with-subgroups, +75pp delta) and eval-6 (anchoring-absolute-importance, +75pp delta). These represent the skill's clearest value-add — precision-derived sample sizing and the direct-binary vs dual-response anchoring distinction.",
+    "Eval-1 (method-selection-maxdiff, +25pp delta) shows anchoring as the key gap in the base model. Base model recommends MaxDiff correctly but never surfaces the anchoring need even when 'importance' language is used.",
+    "With-skill response quality appears high across all evals (100% assertion pass rate). The token cost is approximately 2x vs baseline, consistent with skill reading reference files.",
+    "Eval-2 grader noted the skill adds the 'ordered price items give trivially predictable picks' structural argument, which is not tested by any assertion. Consider adding this.",
+    "Eval-1 grader flagged a potential SE formula unit inconsistency in the with-skill response. Worth checking numerics in the maxdiff.md reference."
+  ]
+}

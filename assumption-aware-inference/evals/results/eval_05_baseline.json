@@ -1,0 +1,38 @@
+{
+  "eval_id": 5,
+  "condition": "baseline",
+  "prompt": "My residuals aren't normal (clear deviation in the QQ plot) and there's some funneling. The model is an OLS of revenue on a handful of predictors, n=400. Walk me through what to do.",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "Identifies funneling as heteroskedasticity and recommends heteroskedasticity-robust (sandwich/HC, ideally HC3) standard errors",
+      "type": "scored"
+    },
+    {
+      "text": "States that heteroskedasticity affects the standard errors, not the unbiasedness of the OLS coefficients",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that non-normal residuals at n=400 are of limited concern for coefficient inference due to the CLT",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends checking whether the residual pattern signals a misspecified mean structure (nonlinearity / omitted terms) rather than only a distributional issue",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions that a GLM (e.g. gamma/log) may fit revenue's generative structure better, OR cautions against transforming purely to normalize residuals (changing the estimand)",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

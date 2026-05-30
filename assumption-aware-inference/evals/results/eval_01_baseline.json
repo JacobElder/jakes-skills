@@ -1,0 +1,43 @@
+{
+  "eval_id": 1,
+  "condition": "baseline",
+  "prompt": "I have two groups, about 80 people each, and I want to compare their average monthly spend. The data are right-skewed and a Shapiro-Wilk test on each group rejects normality (p < .001). Can I still use a t-test, or do I have to switch to Mann-Whitney?",
+  "response": "With n \u2248 80 per group, the t-test is likely fine \u2014 but the Mann-Whitney isn't quite the right alternative if you care about means. Here's why both pieces of conventional wisdom need nuance.\n\n## Why the t-test is probably still valid\n\nThe t-test's normality assumption is about the **sampling distribution of the mean**, not the raw data. By n \u2248 80, the CLT has typically done its job. Rejecting Shapiro-Wilk is nearly guaranteed at that sample size \u2014 it's sensitive enough to detect trivial deviations that don't actually threaten the t-test's validity.\n\nThe exception: very heavy-tailed skew (think Pareto-distributed spend with a few extreme outliers) can slow CLT convergence enough that n = 80 isn't sufficient. Check your actual skewness and kurtosis, not just the S-W p-value.\n\n## Why Mann-Whitney isn't a direct substitute\n\nMann-Whitney tests whether P(X > Y) = 0.5 \u2014 stochastic dominance, not a difference in means. If you report \"average monthly spend is $X vs $Y,\" Mann-Whitney doesn't test that claim. It can give you a significant result when means are equal (different distributions, same mean) or a non-significant result when means differ substantially.\n\n## What to actually do\n\n**Best option: bootstrap the difference in means.** It's nonparametric, directly tests what you care about, and makes no distributional assumptions.\n\n```python\nimport numpy as np\nfrom scipy import stats\n\nrng = np.random.default_rng(42)\nobserved_diff = group_a.mean() - group_b.mean()\n\nboot_diffs = [\n    rng.choice(group_a, len(group_a)).mean() - rng.choice(group_b, len(group_b)).mean()\n    for _ in range(10_000)\n]\n\nci = np.percentile(boot_diffs, [2.5, 97.5])\np_value = np.mean(np.abs(boot_diffs - observed_diff) >= np.abs(observed_diff))\n```\n\n**Runner-up: Welch's t-test** (unequal variances) is probably fine given your n, and it's what most reviewers expect.\n\n**Avoid:** log-transforming and t-testing \u2014 that tests the ratio of geometric means, not arithmetic means, which changes the research question.\n\nThe S-W rejection doesn't decide this \u2014 the shape of the tails and what quantity you're comparing does.",
+  "assertions": [
+    {
+      "text": "States or implies the relevant object is the sampling distribution of the mean, not the distribution of the raw data",
+      "type": "scored"
+    },
+    {
+      "text": "Says the t-test is approximately valid / okay here given n~80 per group (does not forbid it)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that Shapiro-Wilk rejecting at this sample size is uninformative or expected, and does not treat it as a decisive gate",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends or mentions Welch's t-test (or otherwise addresses unequal variances) rather than the equal-variance pretest",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that Mann-Whitney tests stochastic ordering / P(X>Y), not equality of means or medians in general (location-shift caveat)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT mechanically conclude 'normality rejected therefore use a nonparametric test'",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 6,
+  "pass_rate": 0.8333333333333334
+}

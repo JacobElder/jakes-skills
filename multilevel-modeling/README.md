@@ -105,58 +105,51 @@ The skill's most important moves:
 
 ## Benchmark: skill vs. base model
 
-Evaluated against 12 content evals covering specification correctness, pushback on bad models, brevity calibration, and triggering. Each expectation is a specific, objectively checkable assertion.
+### Iteration 1 — ceiling effect (direct questions)
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by eval (■ with skill  □ base model)"
-    x-axis ["Crossed random effects", "Three-level small clusters", "Cluster-RCT power", "Random-intercept-only pushback", "Singular fit troubleshooting", "Nested ID uniqueness", "Treatment coding / simple effects", "A/B test clustering", "Bayesian credible interval", "Logistic GLMM interpretation", "ICC definition (brevity)", "Paired t-test"]
-    y-axis "Pass rate" 0 --> 1
-    bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-    bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-```
+Evaluated against 12 content evals using direct questions ("What model should I fit?", "Is this defensible?"). Both configurations scored 100%.
 
 | | With skill | Without skill | Delta |
 |--|:---:|:---:|:---:|
 | **Total expectations** | **48/48 (100%)** | **48/48 (100%)** | **+0pp** |
 
-### Ceiling effect — iteration 1 finding
+When asked directly, the base model reasons from scratch and gets MLM questions right. The skill's value is in **behavior modification under apparent satisfaction** — whether it pushes back when the user has already run a wrong analysis and presents it as acceptable. Iteration 1 evals did not isolate that behavior.
 
-Both configurations score 100%. This is the same pattern observed in psychometrics iteration 7: when evals are designed as direct, well-scoped questions, the base model answers them correctly. The skill's value is in **behavior modification** — whether it changes the model's *default* response when the user presents a wrong analysis rather than asking a question.
+### Iteration 2 — trap-based evals
 
-Iteration 1 evals asked: *"What model should I fit?"* or *"Is this defensible?"* — direct questions where the model reasons from scratch.
+Redesigned as 10 trap prompts: the user presents a wrong analysis as already done and asks for validation or next steps. 50 total expectations (5 per eval). Results pending.
 
-The harder test, planned for iteration 2, uses **trap prompts**: the user presents a wrong analysis as already done and apparently acceptable, then asks for validation or next steps. Examples from the psychometrics playbook applied to MLM:
-
-| Trap | Base model default | Skill behavior |
-|------|---|---|
-| "I ran `lmer(rt ~ condition + (1\|subject))` and got p=0.02 — looks solid, right?" | Likely validates or hedges | Refuses to validate; explains the Type I inflation |
-| "My model wouldn't converge so I dropped random slopes — analysis looks clean now" | Likely accepts | Flags the under-specification; diagnosis before simplification |
-| "I aggregated to subject means before running ANOVA — standard practice, right?" | Likely agrees | Names Clark (1973); recommends crossed random effects |
-| "My reviewer said to use cluster means as the unit of analysis for my school study" | Likely complies | Flags loss of within-cluster information; explains design effect |
-
-The base model's factual knowledge on MLM is strong. Iteration 2 should isolate **pushback under apparent satisfaction** — which is exactly where the psychometrics skill showed the largest deltas (0.0 → 1.0 on nearly every trap case).
+| Trap | What the base model is expected to do wrong |
+|------|---|
+| `random-intercept-validation` | Validate or hedge on intercept-only model for within-subjects data |
+| `convergence-simplification` | Accept simplified model and help write it up |
+| `aggregation-fallacy` | Call by-subject ANOVA on means "standard" |
+| `reviewer-cluster-means` | Comply with reviewer's suggestion to use school means |
+| `treatment-coding-simple-effects` | Validate "average effect" interpretation of a treatment-coded simple effect |
+| `glmm-marginal-interpretation` | Accept "in the population" framing of a conditional GLMM fixed effect |
+| `items-as-fixed` | Agree that same-items-for-everyone means items are fixed |
+| `ols-clustered-rubber-stamp` | Move to write-up without flagging non-independence |
+| `singular-fit-drop-everything` | Validate stepwise slope-dropping until warnings disappear |
+| `paired-t-defensible` | Over-engineer by insisting MLM is required for a two-condition balanced design |
 
 ---
 
 ## Eval suite
 
-12 evals covering the full skill scope.
+10 trap-based evals (iteration 2).
 
-| # | Case | Focus | Expectations |
-|---|------|--------|:---:|
-| 1 | `crossed-random-effects` | Crossed subjects × items design; maximal model | 5 |
-| 2 | `three-level-small-clusters` | Three-level nesting; small level-3 n; OLS+CRSE engagement | 4 |
-| 3 | `cluster-rct-power` | Cluster-RCT power; binding constraint; simr; ICC; effect size | 5 |
-| 4 | `random-intercept-only-pushback` | Missing by-subject slope; Type I inflation; firm pushback | 5 |
-| 5 | `singular-fit-troubleshooting` | Boundary singularity; diagnosis before simplification; ordered simplification | 5 |
-| 6 | `nested-id-uniqueness` | Non-unique IDs; nesting syntax; silent lme4 failure mode | 3 |
-| 7 | `treatment-coding-simple-effects` | Treatment-coded "main effects" as simple effects; Schad et al. | 4 |
-| 8 | `ab-test-clustering` | A/B test clustering; unit of randomization; country as grouping factor | 3 |
-| 9 | `bayesian-credible-interval` | CrI ≠ p-value; posterior reporting; probability of direction | 4 |
-| 10 | `logistic-glmm-interpretation` | Log-odds → probability; emmeans/marginaleffects; conditional vs. marginal | 3 |
-| 11 | `icc-definition` | Brevity calibration — definition + formula, not workflow | 4 |
-| 12 | `paired-t-test` | Anti-over-engineering; t-test defensible for narrow question | 3 |
+| # | Case | Trap | Expectations |
+|---|------|------|:---:|
+| 1 | `random-intercept-validation` | User presents intercept-only model for within-subjects condition; advisor approved it | 5 |
+| 2 | `convergence-simplification` | User dropped all slopes until model converged; now writing up the stripped model | 5 |
+| 3 | `aggregation-fallacy` | User averaged to subject means and ran ANOVA; "how it's done in the lab" | 5 |
+| 4 | `reviewer-cluster-means` | Reviewer says to use school-level means as unit of analysis | 5 |
+| 5 | `treatment-coding-simple-effects` | User interprets treatment-coded simple effect as average effect | 5 |
+| 6 | `glmm-marginal-interpretation` | User reports GLMM fixed-effect OR as "population-level" effect | 5 |
+| 7 | `items-as-fixed` | User argues items aren't random because everyone sees the same set | 5 |
+| 8 | `ols-clustered-rubber-stamp` | User ran OLS on trial-level data; asks for write-up help | 5 |
+| 9 | `singular-fit-drop-everything` | User dropped slopes iteratively until warnings disappeared | 5 |
+| 10 | `paired-t-defensible` | Collaborator claims MLM is required for a 2-condition balanced design | 5 |
 
 ---
 

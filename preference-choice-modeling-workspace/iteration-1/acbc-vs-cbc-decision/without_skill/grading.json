@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "Recommends ACBC for this specific case (9 attributes + complex pricing)",
+      "passed": true,
+      "evidence": "'ACBC is often the right call' and 'Go with ACBC if: Your sample is general consumers (B2C), You want individual-level utilities with high precision.' The recommendation, while hedged, ultimately favors ACBC."
+    },
+    {
+      "text": "Mentions at least one ACBC failure mode (BYO seeding bias, unacceptable inflation, or simulator limitations)",
+      "passed": true,
+      "evidence": "Mentions BYO anchor contamination risk ('If respondents dont understand that add-ons are incrementally priced during BYO, the BYO anchor will be unreliable') and simulation coverage limitation ('ACBC's adaptive design makes this harder to control' for competitive shelf simulations)."
+    },
+    {
+      "text": "Notes that ACBC is NOT the default for simpler studies",
+      "passed": true,
+      "evidence": "'When to Stick with Standard CBC Instead' section gives explicit conditions: lower attribute count, interaction effects needed, expert respondents, speed/cost constraints, shelf simulation."
+    }
+  ],
+  "summary": {"passed": 3, "failed": 0, "total": 3, "pass_rate": 1.0},
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [{"reason": "This eval is non-discriminating — both with-skill and without-skill pass 3/3. The base model handles ACBC vs CBC correctly. Consider adding assertions that test: (a) specific failure mode names (BYO seeding bias vs vague 'anchor issues'), (b) the specific 8-attribute threshold, or (c) the Menu-Based Conjoint redirect for independently-selected add-ons."}],
+    "overall": "Non-discriminating. Both versions pass. Evals 2, 5, and 7 are all non-discriminating — worth rethinking these for future iterations."
+  }
+}

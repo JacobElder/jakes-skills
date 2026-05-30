@@ -1,0 +1,22 @@
+{
+  "expectations": [
+    {
+      "text": "Recommends ACBC for this specific case (9 attributes + complex pricing)",
+      "passed": true,
+      "evidence": "'ACBC is the right call for 9 attributes. The complexity is real but proportionate — you would have non-attendance problems in standard CBC at this attribute count.' Decision table also shows ACBC as primary recommendation for 9-attribute + summed pricing."
+    },
+    {
+      "text": "Mentions at least one ACBC failure mode (BYO seeding bias, unacceptable inflation, or simulator limitations)",
+      "passed": true,
+      "evidence": "All three mentioned: 'BYO seeding bias — respondents anchor on what they built in BYO. Importance scores from ACBC are typically more spread.' 'Unacceptable inflation risk — if more than ~10-15% of respondents have a possibility set smaller than 8, you have a problem.' 'Simulator coverage outside the consideration set — ACBC simulators are most reliable for products in or near the consideration zone.'"
+    },
+    {
+      "text": "Notes that ACBC is NOT the default for simpler studies",
+      "passed": true,
+      "evidence": "Decision table entry: 'Survey length is a hard constraint -> CBC with partial-profile (not ACBC).' Also: 'Don't over-index on importance scores from ACBC' and explicit list of conditions where CBC is preferred."
+    }
+  ],
+  "summary": {"passed": 3, "failed": 0, "total": 3, "pass_rate": 1.0},
+  "claims": [],
+  "eval_feedback": {"suggestions": [], "overall": "All assertions pass. Notably, the skill added a Menu-Based Conjoint recommendation for add-on pricing, which is beyond the base assertions and represents genuine expert-level disambiguation."}
+}

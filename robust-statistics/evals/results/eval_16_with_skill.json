@@ -1,0 +1,40 @@
+{
+  "eval_id": 16,
+  "condition": "with_skill",
+  "prompt": "We ran a clean randomized experiment, ~6,000 users per arm, comparing average session length (in minutes). The distribution is a bit right-skewed. I just want to know if the new design increased average session length. Is a t-test fine or do I need something fancier?",
+  "response": "The t-test is fine. Use Welch's variant (the default in most software) and don't think twice about it.\n\nHere's why each potential concern dissolves:\n\n**Skew at n = 6,000 per arm.** The t-test's normality requirement is on the *sampling distribution of the mean*, not the raw data. The CLT handles that. The Berry-Esseen error shrinks like skewness/\u221an \u2014 at 6,000 per arm, even severe skew (think lognormal) leaves an approximation error well under 0.001 on the Type I error rate. \"A bit right-skewed\" at this n is a complete non-issue.\n\n**Randomized experiment.** The unadjusted difference in means *is* the unbiased causal effect \u2014 that's what randomization buys you. No adjustment needed for bias. (You can add pre-experiment covariates for precision if you want tighter SEs, but it's optional.)\n\n**Why Welch over Student's.** Welch handles unequal variances between arms at essentially no cost when variances are equal. Skip any variance-equality pretest \u2014 just use Welch by default.\n\nWhat you'll get is a valid estimate of the mean difference in session minutes, a trustworthy p-value, and a confidence interval on the scale stakeholders actually care about. Nothing fancier earns its complexity here.",
+  "assertions": [
+    {
+      "text": "Says a (Welch) t-test / difference in means is fine here without hedging",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that randomization makes the simple difference in means the unbiased causal effect",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that the large per-arm n handles the mild skew via the CLT",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT recommend a transformation, GLM, or nonparametric test for this case",
+      "type": "must_pass"
+    },
+    {
+      "text": "Does NOT manufacture unnecessary estimand or robustness caveats; the response is proportionate and largely affirming",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

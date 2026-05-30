@@ -1,0 +1,95 @@
+{
+  "skill_name": "preference-choice-modeling",
+  "evals": [
+    {
+      "id": 1,
+      "name": "method-selection-maxdiff",
+      "prompt": "I want to rank 30 product benefits by importance for our messaging team. What's the best approach and roughly how many respondents do I need?",
+      "expected_output": "Recommend MaxDiff (full design feasible at k=30 but burdensome; sparse acceptable). Sample size derived from required precision on item utility, not rule-of-thumb. Mention anchoring (direct binary preferred) since 'importance' implies absolute claims. Should NOT just say n=300.",
+      "assertions": [
+        "Recommends MaxDiff (not CBC, not rating scales)",
+        "Discusses anchoring (recommends direct binary or dual-response; does not give only unanchored advice)",
+        "Sample size advice is precision-derived, not a flat rule-of-thumb like 'n=300'",
+        "Notes respondent burden or design constraints at k=30"
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "wrong-method-pricing-maxdiff",
+      "prompt": "We're trying to figure out the right price for our new SaaS tier. Thinking about doing a MaxDiff on different price points. Does that work?",
+      "expected_output": "Should push back firmly. MaxDiff on price points gives relative preference among prices but not WTP, demand curve, or share at price. Redirect to CBC with price as an attribute, or Van Westendorp / Gabor-Granger for pure pricing.",
+      "assertions": [
+        "Pushes back on MaxDiff-for-pricing (does NOT enthusiastically help build the study as described)",
+        "Recommends CBC with price as an attribute, OR Van Westendorp/Gabor-Granger as alternative",
+        "Explains why: relative preference among price points does not equal WTP or demand curve"
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "sparse-maxdiff-design",
+      "prompt": "I have a list of 75 potential feature ideas and need to prioritize them. Walk me through how to design this — items per set, showings per item, sample size.",
+      "expected_output": "Sparse MaxDiff. Per-respondent subset (e.g., 20-25 items, 3+ showings each, ~15 sets). Population-level co-occurrence balance. Sample size in the 500-1000 range derived from per-item population showings target. Should note individual-level readout degrades at this k and segment-level is the appropriate aspiration. Should mention anchoring.",
+      "assertions": [
+        "Recommends sparse MaxDiff (not full design with 75 items)",
+        "Specifies items-per-respondent-subset, showings-per-item, and sets-per-respondent with actual numbers",
+        "Discusses co-occurrence balance across the population",
+        "Gives sample size in the 500-1500 range with reasoning (not just a rule-of-thumb)",
+        "Notes individual-level readout degrades at k=75 and recommends aggregate or segment-level"
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "cbc-sample-size-with-subgroups",
+      "prompt": "Planning a CBC for a new pricing tier. 6 attributes (brand, price, 4 features). Need to compare enterprise vs. SMB segments (roughly 50/50 in our population). What's the right sample size?",
+      "expected_output": "Should NOT quote a rule-of-thumb. Should ask or surface: (a) what precision is needed on simulator share differences, (b) what subgroup readout precision is needed. Walk through derivation. Land at ~800-1200 with explicit reasoning. Mention per-segment minimums for stable HB.",
+      "assertions": [
+        "Does NOT give a single rule-of-thumb number without conditioning on precision or subgroup requirements",
+        "Asks about or explicitly surfaces required precision (share difference, CI width, etc.)",
+        "Discusses per-segment precision floor or minimum sample per segment",
+        "Derives n in the 800-1200 range with explicit reasoning"
+      ],
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "hb-troubleshooting-reversals",
+      "prompt": "Just ran HB on a CBC and ~4% of respondents have negative price part-worths (preferring higher prices). Is this a problem? Should I constrain monotonicity on price?",
+      "expected_output": "4% is a small fraction and typical for HB with sparse individual data + shrinkage. Three options should be presented: leave alone (most common), constrain (only if confident price is monotonic for population), investigate (sometimes reversals indicate a real subgroup like conspicuous consumption). Should NOT panic or default to constraints.",
+      "assertions": [
+        "Notes that 4% is small/typical and not immediately alarming",
+        "Does NOT default to constraining monotonicity as the primary recommendation",
+        "Presents at least two of three options: leave alone / constrain / investigate",
+        "Mentions HB shrinkage toward population mean as a plausible cause of reversals"
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "anchoring-absolute-importance",
+      "prompt": "My stakeholder is asking 'which features are actually important' not just 'which are more important than others'. How do I get to that from a MaxDiff?",
+      "expected_output": "Needs anchored MaxDiff. Direct binary anchor as default (separate question: 'would you consider this important/a benefit?'). Dual-response anchor as alternative when item set is evaluative. Should explicitly state that unanchored utilities CANNOT support absolute importance claims. Reporting should lead with share-above-anchor.",
+      "assertions": [
+        "Explicitly states that unanchored MaxDiff utilities cannot support absolute importance claims",
+        "Recommends direct binary anchor as the default approach",
+        "Mentions dual-response anchor as an alternative",
+        "Discusses reporting format (share-above-anchor, not just raw rescaled utility)"
+      ],
+      "files": []
+    },
+    {
+      "id": 7,
+      "name": "acbc-vs-cbc-decision",
+      "prompt": "We're studying a product with 9 attributes including a complex pricing structure (base + add-ons). Sawtooth keeps suggesting ACBC. Worth the complexity?",
+      "expected_output": "9 attributes is in the ACBC sweet spot (gain real above ~8); complex pricing also favors ACBC's summed pricing engine. So yes, in this case. But should mention ACBC's failure modes (BYO seeding bias, unacceptable inflation, simulator degrades outside consideration set) and note ACBC is NOT the default for simpler studies.",
+      "assertions": [
+        "Recommends ACBC for this specific case (9 attributes + complex pricing)",
+        "Mentions at least one ACBC failure mode (BYO seeding bias, unacceptable inflation, or simulator limitations)",
+        "Notes that ACBC is NOT the default for simpler studies"
+      ],
+      "files": []
+    }
+  ]
+}

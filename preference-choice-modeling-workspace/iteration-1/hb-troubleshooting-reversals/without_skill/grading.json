@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Notes that 4% is small/typical and not immediately alarming",
+      "passed": true,
+      "evidence": "'~4% negative price part-worths is generally within the expected range for a well-run HB study and is usually not a serious problem in itself.' Studies routinely report 3-8%."
+    },
+    {
+      "text": "Does NOT default to constraining monotonicity as the primary recommendation",
+      "passed": true,
+      "evidence": "'For most applications: do not constrain.' Constraining is presented as an option with explicit tradeoffs, not as the default recommendation."
+    },
+    {
+      "text": "Presents at least two of three options: leave alone / constrain / investigate",
+      "passed": true,
+      "evidence": "All three are covered: leave alone (report aggregate, don't constrain), investigate (check if clusters in segment, correlate with attention metrics), and constrain (Arguments FOR constraining section with specific use cases)."
+    },
+    {
+      "text": "Mentions HB shrinkage toward population mean as a plausible cause of reversals",
+      "passed": true,
+      "evidence": "'Shrinkage toward the population mean: HB pulls individual estimates toward the group mean, but the normal distribution assumption allows tails that cross zero.'"
+    }
+  ],
+  "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0},
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [{"reason": "Both with-skill and without-skill score 4/4. This eval is non-discriminating — the base model handles this topic well. Consider replacing with a harder HB pathology (convergence failure, prohibitions causing non-identification, or prior misspecification for non-price attributes)."}],
+    "overall": "Non-discriminating eval. The base model already knows this topic thoroughly."
+  }
+}

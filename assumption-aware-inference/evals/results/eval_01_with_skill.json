@@ -1,0 +1,43 @@
+{
+  "eval_id": 1,
+  "condition": "with_skill",
+  "prompt": "I have two groups, about 80 people each, and I want to compare their average monthly spend. The data are right-skewed and a Shapiro-Wilk test on each group rejects normality (p < .001). Can I still use a t-test, or do I have to switch to Mann-Whitney?",
+  "response": "Yes, Welch's t-test is almost certainly fine here. Here's why the Shapiro-Wilk result shouldn't drive that decision.\n\n**The Shapiro-Wilk rejection is the wrong signal to act on.** At n = 80, Shapiro-Wilk has enough power to detect trivial, inconsequential deviations from normality. The test answers \"is the distribution *exactly* normal?\" \u2014 the answer is always no, and a p < .001 at n = 80 tells you almost nothing about whether the violation matters for inference.\n\n**The relevant object is the sampling distribution of your *estimate*, not the raw data.** A t-test doesn't require normal data; it requires that the sampling distribution of the mean difference is approximately normal. That's what the CLT delivers \u2014 and at n = 80 per group, it's been working for a while. Berry-Esseen says the approximation error shrinks like skewness/\u221an; for the two-sample case it's even better, because skew partially cancels across groups. Spend data would have to be extremely pathological (Pareto-like, near-infinite variance) before n = 80 per group is insufficient.\n\n**Mann-Whitney doesn't fix the problem \u2014 it changes the question.** Mann-Whitney tests stochastic ordering (P(X > Y) = \u00bd), not equality of means. Under different group shapes/spreads, it can reject even when means and medians are equal. If your estimand is \"difference in average monthly spend,\" Mann-Whitney doesn't answer that cleanly. Switching to it isn't a free robustness upgrade; it's an estimand change, and you'd lose interpretability (you can't say \"group A spends $X more on average\").\n\n**What to actually do:**\n- Use **Welch's t-test** (not Student's) \u2014 it handles potentially unequal variances without needing a pretest and costs almost nothing when variances happen to be equal.\n- Skip the pretest-then-choose workflow entirely.\n\n**The one thing worth actually checking:** are there one or two extreme outliers driving the means? If a handful of observations would reverse the conclusion, that's a real fragility worth reporting \u2014 not as a reason to switch tests, but to note in the analysis. A quick check of Cook's-distance-style influence (refit without the top few spenders, see if the conclusion moves) is more useful than the Shapiro-Wilk result was.\n\nShort version: Shapiro-Wilk at n = 80 on spend data is expected to reject. Use Welch, report the mean difference with a 95% CI, and you're done.",
+  "assertions": [
+    {
+      "text": "States or implies the relevant object is the sampling distribution of the mean, not the distribution of the raw data",
+      "type": "scored"
+    },
+    {
+      "text": "Says the t-test is approximately valid / okay here given n~80 per group (does not forbid it)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that Shapiro-Wilk rejecting at this sample size is uninformative or expected, and does not treat it as a decisive gate",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends or mentions Welch's t-test (or otherwise addresses unequal variances) rather than the equal-variance pretest",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that Mann-Whitney tests stochastic ordering / P(X>Y), not equality of means or medians in general (location-shift caveat)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT mechanically conclude 'normality rejected therefore use a nonparametric test'",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 6,
+  "total": 6,
+  "pass_rate": 1.0
+}

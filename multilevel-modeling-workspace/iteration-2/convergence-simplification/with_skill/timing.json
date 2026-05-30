@@ -1,0 +1,6 @@
+{
+  "eval_name": "convergence-simplification",
+  "config": "with_skill",
+  "executor_duration_seconds": 70.05,
+  "total_duration_seconds": 70.05
+}

@@ -1,0 +1,38 @@
+{
+  "eval_id": 7,
+  "condition": "baseline",
+  "prompt": "My logistic regression has one coefficient that came back as 14.2 with a standard error of 3400. What's going on and how do I fix it?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "Diagnoses (quasi-)complete separation as the cause of the huge coefficient and enormous SE",
+      "type": "scored"
+    },
+    {
+      "text": "Explains that under separation the MLE diverges / has no finite maximum",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends a fix such as Firth penalized logistic regression or weakly-informative Bayesian priors",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions checking for sparse / small cell counts or a near-perfect predictor",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT misattribute the symptom to multicollinearity or non-normality",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

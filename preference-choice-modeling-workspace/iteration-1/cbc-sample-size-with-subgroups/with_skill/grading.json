@@ -1,0 +1,27 @@
+{
+  "expectations": [
+    {
+      "text": "Does NOT give a single rule-of-thumb number without conditioning on precision or subgroup requirements",
+      "passed": true,
+      "evidence": "Section 'Deriving sample size from precision, not a rule' explicitly names the approach and works through 4 named constraints rather than citing any platform default."
+    },
+    {
+      "text": "Asks about or explicitly surfaces required precision (share difference, CI width, etc.)",
+      "passed": true,
+      "evidence": "'Ask: what is the smallest share difference between enterprise and SMB that your stakeholder needs to act on?' Table shows SE vs n per segment at various overall n levels."
+    },
+    {
+      "text": "Discusses per-segment precision floor or minimum sample per segment",
+      "passed": true,
+      "evidence": "'A practical floor for clean segment-level HB utilities is n = 200 per segment. A comfortable floor for publishable or decision-grade segment analysis is n = 300-400 per segment.'"
+    },
+    {
+      "text": "Derives n in the 800-1200 range with explicit reasoning",
+      "passed": true,
+      "evidence": "'Target n = 800-1,000 total (400-500 per segment). This is driven by simulator precision, not the Orme floor or any platform default.' Full derivation shown via SE table."
+    }
+  ],
+  "summary": {"passed": 4, "failed": 0, "total": 4, "pass_rate": 1.0},
+  "claims": [],
+  "eval_feedback": {"suggestions": [], "overall": "All assertions pass cleanly. The response is a model example of precision-derived sample sizing."}
+}

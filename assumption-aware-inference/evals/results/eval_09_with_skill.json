@@ -1,0 +1,38 @@
+{
+  "eval_id": 9,
+  "condition": "with_skill",
+  "prompt": "I have data from 6 hospitals, with hundreds of patients each, and treatment was assigned at the hospital level. I clustered my standard errors by hospital. Is that enough?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "States that the relevant asymptotics are in the number of clusters, not the number of patients, so hundreds per cluster does not rescue inference",
+      "type": "scored"
+    },
+    {
+      "text": "Identifies 6 clusters as too few for standard cluster-robust SEs (downward bias / over-rejection)",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends an appropriate response to few clusters (e.g. wild cluster bootstrap, a small-cluster degrees-of-freedom correction, or design-based inference) or at minimum flags that standard cluster-robust SEs are unreliable with so few clusters",
+      "type": "scored"
+    },
+    {
+      "text": "Confirms hospital is the appropriate clustering level given treatment was assigned at that level",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT say that clustering by hospital with large per-hospital n is sufficient",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}
