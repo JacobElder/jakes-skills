@@ -1,0 +1,43 @@
+{
+  "eval_id": 18,
+  "condition": "with_skill",
+  "prompt": "I have 500,000 rows. The outcome is a count (number of purchases in a window) and I just want the average difference between two cohorts. Do I have to use a Poisson or negative binomial model, or can I just use OLS / a t-test on the counts?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "States that for the difference in mean counts, OLS+robust SEs (or a t-test) is valid here and a GLM is not required for validity",
+      "type": "scored"
+    },
+    {
+      "text": "Attributes that validity to the CLT / large n rather than to the outcome being normal",
+      "type": "scored"
+    },
+    {
+      "text": "Identifies what a Poisson/NB model actually adds: a multiplicative/rate-ratio estimand, in-bounds predictions, and/or efficiency \u2014 not validity",
+      "type": "scored"
+    },
+    {
+      "text": "Notes the choice hinges on the estimand (additive mean difference vs rate ratio) rather than on a rule that counts 'require' a count model",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions that at this very large n the efficiency advantage of the GLM is small",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT assert that count outcomes must be modeled with Poisson/NB",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 6,
+  "pass_rate": 0.0
+}

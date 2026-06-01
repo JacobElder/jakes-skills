@@ -1,0 +1,38 @@
+{
+  "eval_id": 12,
+  "condition": "with_skill",
+  "prompt": "My costs data are very right-skewed and positive. My instinct is to log-transform and run OLS. A colleague says use a gamma GLM with a log link. Does it matter which?",
+  "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "States that log-OLS estimates E[log Y] (geometric mean upon exponentiation) while gamma-log estimates log E[Y] (arithmetic mean) \u2014 i.e. different estimands",
+      "type": "scored"
+    },
+    {
+      "text": "Explains the retransformation / Jensen's inequality problem with naively exponentiating log-OLS predictions to recover E[Y]",
+      "type": "scored"
+    },
+    {
+      "text": "Notes the retransformation correction (smearing) depends on the error variance and is complicated by heteroskedasticity",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the decision as which estimand/scale you want rather than which is 'more correct'",
+      "type": "scored"
+    },
+    {
+      "text": "Treats both as defensible rather than dismissing one outright",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

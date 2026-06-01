@@ -1,0 +1,41 @@
+{
+  "run_id": "treatment-coding-simple-effects-without_skill",
+  "eval_id": 5,
+  "eval_name": "treatment-coding-simple-effects",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output explicitly states that the interpretation 'treatment effect of A on average' is incorrect given treatment coding with an interaction term",
+      "passed": true,
+      "evidence": "The response opens with 'This interpretation has two problems' and in the summary table explicitly marks '\u274c \u2014 it's the effect of A at B = low only' and '\u274c \u2014 needs effects coding + no interaction' for the 'on average' claim."
+    },
+    {
+      "text": "Output explains that the \u03b2 = 0.45 coefficient represents the simple effect of A at the reference level (low) of B \u2014 not an average across levels of B",
+      "passed": true,
+      "evidence": "'With treatment (dummy) coding, the coefficient for A is not the effect averaged across levels of B. It is the conditional simple effect of A when B is at its reference level (B = low/0).' and 'The coefficient 0.45 is the effect of A only in the low-B condition, not on average.'"
+    },
+    {
+      "text": "Output does NOT validate the write-up language as written",
+      "passed": true,
+      "evidence": "The response explicitly identifies two problems with the interpretation, marks relevant claims with \u274c, and provides corrected language: 'Correct language: The effect of condition A was significant when condition B was at its low level (\u03b2 = 0.45, p = .02).'"
+    },
+    {
+      "text": "Output recommends either (a) switching to sum/effects coding so that the main effect IS the average, OR (b) using emmeans or marginaleffects to compute the marginalized average effect of A across levels of B",
+      "passed": true,
+      "evidence": "'If you want the coefficient to represent the average effect of A, switch to effects coding (\u00b10.5 or \u00b11), where the main effect term is estimated at the grand mean of B.' \u2014 satisfies condition (a)."
+    },
+    {
+      "text": "Output references Schad et al. (2020) OR explains the issue clearly enough (the coefficient in an interaction model is conditional on the other factor being at its reference level)",
+      "passed": true,
+      "evidence": "No citation to Schad et al., but the explanation is sufficiently clear: the response shows a model equation, a table breaking down the effect of A at each level of B, and states explicitly that the coefficient is 'the conditional simple effect of A when B is at its reference level (B = low/0).'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

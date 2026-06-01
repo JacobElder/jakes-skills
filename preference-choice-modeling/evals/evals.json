@@ -16,13 +16,14 @@
     },
     {
       "id": 2,
-      "name": "wrong-method-pricing-maxdiff",
-      "prompt": "We're trying to figure out the right price for our new SaaS tier. Thinking about doing a MaxDiff on different price points. Does that work?",
-      "expected_output": "Should push back firmly. MaxDiff on price points gives relative preference among prices but not WTP, demand curve, or share at price. Redirect to CBC with price as an attribute, or Van Westendorp / Gabor-Granger for pure pricing.",
+      "name": "prohibitions-cbc-design",
+      "prompt": "We're running a CBC with 4 brands and 5 price tiers. Our premium brand should never appear at the bottom 2 price tiers — those combinations don't exist in the market. Should I use prohibitions in the design to exclude them?",
+      "expected_output": "Should push back on prohibitions as the solution. Prohibitions reduce D-efficiency and can cause unidentified designs. Correct approach is alternative-specific attributes (premium brand only gets premium price levels by design structure) or conditional pricing. If prohibitions unavoidable, check relative D-efficiency. Should NOT just say 'yes use prohibitions'.",
       "assertions": [
-        "Pushes back on MaxDiff-for-pricing (does NOT enthusiastically help build the study as described)",
-        "Recommends CBC with price as an attribute, OR Van Westendorp/Gabor-Granger as alternative",
-        "Explains why: relative preference among price points does not equal WTP or demand curve"
+        "Pushes back on using prohibitions as the primary solution (does NOT recommend them without caveats)",
+        "Explains that prohibitions reduce D-efficiency and the risk of an unidentified or poorly-identified design",
+        "Recommends alternative-specific attributes or conditional pricing as the preferred fix",
+        "Mentions checking relative D-efficiency if prohibitions are used"
       ],
       "files": []
     },
@@ -55,14 +56,14 @@
     },
     {
       "id": 5,
-      "name": "hb-troubleshooting-reversals",
-      "prompt": "Just ran HB on a CBC and ~4% of respondents have negative price part-worths (preferring higher prices). Is this a problem? Should I constrain monotonicity on price?",
-      "expected_output": "4% is a small fraction and typical for HB with sparse individual data + shrinkage. Three options should be presented: leave alone (most common), constrain (only if confident price is monotonic for population), investigate (sometimes reversals indicate a real subgroup like conspicuous consumption). Should NOT panic or default to constraints.",
+      "name": "cross-wave-maxdiff-comparability",
+      "prompt": "We ran a MaxDiff on 25 product benefits last year and want to run it again this year with 5 new items added and 3 old ones swapped out. Can we compare the utility scores across waves to see which benefits have grown or declined in importance?",
+      "expected_output": "Should say NO to direct utility comparison. Different item sets produce different normalizations — raw utilities are not comparable across waves. Anchored share-above-anchor is the only valid cross-wave metric. If last wave was unanchored, no reliable comparison is possible; re-field with anchoring. Should NOT just say 'yes, compare the scores'.",
       "assertions": [
-        "Notes that 4% is small/typical and not immediately alarming",
-        "Does NOT default to constraining monotonicity as the primary recommendation",
-        "Presents at least two of three options: leave alone / constrain / investigate",
-        "Mentions HB shrinkage toward population mean as a plausible cause of reversals"
+        "Explicitly states that raw MaxDiff utilities cannot be compared across studies with different item sets",
+        "Explains why: different item sets produce different normalizations, making raw utilities non-comparable",
+        "States that anchored share-above-anchor is the valid cross-wave metric",
+        "Addresses what to do if prior wave was unanchored (re-field or flag the limitation clearly)"
       ],
       "files": []
     },
@@ -81,13 +82,14 @@
     },
     {
       "id": 7,
-      "name": "acbc-vs-cbc-decision",
-      "prompt": "We're studying a product with 9 attributes including a complex pricing structure (base + add-ons). Sawtooth keeps suggesting ACBC. Worth the complexity?",
-      "expected_output": "9 attributes is in the ACBC sweet spot (gain real above ~8); complex pricing also favors ACBC's summed pricing engine. So yes, in this case. But should mention ACBC's failure modes (BYO seeding bias, unacceptable inflation, simulator degrades outside consideration set) and note ACBC is NOT the default for simpler studies.",
+      "name": "dual-response-none-cbc",
+      "prompt": "We're designing a CBC for a B2B software product. Our PM says to leave out the None option since this is an existing market — everyone already uses some solution and will definitely pick one. Is that right?",
+      "expected_output": "Should disagree with the PM's reasoning. Default is dual-response None. Omitting None inflates simulated shares and conflates relative preference with purchase likelihood. Dual-response None separates these cleanly. Explicit None is an alternative; omitting None is only defensible in narrow forced-choice competitive simulation contexts, not as a general default.",
       "assertions": [
-        "Recommends ACBC for this specific case (9 attributes + complex pricing)",
-        "Mentions at least one ACBC failure mode (BYO seeding bias, unacceptable inflation, or simulator limitations)",
-        "Notes that ACBC is NOT the default for simpler studies"
+        "Disagrees with the PM's argument that None should be omitted",
+        "Recommends dual-response None as the default (not explicit None, not no None)",
+        "Explains that omitting None inflates simulated shares or conflates preference with purchase likelihood",
+        "Notes the specific context where omitting None is defensible (forced-choice competitive simulation), if mentioned at all"
       ],
       "files": []
     }

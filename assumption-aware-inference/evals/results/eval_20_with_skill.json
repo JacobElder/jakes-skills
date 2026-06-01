@@ -1,0 +1,38 @@
+{
+  "eval_id": 20,
+  "condition": "with_skill",
+  "prompt": "My churn-prediction model has an AUC of 0.86. Stakeholders want to use the predicted probabilities to prioritize retention spend. Is the model good enough?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "Distinguishes discrimination (AUC/ranking) from calibration (probabilities correct in magnitude)",
+      "type": "scored"
+    },
+    {
+      "text": "States that AUC alone does not establish that the predicted probabilities are trustworthy",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that because the probabilities drive a spending/decision, calibration is the property that matters here",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends checking calibration (reliability/calibration plot) and recalibrating (e.g. Platt/isotonic) if needed",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT declare the model adequate for the decision on the basis of AUC alone",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

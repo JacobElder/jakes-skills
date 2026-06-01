@@ -1,0 +1,35 @@
+{
+  "eval_id": 17,
+  "condition": "baseline",
+  "prompt": "n = 300 in each of two independent groups, outcome roughly symmetric, I want to compare means. Anything I actually need to worry about before running a two-sample t-test?",
+  "response": "With n=300 per group and a roughly symmetric outcome, the CLT has you covered on normality \u2014 that concern is essentially moot at this scale.\n\nThree things actually worth checking:\n\n**1. Independence structure.** Are observations truly independent within and between groups? Clustering (e.g., participants nested in schools, repeated measures disguised as two groups, matched pairs) violates the t-test's independence assumption in ways the CLT cannot fix. This is a design question, not a statistical test.\n\n**2. Use Welch's, not the pooled-variance version.** The classic equal-variance t-test is a strictly worse default \u2014 Welch's is essentially identical when variances are equal and correct when they aren't. Most software (R's `t.test`, Python's `scipy.stats.ttest_ind`) defaults to Welch's, but worth confirming. Do *not* pre-screen with Levene's and then choose \u2014 just always use Welch's.\n\n**3. Outliers / heavy tails.** With n=300 you can tolerate moderate skew, but extreme outliers inflate the variance estimate and shrink power. A quick visual (boxplot or histogram) is worth it \u2014 not to gate-keep normality, but to catch data entry errors or distributional surprises before they make your SE misleading.\n\nWhat you don't need to worry about: formal normality tests (Shapiro-Wilk will flag cosmetic deviations at this n), transforming the outcome pre-emptively, or non-parametric alternatives unless outliers are severe.",
+  "assertions": [
+    {
+      "text": "Reassures that the t-test is fine / there is little to worry about given n=300 and symmetry",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions Welch as the sensible default and/or that an equal-variance pretest is unnecessary",
+      "type": "scored"
+    },
+    {
+      "text": "Keeps the response brief and proportionate rather than enumerating many diagnostics or alternative methods",
+      "type": "must_pass"
+    },
+    {
+      "text": "Does NOT invoke normality tests as a gate or recommend a nonparametric switch",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

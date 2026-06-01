@@ -2,7 +2,7 @@
   "eval_id": 11,
   "condition": "baseline",
   "prompt": "I'm comparing pre/post test scores for a treatment and control group that were NOT randomized. Should I analyze change scores (post minus pre) or run ANCOVA controlling for the pre-test? I got different answers from each.",
-  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
   "assertions": [
     {
       "text": "Names or describes Lord's paradox / that the two methods target different estimands and can legitimately disagree",

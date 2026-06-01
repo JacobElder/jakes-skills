@@ -54,6 +54,31 @@ Formal tests of assumptions (Shapiro–Wilk, Levene, Breusch–Pagan) as gatekee
 
 With enough data, every effect is "statistically significant" and every assumption test rejects, because significance conflates effect size with sample size. Lead with **effect sizes and interval estimates** on an interpretable scale; treat the p-value as one limited summary of evidence against a specific null, not as the result. Conversely, a non-significant result is **not** evidence of no effect — absence of evidence is not evidence of absence — and "p > .05 so the assumption holds" is the same error applied to a diagnostic. Frame conclusions in terms of magnitude, direction, and uncertainty.
 
+## Type M and Type S errors (underpowered significant results)
+
+Gelman & Tuerlinckya (2000) framed two errors beyond Type I/II:
+- **Type M (magnitude) error:** a statistically significant estimate from an underpowered study systematically *overestimates* the true effect size. When power is low, the only significant estimates are in the tail of the sampling distribution — that is, they are, by construction, larger than the truth. The expected exaggeration ratio (estimated / true effect) can easily be 2× or more at 20–30% power.
+- **Type S (sign) error:** at very low power, a significant result can even point in the wrong direction.
+
+The practical consequence: "statistically significant and large" from a small study (n < 50 per group, pilot/exploratory designs) should not be treated as strong evidence of a large real effect. Treat it as hypothesis-generating. Replication in adequately powered studies, or prior-informed Bayesian estimation, is the principled response. The problem compounds when researchers selectively report only the significant result from a small study.
+
+## The subgroup comparison fallacy
+
+"Significant in men (p = 0.03), not significant in women (p = 0.16), so the effect differs by sex" is one of the most common errors in applied statistics. It is wrong, and can easily mislead:
+- Two estimates can each be (non-)significant individually while their *difference* has a very different significance status — the SE of a difference is larger than either individual SE (approximately √(SE₁² + SE₂²) when the groups are independent).
+- The correct test for whether effects differ between groups is a direct **interaction term** (e.g. treatment × sex) or an explicit contrast — not a comparison of individual p-values.
+- A non-significant p-value in one subgroup is **not** evidence that the effect is absent there; it is consistent with the study being underpowered in that subgroup.
+Ioannidis (2008), Gelman & Stern (2006), and others have documented how pervasive and consequential this error is. The statistical remedy is always the interaction model.
+
+## Post-selection inference (stepwise regression)
+
+Running backward/forward stepwise regression (or any form of variable selection guided by the data) and then reporting p-values and confidence intervals from the selected model produces **anti-conservative, invalid inference**. The reason: the selection procedure is a random process that uses the data. The nominal p-values from the final model assume that model was fixed in advance — they do not account for the selection step. As a result:
+- Reported p-values are systematically too small and CIs are too narrow.
+- The "surviving" coefficients are biased upward (winner's curse / selection bias).
+- This is related to, but subtler than, naive multiple comparisons: selection inflates false positives even when only one coefficient is reported.
+
+Remedies: (1) pre-register the model before seeing the data; (2) use a held-out test set or cross-validation to evaluate the selected model; (3) use formal **post-selection inference** methods (e.g. PoSI, data splitting, or selective inference / LASSO-based corrections); (4) honestly label the analysis as exploratory and generate hypotheses for independent confirmation. Simply noting "we used stepwise" does not fix the inference — it requires a structural remedy.
+
 ## Interpretability vs fidelity
 
 There is a real frontier between models that mirror the data-generating process faithfully and models a stakeholder can understand and act on. A linear probability model is less faithful than logistic but yields directly interpretable marginal effects; a flexible machine-learned model may predict better but resist explanation. The right point on the frontier depends on the goal: for a high-stakes causal claim, interpretability and defensible identification usually win; for a pure prediction pipeline, fidelity/accuracy wins. Name the tradeoff explicitly rather than pretending one model dominates on every axis — and remember that a more complex model is not automatically more correct, only more flexible.

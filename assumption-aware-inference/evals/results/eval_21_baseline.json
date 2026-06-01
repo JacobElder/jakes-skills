@@ -1,0 +1,38 @@
+{
+  "eval_id": 21,
+  "condition": "baseline",
+  "prompt": "Here's my Poisson regression output for daily complaint counts. Coefficients look reasonable and several are highly significant (p < 0.001). Residual deviance = 4,812 on 1,180 degrees of freedom. Is this model good to report?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "Computes or notes the dispersion ratio (deviance/df ~ 4) and identifies substantial overdispersion",
+      "type": "scored"
+    },
+    {
+      "text": "States that under overdispersion the Poisson coefficients may be okay but the SEs are too small and the reported p-values are over-optimistic",
+      "type": "scored"
+    },
+    {
+      "text": "Warns that the highly-significant results may not survive once dispersion is handled",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends negative binomial or quasi-Poisson, or robust SEs, as the fix",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT accept the model as report-ready on the basis of significance alone",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

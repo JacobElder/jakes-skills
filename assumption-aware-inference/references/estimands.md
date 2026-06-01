@@ -69,6 +69,18 @@ Different methods, and different weightings, target different populations:
 
 These can differ substantially under effect heterogeneity. When a user compares estimates from two methods that "should agree," a different target population is a common and underappreciated reason they don't. Always name which population the estimand refers to.
 
+## The Table 2 fallacy
+
+In a multivariable regression with one main exposure and several covariates, it is tempting to report *all* coefficients as the causal effects of each variable. Westreich & Greenland (2013) named this the **Table 2 fallacy**: only the main exposure was designed to have its confounders controlled; the other coefficients don't have that property.
+
+Specifically:
+- Each coefficient is a *partial* effect — the association with the outcome holding all other variables constant. This is **not** the total causal effect of that variable on the outcome.
+- The model was designed to estimate one causal contrast (the main exposure). The adjustment set was chosen to block confounders of *that* exposure, not of the covariates themselves.
+- Some covariates may be mediators or colliders for each other, making their coefficients further uninterpretable as causal effects.
+- The non-collapsibility of odds and hazard ratios (conditional vs marginal) makes this worse: the covariate coefficients in a logistic or Cox model have no marginal causal interpretation even under ideal conditions.
+
+The correct language: "adjusting for X in the model for exposure-outcome" vs "the effect of X on the outcome." Only the exposure was designed to support a causal claim; the covariate coefficients are at best descriptive partial associations.
+
 ## When simple comparisons are exactly right
 
 Don't over-correct into the belief that raw comparisons are always naive:

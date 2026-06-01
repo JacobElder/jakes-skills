@@ -2,7 +2,7 @@
   "eval_id": 18,
   "condition": "with_skill",
   "prompt": "I have 500,000 rows. The outcome is a count (number of purchases in a window) and I just want the average difference between two cohorts. Do I have to use a Poisson or negative binomial model, or can I just use OLS / a t-test on the counts?",
-  "response": "No, you don't need Poisson or negative binomial for this. OLS (or equivalently, a Welch t-test) is the right tool.\n\n**Why OLS is fine here**\n\nYou want an additive mean contrast \u2014 the difference in mean purchase counts between the two cohorts. OLS estimates exactly that. At n = 500,000, the CLT has thoroughly converged: even with severe right skew in the counts, the sampling distribution of the sample mean is essentially normal. The Berry\u2013Esseen bound says the approximation error is \u221d skewness/\u221an; with \u221an \u2248 700 per group (at equal split), the residual error is negligible.\n\n**The one real issue: heteroskedasticity**\n\nCount data have a mean\u2013variance relationship \u2014 high-purchase users vary more. That doesn't bias OLS coefficients, but it makes the classical standard errors wrong. The fix is cheap: use **HC3 robust standard errors** (sandwich estimator). Your point estimate is the same OLS number; only the SE changes.\n\n```python\nimport statsmodels.formula.api as smf\n\nmodel = smf.ols(\"purchases ~ C(cohort)\", data=df).fit(cov_type=\"HC3\")\nprint(model.summary())\n```\n\nOr a Welch t-test is equivalent and even simpler:\n\n```python\nfrom scipy.stats import ttest_ind\nttest_ind(df.loc[df.cohort==\"A\", \"purchases\"],\n          df.loc[df.cohort==\"B\", \"purchases\"],\n          equal_var=False)\n```\n\n**What Poisson/NB would actually add \u2014 and it's not validity**\n\n- **A different estimand.** Poisson with a log link reports a *rate ratio*, not a mean difference. That's a multiplicative effect. You said you want an average difference, so that's the wrong answer to your question.\n- **Efficiency.** Poisson/NB uses the mean\u2013variance structure to weight observations more cleverly than OLS. At 500k rows you have precision to burn; this is irrelevant.\n- **In-bounds predictions.** Irrelevant if you're not generating predictions.\n\n**The bottom line:** OLS + HC3 SEs is valid, direct, and gives you the estimand you actually want. You'd only reach for Poisson/NB if (a) you wanted a rate ratio instead of a mean difference, or (b) you had a small sample where efficiency mattered. Neither applies here.\n\nOne thing worth checking: if observations are clustered (e.g., users within geographic markets, or repeated measures per user), swap HC3 for **cluster-robust SEs** \u2014 that's the one violation n doesn't fix.",
+  "response": "No, you don't need Poisson or negative binomial here. With n = 500,000 and a mean-difference estimand, OLS (or Welch's t-test) is entirely valid.\n\n**Why it's fine.** The t-test and OLS don't assume the *data* are normal \u2014 they assume the *sampling distribution of the mean* is approximately normal. The CLT delivers that, and the Berry-Esseen approximation error shrinks like skewness/\u221an. At \u221a500,000 \u2248 707, even badly skewed count distributions have a negligible approximation error. The CLT has done its work many times over.\n\n**The one thing to fix: standard errors.** Counts have variance that grows with the mean (like Poisson), so the homoskedastic SE assumption is wrong. Use:\n- **Welch's t-test** (handles unequal variances automatically), or\n- **OLS with HC3 robust SEs** (`sandwich` in R, `HC3` in statsmodels).\n\nThe point estimate \u2014 the mean difference \u2014 is unbiased either way. Heteroskedasticity only affects the SE, not the coefficient, and robust SEs fix that.\n\n**What Poisson/NB would actually add** (and why you don't need it):\n- A *multiplicative* estimand (rate ratio) \u2014 not what you want\n- Efficiency gains \u2014 irrelevant when you have 500K rows\n- Better behavior near a boundary \u2014 not a concern at this n\n\nIf you later want \"cohort B purchases 23% more than cohort A\" instead of \"cohort B averages 1.2 more purchases,\" that's when a log-link GLM becomes the right tool \u2014 because you've changed the estimand, not because OLS was invalid.\n\n**Bottom line:** OLS with robust SEs is the right call. Simple, interpretable, valid.",
   "assertions": [
     {
       "text": "States that for the difference in mean counts, OLS+robust SEs (or a t-test) is valid here and a GLM is not required for validity",
@@ -30,16 +30,18 @@
     }
   ],
   "assertion_results": [
-    true,
-    true,
-    true,
-    true,
-    true,
-    true
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
   ],
-  "passed": 6,
+  "passed": 0,
   "total": 6,
-  "pass_rate": 1.0,
-  "eval_passes": true,
-  "must_pass_failed_indices": []
+  "pass_rate": 0.0,
+  "eval_passes": false,
+  "must_pass_failed_indices": [
+    6
+  ]
 }

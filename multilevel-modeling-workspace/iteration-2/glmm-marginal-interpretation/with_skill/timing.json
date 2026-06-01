@@ -1,0 +1,6 @@
+{
+  "eval_name": "glmm-marginal-interpretation",
+  "config": "with_skill",
+  "executor_duration_seconds": 33.5,
+  "total_duration_seconds": 33.5
+}

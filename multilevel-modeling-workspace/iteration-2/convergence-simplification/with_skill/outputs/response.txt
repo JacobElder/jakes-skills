@@ -1,94 +1,95 @@
-Before we get to write-up language, I need to flag something that affects your results, not just your reporting: **the model you've landed on is likely producing anti-conservative *p*-values for `condition`, and the write-up question is premature until this is resolved.**
+Before writing this up, I'd push back on the model you landed on — there's a real risk it's anti-conservative for your condition test, and a methods section that accurately describes it may draw reviewer scrutiny for exactly that reason. Let me explain the issue and then what to do about it.
 
-Here's why, and what to do instead.
+## The problem with your current model
 
----
+Your condition manipulation is **within-subjects** — every subject saw both conditions. That means subjects vary in *how much* they're affected by condition (some people are more sensitive to the manipulation than others). The correct error term for testing a within-subjects effect requires a by-subject random slope for condition.
 
-## The core problem: you dropped the wrong thing
+Your current model `(1 | subject)` only allows subjects to differ in baseline RT. It assumes the condition effect is *identical* across all subjects, which is almost never true. When you drop the slope and use only a random intercept, the residual variance absorbs the between-subject variability in the condition effect — this deflates your standard error and makes the test anti-conservative. Type I error rates in this situation routinely run 2–5× the nominal rate (Barr et al., 2013; Schielzeth & Forstmeier, 2009).
 
-In a within-subjects condition manipulation, every subject contributes observations from both conditions. That means **condition varies within subjects**, which means a by-subject random slope for condition is structurally justified. Without it, the variance in condition effects across subjects gets absorbed into the residual, and the test of the fixed effect for condition uses the wrong error term — inflating Type I error, sometimes dramatically (Barr et al., 2013).
+The same question applies to items: does condition vary within items (e.g., a Latin square counterbalancing where each sentence appears in both conditions across subjects)? If yes, `(1 | item)` has the same problem.
 
-Your current model:
-```r
-lmer(rt ~ condition + (1 | subject) + (1 | item))
-```
+## The singular fit doesn't justify dropping the slope
 
-…treats all subject-by-condition variability as noise. The *p*-value for `condition` is suspect.
-
----
-
-## Singular fit ≠ mandate to drop slopes
-
-Singular fits are **diagnostic information**, not just a nuisance. They almost never mean "remove the random slope." The most common cause is an over-parameterized correlation structure — specifically, the intercept-slope correlation in `(1 + condition | subject)` is poorly estimated even when the slope variance itself is real and necessary.
-
-The right first simplification is to **remove the correlation parameter, not the slope**:
+A singular fit warning means the estimated variance for a random effect collapsed to zero or a correlation hit ±1. That's a signal about your data and model — not automatic permission to drop the structure your design requires. Diagnose it first:
 
 ```r
-# Zero-correlation model — keeps the slope, drops the intercept-slope correlation
-lmer(rt ~ condition + (1 + condition || subject) + (1 | item))
+library(lme4)
+library(lmerTest)
+
+# What you should have tried first:
+m_max <- lmer(rt ~ condition + (1 + condition | subject) + (1 + condition | item),
+              data = dat, REML = TRUE)
 ```
 
-This is usually the correct Bates et al. (2015) / Matuschek et al. (2017) simplification for a two-level within-subjects factor. Try this first.
-
----
-
-## Also check: does condition vary within items?
-
-If your design counterbalances items across conditions (e.g., Latin square — each item appears in each condition across different subjects), then condition also varies within items, and you'd want:
+If that singular-fits, check *what* is singular before simplifying:
 
 ```r
-lmer(rt ~ condition + (1 + condition || subject) + (1 + condition || item))
+isSingular(m_max)
+VarCorr(m_max)   # which variance component is at/near zero?
 ```
 
-If items are nested within conditions (each item always appears in the same condition), then `(1 | item)` is correct for items. Which is it?
+Then work through the convergence decision tree **before** removing theoretically required structure:
 
----
-
-## A practical decision procedure
-
-Run these in sequence and stop when you get clean convergence with no singularity:
+### Fix 1 — Try all optimizers
 
 ```r
-# Step 1: Maximal, with correlations
-m1 <- lmer(rt ~ condition + (1 + condition | subject) + (1 + condition | item), REML = TRUE)
-
-# Step 2: Remove correlations (keep slopes)
-m2 <- lmer(rt ~ condition + (1 + condition || subject) + (1 + condition || item), REML = TRUE)
-
-# Step 3: Remove by-item slope only (if item counterbalancing is weak/absent)
-m3 <- lmer(rt ~ condition + (1 + condition || subject) + (1 | item), REML = TRUE)
-
-# Step 4 (last resort): Remove by-subject correlation only; keep slope
-m4 <- lmer(rt ~ condition + (1 + condition || subject) + (1 | item), REML = TRUE)
+library(allFit)
+all_fits <- allFit(m_max)
+summary(all_fits)   # do any converge cleanly?
 ```
 
-Check each with:
+Often `bobyqa` or `nloptwrap` with `NLOPT_LN_BOBYQA` converges when the default `nloptwrap` doesn't. If any optimizer gives a clean fit, use that one.
+
+### Fix 2 — Center and scale
+
+Singular fits frequently trace back to predictors that are uncentered or on a scale that makes the optimization landscape poorly conditioned:
+
 ```r
-isSingular(m2)   # should be FALSE before proceeding to write-up
-summary(m2)$varcor  # inspect variance components — are any ~0?
+# For a binary condition: sum/±0.5 coding helps more than treatment coding
+contrasts(dat$condition) <- c(-0.5, 0.5)
 ```
 
-Also worth checking: are you modeling raw RT or log RT? Log-transforming RT often dramatically improves the random-effects geometry and reduces singularity — it's the right call substantively too (RT distributions are right-skewed).
+If RT is in milliseconds, consider log-transforming (RT distributions are right-skewed, and the log scale often gives better-behaved residuals *and* easier optimization).
+
+### Fix 3 — Zero-correlation model as a principled intermediate
+
+If the full correlation structure is the problem (random slope variance is fine but the slope–intercept correlation is hitting ±1), fit a zero-correlation model:
+
+```r
+m_zcp <- lmer(rt ~ condition + (1 | subject) + (0 + condition | subject) +
+                               (1 | item) + (0 + condition | item),
+              data = dat, REML = TRUE)
+```
+
+This is theoretically defensible and is the Bates et al. (2015) / Matuschek et al. (2017) recommendation when the full model is overparameterized but the slopes themselves are non-zero.
+
+### Fix 4 — Check if by-item slopes are estimable
+
+If condition does **not** vary within items (i.e., each sentence only appears in one condition — no counterbalancing), then `(1 + condition | item)` is not identifiable and should not be in the model. `(1 | item)` is then correct. But you still need `(1 + condition | subject)`.
 
 ---
 
-## What to write up once you have a defensible model
+## What to include in your write-up — once the model is right
 
-A complete random-effects section includes:
+If after all the above you land on a clean model, here's what the random-effects section needs:
 
-1. **The full model formula** — both fixed and random parts, explicitly
-2. **The estimation method** — REML for the final model; ML for fixed-effect LRTs if you use them
-3. **The random-effects selection rationale** — did you start maximal and simplify? On what principled grounds? (This is now required by most journals — reviewers will ask)
-4. **The variance components** — report the estimated random-effect SDs (and correlation, if estimated) alongside the fixed-effect table
-5. **The ICC** — at minimum for subjects; it contextualizes how much clustering matters
-6. **Convergence/singularity status** — confirm the final model converged without singularity warnings; name optimizer if you switched
+**1. The full lme4 formula**, including the random-effects structure spelled out:
+> *We fit linear mixed-effects models using lmer (lme4 v1.x; Bates et al., 2015) with REML estimation. The random-effects structure included by-subject random intercepts and random slopes for condition, and by-item random intercepts [and random slopes for condition if applicable].*
 
-Example write-up language for a zero-correlation model that converged cleanly:
+**2. Justification for the structure chosen:**
+> *This structure was selected as the maximal model justified by the design (Barr et al., 2013), as condition varied within subjects [and within items under counterbalancing].*
 
-> We fit linear mixed-effects models using `lmer` (lme4 v1.x; Bates et al., 2015) with REML estimation. Response times were log-transformed prior to analysis. Following Barr et al. (2013), we began with the maximal random-effects structure justified by the design: by-subject and by-item random intercepts and slopes for condition. The maximal model produced a singular fit, indicating an over-parameterized correlation structure. We therefore removed the intercept-slope correlations (Bates et al., 2015; Matuschek et al., 2017), yielding the final model: `log(rt) ~ condition + (1 + condition || subject) + (1 + condition || item)`. This model converged without singularity warnings. Degrees of freedom were estimated using the Satterthwaite approximation (lmerTest; Kuznetsova et al., 2017).
+**3. If you did simplify, say why and how:**
+> *The maximal model produced singular fits attributable to [which component — e.g., the by-item slope variance being near zero]. We simplified by removing [specific component], following the approach of Matuschek et al. (2017). We verified via allFit that convergence was not optimizer-dependent.*
+
+**4. Variance components and ICC:**
+Report `VarCorr(model)` output — random-effect SDs, residual SD, and optionally the by-subject ICC. Reviewers increasingly expect this.
+
+**5. Inference method:**
+lme4 doesn't print *p*-values by default. If you used `lmerTest`, say "Satterthwaite-approximated degrees of freedom." If you used likelihood-ratio tests, note you refitted with ML (REML = FALSE) for the comparison.
 
 ---
 
-## Bottom line
+## The short version
 
-Don't write up the current model. Run the zero-correlation version first. If condition is within-subjects, that random slope belongs in the model — singular fit from the correlation parameter is not a reason to drop the slope. The write-up language above is ready to slot in once you have a model that's both converged and defensible.
+**Don't write up `(1 | subject) + (1 | item)` without first trying to recover the random slope for condition.** That model likely has inflated Type I error for your key test, and sophisticated reviewers will flag it. Work through the optimizer sweep and zero-correlation model — 40 subjects × 80 items is a reasonably well-powered design and you may get the slope to converge with the right optimizer or contrast coding.

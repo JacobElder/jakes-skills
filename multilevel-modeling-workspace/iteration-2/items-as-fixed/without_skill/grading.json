@@ -1,0 +1,41 @@
+{
+  "run_id": "items-as-fixed-without_skill",
+  "eval_id": 7,
+  "eval_name": "items-as-fixed",
+  "config": "without_skill",
+  "passed": 4,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output flags that the 'same items for everyone therefore items are fixed' reasoning is incorrect",
+      "passed": true,
+      "evidence": "\"Even though you *chose* these 48 images deliberately, they still introduce variance... The selection mechanism (deliberate vs. random sampling) is separate from whether image-level variance needs to be partitioned out. It does.\""
+    },
+    {
+      "text": "Output explains that items should be treated as random because the researcher wants to generalize beyond these specific 48 images to the population of similar stimuli \u2014 which requires treating items as a random sample",
+      "passed": false,
+      "evidence": "The response frames the issue as variance inflation and anti-conservative tests ('collapses into the residual, inflating your effective sample size'), not as a generalizability argument. It never explicitly states that treating items as random is required for conclusions to generalize beyond these 48 specific images to a broader population of similar stimuli."
+    },
+    {
+      "text": "Output recommends adding by-item random effects \u2014 (1 | item) at minimum, and by-item random slopes for within-item conditions if applicable",
+      "passed": true,
+      "evidence": "\"Minimum recommended model: lmer(rating ~ condition + (1 | subject) + (1 | image))\" and later discusses when `(condition | image)` would be appropriate if images appear in multiple conditions."
+    },
+    {
+      "text": "Output does NOT validate the advisor's framing or agree that fixed-item analysis is appropriate",
+      "passed": true,
+      "evidence": "While the response says \"Your advisor is right that (1 | subject) is necessary,\" it immediately adds \"but the model as specified has a meaningful gap\" and clearly states the advisor's implied conclusion (that the model is sufficient) is wrong, recommending the addition of image random effects."
+    },
+    {
+      "text": "Output references Clark (1973) / language-as-fixed-effect fallacy, OR Judd et al., OR explains that treating items as fixed means conclusions don't generalize beyond those 48 specific images",
+      "passed": true,
+      "evidence": "\"This is the stimuli-as-fixed-effect fallacy (Clark, 1973; Judd, Westfall & Kenny, 2012)\" and both Clark (1973) and Judd et al. (2012) are listed in the key references section."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 1,
+    "total": 5,
+    "pass_rate": 0.8
+  }
+}

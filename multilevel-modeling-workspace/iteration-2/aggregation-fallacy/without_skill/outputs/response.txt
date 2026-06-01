@@ -1,42 +1,40 @@
-This is a real methodological question worth thinking through carefully, because what you're describing has a specific known limitation that reviewers at most journals will flag.
+This is a real methodological issue worth addressing before submission — not just a reporting style question. Here's a frank assessment:
 
-## What you're doing: F1-only analysis
+## The Core Problem: Language-as-Fixed-Effect Fallacy
 
-Aggregating to participant means and running a repeated-measures ANOVA is the classic **by-participants analysis (F1)**. It's been standard practice for decades — but the field has known since Clark (1973) that F1 alone is statistically insufficient.
+Your analysis treats **participants as random** but **items as fixed**. That means your results technically only generalize to those exact 40 sentences per condition — not to the broader population of sentences of that type. Clark (1973) identified this as a fundamental validity problem in psycholinguistics, and it inflates Type I error for item-level generalization.
 
-### The core problem: language as a fixed effect
+By-participant ANOVA on condition means ("F1") is how labs have run experiments for decades — but it's been considered insufficient at most journals since roughly 2008–2010.
 
-When you aggregate over items before modeling, you implicitly treat your 40 sentences per condition as *the* sentences — not a sample from a population of possible sentences. This means:
+## What Reviewers at Top Journals Will Expect
 
-- **Item variance is folded into error** in a way that inflates Type I error rate
-- A significant F1 tells you the effect holds across your participants, but not that it would generalize to different items
-- This is the **language-as-fixed-effect fallacy** (Clark, 1973)
+**Minimum acceptable (older standard):**
+Run a parallel **by-items ANOVA (F2)** — compute mean RT per item per condition, then run the same 2×2 ANOVA on those item means. Report both F1 and F2 (or min-F′). If F2 is not significant, your finding doesn't generalize beyond your specific items.
 
-## What reviewers will expect
-
-**Traditional solution (still acceptable at some venues):** Run *both* F1 (by-participants) and F2 (by-items) ANOVAs, then compute **minF′** — the quasi-F statistic that combines them. If minF′ is significant, you've established the effect generalizes across both participants *and* items.
-
-**Modern gold standard:** Linear mixed-effects models (LMEMs) with **crossed random effects** for participants and items simultaneously. A single model like:
+**Current standard:**
+Run **Linear Mixed-Effects Models (LMMs)** with crossed random effects for both participants and items. In R:
 
 ```r
-lmer(RT ~ condA * condB + (1 + condA * condB | participant) + (1 | item), data = df)
+library(lme4)
+m <- lmer(RT ~ cond1 * cond2 + (1 + cond1 * cond2 | participant) + 
+                                (1 + cond1 * cond2 | item), data = df)
 ```
 
-This is what most journals (JML, Cognition, Psychological Science, JEPLMC) now expect or require.
+This simultaneously accounts for both sources of random variability and is what Baayen, Davidson & Bates (2008) and Barr et al. (2013) established as the field standard. If the maximal model doesn't converge, you simplify the random effects structure and justify it.
 
-## Additional things to add regardless
+## What to Report
 
-| Issue | What to report |
+Regardless of approach:
+
+| What | Why |
 |---|---|
-| **Effect size** | η²p or (preferably) ω²p — it's less biased |
-| **RT distribution** | Did you log-transform? RT is right-skewed; averaging over 40 items helps via CLT but doesn't fix it |
-| **Data exclusions** | Outlier trimming criteria (e.g., ±2.5 SD per participant/condition) |
-| **Error trials** | How were incorrect responses or regressions handled? |
+| Effect size (partial η² or Cohen's *d*) | Required by most journals; F-values alone are uninformative about magnitude |
+| Both F1 and F2, **or** LMM results | Demonstrates item-level generalizability |
+| Random effects structure (if LMM) | Reviewers need to evaluate what you controlled for |
+| Whether your trimming/exclusion criteria were applied before aggregation | Aggregating first can mask outlier influence |
 
-## Practical bottom line
+## Practical Suggestion
 
-If your target journal is psycholinguistics-specific (JML, Cognition, QJEP), **reviewers will almost certainly ask for mixed-effects models.** If you're submitting to a more general psychology venue, F1+F2+minF′ may pass, but it's increasingly seen as dated.
+Before submitting, run the by-items ANOVA as a quick check. If it's also significant, you can report both and note that LMMs are the planned approach for the full study (or just run the LMM now — it's not much more work if your data are tidy). If F2 is *not* significant, that's important information about the robustness of your finding that you'd want to know before reviewers flag it.
 
-The good news: if your F1 effect is significant, it very likely survives a mixed-effects model too. Running `lmer` now before submission is far less painful than revising under review pressure.
-
-Want help setting up the LMEM, interpreting random effects structure, or thinking through what random slopes are justified given your design?
+The `lme4` + `lmerTest` combination in R is the standard toolchain; `lmerTest` gives you p-values via Satterthwaite approximation that read similarly to ANOVA output.

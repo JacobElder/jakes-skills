@@ -1,0 +1,64 @@
+Your advisor's intuition is understandable — it's one of the most common reasoning errors in stimulus-based research — but the model as specified has two problems that can meaningfully inflate your Type I error rate. Here's what's missing and why.
+
+---
+
+## Problem 1: By-image random intercepts (the "fixed stimuli" fallacy)
+
+**The reasoning** "my images are fixed, so no random effect for image" is exactly Clark's (1973) *language-as-fixed-effect fallacy*, updated for vision/perception research. It's the single most replicated error in psycholinguistics and perception.
+
+The critical question isn't *how* you selected the images — it's whether you want your conclusion to generalize beyond these specific 48 images to the broader class of stimuli they represent. You almost certainly do. If you re-ran the study with a different set of 48 images from the same categories/conditions, you'd expect your condition effect to hold. Random effects for image are precisely what licenses that generalization.
+
+Without `(1 | image)`:
+
+- Image-level variance (some images are just rated higher regardless of condition) is pushed into the residual
+- If image characteristics are even slightly correlated with condition assignment — nearly inevitable when you hand-pick stimuli — the condition test is anti-conservative
+- You can only technically claim your results hold for *these exact 48 images*, which is almost never the scientific claim
+
+## Problem 2: Random slopes for condition by subject
+
+If `condition` varies within subjects — i.e., each participant rates images from multiple conditions — then the condition effect can differ across people. Some participants may be highly sensitive to the manipulation; others barely respond to it. That's a random slope.
+
+Without `(1 + condition | subject)`, the residual error term for the fixed effect of condition is wrong, and the test is anti-conservative (Barr et al., 2013). This is the maximal random-effects argument: **every within-cluster predictor needs a random slope at that cluster level.**
+
+---
+
+## The corrected model
+
+**Minimal defensible model** (condition is a property of each image, not manipulated within-image):
+
+```r
+lmer(rating ~ condition + (1 + condition | subject) + (1 | image), data = d, REML = TRUE)
+```
+
+**If each image appears in multiple conditions** (e.g., you showed each image in both conditions via manipulation):
+
+```r
+lmer(rating ~ condition + (1 + condition | subject) + (1 + condition | image), data = d, REML = TRUE)
+```
+
+If you get a singular fit warning, simplify the random-effects correlation first before dropping slopes:
+
+```r
+# Remove correlation parameter between intercept and slope
+lmer(rating ~ condition + (1 + condition || subject) + (1 | image), data = d, REML = TRUE)
+```
+
+---
+
+## Quick checklist before running
+
+| Check | What to do |
+|---|---|
+| Does condition vary *within* subjects? | Yes → need `(1 + condition \| subject)` |
+| Same images for all subjects? | Yes → need `(1 \| image)` |
+| Does condition vary *within* images? | Yes → need `(1 + condition \| image)` |
+| Singular fit? | Drop correlation first (`\|\|`), then slopes only if still singular |
+| Using `lmer`? | Add `library(lmerTest)` for Satterthwaite *p*-values |
+
+---
+
+## On the advisor conversation
+
+This is a very easy mistake to make — the "I chose my stimuli deliberately, therefore they're fixed" logic sounds intuitive. The pedagogical fix that usually lands well: point out that if a colleague ran the same study with 48 *different* images from the same pool, you'd expect replication. That's exactly what a random effect for image is modeling. The fixed-effect treatment of stimuli would be appropriate only if your claim is specifically about *these 48 images and no others* — which is essentially never the scientific question.
+
+Barr et al. (2013, *JML*) and Judd, Westfall & Kenny (2012, *JPSP*) are the canonical citations if you need to make the case in writing.

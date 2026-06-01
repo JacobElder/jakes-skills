@@ -1,0 +1,40 @@
+{
+  "eval_id": 15,
+  "condition": "with_skill",
+  "prompt": "Before every analysis I run normality tests, Levene's test, and Breusch-Pagan, and I pick my method based on the results. Is this a good workflow?",
+  "response": "No \u2014 this is a \"pretest-and-switch\" workflow, and it's dominated by just using the robust method from the start. The problem is twofold: the tests are miscalibrated as gatekeepers, and running them before the main analysis distorts the final inference. At small n, all three tests are underpowered \u2014 they'll miss violations large enough to actually matter. At large n, they'll reject for trivial, inconsequential deviations. So the decision they hand you is least reliable exactly when you'd most want guidance, and the final test's operating characteristics (level, coverage) now depend on this random first stage in a way that's hard to characterize.\n\nThe better approach is robust-by-design, which makes the pretesting irrelevant:\n\n**Instead of Levene's \u2192 Student or Welch:** Just use Welch unconditionally. It loses essentially nothing when variances are equal and protects you when they aren't. The equal-variance pretest buys nothing and costs you.\n\n**Instead of Breusch-Pagan \u2192 OLS or robust SEs:** Use HC3 robust SEs by default. Heteroskedasticity doesn't bias OLS coefficients \u2014 it only makes the classical SEs wrong \u2014 and a sandwich estimator fixes that without a gatekeeper test.\n\n**Instead of Shapiro-Wilk \u2192 parametric or nonparametric:** Don't treat it as a switch. Ask instead: is n large enough relative to the skew for the CLT to have engaged? Look at residual plots to check the *mean structure* (curvature, omitted terms), which is where bias actually lives. Normality of the residuals matters mainly for small-sample exact inference and prediction intervals, not for coefficient inference at adequate n.\n\nThe throughline: these tests ask \"is the assumption exactly true?\" (always no) rather than \"is the violation consequential for my goal at this n?\" (the real question). Reason about the latter directly, and skip the tests.",
+  "assertions": [
+    {
+      "text": "Pushes back on the test-then-choose workflow rather than endorsing it",
+      "type": "scored"
+    },
+    {
+      "text": "Explains that assumption tests check exact truth, not whether the violation is consequential, and are underpowered at small n / overpowered at large n",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that pretesting distorts the level/coverage of the final inference (pretest bias)",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends robust-by-design methods (e.g. Welch, robust/HC SEs, appropriate model family) and/or graphical diagnostics for magnitude instead",
+      "type": "scored"
+    },
+    {
+      "text": "Frames good practice as reasoning about consequences for the estimand/goal rather than a mechanical pipeline",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

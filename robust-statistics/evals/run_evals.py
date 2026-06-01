@@ -41,37 +41,43 @@ RESULTS_DIR = Path(__file__).parent / "results"
 RESULTS_DIR.mkdir(exist_ok=True)
 
 
+RATE_LIMIT_SENTINEL = "__RATE_LIMITED__"
+
+
 def call_claude(prompt: str, system_extra: str | None = None,
                 model: str = "claude-sonnet-4-6",
-                timeout: int = 600) -> str:
-    """Call claude CLI, piping prompt via stdin to avoid long argument issues."""
-    cmd = ["claude",
-           "--dangerously-skip-permissions",
-           "--model", model,
-           "--output-format", "text",
-           "-p", "-"]          # '-' means read prompt from stdin
-    if system_extra:
-        cmd += ["--append-system-prompt", system_extra]
-
-    result = subprocess.run(
-        cmd,
-        input=prompt,
-        capture_output=True,
-        text=True,
-        timeout=timeout,
-    )
-    out = result.stdout.strip()
-    if not out and result.stderr:
-        # fallback: some CLI versions don't support '-' as prompt; retry with positional
-        cmd2 = ["claude",
-                "--dangerously-skip-permissions",
-                "--model", model,
-                "-p", prompt]
+                timeout: int = 600,
+                retries: int = 2,
+                retry_delay: float = 15.0) -> str:
+    """Call claude CLI with retry on rate-limit errors."""
+    for attempt in range(retries + 1):
+        cmd = ["claude",
+               "--dangerously-skip-permissions",
+               "--model", model,
+               "--output-format", "text",
+               "-p", prompt]
         if system_extra:
-            cmd2 += ["--append-system-prompt", system_extra]
-        r2 = subprocess.run(cmd2, capture_output=True, text=True, timeout=timeout)
-        out = r2.stdout.strip()
-    return out
+            cmd += ["--append-system-prompt", system_extra]
+
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        out = result.stdout.strip()
+
+        # Detect rate-limit response
+        if "hit your limit" in out.lower() or "rate limit" in out.lower():
+            if attempt < retries:
+                print(f"\n  [rate-limited, waiting {retry_delay}s before retry {attempt+1}/{retries}]",
+                      end=" ", flush=True)
+                time.sleep(retry_delay)
+                continue
+            return RATE_LIMIT_SENTINEL
+        if out:
+            return out
+
+        # Empty output fallback — stderr may have the real error
+        if result.stderr and attempt < retries:
+            time.sleep(retry_delay)
+            continue
+    return out  # return whatever we got (may be empty)
 
 
 GRADER_SYSTEM = """You are a strict grader for statistical methodology evals.
@@ -90,16 +96,19 @@ def _assertion_text(a) -> str:
     return a["text"] if isinstance(a, dict) else a
 
 
-def grade_assertions(response: str, assertions: list) -> list[bool]:
+def grade_assertions(response: str, assertions: list,
+                     grader_model: str = "claude-haiku-4-5-20251001") -> list[bool]:
+    """Grade assertions; uses Haiku by default to conserve Sonnet quota."""
+    if response == RATE_LIMIT_SENTINEL:
+        return [False] * len(assertions)
     texts = [_assertion_text(a) for a in assertions]
     numbered = "\n".join(f"{i+1}. {t}" for i, t in enumerate(texts))
-    # Truncate response if very long (keep first 2000 chars)
     resp_trunc = response[:2000] + ("..." if len(response) > 2000 else "")
     prompt = (
         f"Response to grade:\n\n{resp_trunc}\n\n"
         f"Assertions to evaluate:\n{numbered}"
     )
-    raw = call_claude(prompt, system_extra=GRADER_SYSTEM)
+    raw = call_claude(prompt, system_extra=GRADER_SYSTEM, model=grader_model)
     results = []
     for line in raw.strip().splitlines():
         line = line.strip()
@@ -112,7 +121,9 @@ def grade_assertions(response: str, assertions: list) -> list[bool]:
 
 
 def run(eval_ids: list[int] | None, conditions: list[str],
-        delay: float = 2.0) -> None:
+        delay: float = 3.0,
+        executor_model: str = "claude-sonnet-4-6",
+        grader_model: str = "claude-haiku-4-5-20251001") -> None:
     evals_data = json.loads(EVALS_JSON.read_text())["evals"]
     if eval_ids:
         evals_data = [e for e in evals_data if e["id"] in eval_ids]
@@ -129,11 +140,14 @@ def run(eval_ids: list[int] | None, conditions: list[str],
         for condition in conditions:
             system = SKILL_WITH_REFS if condition == "with_skill" else None
             print(f"  [{condition}] executor...", end=" ", flush=True)
-            response = call_claude(prompt, system_extra=system)
+            response = call_claude(prompt, system_extra=system, model=executor_model)
             time.sleep(delay)
 
+            if response == RATE_LIMIT_SENTINEL:
+                print("RATE-LIMITED — skipping grading")
+                continue
             print("grader...", end=" ", flush=True)
-            passes = grade_assertions(response, assertions)
+            passes = grade_assertions(response, assertions, grader_model=grader_model)
             time.sleep(delay)
 
             n_pass = sum(passes)
@@ -217,9 +231,17 @@ if __name__ == "__main__":
     parser.add_argument("--evals", help="comma-separated eval IDs e.g. 1,2,3")
     parser.add_argument("--condition", default="both",
                         choices=["baseline", "with_skill", "both"])
+    parser.add_argument("--grader-model", default="claude-haiku-4-5-20251001",
+                        help="model to use for assertion grading (default: haiku)")
+    parser.add_argument("--executor-model", default="claude-sonnet-4-6",
+                        help="model to use for generating responses (default: sonnet)")
+    parser.add_argument("--delay", type=float, default=3.0,
+                        help="seconds to wait between API calls (default: 3)")
     args = parser.parse_args()
 
     eval_ids = [int(x) for x in args.evals.split(",")] if args.evals else None
     conditions = (["baseline", "with_skill"] if args.condition == "both"
                   else [args.condition])
-    run(eval_ids, conditions)
+    run(eval_ids, conditions, delay=args.delay,
+        executor_model=args.executor_model,
+        grader_model=args.grader_model)

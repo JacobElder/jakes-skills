@@ -2,7 +2,7 @@
   "eval_id": 8,
   "condition": "baseline",
   "prompt": "A reviewer is demanding I drop variables because my VIFs are above 5. I care about the coefficient on price, which has a VIF of 2.1. The high-VIF variables are control variables I'm not interpreting. What should I do?",
-  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "response": "The reviewer's concern is misapplied to your situation. Here's the logic:\n\n**VIF tells you whose standard errors are inflated.** A high VIF on a control variable inflates the SE on *that control*, not on price. Your price coefficient has a VIF of 2.1 \u2014 its SE is essentially unaffected by whatever collinearity exists among the controls.\n\n**Dropping high-VIF controls doesn't fix your model \u2014 it breaks it.** If those controls belong in the model (i.e., they're correlated with price and with the outcome), omitting them biases your price coefficient. You've traded noisy-but-unbiased estimates of things you don't care about for a *biased* estimate of the thing you do care about. That's the wrong trade.\n\n**How to push back:**\n\n1. Point out that multicollinearity is a precision problem for the collinear variables, not a bias problem, and not a problem for price at all.\n2. Note that VIF > 5 (or 10) is a rule of thumb, not a statistical test \u2014 it has no formal decision threshold.\n3. Argue that the controls are included for confound adjustment, not for interpretation. High SEs on controls you're not interpreting is acceptable.\n4. If they want something to cite: Farrar & Glauber (1967), or O'Brien (2007) \"A Caution Regarding Rules of Thumb for Variance Inflation Factors\" \u2014 the latter directly addresses why rigid VIF cutoffs are problematic.\n\n**Optional diagnostic you can offer:** Report that the SE on price changes minimally when you add/remove the high-VIF controls (if true). That directly demonstrates the collinearity isn't affecting your key estimate.\n\nThe short version for the response: \"Multicollinearity affects the variables with high VIFs, not the variable I'm reporting. Dropping those controls risks confounding bias in the price estimate, which is the more serious threat to validity.\"",
   "assertions": [
     {
       "text": "States that multicollinearity inflates standard errors of the collinear coefficients but does not bias estimates",
@@ -26,13 +26,13 @@
     }
   ],
   "assertion_results": [
-    false,
-    false,
-    false,
-    false,
-    false
+    true,
+    true,
+    true,
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.0
+  "pass_rate": 1.0
 }

@@ -1,0 +1,41 @@
+{
+  "run_id": "reviewer-cluster-means-without_skill",
+  "eval_id": 4,
+  "eval_name": "reviewer-cluster-means",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output does NOT agree with the reviewer's suggestion or recommend going ahead with school-means OLS",
+      "passed": true,
+      "evidence": "The response explicitly states 'Your reviewer is right about the *level* of the intervention \u2014 but wrong about the fix. Aggregating to school means and running OLS is a common instinct that solves one problem (non-independence) while creating new ones.' It then dedicates an entire section titled 'Why school-means OLS is the wrong fix.'"
+    },
+    {
+      "text": "Output explains that aggregating to school means discards within-school variance, which is typically large and contains important information about individual student outcomes",
+      "passed": true,
+      "evidence": "The response states 'aggregating to cluster means inflates Type II error (throws away power) and discards the within-school variation that helps you estimate parameters more precisely' and later 'squandering within-school information makes an already low-power design worse.'"
+    },
+    {
+      "text": "Output recommends MLM (three-level or two-level depending on design) as the appropriate method that uses all the data and partitions variance correctly",
+      "passed": true,
+      "evidence": "The response recommends 'two-level MLM' with a detailed R code example using lme4/lmerTest, explaining it 'Uses all ~1,050 students to estimate residual variance, which sharpens your level-2 standard errors' and 'Correctly places the intervention at level 2, where it belongs.'"
+    },
+    {
+      "text": "Output explains that OLS on 35 school means loses statistical power and produces biased standard errors because residuals are not identically distributed \u2014 school means are averages of ~30 students, which is different across schools",
+      "passed": true,
+      "evidence": "The response notes 'With 35 observations, you have painfully few degrees of freedom,' mentions 'inflated standard errors (because each school mean has sampling error that OLS ignores),' and flags that 'if enrollment is unequal the noisiest means get as much weight as the most stable ones' \u2014 capturing the heteroskedasticity issue arising from school means being averages of varying numbers of students."
+    },
+    {
+      "text": "Output notes that the reviewer's framing ('school is the unit of analysis') is true for the intervention (it's school-level) but the appropriate method still models student-level outcomes with school as a grouping factor",
+      "passed": true,
+      "evidence": "The response explicitly grants 'The reviewer is right to push back on that' regarding non-independence, but then explains that MLM 'Correctly places the intervention at level 2, where it belongs' while using all student-level data. The summary table also distinguishes between 'correct unit of assignment' and modeling approach, reinforcing that school is the right level for the intervention but MLM still uses student-level outcomes."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

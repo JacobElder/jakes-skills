@@ -1,0 +1,929 @@
+{
+  "skill_name": "assumption-aware-inference",
+  "executor_model": "claude-sonnet-4-6",
+  "grader_model": "claude-haiku-4-5-20251001",
+  "results": [
+    {
+      "eval_id": 4,
+      "condition": "baseline",
+      "prompt": "We ran a randomized A/B test on checkout flow. Someone on my team says we need to control for device type, browser, and whether the user completed onboarding, since those differ a bit between the two arms. Should I add those as covariates?",
+      "response": "Adding pre-treatment covariates to a randomized experiment is valid and often beneficial, but the *reason* matters a lot here.\n\n**Good reason to add them:** They predict the outcome (conversion rate), which reduces residual variance and increases power. This is standard ANCOVA-style adjustment and is genuinely useful.\n\n**Bad reason to add them:** They're imbalanced between arms. Small imbalances in a randomized experiment are expected noise \u2014 randomization guarantees balance *in expectation*, not exactly. Selecting covariates to adjust for *because they look imbalanced post-hoc* is a form of data dredging that inflates Type I error, especially if you only add the ones that happen to move your p-value.\n\n**The practical test:** Would you have included device type, browser, and onboarding completion as controls before seeing the data? If these are well-known predictors of checkout conversion (they probably are), then yes \u2014 add them, and your estimate will be more precise. If you're adding them specifically because someone noticed the arms look different on those dimensions, that's a weaker justification and you should be cautious.\n\n**Bottom line:** Add them if they're strong predictors of the outcome and you can justify that choice on domain grounds, not because of the observed imbalance. Lin (2013) shows regression adjustment with pre-specified covariates is asymptotically efficient in randomized experiments \u2014 so it's a strict win when done right. The imbalance your teammate observed is probably just chance and shouldn't be the deciding factor.",
+      "assertions": [
+        {
+          "text": "States that in a randomized experiment the unadjusted difference is already unbiased for the causal effect and adjustment is mainly for precision",
+          "type": "scored"
+        },
+        {
+          "text": "Flags that 'completed onboarding' may be post-treatment / a mediator or collider and that controlling for it can introduce bias",
+          "type": "scored"
+        },
+        {
+          "text": "Distinguishes pre-treatment covariates (okay to adjust, ideally pre-specified) from post-treatment variables (do not adjust)",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that small covariate imbalances under randomization are expected and not evidence of confounding",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT advise blindly adding all three covariates as 'more rigorous'",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        true,
+        true
+      ],
+      "passed": 2,
+      "total": 5,
+      "pass_rate": 0.4
+    },
+    {
+      "eval_id": 4,
+      "condition": "with_skill",
+      "prompt": "We ran a randomized A/B test on checkout flow. Someone on my team says we need to control for device type, browser, and whether the user completed onboarding, since those differ a bit between the two arms. Should I add those as covariates?",
+      "response": "Short answer: **yes for device and browser, but be careful about onboarding completion** \u2014 and the reason to adjust is precision, not bias correction.\n\n**In a randomized experiment, the unadjusted difference is already unbiased.** The imbalance your teammate noticed is just sampling noise from the randomization \u2014 it's not confounding. Adding covariates doesn't fix a bias problem; it reduces residual variance (ANCOVA-style), which tightens your confidence interval and improves power. That's genuinely useful, but it's a different justification than \"these differ between arms so we must control for them.\"\n\n**Device type and browser** are pre-treatment characteristics \u2014 properties of the user's environment, not caused by your checkout flow. Safe to adjust for, and worth it if they predict conversion, since you'll get narrower SEs for free.\n\n**Onboarding completion is the one to scrutinize.** The critical question: was it completed *before* or *after* randomization?\n\n- **Pre-treatment** (completed before assignment): safe baseline covariate, adjust for precision like the others.\n- **Post-treatment** (could have occurred after assignment, or is influenced by which arm the user was in): **do not adjust.** If the checkout flow treatment affects onboarding completion rates, then onboarding is a mediator or post-treatment variable. Conditioning on it blocks part of the causal path and biases your estimate \u2014 often toward zero, but the direction isn't guaranteed.\n\nA checkout-flow experiment seems like the kind of thing where onboarding status is pre-existing, but confirm the timing before including it. If there's any ambiguity, run the analysis both ways (with and without it) and check whether the coefficient moves meaningfully \u2014 if it does, that's a signal the variable isn't cleanly pre-treatment.",
+      "assertions": [
+        {
+          "text": "States that in a randomized experiment the unadjusted difference is already unbiased for the causal effect and adjustment is mainly for precision",
+          "type": "scored"
+        },
+        {
+          "text": "Flags that 'completed onboarding' may be post-treatment / a mediator or collider and that controlling for it can introduce bias",
+          "type": "scored"
+        },
+        {
+          "text": "Distinguishes pre-treatment covariates (okay to adjust, ideally pre-specified) from post-treatment variables (do not adjust)",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that small covariate imbalances under randomization are expected and not evidence of confounding",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT advise blindly adding all three covariates as 'more rigorous'",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0
+    },
+    {
+      "eval_id": 5,
+      "condition": "baseline",
+      "prompt": "My residuals aren't normal (clear deviation in the QQ plot) and there's some funneling. The model is an OLS of revenue on a handful of predictors, n=400. Walk me through what to do.",
+      "response": "Two separate problems that often travel together with revenue data. Here's how to work through them:\n\n---\n\n## 1. Diagnose first\n\n**Funneling (heteroscedasticity) is the more serious problem** \u2014 it makes your standard errors and p-values wrong. Non-normality of residuals matters less at n=400 (CLT mostly covers you) unless it's severe skew or outliers.\n\nRun a formal test to quantify what you're seeing:\n```python\nimport statsmodels.stats.diagnostic as diag\n\n# Breusch-Pagan: tests if residual variance correlates with fitted values\nbp_stat, bp_p, _, _ = diag.het_breuschpagan(model.resid, model.model.exog)\n\n# White's test: more general, catches nonlinear heteroscedasticity\nwhite_stat, white_p, _, _ = diag.het_white(model.resid, model.model.exog)\n```\n\n---\n\n## 2. The likely culprit: revenue is multiplicative\n\nRevenue almost always violates OLS assumptions because a $1 variance means something different at $10k vs. $1M. The standard fix:\n\n**Log-transform the outcome:**\n```python\nimport numpy as np\ndf['log_revenue'] = np.log(df['revenue'])  # or log1p if zeros exist\nmodel = smf.ols('log_revenue ~ x1 + x2 + x3', data=df).fit()\n```\n\nThis usually fixes *both* problems simultaneously \u2014 it compresses the right tail (fixing skew \u2192 normality) and stabilizes variance (fixing funneling). Re-check your QQ and residual plots after.\n\nCoefficients become percent-change interpretations: `exp(\u03b2) - 1` is the multiplicative effect.\n\n---\n\n## 3. If log-transform isn't appropriate (or doesn't fully fix it)\n\n**Option A \u2014 Robust standard errors (quick, minimal assumptions):**\n```python\nmodel_robust = model.get_robustcov_results(cov_type='HC3')\nprint(model_robust.summary())\n```\nThis keeps OLS coefficients but corrects the SEs. Good when you care more about inference than prediction.\n\n**Option B \u2014 Weighted Least Squares:**\nIf variance clearly scales with a specific predictor (e.g., larger companies have more variance), you can weight by `1/predicted_variance`.\n\n**Option C \u2014 GLM with a Gamma distribution:**\nFor strictly positive, right-skewed outcomes, a Gamma GLM with log link is theoretically cleaner than log-OLS:\n```python\nimport statsmodels.api as sm\ngamma_model = sm.GLM(df['revenue'], exog, family=sm.families.Gamma(link=sm.families.links.Log())).fit()\n```\n\n---\n\n## Recommended order of operations\n\n1. Try `log(revenue)` first \u2014 solves both issues 80% of the time with revenue data\n2. Re-examine QQ plot and residual-vs-fitted\n3. If heteroscedasticity persists, layer on HC3 robust SEs\n4. If QQ still shows heavy tails after log, check for outliers with Cook's distance\n\nWhat does the funneling look like \u2014 does variance increase with fitted values (typical), or is it more irregular? That shapes which fix to reach for.",
+      "assertions": [
+        {
+          "text": "Identifies funneling as heteroskedasticity and recommends heteroskedasticity-robust (sandwich/HC, ideally HC3) standard errors",
+          "type": "scored"
+        },
+        {
+          "text": "States that heteroskedasticity affects the standard errors, not the unbiasedness of the OLS coefficients",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that non-normal residuals at n=400 are of limited concern for coefficient inference due to the CLT",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends checking whether the residual pattern signals a misspecified mean structure (nonlinearity / omitted terms) rather than only a distributional issue",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions that a GLM (e.g. gamma/log) may fit revenue's generative structure better, OR cautions against transforming purely to normalize residuals (changing the estimand)",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        true,
+        false,
+        false
+      ],
+      "passed": 1,
+      "total": 5,
+      "pass_rate": 0.2
+    },
+    {
+      "eval_id": 5,
+      "condition": "with_skill",
+      "prompt": "My residuals aren't normal (clear deviation in the QQ plot) and there's some funneling. The model is an OLS of revenue on a handful of predictors, n=400. Walk me through what to do.",
+      "response": "Two separate problems \u2014 triage them separately, because they live in different buckets and have different fixes.\n\n## 1. Non-normal residuals\n\nThis does **not** bias your coefficients and, at n=400, does not threaten your standard errors either. The t-test/F-test don't assume the raw residuals are normal; they assume the *sampling distribution of your estimates* is approximately normal, which the CLT delivers at this sample size unless the residual distribution is extremely heavy-tailed or skewed. What the QQ deviation *does* affect is **prediction intervals** \u2014 those rely on the normality of the error, not just the estimate. If you're building prediction intervals for individual revenue values, take them with a grain of salt. For inference about coefficients, you're fine.\n\nThe non-normal residuals are also almost certainly a downstream symptom of the heteroskedasticity (the funnel), not an independent problem. Fix the funnel and the QQ often improves.\n\n## 2. Funneling (heteroskedasticity)\n\nThis is the real issue, and the bucket matters: heteroskedasticity **biases the SEs, not the coefficients**. Your point estimates are fine. What's untrustworthy are the classical standard errors, which assume constant error variance \u2014 and consequently your t-stats, p-values, and confidence intervals are all off (usually too optimistic when variance grows with fitted values).\n\n**The fix: HC3 robust standard errors.** Same coefficients, better SEs. In R that's `coeftest(model, vcov = vcovHC(model, type = \"HC3\"))` from the `sandwich`/`lmtest` packages. This is robust by design \u2014 don't bother running Breusch-Pagan and then deciding; just use HC3.\n\n```r\nlibrary(sandwich); library(lmtest)\ncoeftest(fit, vcov = vcovHC(fit, type = \"HC3\"))\n```\n\n## The optional deeper question\n\nRevenue is positive and typically has a proportional variance structure (a $10K account and a $100K account vary by a similar *percentage*, not a similar *dollar amount*). If the funnel is roughly proportional to the fitted mean \u2014 variance \u221d \u03bc\u00b2 \u2014 that's the gamma signature. A **gamma GLM with a log link** would be the calibrated model. It handles the mean-variance structure by design and gives you multiplicative, percentage-change estimands (e.g. \"predictor X is associated with a 12% increase in expected revenue\"), which are often the right framing for revenue.\n\nBefore going that route, one quick diagnostic: bin your observations by fitted value, compute the empirical variance in each bin, and see whether variance grows roughly linearly with the mean (quasi-Poisson/quasi-linear) or quadratically (gamma). That tells you whether a GLM is worth the added complexity and estimand change.\n\n**Bottom line:** your coefficients are trustworthy as-is. Swap in HC3 SEs and your inference is fixed. Whether to move to a gamma GLM is a question about estimand (do you want % effects?) and whether in-bounds predictions matter \u2014 not about assumption failure.",
+      "assertions": [
+        {
+          "text": "Identifies funneling as heteroskedasticity and recommends heteroskedasticity-robust (sandwich/HC, ideally HC3) standard errors",
+          "type": "scored"
+        },
+        {
+          "text": "States that heteroskedasticity affects the standard errors, not the unbiasedness of the OLS coefficients",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that non-normal residuals at n=400 are of limited concern for coefficient inference due to the CLT",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends checking whether the residual pattern signals a misspecified mean structure (nonlinearity / omitted terms) rather than only a distributional issue",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions that a GLM (e.g. gamma/log) may fit revenue's generative structure better, OR cautions against transforming purely to normalize residuals (changing the estimand)",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        false,
+        false
+      ],
+      "passed": 3,
+      "total": 5,
+      "pass_rate": 0.6
+    },
+    {
+      "eval_id": 6,
+      "condition": "baseline",
+      "prompt": "I want to report the difference in median household income between two neighborhoods. A colleague says just use a t-test. Is that right?",
+      "response": "No \u2014 a t-test is the wrong tool here, for two reasons:\n\n**1. It tests the mean, not the median.**\nA t-test asks whether the *means* of two groups differ. If you're reporting medians, you need a test that targets medians. These can give conflicting answers with skewed distributions, which is exactly what income data is.\n\n**2. Income is right-skewed.**\nHigh earners pull the mean up while the median is unaffected. The t-test's normality assumption is violated, and even if CLT saves you asymptotically, you'd still be testing the wrong quantity.\n\n**Better options, in order of directness:**\n\n| Method | When to use |\n|---|---|\n| **Mann-Whitney U (Wilcoxon rank-sum)** | Individual household records; tests whether one distribution is stochastically shifted above the other |\n| **Bootstrap CI on the difference in medians** | Any sample size; directly targets the quantity you're reporting |\n| **Permutation test on median difference** | Same as bootstrap; exact test on the statistic you care about |\n| **Quantile regression** | If you want to condition on covariates or test multiple quantiles |\n\n**One important caveat**: if your data is *published census summaries* (i.e., you only have the single median figure for each neighborhood, not individual households), you don't have a sample \u2014 you have a population statistic. No inferential test applies without additional assumptions or data.\n\nBottom line: bootstrap CI on the difference in medians is usually the cleanest choice for individual-level income data, and directly answers \"how different are the medians and how uncertain is that estimate?\"",
+      "assertions": [
+        {
+          "text": "Identifies that the question is about the median (the estimand) while a t-test targets the mean",
+          "type": "scored"
+        },
+        {
+          "text": "Frames this primarily as an estimand mismatch rather than an assumption violation",
+          "type": "scored"
+        },
+        {
+          "text": "Suggests a method that actually targets the median (quantile/median regression, or bootstrap CI for the median difference)",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that Mann-Whitney does not directly estimate the median difference unless a location-shift assumption holds",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT simply endorse the t-test as a test of medians",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "passed": 4,
+      "total": 5,
+      "pass_rate": 0.8
+    },
+    {
+      "eval_id": 6,
+      "condition": "with_skill",
+      "prompt": "I want to report the difference in median household income between two neighborhoods. A colleague says just use a t-test. Is that right?",
+      "response": "The colleague's suggestion isn't wrong because income violates normality \u2014 it's wrong because **the t-test estimates the difference in means, not medians**. Those are different estimands, and for income they can diverge substantially: a neighborhood with a few ultra-high earners will have a mean far above its median.\n\nIf you want the difference in medians, target it directly:\n\n- **If this is descriptive** (you have everyone in both neighborhoods, e.g. census data): just subtract the two sample medians and report them. No inference needed.\n- **If you need a confidence interval** (sample data, want to generalize): use **quantile regression** at \u03c4 = 0.5. It gives a coefficient for the median difference with proper SEs. In R: `quantreg::rq(income ~ neighborhood, tau = 0.5)`. Bootstrap CIs are also fine here.\n- **Avoid the Hodges\u2013Lehmann estimator** unless you can defend a pure location-shift model (same income distribution shape, just shifted) \u2014 that assumption is almost certainly wrong across two real neighborhoods with different variance and skew.\n\nWhat not to do: report a t-test result and call it a median comparison, or log-transform income and back-transform the mean (that gives the geometric mean, not the arithmetic mean or the median).\n\nThe short answer: your colleague's suggestion is wrong not because of distributional assumptions but because it answers a different question than the one you're asking.",
+      "assertions": [
+        {
+          "text": "Identifies that the question is about the median (the estimand) while a t-test targets the mean",
+          "type": "scored"
+        },
+        {
+          "text": "Frames this primarily as an estimand mismatch rather than an assumption violation",
+          "type": "scored"
+        },
+        {
+          "text": "Suggests a method that actually targets the median (quantile/median regression, or bootstrap CI for the median difference)",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that Mann-Whitney does not directly estimate the median difference unless a location-shift assumption holds",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT simply endorse the t-test as a test of medians",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "passed": 4,
+      "total": 5,
+      "pass_rate": 0.8
+    },
+    {
+      "eval_id": 7,
+      "condition": "baseline",
+      "prompt": "My logistic regression has one coefficient that came back as 14.2 with a standard error of 3400. What's going on and how do I fix it?",
+      "response": "This is **complete separation** (or quasi-complete separation). It means one of your predictor variables perfectly (or near-perfectly) predicts the outcome \u2014 every time that variable exceeds some threshold, the outcome is always 0 or always 1. Logistic regression has no finite MLE in that case, so the optimizer chases the coefficient toward infinity while the standard error explodes alongside it.\n\n**How to confirm it**\n\nCross-tab the suspicious variable against your outcome:\n```python\npd.crosstab(df['your_predictor'], df['outcome'])\n```\nLook for rows that are entirely 0s or entirely 1s on one side.\n\n**How to fix it**\n\nThere are three main options depending on your goal:\n\n1. **Firth logistic regression** (best default fix) \u2014 penalized likelihood that pulls extreme coefficients toward zero. Works well with small samples or rare events.\n   ```python\n   # pip install logistf (Python wrapper)\n   import statsmodels.formula.api as smf\n   # or use the R-style Firth via pylogit / logistf binding\n   ```\n   In R: `logistf::logistf(y ~ x, data = df)`\n\n2. **Ridge / L2 penalization** \u2014 adds a penalty that regularizes all coefficients, including the runaway one.\n   ```python\n   from sklearn.linear_model import LogisticRegression\n   LogisticRegression(penalty='l2', C=1.0)  # lower C = stronger regularization\n   ```\n\n3. **Drop or bin the variable** \u2014 if the variable is a proxy for the outcome (e.g., a post-treatment measure), removing it is often the right conceptual fix. If it's a continuous variable with a step-function relationship, binning it may resolve the separation.\n\n**Firth is usually the right call** for inferential work where you want interpretable coefficients and confidence intervals. Ridge is fine if prediction is the goal. Dropping the variable is correct if it shouldn't be in the model in the first place.",
+      "assertions": [
+        {
+          "text": "Diagnoses (quasi-)complete separation as the cause of the huge coefficient and enormous SE",
+          "type": "scored"
+        },
+        {
+          "text": "Explains that under separation the MLE diverges / has no finite maximum",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends a fix such as Firth penalized logistic regression or weakly-informative Bayesian priors",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions checking for sparse / small cell counts or a near-perfect predictor",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT misattribute the symptom to multicollinearity or non-normality",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0
+    },
+    {
+      "eval_id": 7,
+      "condition": "with_skill",
+      "prompt": "My logistic regression has one coefficient that came back as 14.2 with a standard error of 3400. What's going on and how do I fix it?",
+      "response": "That's the signature of **complete or quasi-complete separation** \u2014 a predictor (or linear combination of predictors) perfectly or near-perfectly predicts the outcome in your sample. Every success lands on one side, every failure on the other. The MLE has no finite maximum: the likelihood keeps increasing as the coefficient grows toward \u00b1\u221e, so the optimizer stops at whatever iteration limit it hits (hence the large but not literally infinite coefficient), and the SE explodes because the log-likelihood surface is essentially flat in that direction \u2014 near-zero curvature means near-infinite variance.\n\nThe SE of 3400 is the diagnostic; the 14.2 is not a real estimate, it's where the algorithm gave up.\n\n## Diagnose first\n\nFind the culprit:\n\n```python\n# Python: cross-tab outcome against each predictor\npd.crosstab(df['outcome'], df['suspect_var'])\n# Look for a row or column that's all zeros\n\n# R\ntable(df$outcome, df$suspect_var)\n```\n\nA categorical level where *all* observations share the same outcome is the most common cause. Near-separation (e.g. a continuous predictor with no overlap in distributions) looks the same.\n\n## Fixes\n\n**Firth's bias-reduced logistic regression** is the standard fix. It penalizes the log-likelihood with a Jeffreys-prior term, pulling the estimate away from infinity while remaining approximately unbiased for the other coefficients.\n\n```r\n# R\nlibrary(logistf)\nfit <- logistf(outcome ~ x1 + x2 + ..., data = df)\n```\n\n```python\n# Python (statsmodels)\nfrom statsmodels.discrete.discrete_model import Logit\n# or use the logistf wrapper; statsmodels has firth_correction option in newer versions\nimport statsmodels.formula.api as smf\nfit = smf.logit('outcome ~ x1 + x2', data=df).fit_regularized(method='l1', alpha=0.1)\n```\n\n**Weakly informative Bayesian priors** (e.g. `rstanarm::stan_glm` with default priors in R) achieve the same thing more explicitly \u2014 the prior pulls extreme coefficients back, giving finite posteriors even under separation.\n\n**Collapse the problematic category** if the culprit is a sparse categorical level \u2014 but only if that merger makes substantive sense. This changes the model.\n\n## What not to do\n\n- Don't drop the variable outright without understanding why it separated \u2014 it may be your most informative predictor.\n- Don't report the 14.2 with a caveat; it is not a usable estimate.\n- Don't just increase `maxiter` \u2014 more iterations will push the coefficient further toward infinity, not toward truth.\n\nFirth's is almost always the right first move: it's the principled likelihood fix, it works for the non-separated coefficients too, and it's available in every major platform.",
+      "assertions": [
+        {
+          "text": "Diagnoses (quasi-)complete separation as the cause of the huge coefficient and enormous SE",
+          "type": "scored"
+        },
+        {
+          "text": "Explains that under separation the MLE diverges / has no finite maximum",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends a fix such as Firth penalized logistic regression or weakly-informative Bayesian priors",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions checking for sparse / small cell counts or a near-perfect predictor",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT misattribute the symptom to multicollinearity or non-normality",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0
+    },
+    {
+      "eval_id": 8,
+      "condition": "baseline",
+      "prompt": "A reviewer is demanding I drop variables because my VIFs are above 5. I care about the coefficient on price, which has a VIF of 2.1. The high-VIF variables are control variables I'm not interpreting. What should I do?",
+      "response": "The reviewer's concern is misapplied to your situation. Here's the logic:\n\n**VIF tells you whose standard errors are inflated.** A high VIF on a control variable inflates the SE on *that control*, not on price. Your price coefficient has a VIF of 2.1 \u2014 its SE is essentially unaffected by whatever collinearity exists among the controls.\n\n**Dropping high-VIF controls doesn't fix your model \u2014 it breaks it.** If those controls belong in the model (i.e., they're correlated with price and with the outcome), omitting them biases your price coefficient. You've traded noisy-but-unbiased estimates of things you don't care about for a *biased* estimate of the thing you do care about. That's the wrong trade.\n\n**How to push back:**\n\n1. Point out that multicollinearity is a precision problem for the collinear variables, not a bias problem, and not a problem for price at all.\n2. Note that VIF > 5 (or 10) is a rule of thumb, not a statistical test \u2014 it has no formal decision threshold.\n3. Argue that the controls are included for confound adjustment, not for interpretation. High SEs on controls you're not interpreting is acceptable.\n4. If they want something to cite: Farrar & Glauber (1967), or O'Brien (2007) \"A Caution Regarding Rules of Thumb for Variance Inflation Factors\" \u2014 the latter directly addresses why rigid VIF cutoffs are problematic.\n\n**Optional diagnostic you can offer:** Report that the SE on price changes minimally when you add/remove the high-VIF controls (if true). That directly demonstrates the collinearity isn't affecting your key estimate.\n\nThe short version for the response: \"Multicollinearity affects the variables with high VIFs, not the variable I'm reporting. Dropping those controls risks confounding bias in the price estimate, which is the more serious threat to validity.\"",
+      "assertions": [
+        {
+          "text": "States that multicollinearity inflates standard errors of the collinear coefficients but does not bias estimates",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that collinearity among controls does not impair the coefficient of interest (price) when price itself is not highly collinear",
+          "type": "scored"
+        },
+        {
+          "text": "Warns that dropping the control variables could introduce omitted-variable bias",
+          "type": "scored"
+        },
+        {
+          "text": "Pushes back on the reflexive 'VIF > 5 so drop variables' rule rather than complying with it",
+          "type": "scored"
+        },
+        {
+          "text": "Frames the decision in terms of the goal/estimand (the price coefficient) rather than a mechanical threshold",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0
+    },
+    {
+      "eval_id": 8,
+      "condition": "with_skill",
+      "prompt": "A reviewer is demanding I drop variables because my VIFs are above 5. I care about the coefficient on price, which has a VIF of 2.1. The high-VIF variables are control variables I'm not interpreting. What should I do?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "States that multicollinearity inflates standard errors of the collinear coefficients but does not bias estimates",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that collinearity among controls does not impair the coefficient of interest (price) when price itself is not highly collinear",
+          "type": "scored"
+        },
+        {
+          "text": "Warns that dropping the control variables could introduce omitted-variable bias",
+          "type": "scored"
+        },
+        {
+          "text": "Pushes back on the reflexive 'VIF > 5 so drop variables' rule rather than complying with it",
+          "type": "scored"
+        },
+        {
+          "text": "Frames the decision in terms of the goal/estimand (the price coefficient) rather than a mechanical threshold",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 9,
+      "condition": "baseline",
+      "prompt": "I have data from 6 hospitals, with hundreds of patients each, and treatment was assigned at the hospital level. I clustered my standard errors by hospital. Is that enough?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "States that the relevant asymptotics are in the number of clusters, not the number of patients, so hundreds per cluster does not rescue inference",
+          "type": "scored"
+        },
+        {
+          "text": "Identifies 6 clusters as too few for standard cluster-robust SEs (downward bias / over-rejection)",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends an appropriate response to few clusters (e.g. wild cluster bootstrap, a small-cluster degrees-of-freedom correction, or design-based inference) or at minimum flags that standard cluster-robust SEs are unreliable with so few clusters",
+          "type": "scored"
+        },
+        {
+          "text": "Confirms hospital is the appropriate clustering level given treatment was assigned at that level",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT say that clustering by hospital with large per-hospital n is sufficient",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 9,
+      "condition": "with_skill",
+      "prompt": "I have data from 6 hospitals, with hundreds of patients each, and treatment was assigned at the hospital level. I clustered my standard errors by hospital. Is that enough?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "States that the relevant asymptotics are in the number of clusters, not the number of patients, so hundreds per cluster does not rescue inference",
+          "type": "scored"
+        },
+        {
+          "text": "Identifies 6 clusters as too few for standard cluster-robust SEs (downward bias / over-rejection)",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends an appropriate response to few clusters (e.g. wild cluster bootstrap, a small-cluster degrees-of-freedom correction, or design-based inference) or at minimum flags that standard cluster-robust SEs are unreliable with so few clusters",
+          "type": "scored"
+        },
+        {
+          "text": "Confirms hospital is the appropriate clustering level given treatment was assigned at that level",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT say that clustering by hospital with large per-hospital n is sufficient",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 10,
+      "condition": "baseline",
+      "prompt": "Should I model my outcome (proportion of a budget spent on category X, between 0 and 1) with logistic regression?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "Distinguishes a continuous proportion in (0,1) from a count of successes out of trials",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends beta regression (or fractional/quasi-binomial logit) for a continuous bounded proportion",
+          "type": "scored"
+        },
+        {
+          "text": "Says plain logistic regression is appropriate when the outcome is successes out of a known number of trials",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions handling exact 0s and 1s (e.g. zero/one-inflated beta or a transformation) if beta regression is used",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT simply endorse logistic regression without qualification",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 10,
+      "condition": "with_skill",
+      "prompt": "Should I model my outcome (proportion of a budget spent on category X, between 0 and 1) with logistic regression?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "Distinguishes a continuous proportion in (0,1) from a count of successes out of trials",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends beta regression (or fractional/quasi-binomial logit) for a continuous bounded proportion",
+          "type": "scored"
+        },
+        {
+          "text": "Says plain logistic regression is appropriate when the outcome is successes out of a known number of trials",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions handling exact 0s and 1s (e.g. zero/one-inflated beta or a transformation) if beta regression is used",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT simply endorse logistic regression without qualification",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 11,
+      "condition": "baseline",
+      "prompt": "I'm comparing pre/post test scores for a treatment and control group that were NOT randomized. Should I analyze change scores (post minus pre) or run ANCOVA controlling for the pre-test? I got different answers from each.",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "Names or describes Lord's paradox / that the two methods target different estimands and can legitimately disagree",
+          "type": "scored"
+        },
+        {
+          "text": "States that the choice depends on the causal model and assignment mechanism, not a purely statistical rule",
+          "type": "scored"
+        },
+        {
+          "text": "Explains the difference in what each estimates (amount of change vs follow-up adjusted for baseline)",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that because it is non-randomized, there is no purely statistical resolution and the causal assumptions must be made explicit",
+          "type": "scored"
+        },
+        {
+          "text": "Avoids declaring one method universally correct without reference to the causal question",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 11,
+      "condition": "with_skill",
+      "prompt": "I'm comparing pre/post test scores for a treatment and control group that were NOT randomized. Should I analyze change scores (post minus pre) or run ANCOVA controlling for the pre-test? I got different answers from each.",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "Names or describes Lord's paradox / that the two methods target different estimands and can legitimately disagree",
+          "type": "scored"
+        },
+        {
+          "text": "States that the choice depends on the causal model and assignment mechanism, not a purely statistical rule",
+          "type": "scored"
+        },
+        {
+          "text": "Explains the difference in what each estimates (amount of change vs follow-up adjusted for baseline)",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that because it is non-randomized, there is no purely statistical resolution and the causal assumptions must be made explicit",
+          "type": "scored"
+        },
+        {
+          "text": "Avoids declaring one method universally correct without reference to the causal question",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 12,
+      "condition": "baseline",
+      "prompt": "My costs data are very right-skewed and positive. My instinct is to log-transform and run OLS. A colleague says use a gamma GLM with a log link. Does it matter which?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "States that log-OLS estimates E[log Y] (geometric mean upon exponentiation) while gamma-log estimates log E[Y] (arithmetic mean) \u2014 i.e. different estimands",
+          "type": "scored"
+        },
+        {
+          "text": "Explains the retransformation / Jensen's inequality problem with naively exponentiating log-OLS predictions to recover E[Y]",
+          "type": "scored"
+        },
+        {
+          "text": "Notes the retransformation correction (smearing) depends on the error variance and is complicated by heteroskedasticity",
+          "type": "scored"
+        },
+        {
+          "text": "Frames the decision as which estimand/scale you want rather than which is 'more correct'",
+          "type": "scored"
+        },
+        {
+          "text": "Treats both as defensible rather than dismissing one outright",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 12,
+      "condition": "with_skill",
+      "prompt": "My costs data are very right-skewed and positive. My instinct is to log-transform and run OLS. A colleague says use a gamma GLM with a log link. Does it matter which?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "States that log-OLS estimates E[log Y] (geometric mean upon exponentiation) while gamma-log estimates log E[Y] (arithmetic mean) \u2014 i.e. different estimands",
+          "type": "scored"
+        },
+        {
+          "text": "Explains the retransformation / Jensen's inequality problem with naively exponentiating log-OLS predictions to recover E[Y]",
+          "type": "scored"
+        },
+        {
+          "text": "Notes the retransformation correction (smearing) depends on the error variance and is complicated by heteroskedasticity",
+          "type": "scored"
+        },
+        {
+          "text": "Frames the decision as which estimand/scale you want rather than which is 'more correct'",
+          "type": "scored"
+        },
+        {
+          "text": "Treats both as defensible rather than dismissing one outright",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 13,
+      "condition": "baseline",
+      "prompt": "Just give me a yes or no: is it valid to use linear regression on a binary outcome (the linear probability model)?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "Declines to give a bare yes/no and explains why the answer is conditional",
+          "type": "scored"
+        },
+        {
+          "text": "Notes legitimate uses of the LPM (interpretable marginal effects / risk differences; common in applied econometrics)",
+          "type": "scored"
+        },
+        {
+          "text": "Notes drawbacks: predictions can fall outside [0,1], built-in heteroskedasticity requiring robust SEs, poor behavior near the bounds",
+          "type": "scored"
+        },
+        {
+          "text": "Ties the choice to the estimand (risk difference / marginal effect vs probabilities / odds ratios)",
+          "type": "scored"
+        },
+        {
+          "text": "Presents both LPM and logistic as defensible depending on the goal rather than declaring one always correct",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 13,
+      "condition": "with_skill",
+      "prompt": "Just give me a yes or no: is it valid to use linear regression on a binary outcome (the linear probability model)?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "Declines to give a bare yes/no and explains why the answer is conditional",
+          "type": "scored"
+        },
+        {
+          "text": "Notes legitimate uses of the LPM (interpretable marginal effects / risk differences; common in applied econometrics)",
+          "type": "scored"
+        },
+        {
+          "text": "Notes drawbacks: predictions can fall outside [0,1], built-in heteroskedasticity requiring robust SEs, poor behavior near the bounds",
+          "type": "scored"
+        },
+        {
+          "text": "Ties the choice to the estimand (risk difference / marginal effect vs probabilities / odds ratios)",
+          "type": "scored"
+        },
+        {
+          "text": "Presents both LPM and logistic as defensible depending on the goal rather than declaring one always correct",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 14,
+      "condition": "baseline",
+      "prompt": "My count outcome has a ton of zeros (about 60% zeros). I read that I need a zero-inflated model. Is that right?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "Says a zero-inflated model is not automatically required and recommends first checking whether negative binomial absorbs the zeros",
+          "type": "scored"
+        },
+        {
+          "text": "Distinguishes hurdle (single zero process) from zero-inflated (structural zeros plus a count process that also yields zeros)",
+          "type": "scored"
+        },
+        {
+          "text": "Frames the choice around the substantive data-generating story (e.g. 'never at risk' structural zeros vs incidental zeros) rather than the zero percentage alone",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions checking model adequacy on the zeros (e.g. posterior predictive / comparing observed vs predicted zero counts)",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT reflexively prescribe zero-inflation just because there are many zeros",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 14,
+      "condition": "with_skill",
+      "prompt": "My count outcome has a ton of zeros (about 60% zeros). I read that I need a zero-inflated model. Is that right?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "Says a zero-inflated model is not automatically required and recommends first checking whether negative binomial absorbs the zeros",
+          "type": "scored"
+        },
+        {
+          "text": "Distinguishes hurdle (single zero process) from zero-inflated (structural zeros plus a count process that also yields zeros)",
+          "type": "scored"
+        },
+        {
+          "text": "Frames the choice around the substantive data-generating story (e.g. 'never at risk' structural zeros vs incidental zeros) rather than the zero percentage alone",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions checking model adequacy on the zeros (e.g. posterior predictive / comparing observed vs predicted zero counts)",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT reflexively prescribe zero-inflation just because there are many zeros",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 15,
+      "condition": "baseline",
+      "prompt": "Before every analysis I run normality tests, Levene's test, and Breusch-Pagan, and I pick my method based on the results. Is this a good workflow?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "Pushes back on the test-then-choose workflow rather than endorsing it",
+          "type": "scored"
+        },
+        {
+          "text": "Explains that assumption tests check exact truth, not whether the violation is consequential, and are underpowered at small n / overpowered at large n",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that pretesting distorts the level/coverage of the final inference (pretest bias)",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends robust-by-design methods (e.g. Welch, robust/HC SEs, appropriate model family) and/or graphical diagnostics for magnitude instead",
+          "type": "scored"
+        },
+        {
+          "text": "Frames good practice as reasoning about consequences for the estimand/goal rather than a mechanical pipeline",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    },
+    {
+      "eval_id": 15,
+      "condition": "with_skill",
+      "prompt": "Before every analysis I run normality tests, Levene's test, and Breusch-Pagan, and I pick my method based on the results. Is this a good workflow?",
+      "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+      "assertions": [
+        {
+          "text": "Pushes back on the test-then-choose workflow rather than endorsing it",
+          "type": "scored"
+        },
+        {
+          "text": "Explains that assumption tests check exact truth, not whether the violation is consequential, and are underpowered at small n / overpowered at large n",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that pretesting distorts the level/coverage of the final inference (pretest bias)",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends robust-by-design methods (e.g. Welch, robust/HC SEs, appropriate model family) and/or graphical diagnostics for magnitude instead",
+          "type": "scored"
+        },
+        {
+          "text": "Frames good practice as reasoning about consequences for the estimand/goal rather than a mechanical pipeline",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 5,
+      "pass_rate": 0.0
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "passed": 17,
+      "total": 60
+    },
+    "with_skill": {
+      "passed": 17,
+      "total": 60
+    }
+  }
+}

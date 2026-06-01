@@ -1,0 +1,38 @@
+{
+  "eval_id": 24,
+  "condition": "with_skill",
+  "prompt": "I fit a logistic regression for stroke (1/0) with the main exposure being hypertension, and I also included age, sex, smoking, and diabetes as covariates. My Table 2 reports all five coefficients with p-values, and I'm interpreting each as 'the effect of that variable on stroke risk.' Is that right?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "Identifies the Table 2 fallacy or equivalent concern: covariate coefficients in a multivariable model do not each estimate their own total causal effect",
+      "type": "must_pass"
+    },
+    {
+      "text": "Explains that each coefficient is conditional on all others and subject to different confounding than the main exposure",
+      "type": "scored"
+    },
+    {
+      "text": "Notes the model was designed to estimate one estimand (hypertension \u2192 stroke); other coefficients are incidental to that design",
+      "type": "scored"
+    },
+    {
+      "text": "Warns that some covariates may be mediators of others, making their coefficients further uninterpretable as total causal effects",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT endorse reporting all coefficients as causal effects of each variable without qualification",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

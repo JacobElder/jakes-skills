@@ -1,0 +1,38 @@
+{
+  "eval_id": 19,
+  "condition": "baseline",
+  "prompt": "I have a small, heavy-tailed sample (n=40) and I want a confidence interval for the maximum value the process can produce. I'll just bootstrap the maximum \u2014 that's assumption-free, right?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "States that the naive bootstrap is not assumption-free and fails (is inconsistent) for the maximum / extreme order statistics",
+      "type": "scored"
+    },
+    {
+      "text": "Explains why: the maximum is a non-smooth functional pinned to the observed extreme, so the bootstrap distribution doesn't converge correctly",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that small n and heavy tails make estimating an extreme quantity especially fragile",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends a more appropriate approach (extreme-value theory / GEV / peaks-over-threshold, or m-out-of-n / subsampling)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT endorse the plan as a valid assumption-free procedure",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

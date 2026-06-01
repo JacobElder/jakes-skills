@@ -1,0 +1,41 @@
+{
+  "run_id": "items-as-fixed-with_skill",
+  "eval_id": 7,
+  "eval_name": "items-as-fixed",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output flags that the 'same items for everyone therefore items are fixed' reasoning is incorrect",
+      "passed": true,
+      "evidence": "\"The reasoning 'my images are fixed, so no random effect for image' is exactly Clark's (1973) language-as-fixed-effect fallacy\" and \"it's one of the most common reasoning errors in stimulus-based research\""
+    },
+    {
+      "text": "Output explains that items should be treated as random because the researcher wants to generalize beyond these specific 48 images to the population of similar stimuli \u2014 which requires treating items as a random sample",
+      "passed": true,
+      "evidence": "\"The critical question isn't how you selected the images \u2014 it's whether you want your conclusion to generalize beyond these specific 48 images to the broader class of stimuli they represent. You almost certainly do.\""
+    },
+    {
+      "text": "Output recommends adding by-item random effects \u2014 (1 | item) at minimum, and by-item random slopes for within-item conditions if applicable",
+      "passed": true,
+      "evidence": "Minimal defensible model includes `(1 | image)`, and the response adds `(1 + condition | image)` when condition varies within images, explicitly covering both cases."
+    },
+    {
+      "text": "Output does NOT validate the advisor's framing or agree that fixed-item analysis is appropriate",
+      "passed": true,
+      "evidence": "\"Your advisor's intuition is understandable \u2014 it's one of the most common reasoning errors in stimulus-based research \u2014 but the model as specified has two problems that can meaningfully inflate your Type I error rate.\""
+    },
+    {
+      "text": "Output references Clark (1973) / language-as-fixed-effect fallacy, OR Judd et al., OR explains that treating items as fixed means conclusions don't generalize beyond those 48 specific images",
+      "passed": true,
+      "evidence": "Explicitly cites Clark (1973), Judd, Westfall & Kenny (2012, JPSP), and states \"You can only technically claim your results hold for these exact 48 images, which is almost never the scientific claim.\""
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

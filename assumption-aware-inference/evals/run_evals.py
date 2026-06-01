@@ -41,6 +41,9 @@ EXECUTOR_MODEL = "claude-sonnet-4-6"
 GRADER_MODEL   = "claude-haiku-4-5-20251001"
 
 
+RATE_LIMIT_PHRASES = ["you've hit your limit", "you have hit your limit"]
+
+
 def call_claude(prompt: str, system_extra: str | None = None,
                 model: str = EXECUTOR_MODEL, timeout: int = 240) -> str:
     cmd = ["claude", "-p", prompt,
@@ -49,7 +52,10 @@ def call_claude(prompt: str, system_extra: str | None = None,
     if system_extra:
         cmd += ["--append-system-prompt", system_extra]
     r = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
-    return r.stdout.strip()
+    text = r.stdout.strip()
+    if any(p in text.lower() for p in RATE_LIMIT_PHRASES):
+        raise RuntimeError(f"Rate limited: {text}")
+    return text
 
 
 GRADER_SYSTEM = (
@@ -62,8 +68,7 @@ GRADER_SYSTEM = (
 
 def grade_assertions(response: str, assertions: list[str]) -> list[bool]:
     numbered = "\n".join(f"{i+1}. {a}" for i, a in enumerate(assertions))
-    # Keep response under 1500 chars to avoid long arg issues
-    resp = response[:1500] + ("…" if len(response) > 1500 else "")
+    resp = response[:4000] + ("…" if len(response) > 4000 else "")
     prompt = f"Response:\n{resp}\n\nAssertions:\n{numbered}"
     raw = call_claude(prompt, system_extra=GRADER_SYSTEM,
                       model=GRADER_MODEL, timeout=120)
@@ -96,7 +101,11 @@ def run(eval_ids: list[int] | None, conditions: list[str],
         for condition in conditions:
             system = SKILL_WITH_REFS if condition == "with_skill" else None
             print(f"  [{condition}] executor…", end=" ", flush=True)
-            response = call_claude(prompt, system_extra=system)
+            try:
+                response = call_claude(prompt, system_extra=system)
+            except RuntimeError as e:
+                print(f"SKIPPED ({e})")
+                continue
             time.sleep(delay)
 
             print("grader…", end=" ", flush=True)

@@ -1,0 +1,38 @@
+{
+  "eval_id": 26,
+  "condition": "with_skill",
+  "prompt": "About 20% of my observations are missing on the outcome variable. I'm planning to just drop them and do complete-case analysis. Walk me through when that's okay and when it's not.",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "States that complete-case validity depends on the missingness mechanism (MCAR / MAR / MNAR)",
+      "type": "scored"
+    },
+    {
+      "text": "Correctly states MCAR \u2192 complete-case is unbiased (though inefficient)",
+      "type": "scored"
+    },
+    {
+      "text": "States the MAR subtlety: complete-case is valid for regression coefficients when outcome missingness depends only on covariates in the model, not on the unobserved outcome given those covariates",
+      "type": "scored"
+    },
+    {
+      "text": "States that MNAR \u2192 complete-case is biased and cannot be fixed from data alone; requires sensitivity analysis or explicit MNAR modeling",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply endorse dropping the 20% without qualification or mention of the missingness mechanism",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

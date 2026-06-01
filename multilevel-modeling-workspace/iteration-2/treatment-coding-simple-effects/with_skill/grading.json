@@ -1,0 +1,41 @@
+{
+  "run_id": "treatment-coding-simple-effects-with_skill",
+  "eval_id": 5,
+  "eval_name": "treatment-coding-simple-effects",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output explicitly states that the interpretation 'treatment effect of A on average' is incorrect given treatment coding with an interaction term",
+      "passed": true,
+      "evidence": "The response opens unambiguously: 'Your interpretation is incorrect \u2014 and this is the most consequential mistake in 2\u00d72 MLM write-ups.' and closes with: 'The sentence you drafted \u2014 \"the treatment effect of condition A was significant on average (\u03b2 = 0.45)\" \u2014 is incorrect under treatment coding.'"
+    },
+    {
+      "text": "Output explains that the \u03b2 = 0.45 coefficient represents the simple effect of A at the reference level (low) of B \u2014 not an average across levels of B",
+      "passed": true,
+      "evidence": "Table entry: '\u03b2_A = 0.45 | Effect of A **only when B = low**' and explicit prose: 'So \u03b2_A = 0.45 is the **simple effect of A at B = low**, not the average treatment effect of A across both levels of B.'"
+    },
+    {
+      "text": "Output does NOT validate the write-up language as written",
+      "passed": true,
+      "evidence": "The response never endorses the proposed write-up and explicitly calls it 'incorrect' and 'an interpretive error in a manuscript.' The recommended write-up structure uses different numbers and different language entirely."
+    },
+    {
+      "text": "Output recommends either (a) switching to sum/effects coding so that the main effect IS the average, OR (b) using emmeans or marginaleffects to compute the marginalized average effect of A across levels of B",
+      "passed": true,
+      "evidence": "The response recommends option (a) with concrete R code: 'Switch both factors to **sum coding** (or equivalently, \u00b10.5 deviation coding)' and provides contrasts() syntax. emmeans/marginaleffects are not mentioned but the OR condition is satisfied."
+    },
+    {
+      "text": "Output references Schad et al. (2020) OR explains the issue clearly enough (the coefficient in an interaction model is conditional on the other factor being at its reference level)",
+      "passed": true,
+      "evidence": "No citation to Schad et al., but the conceptual explanation is clear and correct: 'With default treatment coding, **main effect coefficients are simple effects at the reference level of the other factor**, not averages across levels of that factor.' This satisfies the OR condition."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

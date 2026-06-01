@@ -2,7 +2,7 @@
   "eval_id": 4,
   "condition": "baseline",
   "prompt": "We ran a randomized A/B test on checkout flow. Someone on my team says we need to control for device type, browser, and whether the user completed onboarding, since those differ a bit between the two arms. Should I add those as covariates?",
-  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "response": "Adding pre-treatment covariates to a randomized experiment is valid and often beneficial, but the *reason* matters a lot here.\n\n**Good reason to add them:** They predict the outcome (conversion rate), which reduces residual variance and increases power. This is standard ANCOVA-style adjustment and is genuinely useful.\n\n**Bad reason to add them:** They're imbalanced between arms. Small imbalances in a randomized experiment are expected noise \u2014 randomization guarantees balance *in expectation*, not exactly. Selecting covariates to adjust for *because they look imbalanced post-hoc* is a form of data dredging that inflates Type I error, especially if you only add the ones that happen to move your p-value.\n\n**The practical test:** Would you have included device type, browser, and onboarding completion as controls before seeing the data? If these are well-known predictors of checkout conversion (they probably are), then yes \u2014 add them, and your estimate will be more precise. If you're adding them specifically because someone noticed the arms look different on those dimensions, that's a weaker justification and you should be cautious.\n\n**Bottom line:** Add them if they're strong predictors of the outcome and you can justify that choice on domain grounds, not because of the observed imbalance. Lin (2013) shows regression adjustment with pre-specified covariates is asymptotically efficient in randomized experiments \u2014 so it's a strict win when done right. The imbalance your teammate observed is probably just chance and shouldn't be the deciding factor.",
   "assertions": [
     {
       "text": "States that in a randomized experiment the unadjusted difference is already unbiased for the causal effect and adjustment is mainly for precision",
@@ -29,10 +29,10 @@
     false,
     false,
     false,
-    false,
-    false
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 2,
   "total": 5,
-  "pass_rate": 0.0
+  "pass_rate": 0.4
 }

@@ -1,0 +1,344 @@
+{
+  "metadata": {
+    "skill_name": "preference-choice-modeling",
+    "executor_model": "claude-sonnet-4-6",
+    "timestamp": "2026-05-31T00:00:00Z",
+    "evals_run": [
+      "method-selection-maxdiff",
+      "prohibitions-cbc-design",
+      "sparse-maxdiff-design",
+      "cbc-sample-size-with-subgroups",
+      "cross-wave-maxdiff-comparability",
+      "anchoring-absolute-importance",
+      "dual-response-none-cbc"
+    ],
+    "runs_per_configuration": 1,
+    "notes": "Most with_skill timing files unavailable — agents hit API rate limits during the run. Response files were written before limits hit. Timing reported as null where unavailable."
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "eval_name": "method-selection-maxdiff",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Recommends MaxDiff (not CBC, not rating scales)", "passed": true, "evidence": "'MaxDiff is the correct method' — rules out both CBC and rating scales with correct mechanistic reasoning."},
+        {"text": "Discusses anchoring (recommends direct binary or dual-response; does not give only unanchored advice)", "passed": true, "evidence": "Full section 'You need anchoring' with direct binary anchor as explicit recommendation. Explains share-above-anchor as stakeholder output."},
+        {"text": "Sample size advice is precision-derived, not a flat rule-of-thumb like 'n=300'", "passed": true, "evidence": "SE formula table conditioned on detectability gap needed. Recommends n=400-500 for general, n=600-800 for subgroups — both derived, not flat."},
+        {"text": "Notes respondent burden or design constraints at k=30", "passed": true, "evidence": "'30 sets per respondent... That's too long; response quality degrades badly past ~15-18 sets.' Full design math shown at different set counts."}
+      ]
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "method-selection-maxdiff",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 2,
+        "failed": 2,
+        "total": 4,
+        "time_seconds": 51.1,
+        "tokens": 12739,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Recommends MaxDiff (not CBC, not rating scales)", "passed": true, "evidence": "'MaxDiff (Best-Worst Scaling, Case 1) is the gold-standard method' — correct recommendation with appropriate rationale."},
+        {"text": "Discusses anchoring (recommends direct binary or dual-response; does not give only unanchored advice)", "passed": false, "evidence": "No mention of anchoring anywhere. Entire response treats MaxDiff utilities as self-sufficient for importance claims."},
+        {"text": "Sample size advice is precision-derived, not a flat rule-of-thumb like 'n=300'", "passed": false, "evidence": "'A practical starting point: 200-300 respondents' — flat rule-of-thumb. Observation-count reasoning (8,000 observations) not precision-derived."},
+        {"text": "Notes respondent burden or design constraints at k=30", "passed": true, "evidence": "Notes '20-24 sets' with 'target: under 12 minutes' — implicit burden acknowledgment, though recommends above-ceiling set count without flagging the risk."}
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "prohibitions-cbc-design",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 76.7,
+        "tokens": 23759,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Pushes back on using prohibitions as the primary solution (does NOT recommend them without caveats)", "passed": true, "evidence": "'Short answer: No — use an alternative-specific design instead.' Opens with unambiguous pushback."},
+        {"text": "Explains that prohibitions reduce D-efficiency and the risk of an unidentified or poorly-identified design", "passed": true, "evidence": "'D-efficiency drops... brand and price become partially confounded.' Cost of prohibitions clearly explained including simulator impact."},
+        {"text": "Recommends alternative-specific attributes or conditional pricing as the preferred fix", "passed": true, "evidence": "'Alternative-specific attribute design' section with Sawtooth implementation guidance. Presented as the structurally correct solution, not a fallback."},
+        {"text": "Mentions checking relative D-efficiency if prohibitions are used", "passed": true, "evidence": "'Generate the design and check relative D-efficiency before fielding... If it's below 85%, you're paying a real cost.'"}
+      ]
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "prohibitions-cbc-design",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 2,
+        "failed": 2,
+        "total": 4,
+        "time_seconds": 52.8,
+        "tokens": 12680,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Pushes back on using prohibitions as the primary solution (does NOT recommend them without caveats)", "passed": false, "evidence": "'Yes, using prohibitions... is the standard approach when certain attribute combinations do not exist.' Affirmatively recommends prohibitions."},
+        {"text": "Explains that prohibitions reduce D-efficiency and the risk of an unidentified or poorly-identified design", "passed": true, "evidence": "'Prohibitions reduce the number of valid profiles... which tends to reduce orthogonality and D-efficiency.' Mentioned as a trade-off section."},
+        {"text": "Recommends alternative-specific attributes or conditional pricing as the preferred fix", "passed": false, "evidence": "Alternative-specific design not mentioned. The correct structural fix is absent; prohibitions are treated as the right answer."},
+        {"text": "Mentions checking relative D-efficiency if prohibitions are used", "passed": true, "evidence": "'re-check the design's efficiency statistics (D-error, A-error) after applying prohibitions.'"}
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "sparse-maxdiff-design",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8,
+        "passed": 4,
+        "failed": 1,
+        "total": 5,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Recommends sparse MaxDiff (not full design with 75 items)", "passed": true, "evidence": "'75 items is well into sparse MaxDiff territory (the boundary is roughly 30-35 items). A full design would require an unreasonable number of sets.'"},
+        {"text": "Specifies items-per-respondent-subset, showings-per-item, and sets-per-respondent with actual numbers", "passed": true, "evidence": "Summary table: items-per-respondent=20, sets-per-respondent=15, showings-per-item=3. Alternate design at 16 items/12 sets also specified."},
+        {"text": "Discusses co-occurrence balance across the population", "passed": true, "evidence": "'verify that every item co-occurs with every other item at least 2-3 times across the population design. If two items never appear in the same set, their relative utility is identified only through indirect chains.'"},
+        {"text": "Gives sample size in the 500-1500 range with reasoning (not just a rule-of-thumb)", "passed": true, "evidence": "r_pop formula with SE table. Recommends n=500 as solid default ('items ~2 pts apart are distinguishable') with explicit derivation via SE formula."},
+        {"text": "Notes individual-level readout degrades at k=75 and recommends aggregate or segment-level", "passed": false, "evidence": "Frames recommendations primarily as 'aggregate or top-level segment readout' but never explicitly states individual-level utilities degrade at k=75 as a general principle."}
+      ]
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "sparse-maxdiff-design",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.6,
+        "passed": 3,
+        "failed": 2,
+        "total": 5,
+        "time_seconds": 77.0,
+        "tokens": 13637,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Recommends sparse MaxDiff (not full design with 75 items)", "passed": true, "evidence": "Recommends sparse/incomplete block design and frames complete-coverage design as 'borderline' rather than the default."},
+        {"text": "Specifies items-per-respondent-subset, showings-per-item, and sets-per-respondent with actual numbers", "passed": true, "evidence": "5 items/set, 15 sets, 3-5 showings/item cited. Summary table included."},
+        {"text": "Discusses co-occurrence balance across the population", "passed": true, "evidence": "'Verify balance: each item appears approximately equally often, and each pair of items co-appears approximately equally often.'"},
+        {"text": "Gives sample size in the 500-1500 range with reasoning (not just a rule-of-thumb)", "passed": false, "evidence": "'n=200-300 with HB estimation gives reliable item-level rank ordering' — below the 500-1500 range. Reasoning is observation-count heuristic, not SE-derived."},
+        {"text": "Notes individual-level readout degrades at k=75 and recommends aggregate or segment-level", "passed": false, "evidence": "'HB borrows strength across respondents, so individual-level scores become reliable with as few as 200-300 completes' — directly contradicts the assertion; implies individual-level is fine at k=75."}
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "cbc-sample-size-with-subgroups",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Does NOT give a single rule-of-thumb number without conditioning on precision or subgroup requirements", "passed": true, "evidence": "'The subgroup constraint drives this, not the aggregate floor.' Derives from segment requirements before stating any number. No flat rule cited."},
+        {"text": "Asks about or explicitly surfaces required precision (share difference, CI width, etc.)", "passed": true, "evidence": "SE table conditioned on n per segment: 'Approx SE on simulated share per segment.' States need to 'ask what precision is needed' before recommending."},
+        {"text": "Discusses per-segment precision floor or minimum sample per segment", "passed": true, "evidence": "'n ≥ 200 per segment for clean HB-driven individual-level utility estimation... That puts the aggregate floor at n=400 from subgroup requirements alone.'"},
+        {"text": "Derives n in the 800-1200 range with explicit reasoning", "passed": true, "evidence": "'Target n=800, with explicit attention to segment balance. 400 per segment gives HB-stable individual utilities and simulator precision adequate for distinguishing meaningful differences (≥6 pp).'"}
+      ]
+    },
+    {
+      "eval_id": 4,
+      "eval_name": "cbc-sample-size-with-subgroups",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 2,
+        "failed": 2,
+        "total": 4,
+        "time_seconds": 61.3,
+        "tokens": 13118,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Does NOT give a single rule-of-thumb number without conditioning on precision or subgroup requirements", "passed": false, "evidence": "'Quick Answer: For a CBC with 6 attributes comparing two roughly equal segments, a total sample of 300-400 respondents is a reasonable starting point.' — flat rule-of-thumb as the lede."},
+        {"text": "Asks about or explicitly surfaces required precision (share difference, CI width, etc.)", "passed": true, "evidence": "Discusses Cohen's d for segment comparison power and effect size considerations. SE not explicitly surfaced but precision concept addressed."},
+        {"text": "Discusses per-segment precision floor or minimum sample per segment", "passed": true, "evidence": "'200 per segment = 400 total' with per-segment reasoning for both aggregate logit and HB."},
+        {"text": "Derives n in the 800-1200 range with explicit reasoning", "passed": false, "evidence": "Primary recommendation is n=400 total. n=600 as 'conservative/high-stakes.' n=800+ not recommended. Misses the range."}
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "cross-wave-maxdiff-comparability",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Explicitly states that raw MaxDiff utilities cannot be compared across studies with different item sets", "passed": true, "evidence": "'Raw or rescaled utilities from MaxDiff studies are not comparable across waves when the item sets differ.'"},
+        {"text": "Explains why: different item sets produce different normalizations, making raw utilities non-comparable", "passed": true, "evidence": "'When you change the item set... the normalization shifts. An item that rated high in a 25-item pool will have a different utility score in a 27-item pool, even if respondents' underlying preferences haven't changed.'"},
+        {"text": "States that anchored share-above-anchor is the valid cross-wave metric", "passed": true, "evidence": "'The only valid cross-wave metric is anchored share-above-anchor, and only if you use the same anchor in both waves.'"},
+        {"text": "Addresses what to do if prior wave was unanchored (re-field or flag the limitation clearly)", "passed": true, "evidence": "'If Wave 1 was unanchored: There is no reliable method to recover comparability post-hoc... The correct path is: Add a direct binary anchor to Wave 2 now. Treat Wave 2 as the new tracking baseline.'"}
+      ]
+    },
+    {
+      "eval_id": 5,
+      "eval_name": "cross-wave-maxdiff-comparability",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 2,
+        "failed": 2,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Explicitly states that raw MaxDiff utilities cannot be compared across studies with different item sets", "passed": true, "evidence": "'Raw Utility Scores Are Not Directly Comparable Across Waves' — explicit and correct."},
+        {"text": "Explains why: different item sets produce different normalizations, making raw utilities non-comparable", "passed": true, "evidence": "'Utilities are identified only up to an arbitrary normalization, and the normalization changes when the item set changes.' Correct mechanism."},
+        {"text": "States that anchored share-above-anchor is the valid cross-wave metric", "passed": false, "evidence": "Mentions 'Anchored MaxDiff' as a forward-looking option but never names share-above-anchor as the specific valid metric. Instead recommends z-score equating on common items as the primary cross-wave approach."},
+        {"text": "Addresses what to do if prior wave was unanchored (re-field or flag the limitation clearly)", "passed": false, "evidence": "Recommends equating methods (z-score, regression on overlap items) rather than clearly stating 're-field with anchoring.' Equating approaches are presented as viable solutions rather than approximations to avoid."}
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "anchoring-absolute-importance",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Explicitly states that unanchored MaxDiff utilities cannot support absolute importance claims", "passed": true, "evidence": "'If your study ran without anchoring, you cannot answer your stakeholder's actual question.' And: 'A deck showing Feature 1: 82... does not tell you Feature 8 is unimportant.'"},
+        {"text": "Recommends direct binary anchor as the default approach", "passed": true, "evidence": "'Direct binary anchor (recommended default)' — explicitly labeled. Post-MaxDiff binary flag question described with wording guidance."},
+        {"text": "Mentions dual-response anchor as an alternative", "passed": true, "evidence": "'Dual-response anchor' described as alternative 'when items are evaluative statements or agreement items, where a separate flagging task would feel awkward.'"},
+        {"text": "Discusses reporting format (share-above-anchor, not just raw rescaled utility)", "passed": true, "evidence": "'Lead with the share-above-anchor, not the rescaled utilities.' Reporting structure shows share-above-anchor as primary output with utilities for relative ranking only."}
+      ]
+    },
+    {
+      "eval_id": 6,
+      "eval_name": "anchoring-absolute-importance",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 2,
+        "failed": 2,
+        "total": 4,
+        "time_seconds": 49.3,
+        "tokens": 12695,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Explicitly states that unanchored MaxDiff utilities cannot support absolute importance claims", "passed": true, "evidence": "'Standard MaxDiff gives you relative importance scores... Your stakeholder's question... requires anchoring the scale to something absolute.'"},
+        {"text": "Recommends direct binary anchor as the default approach", "passed": false, "evidence": "Presents 5 options in parallel — 'None of these' embedded in task (Option 1), follow-up rating (Option 2), reference item (Option 3), etc. No default identified. Direct binary anchor not named."},
+        {"text": "Mentions dual-response anchor as an alternative", "passed": true, "evidence": "'Option 2: Dual-Response / Follow-Up Rating' described with rating-scale follow-up. Not exactly the same as the dual-response anchor (binary judgment per set) but conceptually proximate."},
+        {"text": "Discusses reporting format (share-above-anchor, not just raw rescaled utility)", "passed": false, "evidence": "No mention of share-above-anchor. Reporting discussion centers on chance-threshold heuristic and top-box analysis — structurally different concepts."}
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "dual-response-none-cbc",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": null,
+        "tokens": null,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Disagrees with the PM's argument that None should be omitted", "passed": true, "evidence": "'No — and the reasoning your PM is using is a known error in conjoint design.' Unambiguous disagreement."},
+        {"text": "Recommends dual-response None as the default (not explicit None, not no None)", "passed": true, "evidence": "'The recommended default for most CBC studies is dual-response None, not single explicit None and not no-None.' Explicit and correctly discriminated."},
+        {"text": "Explains that omitting None inflates simulated shares or conflates preference with purchase likelihood", "passed": true, "evidence": "'Omitting None inflates all simulated share-of-preference values... every respondent's probability must be distributed across the shown alternatives — there is no outside-good.'"},
+        {"text": "Notes the specific context where omitting None is defensible (forced-choice competitive simulation), if mentioned at all", "passed": true, "evidence": "'Forced-choice competitive displacement simulation: you are literally simulating which one gets the deal and have strong external evidence that one of them will be selected.'"}
+      ]
+    },
+    {
+      "eval_id": 7,
+      "eval_name": "dual-response-none-cbc",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 53.8,
+        "tokens": 12891,
+        "errors": 0
+      },
+      "expectations": [
+        {"text": "Disagrees with the PM's argument that None should be omitted", "passed": true, "evidence": "'Your PM's reasoning is partially right but the conclusion is wrong.' Disagrees, though softer than ideal."},
+        {"text": "Recommends dual-response None as the default (not explicit None, not no None)", "passed": false, "evidence": "Presents 'Standard None Option' as Option A and dual-response as Option B. Summary says 'dual-response or a None option are both defensible.' Does not establish dual-response as THE default."},
+        {"text": "Explains that omitting None inflates simulated shares or conflates preference with purchase likelihood", "passed": true, "evidence": "'WTP Estimates Will Be Inflated' and 'Market Share Simulations Will Be Unrealistic' — both mechanisms correctly identified."},
+        {"text": "Notes the specific context where omitting None is defensible (forced-choice competitive simulation), if mentioned at all", "passed": true, "evidence": "'No None option: Only when you're genuinely simulating a forced-choice scenario (e.g., tender/RFP where a vendor will be selected regardless).'"}
+      ]
+    }
+  ],
+  "summary": {
+    "with_skill": {
+      "assertions_passed": 28,
+      "assertions_total": 29,
+      "pass_rate": {"mean": 0.966, "stddev": 0.071, "min": 0.8, "max": 1.0},
+      "time_seconds": {"mean": null, "note": "Most timing unavailable — rate limiting during run. One data point: prohibitions=76.7s"},
+      "tokens": {"mean": null, "note": "Most token counts unavailable. One data point: prohibitions=23759"}
+    },
+    "without_skill": {
+      "assertions_passed": 16,
+      "assertions_total": 29,
+      "pass_rate": {"mean": 0.552, "stddev": 0.096, "min": 0.5, "max": 0.75},
+      "time_seconds": {"mean": 57.2, "note": "Available for 5 of 7 evals"},
+      "tokens": {"mean": 13152, "note": "Available for 5 of 7 evals"}
+    },
+    "delta": {
+      "pass_rate_pp": 41.4,
+      "note": "With-skill: 28/29 assertions (96.6%). Without-skill: 16/29 assertions (55.2%). Delta: +41.4pp"
+    }
+  },
+  "analyst_observations": [
+    "Highly discriminating evals this iteration: prohibitions-cbc-design (+50pp), cbc-sample-size-with-subgroups (+50pp), cross-wave-maxdiff-comparability (+50pp), anchoring-absolute-importance (+50pp), method-selection-maxdiff (+50pp). The skill is cleanly adding value on method-specific guard rails the base model misses.",
+    "Eval-7 (dual-response-none-cbc) was the weakest discriminator at +25pp. Base model disagrees with the PM and identifies the right risks, but defaults to treating dual-response and explicit None as equally valid rather than establishing dual-response as the default. Consider strengthening the eval assertion or prompt to force the distinction more cleanly.",
+    "Eval-3 (sparse-maxdiff-design) is the only eval where the with_skill response failed an assertion (individual-level degradation at k=75). The skill SKILL.md covers this, but the response framed the design constraints per-respondent rather than naming k=75 as a ceiling for individual-level readout. Consider adding a note to the SKILL.md trigger for this.",
+    "Without-skill pattern: base model correctly recommends the right method (MaxDiff, CBC, sparse design) in every case. The failure modes are: (a) missing anchoring guidance, (b) underpowered sample sizes with flat rules-of-thumb, (c) treating prohibitions as standard rather than a last resort, (d) recommending equating approximations instead of re-fielding with anchoring for cross-wave comparability.",
+    "Eval-5 (cross-wave-maxdiff-comparability) without-skill response is actively misleading — recommends z-score equating as a viable technique, which the skill correctly identifies as insufficient. This is the highest-risk gap in base model behavior.",
+    "Rate limiting during the run prevented timing/token data from being captured for most with_skill evals. Iteration-1 data suggests with_skill tokens are approximately 23-27k (vs. 12-14k without_skill), roughly 1.8-2x overhead for reference file reading."
+  ]
+}

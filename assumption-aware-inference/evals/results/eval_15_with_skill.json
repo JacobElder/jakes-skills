@@ -1,0 +1,38 @@
+{
+  "eval_id": 15,
+  "condition": "with_skill",
+  "prompt": "Before every analysis I run normality tests, Levene's test, and Breusch-Pagan, and I pick my method based on the results. Is this a good workflow?",
+  "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "Pushes back on the test-then-choose workflow rather than endorsing it",
+      "type": "scored"
+    },
+    {
+      "text": "Explains that assumption tests check exact truth, not whether the violation is consequential, and are underpowered at small n / overpowered at large n",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that pretesting distorts the level/coverage of the final inference (pretest bias)",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends robust-by-design methods (e.g. Welch, robust/HC SEs, appropriate model family) and/or graphical diagnostics for magnitude instead",
+      "type": "scored"
+    },
+    {
+      "text": "Frames good practice as reasoning about consequences for the estimand/goal rather than a mechanical pipeline",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

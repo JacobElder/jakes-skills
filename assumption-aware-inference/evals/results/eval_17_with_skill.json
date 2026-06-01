@@ -1,0 +1,33 @@
+{
+  "eval_id": 17,
+  "condition": "with_skill",
+  "prompt": "n = 300 in each of two independent groups, outcome roughly symmetric, I want to compare means. Anything I actually need to worry about before running a two-sample t-test?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "Reassures that the t-test is fine / there is little to worry about given n=300 and symmetry",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions Welch as the sensible default and/or that an equal-variance pretest is unnecessary",
+      "type": "scored"
+    },
+    {
+      "text": "Keeps the response brief and proportionate rather than enumerating many diagnostics or alternative methods",
+      "type": "must_pass"
+    },
+    {
+      "text": "Does NOT invoke normality tests as a gate or recommend a nonparametric switch",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 4,
+  "pass_rate": 0.0
+}

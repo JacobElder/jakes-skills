@@ -78,6 +78,11 @@ These are starting points for reasoning, not a decision tree to execute mechanic
 - **Reporting p < 0.05 at n = 2,000,000** as if significance implied importance.
 - **Log-transforming then back-transforming the mean** without accounting for Jensen's inequality (the retransformation bias).
 - **Treating a confidence interval as a probability statement about the parameter**, or a failure to reject as evidence of no effect.
+- **"Significant in group A, not in B" as evidence that the effect differs between groups.** The correct test is an interaction term or explicit contrast, not a comparison of individual p-values. The difference of two effects can be insignificant while each is individually (in)significant, because the SE of a difference is larger than either individual SE.
+- **Type M / Type S errors from underpowered studies.** A significant result from a low-powered study (n per group < 30–50, exploratory) systematically overestimates the true effect (Type M / magnitude error) and can even have the wrong sign (Type S / sign error). "Large and significant" from a pilot study should trigger replication, not celebration.
+- **Reporting stepwise-selected model p-values at face value.** Backward/forward selection by p-value uses the data to pick the model, so the final model's p-values are anti-conservative — the selection step inflates apparent significance even without multiple comparisons. Pre-registration, sample splitting, or post-selection inference methods are required.
+- **The Table 2 fallacy: reporting every coefficient in a multivariable model as its variable's total causal effect.** Only the main exposure was designed to have its confounders controlled; covariate coefficients are partial associations conditional on all other model terms, often with entirely different confounding than the main exposure.
+- **Using the standard bootstrap for extreme statistics (maximum, order statistics).** The nonparametric bootstrap is inconsistent for the sample maximum — each resample contains the observed max ~63% of the time, producing a degenerate distribution. Use extreme value theory (GEV, POT) for valid inference about extremes.
 
 ## Response templates
 
@@ -133,11 +138,11 @@ Reason like a consultant a sophisticated researcher would actually want in the r
 ## Reference files — read the ones the question needs
 
 - `references/robustness.md` — robustness of classical tests, CLT/Berry-Esseen intuition, Welch, skew vs heavy tails, means vs medians, when classical methods actually fail.
-- `references/estimands.md` — group comparisons, omitted-variable bias, descriptive vs causal, post-treatment/collider bias, ANCOVA vs change scores (Lord's paradox), matching vs regression, ATE vs ATT.
+- `references/estimands.md` — group comparisons, omitted-variable bias, descriptive vs causal, post-treatment/collider bias, ANCOVA vs change scores (Lord's paradox), matching vs regression, ATE vs ATT, Table 2 fallacy.
 - `references/glm-families.md` — exponential family, links, variance functions, and a worked guide to logistic / Poisson / NB / quasi-Poisson / gamma / inverse-Gaussian / beta / zero-inflated / hurdle / ordinal, with selection heuristics.
-- `references/robust-inference.md` — HC and clustered SEs, the sandwich estimator, bootstrap, permutation, rank-based tests, quantile regression, M-estimation/robust regression, Bayesian alternatives, and what each does and doesn't fix.
+- `references/robust-inference.md` — HC and clustered SEs, the sandwich estimator, bootstrap (including inconsistency for extreme statistics), permutation tests, rank-based tests, quantile regression, M-estimation/robust regression, Bayesian alternatives, and what each does and doesn't fix.
 - `references/diagnostics.md` — residuals, leverage, influence, overdispersion, calibration, separation, multicollinearity, misspecification — and which diagnostics earn their keep vs which are overemphasized.
-- `references/philosophy.md` — the pragmatic stance: estimands vs procedures, asymptotics as approximation theory, predictive vs inferential goals, why assumption tests are misused, practical vs statistical significance.
+- `references/philosophy.md` — the pragmatic stance: estimands vs procedures, asymptotics as approximation theory, predictive vs inferential goals, why assumption tests are misused, practical vs statistical significance, Type M/S errors, subgroup comparison fallacy, post-selection inference.
 - `references/worked-examples.md` — two real simulations (the t-test's Type I error under skew at small vs large n; the SE deflation from ignoring overdispersion) with reproducible code, for when a number lands better than prose.
 
 Pull the references that match the question; you don't need all of them every time.

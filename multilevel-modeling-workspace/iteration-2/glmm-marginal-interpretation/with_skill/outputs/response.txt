@@ -1,0 +1,54 @@
+## The write-up has a significant interpretive error
+
+The phrase **"in the population"** signals a *marginal* (population-average) interpretation. Your GLMM coefficient gives you a *conditional* (cluster-specific) estimate. These are not the same thing for a logistic model, and conflating them is a meaningful error reviewers will catch.
+
+---
+
+### Why they differ
+
+For **linear** outcomes (LMM), conditional and marginal effects are numerically identical — the distinction doesn't matter.
+
+For **nonlinear** outcomes like binary responses, the logistic transformation is nonlinear, so:
+
+> **Conditional (GLMM):** "For a patient in a *given clinic* (held at its random-effect value), the odds of adhering are 3.32× higher under intervention."
+
+> **Marginal (GEE):** "Averaged *across the population of clinics*, patients in the intervention condition have X× the odds of adhering."
+
+Because of Jensen's inequality, **the marginal OR is always attenuated toward 1** relative to the conditional OR. How much depends on the clinic-level variance (σ²_u). With substantial clinic-to-clinic variability, the gap can be large — your marginal OR could easily be 2.0–2.5 rather than 3.32.
+
+---
+
+### What to write instead
+
+**Correct write-up for your GLMM:**
+
+> *"Within a given clinic, patients who received the intervention had 3.32 times the odds of adhering compared to patients in the control condition (β = 1.20, OR = 3.32, 95% CI [x, x])."*
+
+Or equivalently:
+
+> *"Conditional on clinic, the intervention was associated with 3.32× greater odds of adherence (β = 1.20)."*
+
+---
+
+### If you actually want a population-average statement
+
+You have two options:
+
+| Option | What to do |
+|---|---|
+| **Refit with GEE** | Use `geepack::geeglm` (R) or `statsmodels.GEE` (Python) with an exchangeable working correlation. The coefficient *is* population-average by construction. |
+| **Marginalize your GLMM** | Use `marginaleffects::avg_slopes()` or `emmeans` with integration over the random-effects distribution. This recovers a marginal OR from your existing model. |
+
+The GEE route is cleaner if the population-average effect is the primary estimand of interest (e.g., a public-health policy question: "what happens if we roll this out across all clinics?"). The GLMM conditional interpretation is appropriate if the question is "does the intervention work within a clinic" — which is often what a clinical trial is really asking.
+
+---
+
+### One additional check
+
+While you're revising, report your clinic-level variance component (σ²_u). This is:
+
+1. **Required** for a complete MLM write-up
+2. **Diagnostic**: a large σ²_u means the conditional/marginal gap is large, which makes the distinction even more consequential for your readers
+3. Needed to compute the ICC: ICC ≈ σ²_u / (σ²_u + π²/3)
+
+The ICC tells readers how much clinic membership matters — with 40 clinics, this is estimable and should be reported.

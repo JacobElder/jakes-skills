@@ -2,7 +2,7 @@
   "eval_id": 9,
   "condition": "baseline",
   "prompt": "I have data from 6 hospitals, with hundreds of patients each, and treatment was assigned at the hospital level. I clustered my standard errors by hospital. Is that enough?",
-  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
   "assertions": [
     {
       "text": "States that the relevant asymptotics are in the number of clusters, not the number of patients, so hundreds per cluster does not rescue inference",

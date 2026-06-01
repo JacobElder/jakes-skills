@@ -2,73 +2,308 @@
   "skill_name": "robust-statistics",
   "results": [
     {
-      "eval_id": 29,
-      "condition": "with_skill",
-      "prompt": "Everyone knows you must log-transform right-skewed data before running a regression. My revenue outcome is skewed, so I'll log it first. That's the right move, right?",
-      "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+      "eval_id": 15,
+      "condition": "baseline",
+      "prompt": "Before every analysis I run normality tests, Levene's test, and Breusch-Pagan, and I pick my method based on the results. Is this a good workflow?",
+      "response": "This workflow is very common but has well-documented problems. The short version: **no, it's not a good workflow**, and it can make things worse than just picking a method upfront.\n\n## The core problem: pre-testing inflates error rates\n\nWhen you use your data to decide which test to run on that same data, you introduce a hidden multiple-comparisons problem. Your nominal \u03b1 is no longer your actual Type I error rate \u2014 and the distortion is hard to quantify because it depends on the true effect size, sample size, and which branch you took.\n\n## Why each test fails at its job here\n\n**Normality tests (Shapiro-Wilk, K-S, etc.)**\n- Low power with small n \u2014 they miss real violations exactly when normality matters most for parametric tests\n- Too powerful with large n \u2014 they flag trivial departures that have no practical effect on your inference\n- They answer \"is the distribution exactly normal?\" but parametric tests only need approximate normality, and many are robust anyway\n\n**Levene's test**\n- Same power problem at both extremes\n- Welch's t-test dominates Student's t-test in nearly all conditions anyway \u2014 just use Welch's by default and skip the pre-test entirely\n\n**Breusch-Pagan**\n- Useful as a diagnostic, but using it to gate whether you apply HC standard errors creates the same conditional-testing problem\n\n## Better workflow\n\n- **Commit to your method before seeing the data** (or pre-register) based on your design and domain knowledge\n- **Use robust methods by default**: Welch's instead of Student's, HC standard errors in OLS, rank-based tests when distributions are genuinely heavy-tailed\n- **Use visual diagnostics** (Q-Q plots, residual vs. fitted plots) \u2014 these show you the *shape* and *severity* of violations, not just a binary pass/fail\n- **Ask \"how bad is the violation?\" not \"is the assumption met?\"** \u2014 effect size of the violation matters, not its p-value\n\nThe pre-testing approach feels rigorous but actually trades one problem (assumption violation) for another (specification searching). Defaulting to robust methods and diagnosing visually is cleaner.",
       "assertions": [
         {
-          "text": "Does NOT accept the false premise that log-transformation is universally required before regression on skewed data",
-          "type": "must_pass"
-        },
-        {
-          "text": "Explains that log-transforming changes the estimand (from effects on E[Y] / arithmetic mean to effects on E[log Y] / geometric mean)",
+          "text": "Pushes back on the test-then-choose workflow rather than endorsing it",
           "type": "scored"
         },
         {
-          "text": "Notes that raw-data skewness is not automatically a problem for OLS at adequate n \u2014 the relevant question is the sampling distribution of the estimator",
+          "text": "Explains that assumption tests check exact truth, not whether the violation is consequential, and are underpowered at small n / overpowered at large n",
           "type": "scored"
         },
         {
-          "text": "Response is proportionate and corrects the premise concisely without a lengthy lecture",
-          "type": "must_pass"
+          "text": "Notes that pretesting distorts the level/coverage of the final inference (pretest bias)",
+          "type": "scored"
         },
         {
-          "text": "Does NOT recommend log-transforming without first identifying what estimand the user actually wants",
-          "type": "must_pass"
+          "text": "Recommends robust-by-design methods (e.g. Welch, robust/HC SEs, appropriate model family) and/or graphical diagnostics for magnitude instead",
+          "type": "scored"
+        },
+        {
+          "text": "Frames good practice as reasoning about consequences for the estimand/goal rather than a mechanical pipeline",
+          "type": "scored"
         }
       ],
       "assertion_results": [
-        false,
-        false,
-        false,
-        false,
-        false
+        true,
+        true,
+        true,
+        true,
+        true
       ],
-      "passed": 0,
+      "passed": 5,
       "total": 5,
-      "pass_rate": 0.0,
-      "eval_passes": false,
-      "must_pass_failed_indices": [
-        1,
-        4,
-        5
-      ]
+      "pass_rate": 1.0,
+      "eval_passes": true,
+      "must_pass_failed_indices": []
     },
     {
-      "eval_id": 30,
+      "eval_id": 15,
       "condition": "with_skill",
-      "prompt": "My sample size is 150 per group, and the histogram looks clearly non-normal \u2014 there's skew and the tails are fat. That means I definitely can't use a t-test here. Right?",
-      "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+      "prompt": "Before every analysis I run normality tests, Levene's test, and Breusch-Pagan, and I pick my method based on the results. Is this a good workflow?",
+      "response": "No \u2014 this is a \"pretest-and-switch\" workflow, and it's dominated by just using the robust method from the start. The problem is twofold: the tests are miscalibrated as gatekeepers, and running them before the main analysis distorts the final inference. At small n, all three tests are underpowered \u2014 they'll miss violations large enough to actually matter. At large n, they'll reject for trivial, inconsequential deviations. So the decision they hand you is least reliable exactly when you'd most want guidance, and the final test's operating characteristics (level, coverage) now depend on this random first stage in a way that's hard to characterize.\n\nThe better approach is robust-by-design, which makes the pretesting irrelevant:\n\n**Instead of Levene's \u2192 Student or Welch:** Just use Welch unconditionally. It loses essentially nothing when variances are equal and protects you when they aren't. The equal-variance pretest buys nothing and costs you.\n\n**Instead of Breusch-Pagan \u2192 OLS or robust SEs:** Use HC3 robust SEs by default. Heteroskedasticity doesn't bias OLS coefficients \u2014 it only makes the classical SEs wrong \u2014 and a sandwich estimator fixes that without a gatekeeper test.\n\n**Instead of Shapiro-Wilk \u2192 parametric or nonparametric:** Don't treat it as a switch. Ask instead: is n large enough relative to the skew for the CLT to have engaged? Look at residual plots to check the *mean structure* (curvature, omitted terms), which is where bias actually lives. Normality of the residuals matters mainly for small-sample exact inference and prediction intervals, not for coefficient inference at adequate n.\n\nThe throughline: these tests ask \"is the assumption exactly true?\" (always no) rather than \"is the violation consequential for my goal at this n?\" (the real question). Reason about the latter directly, and skip the tests.",
       "assertions": [
         {
-          "text": "Does NOT accept the false premise that non-normal raw data prohibits using a t-test",
-          "type": "must_pass"
-        },
-        {
-          "text": "States the relevant object is the sampling distribution of the mean (not the raw data distribution), governed by the CLT",
+          "text": "Pushes back on the test-then-choose workflow rather than endorsing it",
           "type": "scored"
         },
         {
-          "text": "Affirms that at n=150 per group the t-test is approximately valid for inference about the mean despite non-normality",
+          "text": "Explains that assumption tests check exact truth, not whether the violation is consequential, and are underpowered at small n / overpowered at large n",
           "type": "scored"
         },
         {
-          "text": "Response is proportionate and concise; does not deliver a lengthy lecture on distributional theory",
+          "text": "Notes that pretesting distorts the level/coverage of the final inference (pretest bias)",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends robust-by-design methods (e.g. Welch, robust/HC SEs, appropriate model family) and/or graphical diagnostics for magnitude instead",
+          "type": "scored"
+        },
+        {
+          "text": "Frames good practice as reasoning about consequences for the estimand/goal rather than a mechanical pipeline",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 16,
+      "condition": "baseline",
+      "prompt": "We ran a clean randomized experiment, ~6,000 users per arm, comparing average session length (in minutes). The distribution is a bit right-skewed. I just want to know if the new design increased average session length. Is a t-test fine or do I need something fancier?",
+      "response": "With 6,000 users per arm, a t-test is fine. The Central Limit Theorem kicks in well before that sample size \u2014 the sampling distribution of the mean is essentially normal regardless of how skewed the raw session times are. \"A bit right-skewed\" isn't a concern here; you'd need extreme pathological tails (e.g., a small number of users with astronomically long sessions) to cause problems, and even then you'd likely notice it rather than be silently misled.\n\nTwo small recommendations:\n\n1. **Use Welch's t-test** (unequal variances) rather than Student's. The treatment arm may have a different variance if the new design changes engagement patterns \u2014 Welch handles that without penalty when variances happen to be equal.\n\n2. **Eyeball your outliers first.** If you have bot traffic or a handful of sessions in the thousands of minutes, winsorizing or excluding them is worth considering \u2014 not because the t-test breaks, but because those sessions may not represent real user behavior you care about.\n\nIf you wanted to go fancier, a Mann-Whitney U test would give you a valid nonparametric comparison, but it tests stochastic dominance (roughly: \"is one distribution shifted up?\"), not the mean specifically. Since you said you care about average session length, the t-test is actually the right tool.\n\nBottom line: Welch t-test, one-sided, done.",
+      "assertions": [
+        {
+          "text": "Says a (Welch) t-test / difference in means is fine here without hedging",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that randomization makes the simple difference in means the unbiased causal effect",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that the large per-arm n handles the mild skew via the CLT",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT recommend a transformation, GLM, or nonparametric test for this case",
           "type": "must_pass"
         },
         {
-          "text": "Does NOT recommend a nonparametric test based solely on the histogram looking non-normal, without considering n or the estimand",
+          "text": "Does NOT manufacture unnecessary estimand or robustness caveats; the response is proportionate and largely affirming",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        false,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 5,
+      "pass_rate": 0.8,
+      "eval_passes": false,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 16,
+      "condition": "with_skill",
+      "prompt": "We ran a clean randomized experiment, ~6,000 users per arm, comparing average session length (in minutes). The distribution is a bit right-skewed. I just want to know if the new design increased average session length. Is a t-test fine or do I need something fancier?",
+      "response": "The t-test is fine here. A short explanation of why:\n\n**The skew doesn't matter at your n.** A t-test doesn't require the raw data to be normal \u2014 it requires the sampling distribution of the *mean* to be approximately normal. With ~6,000 per arm, the CLT has done its work. By Berry-Esseen, the approximation error shrinks like skewness/\u221an; at n=6,000, even substantial right-skew (think lognormal-level) produces an essentially normal sampling distribution for the mean. Session times are usually far less skewed than a lognormal, so you're comfortably in the clear.\n\n**Use Welch's, not Student's.** Welch's t-test (the default in R, `scipy.stats.ttest_ind` with `equal_var=False`) doesn't assume equal variances across arms, costs you almost nothing when variances are equal, and protects you when they aren't. No reason to use Student's or pretest the variances with Levene.\n\n**The randomization does the heavy lifting.** Because assignment was random, the simple difference in means *is* the average causal effect. No adjustment needed for unbiasedness; covariate adjustment (ANCOVA) is available purely for efficiency gains if you have strong pre-experiment predictors of session length.\n\nOne thing worth reporting alongside the p-value: the difference in means in minutes (or seconds) and a confidence interval. Session length is a domain where statistical significance at n=6,000 is virtually guaranteed for any real signal \u2014 the interval tells you whether the effect is large enough to care about.\n\nShort version: run Welch's t-test, report the effect size and CI, and move on.",
+      "assertions": [
+        {
+          "text": "Says a (Welch) t-test / difference in means is fine here without hedging",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that randomization makes the simple difference in means the unbiased causal effect",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that the large per-arm n handles the mild skew via the CLT",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT recommend a transformation, GLM, or nonparametric test for this case",
+          "type": "must_pass"
+        },
+        {
+          "text": "Does NOT manufacture unnecessary estimand or robustness caveats; the response is proportionate and largely affirming",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 17,
+      "condition": "baseline",
+      "prompt": "n = 300 in each of two independent groups, outcome roughly symmetric, I want to compare means. Anything I actually need to worry about before running a two-sample t-test?",
+      "response": "With n=300 per group and a roughly symmetric outcome, the CLT has you covered on normality \u2014 that concern is essentially moot at this scale.\n\nThree things actually worth checking:\n\n**1. Independence structure.** Are observations truly independent within and between groups? Clustering (e.g., participants nested in schools, repeated measures disguised as two groups, matched pairs) violates the t-test's independence assumption in ways the CLT cannot fix. This is a design question, not a statistical test.\n\n**2. Use Welch's, not the pooled-variance version.** The classic equal-variance t-test is a strictly worse default \u2014 Welch's is essentially identical when variances are equal and correct when they aren't. Most software (R's `t.test`, Python's `scipy.stats.ttest_ind`) defaults to Welch's, but worth confirming. Do *not* pre-screen with Levene's and then choose \u2014 just always use Welch's.\n\n**3. Outliers / heavy tails.** With n=300 you can tolerate moderate skew, but extreme outliers inflate the variance estimate and shrink power. A quick visual (boxplot or histogram) is worth it \u2014 not to gate-keep normality, but to catch data entry errors or distributional surprises before they make your SE misleading.\n\nWhat you don't need to worry about: formal normality tests (Shapiro-Wilk will flag cosmetic deviations at this n), transforming the outcome pre-emptively, or non-parametric alternatives unless outliers are severe.",
+      "assertions": [
+        {
+          "text": "Reassures that the t-test is fine / there is little to worry about given n=300 and symmetry",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions Welch as the sensible default and/or that an equal-variance pretest is unnecessary",
+          "type": "scored"
+        },
+        {
+          "text": "Keeps the response brief and proportionate rather than enumerating many diagnostics or alternative methods",
+          "type": "must_pass"
+        },
+        {
+          "text": "Does NOT invoke normality tests as a gate or recommend a nonparametric switch",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 17,
+      "condition": "with_skill",
+      "prompt": "n = 300 in each of two independent groups, outcome roughly symmetric, I want to compare means. Anything I actually need to worry about before running a two-sample t-test?",
+      "response": "At n = 300 per group with a symmetric outcome and a mean estimand, essentially nothing is at risk. The short answer is: run Welch's t-test and you're done.\n\nHere's why each concern is negligible:\n\n**Normality of the data.** The t-test doesn't require normal *data* \u2014 it requires an approximately normal sampling distribution for the *sample mean*. The CLT delivers that comfortably at n = 300 even for moderately skewed data; with a roughly symmetric outcome it's a non-issue well before n = 30.\n\n**Unequal variances.** Use Welch's t-test by default rather than Student's. It's barely less powerful when variances are equal and meaningfully more reliable when they're not. There's no reason to pretest variances with Levene's \u2014 that test-then-choose workflow distorts the final inference and is dominated by just using Welch from the start.\n\n**Outliers / heavy tails.** With finite variance and a symmetric distribution, heavy tails reduce efficiency (power) but don't distort the level of the test. At n = 300 you have power to spare for most effect sizes worth detecting.\n\n**Independence.** The one thing large n doesn't fix. If observations within a group are clustered (siblings, repeated measures, students in classrooms), you'd need clustered SEs or a mixed model. If they're genuinely independent draws, no concern.\n\nSo the only real decision is Welch vs Student's, and the answer is Welch. Everything else is fine.",
+      "assertions": [
+        {
+          "text": "Reassures that the t-test is fine / there is little to worry about given n=300 and symmetry",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions Welch as the sensible default and/or that an equal-variance pretest is unnecessary",
+          "type": "scored"
+        },
+        {
+          "text": "Keeps the response brief and proportionate rather than enumerating many diagnostics or alternative methods",
+          "type": "must_pass"
+        },
+        {
+          "text": "Does NOT invoke normality tests as a gate or recommend a nonparametric switch",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 18,
+      "condition": "baseline",
+      "prompt": "I have 500,000 rows. The outcome is a count (number of purchases in a window) and I just want the average difference between two cohorts. Do I have to use a Poisson or negative binomial model, or can I just use OLS / a t-test on the counts?",
+      "response": "With 500k rows, you can almost certainly use OLS or a Welch t-test and be fine. Here's the reasoning:\n\n## Why OLS is defensible\n\n**Point estimate:** OLS estimates E[Y|X] directly \u2014 the same quantity Poisson regression targets when you want an additive difference. The coefficients are the same thing you want.\n\n**Central Limit Theorem:** At N=500k, the sampling distribution of the mean difference is extremely well-approximated by a normal distribution regardless of the underlying count distribution. Your inference is valid.\n\n## The one real concern: heteroscedastic standard errors\n\nCount data almost always has variance that scales with the mean (Poisson: Var = \u03bc; NB: Var > \u03bc). Vanilla OLS standard errors assume homoscedasticity, so they'll be wrong \u2014 but the fix is trivial:\n\n- **t-test:** use Welch's (unequal variances) \u2014 this is the default in most software\n- **OLS regression:** use **HC3 robust standard errors** (`cov_type='HC3'` in statsmodels, `vcov = \"HC3\"` in R's `lm_robust`)\n\nWith robust SEs, OLS gives you valid inference on the mean difference.\n\n## When you'd actually need Poisson/NB\n\n| Situation | Use count model |\n|---|---|\n| Want rate ratios, not differences | Yes \u2014 Poisson gives IRR directly |\n| Very sparse counts (mean < 1, many zeros) | Possibly \u2014 distribution shape matters more |\n| Adding covariates with effect modification | Poisson avoids predicted negatives in margins |\n| Already have Poisson/NB pipeline | Stick with it, no reason to switch |\n\n## Bottom line\n\nFor \"what's the average difference between two cohorts\" with 500k rows: **Welch t-test or OLS with robust SEs is the right call.** It's simpler, faster, and the asymptotics are thoroughly on your side. Poisson/NB would give you essentially identical inference and isn't worth the added complexity unless you need ratio-scale interpretations or have a covariate-adjustment story that benefits from the GLM link function.",
+      "assertions": [
+        {
+          "text": "States that for the difference in mean counts, OLS+robust SEs (or a t-test) is valid here and a GLM is not required for validity",
+          "type": "scored"
+        },
+        {
+          "text": "Attributes that validity to the CLT / large n rather than to the outcome being normal",
+          "type": "scored"
+        },
+        {
+          "text": "Identifies what a Poisson/NB model actually adds: a multiplicative/rate-ratio estimand, in-bounds predictions, and/or efficiency \u2014 not validity",
+          "type": "scored"
+        },
+        {
+          "text": "Notes the choice hinges on the estimand (additive mean difference vs rate ratio) rather than on a rule that counts 'require' a count model",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions that at this very large n the efficiency advantage of the GLM is small",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT assert that count outcomes must be modeled with Poisson/NB",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 6,
+      "total": 6,
+      "pass_rate": 1.0,
+      "eval_passes": true,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 18,
+      "condition": "with_skill",
+      "prompt": "I have 500,000 rows. The outcome is a count (number of purchases in a window) and I just want the average difference between two cohorts. Do I have to use a Poisson or negative binomial model, or can I just use OLS / a t-test on the counts?",
+      "response": "No, you don't need Poisson or negative binomial here. With n = 500,000 and a mean-difference estimand, OLS (or Welch's t-test) is entirely valid.\n\n**Why it's fine.** The t-test and OLS don't assume the *data* are normal \u2014 they assume the *sampling distribution of the mean* is approximately normal. The CLT delivers that, and the Berry-Esseen approximation error shrinks like skewness/\u221an. At \u221a500,000 \u2248 707, even badly skewed count distributions have a negligible approximation error. The CLT has done its work many times over.\n\n**The one thing to fix: standard errors.** Counts have variance that grows with the mean (like Poisson), so the homoskedastic SE assumption is wrong. Use:\n- **Welch's t-test** (handles unequal variances automatically), or\n- **OLS with HC3 robust SEs** (`sandwich` in R, `HC3` in statsmodels).\n\nThe point estimate \u2014 the mean difference \u2014 is unbiased either way. Heteroskedasticity only affects the SE, not the coefficient, and robust SEs fix that.\n\n**What Poisson/NB would actually add** (and why you don't need it):\n- A *multiplicative* estimand (rate ratio) \u2014 not what you want\n- Efficiency gains \u2014 irrelevant when you have 500K rows\n- Better behavior near a boundary \u2014 not a concern at this n\n\nIf you later want \"cohort B purchases 23% more than cohort A\" instead of \"cohort B averages 1.2 more purchases,\" that's when a log-link GLM becomes the right tool \u2014 because you've changed the estimand, not because OLS was invalid.\n\n**Bottom line:** OLS with robust SEs is the right call. Simple, interpretable, valid.",
+      "assertions": [
+        {
+          "text": "States that for the difference in mean counts, OLS+robust SEs (or a t-test) is valid here and a GLM is not required for validity",
+          "type": "scored"
+        },
+        {
+          "text": "Attributes that validity to the CLT / large n rather than to the outcome being normal",
+          "type": "scored"
+        },
+        {
+          "text": "Identifies what a Poisson/NB model actually adds: a multiplicative/rate-ratio estimand, in-bounds predictions, and/or efficiency \u2014 not validity",
+          "type": "scored"
+        },
+        {
+          "text": "Notes the choice hinges on the estimand (additive mean difference vs rate ratio) rather than on a rule that counts 'require' a count model",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions that at this very large n the efficiency advantage of the GLM is small",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT assert that count outcomes must be modeled with Poisson/NB",
           "type": "must_pass"
         }
       ],
@@ -77,23 +312,26 @@
         false,
         false,
         false,
+        false,
         false
       ],
       "passed": 0,
-      "total": 5,
+      "total": 6,
       "pass_rate": 0.0,
       "eval_passes": false,
       "must_pass_failed_indices": [
-        1,
-        4,
-        5
+        6
       ]
     }
   ],
   "summary": {
+    "baseline": {
+      "passed": 19,
+      "total": 20
+    },
     "with_skill": {
-      "passed": 0,
-      "total": 10
+      "passed": 14,
+      "total": 20
     }
   }
 }

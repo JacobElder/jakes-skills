@@ -1,0 +1,45 @@
+{
+  "eval_id": 18,
+  "condition": "baseline",
+  "prompt": "I have 500,000 rows. The outcome is a count (number of purchases in a window) and I just want the average difference between two cohorts. Do I have to use a Poisson or negative binomial model, or can I just use OLS / a t-test on the counts?",
+  "response": "With 500k rows, you can almost certainly use OLS or a Welch t-test and be fine. Here's the reasoning:\n\n## Why OLS is defensible\n\n**Point estimate:** OLS estimates E[Y|X] directly \u2014 the same quantity Poisson regression targets when you want an additive difference. The coefficients are the same thing you want.\n\n**Central Limit Theorem:** At N=500k, the sampling distribution of the mean difference is extremely well-approximated by a normal distribution regardless of the underlying count distribution. Your inference is valid.\n\n## The one real concern: heteroscedastic standard errors\n\nCount data almost always has variance that scales with the mean (Poisson: Var = \u03bc; NB: Var > \u03bc). Vanilla OLS standard errors assume homoscedasticity, so they'll be wrong \u2014 but the fix is trivial:\n\n- **t-test:** use Welch's (unequal variances) \u2014 this is the default in most software\n- **OLS regression:** use **HC3 robust standard errors** (`cov_type='HC3'` in statsmodels, `vcov = \"HC3\"` in R's `lm_robust`)\n\nWith robust SEs, OLS gives you valid inference on the mean difference.\n\n## When you'd actually need Poisson/NB\n\n| Situation | Use count model |\n|---|---|\n| Want rate ratios, not differences | Yes \u2014 Poisson gives IRR directly |\n| Very sparse counts (mean < 1, many zeros) | Possibly \u2014 distribution shape matters more |\n| Adding covariates with effect modification | Poisson avoids predicted negatives in margins |\n| Already have Poisson/NB pipeline | Stick with it, no reason to switch |\n\n## Bottom line\n\nFor \"what's the average difference between two cohorts\" with 500k rows: **Welch t-test or OLS with robust SEs is the right call.** It's simpler, faster, and the asymptotics are thoroughly on your side. Poisson/NB would give you essentially identical inference and isn't worth the added complexity unless you need ratio-scale interpretations or have a covariate-adjustment story that benefits from the GLM link function.",
+  "assertions": [
+    {
+      "text": "States that for the difference in mean counts, OLS+robust SEs (or a t-test) is valid here and a GLM is not required for validity",
+      "type": "scored"
+    },
+    {
+      "text": "Attributes that validity to the CLT / large n rather than to the outcome being normal",
+      "type": "scored"
+    },
+    {
+      "text": "Identifies what a Poisson/NB model actually adds: a multiplicative/rate-ratio estimand, in-bounds predictions, and/or efficiency \u2014 not validity",
+      "type": "scored"
+    },
+    {
+      "text": "Notes the choice hinges on the estimand (additive mean difference vs rate ratio) rather than on a rule that counts 'require' a count model",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions that at this very large n the efficiency advantage of the GLM is small",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT assert that count outcomes must be modeled with Poisson/NB",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 6,
+  "total": 6,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

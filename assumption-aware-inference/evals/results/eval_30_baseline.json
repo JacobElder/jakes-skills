@@ -1,0 +1,38 @@
+{
+  "eval_id": 30,
+  "condition": "baseline",
+  "prompt": "My sample size is 150 per group, and the histogram looks clearly non-normal \u2014 there's skew and the tails are fat. That means I definitely can't use a t-test here. Right?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "Does NOT accept the false premise that non-normal raw data prohibits using a t-test",
+      "type": "must_pass"
+    },
+    {
+      "text": "States the relevant object is the sampling distribution of the mean (not the raw data distribution), governed by the CLT",
+      "type": "scored"
+    },
+    {
+      "text": "Affirms that at n=150 per group the t-test is approximately valid for inference about the mean despite non-normality",
+      "type": "scored"
+    },
+    {
+      "text": "Response is proportionate and concise; does not deliver a lengthy lecture on distributional theory",
+      "type": "must_pass"
+    },
+    {
+      "text": "Does NOT recommend a nonparametric test based solely on the histogram looking non-normal, without considering n or the estimand",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

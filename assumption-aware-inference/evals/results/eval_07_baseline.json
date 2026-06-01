@@ -2,7 +2,7 @@
   "eval_id": 7,
   "condition": "baseline",
   "prompt": "My logistic regression has one coefficient that came back as 14.2 with a standard error of 3400. What's going on and how do I fix it?",
-  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "response": "This is **complete separation** (or quasi-complete separation). It means one of your predictor variables perfectly (or near-perfectly) predicts the outcome \u2014 every time that variable exceeds some threshold, the outcome is always 0 or always 1. Logistic regression has no finite MLE in that case, so the optimizer chases the coefficient toward infinity while the standard error explodes alongside it.\n\n**How to confirm it**\n\nCross-tab the suspicious variable against your outcome:\n```python\npd.crosstab(df['your_predictor'], df['outcome'])\n```\nLook for rows that are entirely 0s or entirely 1s on one side.\n\n**How to fix it**\n\nThere are three main options depending on your goal:\n\n1. **Firth logistic regression** (best default fix) \u2014 penalized likelihood that pulls extreme coefficients toward zero. Works well with small samples or rare events.\n   ```python\n   # pip install logistf (Python wrapper)\n   import statsmodels.formula.api as smf\n   # or use the R-style Firth via pylogit / logistf binding\n   ```\n   In R: `logistf::logistf(y ~ x, data = df)`\n\n2. **Ridge / L2 penalization** \u2014 adds a penalty that regularizes all coefficients, including the runaway one.\n   ```python\n   from sklearn.linear_model import LogisticRegression\n   LogisticRegression(penalty='l2', C=1.0)  # lower C = stronger regularization\n   ```\n\n3. **Drop or bin the variable** \u2014 if the variable is a proxy for the outcome (e.g., a post-treatment measure), removing it is often the right conceptual fix. If it's a continuous variable with a step-function relationship, binning it may resolve the separation.\n\n**Firth is usually the right call** for inferential work where you want interpretable coefficients and confidence intervals. Ridge is fine if prediction is the goal. Dropping the variable is correct if it shouldn't be in the model in the first place.",
   "assertions": [
     {
       "text": "Diagnoses (quasi-)complete separation as the cause of the huge coefficient and enormous SE",
@@ -26,13 +26,13 @@
     }
   ],
   "assertion_results": [
-    false,
-    false,
-    false,
-    false,
-    false
+    true,
+    true,
+    true,
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.0
+  "pass_rate": 1.0
 }

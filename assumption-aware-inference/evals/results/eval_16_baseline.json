@@ -1,0 +1,38 @@
+{
+  "eval_id": 16,
+  "condition": "baseline",
+  "prompt": "We ran a clean randomized experiment, ~6,000 users per arm, comparing average session length (in minutes). The distribution is a bit right-skewed. I just want to know if the new design increased average session length. Is a t-test fine or do I need something fancier?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "Says a (Welch) t-test / difference in means is fine here without hedging",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that randomization makes the simple difference in means the unbiased causal effect",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that the large per-arm n handles the mild skew via the CLT",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT recommend a transformation, GLM, or nonparametric test for this case",
+      "type": "must_pass"
+    },
+    {
+      "text": "Does NOT manufacture unnecessary estimand or robustness caveats; the response is proportionate and largely affirming",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

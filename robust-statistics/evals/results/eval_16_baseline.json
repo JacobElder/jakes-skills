@@ -1,0 +1,40 @@
+{
+  "eval_id": 16,
+  "condition": "baseline",
+  "prompt": "We ran a clean randomized experiment, ~6,000 users per arm, comparing average session length (in minutes). The distribution is a bit right-skewed. I just want to know if the new design increased average session length. Is a t-test fine or do I need something fancier?",
+  "response": "With 6,000 users per arm, a t-test is fine. The Central Limit Theorem kicks in well before that sample size \u2014 the sampling distribution of the mean is essentially normal regardless of how skewed the raw session times are. \"A bit right-skewed\" isn't a concern here; you'd need extreme pathological tails (e.g., a small number of users with astronomically long sessions) to cause problems, and even then you'd likely notice it rather than be silently misled.\n\nTwo small recommendations:\n\n1. **Use Welch's t-test** (unequal variances) rather than Student's. The treatment arm may have a different variance if the new design changes engagement patterns \u2014 Welch handles that without penalty when variances happen to be equal.\n\n2. **Eyeball your outliers first.** If you have bot traffic or a handful of sessions in the thousands of minutes, winsorizing or excluding them is worth considering \u2014 not because the t-test breaks, but because those sessions may not represent real user behavior you care about.\n\nIf you wanted to go fancier, a Mann-Whitney U test would give you a valid nonparametric comparison, but it tests stochastic dominance (roughly: \"is one distribution shifted up?\"), not the mean specifically. Since you said you care about average session length, the t-test is actually the right tool.\n\nBottom line: Welch t-test, one-sided, done.",
+  "assertions": [
+    {
+      "text": "Says a (Welch) t-test / difference in means is fine here without hedging",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that randomization makes the simple difference in means the unbiased causal effect",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that the large per-arm n handles the mild skew via the CLT",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT recommend a transformation, GLM, or nonparametric test for this case",
+      "type": "must_pass"
+    },
+    {
+      "text": "Does NOT manufacture unnecessary estimand or robustness caveats; the response is proportionate and largely affirming",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

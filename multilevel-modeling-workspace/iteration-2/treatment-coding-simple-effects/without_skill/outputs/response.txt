@@ -1,0 +1,45 @@
+This interpretation has two problems — one about what the coefficient actually estimates, and one about the interaction.
+
+## Problem 1: Treatment coding ≠ "average" effect
+
+With **treatment (dummy) coding**, the coefficient for A is **not** the effect averaged across levels of B. It is the **conditional simple effect of A when B is at its reference level (B = low/0)**.
+
+Your model is:
+
+```
+Y = β₀ + β_A·A + β_B·B + β_AB·A×B
+```
+
+So the effect of A **depends on B**:
+
+| When B = ... | Effect of A |
+|---|---|
+| Low (0) | β_A = **0.45** |
+| High (1) | β_A + β_AB = 0.45 + 0.55 = **1.00** |
+| Average across B | (0.45 + 1.00) / 2 = **0.725** |
+
+The coefficient 0.45 is the effect of A **only in the low-B condition**, not on average. The average effect of A is actually ~0.725.
+
+> **Correct language:** "The effect of condition A was significant when condition B was at its low level (β = 0.45, p = .02)."
+
+If you want the coefficient to represent the average effect of A, switch to **effects coding** (±0.5 or ±1), where the main effect term is estimated at the grand mean of B.
+
+---
+
+## Problem 2: You have a significant interaction — the main effect of A isn't a single story
+
+Even setting aside the coding issue, **a significant interaction (β = 0.55, p = .01) means the effect of A is not constant across levels of B**. In that case, reporting a single "main effect of A" — however you compute it — is often misleading. Readers will wonder: significant where? At low B, high B, or both?
+
+The more informative write-up probes the interaction directly:
+
+> "The effect of condition A was significant at low levels of B (β = 0.45, p = .02) and larger still at high levels of B (β = 1.00). This was reflected in a significant A×B interaction (β = 0.55, p = .01)."
+
+---
+
+## Summary
+
+| Claim | Correct? |
+|---|---|
+| β_A = 0.45 is the average effect of A | ❌ — it's the effect of A at B = low only |
+| β_A is significant "on average" | ❌ — needs effects coding + no interaction |
+| The effect of A differs by level of B | ✅ — that's exactly what the significant interaction says |

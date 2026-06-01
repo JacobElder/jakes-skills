@@ -23,7 +23,7 @@
         "Output does NOT simply accept the simplified model and move to write-up guidance",
         "Output raises that dropping random slopes to fix convergence risks under-specifying the model and inflating Type I error",
         "Output names at least one upstream fix that should be tried before dropping slopes — predictor scaling, sum coding, allFit() / alternative optimizers, or dropping correlation parameters with || before dropping slopes",
-        "Output recommends running VarCorr() or rePCA() to diagnose which component caused the singularity, rather than simplifying by trial and error",
+        "Output recommends inspecting the random-effects variance components to diagnose which component is at the boundary — e.g. VarCorr(), summary()$varcor, rePCA(), or equivalent — rather than simplifying by trial and error",
         "Output notes that the condition slope is missing from a within-subjects design and this is the most consequential omission — not just a minor simplification"
       ]
     },

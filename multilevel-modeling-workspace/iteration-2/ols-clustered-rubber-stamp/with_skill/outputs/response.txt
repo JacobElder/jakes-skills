@@ -1,0 +1,72 @@
+Before we write anything up, I need to flag a serious methodological problem with this analysis — one that makes the current results unpublishable as-is and potentially invalid.
+
+## The core issue: `lm()` treats 5,000 trials as 5,000 independent observations
+
+They are not. You have **100 participants × 50 trials**. Trials from the same person share variance — a participant who is generally more accurate will be accurate across all their trials. `lm()` has no way to know this, so it:
+
+1. **Massively underestimates standard errors** by inflating the effective N from ~100 to 5,000
+2. **Uses ~4,900 extra degrees of freedom that don't exist**, making everything look far more significant than it is
+3. **Produces a p-value for the interaction that is anti-conservative by a large factor** — your p = 0.008 may easily be a false positive
+
+The "N = 5,000 gives us a lot of power" intuition is exactly backwards here. For a fixed effect involving `age` (a between-person variable), your inferential leverage comes from the **100 participants**, not the 5,000 trials. The extra trials help estimate within-person patterns but don't add independent data points for the condition × age interaction.
+
+This is the single most common error in cognitive/behavioral data analysis, and journals and reviewers will catch it.
+
+---
+
+## What I need to know before recommending the right model
+
+**1. Is `condition` within-subjects or between-subjects?**
+- *Within*: each participant sees both conditions across their 50 trials → you need a random slope for condition by participant
+- *Between*: each participant is assigned to one condition → condition is a level-2 (participant-level) variable
+
+**2. What is `accuracy`?**
+- Binary (0/1 correct per trial) → `glmer(..., family = binomial)` is required; `lm()` is also wrong on this dimension
+- Continuous (proportion, RT, d′) → `lmer()` is appropriate
+
+**3. Is `age` continuous, measured once per participant?**
+- Assuming yes — this means age is a pure level-2 predictor, and `condition × age` is a **cross-level interaction**
+
+---
+
+## The correct model skeleton (pending your answers)
+
+If condition is **within-subjects** and accuracy is **binary**:
+
+```r
+library(lme4)
+
+m <- glmer(
+  accuracy ~ condition * age + (1 + condition | participant_id),
+  data   = d,
+  family = binomial,
+  control = glmerControl(optimizer = "bobyqa")
+)
+```
+
+If condition is **between-subjects** and accuracy is **binary**:
+
+```r
+m <- glmer(
+  accuracy ~ condition * age + (1 | participant_id),
+  data   = d,
+  family = binomial
+)
+```
+
+Swap `glmer`/`binomial` for `lmer` if accuracy is continuous.
+
+---
+
+## Why this matters for your specific claim
+
+The interaction `condition × age` — that's what you're excited about. With `lm()`, your SE for that interaction coefficient is computed as if you have 5,000 independent people of varying ages. You don't. You have 100. The SE is almost certainly far too small, and the p-value far too small.
+
+Refit the correct model and the interaction may:
+- Remain significant (great — now it's defensible)
+- Widen substantially in its CI (still possibly reportable with appropriate caution)
+- Become non-significant (better to know now than in peer review)
+
+---
+
+Once you share the answers to the three questions above and refit the model, I'll help you write a complete method and results section — model equation, random-effects structure justification, variance components, ICC, fixed-effect table, and interpretation of the interaction.

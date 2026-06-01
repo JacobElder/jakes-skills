@@ -1,0 +1,38 @@
+{
+  "eval_id": 28,
+  "condition": "with_skill",
+  "prompt": "I have a randomized experiment comparing two groups, but the outcome has a weird, heavy-tailed distribution. Someone suggests a permutation test because it's 'assumption-free.' Is that right, and what exactly does a permutation test test?",
+  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "assertions": [
+    {
+      "text": "States that exchangeability (from the randomization) is the key assumption justifying the permutation test, not that it is entirely assumption-free",
+      "type": "scored"
+    },
+    {
+      "text": "States that the null being tested is the sharp null (no effect for any unit), which is stronger than equality of means",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that distributional assumptions (normality, etc.) are not needed and exact Type I error control holds in finite samples",
+      "type": "scored"
+    },
+    {
+      "text": "Notes at least one limitation or nuance: e.g. sensitivity to variance differences under heterogeneous effects, or the sharp vs composite null distinction",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT claim the permutation test is entirely assumption-free",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0
+}

@@ -42,6 +42,8 @@ For the full advanced treatment (design efficiency, sparse design math, anchorin
 
 Default to reading the reference file whenever a MaxDiff question goes beyond "should I use MaxDiff."
 
+**Anchoring trigger**: whenever the user mentions "importance," "which features actually matter," "absolute," "genuinely valuable," or asks whether items are *actually* important vs. merely *relatively* preferred — confirm anchoring is in the plan before going further. Unanchored MaxDiff cannot support absolute claims, and most stakeholder requests for "importance" are implicitly asking for something anchoring is required to answer.
+
 ---
 
 ## Conjoint analysis — advanced topics
@@ -98,7 +100,7 @@ Then derive from there. See the references for the underlying math.
 - ≤ 15: comfortable for full design (every respondent sees every item ~3–5 times)
 - 16–30: full design still feasible; respondent burden becomes the constraint, not statistical
 - 31–60: **sparse MaxDiff territory**. Each respondent sees a subset (typically 3–5 showings/item per respondent, designed so the *aggregate* design is balanced)
-- 61–150: sparse MaxDiff or Bandit MaxDiff; individual-level utilities degrade — plan for aggregate or segment-level readout, not individual scores
+- 61–150: sparse MaxDiff or Bandit MaxDiff; **individual-level utilities degrade — this must be stated explicitly when k is in this range.** Each respondent sees only a fraction of the item pool, so their personal utility estimates are partially imputed from the population prior. Plan for aggregate or segment-level readout as the primary deliverable. Do not present individual-level HB scores as reliable without explicitly noting this limitation.
 - 150+: rethink the list. You're probably conflating multiple constructs. Cluster items first, then MaxDiff the clusters, then MaxDiff within clusters in a follow-up.
 
 **CBC attributes:**
@@ -127,15 +129,23 @@ For uncertainty visualization specifically: prefer overlapping CI bars or gradie
 
 **"Can you analyze this MaxDiff data?"** → Confirm: was it run with anchoring? If not, the utilities are relative-only and you cannot say "X is important in absolute terms" — only "X is more important than Y." Push back if the deck claims absolute importance from unanchored scores.
 
-**"We want to test 80 messages"** → Sparse MaxDiff, not full. Walk through showings-per-item math. Warn that with 80 items, individual-level readout is weak — set expectations for aggregate or segment-level results.
+**"We want to test 80 messages"** (or any k > 60 MaxDiff) → Sparse MaxDiff, not full. Walk through showings-per-item math. **Explicitly state that individual-level utilities degrade at this item count** — each respondent sees only a fraction of items, so personal utility estimates are partially imputed from the population prior. Set expectations for aggregate or segment-level readout as the primary deliverable before discussing design parameters.
 
-**"How many respondents for a CBC?"** → Ask the subgroup question first. Then derive from required precision on the decision being made.
+**"How many respondents for a CBC?"** → Ask the subgroup question first. Then derive from required precision on the decision being made. Do not cite Sawtooth's n ≥ 300 floor — it is a floor of the industry, not a target for your study.
 
 **"The HB utilities look weird"** → Almost always one of: (1) insufficient burn-in / iterations, (2) prohibitions that effectively created an unidentified design, (3) one attribute is causing reversal in a non-trivial fraction of respondents (and HB shrinkage is hiding it at the aggregate level), or (4) bad respondents weren't filtered. Check each.
 
 **"Should we use ACBC instead of CBC?"** → Default no unless the product has many attributes (≥8) and a complex pricing structure. ACBC adds complexity and respondent fatigue; the gains are real but situation-dependent. See the references.
 
 **"Can we use MaxDiff for pricing?"** → Almost never directly. MaxDiff on price points gives a relative preference among prices, which is not the same as willingness to pay or demand curve. Use CBC with price as an attribute, or Van Westendorp / Gabor-Granger for pure pricing.
+
+**"Should I use prohibitions to block unrealistic combinations in my CBC?"** → Almost always no. Prohibitions reduce D-efficiency and can create unidentified designs — the cost is usually worse than the benefit of excluding a few unrealistic profiles. The right fix is alternative-specific attributes (e.g., premium brand only gets premium price levels by design structure, not exclusion) or conditional pricing logic. If prohibitions are unavoidable, check relative D-efficiency before fielding; below ~85% is a warning sign. See `references/conjoint.md`.
+
+**"Can we compare our MaxDiff results to last year's wave / a competitor study?"** → Only if both studies were anchored. Raw utilities from different MaxDiff studies are not comparable — different item sets produce different normalizations. Anchored share-above-anchor is the only valid cross-wave metric. If the prior wave was unanchored, there is no reliable way to compare; re-fielding with anchoring is the correct answer.
+
+**"Should I include a None option in my CBC?"** → Default: dual-response None, not explicit None and not no None. Explicit None conflates "wouldn't choose any of these" with "would choose none of these in real life," and omitting None entirely inflates simulated shares. Dual-response None (choose best option, then confirm whether you'd actually buy it) is the cleanest separation of relative preference from purchase likelihood. Exceptions: use explicit None when the category has genuine no-purchase behavior and respondents understand it; omit when the task is specifically a forced-choice competitive simulation.
+
+**"My simulator shows X% share but our actual share is Y%."** → Expected. Share-of-preference simulators use softmax over utilities — they produce relative shares assuming no awareness, distribution, or brand-equity gaps. To calibrate: (1) adjust the None rate to match observed category penetration, (2) apply an exponent (IIA exponent) to sharpen or flatten the choice curve, (3) adjust availability weights if your product has different distribution than competitors. Do not calibrate by changing the utilities — that destroys the measurement.
 
 ---
 

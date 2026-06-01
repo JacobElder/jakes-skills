@@ -1,0 +1,46 @@
+The math is right — exp(1.2) = 3.32 ✓ — but the write-up has a subtle, consequential error in how it frames the estimate.
+
+---
+
+## The Problem: Conditional vs. Marginal OR
+
+In a logistic GLMM, fixed-effect coefficients are **conditional** (cluster-specific) estimates, not **marginal** (population-average) estimates. The phrase **"In the population"** signals a marginal interpretation — which is *not* what your β gives you.
+
+### Why they differ in logistic models
+
+In a linear mixed model, conditional and marginal effects are numerically equal (linearity lets you "average through" the random effects). In a **nonlinear** model like logistic regression, Jensen's inequality breaks that equivalence. The conditional OR from a GLMM is always more extreme (further from 1) than the true marginal OR. The two converge only when the random-effect variance → 0 (i.e., when nesting doesn't matter).
+
+With 40 clinics, your clinic-level variance is almost certainly non-trivial — so the gap is real.
+
+---
+
+## What Your β = 1.2 Actually Means
+
+> For a **patient in a given clinic** (holding that clinic's random effect constant at its average, u = 0), the intervention multiplies the odds of adherence by 3.32 compared to a control patient **in the same clinic**.
+
+This is a **within-clinic, clinic-average** estimate. It's not "across the population of all patients."
+
+---
+
+## Corrected Write-Up Options
+
+**Option A — Conditional framing (correct for GLMM):**
+> "Within a given clinic, patients who received the intervention had 3.32 times the odds of adhering compared to control patients in the same clinic (β = 1.2, OR = 3.32)."
+
+**Option B — If you want a population-average statement:**
+You need to marginalize over the random-effect distribution — either refit with GEE, or compute marginal predictions by integrating out the clinic-level random effects (e.g., `margins` in Stata, `emmeans` or manual integration in R). The resulting marginal OR will be **attenuated toward 1** relative to 3.32.
+
+---
+
+## Quick Decision Rule
+
+| Goal | Method | Estimate type |
+|---|---|---|
+| Effect *within* a typical clinic | GLMM fixed effect | Conditional OR |
+| Average effect *across* the population | GEE or marginalized GLMM | Marginal OR |
+
+---
+
+## Bottom Line
+
+Your write-up as drafted overstates the scope of the claim. Change **"In the population"** to a clinic-conditional framing (Option A), or go back and compute the marginal OR if population-average language is what the paper needs. Don't report the GLMM conditional OR with marginal language — reviewers familiar with mixed models will flag it.

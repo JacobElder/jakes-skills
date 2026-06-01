@@ -2,7 +2,7 @@
   "eval_id": 10,
   "condition": "baseline",
   "prompt": "Should I model my outcome (proportion of a budget spent on category X, between 0 and 1) with logistic regression?",
-  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
   "assertions": [
     {
       "text": "Distinguishes a continuous proportion in (0,1) from a count of successes out of trials",

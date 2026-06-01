@@ -37,6 +37,8 @@ Resample the data (with replacement) to approximate the sampling distribution of
 
 The bootstrap approximates the sampling distribution; it does not manufacture information the data don't contain, and it inherits any bias in the estimator being bootstrapped.
 
+**Bootstrap inconsistency for extreme order statistics.** The standard nonparametric bootstrap is provably *inconsistent* for the sample maximum (and other extreme order statistics). The maximum is the largest observed value; each bootstrap resample contains the original maximum with probability 1 − (1 − 1/n)ⁿ ≈ 1 − 1/e ≈ 63%, so the bootstrap distribution of the maximum is a discrete spike at the observed maximum with mass ~63%, not a smooth approximation to the sampling distribution. The bootstrap CI for the maximum is not valid and will undercover badly. This is not a finite-sample problem that resolves at large n; it is a fundamental non-regularity. The correct approach is **extreme value theory (EVT)**: fit a generalized extreme value (GEV) distribution or use peaks-over-threshold (POT / generalized Pareto) to characterize the tail and obtain a confidence interval for extreme quantiles. With small n and heavy tails, even EVT assumptions are fragile and estimates should be reported with wide uncertainty.
+
 ## Permutation / randomization tests
 
 Permute the treatment labels to build the exact null distribution of the test statistic under the **sharp null of no effect for any unit**. In a randomized experiment this is the inference that most directly mirrors the design: the randomization itself justifies the test, with no distributional assumption. Strengths: exact level in finite samples, no normality needed, applies to arbitrary test statistics. Things to keep straight:
