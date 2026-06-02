@@ -2,7 +2,7 @@
   "eval_id": 6,
   "condition": "baseline",
   "prompt": "I want to report the difference in median household income between two neighborhoods. A colleague says just use a t-test. Is that right?",
-  "response": "No \u2014 a t-test is the wrong tool here, for two reasons:\n\n**1. It tests the mean, not the median.**\nA t-test asks whether the *means* of two groups differ. If you're reporting medians, you need a test that targets medians. These can give conflicting answers with skewed distributions, which is exactly what income data is.\n\n**2. Income is right-skewed.**\nHigh earners pull the mean up while the median is unaffected. The t-test's normality assumption is violated, and even if CLT saves you asymptotically, you'd still be testing the wrong quantity.\n\n**Better options, in order of directness:**\n\n| Method | When to use |\n|---|---|\n| **Mann-Whitney U (Wilcoxon rank-sum)** | Individual household records; tests whether one distribution is stochastically shifted above the other |\n| **Bootstrap CI on the difference in medians** | Any sample size; directly targets the quantity you're reporting |\n| **Permutation test on median difference** | Same as bootstrap; exact test on the statistic you care about |\n| **Quantile regression** | If you want to condition on covariates or test multiple quantiles |\n\n**One important caveat**: if your data is *published census summaries* (i.e., you only have the single median figure for each neighborhood, not individual households), you don't have a sample \u2014 you have a population statistic. No inferential test applies without additional assumptions or data.\n\nBottom line: bootstrap CI on the difference in medians is usually the cleanest choice for individual-level income data, and directly answers \"how different are the medians and how uncertain is that estimate?\"",
+  "response": "No \u2014 a t-test is the wrong tool here for two reasons:\n\n**1. It tests means, not medians.**\nA t-test answers \"do the group means differ?\" You said you want to report on *medians*. Income is right-skewed, so the mean and median can diverge substantially; a significant t-test result says nothing about whether the medians differ.\n\n**2. Income violates the normality assumption.**\nThe t-test assumes the outcome is roughly normally distributed (or that samples are large enough for CLT to apply to the mean). Household income has a long right tail and often extreme outliers \u2014 conditions where the mean is unstable and a t-test can mislead.\n\n**Better options, depending on your goal:**\n\n| Goal | Test |\n|---|---|\n| Test whether one neighborhood tends toward higher incomes overall | Mann-Whitney U (Wilcoxon rank-sum) \u2014 nonparametric, no normality assumption |\n| Test equality of the medians directly | Mood's median test |\n| Quantify and test the difference in medians with uncertainty | Bootstrap confidence interval on the median difference |\n\nThe Mann-Whitney U is the most common choice for income comparisons. It's worth noting it technically tests whether one distribution is stochastically larger than the other, not strictly \"are the medians equal\" \u2014 but for reporting purposes, if you report the medians alongside the p-value, that's well understood.\n\nIf your neighborhoods are large census tracts and you have hundreds of households, the t-test on means would at least be technically valid for means \u2014 but if you said \"median\" in your report, that's the quantity you need to test.",
   "assertions": [
     {
       "text": "Identifies that the question is about the median (the estimand) while a t-test targets the mean",
@@ -27,9 +27,9 @@
   ],
   "assertion_results": [
     true,
-    true,
-    true,
     false,
+    true,
+    true,
     true
   ],
   "passed": 4,

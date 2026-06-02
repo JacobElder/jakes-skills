@@ -2,7 +2,7 @@
   "eval_id": 6,
   "condition": "with_skill",
   "prompt": "I want to report the difference in median household income between two neighborhoods. A colleague says just use a t-test. Is that right?",
-  "response": "The colleague's suggestion isn't wrong because income violates normality \u2014 it's wrong because **the t-test estimates the difference in means, not medians**. Those are different estimands, and for income they can diverge substantially: a neighborhood with a few ultra-high earners will have a mean far above its median.\n\nIf you want the difference in medians, target it directly:\n\n- **If this is descriptive** (you have everyone in both neighborhoods, e.g. census data): just subtract the two sample medians and report them. No inference needed.\n- **If you need a confidence interval** (sample data, want to generalize): use **quantile regression** at \u03c4 = 0.5. It gives a coefficient for the median difference with proper SEs. In R: `quantreg::rq(income ~ neighborhood, tau = 0.5)`. Bootstrap CIs are also fine here.\n- **Avoid the Hodges\u2013Lehmann estimator** unless you can defend a pure location-shift model (same income distribution shape, just shifted) \u2014 that assumption is almost certainly wrong across two real neighborhoods with different variance and skew.\n\nWhat not to do: report a t-test result and call it a median comparison, or log-transform income and back-transform the mean (that gives the geometric mean, not the arithmetic mean or the median).\n\nThe short answer: your colleague's suggestion is wrong not because of distributional assumptions but because it answers a different question than the one you're asking.",
+  "response": "The t-test isn't wrong exactly \u2014 it's the wrong tool for *this* estimand. That's the problem, not an assumption failure.\n\n**The estimand mismatch.** A t-test estimates the difference in **means**. You said you want the difference in **medians**. For income, those can tell very different stories: a few high earners pull the mean up without moving the median much. If median is the quantity you care about \u2014 and for income it usually is \u2014 the t-test gives you a precise answer to the wrong question regardless of n.\n\n**What to do instead.**\n\n- **Just report the sample medians and their difference.** If you have all (or nearly all) households in each neighborhood, that's it \u2014 there's no inference needed, it's a description.\n- **If you have a sample and want a confidence interval** for the median difference: use **quantile regression at \u03c4 = 0.5** with bootstrap SEs. This directly targets the median contrast with no distributional assumptions.\n- **Don't use Mann-Whitney** as a substitute \u2014 it tests stochastic ordering (P(X > Y) = \u00bd), not the difference in medians, unless income in the two neighborhoods has the same shape shifted by a constant, which is unlikely.\n\n**When the t-test *would* be fine.** If your colleague is okay reporting mean income and you're both happy with that estimand, the t-test (Welch's, to handle unequal variances) is defensible at adequate n even given income's skew \u2014 the CLT makes inference on the mean valid. But that requires calling it a mean comparison, not a median comparison.\n\n**Bottom line:** call the estimand explicitly. Do you want mean income (t-test is fine) or median income (quantile regression / report the medians directly)? For household income, median is almost always the more meaningful and honest summary \u2014 so your instinct to report the median is good; you just need the right method to go with it.",
   "assertions": [
     {
       "text": "Identifies that the question is about the median (the estimand) while a t-test targets the mean",
@@ -29,10 +29,10 @@
     true,
     true,
     true,
-    false,
+    true,
     true
   ],
-  "passed": 4,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.8
+  "pass_rate": 1.0
 }

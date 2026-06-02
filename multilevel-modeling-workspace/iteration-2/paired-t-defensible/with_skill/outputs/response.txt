@@ -1,0 +1,51 @@
+Your collaborator is wrong for this specific design. Here's the precise reasoning.
+
+## Your design calls for a paired t-test
+
+You have exactly the scenario the paired t-test was designed for:
+
+- One grouping factor (participant) with one observation per cell
+- 2 conditions (within-subjects)
+- Complete, balanced data
+
+The paired t-test is not a naive or unsophisticated choice here — it is **the correct classical procedure**, and critically:
+
+## The "right" MLM is mathematically identical to the paired t-test
+
+For your design, the appropriate MLM would be:
+
+```r
+lmer(score ~ condition + (1 | participant), REML = TRUE)
+```
+
+For balanced, complete within-subjects data with 2 conditions, this model produces **the same point estimate, standard error, and test statistic** as the paired t-test. They are the same analysis expressed in different notation.
+
+## You also cannot improve on the paired t-test by adding random slopes
+
+Following the maximal-random-effects principle (Barr et al., 2013), you'd want to ask: *does condition vary within participant?* Yes — so shouldn't there be a random slope for condition by participant?
+
+The answer is that with only **2 observations per participant**, a random intercept + random slope for condition perfectly saturates the within-person data. There is no residual variance left to estimate. `lmer` will return a singular fit warning and the model will be unidentifiable. This is one of the rare cases where the maximal model is literally not estimable from the data structure, and the paired t-test (= random-intercept-only MLM) is the correct and complete model.
+
+## When your collaborator's intuition *would* be right
+
+The "use MLM or reviewers will reject it" concern is valid in designs like:
+
+| Design feature | Paired t-test breaks down | MLM needed |
+|---|---|---|
+| >2 time points or conditions | ✓ | ✓ |
+| Missing data (MCAR is implausible) | ✓ | ✓ |
+| Items are also sampled (crossed with participants) | ✓ | ✓ |
+| You want to model growth trajectories | ✓ | ✓ |
+| Covariates at participant level | Awkward | ✓ |
+
+None of those apply to your clean 2-condition within-subjects dataset.
+
+## What to say if a reviewer pushes back anyway
+
+You can write this in your methods section and no informed reviewer can object:
+
+> "Conditions were compared using a paired *t*-test, which is algebraically equivalent to a linear mixed-effects model with a random intercept for participant — the maximal identifiable random-effects structure for a two-condition within-subjects design with one observation per cell."
+
+## Bottom line
+
+Stick with the paired t-test. It's correct, it's equivalent to the best-specified MLM for your design, it's simpler to report, and it's easier for readers to interpret. Switching to MLM doesn't protect you from anything — it just adds notation without changing the inference.

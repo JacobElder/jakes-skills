@@ -1,0 +1,40 @@
+{
+  "eval_id": 25,
+  "condition": "baseline",
+  "prompt": "I had 15 candidate predictors. I ran backward stepwise selection (dropping variables by p-value > 0.10) and ended up with 6 in the final model. I'm now reporting the coefficients and p-values from that final model. Is this a valid inference procedure?",
+  "response": "No \u2014 this is a classic **post-selection inference** problem, and the reported p-values and coefficients from the final model are invalid in several compounding ways.\n\n## What goes wrong\n\n**1. P-values are anti-conservative (too small)**\nStepwise selection is an implicit multiple testing procedure. You tested all 15 predictors across multiple model configurations to find the 6 that \"survived.\" The p-values in the final model treat those 6 as if they were pre-specified, which they weren't. The nominal \u03b1 = 0.05 threshold in the final model no longer corresponds to a 5% false positive rate \u2014 it's much higher.\n\nAs a rough intuition: with 15 truly null predictors and p > 0.10 as the removal threshold, you'd expect ~1\u20132 false positives to survive selection by chance alone.\n\n**2. Coefficients are inflated (winner's curse)**\nStepwise selection preferentially retains predictors whose sample coefficients happened to be large. The surviving estimates are biased away from zero \u2014 they won the selection tournament partly by being large, and that sample-specific inflation doesn't reflect the true population effect.\n\n**3. Standard errors are too small**\nThe SEs in the final model condition on the selected set being fixed. They don't account for the variance introduced by the search process itself.\n\n## How to fix it\n\n| Approach | When to use |\n|---|---|\n| **Data splitting** | Use one half to select the model, report inference from the other half. Simple and valid. |\n| **Selective inference** (PoSI) | Adjust for the selection step using the `selectiveInference` R package (Lee et al. 2016). Gives valid CIs/p-values post-selection. |\n| **Lasso + post-selection inference** | Replace stepwise with lasso; apply debiased lasso or sample splitting for inference. |\n| **Pre-specify the model** | If theory supports a smaller set, specify it before seeing data and don't run selection at all. |\n| **Frame it as exploratory** | If confirmatory inference isn't the goal, report the analysis honestly as hypothesis-generating, not hypothesis-confirming. |\n\n## Bottom line\n\nStepwise selection followed by standard inference from the selected model is widely used but widely criticized \u2014 Harrell, Gelman, and others have written extensively against it. The p-values cannot be interpreted at face value. The appropriate fix depends on whether you want confirmatory inference (use data splitting or selective inference) or are comfortable calling this exploratory (report it as such, explicitly).",
+  "assertions": [
+    {
+      "text": "States that reporting p-values from a model selected by the same data is invalid / anti-conservative (post-selection inference problem)",
+      "type": "must_pass"
+    },
+    {
+      "text": "Explains that the stepwise selection process distorts the nominal meaning of the final model's p-values",
+      "type": "scored"
+    },
+    {
+      "text": "Notes this is related to but subtler than standard multiple testing \u2014 search inflates false positives even without explicit multiplicity",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends at least one mitigation: pre-registration, sample splitting, honest exploratory labeling, or selective inference methods",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT endorse the reported p-values as having their nominal meaning",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

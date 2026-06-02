@@ -2,109 +2,189 @@
   "skill_name": "robust-statistics",
   "results": [
     {
-      "eval_id": 15,
+      "eval_id": 22,
       "condition": "baseline",
-      "prompt": "Before every analysis I run normality tests, Levene's test, and Breusch-Pagan, and I pick my method based on the results. Is this a good workflow?",
-      "response": "This workflow is very common but has well-documented problems. The short version: **no, it's not a good workflow**, and it can make things worse than just picking a method upfront.\n\n## The core problem: pre-testing inflates error rates\n\nWhen you use your data to decide which test to run on that same data, you introduce a hidden multiple-comparisons problem. Your nominal \u03b1 is no longer your actual Type I error rate \u2014 and the distortion is hard to quantify because it depends on the true effect size, sample size, and which branch you took.\n\n## Why each test fails at its job here\n\n**Normality tests (Shapiro-Wilk, K-S, etc.)**\n- Low power with small n \u2014 they miss real violations exactly when normality matters most for parametric tests\n- Too powerful with large n \u2014 they flag trivial departures that have no practical effect on your inference\n- They answer \"is the distribution exactly normal?\" but parametric tests only need approximate normality, and many are robust anyway\n\n**Levene's test**\n- Same power problem at both extremes\n- Welch's t-test dominates Student's t-test in nearly all conditions anyway \u2014 just use Welch's by default and skip the pre-test entirely\n\n**Breusch-Pagan**\n- Useful as a diagnostic, but using it to gate whether you apply HC standard errors creates the same conditional-testing problem\n\n## Better workflow\n\n- **Commit to your method before seeing the data** (or pre-register) based on your design and domain knowledge\n- **Use robust methods by default**: Welch's instead of Student's, HC standard errors in OLS, rank-based tests when distributions are genuinely heavy-tailed\n- **Use visual diagnostics** (Q-Q plots, residual vs. fitted plots) \u2014 these show you the *shape* and *severity* of violations, not just a binary pass/fail\n- **Ask \"how bad is the violation?\" not \"is the assumption met?\"** \u2014 effect size of the violation matters, not its p-value\n\nThe pre-testing approach feels rigorous but actually trades one problem (assumption violation) for another (specification searching). Defaulting to robust methods and diagnosing visually is cleaner.",
+      "prompt": "I ran the same regression in men and women separately. In men the coefficient on treatment is 0.42 (p = 0.03). In women it's 0.31 (p = 0.12). So the treatment effect is significant in men but not women \u2014 that means the treatment works differently by sex, right?",
+      "response": "No \u2014 this is one of the most common misinterpretations in statistics. A significant effect in one group and a non-significant effect in another **does not mean the effects differ between groups**.\n\n## The problem\n\nYou're comparing two p-values (0.03 vs 0.12) and inferring an interaction, but neither p-value tells you whether the effects are *different from each other*. To test that, you need a direct test of the difference.\n\nThe relevant quantity is: **(0.42 \u2212 0.31) = 0.11** \u2014 and you have no idea whether that gap is statistically distinguishable from zero.\n\n## Why the pattern you saw can easily happen when there's no real difference\n\n- Women's sample may be smaller \u2192 wider confidence interval \u2192 same true effect, but not significant\n- Random sampling variation \u2014 both coefficients could be draws from the same distribution\n- The effect sizes (0.42 vs 0.31) are actually pretty close\n\nGelman & Stern (2006) called this the **\"difference in significance is not a significant difference\"** error. It's endemic in applied research.\n\n## What you should actually do\n\n**Test the interaction directly** in a pooled model:\n\n```\noutcome ~ treatment * sex + controls\n```\n\nThe coefficient on `treatment:sex` is the formal test of whether the effect differs. If that interaction term is significant, *then* you can claim differential effects by sex.\n\nUntil you run that test, all you can say is: \"The effect was significant in men but not women \u2014 whether these effects differ requires a formal interaction test.\"",
       "assertions": [
         {
-          "text": "Pushes back on the test-then-choose workflow rather than endorsing it",
-          "type": "scored"
-        },
-        {
-          "text": "Explains that assumption tests check exact truth, not whether the violation is consequential, and are underpowered at small n / overpowered at large n",
-          "type": "scored"
-        },
-        {
-          "text": "Notes that pretesting distorts the level/coverage of the final inference (pretest bias)",
-          "type": "scored"
-        },
-        {
-          "text": "Recommends robust-by-design methods (e.g. Welch, robust/HC SEs, appropriate model family) and/or graphical diagnostics for magnitude instead",
-          "type": "scored"
-        },
-        {
-          "text": "Frames good practice as reasoning about consequences for the estimand/goal rather than a mechanical pipeline",
-          "type": "scored"
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        true,
-        true,
-        true
-      ],
-      "passed": 5,
-      "total": 5,
-      "pass_rate": 1.0,
-      "eval_passes": true,
-      "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 15,
-      "condition": "with_skill",
-      "prompt": "Before every analysis I run normality tests, Levene's test, and Breusch-Pagan, and I pick my method based on the results. Is this a good workflow?",
-      "response": "No \u2014 this is a \"pretest-and-switch\" workflow, and it's dominated by just using the robust method from the start. The problem is twofold: the tests are miscalibrated as gatekeepers, and running them before the main analysis distorts the final inference. At small n, all three tests are underpowered \u2014 they'll miss violations large enough to actually matter. At large n, they'll reject for trivial, inconsequential deviations. So the decision they hand you is least reliable exactly when you'd most want guidance, and the final test's operating characteristics (level, coverage) now depend on this random first stage in a way that's hard to characterize.\n\nThe better approach is robust-by-design, which makes the pretesting irrelevant:\n\n**Instead of Levene's \u2192 Student or Welch:** Just use Welch unconditionally. It loses essentially nothing when variances are equal and protects you when they aren't. The equal-variance pretest buys nothing and costs you.\n\n**Instead of Breusch-Pagan \u2192 OLS or robust SEs:** Use HC3 robust SEs by default. Heteroskedasticity doesn't bias OLS coefficients \u2014 it only makes the classical SEs wrong \u2014 and a sandwich estimator fixes that without a gatekeeper test.\n\n**Instead of Shapiro-Wilk \u2192 parametric or nonparametric:** Don't treat it as a switch. Ask instead: is n large enough relative to the skew for the CLT to have engaged? Look at residual plots to check the *mean structure* (curvature, omitted terms), which is where bias actually lives. Normality of the residuals matters mainly for small-sample exact inference and prediction intervals, not for coefficient inference at adequate n.\n\nThe throughline: these tests ask \"is the assumption exactly true?\" (always no) rather than \"is the violation consequential for my goal at this n?\" (the real question). Reason about the latter directly, and skip the tests.",
-      "assertions": [
-        {
-          "text": "Pushes back on the test-then-choose workflow rather than endorsing it",
-          "type": "scored"
-        },
-        {
-          "text": "Explains that assumption tests check exact truth, not whether the violation is consequential, and are underpowered at small n / overpowered at large n",
-          "type": "scored"
-        },
-        {
-          "text": "Notes that pretesting distorts the level/coverage of the final inference (pretest bias)",
-          "type": "scored"
-        },
-        {
-          "text": "Recommends robust-by-design methods (e.g. Welch, robust/HC SEs, appropriate model family) and/or graphical diagnostics for magnitude instead",
-          "type": "scored"
-        },
-        {
-          "text": "Frames good practice as reasoning about consequences for the estimand/goal rather than a mechanical pipeline",
-          "type": "scored"
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        true,
-        true,
-        true
-      ],
-      "passed": 5,
-      "total": 5,
-      "pass_rate": 1.0,
-      "eval_passes": true,
-      "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 16,
-      "condition": "baseline",
-      "prompt": "We ran a clean randomized experiment, ~6,000 users per arm, comparing average session length (in minutes). The distribution is a bit right-skewed. I just want to know if the new design increased average session length. Is a t-test fine or do I need something fancier?",
-      "response": "With 6,000 users per arm, a t-test is fine. The Central Limit Theorem kicks in well before that sample size \u2014 the sampling distribution of the mean is essentially normal regardless of how skewed the raw session times are. \"A bit right-skewed\" isn't a concern here; you'd need extreme pathological tails (e.g., a small number of users with astronomically long sessions) to cause problems, and even then you'd likely notice it rather than be silently misled.\n\nTwo small recommendations:\n\n1. **Use Welch's t-test** (unequal variances) rather than Student's. The treatment arm may have a different variance if the new design changes engagement patterns \u2014 Welch handles that without penalty when variances happen to be equal.\n\n2. **Eyeball your outliers first.** If you have bot traffic or a handful of sessions in the thousands of minutes, winsorizing or excluding them is worth considering \u2014 not because the t-test breaks, but because those sessions may not represent real user behavior you care about.\n\nIf you wanted to go fancier, a Mann-Whitney U test would give you a valid nonparametric comparison, but it tests stochastic dominance (roughly: \"is one distribution shifted up?\"), not the mean specifically. Since you said you care about average session length, the t-test is actually the right tool.\n\nBottom line: Welch t-test, one-sided, done.",
-      "assertions": [
-        {
-          "text": "Says a (Welch) t-test / difference in means is fine here without hedging",
-          "type": "scored"
-        },
-        {
-          "text": "Notes that randomization makes the simple difference in means the unbiased causal effect",
-          "type": "scored"
-        },
-        {
-          "text": "Notes that the large per-arm n handles the mild skew via the CLT",
-          "type": "scored"
-        },
-        {
-          "text": "Does NOT recommend a transformation, GLM, or nonparametric test for this case",
+          "text": "States that 'significant in one group, not the other' does NOT establish that the effects differ between groups",
           "type": "must_pass"
         },
         {
-          "text": "Does NOT manufacture unnecessary estimand or robustness caveats; the response is proportionate and largely affirming",
+          "text": "States the correct test is a direct contrast or interaction term (treatment \u00d7 sex / group), not a comparison of individual p-values",
+          "type": "scored"
+        },
+        {
+          "text": "Explains why: two effects can each be (non-)significant individually while their difference has a different significance status",
+          "type": "scored"
+        },
+        {
+          "text": "Notes or implies the SE of the difference is larger than either individual SE (e.g. \u221a(SE\u2081\u00b2 + SE\u2082\u00b2) under independence)",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT accept the subgroup p-value comparison as a valid test of the between-group difference",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "passed": 4,
+      "total": 5,
+      "pass_rate": 0.8,
+      "eval_passes": false,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 22,
+      "condition": "with_skill",
+      "prompt": "I ran the same regression in men and women separately. In men the coefficient on treatment is 0.42 (p = 0.03). In women it's 0.31 (p = 0.12). So the treatment effect is significant in men but not women \u2014 that means the treatment works differently by sex, right?",
+      "response": "No \u2014 this is a very common error. The fact that one p-value clears 0.05 and the other doesn't tells you almost nothing about whether the two effects *differ*. You've run two separate hypothesis tests against zero, not a test of whether the effects are equal. The significance labels \"yes\" and \"no\" are doing rhetorical work they aren't licensed to do.\n\nHere's the crux: your two point estimates are 0.42 and 0.31. Those are close. The difference is 0.11. To know whether *that difference* is meaningful, you need its own standard error and its own p-value \u2014 which you don't have yet. Under independence, SE(\u03b2\u0302_men \u2212 \u03b2\u0302_women) = \u221a(SE_men\u00b2 + SE_women\u00b2), and you'd test whether 0.11 / that pooled SE is large. It very likely won't be.\n\nThe right move is to fit a single model on the combined data and add a **treatment \u00d7 sex interaction term**. The coefficient on that interaction is the formal estimate of how much the treatment effect differs by sex, with a proper p-value for that specific contrast. My strong prior, given that 0.42 vs 0.31 is a small numerical gap and the non-significant p-value in women is 0.12 (not 0.70), is that the interaction will be far from significant.\n\nThe intuition for why this goes wrong: in the women's group, you probably have less power, a larger SE, or both. A wide confidence interval that straddles zero doesn't mean the effect is absent \u2014 it means you can't rule out a range that includes zero. Meanwhile the men's result is \"significant\" partly because the SE happened to be smaller. You're comparing two noisy estimates against a threshold, not comparing the estimates against each other.\n\nBottom line: \"significant in one group, not the other\" is not evidence of an interaction. Only a direct interaction test is.",
+      "assertions": [
+        {
+          "text": "States that 'significant in one group, not the other' does NOT establish that the effects differ between groups",
+          "type": "must_pass"
+        },
+        {
+          "text": "States the correct test is a direct contrast or interaction term (treatment \u00d7 sex / group), not a comparison of individual p-values",
+          "type": "scored"
+        },
+        {
+          "text": "Explains why: two effects can each be (non-)significant individually while their difference has a different significance status",
+          "type": "scored"
+        },
+        {
+          "text": "Notes or implies the SE of the difference is larger than either individual SE (e.g. \u221a(SE\u2081\u00b2 + SE\u2082\u00b2) under independence)",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT accept the subgroup p-value comparison as a valid test of the between-group difference",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 23,
+      "condition": "baseline",
+      "prompt": "We ran a small pilot study \u2014 9 people per group, so n=18 total \u2014 and found d = 0.9, p = 0.04. The effect is large and significant! This is great news for the intervention, right?",
+      "response": "Not quite \u2014 there are several reasons to be cautious before celebrating.\n\n**The Type M problem (winner's curse)**\n\nWith n=9 per group, this study had low power \u2014 roughly 40\u201350% to detect a true d=0.5. When an underpowered study produces a significant result, the observed effect size is almost certainly inflated above the true effect. You only clear the significance threshold when sampling variation *adds* to the true effect; the reported d=0.9 is likely a substantial overestimate. Gelman & Carlin call this Type M (magnitude) error.\n\n**The confidence interval is enormous**\n\nThe SE of Cohen's *d* with n=9 per group is approximately 0.50. That puts the 95% CI for *d* at roughly **(-0.07, 1.87)**. The data are consistent with anything from a near-zero effect to an enormous one. A point estimate of 0.9 with that interval is not informative about what the intervention actually does.\n\n**p = 0.04 is fragile here**\n\nBarely significant with n=18 is a fragile signal. A single influential observation or a minor violation of distributional assumptions could flip this. The *p*-value alone tells you nothing about whether the effect size is real or exaggerated.\n\n**Pilot studies aren't designed for hypothesis testing**\n\nThe correct use of a pilot is to estimate plausible effect sizes and compute power for an adequately-sized confirmatory trial. Using a pilot's significant result as evidence the intervention works inverts this logic \u2014 you're running a hypothesis test on data specifically not designed to support one.\n\n**What to do instead**\n\nUse the pilot to estimate a plausible effect size range (accounting for the inflation) and design a properly powered study. If the true effect is d=0.5 rather than 0.9, you'd need roughly n=52 per group to achieve 80% power \u2014 about 6\u00d7 what you have now.\n\nThe right framing: \"The pilot produced a large but very uncertain estimate. We should power a confirmatory study on d=0.4\u20130.5 to be conservative, not treat this as confirmation.\"",
+      "assertions": [
+        {
+          "text": "Flags low power as a concern \u2014 n=18 is a very small sample for an effect of this magnitude",
+          "type": "scored"
+        },
+        {
+          "text": "Names or describes the Type M / exaggeration ratio concern: significant estimates from low-powered studies systematically overstate the true effect",
+          "type": "scored"
+        },
+        {
+          "text": "Notes the Type S / wrong-sign risk at low power",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends treating the result as preliminary / hypothesis-generating rather than conclusive",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT simply validate 'large and significant' as strong confirmation of the intervention's efficacy",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 5,
+      "pass_rate": 0.8,
+      "eval_passes": false,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 23,
+      "condition": "with_skill",
+      "prompt": "We ran a small pilot study \u2014 9 people per group, so n=18 total \u2014 and found d = 0.9, p = 0.04. The effect is large and significant! This is great news for the intervention, right?",
+      "response": "Not quite \u2014 and the specific combination of \"large, significant, small n\" is actually a warning sign, not a green light. Here's what's actually happening.\n\n**Power is around 40\u201350%.** With n=9 per group and a true effect of d=0.9, a two-sample t-test has roughly that probability of clearing p < .05. That means most runs of this study would *miss* the effect even if it's real.\n\n**The exaggeration problem (Type M error).** When power is ~40\u201350%, the estimates that happen to cross the significance threshold are drawn from the tail of the sampling distribution \u2014 they are not a representative sample of the true effect. Conditional on being significant, the observed d is systematically inflated relative to the true d. The winner's curse applies in full: d=0.9 is your best estimate of the *observed-significant* effect, not the underlying effect. The true effect could be d=0.3\u20130.5, with a fortunate random fluctuation pushing you past p=.05.\n\n**p=0.04 is modest evidence.** With a single small study and no preregistration, the probability the observed effect replicates at similar magnitude is substantially below what p=.04 implies. The p-value answers \"how often would I get a result this extreme if the null were true?\" \u2014 it doesn't tell you how much to trust the point estimate.\n\n**What you actually have.** Promising pilot data that's consistent with a real effect and justifies a properly powered follow-up. That's genuinely useful. But the d=0.9 estimate should not be used for effect-size claims or as the basis for resource decisions \u2014 it almost certainly overstates the true effect, possibly by a factor of 2 or more.\n\nThe right framing: design the confirmatory study with a more conservative assumed effect (d=0.4\u20130.5 is a reasonable hedge), compute the n needed for 80\u201390% power at that effect, and pre-register the analysis. If the effect is real, you'll find it. If d=0.9 is what's real, you'll have plenty of power.",
+      "assertions": [
+        {
+          "text": "Flags low power as a concern \u2014 n=18 is a very small sample for an effect of this magnitude",
+          "type": "scored"
+        },
+        {
+          "text": "Names or describes the Type M / exaggeration ratio concern: significant estimates from low-powered studies systematically overstate the true effect",
+          "type": "scored"
+        },
+        {
+          "text": "Notes the Type S / wrong-sign risk at low power",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends treating the result as preliminary / hypothesis-generating rather than conclusive",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT simply validate 'large and significant' as strong confirmation of the intervention's efficacy",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 5,
+      "pass_rate": 0.8,
+      "eval_passes": false,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 24,
+      "condition": "baseline",
+      "prompt": "I fit a logistic regression for stroke (1/0) with the main exposure being hypertension, and I also included age, sex, smoking, and diabetes as covariates. My Table 2 reports all five coefficients with p-values, and I'm interpreting each as 'the effect of that variable on stroke risk.' Is that right?",
+      "response": "Close, but there are a few important qualifications worth correcting before this goes to a table caption or results section.\n\n**What the coefficients actually represent**\n\nEach coefficient is the *adjusted* log-odds ratio for that variable, holding all other model variables constant. That's a meaningful quantity, but it's not the same as \"the effect.\"\n\n**Three specific problems with the current framing**\n\n1. **\"Effect\" implies causality.** You have observational data with no causal identification strategy (no DAG, no IV, no propensity matching). The correct word is *association* or *adjusted association*. Reviewers in epidemiology and clinical journals will flag this.\n\n2. **Covariates are adjustors, not exposures-of-interest.** Hypertension is your exposure \u2014 the model was built to estimate its adjusted association with stroke. Age, sex, smoking, and diabetes were included to *control confounding*, not to estimate their independent effects. Reporting their coefficients is fine, but treating them symmetrically with your main exposure conflates two different roles. A typical Table 2 caption would say something like: *\"OR (95% CI) for hypertension, adjusted for age, sex, smoking, and diabetes.\"*\n\n3. **Potential mediation by diabetes.** If diabetes lies on a causal pathway between hypertension and stroke (hypertension \u2192 diabetes \u2192 stroke), then conditioning on it blocks part of the effect you're trying to estimate. You should check your assumed DAG before treating diabetes as a pure confounder.\n\n**A smaller but real issue**\n\nLogistic regression coefficients are log-odds ratios, not risk differences or risk ratios. \"Effect on stroke *risk*\" is imprecise \u2014 say \"odds of stroke\" or exponentiate to ORs and label them accordingly. When outcome prevalence is high (>10%), ORs also overestimate risk ratios, which may matter for your interpretation.\n\n**Bottom line:** replace \"effect\" with \"adjusted association,\" clarify that covariates are adjustors rather than co-exposures, and verify diabetes isn't a mediator before finalizing Table 2.",
+      "assertions": [
+        {
+          "text": "Identifies the Table 2 fallacy or equivalent concern: covariate coefficients in a multivariable model do not each estimate their own total causal effect",
+          "type": "must_pass"
+        },
+        {
+          "text": "Explains that each coefficient is conditional on all others and subject to different confounding than the main exposure",
+          "type": "scored"
+        },
+        {
+          "text": "Notes the model was designed to estimate one estimand (hypertension \u2192 stroke); other coefficients are incidental to that design",
+          "type": "scored"
+        },
+        {
+          "text": "Warns that some covariates may be mediators of others, making their coefficients further uninterpretable as total causal effects",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT endorse reporting all coefficients as causal effects of each variable without qualification",
           "type": "must_pass"
         }
       ],
@@ -122,29 +202,29 @@
       "must_pass_failed_indices": []
     },
     {
-      "eval_id": 16,
+      "eval_id": 24,
       "condition": "with_skill",
-      "prompt": "We ran a clean randomized experiment, ~6,000 users per arm, comparing average session length (in minutes). The distribution is a bit right-skewed. I just want to know if the new design increased average session length. Is a t-test fine or do I need something fancier?",
-      "response": "The t-test is fine here. A short explanation of why:\n\n**The skew doesn't matter at your n.** A t-test doesn't require the raw data to be normal \u2014 it requires the sampling distribution of the *mean* to be approximately normal. With ~6,000 per arm, the CLT has done its work. By Berry-Esseen, the approximation error shrinks like skewness/\u221an; at n=6,000, even substantial right-skew (think lognormal-level) produces an essentially normal sampling distribution for the mean. Session times are usually far less skewed than a lognormal, so you're comfortably in the clear.\n\n**Use Welch's, not Student's.** Welch's t-test (the default in R, `scipy.stats.ttest_ind` with `equal_var=False`) doesn't assume equal variances across arms, costs you almost nothing when variances are equal, and protects you when they aren't. No reason to use Student's or pretest the variances with Levene.\n\n**The randomization does the heavy lifting.** Because assignment was random, the simple difference in means *is* the average causal effect. No adjustment needed for unbiasedness; covariate adjustment (ANCOVA) is available purely for efficiency gains if you have strong pre-experiment predictors of session length.\n\nOne thing worth reporting alongside the p-value: the difference in means in minutes (or seconds) and a confidence interval. Session length is a domain where statistical significance at n=6,000 is virtually guaranteed for any real signal \u2014 the interval tells you whether the effect is large enough to care about.\n\nShort version: run Welch's t-test, report the effect size and CI, and move on.",
+      "prompt": "I fit a logistic regression for stroke (1/0) with the main exposure being hypertension, and I also included age, sex, smoking, and diabetes as covariates. My Table 2 reports all five coefficients with p-values, and I'm interpreting each as 'the effect of that variable on stroke risk.' Is that right?",
+      "response": "No \u2014 this is the **Table 2 fallacy** (Westreich & Greenland, 2013), and it's worth being precise about why.\n\nYour model was designed to estimate the effect of **hypertension on stroke**, adjusting for age, sex, smoking, and diabetes as confounders of *that* relationship. The hypertension OR is the result of a deliberate identification decision: you chose those covariates because they're confounders of hypertension \u2192 stroke.\n\nBut the coefficients on age, sex, smoking, and diabetes are each a *different* estimand, and your model was not built for them. For any one of those variables \u2014 say, smoking \u2014 the right adjustment set for estimating smoking's causal effect on stroke is not necessarily the same set you'd use for hypertension. Some of the other model terms might be smoking's confounders, some might be mediators, some might be colliders. Conditioning on a mediator of smoking \u2192 stroke (e.g., if diabetes partly mediates that path) blocks part of the causal pathway and biases the smoking coefficient. Conditioning on a collider opens a spurious backdoor. You didn't build in any of those checks for the non-focal variables.\n\nThere's also a subtler issue: each coefficient is **conditional**, holding all other predictors fixed. For most scientific or policy questions, you want the *total* marginal effect of a variable \u2014 not its effect in a world where every other predictor is simultaneously held constant. For the odds ratio specifically, this conflation is worsened by **non-collapsibility**: adding any predictor of the outcome shifts the OR on other variables even with no confounding.\n\n**The fix depends on your goal:**\n\n- If you only care about hypertension's effect, say so clearly and report only that coefficient as a causal estimate; label the rest as \"adjusted associations\" or simply don't interpret them.\n- If smoking (or age, or diabetes) is also a substantive exposure of interest, it deserves its own analysis \u2014 its own identification argument, its own adjustment set derived from the causal structure for *that* exposure.\n- If the goal is purely descriptive (\"how do these variables jointly relate to stroke in this sample?\"), that's fine \u2014 just don't dress conditional associations from a causally-motivated model as total causal effects.\n\nThe practical bottom line: interpret the hypertension OR as your causal estimate; treat the other coefficients as conditional associations in the presence of the remaining model terms, not as each variable's effect on stroke risk.",
       "assertions": [
         {
-          "text": "Says a (Welch) t-test / difference in means is fine here without hedging",
-          "type": "scored"
-        },
-        {
-          "text": "Notes that randomization makes the simple difference in means the unbiased causal effect",
-          "type": "scored"
-        },
-        {
-          "text": "Notes that the large per-arm n handles the mild skew via the CLT",
-          "type": "scored"
-        },
-        {
-          "text": "Does NOT recommend a transformation, GLM, or nonparametric test for this case",
+          "text": "Identifies the Table 2 fallacy or equivalent concern: covariate coefficients in a multivariable model do not each estimate their own total causal effect",
           "type": "must_pass"
         },
         {
-          "text": "Does NOT manufacture unnecessary estimand or robustness caveats; the response is proportionate and largely affirming",
+          "text": "Explains that each coefficient is conditional on all others and subject to different confounding than the main exposure",
+          "type": "scored"
+        },
+        {
+          "text": "Notes the model was designed to estimate one estimand (hypertension \u2192 stroke); other coefficients are incidental to that design",
+          "type": "scored"
+        },
+        {
+          "text": "Warns that some covariates may be mediators of others, making their coefficients further uninterpretable as total causal effects",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT endorse reporting all coefficients as causal effects of each variable without qualification",
           "type": "must_pass"
         }
       ],
@@ -162,175 +242,93 @@
       "must_pass_failed_indices": []
     },
     {
-      "eval_id": 17,
+      "eval_id": 25,
       "condition": "baseline",
-      "prompt": "n = 300 in each of two independent groups, outcome roughly symmetric, I want to compare means. Anything I actually need to worry about before running a two-sample t-test?",
-      "response": "With n=300 per group and a roughly symmetric outcome, the CLT has you covered on normality \u2014 that concern is essentially moot at this scale.\n\nThree things actually worth checking:\n\n**1. Independence structure.** Are observations truly independent within and between groups? Clustering (e.g., participants nested in schools, repeated measures disguised as two groups, matched pairs) violates the t-test's independence assumption in ways the CLT cannot fix. This is a design question, not a statistical test.\n\n**2. Use Welch's, not the pooled-variance version.** The classic equal-variance t-test is a strictly worse default \u2014 Welch's is essentially identical when variances are equal and correct when they aren't. Most software (R's `t.test`, Python's `scipy.stats.ttest_ind`) defaults to Welch's, but worth confirming. Do *not* pre-screen with Levene's and then choose \u2014 just always use Welch's.\n\n**3. Outliers / heavy tails.** With n=300 you can tolerate moderate skew, but extreme outliers inflate the variance estimate and shrink power. A quick visual (boxplot or histogram) is worth it \u2014 not to gate-keep normality, but to catch data entry errors or distributional surprises before they make your SE misleading.\n\nWhat you don't need to worry about: formal normality tests (Shapiro-Wilk will flag cosmetic deviations at this n), transforming the outcome pre-emptively, or non-parametric alternatives unless outliers are severe.",
+      "prompt": "I had 15 candidate predictors. I ran backward stepwise selection (dropping variables by p-value > 0.10) and ended up with 6 in the final model. I'm now reporting the coefficients and p-values from that final model. Is this a valid inference procedure?",
+      "response": "No \u2014 this is a classic **post-selection inference** problem, and the reported p-values and coefficients from the final model are invalid in several compounding ways.\n\n## What goes wrong\n\n**1. P-values are anti-conservative (too small)**\nStepwise selection is an implicit multiple testing procedure. You tested all 15 predictors across multiple model configurations to find the 6 that \"survived.\" The p-values in the final model treat those 6 as if they were pre-specified, which they weren't. The nominal \u03b1 = 0.05 threshold in the final model no longer corresponds to a 5% false positive rate \u2014 it's much higher.\n\nAs a rough intuition: with 15 truly null predictors and p > 0.10 as the removal threshold, you'd expect ~1\u20132 false positives to survive selection by chance alone.\n\n**2. Coefficients are inflated (winner's curse)**\nStepwise selection preferentially retains predictors whose sample coefficients happened to be large. The surviving estimates are biased away from zero \u2014 they won the selection tournament partly by being large, and that sample-specific inflation doesn't reflect the true population effect.\n\n**3. Standard errors are too small**\nThe SEs in the final model condition on the selected set being fixed. They don't account for the variance introduced by the search process itself.\n\n## How to fix it\n\n| Approach | When to use |\n|---|---|\n| **Data splitting** | Use one half to select the model, report inference from the other half. Simple and valid. |\n| **Selective inference** (PoSI) | Adjust for the selection step using the `selectiveInference` R package (Lee et al. 2016). Gives valid CIs/p-values post-selection. |\n| **Lasso + post-selection inference** | Replace stepwise with lasso; apply debiased lasso or sample splitting for inference. |\n| **Pre-specify the model** | If theory supports a smaller set, specify it before seeing data and don't run selection at all. |\n| **Frame it as exploratory** | If confirmatory inference isn't the goal, report the analysis honestly as hypothesis-generating, not hypothesis-confirming. |\n\n## Bottom line\n\nStepwise selection followed by standard inference from the selected model is widely used but widely criticized \u2014 Harrell, Gelman, and others have written extensively against it. The p-values cannot be interpreted at face value. The appropriate fix depends on whether you want confirmatory inference (use data splitting or selective inference) or are comfortable calling this exploratory (report it as such, explicitly).",
       "assertions": [
         {
-          "text": "Reassures that the t-test is fine / there is little to worry about given n=300 and symmetry",
-          "type": "scored"
-        },
-        {
-          "text": "Mentions Welch as the sensible default and/or that an equal-variance pretest is unnecessary",
-          "type": "scored"
-        },
-        {
-          "text": "Keeps the response brief and proportionate rather than enumerating many diagnostics or alternative methods",
+          "text": "States that reporting p-values from a model selected by the same data is invalid / anti-conservative (post-selection inference problem)",
           "type": "must_pass"
         },
         {
-          "text": "Does NOT invoke normality tests as a gate or recommend a nonparametric switch",
+          "text": "Explains that the stepwise selection process distorts the nominal meaning of the final model's p-values",
+          "type": "scored"
+        },
+        {
+          "text": "Notes this is related to but subtler than standard multiple testing \u2014 search inflates false positives even without explicit multiplicity",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends at least one mitigation: pre-registration, sample splitting, honest exploratory labeling, or selective inference methods",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT endorse the reported p-values as having their nominal meaning",
           "type": "must_pass"
         }
       ],
       "assertion_results": [
         true,
         true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 25,
+      "condition": "with_skill",
+      "prompt": "I had 15 candidate predictors. I ran backward stepwise selection (dropping variables by p-value > 0.10) and ended up with 6 in the final model. I'm now reporting the coefficients and p-values from that final model. Is this a valid inference procedure?",
+      "response": "No, the p-values and standard errors from that final model are not valid for inference. This is the post-selection inference problem, and it's one of the clearest cases where nominal error rates are just wrong.\n\n**Why it fails.** The p-values from a regression model are calibrated assuming the model specification was fixed before seeing the data. Your backward selection searched through up to 2\u00b9\u2075 implicit candidate models, using the outcome's relationship to the data to decide which 6 predictors to keep. The final model's standard errors have no memory of that search \u2014 they act as if you had always planned to fit exactly those 6 predictors. The true Type I error rate for each \"significant\" coefficient is substantially higher than 0.05, and there's no simple correction factor because it depends on the correlation structure of the 15 predictors and how the search actually proceeded.\n\nThe p > 0.10 dropping rule is essentially a pretest-and-switch applied 9 times. Each step uses the data to decide the model, compounding the distortion.\n\n**There's also a coefficient bias.** The estimates that survived selection are biased away from zero \u2014 they're the winners of a noisy selection contest. Even the point estimates shouldn't be taken at face value, not just the p-values.\n\n**What to do, depending on your goal:**\n\nIf the goal is *inference on specific predictors*: the cleanest fix is **sample splitting** \u2014 use one half to run the stepwise selection, then fit exactly the selected model (fixed specification) on the held-out half and report those p-values. They're valid because the selection didn't touch those data.\n\nIf the goal is *prediction*: stepwise is a poor variable selection method anyway (greedy, unstable, prone to overfitting). Use regularization (lasso/ridge/elastic net) with cross-validated tuning. Don't report p-values from a prediction model.\n\nIf you must report the current results: label them explicitly as exploratory and hypothesis-generating \u2014 not confirmatory. The honest framing is \"these predictors emerged from a data-driven selection process; the reported p-values should not be interpreted as controlling Type I error.\"\n\nThe short version: you've got 6 candidate predictors worth taking seriously, and a set of coefficient directions worth examining, but the p-values tell you very little. The selection process consumed the inferential currency that those p-values are pretending to spend.",
+      "assertions": [
+        {
+          "text": "States that reporting p-values from a model selected by the same data is invalid / anti-conservative (post-selection inference problem)",
+          "type": "must_pass"
+        },
+        {
+          "text": "Explains that the stepwise selection process distorts the nominal meaning of the final model's p-values",
+          "type": "scored"
+        },
+        {
+          "text": "Notes this is related to but subtler than standard multiple testing \u2014 search inflates false positives even without explicit multiplicity",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends at least one mitigation: pre-registration, sample splitting, honest exploratory labeling, or selective inference methods",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT endorse the reported p-values as having their nominal meaning",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
         true,
         true
       ],
       "passed": 4,
-      "total": 4,
-      "pass_rate": 1.0,
-      "eval_passes": true,
-      "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 17,
-      "condition": "with_skill",
-      "prompt": "n = 300 in each of two independent groups, outcome roughly symmetric, I want to compare means. Anything I actually need to worry about before running a two-sample t-test?",
-      "response": "At n = 300 per group with a symmetric outcome and a mean estimand, essentially nothing is at risk. The short answer is: run Welch's t-test and you're done.\n\nHere's why each concern is negligible:\n\n**Normality of the data.** The t-test doesn't require normal *data* \u2014 it requires an approximately normal sampling distribution for the *sample mean*. The CLT delivers that comfortably at n = 300 even for moderately skewed data; with a roughly symmetric outcome it's a non-issue well before n = 30.\n\n**Unequal variances.** Use Welch's t-test by default rather than Student's. It's barely less powerful when variances are equal and meaningfully more reliable when they're not. There's no reason to pretest variances with Levene's \u2014 that test-then-choose workflow distorts the final inference and is dominated by just using Welch from the start.\n\n**Outliers / heavy tails.** With finite variance and a symmetric distribution, heavy tails reduce efficiency (power) but don't distort the level of the test. At n = 300 you have power to spare for most effect sizes worth detecting.\n\n**Independence.** The one thing large n doesn't fix. If observations within a group are clustered (siblings, repeated measures, students in classrooms), you'd need clustered SEs or a mixed model. If they're genuinely independent draws, no concern.\n\nSo the only real decision is Welch vs Student's, and the answer is Welch. Everything else is fine.",
-      "assertions": [
-        {
-          "text": "Reassures that the t-test is fine / there is little to worry about given n=300 and symmetry",
-          "type": "scored"
-        },
-        {
-          "text": "Mentions Welch as the sensible default and/or that an equal-variance pretest is unnecessary",
-          "type": "scored"
-        },
-        {
-          "text": "Keeps the response brief and proportionate rather than enumerating many diagnostics or alternative methods",
-          "type": "must_pass"
-        },
-        {
-          "text": "Does NOT invoke normality tests as a gate or recommend a nonparametric switch",
-          "type": "must_pass"
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        true,
-        true
-      ],
-      "passed": 4,
-      "total": 4,
-      "pass_rate": 1.0,
-      "eval_passes": true,
-      "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 18,
-      "condition": "baseline",
-      "prompt": "I have 500,000 rows. The outcome is a count (number of purchases in a window) and I just want the average difference between two cohorts. Do I have to use a Poisson or negative binomial model, or can I just use OLS / a t-test on the counts?",
-      "response": "With 500k rows, you can almost certainly use OLS or a Welch t-test and be fine. Here's the reasoning:\n\n## Why OLS is defensible\n\n**Point estimate:** OLS estimates E[Y|X] directly \u2014 the same quantity Poisson regression targets when you want an additive difference. The coefficients are the same thing you want.\n\n**Central Limit Theorem:** At N=500k, the sampling distribution of the mean difference is extremely well-approximated by a normal distribution regardless of the underlying count distribution. Your inference is valid.\n\n## The one real concern: heteroscedastic standard errors\n\nCount data almost always has variance that scales with the mean (Poisson: Var = \u03bc; NB: Var > \u03bc). Vanilla OLS standard errors assume homoscedasticity, so they'll be wrong \u2014 but the fix is trivial:\n\n- **t-test:** use Welch's (unequal variances) \u2014 this is the default in most software\n- **OLS regression:** use **HC3 robust standard errors** (`cov_type='HC3'` in statsmodels, `vcov = \"HC3\"` in R's `lm_robust`)\n\nWith robust SEs, OLS gives you valid inference on the mean difference.\n\n## When you'd actually need Poisson/NB\n\n| Situation | Use count model |\n|---|---|\n| Want rate ratios, not differences | Yes \u2014 Poisson gives IRR directly |\n| Very sparse counts (mean < 1, many zeros) | Possibly \u2014 distribution shape matters more |\n| Adding covariates with effect modification | Poisson avoids predicted negatives in margins |\n| Already have Poisson/NB pipeline | Stick with it, no reason to switch |\n\n## Bottom line\n\nFor \"what's the average difference between two cohorts\" with 500k rows: **Welch t-test or OLS with robust SEs is the right call.** It's simpler, faster, and the asymptotics are thoroughly on your side. Poisson/NB would give you essentially identical inference and isn't worth the added complexity unless you need ratio-scale interpretations or have a covariate-adjustment story that benefits from the GLM link function.",
-      "assertions": [
-        {
-          "text": "States that for the difference in mean counts, OLS+robust SEs (or a t-test) is valid here and a GLM is not required for validity",
-          "type": "scored"
-        },
-        {
-          "text": "Attributes that validity to the CLT / large n rather than to the outcome being normal",
-          "type": "scored"
-        },
-        {
-          "text": "Identifies what a Poisson/NB model actually adds: a multiplicative/rate-ratio estimand, in-bounds predictions, and/or efficiency \u2014 not validity",
-          "type": "scored"
-        },
-        {
-          "text": "Notes the choice hinges on the estimand (additive mean difference vs rate ratio) rather than on a rule that counts 'require' a count model",
-          "type": "scored"
-        },
-        {
-          "text": "Mentions that at this very large n the efficiency advantage of the GLM is small",
-          "type": "scored"
-        },
-        {
-          "text": "Does NOT assert that count outcomes must be modeled with Poisson/NB",
-          "type": "must_pass"
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        true,
-        true,
-        true,
-        true
-      ],
-      "passed": 6,
-      "total": 6,
-      "pass_rate": 1.0,
-      "eval_passes": true,
-      "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 18,
-      "condition": "with_skill",
-      "prompt": "I have 500,000 rows. The outcome is a count (number of purchases in a window) and I just want the average difference between two cohorts. Do I have to use a Poisson or negative binomial model, or can I just use OLS / a t-test on the counts?",
-      "response": "No, you don't need Poisson or negative binomial here. With n = 500,000 and a mean-difference estimand, OLS (or Welch's t-test) is entirely valid.\n\n**Why it's fine.** The t-test and OLS don't assume the *data* are normal \u2014 they assume the *sampling distribution of the mean* is approximately normal. The CLT delivers that, and the Berry-Esseen approximation error shrinks like skewness/\u221an. At \u221a500,000 \u2248 707, even badly skewed count distributions have a negligible approximation error. The CLT has done its work many times over.\n\n**The one thing to fix: standard errors.** Counts have variance that grows with the mean (like Poisson), so the homoskedastic SE assumption is wrong. Use:\n- **Welch's t-test** (handles unequal variances automatically), or\n- **OLS with HC3 robust SEs** (`sandwich` in R, `HC3` in statsmodels).\n\nThe point estimate \u2014 the mean difference \u2014 is unbiased either way. Heteroskedasticity only affects the SE, not the coefficient, and robust SEs fix that.\n\n**What Poisson/NB would actually add** (and why you don't need it):\n- A *multiplicative* estimand (rate ratio) \u2014 not what you want\n- Efficiency gains \u2014 irrelevant when you have 500K rows\n- Better behavior near a boundary \u2014 not a concern at this n\n\nIf you later want \"cohort B purchases 23% more than cohort A\" instead of \"cohort B averages 1.2 more purchases,\" that's when a log-link GLM becomes the right tool \u2014 because you've changed the estimand, not because OLS was invalid.\n\n**Bottom line:** OLS with robust SEs is the right call. Simple, interpretable, valid.",
-      "assertions": [
-        {
-          "text": "States that for the difference in mean counts, OLS+robust SEs (or a t-test) is valid here and a GLM is not required for validity",
-          "type": "scored"
-        },
-        {
-          "text": "Attributes that validity to the CLT / large n rather than to the outcome being normal",
-          "type": "scored"
-        },
-        {
-          "text": "Identifies what a Poisson/NB model actually adds: a multiplicative/rate-ratio estimand, in-bounds predictions, and/or efficiency \u2014 not validity",
-          "type": "scored"
-        },
-        {
-          "text": "Notes the choice hinges on the estimand (additive mean difference vs rate ratio) rather than on a rule that counts 'require' a count model",
-          "type": "scored"
-        },
-        {
-          "text": "Mentions that at this very large n the efficiency advantage of the GLM is small",
-          "type": "scored"
-        },
-        {
-          "text": "Does NOT assert that count outcomes must be modeled with Poisson/NB",
-          "type": "must_pass"
-        }
-      ],
-      "assertion_results": [
-        false,
-        false,
-        false,
-        false,
-        false,
-        false
-      ],
-      "passed": 0,
-      "total": 6,
-      "pass_rate": 0.0,
+      "total": 5,
+      "pass_rate": 0.8,
       "eval_passes": false,
-      "must_pass_failed_indices": [
-        6
-      ]
+      "must_pass_failed_indices": []
     }
   ],
   "summary": {
     "baseline": {
-      "passed": 19,
+      "passed": 17,
       "total": 20
     },
     "with_skill": {
-      "passed": 14,
+      "passed": 18,
       "total": 20
     }
   }

@@ -84,7 +84,7 @@ def grade_assertions(response: str, assertions: list[str]) -> list[bool]:
 
 
 def run(eval_ids: list[int] | None, conditions: list[str],
-        delay: float = 2.0) -> None:
+        delay: float = 2.0, skip_existing: bool = False) -> None:
     evals_data = json.loads(EVALS_JSON.read_text())["evals"]
     if eval_ids:
         evals_data = [e for e in evals_data if e["id"] in eval_ids]
@@ -99,6 +99,15 @@ def run(eval_ids: list[int] | None, conditions: list[str],
         print(f"  {prompt[:80]}...")
 
         for condition in conditions:
+            result_path = RESULTS_DIR / f"eval_{eid:02d}_{condition}.json"
+            if skip_existing and result_path.exists():
+                existing = json.loads(result_path.read_text())
+                all_results.append(existing)
+                n_pass, n_total = existing["passed"], existing["total"]
+                marks = "".join("+" if p else "-" for p in existing["assertion_results"])
+                print(f"  [{condition}] CACHED  {n_pass}/{n_total}  [{marks}]")
+                continue
+
             system = SKILL_WITH_REFS if condition == "with_skill" else None
             print(f"  [{condition}] executor…", end=" ", flush=True)
             try:
@@ -173,7 +182,9 @@ if __name__ == "__main__":
     p.add_argument("--evals", help="comma-separated eval IDs, e.g. 1,2,3")
     p.add_argument("--condition", default="both",
                    choices=["baseline", "with_skill", "both"])
+    p.add_argument("--skip-existing", action="store_true",
+                   help="load cached results instead of re-running completed evals")
     args = p.parse_args()
     eval_ids   = [int(x) for x in args.evals.split(",")] if args.evals else None
     conditions = ["baseline", "with_skill"] if args.condition == "both" else [args.condition]
-    run(eval_ids, conditions)
+    run(eval_ids, conditions, skip_existing=args.skip_existing)

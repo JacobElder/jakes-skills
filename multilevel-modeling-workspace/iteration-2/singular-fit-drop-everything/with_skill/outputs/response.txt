@@ -1,0 +1,94 @@
+## Short answer: The school-level slope drop is probably fine. The student-level slope drop is the problem.
+
+Dropping both and declaring the model clean because "p-values look good" is where this goes wrong — and the good p-values may be a symptom of the problem, not a vindication.
+
+---
+
+## Why the student-level slope for `time` matters
+
+`time` varies **within students** (that's the whole point — repeated measurements). For within-cluster predictors, the fixed-effect test uses an error term that implicitly assumes all units have the same slope. When that assumption is wrong — and individual growth trajectories almost always vary — the standard error for the `time` and `time × treatment` coefficients is too small, and your p-values are anti-conservative.
+
+This is the exact error Barr et al. (2013) document. In simulation, omitting random slopes for within-cluster predictors inflates Type I error to 2–5× the nominal rate. The `time × treatment` interaction is your key inference, and it's the one most exposed here.
+
+---
+
+## The two drops aren't equally defensible
+
+| Drop | Verdict | Reason |
+|---|---|---|
+| School-level slope for `time` (σ² → 0) | **Probably defensible** | Schools rarely differ in *how fast* outcomes change; this variance being negligible is plausible. Also, with typical numbers of schools (~10–50), this parameter is weakly identified anyway. |
+| Student-level slope for `time` (σ² → 0) | **Needs diagnosis before accepting** | Individual growth trajectories almost always vary. A zero estimate here often signals a scaling issue, not a true zero. |
+
+---
+
+## Before accepting the simplified model, run these checks
+
+**1. Is `time` scaled?** This is the most common cause of spurious singularity.
+
+If time is coded as raw years (2018, 2019, 2020) or large integers, the random slope variance will be numerically tiny even when the effect is real — the optimizer hits numerical precision limits and reports zero. Fix it first:
+
+```r
+df$time_c <- scale(df$time)  # or manually center and divide by SD
+```
+
+Then refit `(time_c | school:student)` and see if the singularity disappears. Very often it does.
+
+**2. Try removing the intercept-slope correlation before dropping the slope entirely.**
+
+Singularity in `(time | school:student)` is often caused by the intercept-slope correlation hitting ±1, not by the slope variance being zero. Separate them:
+
+```r
+lmer(score ~ time * treatment + 
+       (1 | school) + 
+       (1 | school:student) + 
+       (0 + time | school:student))
+```
+
+If *this* runs clean, you've kept the slope you need while resolving the correlation issue.
+
+**3. Check `isSingular()` and `VarCorr()` on the original maximal model.**
+
+```r
+m_max <- lmer(score ~ time * treatment + 
+                (time | school) + 
+                (time | school:student), 
+              data = df, REML = TRUE)
+isSingular(m_max)
+VarCorr(m_max)   # look at which component is zero or which correlation is ±1
+```
+
+The component that's zero tells you what to drop, not a blanket "drop all slopes."
+
+---
+
+## What to try, in order
+
+```r
+# Step 1: Scale time — does singularity go away?
+m1 <- lmer(score ~ time_c * treatment + (time_c | school) + (time_c | school:student), df)
+isSingular(m1)
+
+# Step 2: If school slope still singular, drop school slope only
+m2 <- lmer(score ~ time_c * treatment + (1 | school) + (time_c | school:student), df)
+isSingular(m2)
+
+# Step 3: If m2 is still singular, try removing the correlation
+m3 <- lmer(score ~ time_c * treatment + 
+             (1 | school) + (1 | school:student) + (0 + time_c | school:student), df)
+isSingular(m3)
+
+# Only if slope variance is genuinely zero after scaling: your current model
+m_final <- lmer(score ~ time_c * treatment + (1 | school) + (1 | school:student), df)
+```
+
+---
+
+## One more thing about `treatment`
+
+If treatment is randomized at the school level (the typical cluster RCT design), it only varies between schools — it cannot have a random slope at any level, so that's not the concern. But if treatment is within-student (crossover, or within-school randomization), then by the same logic it needs a random slope by student too.
+
+---
+
+## Bottom line
+
+Your current model is likely **anti-conservative for the `time` and `time × treatment` fixed effects**. The good p-values don't validate it — they may reflect inflated test statistics. Scaling `time` and trying `(0 + time_c | school:student)` takes five minutes and will tell you whether the student-level slope was genuinely zero or a scaling artifact. Do that before reporting.

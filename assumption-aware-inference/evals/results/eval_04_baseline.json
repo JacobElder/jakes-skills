@@ -2,7 +2,7 @@
   "eval_id": 4,
   "condition": "baseline",
   "prompt": "We ran a randomized A/B test on checkout flow. Someone on my team says we need to control for device type, browser, and whether the user completed onboarding, since those differ a bit between the two arms. Should I add those as covariates?",
-  "response": "Adding pre-treatment covariates to a randomized experiment is valid and often beneficial, but the *reason* matters a lot here.\n\n**Good reason to add them:** They predict the outcome (conversion rate), which reduces residual variance and increases power. This is standard ANCOVA-style adjustment and is genuinely useful.\n\n**Bad reason to add them:** They're imbalanced between arms. Small imbalances in a randomized experiment are expected noise \u2014 randomization guarantees balance *in expectation*, not exactly. Selecting covariates to adjust for *because they look imbalanced post-hoc* is a form of data dredging that inflates Type I error, especially if you only add the ones that happen to move your p-value.\n\n**The practical test:** Would you have included device type, browser, and onboarding completion as controls before seeing the data? If these are well-known predictors of checkout conversion (they probably are), then yes \u2014 add them, and your estimate will be more precise. If you're adding them specifically because someone noticed the arms look different on those dimensions, that's a weaker justification and you should be cautious.\n\n**Bottom line:** Add them if they're strong predictors of the outcome and you can justify that choice on domain grounds, not because of the observed imbalance. Lin (2013) shows regression adjustment with pre-specified covariates is asymptotically efficient in randomized experiments \u2014 so it's a strict win when done right. The imbalance your teammate observed is probably just chance and shouldn't be the deciding factor.",
+  "response": "Short answer: **it depends on whether these were pre-specified, and onboarding completion needs special scrutiny.**\n\n**The core issue with \"they differ a bit\"**\n\nIn a randomized experiment, any covariate imbalance between arms is purely random \u2014 it's not confounding anything. Adding covariates *because* you noticed imbalance after the fact is a form of specification searching that inflates Type I error. The right reason to adjust for covariates is **precision gain**, not confounding control.\n\n**What to actually do**\n\n- If device type and browser were pre-specified in your analysis plan before seeing data, include them \u2014 they can tighten your confidence intervals (this is the ANCOVA/Lin estimator logic). Fine.\n- If you're adding them because someone eyeballed the balance table and got nervous, that's more dangerous than it sounds. The expected covariate imbalance across all covariates in a randomized trial is not zero \u2014 it's random. Chasing it inflates false positive rates.\n\n**The onboarding flag is a different problem entirely**\n\nIf \"completed onboarding\" could plausibly be *affected* by which checkout flow the user was assigned to (i.e., it's a post-treatment variable), then it's a mediator or collider, not a baseline covariate. Controlling for it would introduce bias \u2014 you'd be blocking part of the treatment effect or opening a backdoor path. Check carefully: does assignment to a checkout arm precede or follow onboarding completion in the user timeline?\n\n**Bottom line**\n\nPre-specified device/browser adjustments \u2192 fine, may improve precision. Post-hoc adjustments chasing observed imbalance \u2192 resist this. Onboarding completion as a covariate \u2192 only safe if it's definitively pre-treatment and pre-specified.",
   "assertions": [
     {
       "text": "States that in a randomized experiment the unadjusted difference is already unbiased for the causal effect and adjustment is mainly for precision",
@@ -26,13 +26,13 @@
     }
   ],
   "assertion_results": [
-    false,
-    false,
-    false,
+    true,
+    true,
+    true,
     true,
     true
   ],
-  "passed": 2,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.4
+  "pass_rate": 1.0
 }

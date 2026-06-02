@@ -1,0 +1,43 @@
+{
+  "eval_id": 22,
+  "condition": "baseline",
+  "prompt": "I ran the same regression in men and women separately. In men the coefficient on treatment is 0.42 (p = 0.03). In women it's 0.31 (p = 0.12). So the treatment effect is significant in men but not women \u2014 that means the treatment works differently by sex, right?",
+  "response": "API Error: 529 Overloaded. This is a server-side issue, usually temporary \u2014 try again in a moment. If it persists, check status.claude.com.",
+  "assertions": [
+    {
+      "text": "States that 'significant in one group, not the other' does NOT establish that the effects differ between groups",
+      "type": "must_pass"
+    },
+    {
+      "text": "States the correct test is a direct contrast or interaction term (treatment \u00d7 sex / group), not a comparison of individual p-values",
+      "type": "scored"
+    },
+    {
+      "text": "Explains why: two effects can each be (non-)significant individually while their difference has a different significance status",
+      "type": "scored"
+    },
+    {
+      "text": "Notes or implies the SE of the difference is larger than either individual SE (e.g. \u221a(SE\u2081\u00b2 + SE\u2082\u00b2) under independence)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT accept the subgroup p-value comparison as a valid test of the between-group difference",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0,
+  "eval_passes": false,
+  "must_pass_failed_indices": [
+    1,
+    5
+  ]
+}

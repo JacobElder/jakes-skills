@@ -1,0 +1,42 @@
+{
+  "eval_id": 23,
+  "condition": "baseline",
+  "prompt": "We ran a small pilot study \u2014 9 people per group, so n=18 total \u2014 and found d = 0.9, p = 0.04. The effect is large and significant! This is great news for the intervention, right?",
+  "response": "There are a few issues worth flagging here, one of which is a hard internal inconsistency.\n\n## The numbers don't add up\n\nFor an independent-samples t-test with n = 9 per group (df = 16):\n\n```\nt = d \u00d7 \u221a(n/2) = 0.9 \u00d7 \u221a4.5 \u2248 1.91\n```\n\nThat gives **p \u2248 0.074**, not 0.04. To reach p = 0.04 with df = 16 you'd need t \u2248 2.24, which corresponds to d \u2248 1.06. So d = 0.9 and p = 0.04 are mutually inconsistent \u2014 one of these numbers is wrong.\n\n## Even if the numbers were consistent: winner's curse\n\nWhen a study is underpowered and still achieves significance, it did so because the observed effect was inflated by sampling noise. This is the **winner's curse**: small-n studies that cross the significance threshold are selected precisely because their estimates ran large. The true effect is almost certainly smaller than d = 0.9.\n\nThe 95% CI on d with n = 9/group is roughly **\u00b10.7 Cohen's d units** \u2014 you could plausibly have anything from a small to a very large effect.\n\n## Power sanity check\n\nEven if the true effect really were d = 0.9, a study of this size has only about **48% power**. That means half of all true positives get missed \u2014 and the ones that do squeak through are the flukes that ran large.\n\n## What this pilot can and can't tell you\n\nPilots with n \u2248 9/group are useful for:\n- Feasibility and procedure refinement\n- Estimating an effect size to **power a real study**\n\nThey're not useful for confirming whether an intervention works. The honest takeaway is: if d = 0.9 is even in the right ballpark, a properly powered confirmatory study (n \u2248 40\u201350/group for 80% power at d = 0.9, more if the true effect is smaller) would be worth running.\n\nThe significant p-value is doing more harm than good here \u2014 it creates premature confidence in results that are too noisy to trust.",
+  "assertions": [
+    {
+      "text": "Flags low power as a concern \u2014 n=18 is a very small sample for an effect of this magnitude",
+      "type": "scored"
+    },
+    {
+      "text": "Names or describes the Type M / exaggeration ratio concern: significant estimates from low-powered studies systematically overstate the true effect",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that at low power the true effect could be much smaller, negligible, or even in the wrong direction \u2014 the observed large effect is not trustworthy at face value",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends treating the result as preliminary / hypothesis-generating rather than conclusive",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply validate 'large and significant' as strong confirmation of the intervention's efficacy",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 5,
+  "pass_rate": 0.0,
+  "eval_passes": false,
+  "must_pass_failed_indices": [
+    5
+  ]
+}

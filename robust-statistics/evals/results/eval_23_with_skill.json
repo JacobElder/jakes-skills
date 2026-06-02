@@ -1,0 +1,40 @@
+{
+  "eval_id": 23,
+  "condition": "with_skill",
+  "prompt": "We ran a small pilot study \u2014 9 people per group, so n=18 total \u2014 and found d = 0.9, p = 0.04. The effect is large and significant! This is great news for the intervention, right?",
+  "response": "Not quite \u2014 and the specific combination of \"large, significant, small n\" is actually a warning sign, not a green light. Here's what's actually happening.\n\n**Power is around 40\u201350%.** With n=9 per group and a true effect of d=0.9, a two-sample t-test has roughly that probability of clearing p < .05. That means most runs of this study would *miss* the effect even if it's real.\n\n**The exaggeration problem (Type M error).** When power is ~40\u201350%, the estimates that happen to cross the significance threshold are drawn from the tail of the sampling distribution \u2014 they are not a representative sample of the true effect. Conditional on being significant, the observed d is systematically inflated relative to the true d. The winner's curse applies in full: d=0.9 is your best estimate of the *observed-significant* effect, not the underlying effect. The true effect could be d=0.3\u20130.5, with a fortunate random fluctuation pushing you past p=.05.\n\n**p=0.04 is modest evidence.** With a single small study and no preregistration, the probability the observed effect replicates at similar magnitude is substantially below what p=.04 implies. The p-value answers \"how often would I get a result this extreme if the null were true?\" \u2014 it doesn't tell you how much to trust the point estimate.\n\n**What you actually have.** Promising pilot data that's consistent with a real effect and justifies a properly powered follow-up. That's genuinely useful. But the d=0.9 estimate should not be used for effect-size claims or as the basis for resource decisions \u2014 it almost certainly overstates the true effect, possibly by a factor of 2 or more.\n\nThe right framing: design the confirmatory study with a more conservative assumed effect (d=0.4\u20130.5 is a reasonable hedge), compute the n needed for 80\u201390% power at that effect, and pre-register the analysis. If the effect is real, you'll find it. If d=0.9 is what's real, you'll have plenty of power.",
+  "assertions": [
+    {
+      "text": "Flags low power as a concern \u2014 n=18 is a very small sample for an effect of this magnitude",
+      "type": "scored"
+    },
+    {
+      "text": "Names or describes the Type M / exaggeration ratio concern: significant estimates from low-powered studies systematically overstate the true effect",
+      "type": "scored"
+    },
+    {
+      "text": "Notes the Type S / wrong-sign risk at low power",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends treating the result as preliminary / hypothesis-generating rather than conclusive",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply validate 'large and significant' as strong confirmation of the intervention's efficacy",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

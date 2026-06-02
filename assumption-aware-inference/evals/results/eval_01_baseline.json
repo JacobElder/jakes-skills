@@ -2,7 +2,7 @@
   "eval_id": 1,
   "condition": "baseline",
   "prompt": "I have two groups, about 80 people each, and I want to compare their average monthly spend. The data are right-skewed and a Shapiro-Wilk test on each group rejects normality (p < .001). Can I still use a t-test, or do I have to switch to Mann-Whitney?",
-  "response": "With n \u2248 80 per group, you can almost certainly use the t-test. Here's the reasoning:\n\n## Why the t-test still works\n\nThe t-test's normality assumption is about the **sampling distribution of the group means**, not the raw data. The Central Limit Theorem kicks in well before n = 80 for typical right-skewed distributions \u2014 the means will be approximately normal even when individual observations aren't.\n\nThe Shapiro-Wilk result is expected: at n \u2248 80, SW is powerful enough to detect trivially small departures from normality that have no practical effect on inference. A significant SW at this sample size tells you almost nothing about whether the t-test is appropriate.\n\n## The actual question to ask\n\nRather than \"does SW reject?\", ask: **are there extreme outliers that pull the mean heavily?**\n\n- If yes: those outliers may distort the mean itself as a target estimand, and you should think carefully about what you're comparing.\n- If no: the t-test is fine.\n\nPlot your data (box plot + histogram) and look at the tails.\n\n## The Mann-Whitney caveat\n\nMann-Whitney is not simply a \"non-parametric t-test.\" It tests whether one distribution is stochastically larger than the other \u2014 formally, P(X > Y) \u2260 0.5. If your question is about **means** (e.g., average monthly spend), Mann-Whitney answers a different question and can mislead. If your question is really about the \"typical\" user, a median comparison or quantile regression might be more honest than either.\n\n## Recommendation\n\n1. Check for outliers visually.\n2. Run the Welch t-test (unequal variances \u2014 right-skewed data often have unequal variances too).\n3. If you're worried, bootstrap a confidence interval on the mean difference as a robustness check \u2014 it makes no distributional assumptions and will likely land very close to the t-test result.\n\nAt your sample size, switching to Mann-Whitney to handle skewness is solving the wrong problem.",
+  "response": "With n \u2248 80 per group, you have more flexibility than the normality test implies. Here's the breakdown:\n\n## The t-test is defensible at n = 80\n\nThe normality assumption for a t-test is about the **sampling distribution of the mean**, not the raw data. By the Central Limit Theorem, the sampling distribution converges to normal as n grows \u2014 at n = 80, this is generally well-established even for moderately skewed distributions.\n\nThe Shapiro-Wilk rejection is partly a sensitivity artifact: at n = 80 it detects even trivial deviations from normality. Statistical significance \u2260 practical importance here.\n\n**But** \u2014 right-skewed spend data often has heavy right tails (a few big spenders), and CLT convergence slows with heavy tails / outliers. So \"defensible\" isn't the same as \"best.\"\n\n## The better question: what are you actually comparing?\n\n| Goal | Method |\n|---|---|\n| Compare **mean** spend | t-test on log(spend), then back-transform \u2192 compares **geometric means** (usually the right quantity for spend) |\n| Compare **typical/median** spend | Mann-Whitney U |\n| Compare means on raw scale, robust to outliers | Bootstrap the mean difference (10k resamples) |\n\n## My recommendation\n\n**Log-transform the data, then run the t-test.** Spend is multiplicatively structured (people differ by ratios, not additive amounts), so log(spend) is usually much closer to normal, and the geometric mean ratio is the more interpretable effect. This is standard practice in health economics, marketing, and behavioral data.\n\nIf you need to report raw-scale means for a non-technical audience, report the back-transformed confidence interval alongside it.\n\nMann-Whitney is a reasonable sensitivity check, but know it tests whether one group **stochastically dominates** the other \u2014 not a mean difference \u2014 so the null and the effect size mean something different than what most readers expect.",
   "assertions": [
     {
       "text": "States or implies the relevant object is the sampling distribution of the mean, not the distribution of the raw data",
@@ -33,11 +33,11 @@
     true,
     true,
     true,
-    true,
+    false,
     true,
     true
   ],
-  "passed": 6,
+  "passed": 5,
   "total": 6,
-  "pass_rate": 1.0
+  "pass_rate": 0.8333333333333334
 }

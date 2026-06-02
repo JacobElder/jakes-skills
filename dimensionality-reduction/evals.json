@@ -1,0 +1,149 @@
+{
+  "skill_name": "dimensionality-reduction",
+  "notes": "Each eval targets a specific failure mode the skill exists to prevent. Assertions are objectively checkable claims about the response. should_not_trigger cases at the bottom are for description-triggering evals, not output grading.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "tsne-distance-misread",
+      "prompt": "I ran t-SNE on my customer behavior data (about 8k customers, 40 features). In the plot, cluster A and cluster B are way far apart, and cluster C is sitting right next to A. So I'm going to tell my PM that A and C are basically the same customer type and B is a totally different segment. Also B's blob is huge so it must be our most variable segment. Sound right?",
+      "files": [],
+      "expected_output": "Corrects both the distance interpretation (inter-cluster distance in t-SNE is not meaningful) and the size interpretation (cluster size/blob area is meaningless because t-SNE equalizes density). Recommends validating segment similarity and variability in the original or PCA-reduced space, and scanning multiple perplexities/seeds.",
+      "assertions": [
+        "States that distances between clusters in a t-SNE plot are not reliable/meaningful",
+        "States that cluster size or blob area in t-SNE is meaningless (does not indicate variability)",
+        "Recommends measuring similarity/variability in the original or PCA space rather than the embedding",
+        "Mentions checking robustness across multiple seeds and/or perplexity values, or that one run is not sufficient",
+        "Does NOT endorse the user's plan to report A~C similarity and B as most variable based on the plot"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "pca-vs-efa-confusion",
+      "prompt": "I have a 32-item wellbeing questionnaire, n=400. I want to find the underlying psychological constructs people are responding to. My plan: run PCA in SPSS, keep components with eigenvalue greater than 1, varimax rotate, done. That's factor analysis, right?",
+      "files": [],
+      "expected_output": "Distinguishes EFA (common-factor model, latent constructs) from PCA (no error term, repackages all variance). Recommends true EFA with ML or principal-axis extraction. Pushes back on the eigenvalue>1 (Kaiser) rule in favor of parallel analysis. Notes oblique rotation is usually more appropriate than varimax for psychological constructs because they tend to correlate. Optionally flags that SPSS defaults to PCA inside its factor menu.",
+      "assertions": [
+        "Explains that PCA is not the same as factor analysis / EFA (PCA has no common-factor model or error term)",
+        "Recommends a genuine EFA extraction method such as maximum likelihood or principal-axis factoring",
+        "Advises against relying on the eigenvalue-greater-than-1 (Kaiser) rule and recommends parallel analysis (and/or scree)",
+        "Recommends oblique rotation (e.g. oblimin/promax) for likely-correlated psychological factors, or at least questions defaulting to varimax",
+        "Recommends checking factorability (KMO and/or Bartlett) before extracting"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "lda-on-unlabeled-data",
+      "prompt": "I've got unlabeled sensor data, 80 features, ~2000 rows, no class labels. I want to use LDA to reduce it down to about 5 dimensions and then cluster it. Can you give me the code?",
+      "files": [],
+      "expected_output": "Catches that LDA is supervised and requires class labels, so it cannot be applied to unlabeled data. Also notes LDA is capped at (k-1) components, so 5 dimensions would require at least 6 classes. Redirects to an unsupervised method (PCA, or UMAP/PaCMAP for visualization) and suggests clustering in the reduced/original space.",
+      "assertions": [
+        "Identifies that LDA is supervised and requires class labels, which the user does not have",
+        "Mentions the (k-1)-component ceiling of LDA (needing more classes than the requested dimensions)",
+        "Recommends an unsupervised alternative such as PCA (and/or UMAP/PaCMAP) instead",
+        "Does NOT provide LDA code that pretends to run on unlabeled data as if it were valid"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "full-pipeline-with-validation",
+      "prompt": "Attached is a numeric dataset, roughly 1500 rows by 60 columns (data.npy), no labels. I want a solid dimensionality-reduction and visualization pipeline I can actually defend. Give me runnable Python and tell me how to know whether the result is trustworthy.",
+      "files": ["data.npy"],
+      "expected_output": "Produces a defensible pipeline: standardize, run PCA first (report explained variance / scree), reduce to ~30-50 dims before a nonlinear method, run a nonlinear embedding across multiple seeds and hyperparameter values, then validate with quantitative metrics (trustworthiness, continuity, kNN preservation, Shepard correlation) using the bundled diagnostics. States the t-SNE/UMAP interpretation caveats explicitly.",
+      "assertions": [
+        "Standardizes the features before variance/distance-based methods",
+        "Runs PCA first and reports explained variance or a scree-based way to choose dimensions",
+        "Reduces with PCA to roughly 30-50 dimensions before running t-SNE/UMAP (or justifies an alternative)",
+        "Runs the nonlinear embedding across more than one seed and/or hyperparameter value",
+        "Validates the embedding with quantitative neighbour-preservation metrics (trustworthiness/continuity/kNN/Shepard), ideally via the bundled dr_diagnostics script",
+        "States the interpretation caveats (cluster size/distance not meaningful) in the writeup",
+        "Provides runnable Python code"
+      ]
+    },
+    {
+      "id": 4,
+      "name": "umap-global-structure-overclaim",
+      "prompt": "I'm switching from t-SNE to UMAP because UMAP preserves global structure. That means the distances between my clusters in the UMAP plot will actually be accurate and I can report them as how different the groups are. Good plan?",
+      "files": [],
+      "expected_output": "Pushes back on the overstated claim that UMAP preserves global structure well; notes benchmarks show only marginal improvement over t-SNE and that PCA/PaCMAP/TriMap are stronger for global geometry. Makes clear that inter-cluster distances in UMAP are still not safe to report as group dissimilarity. Suggests PaCMAP/TriMap or PCA if global layout genuinely matters, and validating distances quantitatively.",
+      "assertions": [
+        "Pushes back on the claim that UMAP reliably preserves global structure (notes it is overstated / only marginally better than t-SNE)",
+        "States that inter-cluster distances in a UMAP plot are still not trustworthy to report as group dissimilarity",
+        "Suggests a better option for global structure such as PaCMAP, TriMap, or PCA",
+        "Does NOT endorse reporting UMAP inter-cluster distances as a measure of how different the groups are"
+      ]
+    },
+    {
+      "id": 5,
+      "name": "ica-vs-pca-source-separation",
+      "prompt": "I have 8 channels of EEG. Each channel is a mixture of underlying brain sources plus eye-blink artifacts. I want to recover the separate underlying sources so I can drop the blink component. I was going to use PCA for this. Right call?",
+      "files": [],
+      "expected_output": "Recommends ICA over PCA for blind source separation. Explains PCA only decorrelates (variance/orthogonality) whereas ICA targets statistical independence/non-Gaussianity, which is what source separation needs. Mentions ICA components are unordered with sign/scale ambiguity, and that PCA whitening is a common preprocessing step.",
+      "assertions": [
+        "Recommends ICA (rather than PCA) for separating the independent sources",
+        "Explains the conceptual difference: PCA decorrelates/maximizes variance, ICA seeks statistical independence / non-Gaussianity",
+        "Notes a practical ICA caveat (components unordered, sign/scale ambiguity, or that whitening/PCA is a preprocessing step)"
+      ]
+    },
+    {
+      "id": 6,
+      "name": "efa-cfa-double-dip",
+      "prompt": "I ran an EFA on my 300 survey responses and a clean 3-factor structure popped out. Now I want to run a CFA on those same 300 responses to confirm the 3-factor model is solid before I publish. Can you set up the CFA?",
+      "files": [],
+      "expected_output": "Flags that running CFA on the same sample used for EFA is circular double-dipping and is not genuine confirmation. Recommends a split-sample, cross-validation, or an independent replication sample. Can still describe how to set up the CFA (lavaan/semopy, fit indices) but conditions it on using fresh data.",
+      "assertions": [
+        "Identifies that running CFA on the same data used for the EFA is circular / double-dipping and not real confirmation",
+        "Recommends a separate sample: split-sample, replication, or cross-validation",
+        "If it sets up the CFA, it names appropriate fit indices (e.g. CFI/TLI, RMSEA, SRMR) and/or a tool (lavaan/semopy)"
+      ]
+    },
+    {
+      "id": 7,
+      "name": "pca-is-fine-dont-overcomplicate",
+      "prompt": "I've got 12 numeric sensor readings, all on similar scales, mildly correlated, n=5000. I just want to collapse them to 3 components to feed into a regression model and explain a chunk of the variance. I was going to use plain PCA. Is that fine or am I missing something fancier?",
+      "files": [],
+      "expected_output": "Affirms that PCA is the correct, appropriate choice here and does NOT push the user toward nonlinear or exotic methods. May add light, proportionate practical notes (standardize/center, check explained variance, validate via downstream regression performance), but should not lecture about t-SNE/UMAP caveats that are irrelevant to this compression task. This eval guards against the skill making the agent reflexively contrarian.",
+      "assertions": [
+        "Affirms PCA is an appropriate choice for this task (does not steer away from it)",
+        "Does NOT recommend switching to t-SNE/UMAP or a more complex method for this compression goal",
+        "Does NOT deliver irrelevant warnings about embedding cluster sizes/distances (those caveats don't apply to PCA-for-regression)",
+        "Any added advice is proportionate (e.g. center/standardize, check cumulative explained variance, validate on downstream regression) rather than an over-long lecture"
+      ]
+    },
+    {
+      "id": 8,
+      "name": "categorical-data-not-pca",
+      "prompt": "I have a survey dataset that's almost all categorical — region, job category, education band, a few yes/no items, maybe 18 columns. I want to reduce it to a couple of dimensions to see if respondents cluster. My plan is one-hot encode everything and run PCA. Good?",
+      "files": [],
+      "expected_output": "Flags that one-hot encoding categorical variables and running PCA distorts the geometry (variance becomes an artifact of category frequencies). Recommends the correspondence-analysis family instead: MCA for all-categorical, FAMD/PCAmix if numeric columns are mixed in. May point to prince (Python) or FactoMineR (R).",
+      "assertions": [
+        "Identifies that running PCA on one-hot-encoded categorical data is problematic / distorts the geometry",
+        "Recommends MCA (and/or FAMD/PCAmix for mixed data) as the appropriate method",
+        "Does NOT simply endorse the one-hot-plus-PCA plan as-is",
+        "Optionally names a concrete tool (e.g. prince, FactoMineR)"
+      ]
+    }
+  ],
+  "trigger_evals": [
+    {"query": "ran t-SNE on my single-cell data and two clusters are far apart, does that mean those cell types are very different?", "should_trigger": true},
+    {"query": "I have 50 questionnaire items and want to find the latent constructs behind them, what should I run", "should_trigger": true},
+    {"query": "best way to squish a 200-feature dataset down to like 10 features before I throw it into xgboost", "should_trigger": true},
+    {"query": "umap vs tsne for visualizing my embeddings from a sentence transformer, n_neighbors and min_dist advice?", "should_trigger": true},
+    {"query": "is it ok to interpret the distances between groups in my PCA biplot", "should_trigger": true},
+    {"query": "I want to separate mixed audio signals into independent sources", "should_trigger": true},
+    {"query": "how do I know if my 2D embedding is actually faithful to the original high-dimensional data", "should_trigger": true},
+    {"query": "should I use NMF or PCA for my term-document matrix topic analysis", "should_trigger": true},
+    {"query": "ran EFA, got 4 factors, now I want to confirm them — what's the right way to do that", "should_trigger": true},
+    {"query": "project my 80-dim feature vectors to 2d so I can see the clusters in matplotlib", "should_trigger": true},
+    {"query": "my survey is all categorical (region, job type, education) and I want to collapse it to a couple dimensions, one-hot then pca?", "should_trigger": true},
+    {"query": "I need to fit my reduction on training data and apply the same transform to new incoming rows later — which methods can do that", "should_trigger": true},
+    {"query": "write me a CUDA kernel to speed up matrix multiplication", "should_trigger": false},
+    {"query": "what's the difference between linear and logistic regression", "should_trigger": false},
+    {"query": "Latent Dirichlet Allocation for topic modeling my news articles — set up the LDA", "should_trigger": false},
+    {"query": "run k-means on my dataset and tell me the optimal number of clusters with the elbow method", "should_trigger": false},
+    {"query": "how do I reduce the file size of this 60 MB PDF", "should_trigger": false},
+    {"query": "my dataframe has too many columns to display, how do I show all of them in pandas", "should_trigger": false},
+    {"query": "discriminant validity for my survey — what's the HTMT cutoff", "should_trigger": false},
+    {"query": "explain how a transformer attention head works", "should_trigger": false},
+    {"query": "I have linear algebra homework on eigenvalues of a 3x3 matrix, can you check my work", "should_trigger": false}
+  ]
+}

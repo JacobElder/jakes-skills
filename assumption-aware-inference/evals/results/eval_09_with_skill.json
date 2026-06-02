@@ -2,7 +2,7 @@
   "eval_id": 9,
   "condition": "with_skill",
   "prompt": "I have data from 6 hospitals, with hundreds of patients each, and treatment was assigned at the hospital level. I clustered my standard errors by hospital. Is that enough?",
-  "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+  "response": "No \u2014 six clusters is the specific failure mode that makes cluster-robust SEs unreliable, and clustering alone isn't enough here.\n\n## The core problem\n\nCluster-robust SEs are asymptotic in the **number of clusters**, not the number of observations. With 6 hospitals, the asymptotics haven't engaged. The standard sandwich estimator is biased downward in this regime \u2014 it systematically underestimates the true sampling variability \u2014 so your p-values are too optimistic and your CIs too narrow. Hundreds of patients per hospital doesn't help; the patients give you precision *within* hospitals, but the treatment effect is identified across hospitals, and you have 6 of those.\n\n## The fix\n\n**Wild cluster bootstrap** (Cameron\u2013Gelbach\u2013Miller). It resamples at the cluster level and imposes the null, producing valid inference with few clusters where the asymptotic sandwich fails. This is the go-to for the low-cluster regime.\n\nIn R: `lmtest::coeftest` + `sandwich::vcovBS(..., type = \"wild\")`, or the `fwildclusterboot` package (faster, purpose-built). In Stata: `boottest`. In Python: `wildboottest`.\n\n## A harder issue to sit with\n\nWith treatment assigned at the hospital level, your effective sample size for the *treatment effect* is 6 \u2014 regardless of how many patients are inside. If the treatment split is unbalanced (say 4 treated / 2 control hospitals), you're estimating the control counterfactual from 2 units. Precision is determined by the number of clusters, not patients. Report your results accordingly: wide intervals aren't a modeling failure, they're an honest reflection of having 6 randomization units.\n\nIf the hospitals weren't *randomly* assigned to treatment, you also have an identification problem that no variance fix addresses \u2014 confounding at the hospital level (teaching status, urban/rural, patient mix) may drive the observed difference.\n\n## Practical recommendation\n\n1. Switch to the wild cluster bootstrap for inference.\n2. Report the effective N as 6 clusters, not total patients.\n3. If observational: name what hospital-level confounders you're relying on measured covariates to handle, and consider a sensitivity analysis.\n\nThe \"hundreds of patients\" gives you reliable within-hospital estimates, which feeds into a more stable bootstrap. But the honest uncertainty band on the treatment effect will likely be wide \u2014 that's the data, not a problem to engineer away.",
   "assertions": [
     {
       "text": "States that the relevant asymptotics are in the number of clusters, not the number of patients, so hundreds per cluster does not rescue inference",
@@ -26,13 +26,13 @@
     }
   ],
   "assertion_results": [
-    false,
-    false,
-    false,
-    false,
-    false
+    true,
+    true,
+    true,
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.0
+  "pass_rate": 1.0
 }

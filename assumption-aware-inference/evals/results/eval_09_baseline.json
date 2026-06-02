@@ -2,7 +2,7 @@
   "eval_id": 9,
   "condition": "baseline",
   "prompt": "I have data from 6 hospitals, with hundreds of patients each, and treatment was assigned at the hospital level. I clustered my standard errors by hospital. Is that enough?",
-  "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+  "response": "No \u2014 6 clusters is a serious problem. Here's why, and what to do instead.\n\n## The core issue\n\nCluster-robust (sandwich) SEs are **asymptotically valid**, meaning they require many clusters to be reliable. With 6 clusters, the estimator is biased downward \u2014 it systematically underestimates variance, giving you anti-conservative inference (inflated Type I error, p-values that are too small).\n\nThe rule of thumb varies, but most econometricians won't trust conventional cluster-robust SEs below ~30\u201350 clusters.\n\n## The deeper problem\n\nTreatment is assigned at the hospital level with 6 hospitals. Regardless of how many patients you have, you effectively have **6 independent treatment observations**. No standard error correction changes that fundamental constraint on your identifying variation.\n\n## What to do instead\n\n**Best option: Wild cluster bootstrap**\nDesigned specifically for few clusters. Resamples residuals within clusters rather than clusters themselves, giving better finite-sample performance.\n- R: `fwildclusterboot` package (`boottest()`)\n- Stata: `boottest` package (Cameron, Gelbach & Miller 2008)\n\n**Simple correction: Use t(G\u22121) degrees of freedom**\nReplace normal/large-df inference with t(5). The 5% two-tailed critical value jumps from 1.96 to 2.57 \u2014 meaningfully more conservative. This is a floor, not a solution, but it's better than assuming asymptotic normality.\n\n**Randomization inference**\nWith 6 hospitals and a fixed number treated, you can enumerate permutations of treatment assignment and compute an exact p-value. If 3 are treated: C(6,3) = 20 permutations, so minimum achievable p = 0.05. This tells you something important: **your design may be underpowered by construction**.\n\n**Mixed model**\nTreat hospital as a random effect. This handles clustering through the model structure rather than a post-hoc SE correction, and is appropriate if hospitals are a sample from a broader population.\n\n## Bottom line\n\nClustered SEs with 6 clusters will give you confidence intervals that are too narrow and p-values that are too small. Use the wild cluster bootstrap as your primary approach, and be transparent about the few-clusters limitation in your paper.",
   "assertions": [
     {
       "text": "States that the relevant asymptotics are in the number of clusters, not the number of patients, so hundreds per cluster does not rescue inference",
@@ -26,13 +26,13 @@
     }
   ],
   "assertion_results": [
-    false,
-    false,
-    false,
-    false,
-    false
+    true,
+    true,
+    true,
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.0
+  "pass_rate": 1.0
 }

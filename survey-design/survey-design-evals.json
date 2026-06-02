@@ -1,0 +1,64 @@
+{
+  "skill_name": "survey-design",
+  "notes": "Task evals for the survey-design skill. Each prompt is something a real researcher/PM would send. Assertions are objective checks a grader can verify against the output. Eval 4 deliberately tests the psychometrics boundary (the skill should defer, not improvise statistics).",
+  "evals": [
+    {
+      "id": 1,
+      "name": "review-customer-sat-with-planted-flaws",
+      "prompt": "Can you review this 4-question customer satisfaction survey before I launch it? It's a phone survey our reps will read aloud.\n\n1. How satisfied were you with the speed and friendliness of our support team? (1-5)\n2. Don't you agree that our pricing is fair? (Strongly agree / Agree / Neither / Disagree / Strongly disagree)\n3. Which of these did you use? (select all that apply): Live chat, Phone, Email, Help center\n4. What is your household income? ___\n\nFor the rating scales I'm just going to show the numbers 1-5, no words, to keep it clean. Anything I should fix?",
+      "expected_output": "An item-by-item review that catches: Q1 double-barreled (speed + friendliness); Q2 leading/loaded ('Don't you agree') and acquiescence-prone agree/disagree; Q3 'select all that apply' should be forced-choice yes/no; Q4 sensitive income item read aloud by an interviewer invites social-desirability bias and item nonresponse (suggest self-administered / ranges / place late); the numeric-only scale should be verbally labeled. Each flaw should come with a concrete rewrite, and recency effects from reading options aloud on a phone survey should be noted.",
+      "files": [],
+      "assertions": [
+        {"text": "Identifies Q1 as double-barreled (combines speed and friendliness) and splits it into two items", "passed": null, "evidence": ""},
+        {"text": "Flags Q2 as leading/loaded ('Don't you agree') and rewrites it with both poles offered", "passed": null, "evidence": ""},
+        {"text": "Notes that the agree/disagree format in Q2 is prone to acquiescence and/or suggests an item-specific alternative", "passed": null, "evidence": ""},
+        {"text": "Recommends replacing 'select all that apply' in Q3 with a forced-choice yes/no per option", "passed": null, "evidence": ""},
+        {"text": "Identifies the income question as sensitive and recommends a social-desirability mitigation (self-administered mode, ranges, confidentiality, and/or placing it late)", "passed": null, "evidence": ""},
+        {"text": "Advises against numeric-only scales and recommends verbal labels on the points", "passed": null, "evidence": ""},
+        {"text": "Provides a concrete rewrite for at least three of the four questions, not just abstract critique", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "design-employee-engagement-pulse",
+      "prompt": "I need to design a short quarterly employee engagement pulse survey for a 300-person company. We want to track manager support, workload, and whether people feel safe speaking up, plus one question on whether they're thinking about leaving. Web-based, anonymous. Can you draft the questionnaire and explain your format choices?",
+      "expected_output": "A drafted instrument that: uses item-specific rating scales (or justifies any agree/disagree use), chooses 5 or 7 fully-labeled points and says why, keeps the survey short, orders the sensitive 'thinking about leaving' / psychological-safety items thoughtfully (later, with confidentiality framing), avoids double-barreled items across the three topics, and notes anonymity/social-desirability handling. Should explain choices in terms of data quality (satisficing, acquiescence, fatigue), not just present items.",
+      "files": [],
+      "assertions": [
+        {"text": "Uses item-specific response scales, or explicitly justifies any agree/disagree items chosen", "passed": null, "evidence": ""},
+        {"text": "Selects a 5- or 7-point scale and gives a reason tied to the construct/population", "passed": null, "evidence": ""},
+        {"text": "Fully labels the scale points with words rather than endpoints-only or numbers-only", "passed": null, "evidence": ""},
+        {"text": "Keeps the instrument short and/or explicitly invokes fatigue/length as a reason", "passed": null, "evidence": ""},
+        {"text": "Handles the sensitive intent-to-leave and speak-up-safety items with placement and/or confidentiality/anonymity framing", "passed": null, "evidence": ""},
+        {"text": "Each drafted item asks about one thing (no double-barreled items spanning the three topics)", "passed": null, "evidence": ""},
+        {"text": "Explains at least one format choice in terms of a named bias or the satisficing/cognitive model", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "focused-scale-points-decision",
+      "prompt": "Quick one — for my Likert items should I use a 5-point or 7-point scale? I keep reading conflicting things online, some people say more points is always better.",
+      "expected_output": "A nuanced answer: there is no universal optimum; reliability/validity rise with points then plateau around 5-7 and can fall past ~7 partly because you can't label well; default 5 or 7; for agree/disagree specifically use 5 (Revilla/Saris/Krosnick); fewer points for children/low-literacy; flags the confound with labeling. Should NOT simply endorse 'more is always better.' May ask or note that the answer depends on format (agree/disagree vs item-specific) and population.",
+      "files": [],
+      "assertions": [
+        {"text": "States there is no single universal optimum and that the choice depends on format and/or population", "passed": null, "evidence": ""},
+        {"text": "Explains that reliability/validity improve with more points then plateau (≈5–7) and can degrade beyond ~7", "passed": null, "evidence": ""},
+        {"text": "Does NOT simply agree that more points is always better", "passed": null, "evidence": ""},
+        {"text": "Mentions the agree/disagree-specific finding to use 5 points, or distinguishes agree/disagree from item-specific formats", "passed": null, "evidence": ""},
+        {"text": "References full labeling and/or the confound between number of points and labeling", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "psychometrics-boundary-handoff",
+      "prompt": "I've already collected responses to my 20-item workplace burnout scale (1100 people, 5-point items). Can you compute Cronbach's alpha for the three subscales, run a confirmatory factor analysis to check the structure, and test whether the factor loadings are invariant between our two office locations?",
+      "expected_output": "Recognizes this is post-collection measurement modeling (reliability estimation, CFA, measurement invariance) which is psychometrics, not survey design. Should clearly indicate the request belongs to psychometric analysis and hand off / defer rather than improvising the survey-design content as if it covered alpha/CFA/invariance. May still offer any genuinely design-adjacent observations, but should not pretend the survey-design skill performs the statistics.",
+      "files": [],
+      "assertions": [
+        {"text": "Recognizes the task (alpha, CFA, measurement invariance) as psychometrics / post-collection measurement modeling rather than survey design", "passed": null, "evidence": ""},
+        {"text": "Does not fabricate or improvise reliability/factor-analysis statistics as if survey design covered them", "passed": null, "evidence": ""},
+        {"text": "Indicates the request should be handled as a psychometric analysis (handoff/defer) while staying helpful", "passed": null, "evidence": ""}
+      ]
+    }
+  ]
+}

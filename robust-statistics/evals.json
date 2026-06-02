@@ -299,7 +299,7 @@
       "assertions": [
         {"text": "Flags low power as a concern — n=18 is a very small sample for an effect of this magnitude", "type": "scored"},
         {"text": "Names or describes the Type M / exaggeration ratio concern: significant estimates from low-powered studies systematically overstate the true effect", "type": "scored"},
-        {"text": "Notes the Type S / wrong-sign risk at low power", "type": "scored"},
+        {"text": "Notes that at low power the true effect could be much smaller, negligible, or even in the wrong direction — the observed large effect is not trustworthy at face value", "type": "scored"},
         {"text": "Recommends treating the result as preliminary / hypothesis-generating rather than conclusive", "type": "scored"},
         {"text": "Does NOT simply validate 'large and significant' as strong confirmation of the intervention's efficacy", "type": "must_pass"}
       ]
@@ -325,7 +325,7 @@
       "assertions": [
         {"text": "States that reporting p-values from a model selected by the same data is invalid / anti-conservative (post-selection inference problem)", "type": "must_pass"},
         {"text": "Explains that the stepwise selection process distorts the nominal meaning of the final model's p-values", "type": "scored"},
-        {"text": "Notes this is related to but subtler than standard multiple testing — search inflates false positives even without explicit multiplicity", "type": "scored"},
+        {"text": "Notes that the inflation of false positives comes from the implicit search across models, not only from explicitly running the same test many times", "type": "scored"},
         {"text": "Recommends at least one mitigation: pre-registration, sample splitting, honest exploratory labeling, or selective inference methods", "type": "scored"},
         {"text": "Does NOT endorse the reported p-values as having their nominal meaning", "type": "must_pass"}
       ]
@@ -395,6 +395,58 @@
         {"text": "Affirms that at n=150 per group the t-test is approximately valid for inference about the mean despite non-normality", "type": "scored"},
         {"text": "Response is proportionate and concise; does not deliver a lengthy lecture on distributional theory", "type": "must_pass"},
         {"text": "Does NOT recommend a nonparametric test based solely on the histogram looking non-normal, without considering n or the estimand", "type": "must_pass"}
+      ]
+    },
+    {
+      "id": 31,
+      "prompt": "I ran Shapiro-Wilk on my residuals (n=150, OLS regression) and got p = 0.08. So normality isn't violated and my inference is valid, right?",
+      "expected_output": "Wrong on two levels. First, p = 0.08 is absence of evidence, not evidence of normality — at n=150 the test has limited power to detect moderate violations. A non-rejection means 'we couldn't detect a violation', not 'normality holds'. Second, residual normality barely matters for coefficient inference at n=150 anyway: the CLT governs the sampling distribution of the estimator, not residual normality. The Shapiro-Wilk result is doing no useful work here in either direction.",
+      "files": [],
+      "expected_brevity": "short",
+      "assertions": [
+        {"text": "Does NOT accept p=0.08 on Shapiro-Wilk as confirmation that normality holds or that inference is validated", "type": "must_pass"},
+        {"text": "States that a non-significant Shapiro-Wilk is absence of evidence (low power to detect violations), not positive evidence of normality", "type": "scored"},
+        {"text": "Notes that residual normality matters little for coefficient inference at n=150 — the CLT governs the sampling distribution of the estimator", "type": "scored"},
+        {"text": "Does NOT endorse the Shapiro-Wilk result as the reason to proceed with inference", "type": "must_pass"}
+      ]
+    },
+    {
+      "id": 32,
+      "prompt": "I have two groups, n=45 per group, with moderately right-skewed outcomes (skewness ~1.5). My collaborator says I should use a permutation test instead of a t-test because it's 'safer' for non-normal data. Should I switch?",
+      "expected_output": "No switch needed. At n=45 with skewness ~1.5, the Berry-Esseen bound is roughly skewness/√n ≈ 1.5/√45 ≈ 0.22 for one sample; the two-sample test is more forgiving because skew partially cancels. The t-test's level is approximately valid here. A permutation test is also valid — but 'safer' implies the t-test is unsafe when it isn't. Both are fine; the t-test is the simpler and appropriate choice for a mean comparison.",
+      "files": [],
+      "expected_brevity": "short",
+      "assertions": [
+        {"text": "States the t-test is approximately valid at n=45 with moderate skew (~1.5), citing CLT or Berry-Esseen reasoning", "type": "scored"},
+        {"text": "Does NOT recommend switching to a permutation test as necessary for this case", "type": "must_pass"},
+        {"text": "Does NOT characterize the t-test as unsafe or problematic at this n and skew level", "type": "must_pass"},
+        {"text": "Notes that the permutation test is valid but is not required — both approaches are fine for a mean comparison", "type": "scored"}
+      ]
+    },
+    {
+      "id": 33,
+      "prompt": "I have a trial with 3 pre-specified primary outcomes. I tested each with a planned t-test and got p-values of 0.04, 0.03, and 0.08. A reviewer says I must apply Bonferroni correction. Is that right?",
+      "expected_output": "Whether correction is required depends on the analysis plan, field conventions, and the regulatory context — 'must' is too strong. For pre-specified primary outcomes with distinct scientific questions, the case for correction is weaker than for exploratory data-dredging. When correction is warranted, Bonferroni is the most conservative choice: the Holm procedure is uniformly more powerful and also controls FWER; FDR control (Benjamini-Hochberg) is appropriate when false-discovery rate rather than FWER is the right goal. The reviewer has a point about multiplicity; the disagreement is about whether Bonferroni specifically is obligatory.",
+      "files": [],
+      "assertions": [
+        {"text": "Does NOT simply endorse 'must apply Bonferroni' without engaging with the pre-specification context", "type": "must_pass"},
+        {"text": "Distinguishes pre-specified primary outcomes from exploratory comparisons as relevant to the correction decision", "type": "scored"},
+        {"text": "Notes that Bonferroni is conservative and that alternatives (Holm, FDR/BH) are available and often preferable", "type": "scored"},
+        {"text": "Acknowledges the reviewer's multiplicity concern as legitimate — does not dismiss correction entirely", "type": "scored"},
+        {"text": "Does NOT say multiple comparisons corrections are never needed", "type": "must_pass"}
+      ]
+    },
+    {
+      "id": 34,
+      "prompt": "I want to estimate the causal effect of a new training program on employee performance. I'll compare trained vs untrained employees using a t-test. Participation was voluntary. Is there anything wrong with that approach?",
+      "expected_output": "Yes — voluntary participation means self-selection into training. The t-test is mechanically valid but it estimates a confounded descriptive contrast, not a causal effect. Employees who choose to train likely differ from those who don't on motivation, tenure, role, and other performance predictors. The estimand issue (confounded descriptive vs causal effect) dominates any distributional concern. To approach causal identification: propensity score methods or matching, difference-in-differences if pre/post data exist, instrumental variable if there's a valid instrument, or regression discontinuity if there's an eligibility threshold. A well-run comparison requires making the ignorability assumption explicit and arguing for it.",
+      "files": [],
+      "assertions": [
+        {"text": "Identifies voluntary participation / self-selection as the core problem — the comparison is confounded", "type": "must_pass"},
+        {"text": "Distinguishes the descriptive contrast (t-test gives this) from a causal estimand (which requires handling selection)", "type": "scored"},
+        {"text": "Names at least one approach to causal identification given the observational design (e.g. propensity scores, DiD, IV, matching)", "type": "scored"},
+        {"text": "Frames the issue as an identification problem, not a distributional/assumption problem", "type": "scored"},
+        {"text": "Does NOT accept the t-test as an estimator of the causal effect of training without flagging the confounding", "type": "must_pass"}
       ]
     }
   ]

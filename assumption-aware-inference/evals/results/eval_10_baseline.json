@@ -2,7 +2,7 @@
   "eval_id": 10,
   "condition": "baseline",
   "prompt": "Should I model my outcome (proportion of a budget spent on category X, between 0 and 1) with logistic regression?",
-  "response": "You've hit your limit \u00b7 resets 11:20pm (America/Los_Angeles)",
+  "response": "No \u2014 logistic regression is for binary outcomes (0 or 1), not continuous proportions. Using it here is a misspecification.\n\n**The right choice depends on your boundary values:**\n\n- **No exact 0s or 1s** \u2192 **Beta regression**. The Beta distribution is parameterized on (0,1), fits the skew typical of budget shares, and gives interpretable coefficients via a logit link. This is the standard choice.\n\n- **You have exact 0s or 1s** (people who spent nothing or everything on category X) \u2192 **Zero-one inflated Beta regression** (ZOIB), which explicitly models the boundary probability mass separately from the continuous portion.\n\n- **Quick-and-dirty or lots of boundary values** \u2192 **Fractional logit** (Papke & Wooldridge 1996) \u2014 uses a logistic link with quasi-MLE, robust to boundary values, simpler to implement, but less efficient than Beta regression when the Beta assumption holds.\n\n**Why not OLS?** OLS can predict outside [0,1] and assumes homoskedastic errors, which is wrong for proportions (variance is highest near 0.5 and shrinks toward the boundaries).\n\n**In practice:** start with Beta regression (`betareg` in R, `statsmodels.BetaModel` in Python). Check whether you have boundary values first \u2014 if so, go ZOIB or fractional logit.",
   "assertions": [
     {
       "text": "Distinguishes a continuous proportion in (0,1) from a count of successes out of trials",
@@ -26,13 +26,13 @@
     }
   ],
   "assertion_results": [
+    true,
+    true,
     false,
-    false,
-    false,
-    false,
-    false
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 4,
   "total": 5,
-  "pass_rate": 0.0
+  "pass_rate": 0.8
 }

@@ -1,0 +1,22 @@
+[
+  {"query": "i have like 60 days of daily mood, sleep and stress ratings from ONE therapy client and i want to figure out what drives what for her specifically so we can target treatment", "should_trigger": true},
+  {"query": "we fit a regression across ~3000 people showing rumination predicts depression. can i tell my individual patient that if she ruminates less she'll get less depressed?", "should_trigger": true},
+  {"query": "I want to test whether a new migraine med actually works for this one patient by cycling her on and off it (with placebo) a few times over a couple months. how do I design and analyze that rigorously?", "should_trigger": true},
+  {"query": "120 participants, about 70 EMA beeps each, stress/sleepiness/craving. I want each person's OWN dynamics, not just the group average, but I also don't want to run 120 separate models. options?", "should_trigger": true},
+  {"query": "does the Big Five actually describe how MY traits hang together day to day? i tracked all five once a day for 3 months and want to know if my structure matches the standard one", "should_trigger": true},
+  {"query": "how many timepoints do I realistically need before a graphicalVAR network for a single person is trustworthy? I keep seeing people fit them on 50ish beeps and it feels wrong", "should_trigger": true},
+  {"query": "my within-person symptom network looks totally different at wave 1 versus wave 2 for the SAME person. is that expected or did I do something wrong?", "should_trigger": true},
+  {"query": "I have a year of my own Fitbit + daily mood data and want to model what predicts my bad days. it's literally just me, n=1.", "should_trigger": true},
+  {"query": "is it actually valid to take population norms from a big sample and use them to interpret one individual's score trajectory as it changes over time?", "should_trigger": true},
+  {"query": "UX research q: I can toggle a focus-mode setting on and off for one heavy user and I log their task-switches per session. how do I tell if the feature actually reduces switching for them?", "should_trigger": true},
+  {"query": "50,000 users, each one sees exactly one version of our checkout flow, I just need to know which version converts better so we can ship one to everyone. how should I analyze it?", "should_trigger": false},
+  {"query": "I have 500 students tested once a year for 4 years and I want to model average reading growth over time and what predicts faster growth. latent growth curve?", "should_trigger": false},
+  {"query": "panel dataset of 2000 firms over 10 years. I want a fixed-effects regression for the average within-firm effect of R&D spend on revenue. is fixed effects right here?", "should_trigger": false},
+  {"query": "survey data from 800 people at a single timepoint, I want to test a mediation model where job stress -> burnout -> turnover intention. SEM?", "should_trigger": false},
+  {"query": "I'm validating a new 15-item burnout scale and want to run an exploratory factor analysis on responses from 600 employees to see the factor structure", "should_trigger": false},
+  {"query": "combine effect sizes from 32 studies on mindfulness interventions and anxiety into a meta-analysis with a random-effects model", "should_trigger": false},
+  {"query": "two-arm RCT, 200 patients randomized to drug vs placebo, does the treatment beat control on average on the depression scale at 8 weeks", "should_trigger": false},
+  {"query": "forecast next quarter's daily server load from two years of historical load data so we can plan capacity. probably ARIMA or a Prophet-style model?", "should_trigger": false},
+  {"query": "does drug X improve 5-year survival across our cancer cohort compared with standard of care? cox regression on ~1500 patients", "should_trigger": false},
+  {"query": "in my sample of 1000 adults, is household income correlated with self-reported happiness, controlling for age and education?", "should_trigger": false}
+]

@@ -1,0 +1,40 @@
+{
+  "eval_id": 24,
+  "condition": "baseline",
+  "prompt": "I fit a logistic regression for stroke (1/0) with the main exposure being hypertension, and I also included age, sex, smoking, and diabetes as covariates. My Table 2 reports all five coefficients with p-values, and I'm interpreting each as 'the effect of that variable on stroke risk.' Is that right?",
+  "response": "Close, but there are a few important qualifications worth correcting before this goes to a table caption or results section.\n\n**What the coefficients actually represent**\n\nEach coefficient is the *adjusted* log-odds ratio for that variable, holding all other model variables constant. That's a meaningful quantity, but it's not the same as \"the effect.\"\n\n**Three specific problems with the current framing**\n\n1. **\"Effect\" implies causality.** You have observational data with no causal identification strategy (no DAG, no IV, no propensity matching). The correct word is *association* or *adjusted association*. Reviewers in epidemiology and clinical journals will flag this.\n\n2. **Covariates are adjustors, not exposures-of-interest.** Hypertension is your exposure \u2014 the model was built to estimate its adjusted association with stroke. Age, sex, smoking, and diabetes were included to *control confounding*, not to estimate their independent effects. Reporting their coefficients is fine, but treating them symmetrically with your main exposure conflates two different roles. A typical Table 2 caption would say something like: *\"OR (95% CI) for hypertension, adjusted for age, sex, smoking, and diabetes.\"*\n\n3. **Potential mediation by diabetes.** If diabetes lies on a causal pathway between hypertension and stroke (hypertension \u2192 diabetes \u2192 stroke), then conditioning on it blocks part of the effect you're trying to estimate. You should check your assumed DAG before treating diabetes as a pure confounder.\n\n**A smaller but real issue**\n\nLogistic regression coefficients are log-odds ratios, not risk differences or risk ratios. \"Effect on stroke *risk*\" is imprecise \u2014 say \"odds of stroke\" or exponentiate to ORs and label them accordingly. When outcome prevalence is high (>10%), ORs also overestimate risk ratios, which may matter for your interpretation.\n\n**Bottom line:** replace \"effect\" with \"adjusted association,\" clarify that covariates are adjustors rather than co-exposures, and verify diabetes isn't a mediator before finalizing Table 2.",
+  "assertions": [
+    {
+      "text": "Identifies the Table 2 fallacy or equivalent concern: covariate coefficients in a multivariable model do not each estimate their own total causal effect",
+      "type": "must_pass"
+    },
+    {
+      "text": "Explains that each coefficient is conditional on all others and subject to different confounding than the main exposure",
+      "type": "scored"
+    },
+    {
+      "text": "Notes the model was designed to estimate one estimand (hypertension \u2192 stroke); other coefficients are incidental to that design",
+      "type": "scored"
+    },
+    {
+      "text": "Warns that some covariates may be mediators of others, making their coefficients further uninterpretable as total causal effects",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT endorse reporting all coefficients as causal effects of each variable without qualification",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}
