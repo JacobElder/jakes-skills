@@ -2,7 +2,7 @@
   "eval_id": 29,
   "condition": "with_skill",
   "prompt": "Everyone knows you must log-transform right-skewed data before running a regression. My revenue outcome is skewed, so I'll log it first. That's the right move, right?",
-  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "response": "No \u2014 \"must log-transform skewed outcomes\" is a widespread but wrong rule, and it conflates two separate things: fixing an assumption and choosing an estimand.\n\nRegression doesn't assume the outcome is normally distributed. It assumes the *residuals* are approximately well-behaved \u2014 and for inference on coefficients, what actually matters is the sampling distribution of the estimator, which the CLT often handles at adequate sample sizes regardless of outcome skew. So skewed revenue is not, by itself, a reason to transform.\n\nThe real question is: **what do you want your coefficients to mean?** Log-transforming changes the estimand. OLS on log(revenue) estimates the effect of your predictors on E[log Y] \u2014 the geometric mean, not the arithmetic mean. If you naively exponentiate fitted values or predictions back to the revenue scale, you get the geometric mean, not E[Y], and Jensen's inequality means this *systematically underestimates* the arithmetic mean. Recovering E[Y] from a log-OLS model requires a smearing correction that depends on the (possibly heteroskedastic) error variance \u2014 which most people skip.\n\nIf you want **multiplicative / ratio effects** on revenue \u2014 \"a one-unit increase in X is associated with a 12% higher revenue\" \u2014 then log scale is the natural, interpretable choice, but reach for a **gamma GLM with a log link** rather than log-OLS. It directly models log E[Y] instead of E[log Y], avoiding the retransformation problem entirely, and its variance function (V(\u03bc) = \u03bc\u00b2) matches the constant-coefficient-of-variation structure typical of revenue data.\n\nIf you want **additive effects on the revenue scale** \u2014 \"a one-unit increase in X is associated with $500 more revenue\" \u2014 OLS on the raw outcome with heteroskedasticity-robust (HC3) standard errors is often perfectly valid. The skewed residuals may inflate SEs a bit and cost some efficiency, but they don't bias the coefficients, and at reasonable n the CLT covers the inference.\n\nThe short version: log-transforming is an estimand decision, not an assumption fix. Make it because you want ratio effects and a multiplicative interpretation \u2014 not because the histogram looked skewed.",
   "assertions": [
     {
       "text": "Does NOT accept the false premise that log-transformation is universally required before regression on skewed data",
@@ -26,19 +26,15 @@
     }
   ],
   "assertion_results": [
-    false,
-    false,
-    false,
-    false,
-    false
+    true,
+    true,
+    true,
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.0,
-  "eval_passes": false,
-  "must_pass_failed_indices": [
-    1,
-    4,
-    5
-  ]
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
 }

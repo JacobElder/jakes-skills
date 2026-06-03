@@ -1,0 +1,106 @@
+{
+  "skill_name": "multiverse-analysis",
+  "notes": "20 queries: 10 should trigger (clear multiverse/specification-curve/robustness-to-analytic-choices requests), 10 should NOT trigger (sensitivity analyses in finance, single-subsample checks, coincidental 'universe'/'spec' vocabulary, ridge lambda sweeps, etc.). The near-misses in slots 11-20 are the hard cases.",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to test how robust my regression coefficient is to different outlier exclusion rules, covariate choices, and operationalizations of the IV. Can you help me run a multiverse analysis?",
+      "should_trigger": true
+    },
+    {
+      "id": 2,
+      "prompt": "I'm worried my effect might just be an artifact of how I set up the analysis. Is there a way to check whether it holds across different reasonable analytic choices?",
+      "should_trigger": true
+    },
+    {
+      "id": 3,
+      "prompt": "My advisor wants a specification curve analysis showing how my main finding changes across different model specifications. How do I do that?",
+      "should_trigger": true
+    },
+    {
+      "id": 4,
+      "prompt": "Someone asked about researcher degrees of freedom in my study and whether the result would hold if I had made different choices. I want to address this systematically.",
+      "should_trigger": true
+    },
+    {
+      "id": 5,
+      "prompt": "I have 5 defensible decisions in my analysis — outlier rule, whether to include age as a covariate, which of two DV measures to use, whether to log-transform, and which subgroup. Can we enumerate all the universes and run them all?",
+      "should_trigger": true
+    },
+    {
+      "id": 6,
+      "prompt": "My result might be a garden-of-forking-paths artifact. I want to run the analysis under every reasonable combination of the choices I could have made and plot the distribution.",
+      "should_trigger": true
+    },
+    {
+      "id": 7,
+      "prompt": "I want to check vibration of effects — whether my beta changes a lot depending on how I operationalized the key variables. How do I quantify which decisions drive the most variance?",
+      "should_trigger": true
+    },
+    {
+      "id": 8,
+      "prompt": "Can you help me run a specification curve? I have three model variants (OLS, robust regression, quantile regression) crossed with two outlier rules and three DV operationalizations.",
+      "should_trigger": true
+    },
+    {
+      "id": 9,
+      "prompt": "A reviewer says my finding is contingent on arbitrary analytic choices. I want to show that the result holds across the multiverse of reasonable specifications.",
+      "should_trigger": true
+    },
+    {
+      "id": 10,
+      "prompt": "I want to do a Steegen-style multiverse analysis — enumerate the data multiverse and the model multiverse, run everything, and produce the specification curve with joint permutation inference.",
+      "should_trigger": true
+    },
+    {
+      "id": 11,
+      "prompt": "I'm building a DCF valuation model. Can you run a sensitivity analysis showing how the NPV changes as I vary the discount rate from 8% to 15% and the terminal growth rate from 1% to 4%?",
+      "should_trigger": false
+    },
+    {
+      "id": 12,
+      "prompt": "As a robustness check I ran the same regression on just the female subsample. The effect held (b=0.31, p=0.04). Does that confirm my finding?",
+      "should_trigger": false
+    },
+    {
+      "id": 13,
+      "prompt": "My dataset has a column called 'universe' that indicates which Marvel cinematic universe phase each film belongs to. Can you help me use it to group the data for analysis?",
+      "should_trigger": false
+    },
+    {
+      "id": 14,
+      "prompt": "Here is my OpenAPI spec for a REST endpoint. Can you review it and suggest improvements to the request/response schema?",
+      "should_trigger": false
+    },
+    {
+      "id": 15,
+      "prompt": "I want to sweep lambda from 0.001 to 10 in my ridge regression to see how the regularization path affects the coefficients. Can you help me plot that?",
+      "should_trigger": false
+    },
+    {
+      "id": 16,
+      "prompt": "I ran my primary analysis on the full sample and then repeated it on the pre-registered subsample as a sensitivity check. Both p-values were below 0.05. What should I conclude?",
+      "should_trigger": false
+    },
+    {
+      "id": 17,
+      "prompt": "My model has a specification with three hidden layers. I want to try a few variants: two layers, three layers, and adding dropout. Which architecture works best?",
+      "should_trigger": false
+    },
+    {
+      "id": 18,
+      "prompt": "I need to stress-test my financial model. Can you vary the revenue growth assumptions between 5% and 20% in 5pp increments and show me the resulting EBITDA range?",
+      "should_trigger": false
+    },
+    {
+      "id": 19,
+      "prompt": "What is the universe of possible outcomes if I flip three coins? Can you enumerate all 8 combinations?",
+      "should_trigger": false
+    },
+    {
+      "id": 20,
+      "prompt": "I checked one alternative model as a robustness check — added a quadratic term — and the main effect was unchanged. Is that sufficient?",
+      "should_trigger": false
+    }
+  ]
+}

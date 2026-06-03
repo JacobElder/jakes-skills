@@ -15,7 +15,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [comp-modeling](#comp-modeling) | Computational & cognitive modeling | Eval suite included |
 | [sequence-analysis-hmm](#sequence-analysis-hmm) | Hidden Markov Models & sequence analysis | +40pp across 10 content evals |
 | [survival-analysis](#survival-analysis) | Time-to-event modeling (R & Python) | 26/26 analytically graded evals passing |
-| [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | Iter-1 ceiling (100%/100%); 10 trap-based evals written, results pending |
+| [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | +10pp across 10 trap-based evals (94% vs 84%) |
 | [network-analysis](#network-analysis) | Network science & social network analysis | +32.5pp across 8 trap-based evals |
 | [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +15.4pp across 8 scenarios (intersection skill) |
 

@@ -1,0 +1,6 @@
+{
+  "eval_name": "paired-t-defensible",
+  "config": "without_skill",
+  "executor_duration_seconds": 36.48,
+  "total_duration_seconds": 36.48
+}

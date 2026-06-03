@@ -2,37 +2,37 @@
   "skill_name": "robust-statistics",
   "results": [
     {
-      "eval_id": 22,
+      "eval_id": 29,
       "condition": "baseline",
-      "prompt": "I ran the same regression in men and women separately. In men the coefficient on treatment is 0.42 (p = 0.03). In women it's 0.31 (p = 0.12). So the treatment effect is significant in men but not women \u2014 that means the treatment works differently by sex, right?",
-      "response": "No \u2014 this is one of the most common misinterpretations in statistics. A significant effect in one group and a non-significant effect in another **does not mean the effects differ between groups**.\n\n## The problem\n\nYou're comparing two p-values (0.03 vs 0.12) and inferring an interaction, but neither p-value tells you whether the effects are *different from each other*. To test that, you need a direct test of the difference.\n\nThe relevant quantity is: **(0.42 \u2212 0.31) = 0.11** \u2014 and you have no idea whether that gap is statistically distinguishable from zero.\n\n## Why the pattern you saw can easily happen when there's no real difference\n\n- Women's sample may be smaller \u2192 wider confidence interval \u2192 same true effect, but not significant\n- Random sampling variation \u2014 both coefficients could be draws from the same distribution\n- The effect sizes (0.42 vs 0.31) are actually pretty close\n\nGelman & Stern (2006) called this the **\"difference in significance is not a significant difference\"** error. It's endemic in applied research.\n\n## What you should actually do\n\n**Test the interaction directly** in a pooled model:\n\n```\noutcome ~ treatment * sex + controls\n```\n\nThe coefficient on `treatment:sex` is the formal test of whether the effect differs. If that interaction term is significant, *then* you can claim differential effects by sex.\n\nUntil you run that test, all you can say is: \"The effect was significant in men but not women \u2014 whether these effects differ requires a formal interaction test.\"",
+      "prompt": "Everyone knows you must log-transform right-skewed data before running a regression. My revenue outcome is skewed, so I'll log it first. That's the right move, right?",
+      "response": "Not quite \u2014 this is a very common misconception worth unpacking.\n\n**The core error:** OLS assumes the *residuals* are approximately normal, not the outcome variable itself. Skewness in raw `revenue` doesn't violate any OLS assumption on its own.\n\n**What log-transforming actually does:** It changes your model from E[Y|X] to E[log(Y)|X]. These estimate different quantities. Your coefficients now mean \"a 1-unit increase in X multiplies revenue by e^\u03b2\" \u2014 a substantive model choice, not a data-cleaning step.\n\n**Three things to actually check before deciding:**\n\n1. **Residual distribution after fitting** \u2014 plot the residuals from your OLS model. If *they're* skewed or heavy-tailed, then you have a problem to solve.\n2. **Whether the DGP is multiplicative** \u2014 revenue often *is* multiplicative (growth compounds, effects are proportional), which is a substantive reason to prefer the log scale.\n3. **Zeros** \u2014 `log(0)` is undefined. If any revenue values are zero, `log(y+1)` introduces its own distortions.\n\n**Alternatives worth considering for revenue:**\n- **Gamma GLM with log link** \u2014 correct distributional family for positive, right-skewed outcomes; avoids the retransformation bias of log-OLS\n- **Heteroskedasticity-robust SEs** \u2014 if skewness is mild and you care about E[Y|X], just use robust SEs\n- **Quantile regression** \u2014 if you care about effects at the median or upper quantiles specifically\n\nThe log-transform *might* be right, but the reason should be \"the multiplicative model fits my question\" \u2014 not \"the histogram looked skewed.\"",
       "assertions": [
         {
-          "text": "States that 'significant in one group, not the other' does NOT establish that the effects differ between groups",
+          "text": "Does NOT accept the false premise that log-transformation is universally required before regression on skewed data",
           "type": "must_pass"
         },
         {
-          "text": "States the correct test is a direct contrast or interaction term (treatment \u00d7 sex / group), not a comparison of individual p-values",
+          "text": "Explains that log-transforming changes the estimand (from effects on E[Y] / arithmetic mean to effects on E[log Y] / geometric mean)",
           "type": "scored"
         },
         {
-          "text": "Explains why: two effects can each be (non-)significant individually while their difference has a different significance status",
+          "text": "Notes that raw-data skewness is not automatically a problem for OLS at adequate n \u2014 the relevant question is the sampling distribution of the estimator",
           "type": "scored"
         },
         {
-          "text": "Notes or implies the SE of the difference is larger than either individual SE (e.g. \u221a(SE\u2081\u00b2 + SE\u2082\u00b2) under independence)",
-          "type": "scored"
+          "text": "Response is proportionate and corrects the premise concisely without a lengthy lecture",
+          "type": "must_pass"
         },
         {
-          "text": "Does NOT accept the subgroup p-value comparison as a valid test of the between-group difference",
+          "text": "Does NOT recommend log-transforming without first identifying what estimand the user actually wants",
           "type": "must_pass"
         }
       ],
       "assertion_results": [
         true,
         true,
-        true,
         false,
+        true,
         true
       ],
       "passed": 4,
@@ -42,29 +42,29 @@
       "must_pass_failed_indices": []
     },
     {
-      "eval_id": 22,
+      "eval_id": 29,
       "condition": "with_skill",
-      "prompt": "I ran the same regression in men and women separately. In men the coefficient on treatment is 0.42 (p = 0.03). In women it's 0.31 (p = 0.12). So the treatment effect is significant in men but not women \u2014 that means the treatment works differently by sex, right?",
-      "response": "No \u2014 this is a very common error. The fact that one p-value clears 0.05 and the other doesn't tells you almost nothing about whether the two effects *differ*. You've run two separate hypothesis tests against zero, not a test of whether the effects are equal. The significance labels \"yes\" and \"no\" are doing rhetorical work they aren't licensed to do.\n\nHere's the crux: your two point estimates are 0.42 and 0.31. Those are close. The difference is 0.11. To know whether *that difference* is meaningful, you need its own standard error and its own p-value \u2014 which you don't have yet. Under independence, SE(\u03b2\u0302_men \u2212 \u03b2\u0302_women) = \u221a(SE_men\u00b2 + SE_women\u00b2), and you'd test whether 0.11 / that pooled SE is large. It very likely won't be.\n\nThe right move is to fit a single model on the combined data and add a **treatment \u00d7 sex interaction term**. The coefficient on that interaction is the formal estimate of how much the treatment effect differs by sex, with a proper p-value for that specific contrast. My strong prior, given that 0.42 vs 0.31 is a small numerical gap and the non-significant p-value in women is 0.12 (not 0.70), is that the interaction will be far from significant.\n\nThe intuition for why this goes wrong: in the women's group, you probably have less power, a larger SE, or both. A wide confidence interval that straddles zero doesn't mean the effect is absent \u2014 it means you can't rule out a range that includes zero. Meanwhile the men's result is \"significant\" partly because the SE happened to be smaller. You're comparing two noisy estimates against a threshold, not comparing the estimates against each other.\n\nBottom line: \"significant in one group, not the other\" is not evidence of an interaction. Only a direct interaction test is.",
+      "prompt": "Everyone knows you must log-transform right-skewed data before running a regression. My revenue outcome is skewed, so I'll log it first. That's the right move, right?",
+      "response": "No \u2014 \"must log-transform skewed outcomes\" is a widespread but wrong rule, and it conflates two separate things: fixing an assumption and choosing an estimand.\n\nRegression doesn't assume the outcome is normally distributed. It assumes the *residuals* are approximately well-behaved \u2014 and for inference on coefficients, what actually matters is the sampling distribution of the estimator, which the CLT often handles at adequate sample sizes regardless of outcome skew. So skewed revenue is not, by itself, a reason to transform.\n\nThe real question is: **what do you want your coefficients to mean?** Log-transforming changes the estimand. OLS on log(revenue) estimates the effect of your predictors on E[log Y] \u2014 the geometric mean, not the arithmetic mean. If you naively exponentiate fitted values or predictions back to the revenue scale, you get the geometric mean, not E[Y], and Jensen's inequality means this *systematically underestimates* the arithmetic mean. Recovering E[Y] from a log-OLS model requires a smearing correction that depends on the (possibly heteroskedastic) error variance \u2014 which most people skip.\n\nIf you want **multiplicative / ratio effects** on revenue \u2014 \"a one-unit increase in X is associated with a 12% higher revenue\" \u2014 then log scale is the natural, interpretable choice, but reach for a **gamma GLM with a log link** rather than log-OLS. It directly models log E[Y] instead of E[log Y], avoiding the retransformation problem entirely, and its variance function (V(\u03bc) = \u03bc\u00b2) matches the constant-coefficient-of-variation structure typical of revenue data.\n\nIf you want **additive effects on the revenue scale** \u2014 \"a one-unit increase in X is associated with $500 more revenue\" \u2014 OLS on the raw outcome with heteroskedasticity-robust (HC3) standard errors is often perfectly valid. The skewed residuals may inflate SEs a bit and cost some efficiency, but they don't bias the coefficients, and at reasonable n the CLT covers the inference.\n\nThe short version: log-transforming is an estimand decision, not an assumption fix. Make it because you want ratio effects and a multiplicative interpretation \u2014 not because the histogram looked skewed.",
       "assertions": [
         {
-          "text": "States that 'significant in one group, not the other' does NOT establish that the effects differ between groups",
+          "text": "Does NOT accept the false premise that log-transformation is universally required before regression on skewed data",
           "type": "must_pass"
         },
         {
-          "text": "States the correct test is a direct contrast or interaction term (treatment \u00d7 sex / group), not a comparison of individual p-values",
+          "text": "Explains that log-transforming changes the estimand (from effects on E[Y] / arithmetic mean to effects on E[log Y] / geometric mean)",
           "type": "scored"
         },
         {
-          "text": "Explains why: two effects can each be (non-)significant individually while their difference has a different significance status",
+          "text": "Notes that raw-data skewness is not automatically a problem for OLS at adequate n \u2014 the relevant question is the sampling distribution of the estimator",
           "type": "scored"
         },
         {
-          "text": "Notes or implies the SE of the difference is larger than either individual SE (e.g. \u221a(SE\u2081\u00b2 + SE\u2082\u00b2) under independence)",
-          "type": "scored"
+          "text": "Response is proportionate and corrects the premise concisely without a lengthy lecture",
+          "type": "must_pass"
         },
         {
-          "text": "Does NOT accept the subgroup p-value comparison as a valid test of the between-group difference",
+          "text": "Does NOT recommend log-transforming without first identifying what estimand the user actually wants",
           "type": "must_pass"
         }
       ],
@@ -79,257 +79,17 @@
       "total": 5,
       "pass_rate": 1.0,
       "eval_passes": true,
-      "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 23,
-      "condition": "baseline",
-      "prompt": "We ran a small pilot study \u2014 9 people per group, so n=18 total \u2014 and found d = 0.9, p = 0.04. The effect is large and significant! This is great news for the intervention, right?",
-      "response": "Not quite \u2014 there are several reasons to be cautious before celebrating.\n\n**The Type M problem (winner's curse)**\n\nWith n=9 per group, this study had low power \u2014 roughly 40\u201350% to detect a true d=0.5. When an underpowered study produces a significant result, the observed effect size is almost certainly inflated above the true effect. You only clear the significance threshold when sampling variation *adds* to the true effect; the reported d=0.9 is likely a substantial overestimate. Gelman & Carlin call this Type M (magnitude) error.\n\n**The confidence interval is enormous**\n\nThe SE of Cohen's *d* with n=9 per group is approximately 0.50. That puts the 95% CI for *d* at roughly **(-0.07, 1.87)**. The data are consistent with anything from a near-zero effect to an enormous one. A point estimate of 0.9 with that interval is not informative about what the intervention actually does.\n\n**p = 0.04 is fragile here**\n\nBarely significant with n=18 is a fragile signal. A single influential observation or a minor violation of distributional assumptions could flip this. The *p*-value alone tells you nothing about whether the effect size is real or exaggerated.\n\n**Pilot studies aren't designed for hypothesis testing**\n\nThe correct use of a pilot is to estimate plausible effect sizes and compute power for an adequately-sized confirmatory trial. Using a pilot's significant result as evidence the intervention works inverts this logic \u2014 you're running a hypothesis test on data specifically not designed to support one.\n\n**What to do instead**\n\nUse the pilot to estimate a plausible effect size range (accounting for the inflation) and design a properly powered study. If the true effect is d=0.5 rather than 0.9, you'd need roughly n=52 per group to achieve 80% power \u2014 about 6\u00d7 what you have now.\n\nThe right framing: \"The pilot produced a large but very uncertain estimate. We should power a confirmatory study on d=0.4\u20130.5 to be conservative, not treat this as confirmation.\"",
-      "assertions": [
-        {
-          "text": "Flags low power as a concern \u2014 n=18 is a very small sample for an effect of this magnitude",
-          "type": "scored"
-        },
-        {
-          "text": "Names or describes the Type M / exaggeration ratio concern: significant estimates from low-powered studies systematically overstate the true effect",
-          "type": "scored"
-        },
-        {
-          "text": "Notes the Type S / wrong-sign risk at low power",
-          "type": "scored"
-        },
-        {
-          "text": "Recommends treating the result as preliminary / hypothesis-generating rather than conclusive",
-          "type": "scored"
-        },
-        {
-          "text": "Does NOT simply validate 'large and significant' as strong confirmation of the intervention's efficacy",
-          "type": "must_pass"
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        false,
-        true,
-        true
-      ],
-      "passed": 4,
-      "total": 5,
-      "pass_rate": 0.8,
-      "eval_passes": false,
-      "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 23,
-      "condition": "with_skill",
-      "prompt": "We ran a small pilot study \u2014 9 people per group, so n=18 total \u2014 and found d = 0.9, p = 0.04. The effect is large and significant! This is great news for the intervention, right?",
-      "response": "Not quite \u2014 and the specific combination of \"large, significant, small n\" is actually a warning sign, not a green light. Here's what's actually happening.\n\n**Power is around 40\u201350%.** With n=9 per group and a true effect of d=0.9, a two-sample t-test has roughly that probability of clearing p < .05. That means most runs of this study would *miss* the effect even if it's real.\n\n**The exaggeration problem (Type M error).** When power is ~40\u201350%, the estimates that happen to cross the significance threshold are drawn from the tail of the sampling distribution \u2014 they are not a representative sample of the true effect. Conditional on being significant, the observed d is systematically inflated relative to the true d. The winner's curse applies in full: d=0.9 is your best estimate of the *observed-significant* effect, not the underlying effect. The true effect could be d=0.3\u20130.5, with a fortunate random fluctuation pushing you past p=.05.\n\n**p=0.04 is modest evidence.** With a single small study and no preregistration, the probability the observed effect replicates at similar magnitude is substantially below what p=.04 implies. The p-value answers \"how often would I get a result this extreme if the null were true?\" \u2014 it doesn't tell you how much to trust the point estimate.\n\n**What you actually have.** Promising pilot data that's consistent with a real effect and justifies a properly powered follow-up. That's genuinely useful. But the d=0.9 estimate should not be used for effect-size claims or as the basis for resource decisions \u2014 it almost certainly overstates the true effect, possibly by a factor of 2 or more.\n\nThe right framing: design the confirmatory study with a more conservative assumed effect (d=0.4\u20130.5 is a reasonable hedge), compute the n needed for 80\u201390% power at that effect, and pre-register the analysis. If the effect is real, you'll find it. If d=0.9 is what's real, you'll have plenty of power.",
-      "assertions": [
-        {
-          "text": "Flags low power as a concern \u2014 n=18 is a very small sample for an effect of this magnitude",
-          "type": "scored"
-        },
-        {
-          "text": "Names or describes the Type M / exaggeration ratio concern: significant estimates from low-powered studies systematically overstate the true effect",
-          "type": "scored"
-        },
-        {
-          "text": "Notes the Type S / wrong-sign risk at low power",
-          "type": "scored"
-        },
-        {
-          "text": "Recommends treating the result as preliminary / hypothesis-generating rather than conclusive",
-          "type": "scored"
-        },
-        {
-          "text": "Does NOT simply validate 'large and significant' as strong confirmation of the intervention's efficacy",
-          "type": "must_pass"
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        false,
-        true,
-        true
-      ],
-      "passed": 4,
-      "total": 5,
-      "pass_rate": 0.8,
-      "eval_passes": false,
-      "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 24,
-      "condition": "baseline",
-      "prompt": "I fit a logistic regression for stroke (1/0) with the main exposure being hypertension, and I also included age, sex, smoking, and diabetes as covariates. My Table 2 reports all five coefficients with p-values, and I'm interpreting each as 'the effect of that variable on stroke risk.' Is that right?",
-      "response": "Close, but there are a few important qualifications worth correcting before this goes to a table caption or results section.\n\n**What the coefficients actually represent**\n\nEach coefficient is the *adjusted* log-odds ratio for that variable, holding all other model variables constant. That's a meaningful quantity, but it's not the same as \"the effect.\"\n\n**Three specific problems with the current framing**\n\n1. **\"Effect\" implies causality.** You have observational data with no causal identification strategy (no DAG, no IV, no propensity matching). The correct word is *association* or *adjusted association*. Reviewers in epidemiology and clinical journals will flag this.\n\n2. **Covariates are adjustors, not exposures-of-interest.** Hypertension is your exposure \u2014 the model was built to estimate its adjusted association with stroke. Age, sex, smoking, and diabetes were included to *control confounding*, not to estimate their independent effects. Reporting their coefficients is fine, but treating them symmetrically with your main exposure conflates two different roles. A typical Table 2 caption would say something like: *\"OR (95% CI) for hypertension, adjusted for age, sex, smoking, and diabetes.\"*\n\n3. **Potential mediation by diabetes.** If diabetes lies on a causal pathway between hypertension and stroke (hypertension \u2192 diabetes \u2192 stroke), then conditioning on it blocks part of the effect you're trying to estimate. You should check your assumed DAG before treating diabetes as a pure confounder.\n\n**A smaller but real issue**\n\nLogistic regression coefficients are log-odds ratios, not risk differences or risk ratios. \"Effect on stroke *risk*\" is imprecise \u2014 say \"odds of stroke\" or exponentiate to ORs and label them accordingly. When outcome prevalence is high (>10%), ORs also overestimate risk ratios, which may matter for your interpretation.\n\n**Bottom line:** replace \"effect\" with \"adjusted association,\" clarify that covariates are adjustors rather than co-exposures, and verify diabetes isn't a mediator before finalizing Table 2.",
-      "assertions": [
-        {
-          "text": "Identifies the Table 2 fallacy or equivalent concern: covariate coefficients in a multivariable model do not each estimate their own total causal effect",
-          "type": "must_pass"
-        },
-        {
-          "text": "Explains that each coefficient is conditional on all others and subject to different confounding than the main exposure",
-          "type": "scored"
-        },
-        {
-          "text": "Notes the model was designed to estimate one estimand (hypertension \u2192 stroke); other coefficients are incidental to that design",
-          "type": "scored"
-        },
-        {
-          "text": "Warns that some covariates may be mediators of others, making their coefficients further uninterpretable as total causal effects",
-          "type": "scored"
-        },
-        {
-          "text": "Does NOT endorse reporting all coefficients as causal effects of each variable without qualification",
-          "type": "must_pass"
-        }
-      ],
-      "assertion_results": [
-        true,
-        false,
-        true,
-        true,
-        true
-      ],
-      "passed": 4,
-      "total": 5,
-      "pass_rate": 0.8,
-      "eval_passes": false,
-      "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 24,
-      "condition": "with_skill",
-      "prompt": "I fit a logistic regression for stroke (1/0) with the main exposure being hypertension, and I also included age, sex, smoking, and diabetes as covariates. My Table 2 reports all five coefficients with p-values, and I'm interpreting each as 'the effect of that variable on stroke risk.' Is that right?",
-      "response": "No \u2014 this is the **Table 2 fallacy** (Westreich & Greenland, 2013), and it's worth being precise about why.\n\nYour model was designed to estimate the effect of **hypertension on stroke**, adjusting for age, sex, smoking, and diabetes as confounders of *that* relationship. The hypertension OR is the result of a deliberate identification decision: you chose those covariates because they're confounders of hypertension \u2192 stroke.\n\nBut the coefficients on age, sex, smoking, and diabetes are each a *different* estimand, and your model was not built for them. For any one of those variables \u2014 say, smoking \u2014 the right adjustment set for estimating smoking's causal effect on stroke is not necessarily the same set you'd use for hypertension. Some of the other model terms might be smoking's confounders, some might be mediators, some might be colliders. Conditioning on a mediator of smoking \u2192 stroke (e.g., if diabetes partly mediates that path) blocks part of the causal pathway and biases the smoking coefficient. Conditioning on a collider opens a spurious backdoor. You didn't build in any of those checks for the non-focal variables.\n\nThere's also a subtler issue: each coefficient is **conditional**, holding all other predictors fixed. For most scientific or policy questions, you want the *total* marginal effect of a variable \u2014 not its effect in a world where every other predictor is simultaneously held constant. For the odds ratio specifically, this conflation is worsened by **non-collapsibility**: adding any predictor of the outcome shifts the OR on other variables even with no confounding.\n\n**The fix depends on your goal:**\n\n- If you only care about hypertension's effect, say so clearly and report only that coefficient as a causal estimate; label the rest as \"adjusted associations\" or simply don't interpret them.\n- If smoking (or age, or diabetes) is also a substantive exposure of interest, it deserves its own analysis \u2014 its own identification argument, its own adjustment set derived from the causal structure for *that* exposure.\n- If the goal is purely descriptive (\"how do these variables jointly relate to stroke in this sample?\"), that's fine \u2014 just don't dress conditional associations from a causally-motivated model as total causal effects.\n\nThe practical bottom line: interpret the hypertension OR as your causal estimate; treat the other coefficients as conditional associations in the presence of the remaining model terms, not as each variable's effect on stroke risk.",
-      "assertions": [
-        {
-          "text": "Identifies the Table 2 fallacy or equivalent concern: covariate coefficients in a multivariable model do not each estimate their own total causal effect",
-          "type": "must_pass"
-        },
-        {
-          "text": "Explains that each coefficient is conditional on all others and subject to different confounding than the main exposure",
-          "type": "scored"
-        },
-        {
-          "text": "Notes the model was designed to estimate one estimand (hypertension \u2192 stroke); other coefficients are incidental to that design",
-          "type": "scored"
-        },
-        {
-          "text": "Warns that some covariates may be mediators of others, making their coefficients further uninterpretable as total causal effects",
-          "type": "scored"
-        },
-        {
-          "text": "Does NOT endorse reporting all coefficients as causal effects of each variable without qualification",
-          "type": "must_pass"
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        true,
-        true,
-        true
-      ],
-      "passed": 5,
-      "total": 5,
-      "pass_rate": 1.0,
-      "eval_passes": true,
-      "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 25,
-      "condition": "baseline",
-      "prompt": "I had 15 candidate predictors. I ran backward stepwise selection (dropping variables by p-value > 0.10) and ended up with 6 in the final model. I'm now reporting the coefficients and p-values from that final model. Is this a valid inference procedure?",
-      "response": "No \u2014 this is a classic **post-selection inference** problem, and the reported p-values and coefficients from the final model are invalid in several compounding ways.\n\n## What goes wrong\n\n**1. P-values are anti-conservative (too small)**\nStepwise selection is an implicit multiple testing procedure. You tested all 15 predictors across multiple model configurations to find the 6 that \"survived.\" The p-values in the final model treat those 6 as if they were pre-specified, which they weren't. The nominal \u03b1 = 0.05 threshold in the final model no longer corresponds to a 5% false positive rate \u2014 it's much higher.\n\nAs a rough intuition: with 15 truly null predictors and p > 0.10 as the removal threshold, you'd expect ~1\u20132 false positives to survive selection by chance alone.\n\n**2. Coefficients are inflated (winner's curse)**\nStepwise selection preferentially retains predictors whose sample coefficients happened to be large. The surviving estimates are biased away from zero \u2014 they won the selection tournament partly by being large, and that sample-specific inflation doesn't reflect the true population effect.\n\n**3. Standard errors are too small**\nThe SEs in the final model condition on the selected set being fixed. They don't account for the variance introduced by the search process itself.\n\n## How to fix it\n\n| Approach | When to use |\n|---|---|\n| **Data splitting** | Use one half to select the model, report inference from the other half. Simple and valid. |\n| **Selective inference** (PoSI) | Adjust for the selection step using the `selectiveInference` R package (Lee et al. 2016). Gives valid CIs/p-values post-selection. |\n| **Lasso + post-selection inference** | Replace stepwise with lasso; apply debiased lasso or sample splitting for inference. |\n| **Pre-specify the model** | If theory supports a smaller set, specify it before seeing data and don't run selection at all. |\n| **Frame it as exploratory** | If confirmatory inference isn't the goal, report the analysis honestly as hypothesis-generating, not hypothesis-confirming. |\n\n## Bottom line\n\nStepwise selection followed by standard inference from the selected model is widely used but widely criticized \u2014 Harrell, Gelman, and others have written extensively against it. The p-values cannot be interpreted at face value. The appropriate fix depends on whether you want confirmatory inference (use data splitting or selective inference) or are comfortable calling this exploratory (report it as such, explicitly).",
-      "assertions": [
-        {
-          "text": "States that reporting p-values from a model selected by the same data is invalid / anti-conservative (post-selection inference problem)",
-          "type": "must_pass"
-        },
-        {
-          "text": "Explains that the stepwise selection process distorts the nominal meaning of the final model's p-values",
-          "type": "scored"
-        },
-        {
-          "text": "Notes this is related to but subtler than standard multiple testing \u2014 search inflates false positives even without explicit multiplicity",
-          "type": "scored"
-        },
-        {
-          "text": "Recommends at least one mitigation: pre-registration, sample splitting, honest exploratory labeling, or selective inference methods",
-          "type": "scored"
-        },
-        {
-          "text": "Does NOT endorse the reported p-values as having their nominal meaning",
-          "type": "must_pass"
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        true,
-        true,
-        true
-      ],
-      "passed": 5,
-      "total": 5,
-      "pass_rate": 1.0,
-      "eval_passes": true,
-      "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 25,
-      "condition": "with_skill",
-      "prompt": "I had 15 candidate predictors. I ran backward stepwise selection (dropping variables by p-value > 0.10) and ended up with 6 in the final model. I'm now reporting the coefficients and p-values from that final model. Is this a valid inference procedure?",
-      "response": "No, the p-values and standard errors from that final model are not valid for inference. This is the post-selection inference problem, and it's one of the clearest cases where nominal error rates are just wrong.\n\n**Why it fails.** The p-values from a regression model are calibrated assuming the model specification was fixed before seeing the data. Your backward selection searched through up to 2\u00b9\u2075 implicit candidate models, using the outcome's relationship to the data to decide which 6 predictors to keep. The final model's standard errors have no memory of that search \u2014 they act as if you had always planned to fit exactly those 6 predictors. The true Type I error rate for each \"significant\" coefficient is substantially higher than 0.05, and there's no simple correction factor because it depends on the correlation structure of the 15 predictors and how the search actually proceeded.\n\nThe p > 0.10 dropping rule is essentially a pretest-and-switch applied 9 times. Each step uses the data to decide the model, compounding the distortion.\n\n**There's also a coefficient bias.** The estimates that survived selection are biased away from zero \u2014 they're the winners of a noisy selection contest. Even the point estimates shouldn't be taken at face value, not just the p-values.\n\n**What to do, depending on your goal:**\n\nIf the goal is *inference on specific predictors*: the cleanest fix is **sample splitting** \u2014 use one half to run the stepwise selection, then fit exactly the selected model (fixed specification) on the held-out half and report those p-values. They're valid because the selection didn't touch those data.\n\nIf the goal is *prediction*: stepwise is a poor variable selection method anyway (greedy, unstable, prone to overfitting). Use regularization (lasso/ridge/elastic net) with cross-validated tuning. Don't report p-values from a prediction model.\n\nIf you must report the current results: label them explicitly as exploratory and hypothesis-generating \u2014 not confirmatory. The honest framing is \"these predictors emerged from a data-driven selection process; the reported p-values should not be interpreted as controlling Type I error.\"\n\nThe short version: you've got 6 candidate predictors worth taking seriously, and a set of coefficient directions worth examining, but the p-values tell you very little. The selection process consumed the inferential currency that those p-values are pretending to spend.",
-      "assertions": [
-        {
-          "text": "States that reporting p-values from a model selected by the same data is invalid / anti-conservative (post-selection inference problem)",
-          "type": "must_pass"
-        },
-        {
-          "text": "Explains that the stepwise selection process distorts the nominal meaning of the final model's p-values",
-          "type": "scored"
-        },
-        {
-          "text": "Notes this is related to but subtler than standard multiple testing \u2014 search inflates false positives even without explicit multiplicity",
-          "type": "scored"
-        },
-        {
-          "text": "Recommends at least one mitigation: pre-registration, sample splitting, honest exploratory labeling, or selective inference methods",
-          "type": "scored"
-        },
-        {
-          "text": "Does NOT endorse the reported p-values as having their nominal meaning",
-          "type": "must_pass"
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        false,
-        true,
-        true
-      ],
-      "passed": 4,
-      "total": 5,
-      "pass_rate": 0.8,
-      "eval_passes": false,
       "must_pass_failed_indices": []
     }
   ],
   "summary": {
     "baseline": {
-      "passed": 17,
-      "total": 20
+      "passed": 4,
+      "total": 5
     },
     "with_skill": {
-      "passed": 18,
-      "total": 20
+      "passed": 5,
+      "total": 5
     }
   }
 }

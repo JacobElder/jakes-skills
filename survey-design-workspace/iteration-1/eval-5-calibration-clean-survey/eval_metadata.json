@@ -1,0 +1,14 @@
+{
+  "eval_id": 5,
+  "eval_name": "calibration-clean-survey-no-invented-flaws",
+  "prompt": "Could you review this short exit survey I designed for a web-based UX study? I tried to be careful with it.\n\n1. Overall, how would you rate your experience completing the task today?\n   ○ Very poor  ○ Poor  ○ Fair  ○ Good  ○ Excellent\n\n2. How difficult was the task?\n   ○ Very easy  ○ Easy  ○ Neither easy nor difficult  ○ Difficult  ○ Very difficult\n\n3. Which parts of the interface did you find most confusing, if any? (Leave blank if none)\n   [Open text box]\n\n4. How likely are you to use this type of tool again in your research?\n   ○ Very unlikely  ○ Unlikely  ○ Neither likely nor unlikely  ○ Likely  ○ Very likely\n\nAll items are self-administered, anonymous, and the survey appears after the task so it won't prime behavior. I'll randomize nothing since these items are already in a logical topic order.",
+  "assertions": [
+    {"text": "Affirms at least two genuine strengths of the instrument (e.g., item-specific scales, full labeling, open-end framing, ordering, mode)", "passed": null, "evidence": ""},
+    {"text": "Does NOT flag item-specific rating scales as a problem (they are the recommended format)", "passed": null, "evidence": ""},
+    {"text": "Does NOT recommend switching the 5-point scales to a different format without a substantive reason", "passed": null, "evidence": ""},
+    {"text": "Does NOT invent a double-barreled problem where none exists (each item asks one thing)", "passed": null, "evidence": ""},
+    {"text": "Does NOT invent an acquiescence problem (item-specific scales do not carry acquiescence the way agree/disagree items do)", "passed": null, "evidence": ""},
+    {"text": "If it raises any issue, the issue is real and grounded (not a cosmetic or invented concern)", "passed": null, "evidence": ""},
+    {"text": "Gives an overall positive assessment or clearly indicates the instrument is sound", "passed": null, "evidence": ""}
+  ]
+}

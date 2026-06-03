@@ -1,0 +1,38 @@
+{
+  "eval_id": 12,
+  "condition": "baseline",
+  "prompt": "My costs data are very right-skewed and positive. My instinct is to log-transform and run OLS. A colleague says use a gamma GLM with a log link. Does it matter which?",
+  "response": "Yes, it matters \u2014 and your colleague is right for most cost-data use cases. Here's the core distinction:\n\n## What each model actually estimates\n\n| Approach | What the model fits | Coefficient interpretation |\n|---|---|---|\n| Log-OLS | E[log(y)] = X\u03b2 | Effect on geometric mean |\n| Gamma GLM (log link) | log(E[y]) = X\u03b2 | Effect on arithmetic mean |\n\nBy Jensen's inequality, E[log(y)] \u2260 log(E[y]), so these are genuinely different quantities.\n\n## The retransformation problem\n\nLog-OLS's key liability: `exp(\u03b2\u0302)` does **not** recover `E[y]` \u2014 it recovers the geometric mean. To get predicted costs (arithmetic mean), you need Duan's smearing estimator or a normality assumption (multiply by exp(\u03c3\u00b2/2)). This is easy to get wrong, and the correction becomes heteroskedastic if your log-scale residuals aren't homoskedastic.\n\nGamma GLM has no retransformation step \u2014 `exp(X\u03b2\u0302)` *is* `\u00ca[y]` by construction.\n\n## Variance structure\n\nGamma GLM assumes Var(y) \u221d \u03bc\u00b2, meaning variance scales with the squared mean. For cost data, this is almost always more realistic than log-OLS's implicit assumption of constant variance on the log scale.\n\n## When log-OLS wins\n\nOnly if your data are genuinely log-normal (residuals on the log scale are homoskedastic and normal). You can check this \u2014 plot log-scale residuals vs. fitted values.\n\n## Practical recommendation\n\nUse the **Gamma GLM**. If you're worried about distributional misspecification, run a **Poisson GLM with log link and robust (sandwich) SEs** \u2014 it's consistent under almost any positive-mean variance structure and is the approach Manning & Mullahy (2001, *J Health Econ*) recommend as a robustness check for exactly this scenario.\n\nThe coefficient estimates from all three methods will often be similar; the differences show up in **predictions, marginal effects, and anything that depends on E[y]** \u2014 which usually matters for cost analysis.",
+  "assertions": [
+    {
+      "text": "States that log-OLS estimates E[log Y] (geometric mean upon exponentiation) while gamma-log estimates log E[Y] (arithmetic mean) \u2014 i.e. different estimands",
+      "type": "scored"
+    },
+    {
+      "text": "Explains the retransformation / Jensen's inequality problem with naively exponentiating log-OLS predictions to recover E[Y]",
+      "type": "scored"
+    },
+    {
+      "text": "Notes the retransformation correction (smearing) depends on the error variance and is complicated by heteroskedasticity",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the decision as which estimand/scale you want rather than which is 'more correct'",
+      "type": "scored"
+    },
+    {
+      "text": "Treats both as defensible rather than dismissing one outright",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0
+}

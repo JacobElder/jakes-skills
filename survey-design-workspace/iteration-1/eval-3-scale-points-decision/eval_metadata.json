@@ -1,0 +1,12 @@
+{
+  "eval_id": 3,
+  "eval_name": "focused-scale-points-decision",
+  "prompt": "Quick one — for my Likert items should I use a 5-point or 7-point scale? I keep reading conflicting things online, some people say more points is always better.",
+  "assertions": [
+    {"text": "States there is no single universal optimum and that the choice depends on format and/or population", "passed": null, "evidence": ""},
+    {"text": "Explains that reliability/validity improve with more points then plateau (approx 5-7) and can degrade beyond ~7", "passed": null, "evidence": ""},
+    {"text": "Does NOT simply agree that more points is always better", "passed": null, "evidence": ""},
+    {"text": "Mentions the agree/disagree-specific finding to use 5 points, or distinguishes agree/disagree from item-specific formats", "passed": null, "evidence": ""},
+    {"text": "References full labeling and/or the confound between number of points and labeling", "passed": null, "evidence": ""}
+  ]
+}
