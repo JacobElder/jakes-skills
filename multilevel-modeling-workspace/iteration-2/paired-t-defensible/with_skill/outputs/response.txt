@@ -1,51 +1,65 @@
-Your collaborator is wrong for this specific design. Here's the precise reasoning.
+Your collaborator is wrong — or at least, significantly overstating the case. For this specific design, the paired *t*-test is not just defensible: **it is mathematically equivalent to the MLM you'd actually fit.**
 
-## Your design calls for a paired t-test
+## Why the paired *t*-test is fine here
 
-You have exactly the scenario the paired t-test was designed for:
+For a 2-condition within-subjects design with one score per person per condition and no missing data, the appropriate MLM is:
 
-- One grouping factor (participant) with one observation per cell
-- 2 conditions (within-subjects)
-- Complete, balanced data
-
-The paired t-test is not a naive or unsophisticated choice here — it is **the correct classical procedure**, and critically:
-
-## The "right" MLM is mathematically identical to the paired t-test
-
-For your design, the appropriate MLM would be:
-
-```r
-lmer(score ~ condition + (1 | participant), REML = TRUE)
+```
+score ~ condition + (1 | participant)
 ```
 
-For balanced, complete within-subjects data with 2 conditions, this model produces **the same point estimate, standard error, and test statistic** as the paired t-test. They are the same analysis expressed in different notation.
+(A random intercept for participant, fixed effect for condition — there's no room for a random slope because each participant has only one observation per condition, so condition doesn't vary *within* participant beyond the two-level design.)
 
-## You also cannot improve on the paired t-test by adding random slopes
+This model produces **the identical *t*-statistic, *p*-value, and effect size** as the paired *t*-test. They are the same test expressed in two notations. The random intercept in the MLM is doing exactly what the "pairing" does in the *t*-test: it partitions out between-person variance before testing the condition effect.
 
-Following the maximal-random-effects principle (Barr et al., 2013), you'd want to ask: *does condition vary within participant?* Yes — so shouldn't there be a random slope for condition by participant?
+You can verify this empirically in about 10 lines of R:
 
-The answer is that with only **2 observations per participant**, a random intercept + random slope for condition perfectly saturates the within-person data. There is no residual variance left to estimate. `lmer` will return a singular fit warning and the model will be unidentifiable. This is one of the rare cases where the maximal model is literally not estimable from the data structure, and the paired t-test (= random-intercept-only MLM) is the correct and complete model.
+```r
+library(lme4); library(lmerTest)
 
-## When your collaborator's intuition *would* be right
+# Simulate your design
+set.seed(1)
+df <- data.frame(
+  participant = rep(1:80, each = 2),
+  condition   = rep(c(-0.5, 0.5), 80),
+  score       = rep(rnorm(80, 50, 10), each = 2) +  # person random intercept
+                rep(c(-3, 3), 80) +                  # condition effect
+                rnorm(160, 0, 5)                      # residual
+)
 
-The "use MLM or reviewers will reject it" concern is valid in designs like:
+# Paired t-test
+t.test(score ~ condition, data = df, paired = TRUE)
 
-| Design feature | Paired t-test breaks down | MLM needed |
+# MLM
+summary(lmer(score ~ condition + (1 | participant), data = df))
+```
+
+The *t*-value for `condition` in the MLM output will match the paired *t*-test exactly (within floating-point rounding).
+
+---
+
+## When your collaborator would be right
+
+There are real scenarios where reviewers legitimately push back and require MLM:
+
+| Scenario | Why *t*-test fails | What's needed |
 |---|---|---|
-| >2 time points or conditions | ✓ | ✓ |
-| Missing data (MCAR is implausible) | ✓ | ✓ |
-| Items are also sampled (crossed with participants) | ✓ | ✓ |
-| You want to model growth trajectories | ✓ | ✓ |
-| Covariates at participant level | Awkward | ✓ |
+| Each condition used **different stimuli/items** sampled from a population | Language-as-fixed-effect fallacy (Clark, 1973) — stimulus variance is ignored | Crossed random effects: `(1\|participant) + (1\|item)` |
+| **>2 conditions** or a factorial design | *t*-test can't handle it | MLM or ANOVA (which is also a special case of MLM) |
+| **Missing data** | Complete-case paired *t*-test loses power and can bias estimates | MLM handles MAR missingness correctly |
+| Participants are **nested in groups** (e.g., classrooms, clinics) | Non-independence at a higher level | Three-level MLM |
+| You want to **add participant-level covariates** | Awkward in paired *t*-test | Easier in MLM |
 
-None of those apply to your clean 2-condition within-subjects dataset.
+None of these apply to what you described.
 
-## What to say if a reviewer pushes back anyway
+---
 
-You can write this in your methods section and no informed reviewer can object:
+## What to say to your collaborator
 
-> "Conditions were compared using a paired *t*-test, which is algebraically equivalent to a linear mixed-effects model with a random intercept for participant — the maximal identifiable random-effects structure for a two-condition within-subjects design with one observation per cell."
+The paired *t*-test is a special case of MLM — not an alternative to it. For a balanced, complete, 2-condition within-subjects design, it's not a methodological shortcut; it's the exact right tool. If a reviewer objects anyway, you have two good responses:
 
-## Bottom line
+1. **Statistical equivalence argument:** "The paired *t*-test is algebraically identical to a two-level mixed model with a random intercept for participant and a fixed effect for condition. We used the simpler notation because the design does not justify additional random-effects structure."
 
-Stick with the paired t-test. It's correct, it's equivalent to the best-specified MLM for your design, it's simpler to report, and it's easier for readers to interpret. Switching to MLM doesn't protect you from anything — it just adds notation without changing the inference.
+2. **Show both:** Run the MLM alongside the *t*-test to demonstrate the results are identical. Include both in supplementary materials if needed.
+
+The one question worth checking: **Were the stimuli in each condition the same items, or different items sampled from a larger pool?** If participants saw different items across conditions (e.g., 20 words in Condition A, 20 different words in Condition B), you likely need by-item random effects and your collaborator's instinct — though misdirected at the *t*-test specifically — points at a real problem. If it's the same items or a single task score per condition, you're fine.

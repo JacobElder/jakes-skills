@@ -1,0 +1,40 @@
+{
+  "eval_id": 29,
+  "condition": "baseline",
+  "prompt": "Everyone knows you must log-transform right-skewed data before running a regression. My revenue outcome is skewed, so I'll log it first. That's the right move, right?",
+  "response": "Not quite \u2014 this is a very common misconception worth unpacking.\n\n**The core error:** OLS assumes the *residuals* are approximately normal, not the outcome variable itself. Skewness in raw `revenue` doesn't violate any OLS assumption on its own.\n\n**What log-transforming actually does:** It changes your model from E[Y|X] to E[log(Y)|X]. These estimate different quantities. Your coefficients now mean \"a 1-unit increase in X multiplies revenue by e^\u03b2\" \u2014 a substantive model choice, not a data-cleaning step.\n\n**Three things to actually check before deciding:**\n\n1. **Residual distribution after fitting** \u2014 plot the residuals from your OLS model. If *they're* skewed or heavy-tailed, then you have a problem to solve.\n2. **Whether the DGP is multiplicative** \u2014 revenue often *is* multiplicative (growth compounds, effects are proportional), which is a substantive reason to prefer the log scale.\n3. **Zeros** \u2014 `log(0)` is undefined. If any revenue values are zero, `log(y+1)` introduces its own distortions.\n\n**Alternatives worth considering for revenue:**\n- **Gamma GLM with log link** \u2014 correct distributional family for positive, right-skewed outcomes; avoids the retransformation bias of log-OLS\n- **Heteroskedasticity-robust SEs** \u2014 if skewness is mild and you care about E[Y|X], just use robust SEs\n- **Quantile regression** \u2014 if you care about effects at the median or upper quantiles specifically\n\nThe log-transform *might* be right, but the reason should be \"the multiplicative model fits my question\" \u2014 not \"the histogram looked skewed.\"",
+  "assertions": [
+    {
+      "text": "Does NOT accept the false premise that log-transformation is universally required before regression on skewed data",
+      "type": "must_pass"
+    },
+    {
+      "text": "Explains that log-transforming changes the estimand (from effects on E[Y] / arithmetic mean to effects on E[log Y] / geometric mean)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that raw-data skewness is not automatically a problem for OLS at adequate n \u2014 the relevant question is the sampling distribution of the estimator",
+      "type": "scored"
+    },
+    {
+      "text": "Response is proportionate and corrects the premise concisely without a lengthy lecture",
+      "type": "must_pass"
+    },
+    {
+      "text": "Does NOT recommend log-transforming without first identifying what estimand the user actually wants",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

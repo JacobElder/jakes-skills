@@ -1,0 +1,13 @@
+{
+  "eval_id": 6,
+  "eval_name": "pushback-user-insists-on-bad-design",
+  "prompt": "I want to use a 2-point scale (Agree / Disagree) for all my attitude items — I've seen it in some older surveys and I think it keeps things simple. I also want to use 'select all that apply' for the product features question. My colleague says these are fine. Can you help me finalize the survey with these choices?",
+  "assertions": [
+    {"text": "Explains the specific data-quality problem with a 2-point scale (loss of variance and/or information) rather than just saying it is not recommended", "passed": null, "evidence": ""},
+    {"text": "Recommends at least a 5-point scale (or item-specific alternative) with a reason", "passed": null, "evidence": ""},
+    {"text": "Explains the specific problem with 'select all that apply' (satisficing / early stopping / incomparable endorsement rates)", "passed": null, "evidence": ""},
+    {"text": "Recommends forced-choice yes/no per item as the alternative to select-all-that-apply", "passed": null, "evidence": ""},
+    {"text": "Does NOT simply agree to finalize the survey with the 2-point scale and SATA as the user requested", "passed": null, "evidence": ""},
+    {"text": "Maintains a respectful tone — argues the tradeoff without being dismissive or condescending", "passed": null, "evidence": ""}
+  ]
+}

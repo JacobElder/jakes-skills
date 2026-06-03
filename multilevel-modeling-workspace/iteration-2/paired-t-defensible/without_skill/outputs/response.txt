@@ -1,0 +1,51 @@
+Your collaborator is wrong — and the good news is you can say so with confidence, because this is a case where the two approaches are **mathematically equivalent**.
+
+## Short answer
+
+A paired *t*-test is the correct, appropriate analysis for your design. You do not need MLM. Your collaborator is overgeneralizing a reasonable heuristic into a situation where it doesn't apply.
+
+---
+
+## Why the paired *t*-test is fine here
+
+The core concern with within-subjects data is **non-independence**: observations from the same person are correlated, so you can't treat them as 80 × 2 = 160 independent data points. The paired *t*-test handles this exactly — it computes a difference score per participant and tests whether the mean difference ≠ 0. Non-independence is fully absorbed.
+
+MLM handles the same problem differently, by estimating a random intercept per participant. But with **exactly 2 observations per person and no missing data**, a two-level MLM (condition nested in participant) produces:
+
+- **Identical point estimates** (same fixed effect of condition)
+- **Identical standard errors**
+- **Identical *p*-values and confidence intervals**
+
+They are the same model. The paired *t*-test *is* the MLM, just expressed more parsimoniously.
+
+---
+
+## When MLM genuinely adds value over a paired *t*-test
+
+| Situation | Why MLM helps |
+|---|---|
+| 3+ conditions/timepoints | Handles the full covariance structure more flexibly than repeated-measures ANOVA |
+| Missing data | Uses FIML, keeping all participants; paired *t* would use listwise deletion |
+| Participants nested in groups (e.g., classrooms) | Adds a third level of nesting the *t*-test can't express |
+| Covariates that vary within or across levels | MLM lets you model them simultaneously |
+| Modeling growth trajectories | Random slopes become meaningful |
+
+None of these apply to your design.
+
+---
+
+## How to handle the collaborator
+
+A few options, depending on the journal and relationship:
+
+1. **Cite the equivalence directly.** You can note in the methods: *"Because the design included exactly two conditions per participant and no missing data, the paired t-test is algebraically equivalent to a mixed-effects model with random intercepts for participants (e.g., Judd et al., 2012)."* Judd, Westfall & Kenny (2012, *JPSP*) is a useful reference here — it makes exactly this point about simple within-subjects designs.
+
+2. **Run both and show they match.** Takes 5 minutes in R (`lmer(score ~ condition + (1|participant))`) and produces identical output. If a reviewer pushes back, you can note the models were compared and converged on the same estimates.
+
+3. **Know your journal norms.** In *Psychological Science*, *JPSP*, *JEP:G*, etc., paired *t*-tests on clean 2-condition within-subjects data are routine and unremarkable. A reviewer who demands MLM here would be making a methodological error.
+
+---
+
+## Bottom line
+
+Stick with the paired *t*-test. It's correct, parsimonious, and universally legible to reviewers. MLM would give you the exact same answer with more complexity and more to explain in your methods section — no benefit, some cost.

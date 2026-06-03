@@ -23,9 +23,9 @@
     },
     {
       "id": 4,
-      "query": "I'm building a survey to measure user trust. Help me think through the design.",
+      "query": "I'm building a scale to measure user trust — I need to define the construct, generate an item pool, run an EFA, and eventually validate with CFA. Where do I start?",
       "should_trigger": true,
-      "rationale": "Scale development task; primary use case."
+      "rationale": "Full scale-development pipeline (construct definition → EFA → CFA validation); squarely psychometrics. Survey-design owns the earlier instrument-design decisions; this query explicitly asks for the measurement-modeling pipeline."
     },
     {
       "id": 5,
@@ -126,8 +126,8 @@
     {
       "id": 21,
       "query": "Should I use Likert or slider scales for my UX survey?",
-      "should_trigger": true,
-      "rationale": "Survey design — item format question is in scope."
+      "should_trigger": false,
+      "rationale": "Response-format choice (Likert vs slider) is a survey-design decision, not psychometric analysis. The survey-design skill owns format selection. Psychometrics owns downstream reliability/validity estimation once data exist."
     },
     {
       "id": 22,

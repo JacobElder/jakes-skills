@@ -1,0 +1,38 @@
+{
+  "eval_id": 14,
+  "condition": "baseline",
+  "prompt": "My count outcome has a ton of zeros (about 60% zeros). I read that I need a zero-inflated model. Is that right?",
+  "response": "Not necessarily \u2014 60% zeros doesn't automatically mean you need a zero-inflated model. Here's the actual decision logic:\n\n## The real question: are your zeros *excess* zeros?\n\nA standard Poisson or Negative Binomial can already produce many zeros, especially when the mean is low. For example, if your mean count is 0.5, a standard Poisson predicts ~61% zeros naturally.\n\n**Check this first:**\n```r\nlibrary(MASS)\nm <- glm.nb(y ~ x, data = df)\nmean(dpois(0, fitted(m)))  # predicted zero rate\nmean(df$y == 0)            # observed zero rate\n```\n\nIf these are close, you don't need zero-inflation.\n\n## Two-process reasoning matters more than the zero count\n\nZero-inflated models are theoretically justified when there are **two distinct mechanisms** generating zeros:\n\n- **Structural zeros**: units that *can never* produce a count (e.g., non-smokers can't report cigarettes smoked)\n- **Sampling zeros**: units that *could* produce a count but happened not to this time\n\nIf you can't tell a coherent two-process story about your data, forcing a zero-inflated model may be overfitting.\n\n## Recommended decision path\n\n1. **Start with Negative Binomial** \u2014 it handles overdispersion (which often *causes* excess zeros) and is more parsimonious\n2. **Compare predicted vs. observed zeros** \u2014 rootogram or `pscl::vuong()` test\n3. **Only then consider zero-inflation** \u2014 if NB still underpredicts zeros AND you have a two-process story\n4. **Hurdle vs. ZIP**: Hurdle models (zeros come *only* from the zero part) are often more interpretable than zero-inflated models (zeros can come from *either* part)\n\nThe 60% figure alone isn't diagnostic \u2014 the mean of your count and the theoretical data-generating process matter much more.",
+  "assertions": [
+    {
+      "text": "Says a zero-inflated model is not automatically required and recommends first checking whether negative binomial absorbs the zeros",
+      "type": "scored"
+    },
+    {
+      "text": "Distinguishes hurdle (single zero process) from zero-inflated (structural zeros plus a count process that also yields zeros)",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the choice around the substantive data-generating story (e.g. 'never at risk' structural zeros vs incidental zeros) rather than the zero percentage alone",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions checking model adequacy on the zeros (e.g. posterior predictive / comparing observed vs predicted zero counts)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT reflexively prescribe zero-inflation just because there are many zeros",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0
+}

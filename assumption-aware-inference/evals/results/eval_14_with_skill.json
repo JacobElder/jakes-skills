@@ -1,0 +1,38 @@
+{
+  "eval_id": 14,
+  "condition": "with_skill",
+  "prompt": "My count outcome has a ton of zeros (about 60% zeros). I read that I need a zero-inflated model. Is that right?",
+  "response": "Not necessarily \u2014 \"60% zeros\" is only excess relative to what a simpler model already predicts. That's the diagnostic you're skipping.\n\n**The key check: what does your base model predict?**\n\nFor a Poisson with mean \u03bb, the predicted zero probability is e^(-\u03bb). If your mean count is around 0.5, Poisson already predicts ~61% zeros \u2014 no inflation needed. Negative binomial predicts even *more* zeros for a given mean because overdispersion spreads the distribution leftward. So a 60% zero rate is often exactly what NB would predict given a low mean and heavy overdispersion.\n\n**The right workflow:**\n\n1. Fit a negative binomial model first (you almost certainly have overdispersion if you have that many zeros)\n2. Compare the model's predicted P(Y=0) to your observed 60%\n3. Only if the model *systematically* under-predicts zeros should you reach for ZI or hurdle\n\n```r\nlibrary(MASS)\nfit_nb <- glm.nb(y ~ x, data = df)\nmean(predict(fit_nb, type = \"response\") |> dnbinom(x = 0, mu = _, size = fit_nb$theta))\n# Compare to mean(df$y == 0)\n```\n\n**The conceptual check (before the numeric one):**\n\nAsk whether two *qualitatively distinct* processes generate your zeros:\n- **Structural zeros** (units that could never have a positive count \u2014 e.g., non-drinkers in a drinking study) *plus* sampling zeros (drinkers who happened to score 0) \u2192 zero-inflated model makes scientific sense\n- **One process** that just rarely fires \u2192 NB will handle it\n\nIf all your units are plausibly at risk, the zero-inflation machinery is probably unnecessary even if it marginally improves fit.\n\n**Bottom line:** 60% zeros is a description of your data, not a model diagnosis. Check whether NB absorbs them first \u2014 it frequently does. Zero-inflated models earn their complexity only when (a) the base model demonstrably under-predicts zeros *and* (b) the structural-zero story is scientifically defensible.",
+  "assertions": [
+    {
+      "text": "Says a zero-inflated model is not automatically required and recommends first checking whether negative binomial absorbs the zeros",
+      "type": "scored"
+    },
+    {
+      "text": "Distinguishes hurdle (single zero process) from zero-inflated (structural zeros plus a count process that also yields zeros)",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the choice around the substantive data-generating story (e.g. 'never at risk' structural zeros vs incidental zeros) rather than the zero percentage alone",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions checking model adequacy on the zeros (e.g. posterior predictive / comparing observed vs predicted zero counts)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT reflexively prescribe zero-inflation just because there are many zeros",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8
+}

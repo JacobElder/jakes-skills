@@ -117,20 +117,38 @@ When asked directly, the base model reasons from scratch and gets MLM questions 
 
 ### Iteration 2 — trap-based evals
 
-Redesigned as 10 trap prompts: the user presents a wrong analysis as already done and asks for validation or next steps. 50 total expectations (5 per eval). Results pending.
+Redesigned as 10 trap prompts: the user presents a wrong analysis as already done and asks for validation or next steps. 50 total expectations (5 per eval).
 
-| Trap | What the base model is expected to do wrong |
-|------|---|
-| `random-intercept-validation` | Validate or hedge on intercept-only model for within-subjects data |
-| `convergence-simplification` | Accept simplified model and help write it up |
-| `aggregation-fallacy` | Call by-subject ANOVA on means "standard" |
-| `reviewer-cluster-means` | Comply with reviewer's suggestion to use school means |
-| `treatment-coding-simple-effects` | Validate "average effect" interpretation of a treatment-coded simple effect |
-| `glmm-marginal-interpretation` | Accept "in the population" framing of a conditional GLMM fixed effect |
-| `items-as-fixed` | Agree that same-items-for-everyone means items are fixed |
-| `ols-clustered-rubber-stamp` | Move to write-up without flagging non-independence |
-| `singular-fit-drop-everything` | Validate stepwise slope-dropping until warnings disappear |
-| `paired-t-defensible` | Over-engineer by insisting MLM is required for a two-condition balanced design |
+| | With skill | Without skill | Delta |
+|--|:---:|:---:|:---:|
+| **Total expectations** | **47/50 (94%)** | **42/50 (84%)** | **+10pp** |
+
+| Eval | With skill | Without skill | Delta |
+|------|:---:|:---:|:---:|
+| `random-intercept-validation` | 5/5 | 5/5 | +0pp |
+| `convergence-simplification` | 5/5 | 5/5 | +0pp |
+| `aggregation-fallacy` | 5/5 | 3/5 | **+40pp** |
+| `reviewer-cluster-means` | 5/5 | 5/5 | +0pp |
+| `treatment-coding-simple-effects` | 5/5 | 5/5 | +0pp |
+| `glmm-marginal-interpretation` | 5/5 | 5/5 | +0pp |
+| `items-as-fixed` | 5/5 | 4/5 | **+20pp** |
+| `ols-clustered-rubber-stamp` | 5/5 | 5/5 | +0pp |
+| `singular-fit-drop-everything` | 3/5 | 1/5 | **+40pp** |
+| `paired-t-defensible` | 4/5 | 4/5 | +0pp |
+
+### Where the base model fails
+
+| Eval | Trap | With skill | Without skill |
+|---|---|:---:|:---:|
+| `aggregation-fallacy` | Calls by-subject ANOVA on means "standard"; frames item random effects as optional | 100% | 60% |
+| `singular-fit-drop-everything` | Doesn't distinguish boundary estimate from convergence failure; skips diagnostics and upstream fixes | 60% | 20% |
+| `items-as-fixed` | Misses the generalizability argument — items need to be random because the researcher wants conclusions about the class of stimuli, not just these 48 | 100% | 80% |
+
+### Non-discriminating evals — iteration 2 finding
+
+Seven of ten traps showed no gap. The base model handles direct pushback questions well even when framed as validation requests, provided the wrong analysis is clearly described. The skill's value concentrates on the **aggregation and items-as-fixed patterns** — cases where the wrong practice is framed as established lab convention or common sense, and the correct objection requires naming a specific failure mode (Clark, 1973; the language-as-fixed-effect fallacy) rather than general statistical reasoning.
+
+`singular-fit-drop-everything` shows the skill's largest absolute advantage (+40pp) but both configurations score poorly — the two failing expectations require a fine-grained boundary-vs-convergence distinction that neither configuration articulates consistently.
 
 ---
 

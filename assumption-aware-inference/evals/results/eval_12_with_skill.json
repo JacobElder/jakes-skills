@@ -1,0 +1,38 @@
+{
+  "eval_id": 12,
+  "condition": "with_skill",
+  "prompt": "My costs data are very right-skewed and positive. My instinct is to log-transform and run OLS. A colleague says use a gamma GLM with a log link. Does it matter which?",
+  "response": "Yes, it matters \u2014 and the reason is **estimand**, not model validity.\n\n**The core distinction:**\n\n- **Log-OLS** models E[log Y]. Exponentiating the fitted values gives you the **geometric mean** (roughly the median under log-normality), not E[Y]. The log-scale coefficient is an effect on the geometric mean.\n- **Gamma GLM with log link** models log E[Y]. Exponentiating the coefficient gives you a multiplicative effect on the **arithmetic mean**. That's usually what you want for costs.\n\nThese are genuinely different quantities, and Jensen's inequality guarantees E[Y] > exp(E[log Y]) whenever there's any variance \u2014 so they won't even agree in direction of magnitude.\n\n**The retransformation trap.** If you fit log-OLS and then exponentiate predictions to get cost estimates, you're systematically underestimating E[Y]. Recovering E[Y] requires Duan's smearing correction, which depends on the residual distribution being homoskedastic on the log scale \u2014 an assumption you rarely check and often don't want to bet on.\n\n**So which?**\n\nFor costs, the arithmetic mean is almost always the decision-relevant quantity (budgeting, insurance, policy). That makes the gamma GLM the right tool: it directly models E[Y], uses the V(\u03bc)=\u03bc\u00b2 variance function that matches how cost variability actually scales (roughly constant coefficient of variation), and produces multiplicative rate-ratio effects without a correction step.\n\nLog-OLS is defensible if your estimand is genuinely the geometric mean \u2014 e.g., you're summarizing \"typical\" cost on a multiplicative scale and have no prediction goal. Just don't interpret exp(\u03b2) as \"expected costs increase by X%\" if costs near extreme values matter.\n\n**What *doesn't* distinguish them:** validity of inference. At large n, OLS on the raw scale with robust SEs is also consistent for a mean contrast via the CLT. Log-OLS is not wrong because of skew \u2014 it's wrong for your purpose if your purpose is E[Y].\n\nBottom line: use the gamma GLM. Your colleague is right, and the reason is the estimand, not assumptions.",
+  "assertions": [
+    {
+      "text": "States that log-OLS estimates E[log Y] (geometric mean upon exponentiation) while gamma-log estimates log E[Y] (arithmetic mean) \u2014 i.e. different estimands",
+      "type": "scored"
+    },
+    {
+      "text": "Explains the retransformation / Jensen's inequality problem with naively exponentiating log-OLS predictions to recover E[Y]",
+      "type": "scored"
+    },
+    {
+      "text": "Notes the retransformation correction (smearing) depends on the error variance and is complicated by heteroskedasticity",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the decision as which estimand/scale you want rather than which is 'more correct'",
+      "type": "scored"
+    },
+    {
+      "text": "Treats both as defensible rather than dismissing one outright",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0
+}
