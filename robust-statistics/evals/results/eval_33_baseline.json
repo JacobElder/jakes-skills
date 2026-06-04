@@ -1,0 +1,40 @@
+{
+  "eval_id": 33,
+  "condition": "baseline",
+  "prompt": "I have a trial with 3 pre-specified primary outcomes. I tested each with a planned t-test and got p-values of 0.04, 0.03, and 0.08. A reviewer says I must apply Bonferroni correction. Is that right?",
+  "response": "The reviewer has a point, but the answer depends on a design question you haven't stated: **what was the decision rule?**\n\n## When correction is NOT required\n\nIf your trial requires **all three outcomes to be significant** to declare success (co-primary endpoints), there is no multiplicity inflation \u2014 each test is already conservative because you need all three to pass. Bonferroni would be double-penalizing you.\n\n## When correction IS required\n\nIf success means **any one of the three outcomes** reaches significance, then testing each at \u03b1 = 0.05 inflates your family-wise error rate to ~1 \u2212 (0.95\u00b3) \u2248 14%. The reviewer is right that adjustment is needed.\n\n## If you do need to correct, Bonferroni is overly harsh\n\nBonferroni sets threshold at 0.05/3 = 0.0167 \u2014 none of your p-values (0.04, 0.03, 0.08) survive. But Bonferroni is the most conservative option available. **Holm's step-down procedure** controls FWER just as rigorously and is uniformly more powerful:\n\n| Rank | p-value | Holm threshold (0.05 / (3\u2212rank+1)) | Pass? |\n|------|---------|--------------------------------------|-------|\n| 1 | 0.030 | 0.0167 | No |\n| 2 | 0.040 | 0.025 | \u2014 |\n| 3 | 0.080 | 0.05 | \u2014 |\n\nHolm stops at the first failure, so here the result is the same \u2014 but for p-values closer to the boundary, Holm can rescue endpoints that Bonferroni kills.\n\n## Practical response to the reviewer\n\n1. Clarify in your methods whether these are **co-primary** (all must win) or **multiple primary** (any can win). If co-primary, push back with citations to ICH E9 guidance and explain the decision rule.\n2. If multiple primary, agree adjustment is needed but propose **Holm** rather than Bonferroni \u2014 it's equally defensible and less punishing. Cite Holm (1979) and note FDA multiplicity guidance endorses it.\n3. Either way, report unadjusted p-values alongside adjusted ones for transparency.\n\nThe core issue is that the reviewer is applying a rule without interrogating the decision structure of your trial design.",
+  "assertions": [
+    {
+      "text": "Does NOT simply endorse 'must apply Bonferroni' without engaging with the pre-specification context",
+      "type": "must_pass"
+    },
+    {
+      "text": "Distinguishes pre-specified primary outcomes from exploratory comparisons as relevant to the correction decision",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that Bonferroni is conservative and that alternatives (Holm, FDR/BH) are available and often preferable",
+      "type": "scored"
+    },
+    {
+      "text": "Acknowledges the reviewer's multiplicity concern as legitimate \u2014 does not dismiss correction entirely",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT say multiple comparisons corrections are never needed",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    false,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 5,
+  "pass_rate": 0.6,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

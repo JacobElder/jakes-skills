@@ -1,0 +1,40 @@
+{
+  "eval_id": 33,
+  "condition": "with_skill",
+  "prompt": "I have a trial with 3 pre-specified primary outcomes. I tested each with a planned t-test and got p-values of 0.04, 0.03, and 0.08. A reviewer says I must apply Bonferroni correction. Is that right?",
+  "response": "The reviewer is overstating it. Whether Bonferroni correction is required depends on what you are trying to control and why \u2014 \"must apply\" is not correct as a universal rule.\n\n**What Bonferroni actually controls.** Bonferroni (and its family) controls the *family-wise error rate* (FWER): the probability of at least one false positive across all three tests under the global null. With three independent tests at \u03b1 = .05, that's roughly 1 \u2212 .95\u00b3 \u2248 .14. Bonferroni brings it back to .05 by testing each at \u03b1 \u2248 .017 \u2014 under which all three of your p-values would fail.\n\n**The question the reviewer skipped: is FWER the right criterion here?** It depends on two things:\n\n1. **The logical structure of your claim.** If you need *any one* of the three outcomes to be significant to declare success (OR logic, typical in trials where a single primary endpoint triggers approval), then an unadjusted false-positive rate of ~14% is real and FWER control is appropriate. If you need *all three* to be significant (AND logic, e.g. co-primary endpoints where all must clear), then no correction is needed \u2014 you are already in a more conservative position than a single test.\n\n2. **Regulatory vs. academic context.** FDA/EMA guidance for drug approval does require formal multiplicity adjustment when multiple primary endpoints are tested and *any one* could support the claim. For academic research, this is genuinely contested; pre-specification is itself a meaningful protection against the forking-paths problem that gives rise to inflation.\n\n**If adjustment is warranted, use Holm's, not Bonferroni.** Holm's step-down procedure controls FWER exactly like Bonferroni but is uniformly more powerful. Sort your p-values: 0.03, 0.04, 0.08. Compare the smallest to 0.05/3 = 0.017 \u2014 it fails, so all three fail under Holm here as well. But in cases where one or two clear the threshold, Holm recovers power that Bonferroni wastes; there's no reason to leave that on the table.\n\n**The concise reply to the reviewer.** Ask them to clarify which error rate they are trying to control and why FWER is the right criterion given the logical structure of your primary analysis. If your trial requires all three outcomes for a claim, no adjustment is needed. If it requires any one, Holm's procedure is the defensible and more powerful alternative to Bonferroni. Either way, \"you must apply Bonferroni\" is not the correct framing \u2014 it conflates \"adjustment may be warranted\" with \"this specific, suboptimal procedure is mandatory.\"",
+  "assertions": [
+    {
+      "text": "Does NOT simply endorse 'must apply Bonferroni' without engaging with the pre-specification context",
+      "type": "must_pass"
+    },
+    {
+      "text": "Distinguishes pre-specified primary outcomes from exploratory comparisons as relevant to the correction decision",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that Bonferroni is conservative and that alternatives (Holm, FDR/BH) are available and often preferable",
+      "type": "scored"
+    },
+    {
+      "text": "Acknowledges the reviewer's multiplicity concern as legitimate \u2014 does not dismiss correction entirely",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT say multiple comparisons corrections are never needed",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

@@ -1,0 +1,6 @@
+{
+  "eval_name": "reviewer-cluster-means",
+  "config": "with_skill",
+  "executor_duration_seconds": 50.99,
+  "total_duration_seconds": 50.99
+}

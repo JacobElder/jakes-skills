@@ -2,29 +2,69 @@
   "skill_name": "robust-statistics",
   "results": [
     {
-      "eval_id": 29,
+      "eval_id": 33,
       "condition": "baseline",
-      "prompt": "Everyone knows you must log-transform right-skewed data before running a regression. My revenue outcome is skewed, so I'll log it first. That's the right move, right?",
-      "response": "Not quite \u2014 this is a very common misconception worth unpacking.\n\n**The core error:** OLS assumes the *residuals* are approximately normal, not the outcome variable itself. Skewness in raw `revenue` doesn't violate any OLS assumption on its own.\n\n**What log-transforming actually does:** It changes your model from E[Y|X] to E[log(Y)|X]. These estimate different quantities. Your coefficients now mean \"a 1-unit increase in X multiplies revenue by e^\u03b2\" \u2014 a substantive model choice, not a data-cleaning step.\n\n**Three things to actually check before deciding:**\n\n1. **Residual distribution after fitting** \u2014 plot the residuals from your OLS model. If *they're* skewed or heavy-tailed, then you have a problem to solve.\n2. **Whether the DGP is multiplicative** \u2014 revenue often *is* multiplicative (growth compounds, effects are proportional), which is a substantive reason to prefer the log scale.\n3. **Zeros** \u2014 `log(0)` is undefined. If any revenue values are zero, `log(y+1)` introduces its own distortions.\n\n**Alternatives worth considering for revenue:**\n- **Gamma GLM with log link** \u2014 correct distributional family for positive, right-skewed outcomes; avoids the retransformation bias of log-OLS\n- **Heteroskedasticity-robust SEs** \u2014 if skewness is mild and you care about E[Y|X], just use robust SEs\n- **Quantile regression** \u2014 if you care about effects at the median or upper quantiles specifically\n\nThe log-transform *might* be right, but the reason should be \"the multiplicative model fits my question\" \u2014 not \"the histogram looked skewed.\"",
+      "prompt": "I have a trial with 3 pre-specified primary outcomes. I tested each with a planned t-test and got p-values of 0.04, 0.03, and 0.08. A reviewer says I must apply Bonferroni correction. Is that right?",
+      "response": "The reviewer has a point, but the answer depends on a design question you haven't stated: **what was the decision rule?**\n\n## When correction is NOT required\n\nIf your trial requires **all three outcomes to be significant** to declare success (co-primary endpoints), there is no multiplicity inflation \u2014 each test is already conservative because you need all three to pass. Bonferroni would be double-penalizing you.\n\n## When correction IS required\n\nIf success means **any one of the three outcomes** reaches significance, then testing each at \u03b1 = 0.05 inflates your family-wise error rate to ~1 \u2212 (0.95\u00b3) \u2248 14%. The reviewer is right that adjustment is needed.\n\n## If you do need to correct, Bonferroni is overly harsh\n\nBonferroni sets threshold at 0.05/3 = 0.0167 \u2014 none of your p-values (0.04, 0.03, 0.08) survive. But Bonferroni is the most conservative option available. **Holm's step-down procedure** controls FWER just as rigorously and is uniformly more powerful:\n\n| Rank | p-value | Holm threshold (0.05 / (3\u2212rank+1)) | Pass? |\n|------|---------|--------------------------------------|-------|\n| 1 | 0.030 | 0.0167 | No |\n| 2 | 0.040 | 0.025 | \u2014 |\n| 3 | 0.080 | 0.05 | \u2014 |\n\nHolm stops at the first failure, so here the result is the same \u2014 but for p-values closer to the boundary, Holm can rescue endpoints that Bonferroni kills.\n\n## Practical response to the reviewer\n\n1. Clarify in your methods whether these are **co-primary** (all must win) or **multiple primary** (any can win). If co-primary, push back with citations to ICH E9 guidance and explain the decision rule.\n2. If multiple primary, agree adjustment is needed but propose **Holm** rather than Bonferroni \u2014 it's equally defensible and less punishing. Cite Holm (1979) and note FDA multiplicity guidance endorses it.\n3. Either way, report unadjusted p-values alongside adjusted ones for transparency.\n\nThe core issue is that the reviewer is applying a rule without interrogating the decision structure of your trial design.",
       "assertions": [
         {
-          "text": "Does NOT accept the false premise that log-transformation is universally required before regression on skewed data",
+          "text": "Does NOT simply endorse 'must apply Bonferroni' without engaging with the pre-specification context",
           "type": "must_pass"
         },
         {
-          "text": "Explains that log-transforming changes the estimand (from effects on E[Y] / arithmetic mean to effects on E[log Y] / geometric mean)",
+          "text": "Distinguishes pre-specified primary outcomes from exploratory comparisons as relevant to the correction decision",
           "type": "scored"
         },
         {
-          "text": "Notes that raw-data skewness is not automatically a problem for OLS at adequate n \u2014 the relevant question is the sampling distribution of the estimator",
+          "text": "Notes that Bonferroni is conservative and that alternatives (Holm, FDR/BH) are available and often preferable",
           "type": "scored"
         },
         {
-          "text": "Response is proportionate and corrects the premise concisely without a lengthy lecture",
+          "text": "Acknowledges the reviewer's multiplicity concern as legitimate \u2014 does not dismiss correction entirely",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT say multiple comparisons corrections are never needed",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        false,
+        false,
+        true,
+        true
+      ],
+      "passed": 3,
+      "total": 5,
+      "pass_rate": 0.6,
+      "eval_passes": false,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 33,
+      "condition": "with_skill",
+      "prompt": "I have a trial with 3 pre-specified primary outcomes. I tested each with a planned t-test and got p-values of 0.04, 0.03, and 0.08. A reviewer says I must apply Bonferroni correction. Is that right?",
+      "response": "The reviewer is overstating it. Whether Bonferroni correction is required depends on what you are trying to control and why \u2014 \"must apply\" is not correct as a universal rule.\n\n**What Bonferroni actually controls.** Bonferroni (and its family) controls the *family-wise error rate* (FWER): the probability of at least one false positive across all three tests under the global null. With three independent tests at \u03b1 = .05, that's roughly 1 \u2212 .95\u00b3 \u2248 .14. Bonferroni brings it back to .05 by testing each at \u03b1 \u2248 .017 \u2014 under which all three of your p-values would fail.\n\n**The question the reviewer skipped: is FWER the right criterion here?** It depends on two things:\n\n1. **The logical structure of your claim.** If you need *any one* of the three outcomes to be significant to declare success (OR logic, typical in trials where a single primary endpoint triggers approval), then an unadjusted false-positive rate of ~14% is real and FWER control is appropriate. If you need *all three* to be significant (AND logic, e.g. co-primary endpoints where all must clear), then no correction is needed \u2014 you are already in a more conservative position than a single test.\n\n2. **Regulatory vs. academic context.** FDA/EMA guidance for drug approval does require formal multiplicity adjustment when multiple primary endpoints are tested and *any one* could support the claim. For academic research, this is genuinely contested; pre-specification is itself a meaningful protection against the forking-paths problem that gives rise to inflation.\n\n**If adjustment is warranted, use Holm's, not Bonferroni.** Holm's step-down procedure controls FWER exactly like Bonferroni but is uniformly more powerful. Sort your p-values: 0.03, 0.04, 0.08. Compare the smallest to 0.05/3 = 0.017 \u2014 it fails, so all three fail under Holm here as well. But in cases where one or two clear the threshold, Holm recovers power that Bonferroni wastes; there's no reason to leave that on the table.\n\n**The concise reply to the reviewer.** Ask them to clarify which error rate they are trying to control and why FWER is the right criterion given the logical structure of your primary analysis. If your trial requires all three outcomes for a claim, no adjustment is needed. If it requires any one, Holm's procedure is the defensible and more powerful alternative to Bonferroni. Either way, \"you must apply Bonferroni\" is not the correct framing \u2014 it conflates \"adjustment may be warranted\" with \"this specific, suboptimal procedure is mandatory.\"",
+      "assertions": [
+        {
+          "text": "Does NOT simply endorse 'must apply Bonferroni' without engaging with the pre-specification context",
           "type": "must_pass"
         },
         {
-          "text": "Does NOT recommend log-transforming without first identifying what estimand the user actually wants",
+          "text": "Distinguishes pre-specified primary outcomes from exploratory comparisons as relevant to the correction decision",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that Bonferroni is conservative and that alternatives (Holm, FDR/BH) are available and often preferable",
+          "type": "scored"
+        },
+        {
+          "text": "Acknowledges the reviewer's multiplicity concern as legitimate \u2014 does not dismiss correction entirely",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT say multiple comparisons corrections are never needed",
           "type": "must_pass"
         }
       ],
@@ -40,55 +80,15 @@
       "pass_rate": 0.8,
       "eval_passes": false,
       "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 29,
-      "condition": "with_skill",
-      "prompt": "Everyone knows you must log-transform right-skewed data before running a regression. My revenue outcome is skewed, so I'll log it first. That's the right move, right?",
-      "response": "No \u2014 \"must log-transform skewed outcomes\" is a widespread but wrong rule, and it conflates two separate things: fixing an assumption and choosing an estimand.\n\nRegression doesn't assume the outcome is normally distributed. It assumes the *residuals* are approximately well-behaved \u2014 and for inference on coefficients, what actually matters is the sampling distribution of the estimator, which the CLT often handles at adequate sample sizes regardless of outcome skew. So skewed revenue is not, by itself, a reason to transform.\n\nThe real question is: **what do you want your coefficients to mean?** Log-transforming changes the estimand. OLS on log(revenue) estimates the effect of your predictors on E[log Y] \u2014 the geometric mean, not the arithmetic mean. If you naively exponentiate fitted values or predictions back to the revenue scale, you get the geometric mean, not E[Y], and Jensen's inequality means this *systematically underestimates* the arithmetic mean. Recovering E[Y] from a log-OLS model requires a smearing correction that depends on the (possibly heteroskedastic) error variance \u2014 which most people skip.\n\nIf you want **multiplicative / ratio effects** on revenue \u2014 \"a one-unit increase in X is associated with a 12% higher revenue\" \u2014 then log scale is the natural, interpretable choice, but reach for a **gamma GLM with a log link** rather than log-OLS. It directly models log E[Y] instead of E[log Y], avoiding the retransformation problem entirely, and its variance function (V(\u03bc) = \u03bc\u00b2) matches the constant-coefficient-of-variation structure typical of revenue data.\n\nIf you want **additive effects on the revenue scale** \u2014 \"a one-unit increase in X is associated with $500 more revenue\" \u2014 OLS on the raw outcome with heteroskedasticity-robust (HC3) standard errors is often perfectly valid. The skewed residuals may inflate SEs a bit and cost some efficiency, but they don't bias the coefficients, and at reasonable n the CLT covers the inference.\n\nThe short version: log-transforming is an estimand decision, not an assumption fix. Make it because you want ratio effects and a multiplicative interpretation \u2014 not because the histogram looked skewed.",
-      "assertions": [
-        {
-          "text": "Does NOT accept the false premise that log-transformation is universally required before regression on skewed data",
-          "type": "must_pass"
-        },
-        {
-          "text": "Explains that log-transforming changes the estimand (from effects on E[Y] / arithmetic mean to effects on E[log Y] / geometric mean)",
-          "type": "scored"
-        },
-        {
-          "text": "Notes that raw-data skewness is not automatically a problem for OLS at adequate n \u2014 the relevant question is the sampling distribution of the estimator",
-          "type": "scored"
-        },
-        {
-          "text": "Response is proportionate and corrects the premise concisely without a lengthy lecture",
-          "type": "must_pass"
-        },
-        {
-          "text": "Does NOT recommend log-transforming without first identifying what estimand the user actually wants",
-          "type": "must_pass"
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        true,
-        true,
-        true
-      ],
-      "passed": 5,
-      "total": 5,
-      "pass_rate": 1.0,
-      "eval_passes": true,
-      "must_pass_failed_indices": []
     }
   ],
   "summary": {
     "baseline": {
-      "passed": 4,
+      "passed": 3,
       "total": 5
     },
     "with_skill": {
-      "passed": 5,
+      "passed": 4,
       "total": 5
     }
   }

@@ -1,0 +1,38 @@
+{
+  "eval_id": 19,
+  "condition": "baseline",
+  "prompt": "I have a small, heavy-tailed sample (n=40) and I want a confidence interval for the maximum value the process can produce. I'll just bootstrap the maximum \u2014 that's assumption-free, right?",
+  "response": "No \u2014 bootstrapping the maximum is one of the worst-performing cases for the bootstrap, not a safe fallback. There are two compounding problems here:\n\n**Problem 1: The bootstrap maximum is bounded by your observed maximum.**\n\nBootstrap resamples are drawn with replacement from your 40 observed values, so the bootstrap maximum can never exceed the sample maximum you already observed. This means the bootstrap CI is anchored below the true process maximum by construction. You're asking \"how high can this process go?\" and the method structurally cannot answer values above what you've already seen.\n\n**Problem 2: The bootstrap is theoretically inconsistent for the maximum under heavy tails.**\n\nFor light-tailed distributions, the bootstrap for extremes is merely poor. For heavy-tailed distributions (Pareto, Fr\u00e9chet, log-normal with large \u03c3), the bootstrap distribution of the maximum does not converge to the correct sampling distribution \u2014 this is a known asymptotic result, not a small-sample worry. The heavier the tail, the more the bootstrap understates uncertainty about the maximum.\n\n**What the bootstrap CI will look like in practice:** a tight interval sitting just below your observed max, radiating false confidence about a quantity that is actually highly uncertain with n=40.\n\n---\n\n**What to do instead: Extreme Value Theory (EVT)**\n\nEVT is specifically designed to extrapolate beyond observed data into the tail. Two main approaches:\n\n- **Block maxima / GEV**: Fit a Generalized Extreme Value distribution to block maxima. The shape parameter \u03be characterizes tail heaviness (\u03be > 0 = heavy tail / Fr\u00e9chet domain).\n- **Peaks Over Threshold (POT) / GPD**: Fit a Generalized Pareto Distribution to exceedances above a high threshold. More data-efficient than block maxima, which matters at n=40.\n\nWith n=40 you have limited tail data either way \u2014 EVT will give you wide, honest CIs reflecting genuine uncertainty. That width is the correct answer, not a bootstrap CI that looks narrow and precise but is systematically wrong.",
+  "assertions": [
+    {
+      "text": "States that the naive bootstrap is not assumption-free and fails (is inconsistent) for the maximum / extreme order statistics",
+      "type": "scored"
+    },
+    {
+      "text": "Explains why: the maximum is a non-smooth functional pinned to the observed extreme, so the bootstrap distribution doesn't converge correctly",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that small n and heavy tails make estimating an extreme quantity especially fragile",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends a more appropriate approach (extreme-value theory / GEV / peaks-over-threshold, or m-out-of-n / subsampling)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT endorse the plan as a valid assumption-free procedure",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8
+}

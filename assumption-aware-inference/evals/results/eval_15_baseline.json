@@ -1,0 +1,38 @@
+{
+  "eval_id": 15,
+  "condition": "baseline",
+  "prompt": "Before every analysis I run normality tests, Levene's test, and Breusch-Pagan, and I pick my method based on the results. Is this a good workflow?",
+  "response": "This workflow is well-intentioned but has real statistical problems \u2014 it's a common trap worth understanding.\n\n## The core issue: pre-testing inflates error rates\n\nRunning tests to *decide which test to use* is sequential hypothesis testing. Your overall Type I error rate is no longer controlled at \u03b1 because each decision is another test on the same data. This is sometimes called the **pre-testing problem** or part of the \"garden of forking paths.\"\n\n## Why each pre-test specifically misleads you\n\n**Normality tests (Shapiro-Wilk, etc.):**\n- Small n \u2192 low power \u2192 you \"pass\" normality even when the distribution is genuinely problematic\n- Large n \u2192 high power \u2192 you \"fail\" on trivial deviations that CLT handles fine anyway\n- The signal is backwards relative to when it actually matters\n\n**Levene's test:**\n- Same power inversion. Welch's t-test outperforms the \"test, then decide\" approach even when variances *are* equal \u2014 the penalty for using Welch unnecessarily is tiny. Just use Welch by default.\n\n**Breusch-Pagan:**\n- Same logic. Heteroscedasticity-robust (HC) standard errors have negligible cost under homoscedasticity but protect you when it matters. Using them by default is strictly better than deciding based on a pre-test.\n\n## What to do instead\n\n| Instead of | Do |\n|---|---|\n| Normality test \u2192 pick parametric/nonparametric | Choose based on theory + sample size + Q-Q plot visualization |\n| Levene's \u2192 t-test vs. Welch's | Always use Welch's |\n| BP test \u2192 OLS vs. robust SEs | Always use HC robust SEs (or report both) |\n| Data-driven method selection | Pre-register your analysis plan |\n\nThe general principle: **default to robust methods** that work well under both favorable and unfavorable conditions, rather than using a test to conditionally opt in. Visualization (Q-Q plots, residual plots) gives you more nuanced information than a binary pass/fail anyway.",
+  "assertions": [
+    {
+      "text": "Pushes back on the test-then-choose workflow rather than endorsing it",
+      "type": "scored"
+    },
+    {
+      "text": "Explains that assumption tests check exact truth, not whether the violation is consequential, and are underpowered at small n / overpowered at large n",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that pretesting distorts the level/coverage of the final inference (pretest bias)",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends robust-by-design methods (e.g. Welch, robust/HC SEs, appropriate model family) and/or graphical diagnostics for magnitude instead",
+      "type": "scored"
+    },
+    {
+      "text": "Frames good practice as reasoning about consequences for the estimand/goal rather than a mechanical pipeline",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0
+}

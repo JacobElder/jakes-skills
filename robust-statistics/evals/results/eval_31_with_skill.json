@@ -1,0 +1,35 @@
+{
+  "eval_id": 31,
+  "condition": "with_skill",
+  "prompt": "I ran Shapiro-Wilk on my residuals (n=150, OLS regression) and got p = 0.08. So normality isn't violated and my inference is valid, right?",
+  "response": "Two separate mistakes here, and fixing both changes your reasoning but probably leaves your conclusion standing.\n\n**p = 0.08 is not evidence that normality holds.** It means Shapiro-Wilk didn't detect a significant departure \u2014 absence of evidence, not evidence of absence. At n = 150, the test has moderate power; it could easily miss deviations that are small but real. \"The test didn't reject\" is never a valid reason to proceed; the valid reason is a direct judgment that any deviation is inconsequential.\n\n**More fundamentally, normality of residuals is not what makes OLS coefficient inference valid.** The t-statistics and F-statistics for your coefficients rely on the sampling distribution of \u03b2\u0302 being approximately normal \u2014 not on the marginal distribution of the residuals. The CLT delivers that at n = 150 for the vast majority of error distributions, regardless of what Shapiro-Wilk says. Your inference is probably fine, but for the right reason: 150 observations is generally enough for the sampling distribution of the estimates to be well-approximated by a normal, unless you have severe skew, heavy-enough tails to make the variance ill-defined, or strong dependence in the errors.\n\nThe violations that *actually* threaten your inference:\n- **Heteroskedasticity** \u2014 doesn't bias \u03b2\u0302, but makes the classical SEs wrong. Check a residuals-vs-fitted or scale-location plot; use HC3 SEs if there's a fan pattern.\n- **Dependence / clustering** \u2014 this the CLT does *not* fix at any n. If observations are grouped or serially correlated, cluster-robust SEs or a mixed model are needed.\n- **Mean model misspecification** \u2014 a residuals-vs-fitted plot for curvature. This biases the coefficients, which Shapiro-Wilk can't diagnose.\n\nRun those three checks. Normality of residuals is the least of your worries at n = 150, and its p-value tells you almost nothing useful.",
+  "assertions": [
+    {
+      "text": "Does NOT accept p=0.08 on Shapiro-Wilk as confirmation that normality holds or that inference is validated",
+      "type": "must_pass"
+    },
+    {
+      "text": "States that a non-significant Shapiro-Wilk is absence of evidence (low power to detect violations), not positive evidence of normality",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that residual normality matters little for coefficient inference at n=150 \u2014 the CLT governs the sampling distribution of the estimator",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT endorse the Shapiro-Wilk result as the reason to proceed with inference",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

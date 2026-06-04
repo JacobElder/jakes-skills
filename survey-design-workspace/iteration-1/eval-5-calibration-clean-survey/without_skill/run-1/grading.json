@@ -1,0 +1,63 @@
+{
+  "eval_id": 5,
+  "eval_name": "eval-5-calibration-clean-survey (without_skill)",
+  "expectations": [
+    {
+      "text": "Affirms at least two genuine strengths of the instrument (e.g., item-specific scales, full labeling, open-end framing, ordering, mode)",
+      "passed": true,
+      "evidence": "Strengths section explicitly lists: post-task placement, logical ordering, anonymous self-administration, Item 3 open text design, and '5-point Likert-style scales are appropriate.' At least two genuine strengths are affirmed."
+    },
+    {
+      "text": "Does NOT flag item-specific rating scales as a problem (they are the recommended format)",
+      "passed": true,
+      "evidence": "No critique of item-specific rating scales appears. The Strengths section notes '5-point Likert-style scales are appropriate for this type of attitudinal measurement' without flagging the format choice."
+    },
+    {
+      "text": "Does NOT recommend switching the 5-point scales to a different format without a substantive reason",
+      "passed": true,
+      "evidence": "No recommendation to change scale format appears. The response recommends adding a utility item but does not question the existing scale format."
+    },
+    {
+      "text": "Does NOT invent a double-barreled problem where none exists (each item asks one thing)",
+      "passed": true,
+      "evidence": "No double-barreled critique is raised for any item. The response flags Item 1 and Item 2 as 'partially redundant' (a separate, debatable concern) but does not accuse either of being double-barreled."
+    },
+    {
+      "text": "Does NOT invent an acquiescence problem (item-specific scales do not carry acquiescence the way agree/disagree items do)",
+      "passed": true,
+      "evidence": "Acquiescence is not mentioned in the response. The base model does not misapply agree/disagree critiques to the item-specific scales."
+    },
+    {
+      "text": "If it raises any issue, the issue is real and grounded (not a cosmetic or invented concern)",
+      "passed": true,
+      "evidence": "Three issues raised: (1) 'Fair' midpoint is slightly negative in connotation — real and documented. (2) 'in your research' assumes respondent is a researcher — a genuine scope issue. (3) No utility item — a reasonable substantive gap. The 'partially redundant' observation about Q1/Q2 is debatable but not invented. All concerns are real."
+    },
+    {
+      "text": "Gives an overall positive assessment or clearly indicates the instrument is sound",
+      "passed": true,
+      "evidence": "Summary states: 'The survey is well-thought-out and avoids many common pitfalls (no leading questions, appropriate timing, no unnecessary items).' This is a clearly positive overall assessment."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  },
+  "claims": [
+    {
+      "claim": "Item 1 ('Overall experience') and Item 2 ('task difficulty') may be partially redundant",
+      "type": "quality",
+      "verified": false,
+      "evidence": "This is a debatable claim — experience and difficulty are related but distinct constructs. The response acknowledges this: 'Keeping both is reasonable if you want to separate hedonic/affective evaluation from perceived effort.' It is not a fabricated concern but also not a strong finding."
+    }
+  ],
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "reason": "Both with_skill and without_skill pass all 7 assertions on this calibration eval — the base model does not over-flag the clean instrument. This is a good sign, but it means the calibration eval provides limited differentiation between the two conditions. Consider adding an assertion that specifically tests whether the response correctly explains *why* item-specific scales are the right format (not just that it doesn't flag them), which would differentiate rationale quality between conditions."
+      }
+    ],
+    "overall": "Both responses pass 7/7, so this eval does not discriminate between skill and baseline on this instrument. This is noteworthy — the base model is well-calibrated on a clean instrument even without the skill."
+  }
+}

@@ -273,7 +273,12 @@ def decision_importance(results: pd.DataFrame, estimate: str = "estimate",
     """How much does each decision move the estimate?
 
     For each decision, reports the spread (max-min of the per-option median estimate)
-    and eta-squared (share of variance in the estimate explained by that decision alone).
+    and a **marginal** eta-squared: the share of total variance explained by that
+    decision in a one-way ANOVA, ignoring all other decisions. Because this is marginal
+    (not a full variance decomposition), the values can sum to more than 1.0 when
+    decisions share variance — treat the ranking, not the absolute numbers, as the
+    meaningful output. In a balanced orthogonal design the values will sum to ≤ 1.
+
     Bigger = more consequential. Schweinsberg et al. (2021) found operationalization
     decisions dominated statistical ones; this quantifies that for your own multiverse.
     """

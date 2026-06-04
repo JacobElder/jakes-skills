@@ -1,0 +1,35 @@
+{
+  "eval_id": 32,
+  "condition": "with_skill",
+  "prompt": "I have two groups, n=45 per group, with moderately right-skewed outcomes (skewness ~1.5). My collaborator says I should use a permutation test instead of a t-test because it's 'safer' for non-normal data. Should I switch?",
+  "response": "No, stay with Welch's t-test. Your collaborator's concern is reasonable as a general principle but doesn't apply here.\n\n**Why the t-test holds at your n and skew**\n\nThe t-test doesn't assume raw data normality \u2014 it assumes the sampling distribution of the *sample mean* is approximately normal. The Berry-Esseen theorem says the approximation error scales like skewness/\u221an. At skewness = 1.5 and n = 45 per group, that ratio is roughly 1.5/6.7 \u2248 0.22, which is modest. Two-sample tests are also more forgiving than one-sample tests because skew partially cancels across groups when both are drawn from the same family under the null.\n\nThe simulation in this skill's reference (lognormal with skewness ~6.2, a far worse case) shows actual Type I error of ~8% at n = 100 and ~12% at n = 30 \u2014 still elevated but from a skew four times yours. At skewness 1.5 and n = 45, you're likely within a fraction of a percentage point of the nominal 5%. This is a non-problem.\n\n**The permutation test doesn't actually do what your collaborator thinks**\n\nThe permutation test is exact \u2014 but it tests the *sharp null* (no effect for any individual unit), not just equal means. Under effect heterogeneity, it can reject even when means are equal. If your estimand is a difference in means, the t-test is a more direct instrument. Permutation is the right choice when you have a randomized experiment and want an exact design-based test, or when n is genuinely tiny with severe skew \u2014 neither applies here.\n\n**What you should do**\n\nUse **Welch's t-test** (not Student's \u2014 skip the equal-variance pretest and use Welch unconditionally; it costs almost nothing when variances are equal and protects you when they aren't). Report the mean difference, a 95% CI, and an effect size. Your n and skew don't require any further accommodation.",
+  "assertions": [
+    {
+      "text": "States the t-test is approximately valid at n=45 with moderate skew (~1.5), citing CLT or Berry-Esseen reasoning",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT recommend switching to a permutation test as necessary for this case",
+      "type": "must_pass"
+    },
+    {
+      "text": "Does NOT characterize the t-test as unsafe or problematic at this n and skew level",
+      "type": "must_pass"
+    },
+    {
+      "text": "Notes that the permutation test is valid but is not required \u2014 both approaches are fine for a mean comparison",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    false
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

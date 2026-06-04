@@ -1,0 +1,69 @@
+{
+  "eval_id": 2,
+  "eval_name": "eval-2-design-engagement-pulse (without_skill)",
+  "expectations": [
+    {
+      "text": "Uses item-specific response scales, or explicitly justifies any agree/disagree items chosen",
+      "passed": false,
+      "evidence": "All seven closed items use Strongly agree / Agree / Neither agree nor disagree / Disagree / Strongly disagree format. No justification for using agree/disagree is offered — the rationale simply describes it as 'the most widely used and understood format' without acknowledging the acquiescence risk or comparing it to item-specific alternatives."
+    },
+    {
+      "text": "Selects a 5- or 7-point scale and gives a reason tied to the construct/population",
+      "passed": true,
+      "evidence": "5-point scales are used throughout. The rationale states: 'A 5-point symmetric agree–disagree scale… provides enough granularity to detect meaningful movement quarter over quarter without imposing cognitive load.' This is a reason tied to the population context (300-person workforce, quarterly pulse)."
+    },
+    {
+      "text": "Fully labels the scale points with words rather than endpoints-only or numbers-only",
+      "passed": true,
+      "evidence": "All items display five fully-worded options (Strongly agree / Agree / Neither agree nor disagree / Disagree / Strongly disagree). The rationale states 'each point is given a verbal label rather than just anchoring the ends.'"
+    },
+    {
+      "text": "Keeps the instrument short and/or explicitly invokes fatigue/length as a reason",
+      "passed": true,
+      "evidence": "Rationale section 5 states: 'Research on pulse surveys consistently finds that response rates drop significantly beyond 10 items. Keeping to 7 closed items preserves breadth across three domains while staying under the fatigue threshold.'"
+    },
+    {
+      "text": "Handles the sensitive intent-to-leave and speak-up-safety items with placement and/or confidentiality/anonymity framing",
+      "passed": true,
+      "evidence": "The survey header states 'Your responses are completely anonymous — no individual data will be shared with managers or HR.' Rationale section 6 explains why 'anonymous' rather than 'confidential' is used. No explicit statement about placement of sensitive items, but the retention item appears last in the closed section."
+    },
+    {
+      "text": "Each drafted item asks about one thing (no double-barreled items spanning the three topics)",
+      "passed": false,
+      "evidence": "Q3 is double-barreled: 'My workload is manageable — I can get my work done without consistently working unreasonable hours.' This fuses workload manageability with hours/schedule; a respondent with a light volume but rigid schedule could not answer truthfully. The assertion fails because at least one item is double-barreled."
+    },
+    {
+      "text": "Explains at least one format choice in terms of a named bias or the satisficing/cognitive model",
+      "passed": false,
+      "evidence": "The rationale mentions 'acquiescence bias' in passing only in the context of the midpoint (section 1), but frames agree/disagree as the default format without citing acquiescence as a reason to avoid it. No named bias is invoked to explain a format choice made; the mention of acquiescence is used to justify keeping the midpoint rather than explaining a format decision."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 3,
+    "total": 7,
+    "pass_rate": 0.571
+  },
+  "claims": [
+    {
+      "claim": "5-point symmetric agree-disagree is the most widely used and understood format for employee surveys",
+      "type": "factual",
+      "verified": true,
+      "evidence": "The usage claim is broadly accurate, though the response does not note that item-specific formats are preferred on measurement quality grounds."
+    },
+    {
+      "claim": "Q3 double-barreled item (workload manageable + hours) — the response does not flag this",
+      "type": "quality",
+      "verified": false,
+      "evidence": "Q3 combines two things (workload manageability and hours worked); this defect is not flagged by the base model."
+    }
+  ],
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "reason": "The double-barreled flaw in Q3 of the without_skill output ('My workload is manageable — I can get my work done without consistently working unreasonable hours') is an important quality issue that no assertion directly catches as a positive check. Assertion 6 (no double-barreled items) does catch it, but consider whether an explicit positive check — 'items do not combine workload volume with hours/schedule' — would make this more precise."
+      }
+    ],
+    "overall": "Assertions 1 and 7 are highly discriminating: the base model's failure to use or justify item-specific scales, and its inability to name acquiescence as a driver of format choice, cleanly separate it from the skill response."
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "run_id": "aggregation-fallacy-without_skill",
+  "eval_id": 3,
+  "eval_name": "aggregation-fallacy",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output identifies the language-as-fixed-effect fallacy (Clark, 1973) or equivalent \u2014 that by-subject analysis treats items as fixed rather than as a sample from a population",
+      "passed": true,
+      "evidence": "Clark (1973) formalized this as the **language-as-fixed-effect fallacy**: if items aren't a random effect, you can't generalize beyond your exact stimulus set, and Type I error is inflated because item-level variance gets absorbed into error."
+    },
+    {
+      "text": "Output explains what is lost: the analysis does not generalize to other sentences/items, only to the specific 80 stimuli used",
+      "passed": true,
+      "evidence": "your inference is: 'This effect replicates across participants, for these specific sentences.' ... if items aren't a random effect, you can't generalize beyond your exact stimulus set"
+    },
+    {
+      "text": "Output recommends crossed random effects for both subjects and items \u2014 lmer(rt ~ condition + (1 + condition | subject) + (1 + condition | item)) or equivalent",
+      "passed": true,
+      "evidence": "lmer(RT ~ CondA * CondB + (1 + CondA * CondB | participant) + (1 + CondA * CondB | item), data = df, REML = TRUE) \u2014 includes maximal crossed random effects for both participant and item."
+    },
+    {
+      "text": "Output does NOT describe by-subject ANOVA on means as 'standard' or recommend simply adding it as a robustness check alongside \u2014 it should recommend replacing the analysis",
+      "passed": true,
+      "evidence": "The 'lab tradition' here reflects pre-2010 practice... But honestly: fit the LMEM. It's the right model for the design, it will almost certainly be required at review... if the effect holds, you have a stronger paper; if it doesn't, you need to know that. The response frames LMEM as a replacement, not an addition."
+    },
+    {
+      "text": "Output does NOT frame the item random effects as optional given the design",
+      "passed": true,
+      "evidence": "LMEMs are now the de facto standard... most journals (JML, Cognition, Psych Science, JEPLMC) expect them... fit the LMEM. It's the right model for the design. Item random effects are presented as required, not optional; the convergence fallback only addresses structure within the mixed model."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

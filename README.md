@@ -109,7 +109,7 @@ Apply hierarchical / multilevel / mixed-effects models correctly across the full
 
 **Why it matters:** The base model knows multilevel modeling but defaults to hedging on wrong analyses. The most consequential failure is validating or gently caveating a random-intercepts-only model when the design has within-cluster manipulations — an omission that inflates Type I error 2–5× at nominal α = .05 (Barr et al., 2013; Schielzeth & Forstmeier, 2009). The skill opens with a firm no on that case, enforces diagnosis before any simplification of singular models, and corrects the common reflex to recommend MLM for every repeated-measures question even when a paired t-test is the defensible answer.
 
-**Gap:** Iteration 1 evals hit 100% for both configurations — a ceiling showing the base model answers direct MLM questions correctly. Iteration 2 redesigns all evals as trap prompts (wrong analysis already done, user apparently satisfied), the format where the psychometrics skill showed deltas of 0→100% per case. Results pending.
+**Gap:** +10pp on 10 trap-based evals (94% with skill, 84% without). Largest gaps on aggregation fallacy (+40pp — base model treats by-subject ANOVA on means as "standard practice"), items-as-fixed reasoning (+20pp), and singular-fit simplification (+40pp). Seven traps showed no gap — the base model handles validation requests well when the wrong analysis is clearly described; gaps appear when the wrong practice is framed as established convention.
 
 → [multilevel-modeling/](multilevel-modeling/)
 

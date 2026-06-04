@@ -1,0 +1,25 @@
+[
+  {"query": "i want to build a netlogo model where wolves and sheep move around a grid and i want to see if the populations cycle. can you help me set it up and decide how many times to run it?", "should_trigger": true},
+  {"query": "I'm simulating how about 5,000 households decide whether to install rooftop solar based on what their neighbors do and the subsidy level, and I want to know what subsidy creates a tipping point. how do I approach this?", "should_trigger": true},
+  {"query": "reviewer 2 wants our methods section to follow the ODD protocol. can you restructure our model description into Overview, Design concepts and Details?", "should_trigger": true},
+  {"query": "should I model this disease outbreak with a standard SIR compartmental model or simulate individuals on a contact network? we have data on who contacts whom in the nursing home", "should_trigger": true},
+  {"query": "my mesa simulation gives a totally different answer every time I run it and one run showed segregation forming. how do I figure out if that's real or just noise, and which parameters are driving it?", "should_trigger": true},
+  {"query": "we tuned 7 parameters and the sim now matches the historical adoption curve perfectly. can we say the model is validated in the paper?", "should_trigger": true},
+  {"query": "I have a Schelling-style segregation model and the segregation only shows up with a Moore neighborhood, not von Neumann. is my result an artefact?", "should_trigger": true},
+  {"query": "what's the difference between calibration, verification and validation for a bottom-up simulation of firms competing in a market, and what order do I do them in?", "should_trigger": true},
+  {"query": "trying to reproduce sugarscape-style wealth distributions from simple agent rules in Agents.jl, and I want to run a proper global sensitivity analysis on the parameters. morris or sobol?", "should_trigger": true},
+  {"query": "I need to model traffic where each driver reacts to the cars around them so I can study how phantom jams emerge — not just average flow equations. what tooling and what do I need to watch out for when interpreting it?", "should_trigger": true},
+
+  {"query": "I'm building an AI agent with LangChain that can call tools and search the web, and I want a multi-agent setup where a planner agent delegates to worker agents. how do I structure the orchestration?", "should_trigger": false},
+  {"query": "help me train a model to predict customer churn from our subscription data — I've got a CSV with 40 features and I'm deciding between xgboost and a neural net", "should_trigger": false},
+  {"query": "I need to run a Monte Carlo simulation to price an exotic option, like 100,000 stochastic paths of the underlying with antithetic variates. how many replications for a stable VaR estimate?", "should_trigger": false},
+  {"query": "we're using multi-agent reinforcement learning to train a policy that beats the game — I mainly care about the agents converging to a high reward, not modeling any real-world system. tips on reward shaping?", "should_trigger": false},
+  {"query": "can you help me design the data model for our app's Postgres database? I've got users, agents (as in sales reps), listings, and transactions and I'm not sure how to normalize it", "should_trigger": false},
+  {"query": "I'm running a CFD simulation of airflow over a wing and the mesh keeps diverging at high angles of attack. is it a boundary condition problem?", "should_trigger": false},
+  {"query": "our team has this weird emergent behavior where decisions only get made in the hallway after meetings, never in them. how do I write this up as an org dysfunction for my manager?", "should_trigger": false},
+  {"query": "I want to forecast next quarter's sales with a time-series model — should I use ARIMA or Prophet, and how do I validate the forecast?", "should_trigger": false},
+  {"query": "explain the Nash equilibrium of the two-player Cournot duopoly analytically — I need the closed-form best-response functions and the equilibrium quantities, not a simulation", "should_trigger": false},
+  {"query": "what's the best NetLogo tutorial for total beginners? just point me to a good intro video or two, I haven't decided what I want to model yet", "should_trigger": false},
+  {"query": "I want to simulate a small society of LLM-powered agents, each with a persona, and watch whether echo chambers and opinion polarization emerge from their interactions — basically a generative version of an opinion-dynamics model. how do I set this up and validate it?", "should_trigger": true},
+  {"query": "I'm building a tax-and-benefit microsimulation: take a representative sample of households, apply the new policy rules to each one's income, and sum up the revenue and distributional effects. the households don't interact with each other. what tooling fits?", "should_trigger": false}
+]

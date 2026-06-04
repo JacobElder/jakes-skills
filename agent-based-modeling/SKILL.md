@@ -129,8 +129,8 @@ Most defensible models live between these. The failure mode on both sides is
 makes the model easier to fit and harder to trust, and the calibration data
 needed to pin down a model grows fast — even modest added complexity can demand
 disproportionately more data, and small models with only a handful of parameters
-can already be unidentifiable from realistic data (Lee et al. 2015; ten Broeke et
-al. 2021). Add a parameter only if you can say where its value will come from.
+can already be unidentifiable from realistic data (Lee et al. 2015; Srikrishnan &
+Keller 2021). Add a parameter only if you can say where its value will come from.
 
 **Pattern-Oriented Modeling (POM)** is the central design discipline (Grimm et
 al. 2005). Identify multiple **patterns** observed in the real system at

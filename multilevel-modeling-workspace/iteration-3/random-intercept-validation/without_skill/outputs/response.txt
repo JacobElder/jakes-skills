@@ -1,0 +1,38 @@
+Not quite — there's a meaningful problem with the random effects structure that's worth fixing before you write up, especially given that your key effect sits at *p* = .03.
+
+## The Issue: Missing Random Slope for B
+
+Your model:
+```r
+lmer(RT ~ A * B + (1 | subject), data = d)
+```
+
+Because B is **within-subjects**, every participant contributes observations at both levels of B. That means the *effect* of B can vary across participants — some people show a larger B difference than others. A random-intercept-only model ignores that by-subject variability in the B slope entirely, which has two consequences:
+
+1. **Residual variance for the B effect is underestimated** — the model forces all of B's within-person variance into the residual.
+2. **Standard errors for B (and A×B) are too small** → anti-conservative *p*-values. Your *p* = .03 for B may not survive a properly-specified model.
+
+## What the Model Should Be
+
+```r
+lmer(RT ~ A * B + (1 + B | subject), data = d)
+```
+
+This adds a **random slope for B by subject**, which is the theoretically correct structure: you're allowing participants to differ in both their baseline RT *and* their B-level difference. This is the "maximal" justified structure for your design (Barr et al., 2013, *JML*).
+
+> **Why not a random slope for A?** A is between-subjects — each participant is in only one level, so there's no within-person variance in A to model. Random slopes for between-subjects factors are not identifiable from the data.
+
+## Practical Steps Before Writing Up
+
+| Step | Action |
+|---|---|
+| 1 | Refit with `(1 + B \| subject)` |
+| 2 | Check if the model converges (with only 30 per group, it usually will for a 2-level slope) |
+| 3 | Report the new *p*-values for B and A×B |
+| 4 | If convergence fails, try `control = lmerControl(optimizer = "bobyqa")` before simplifying structure |
+
+## On Your Advisor's Remark
+
+Random-intercept-only models *look* reasonable for mixed designs at a glance — the subject grouping is there, the fixed effects are right. The gap is specifically that `(1 | subject)` is **sufficient for between-subjects factors but not for within-subjects factors**. It's an easy thing to miss on a quick read.
+
+The B main effect may well survive re-estimation — but you want to know *before* the manuscript goes out, not after review.

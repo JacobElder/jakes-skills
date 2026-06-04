@@ -1,0 +1,59 @@
+{
+  "eval_id": 5,
+  "eval_name": "eval-5-calibration-clean-survey (with_skill)",
+  "expectations": [
+    {
+      "text": "Affirms at least two genuine strengths of the instrument (e.g., item-specific scales, full labeling, open-end framing, ordering, mode)",
+      "passed": true,
+      "evidence": "The instrument-level section lists multiple genuine strengths: post-task administration ('correct'), anonymous and self-administered ('the right mode'), topic order ('sensible'), and length ('excellent. Four items is short enough to have no fatigue risk'). Item-specific rating scales and full labeling are also affirmed item-by-item."
+    },
+    {
+      "text": "Does NOT flag item-specific rating scales as a problem (they are the recommended format)",
+      "passed": true,
+      "evidence": "Item 1 is reviewed as 'Verdict: Good. Minor labeling note.' Item 2 as 'Verdict: Good as stated.' Item 4 as 'Verdict: Good format and labels.' No critique of item-specific scales appears anywhere in the response."
+    },
+    {
+      "text": "Does NOT recommend switching the 5-point scales to a different format without a substantive reason",
+      "passed": true,
+      "evidence": "No recommendation to change scale format appears. The response explicitly endorses the 5-point fully-labeled approach for each item and identifies no format defect."
+    },
+    {
+      "text": "Does NOT invent a double-barreled problem where none exists (each item asks one thing)",
+      "passed": true,
+      "evidence": "No double-barreled concern is raised for any of the four items. Each is reviewed for content-specific issues, none of which is double-barreling."
+    },
+    {
+      "text": "Does NOT invent an acquiescence problem (item-specific scales do not carry acquiescence the way agree/disagree items do)",
+      "passed": true,
+      "evidence": "Acquiescence is not mentioned anywhere in the response. The item-specific scales are assessed on their own terms without importing A/D-format critiques."
+    },
+    {
+      "text": "If it raises any issue, the issue is real and grounded (not a cosmetic or invented concern)",
+      "passed": true,
+      "evidence": "Three issues are raised: (1) 'Fair' as a midpoint may be perceived as mildly positive rather than neutral — a real and documented labeling concern. (2) 'this type of tool' in Q4 is ambiguous about its referent — a genuine wording issue. (3) No pretesting mentioned — a standard recommendation. All three are substantively grounded."
+    },
+    {
+      "text": "Gives an overall positive assessment or clearly indicates the instrument is sound",
+      "passed": true,
+      "evidence": "Closing statement: 'Everything else — scale points, labels, midpoints, format choices, order, mode, timing — is well-executed. This is a clean, appropriately brief exit instrument.'"
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  },
+  "claims": [
+    {
+      "claim": "'Fair' as a midpoint may be interpreted as mildly positive rather than neutral",
+      "type": "factual",
+      "verified": true,
+      "evidence": "This is a real concern in scale labeling literature — 'fair' does carry a mildly positive connotation in everyday English."
+    }
+  ],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "No suggestions — the seven calibration assertions are well-targeted. The negative-direction assertions (3, 4, 5) correctly test for over-flagging on a clean instrument, which is the key calibration risk."
+  }
+}

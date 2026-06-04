@@ -1,0 +1,109 @@
+There's a significant methodological issue here that goes beyond reporting style — this is the **language-as-fixed-effect fallacy**, and it means your current analysis may not support the inference you think it does. Let me walk through it carefully.
+
+---
+
+## What your current analysis actually tests
+
+By aggregating to participant × condition means and running an F1 ANOVA, you're treating **participants as a random effect** (correctly — they're sampled from a population) but **items as a fixed effect** (incorrectly — the 80 sentences are also a sample from a larger population of possible sentences).
+
+The practical consequence: **your error term doesn't account for item-by-condition variability**. If some sentences happened to produce an unusually large condition difference by chance (i.e., the effect is partly item-specific rather than general), your analysis has no way to detect that. The result is anti-conservative *p*-values — Type I error rates well above .05 for the across-stimuli generalization you almost certainly care about.
+
+This was formally described by Clark (1973) — "The language-as-fixed-effect fallacy" — and it's not a technicality. Simulations have shown inflated Type I error rates of 2–5× in these designs when item variance is non-trivial.
+
+---
+
+## What "has been done in my lab for years" means here
+
+The F1-only approach was standard practice before mixed models became tractable in the early 2000s. The traditional patch was to run **both F1 (by-participants) and F2 (by-items) ANOVAs** and require significance in both, or compute **minF′** (Clark's quasi-F statistic). If your lab isn't doing at least that, the analysis is incomplete by the standards of most psycholinguistics journals today.
+
+But even F1+F2 is now considered suboptimal compared to the modern solution.
+
+---
+
+## The right analysis: crossed random-effects LMM
+
+The current standard in psycholinguistics (Baayen et al., 2008; Barr et al., 2013) is a **single linear mixed-effects model** with crossed random effects for both participants and items. This is what reviewers at *JML*, *Cognition*, *JEPLMC*, and similar venues will expect.
+
+In R with lme4, the model structure depends on your design. For a 2×2 within-participants, within-items factorial, you'd want something like:
+
+```r
+library(lme4)
+library(lmerTest)  # for Satterthwaite df and p-values
+
+# Use trial-level RT, NOT aggregated means
+# factorA and factorB are your two factors, coded as ±0.5
+m <- lmer(RT ~ factorA * factorB +
+               (1 + factorA * factorB | participant_id) +
+               (1 + factorA * factorB | item_id),
+           data = dat,
+           REML = TRUE)
+summary(m)
+```
+
+**Critical notes on this specification:**
+
+1. **Use trial-level data, not the aggregated means.** Aggregating before modeling throws away within-cell variance and prevents you from estimating item random effects.
+2. **The `(... | item_id)` random effect** is what your current analysis is missing entirely.
+3. **Both factors vary within participants and within items**, so both go in both random-effects terms. This is the maximal structure (Barr et al., 2013) — start here.
+4. **Contrast-code your factors as ±0.5** (not the R default of 0/1 treatment coding). Treatment coding makes the "main effects" conditional on the other factor being at its reference level, which is almost never what you want in a factorial design, and it also affects what the random slopes represent.
+
+```r
+# Set up ±0.5 contrasts before fitting
+contrasts(dat$factorA) <- c(-0.5, 0.5)
+contrasts(dat$factorB) <- c(-0.5, 0.5)
+```
+
+If the maximal model has convergence trouble (common with 2×2 interaction slopes):
+
+```r
+# Try a different optimizer first
+m <- lmer(..., control = lmerControl(optimizer = "bobyqa",
+                                     optCtrl = list(maxfun = 2e5)))
+
+# If still singular, inspect which component is zero
+isSingular(m)
+# Then consider dropping the random correlation or the interaction slope:
+# (1 + factorA + factorB | id)  — no interaction slope
+# (1 + factorA * factorB || id) — zero-correlations version
+```
+
+Don't drop slopes reflexively — diagnose first.
+
+---
+
+## Whether your effect will survive
+
+It might. The F1 analysis isn't always *wrong* about direction, just often anti-conservative. But there are two scenarios worth preparing for:
+
+- **Effect holds up in LMM** → you can report it confidently with the stronger inferential basis.
+- **Effect weakens or disappears** → the F1 result was partially driven by item-level variance that happened to align with your condition difference in this stimulus set.
+
+Either outcome is informative, and you'll want to know before submission.
+
+---
+
+## What to report once you've refit
+
+A complete write-up for a psycholinguistics LMM should include:
+
+| What | Example |
+|---|---|
+| Software | `lme4` v1.1-35, `lmerTest` v3.1-3 |
+| Estimation | REML |
+| Random-effects structure | Maximal: by-participant and by-item random intercepts + slopes for both factors and their interaction |
+| Contrast coding | ±0.5 sum coding |
+| Fixed effects | Estimate, SE, *t*, df (Satterthwaite), *p* |
+| Variance components | Random intercept and slope SDs, residual SD |
+| Any simplification | If maximal failed — what was dropped and why |
+
+---
+
+## Bottom line
+
+The aggregated RM ANOVA is F1-only — it does not license claims that generalize across stimuli, which is almost certainly the inference your paper makes. Before submission, you should:
+
+1. Go back to trial-level data
+2. Refit with a crossed random-effects LMM including by-item random effects
+3. Verify the effect holds under that more conservative test
+
+This isn't adding something to your current reporting — it's a reanalysis. Happy to help you write the exact model code once you confirm the design details (are both factors within-items as well as within-participants? Any items appearing in multiple conditions?).

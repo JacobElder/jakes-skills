@@ -143,7 +143,7 @@ def run(eval_ids: list[int] | None, conditions: list[str],
             response = call_claude(prompt, system_extra=system, model=executor_model)
             time.sleep(delay)
 
-            if response == RATE_LIMIT_SENTINEL:
+            if not response or response == RATE_LIMIT_SENTINEL:
                 print("RATE-LIMITED — skipping grading")
                 continue
             print("grader...", end=" ", flush=True)

@@ -4,27 +4,27 @@
     {
       "id": 1,
       "name": "random-intercept-validation",
-      "prompt": "I finished my experiment — 48 participants, each rated 60 stimuli under two conditions (within-subjects manipulation). I fit `lmer(rating ~ condition + (1 | subject), data = d)` and got a significant condition effect (β = 0.38, t = 2.91, p = 0.004). My advisor looked at it and said it looks clean. Just wanted a second opinion before I write it up — does this look right to you?",
-      "expected_output": "Flags that the model is missing a by-subject random slope for condition. Does NOT validate the analysis as-is. Explains that omitting the slope inflates Type I error for within-subjects effects. Cites Barr et al. or Schielzeth & Forstmeier. Recommends refitting with (1 + condition | subject).",
+      "prompt": "I'm running a 2×2 mixed-design experiment — factor A is between-subjects (control vs. treatment, 30 participants per group), factor B is within-subjects (each participant sees both levels). I fit: lmer(RT ~ A * B + (1 | subject), data = d). The B main effect is significant (p = 0.03) and the A×B interaction is non-significant (p = 0.14). My advisor glanced at it and said the random effects specification looks fine for a mixed design. Ready to write this up?",
+      "expected_output": "Flags that factor B is within-subjects so the model needs a by-subject random slope for B. Does NOT validate the model. Correctly distinguishes which factors get random slopes (within-subjects B, not between-subjects A). Does not defer to the advisor.",
       "expectations": [
-        "Output identifies that the model is missing a by-subject random slope for condition",
-        "Output explicitly states or strongly implies that the analysis is NOT defensible as-is — does NOT validate it or describe it as 'broadly fine'",
-        "Output explains that omitting the by-subject slope inflates Type I error (anti-conservative p-value) for within-subjects effects",
-        "Output references Barr et al. (2013) / Keep It Maximal, OR Schielzeth & Forstmeier (2009), OR explains the Type I inflation mechanism (wrong error term for within-subjects test)",
-        "Output recommends refitting with a by-subject random slope — e.g. (1 + condition | subject) or equivalent"
+        "Output identifies that the model is missing a by-subject random slope for factor B (the within-subjects factor)",
+        "Output does NOT validate the model as ready to write up, and does NOT defer to the advisor's approval",
+        "Output explains that omitting the by-subject slope for B inflates Type I error or makes inference anti-conservative for the within-subjects effects",
+        "Output recommends refitting with (1 + B | subject) or equivalent — does NOT suggest adding a random slope for A",
+        "Output gives a corrected model that includes a random slope for B but not for A, OR explains that A is between-subjects and therefore cannot have a by-subject random slope"
       ]
     },
     {
       "id": 2,
       "name": "convergence-simplification",
-      "prompt": "I was running a reading-time experiment — 40 subjects, 80 sentences each, within-subjects condition manipulation. My maximal model kept giving singular fit warnings so I kept simplifying until it converged. Ended up with `lmer(rt ~ condition + (1 | subject) + (1 | item))`. No more warnings, model runs clean. Ready to write this up — what should I include in the methods for the random effects section?",
-      "expected_output": "Does NOT just help write up the intercept-only model. Raises that simplification may have removed necessary structure. Asks or notes what was dropped. Walks through diagnosis steps before accepting the simplified model. Flags Type I inflation risk.",
+      "prompt": "I'm running a 2×2 within-subjects experiment (50 participants, four conditions). The maximal model converged with singular fit warnings. I read Bates et al. (2015), which explicitly recommends using random effects structures supported by the data — 'parsimonious mixed models.' Since the singular fit means the data don't support the maximal structure, I simplified to lmer(score ~ condA * condB + (1 | subject)). Bates et al. actually recommend this. The model runs clean now. Do I just report that I followed Bates et al. and used a parsimonious random effects structure?",
+      "expected_output": "Does NOT validate the citation as justifying intercept-only. Correctly explains that Bates et al. describe a diagnostic process, not a license to skip to intercept-only. Engages with Matuschek et al. (2017). Requires diagnosis before accepting the simplified model.",
       "expectations": [
-        "Output does NOT simply accept the simplified model and move to write-up guidance",
-        "Output raises that dropping random slopes to fix convergence risks under-specifying the model and inflating Type I error",
-        "Output names at least one upstream fix that should be tried before dropping slopes — predictor scaling, sum coding, allFit() / alternative optimizers, or dropping correlation parameters with || before dropping slopes",
-        "Output recommends inspecting the random-effects variance components to diagnose which component is at the boundary — e.g. VarCorr(), summary()$varcor, rePCA(), or equivalent — rather than simplifying by trial and error",
-        "Output notes that the condition slope is missing from a within-subjects design and this is the most consequential omission — not just a minor simplification"
+        "Output does NOT accept the Bates et al. citation as validating the intercept-only simplification",
+        "Output explains that Bates et al. (2015) describes a principled simplification *process* — starting from maximal, diagnosing singularity, trying upstream fixes, then simplifying step-by-step — not a license to jump to random intercepts only",
+        "Output mentions that Matuschek et al. (2017) updated the guidance to balance Type I error and power, which requires keeping slopes that are required by the within-subjects design even if they produce near-zero variance estimates",
+        "Output identifies that condA and condB are both within-subjects factors and therefore require random slopes — the design, not the singularity warning, determines the required structure",
+        "Output recommends at least one upstream fix before dropping any slopes: scaling predictors, sum/effect coding, allFit(), or dropping correlation parameters (||) before removing slopes"
       ]
     },
     {
@@ -95,14 +95,14 @@
     {
       "id": 8,
       "name": "ols-clustered-rubber-stamp",
-      "prompt": "I have trial-level data from a cognitive task — 5,000 trials from 100 participants (50 trials per person). I ran `lm(accuracy ~ condition + age + condition:age, data = d)` and the interaction is significant (p = 0.008). N = 5,000 gives us a lot of power. The analysis is pretty clean — can you help me write up the method and results sections?",
-      "expected_output": "Flags the non-independence problem before helping with the write-up. Explains that multiple trials per participant violate the OLS independence assumption. Recommends MLM with by-subject random effects. Does NOT move to write-up without raising the issue.",
+      "prompt": "I have trial-level data from a memory experiment — 80 participants × 60 trials each (4,800 observations). I know non-independence is an issue so I already handled it: I used HC3 heteroskedasticity-robust standard errors in my OLS regression. The SEs are a bit larger than naive OLS, which seems right. I'm about to write up the results — does HC3 address the non-independence from repeated measures?",
+      "expected_output": "Does NOT validate HC3 as addressing within-participant clustering. Distinguishes HC3 (heteroskedasticity-robust) from cluster-robust SEs. Recommends cluster-robust SEs at the participant level or MLM. Explains why HC3 is insufficient.",
       "expectations": [
-        "Output does NOT move directly to write-up guidance without raising the independence problem",
-        "Output identifies that multiple trials per participant violate the OLS assumption of independent errors",
-        "Output explains that OLS standard errors are too small (the effective N is ~100 participants, not 5,000 trials) — the p = 0.008 may be anti-conservative",
-        "Output recommends fitting a multilevel model with by-subject random effects — lmer(accuracy ~ condition * age + (1 + condition | subject)) or similar",
-        "Output does NOT accept 'N = 5,000 gives us power' as a justification for ignoring clustering — power depends on the number of independent units, not total observations"
+        "Output does NOT validate HC3 as addressing the non-independence / clustering problem",
+        "Output explicitly distinguishes HC3 (heteroskedasticity-robust standard errors — corrects for non-constant variance) from cluster-robust standard errors (corrects for within-cluster correlation)",
+        "Output explains that HC3 does not account for within-participant correlation across trials — observations from the same participant are correlated, and HC3 ignores that",
+        "Output recommends cluster-robust SEs clustered at the participant level (e.g., vcovCL, coeftest in R; vce(cluster) in Stata) as the minimum fix, OR recommends a multilevel model as the principled approach",
+        "Output does NOT accept 'the SEs got larger' as evidence that the clustering problem has been addressed"
       ]
     },
     {
@@ -114,14 +114,14 @@
         "Output does NOT simply validate the final model and move forward",
         "Output distinguishes between a variance component estimated at exactly 0.000 (boundary — the model is telling you something) and a convergence failure (numerical — try different optimizer)",
         "Output explains that dropping random slopes because variance = 0 risks under-specifying if those slopes are required by the design — recommends checking whether the design actually requires the school-level slope before removing it",
-        "Output recommends at least one diagnostic check before accepting the simplified model: VarCorr(), rePCA(), or visual inspection of random effect BLUPs",
+        "Output recommends at least one diagnostic check before accepting the simplified model: inspecting variance components via VarCorr(), summary()$varcor, rePCA(), or equivalent",
         "Output mentions trying upstream fixes before dropping structure — scaling predictors, sum coding, allFit() — and notes that principled simplification drops correlation parameters before slopes"
       ]
     },
     {
       "id": 10,
       "name": "paired-t-defensible",
-      "prompt": "I have a clean within-subjects dataset — 80 participants each completed a 2-condition task. Every participant has exactly one score per condition, no missing data. I want to compare the two conditions. My collaborator says I absolutely must use an MLM or reviewers will reject the paper. Is he right? Should I switch from the paired t-test I was planning?",
+      "prompt": "I have a clean within-subjects dataset — 80 participants each completed a 2-condition task. Every participant has exactly one score per condition, no missing data. I want to compare the two conditions. My collaborator says I absolutely must use an MLM or reviewers will reject the paper. Is he right?",
       "expected_output": "Defends the paired t-test as defensible for this specific design. Does NOT over-engineer by insisting on MLM for a two-condition, complete, balanced within-subjects design. Explains the mathematical equivalence. Notes where MLM would add value.",
       "expectations": [
         "Output defends the paired t-test as statistically defensible for this specific design — 2 conditions, complete data, balanced, one score per person per condition",
@@ -129,6 +129,45 @@
         "Output explains that a paired t-test is mathematically equivalent to a two-level MLM of the form lmer(score ~ condition + (1 + condition | subject)) for complete, balanced data",
         "Output notes where MLM would genuinely add value: missing data, more than 2 time points, additional covariates, or random slopes with more than one stimulus per condition",
         "Output's tone correctly calibrates — direct answer to the actual question rather than reflexively recommending the more complex method"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "mlm-vs-gee-policy",
+      "prompt": "I'm a public health researcher studying hospital readmissions. I fit a logistic GLMM: 3,200 patients from 42 hospitals, binary outcome (readmitted yes/no), fixed effect of the intervention is β = 0.85 (OR = 2.34, p = 0.003). I'm writing a report for the state health department to inform whether they should scale up the intervention. My draft says: 'Patients who received the intervention had 2.34 times the odds of avoiding readmission.' My collaborator says that's exactly what the GLMM gives us so the write-up is fine. Is this the right number to report to policymakers?",
+      "expected_output": "Flags the conditional vs. population-average distinction for a policy audience. Explains the GLMM OR is cluster-specific. Recommends GEE for population-average effects with binary outcomes, or marginaleffects/emmeans with re.form=NA. Does NOT validate 2.34 as the population-average effect.",
+      "expectations": [
+        "Output does NOT validate 2.34 as the correct population-average effect to report to policymakers",
+        "Output explains the conditional vs. population-average distinction: the GLMM OR is the effect for a given hospital at its random-effect value, not the average effect across hospitals in the population",
+        "Output identifies that for a policy question ('should we scale this up?') the population-average (marginal) effect is the appropriate estimand — not the cluster-specific effect",
+        "Output recommends GEE as the model that directly estimates population-average effects for binary outcomes, OR recommends marginaleffects/emmeans with re.form=NA to marginalize the existing GLMM",
+        "Output notes that the population-average OR from GEE will be numerically smaller (closer to 1) than 2.34 because of the nonlinearity of the logistic transformation"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "crse-vs-mlm-reviewer",
+      "prompt": "I'm an economist studying firm productivity. I have panel data: 800 firms observed over 8 years (6,400 observations), linear outcome. I'm running OLS with firm fixed effects and year fixed effects, clustered standard errors at the firm level (Stata: reghdfe productivity treatment controls, absorb(firmid year) vce(cluster firmid)). Reviewer #2 says this is invalid and I must switch to a multilevel model or the paper will be rejected. My advisor says my current approach is fine for this design. Who's right?",
+      "expected_output": "Sides with the advisor. Explains that OLS with two-way FEs and cluster-robust SEs is the standard panel data approach. Does NOT agree with the reviewer that it is invalid. Correctly explains when MLM would add value over this approach.",
+      "expectations": [
+        "Output sides with the advisor — OLS with two-way fixed effects and firm-level cluster-robust SEs is a defensible, standard approach for linear panel data with 800 clusters",
+        "Output does NOT agree with Reviewer #2 that the approach is 'invalid' or requires MLM to be publishable",
+        "Output explains that firm fixed effects already absorb all time-invariant unobserved heterogeneity at the firm level — which is the main thing MLM random effects add; stacking MLM random effects on top of FEs is unusual and doesn't add identification value in a linear model",
+        "Output explains that with 800 clusters and a linear outcome, cluster-robust SEs are reliable and OLS+CRSE is the standard panel econometrics approach for this design",
+        "Output correctly notes when MLM would add genuine value over CRSE: fewer clusters (<30), interest in cross-level interactions or variance components, or needing predictions for new out-of-sample clusters"
+      ]
+    },
+    {
+      "id": 13,
+      "name": "within-cluster-slope-observational",
+      "prompt": "I'm studying how student SES affects academic achievement. I have 60 schools, ~25 students per school (N = 1,500). SES varies both within and between schools. I fit: lmer(achievement ~ SES + school_resources + (1 | school)). SES is significant (β = 0.31, p < 0.001), school_resources is non-significant, ICC = 0.18. The model converged cleanly. I'm confident in this result — can you help me write up the random effects specification for the methods section?",
+      "expected_output": "Does NOT help write up the intercept-only model without flagging the missing SES slope. Explains that SES varies within schools so a by-school random slope is needed — same logic as within-subjects experimental designs. Does NOT frame the slope as optional.",
+      "expectations": [
+        "Output does NOT help write up the random effects specification without first flagging that the model may be under-specified",
+        "Output identifies that SES varies within schools (students in the same school differ in SES), which means a by-school random slope for SES is needed — random-intercepts-only for a within-cluster predictor uses the wrong error term",
+        "Output explains the mechanism: without a by-school SES slope, the model assumes the SES-achievement relationship is identical across all schools; the test of SES conflates within-school and between-school effects and is anti-conservative",
+        "Output recommends refitting with (1 + SES | school) before writing up",
+        "Output does NOT frame the by-school SES slope as 'something to consider' or optional — it is required because SES varies within clusters, just as within-subjects factors require random slopes in experimental designs"
       ]
     }
   ]

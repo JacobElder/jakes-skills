@@ -45,7 +45,7 @@ RATE_LIMIT_PHRASES = ["you've hit your limit", "you have hit your limit"]
 
 
 def call_claude(prompt: str, system_extra: str | None = None,
-                model: str = EXECUTOR_MODEL, timeout: int = 240) -> str:
+                model: str = EXECUTOR_MODEL, timeout: int = 360) -> str:
     cmd = ["claude", "-p", prompt,
            "--model", model,
            "--dangerously-skip-permissions"]
@@ -66,12 +66,13 @@ GRADER_SYSTEM = (
 )
 
 
-def grade_assertions(response: str, assertions: list[str]) -> list[bool]:
-    numbered = "\n".join(f"{i+1}. {a}" for i, a in enumerate(assertions))
-    resp = response[:4000] + ("…" if len(response) > 4000 else "")
+def grade_assertions(response: str, assertions: list) -> list[bool]:
+    texts = [a["text"] if isinstance(a, dict) else a for a in assertions]
+    numbered = "\n".join(f"{i+1}. {t}" for i, t in enumerate(texts))
+    resp = response[:3000] + ("…" if len(response) > 3000 else "")
     prompt = f"Response:\n{resp}\n\nAssertions:\n{numbered}"
     raw = call_claude(prompt, system_extra=GRADER_SYSTEM,
-                      model=GRADER_MODEL, timeout=120)
+                      model=GRADER_MODEL, timeout=240)
     results: list[bool] = []
     for line in raw.strip().splitlines():
         line = line.strip()

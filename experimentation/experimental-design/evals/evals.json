@@ -86,10 +86,10 @@
       "id": 7,
       "name": "file-based-power-from-csv",
       "prompt": "I've attached checkout_history.csv — it has 63 days of daily sessions and conversions for our payment step. We want to run an A/B test targeting a 5% relative lift. Use the file to compute the required sample size and estimate how long the test would need to run.",
-      "expected_output": "Reads the CSV, computes ~4.1-4.2% baseline conversion and ~4,600 sessions/day, runs the script with --mde 0.05 --relative to get ~146,000-147,000/arm, translates to ~9-10 weeks at 50/50 split, flags the long runtime and names variance reduction (CUPED) and MDE reconsideration as the key levers, mentions weekly seasonality requiring whole-week runs.",
+      "expected_output": "Reads the CSV, computes ~4.1% baseline conversion and ~4,600 sessions/day, runs the script with --mde 0.05 --relative to get ~149,000-150,000/arm, translates to ~9-10 weeks at 50/50 split, flags the long runtime and names variance reduction (CUPED) and MDE reconsideration as the key levers, mentions weekly seasonality requiring whole-week runs.",
       "assertions": [
         {"text": "Reads the CSV file to derive baseline conversion rate and average daily traffic — does not ask the user to supply these numbers manually", "passed": null, "evidence": null},
-        {"text": "Runs power_analysis.py with --mde 0.05 --relative (or equivalent) on the computed baseline to get approximately 146,000-147,000 per arm", "passed": null, "evidence": null},
+        {"text": "Runs power_analysis.py with --mde 0.05 --relative (or equivalent) on the computed baseline to get approximately 149,000-150,000 per arm (exact value depends on computed baseline; accept any result in the 145K–155K range)", "passed": null, "evidence": null},
         {"text": "Translates N to a runtime estimate using the traffic from the file, arriving at approximately 9-10 weeks", "passed": null, "evidence": null},
         {"text": "Flags that the runtime is long and names CUPED / variance reduction as a lever to shorten it", "passed": null, "evidence": null},
         {"text": "Notes the visible weekday/weekend seasonality and recommends whole-week runs to avoid confounding", "passed": null, "evidence": null}

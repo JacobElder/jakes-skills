@@ -1,0 +1,38 @@
+{
+  "eval_id": 16,
+  "condition": "baseline",
+  "prompt": "We ran a clean randomized experiment, ~6,000 users per arm, comparing average session length (in minutes). The distribution is a bit right-skewed. I just want to know if the new design increased average session length. Is a t-test fine or do I need something fancier?",
+  "response": "With 6,000 per arm, a t-test is fine. The Central Limit Theorem means the sampling distribution of the mean is essentially normal at that scale \u2014 the skew in the raw data is irrelevant for inference on the mean.\n\nA few specifics worth noting:\n\n- **Use Welch's t-test** (not Student's), which doesn't assume equal variances. This is the default in most software (`scipy.stats.ttest_ind(..., equal_var=False)`, R's `t.test()`), so you're probably already using it.\n- **One-sided test**: since you're asking whether the new design *increased* session length, use a one-sided test. This gives you more power and is the honest framing given your directional hypothesis.\n- **Don't use Mann-Whitney as a substitute**: it's sometimes recommended for skewed data, but it tests stochastic dominance (rank differences), not the mean. Since you care about average session length specifically, the t-test is actually the more appropriate tool.\n\nThe only scenario where you'd want something fancier is if session length has extreme outliers that could heavily distort the mean itself \u2014 in which case you'd want to think about whether the mean is even the right estimand, not just which test to use.\n\nBottom line: Welch's one-sided t-test, you're done.",
+  "assertions": [
+    {
+      "text": "Says a (Welch) t-test / difference in means is fine here without hedging",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that randomization makes the simple difference in means the unbiased causal effect",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that the large per-arm n handles the mild skew via the CLT",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT recommend a transformation, GLM, or nonparametric test for this case",
+      "type": "must_pass"
+    },
+    {
+      "text": "Does NOT manufacture unnecessary estimand or robustness caveats; the response is proportionate and largely affirming",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8
+}

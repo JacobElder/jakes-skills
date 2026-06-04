@@ -2,7 +2,7 @@
   "eval_id": 30,
   "condition": "with_skill",
   "prompt": "My sample size is 150 per group, and the histogram looks clearly non-normal \u2014 there's skew and the tails are fat. That means I definitely can't use a t-test here. Right?",
-  "response": "You've hit your limit \u00b7 resets 1pm (America/Los_Angeles)",
+  "response": "No \u2014 this is a very common category error. The t-test doesn't assume the raw data are normal; it assumes the **sampling distribution of the sample mean** is approximately normal. The histogram of your data is the wrong object to be looking at.\n\nAt n = 150 per group, the CLT has done substantial work. How much depends on the nature of the non-normality:\n\n**Skew** distorts the level (Type I error rate) of the test, and the rate at which it's corrected by the CLT scales roughly as skewness/\u221an. The worked simulation in the skill's reference shows that even severely skewed lognormal data (one of the worst cases) still over-rejects by only about 3 percentage points at n = 100, and by n = 1000 it's essentially nominal. At n = 150 per group in a *two*-sample test (where skew partially cancels across groups), you're almost certainly in \"close enough\" territory unless your data are pathologically skewed.\n\n**Fat tails** are a separate issue and mostly affect *efficiency*, not the test's level. They make the t-test less powerful relative to rank-based alternatives \u2014 but the validity (Type I error rate) is not at serious risk with finite variance.\n\nSo the honest answer is: at n = 150 per group, the t-test is very likely approximately valid for testing a difference in means. The question to actually ask is whether **the mean difference is the estimand you care about**. If your outcome is heavily skewed income or cost and the median is more meaningful, that's a substantive choice about what to estimate \u2014 not an assumption failure. If that's your situation, use quantile regression or report the median directly; don't reach for Mann-Whitney as an indirect fix, since it tests stochastic ordering (P(X > Y) = \u00bd), not a difference in medians.\n\nIf you tell me what the outcome is and what you're trying to compare, I can give you a more direct verdict.",
   "assertions": [
     {
       "text": "Does NOT accept the false premise that non-normal raw data prohibits using a t-test",
@@ -26,19 +26,15 @@
     }
   ],
   "assertion_results": [
-    false,
-    false,
-    false,
-    false,
-    false
+    true,
+    true,
+    true,
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.0,
-  "eval_passes": false,
-  "must_pass_failed_indices": [
-    1,
-    4,
-    5
-  ]
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
 }

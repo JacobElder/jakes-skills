@@ -1,0 +1,42 @@
+{
+  "eval_id": 6,
+  "eval_name": "pushback-user-insists-on-bad-design (without_skill)",
+  "expectations": [
+    {
+      "text": "Explains the specific data-quality problem with a 2-point scale (loss of variance and/or information) rather than just saying it is not recommended",
+      "passed": false,
+      "evidence": "Response validates the 2-point scale: 'A binary Agree/Disagree scale is simple and easy for respondents to use... Your colleague is right that these approaches have precedent.' No data-quality problem is explained."
+    },
+    {
+      "text": "Recommends at least a 5-point scale (or item-specific alternative) with a reason",
+      "passed": false,
+      "evidence": "Response provides formatting tips for the 2-point scale. The only mention of a wider scale is buried as a future 'optional consideration': 'you can always add a midpoint or expand to a 4- or 5-point scale in a future version.'"
+    },
+    {
+      "text": "Explains the specific problem with 'select all that apply' (satisficing / early stopping / incomparable endorsement rates)",
+      "passed": false,
+      "evidence": "Response validates SATA: 'works well when you want to know which features from a list are relevant.' No mention of satisficing, early stopping, or data comparability problems."
+    },
+    {
+      "text": "Recommends forced-choice yes/no per item as the alternative to select-all-that-apply",
+      "passed": false,
+      "evidence": "Response provides formatting tips for SATA and does not recommend forced-choice yes/no as an alternative."
+    },
+    {
+      "text": "Does NOT simply agree to finalize the survey with the 2-point scale and SATA as the user requested",
+      "passed": false,
+      "evidence": "Response opens with 'Sure, I can help you finalize the survey with those choices!' and proceeds to format both choices as instructed."
+    },
+    {
+      "text": "Maintains a respectful tone — argues the tradeoff without being dismissive or condescending",
+      "passed": true,
+      "evidence": "Tone is respectful throughout, though the response fails to argue the tradeoff at all."
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 5,
+    "total": 6,
+    "pass_rate": 0.167
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "run_id": "convergence-simplification-with_skill",
+  "eval_id": 2,
+  "eval_name": "convergence-simplification",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output does NOT accept the Bates et al. citation as validating the intercept-only simplification",
+      "passed": true,
+      "evidence": "'citing Bates et al. to justify `(1 | subject)` only in a 2\u00d72 within-subjects design will not hold up to peer review, and the model is anti-conservative.' and 'Your simplification \u2014 maximal \u2192 singular \u2192 `(1 | subject)` \u2014 skips every intermediate step and is not what Bates et al. describe.'"
+    },
+    {
+      "text": "Output explains that Bates et al. (2015) describes a principled simplification *process* \u2014 starting from maximal, diagnosing singularity, trying upstream fixes, then simplifying step-by-step \u2014 not a license to jump to random intercepts only",
+      "passed": true,
+      "evidence": "Response enumerates Bates et al.'s actual four-step procedure (start maximal, examine PCA, remove specific parameters, retain non-negligible slopes) and explicitly contrasts it with the user's jump: 'skips every intermediate step and is not what Bates et al. describe.'"
+    },
+    {
+      "text": "Output mentions that Matuschek et al. (2017) updated the guidance to balance Type I error and power, which requires keeping slopes that are required by the within-subjects design even if they produce near-zero variance estimates",
+      "passed": true,
+      "evidence": "Dedicated section 'Matuschek et al. (2017) is the key synthesis' states: 'keep random slopes that matter for Type I error control even when they're not large' and frames this as balancing Type I error and power (*Balancing Type I Error and Power in Linear Mixed Models*)."
+    },
+    {
+      "text": "Output identifies that condA and condB are both within-subjects factors and therefore require random slopes \u2014 the design, not the singularity warning, determines the required structure",
+      "passed": true,
+      "evidence": "'condA, condB, and their interaction all vary within subjects \u2014 every participant sees all four conditions. This means participants plausibly differ in how much they respond to condA, condB, and the interaction.' The argument grounds the slope requirement in the design structure."
+    },
+    {
+      "text": "Output recommends at least one upstream fix before dropping any slopes: scaling predictors, sum/effect coding, allFit(), or dropping correlation parameters (||) before removing slopes",
+      "passed": true,
+      "evidence": "Response explicitly recommends `(condA * condB || subject)` with `||` as the first simplification step: 'Remove correlation parameters, keep all slope variances' and 'With 50 subjects and 4 within-subjects conditions, the `||` model often converges cleanly. That's the appropriate Bates et al. simplification here.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

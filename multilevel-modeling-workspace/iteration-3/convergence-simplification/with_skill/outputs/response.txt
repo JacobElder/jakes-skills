@@ -1,0 +1,101 @@
+This is a genuinely important methodological question, and you've hit on a real tension in the literature — but there's a critical distinction between what Bates et al. recommend and what you've actually done. The short answer: **citing Bates et al. to justify `(1 | subject)` only in a 2×2 within-subjects design will not hold up to peer review, and the model is anti-conservative.**
+
+Here's why.
+
+---
+
+## What Bates et al. (2015) actually recommend
+
+"Parsimonious" in Bates et al. does **not** mean "random intercept only." Their procedure is:
+
+1. Start maximal
+2. Examine the **principal components of the random-effects covariance matrix**
+3. Remove **specific parameters** that are not supported — typically correlation parameters first, then variance components estimated at or near zero
+4. Retain slopes whose variance is non-negligible
+
+The paper's own examples show fitted models that still have multiple random slopes. The target is removing redundant covariance parameters, not gutting the slope structure wholesale.
+
+Your simplification — maximal → singular → `(1 | subject)` — skips every intermediate step and is not what Bates et al. describe.
+
+---
+
+## Why `(1 | subject)` is the wrong stopping point for a 2×2 within-subjects design
+
+In your design, `condA`, `condB`, and their interaction **all vary within subjects** — every participant sees all four conditions. This means participants plausibly differ in how much they respond to condA, condB, and the interaction. A random-intercept-only model assumes all participants have *identical* treatment effects, differing only in their baseline.
+
+The consequences are well-established:
+
+- The fixed-effect tests for `condA`, `condB`, and `condA:condB` now use the **wrong error term** — the F-tests are computed against residual variance that is artificially small because between-person slope variation has been folded into it.
+- Type I error for within-subjects effects inflates substantially. Simulations in Barr et al. (2013) and Matuschek et al. (2017) show rates of 2–5× nominal when slopes are omitted for within-subjects manipulations.
+
+This is the exact scenario that random slopes exist to handle.
+
+---
+
+## Diagnosing the singularity first
+
+Before simplifying further, you need to know **what is actually singular**. Run this on your maximal model:
+
+```r
+# Fit maximal
+m_max <- lmer(score ~ condA * condB + (condA * condB | subject), data = df, REML = TRUE)
+
+# Inspect what's singular
+isSingular(m_max)
+VarCorr(m_max)           # look for correlations at ±1 or variances at 0
+summary(rePCA(m_max))    # principal components — how many dimensions are supported?
+```
+
+The most common case in 2×2 within-subjects designs is that **correlations** among random effects hit ±1, not that slope variances collapse to zero. If that's your situation, the right fix is to remove the correlations, not the slopes:
+
+```r
+# Remove correlation parameters, keep all slope variances
+m_nocor <- lmer(score ~ condA * condB + (condA * condB || subject), data = df)
+
+# If still singular, check which specific variance components are near zero
+VarCorr(m_nocor)
+```
+
+With 50 subjects and 4 within-subjects conditions, the `||` model often converges cleanly. That's the appropriate Bates et al. simplification here.
+
+---
+
+## The principled simplification ladder
+
+If `(condA * condB || subject)` is still singular, proceed by removing the **interaction slope** (usually the noisiest term) while keeping main-effect slopes:
+
+```r
+# Step 3: drop interaction slope, keep main-effect slopes and their correlation
+m_step3 <- lmer(score ~ condA * condB + (condA + condB | subject), data = df)
+
+# Step 4: remove slope correlations if needed
+m_step4 <- lmer(score ~ condA * condB + (condA + condB || subject), data = df)
+```
+
+`(1 | subject)` is defensible only if Steps 2–4 above **all** show that the slope variances themselves are zero or near-zero. That would be unusual for an experiment with real within-subjects manipulations.
+
+---
+
+## Matuschek et al. (2017) is the key synthesis
+
+Bates et al. and Barr et al. agree more than they appear to once you read Matuschek et al. (*Balancing Type I Error and Power in Linear Mixed Models*, Journal of Memory and Language). The key finding: keep random slopes that matter for Type I error control even when they're not large, but you don't need to keep slopes that only add noise. For **within-subjects manipulations you're testing**, the slope nearly always matters for Type I error.
+
+---
+
+## What to report
+
+Once you've found a model via the above ladder, your methods section should include:
+
+1. The full maximal model specification and that it produced singular fits
+2. The specific singularity diagnosed (e.g., "random-effects correlations estimated at boundary")
+3. The principled simplification taken and why (following Bates et al.'s procedure of removing unsupported correlation parameters)
+4. The final model formula, written out explicitly
+5. `VarCorr()` output or a table of variance components so reviewers can verify
+
+Citing Bates et al. is correct — but the citation supports the *procedure* (examine, diagnose, remove specific unsupported parameters), not the outcome of `(1 | subject)`.
+
+---
+
+## Bottom line
+
+Run `VarCorr()` and `rePCA()` on your maximal model before going further. My strong prediction for a 2×2 within-subjects design with 50 participants: the singularity is in the correlation parameters, and `(condA * condB || subject)` or `(condA + condB || subject)` will converge cleanly and is defensible. That's the model you want.

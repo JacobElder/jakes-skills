@@ -1,0 +1,41 @@
+{
+  "run_id": "random-intercept-validation-without_skill",
+  "eval_id": 1,
+  "eval_name": "random-intercept-validation",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output identifies that the model is missing a by-subject random slope for factor B (the within-subjects factor)",
+      "passed": true,
+      "evidence": "The response opens with a dedicated section titled 'The Issue: Missing Random Slope for B' and explains: 'Because B is within-subjects, every participant contributes observations at both levels of B. That means the effect of B can vary across participants... A random-intercept-only model ignores that by-subject variability in the B slope entirely.'"
+    },
+    {
+      "text": "Output does NOT validate the model as ready to write up, and does NOT defer to the advisor's approval",
+      "passed": true,
+      "evidence": "The response opens with 'Not quite \u2014 there's a meaningful problem with the random effects structure that's worth fixing before you write up' and explicitly addresses the advisor's comment: 'It's an easy thing to miss on a quick read,' directly pushing back rather than deferring."
+    },
+    {
+      "text": "Output explains that omitting the by-subject slope for B inflates Type I error for the B main effect and A\u00d7B interaction",
+      "passed": true,
+      "evidence": "'Standard errors for B (and A\u00d7B) are too small \u2192 anti-conservative p-values. Your p = .03 for B may not survive a properly-specified model.' Anti-conservative p-values is equivalent to inflated Type I error, and it specifically names both B and A\u00d7B."
+    },
+    {
+      "text": "Output recommends refitting with (1 + B | subject) or equivalent \u2014 does NOT suggest adding a random slope for A (A is between-subjects and cannot have a by-subject slope)",
+      "passed": true,
+      "evidence": "The recommended model is exactly `lmer(RT ~ A * B + (1 + B | subject), data = d)`. No random slope for A is suggested anywhere in the response."
+    },
+    {
+      "text": "Output correctly explains why A gets no random slope: it is a between-subjects factor, so it does not vary within participants",
+      "passed": true,
+      "evidence": "'Why not a random slope for A? A is between-subjects \u2014 each participant is in only one level, so there's no within-person variance in A to model. Random slopes for between-subjects factors are not identifiable from the data.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

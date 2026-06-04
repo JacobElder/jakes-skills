@@ -42,7 +42,7 @@ RATE_LIMIT_PHRASES = ["you've hit your limit", "you have hit your limit"]
 
 
 def call_claude(prompt: str, system_extra: str | None = None,
-                model: str = EXECUTOR_MODEL, timeout: int = 300) -> str:
+                model: str = EXECUTOR_MODEL, timeout: int = 900) -> str:
     cmd = ["claude", "-p", prompt,
            "--model", model,
            "--dangerously-skip-permissions"]
@@ -74,7 +74,7 @@ def grade_assertions(response: str, assertions: list) -> list[bool]:
     resp_trunc = response[:5000] + ("…" if len(response) > 5000 else "")
     prompt = f"Response:\n{resp_trunc}\n\nAssertions:\n{numbered}"
     raw = call_claude(prompt, system_extra=GRADER_SYSTEM,
-                      model=GRADER_MODEL, timeout=120)
+                      model=GRADER_MODEL, timeout=300)
     results: list[bool] = []
     for line in raw.strip().splitlines():
         line = line.strip()
@@ -119,24 +119,61 @@ def run(eval_ids: list[int] | None, conditions: list[str],
             result_path = RESULTS_DIR / f"eval_{eid:02d}_{condition}.json"
             if skip_existing and result_path.exists():
                 existing = json.loads(result_path.read_text())
+                if existing.get("assertion_results") is None:
+                    # partial save (executor done, grader timed out) — re-grade
+                    print(f"  [{condition}] RE-GRADING cached response…", end=" ", flush=True)
+                    try:
+                        passes = grade_assertions(existing["response"], assertions)
+                    except subprocess.TimeoutExpired:
+                        print("TIMEOUT (grader) again — skipping")
+                        continue
+                    n_pass, n_total = sum(passes), len(assertions)
+                    marks = "".join("+" if p else "-" for p in passes)
+                    ok = "OK" if passes_threshold(passes, assertions) else "FAIL"
+                    print(f"{n_pass}/{n_total}  [{marks}]  {ok}")
+                    existing.update({
+                        "assertion_results": passes, "passed": n_pass,
+                        "pass_rate": n_pass/n_total if n_total else 0.0,
+                        "eval_passes": passes_threshold(passes, assertions),
+                    })
+                    result_path.write_text(json.dumps(existing, indent=2))
                 all_results.append(existing)
-                n_pass, n_total = existing["passed"], existing["total"]
-                marks = "".join("+" if p else "-" for p in existing["assertion_results"])
-                ok = "OK" if passes_threshold(existing["assertion_results"], assertions) else "FAIL"
-                print(f"  [{condition}] CACHED  {n_pass}/{n_total}  [{marks}]  {ok}")
+                if existing.get("assertion_results") is not None:
+                    n_pass, n_total = existing["passed"], existing["total"]
+                    marks = "".join("+" if p else "-" for p in existing["assertion_results"])
+                    ok = "OK" if passes_threshold(existing["assertion_results"], assertions) else "FAIL"
+                    print(f"  [{condition}] CACHED  {n_pass}/{n_total}  [{marks}]  {ok}")
                 continue
 
             system = SKILL_WITH_REFS if condition == "with_skill" else None
             print(f"  [{condition}] executor…", end=" ", flush=True)
             try:
                 response = call_claude(prompt, system_extra=system)
+            except subprocess.TimeoutExpired:
+                print("TIMEOUT (executor)")
+                continue
             except RuntimeError as e:
                 print(f"SKIPPED ({e})")
                 continue
             time.sleep(delay)
 
+            # save response immediately so a grader timeout doesn't lose it
+            partial = {
+                "eval_id": eid, "condition": condition,
+                "prompt": prompt, "response": response,
+                "assertions": [_assertion_text(a) for a in assertions],
+                "assertion_types": [a.get("type","scored") if isinstance(a,dict) else "scored" for a in assertions],
+                "assertion_results": None, "passed": None, "total": len(assertions),
+                "pass_rate": None, "eval_passes": None,
+            }
+            result_path.write_text(json.dumps(partial, indent=2))
+
             print("grader…", end=" ", flush=True)
-            passes = grade_assertions(response, assertions)
+            try:
+                passes = grade_assertions(response, assertions)
+            except subprocess.TimeoutExpired:
+                print("TIMEOUT (grader) — response saved, re-run with --skip-existing to re-grade")
+                continue
             time.sleep(delay)
 
             n_pass, n_total = sum(passes), len(assertions)
@@ -145,17 +182,17 @@ def run(eval_ids: list[int] | None, conditions: list[str],
             print(f"{n_pass}/{n_total}  [{marks}]  {ok}")
 
             result = {
-                "eval_id":          eid,
-                "condition":        condition,
-                "prompt":           prompt,
-                "response":         response,
-                "assertions":       [_assertion_text(a) for a in assertions],
-                "assertion_types":  [a.get("type", "scored") if isinstance(a, dict) else "scored" for a in assertions],
+                "eval_id":           eid,
+                "condition":         condition,
+                "prompt":            prompt,
+                "response":          response,
+                "assertions":        [_assertion_text(a) for a in assertions],
+                "assertion_types":   [a.get("type","scored") if isinstance(a,dict) else "scored" for a in assertions],
                 "assertion_results": passes,
-                "passed":           n_pass,
-                "total":            n_total,
-                "pass_rate":        n_pass / n_total if n_total else 0.0,
-                "eval_passes":      passes_threshold(passes, assertions),
+                "passed":            n_pass,
+                "total":             n_total,
+                "pass_rate":         n_pass / n_total if n_total else 0.0,
+                "eval_passes":       passes_threshold(passes, assertions),
             }
             all_results.append(result)
             result_path.write_text(json.dumps(result, indent=2))

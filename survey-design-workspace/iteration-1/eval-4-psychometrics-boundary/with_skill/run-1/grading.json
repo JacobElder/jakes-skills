@@ -1,0 +1,43 @@
+{
+  "eval_id": 4,
+  "eval_name": "eval-4-psychometrics-boundary (with_skill)",
+  "expectations": [
+    {
+      "text": "Recognizes the task (alpha, CFA, measurement invariance) as psychometrics / post-collection measurement modeling rather than survey design",
+      "passed": true,
+      "evidence": "Response states directly: 'The three analyses you've described — Cronbach's alpha, confirmatory factor analysis (CFA), and measurement invariance testing — fall entirely within the psychometrics domain rather than survey design.' A table breaks down why each task belongs to psychometrics."
+    },
+    {
+      "text": "Does not fabricate or improvise reliability/factor-analysis statistics as if survey design covered them",
+      "passed": true,
+      "evidence": "The response does not produce any CFA syntax, alpha calculations, or invariance test output. It explicitly declines: 'the survey-design skill… cannot responsibly run or interpret CFA, reliability coefficients, or invariance tests on your data.'"
+    },
+    {
+      "text": "Indicates the request should be handled as a psychometric analysis (handoff/defer) while staying helpful",
+      "passed": true,
+      "evidence": "Response explicitly routes the request: 'Please route this request to the psychometrics skill.' It also adds a constructive note about how survey design could help if revisions are needed after psychometric results are obtained, staying helpful within scope."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "claims": [
+    {
+      "claim": "CFA, alpha, and invariance testing are post-collection psychometric tasks, not survey design tasks",
+      "type": "factual",
+      "verified": true,
+      "evidence": "This boundary is correct — survey design covers pre/during-collection instrument decisions; psychometrics covers post-collection measurement modeling."
+    }
+  ],
+  "eval_feedback": {
+    "suggestions": [
+      {
+        "reason": "The three assertions all test the same behavior (boundary recognition) from slightly different angles. A fourth assertion checking that the response correctly names 'psychometrics skill' or equivalent as the target handoff destination — rather than just saying 'this isn't survey design' — would add a bit more specificity."
+      }
+    ],
+    "overall": "The three assertions collectively confirm the boundary is recognized, not improvised, and the handoff is made. Clean and well-targeted for a boundary-test eval."
+  }
+}

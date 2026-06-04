@@ -1,0 +1,31 @@
+{
+  "eval_id": 2,
+  "condition": "baseline",
+  "prompt": "I'm running a multiverse analysis on the effect of parental warmth (the key predictor) on child externalizing behavior (the DV). I have three operationalizations of the DV and I want to include all three as options in my multiverse: (1) the raw CBCL total problems score (range 0-118), (2) a normative T-score standardized to the published norms (mean=50, SD=10), and (3) a within-sample z-score (standardized using my own sample's mean and SD). The IV is a continuous parental warmth scale. Should I include all three as separate options in my multiverse? If so, how?",
+  "response": "Two of your three options are redundant for inferential purposes, and including all three would inflate your specification count without adding genuine sensitivity information.\n\n## The core problem\n\nThe within-sample z-score is a linear transformation of the raw score \u2014 it divides by your sample's SD and shifts by your sample's mean. In a regression of parental warmth on the DV:\n\n- The t-statistic and p-value are **identical** whether you use raw or within-sample z\n- The coefficient scales by `1/SD_sample`, but that's not a different analytical decision \u2014 it's arithmetic\n\nAdding the z-score as a third fork means you're counting the same inferential result twice, which misleads readers about how robust the finding actually is.\n\n## What to actually include\n\n**Keep: raw score and normative T-score** \u2014 these are genuinely distinct operationalizations:\n\n| Fork | What it captures |\n|---|---|\n| Raw score | Absolute burden (total problem items endorsed) |\n| Normative T-score | Standing relative to the general population, with age/sex adjustment |\n\nThese can diverge meaningfully. A child with 30 raw problems could be at T=45 (unremarkable) if young, or T=65 (borderline clinical) if older. The choice of whether to norm-reference is a real analytical decision with real consequences.\n\n**Drop: within-sample z-score.** It neither adds a distinct theoretical framing nor produces different inferential results. If a reviewer pushed back on this choice, you'd have no defense beyond \"it's another scaling\" \u2014 which is exactly the kind of fork that weakens a multiverse rather than strengthening it.\n\n## One exception\n\nIf your sample is **clinically selected or otherwise unrepresentative** and your research question is specifically about within-sample heterogeneity (e.g., does warmth matter more for children who are highly elevated *relative to peers in this sample*?), within-sample z could replace \u2014 not supplement \u2014 the raw score. But in that case you'd want to motivate it explicitly.\n\n## How to implement in your multiverse script\n\nStructure DV as a two-level fork:\n\n```python\ndv_options = {\n    \"raw\":    df[\"cbcl_raw\"],\n    \"tnorm\":  df[\"cbcl_tnorm\"],\n}\n```\n\nThen your specification grid crosses `dv_options` against whatever other forks you have (covariate sets, outlier rules, etc.). Each combination is one specification; you report the full distribution of coefficients and the share that cross whatever threshold matters (p < .05, CI excludes 0, etc.).\n\nBottom line: two DV forks, not three. The goal of a multiverse is to map genuine analytical uncertainty \u2014 not to add specifications that are algebraically constrained to agree.",
+  "assertions": [
+    "Explains that mixing raw CBCL (0-118), T-score (0-100), and z-score (unit SD) produces incomparable regression coefficients \u2014 the differences reflect unit scaling, not robustness",
+    "States that the DV operationalization decision would dominate the variance decomposition (decision_importance) for trivial scale reasons, not substantive ones",
+    "Recommends putting all DVs on a common scale before running the multiverse \u2014 e.g., fully standardized coefficients, Cohen's d, or using a consistently scaled DV",
+    "Notes that T-score and z-score are linear transformations of each other (or equivalent), making them redundant options that violate the non-redundancy criterion",
+    "Does NOT say 'yes, include all three as-is' without flagging the scale comparability problem"
+  ],
+  "assertion_types": [
+    "scored",
+    "scored",
+    "scored",
+    "scored",
+    "must_pass"
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false,
+    true
+  ],
+  "passed": 1,
+  "total": 5,
+  "pass_rate": 0.2,
+  "eval_passes": false
+}

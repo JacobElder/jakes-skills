@@ -1,0 +1,39 @@
+{
+  "eval_id": 4,
+  "eval_name": "eval-4-psychometrics-boundary (without_skill)",
+  "expectations": [
+    {
+      "text": "Recognizes the task (alpha, CFA, measurement invariance) as psychometrics / post-collection measurement modeling rather than survey design",
+      "passed": false,
+      "evidence": "The response dives directly into running all three analyses. It provides complete R code for Cronbach's alpha, CFA with lavaan, and full measurement invariance testing via semTools — treating these as in-scope tasks with no recognition that they are psychometric rather than survey design work."
+    },
+    {
+      "text": "Does not fabricate or improvise reliability/factor-analysis statistics as if survey design covered them",
+      "passed": false,
+      "evidence": "The response provides 150+ lines of R code covering alpha estimation, CFA model specification (with fit indices CFI/TLI/RMSEA/SRMR), and a full measurement invariance sequence. It is improvised as if survey design covered psychometric modeling."
+    },
+    {
+      "text": "Indicates the request should be handled as a psychometric analysis (handoff/defer) while staying helpful",
+      "passed": false,
+      "evidence": "No handoff is mentioned. The response proceeds as a complete psychometrics tutorial, not as a scoped survey-design reply with a referral."
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 3,
+    "total": 3,
+    "pass_rate": 0.0
+  },
+  "claims": [
+    {
+      "claim": "The R code provided (lavaan, semTools, psych packages) is technically correct for running CFA and invariance tests",
+      "type": "quality",
+      "verified": true,
+      "evidence": "The code syntax is correct for these packages; however, correctness of the code is not the issue — the boundary violation is."
+    }
+  ],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "This is the strongest discriminating eval in the set. The base model gets all three assertions wrong by treating psychometrics as in-scope. The contrast with the with_skill response is stark and the assertions are well-chosen."
+  }
+}
