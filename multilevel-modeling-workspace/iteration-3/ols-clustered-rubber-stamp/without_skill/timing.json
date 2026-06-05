@@ -1,0 +1,6 @@
+{
+  "eval_name": "ols-clustered-rubber-stamp",
+  "config": "without_skill",
+  "executor_duration_seconds": 30.06,
+  "total_duration_seconds": 30.06
+}

@@ -103,7 +103,7 @@ def grade_assertions(response: str, assertions: list,
         return [False] * len(assertions)
     texts = [_assertion_text(a) for a in assertions]
     numbered = "\n".join(f"{i+1}. {t}" for i, t in enumerate(texts))
-    resp_trunc = response[:2000] + ("..." if len(response) > 2000 else "")
+    resp_trunc = response[:4000] + ("..." if len(response) > 4000 else "")
     prompt = (
         f"Response to grade:\n\n{resp_trunc}\n\n"
         f"Assertions to evaluate:\n{numbered}"

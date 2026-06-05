@@ -1,0 +1,64 @@
+No — and this is worth catching before you write up, because the mistake is subtle but consequential.
+
+## What HC3 actually fixes
+
+HC3 (and the whole HC sandwich family) corrects for **heteroskedasticity** — the situation where the error variance differs across observations. It does this by allowing each residual its own variance weight. Crucially, HC3 still **assumes observations are independent of each other**. It relaxes the constant-variance assumption, not the independence assumption.
+
+Your non-independence problem is different in kind. Each of your 80 participants contributes 60 correlated trials. Trials from the same person share that person's baseline memory ability, strategy, fatigue trajectory, etc. HC3 does nothing about that correlation structure — it treats all 4,800 observations as if they came from 4,800 different people.
+
+## Why your SEs being "a bit larger" is the wrong signal
+
+HC3 typically widens SEs relative to naive OLS when you have high-leverage observations or heteroskedasticity. But for clustered data, **cluster-robust SEs are usually substantially larger than HC3** — because HC3 is still understating the effective dependence. The comparison point you want is not "HC3 vs. naive OLS" but "cluster-robust vs. HC3." The latter gap is almost certainly larger and is where the anti-conservatism lives.
+
+## What actually addresses non-independence from repeated measures
+
+Two defensible options, in order of preference:
+
+### Option 1: Cluster-robust standard errors (CRSEs)
+The direct sandwich-estimator fix. Unlike HC3, CRSEs allow arbitrary within-cluster correlation — they estimate the error covariance block-by-block across participants rather than observation-by-observation.
+
+**In R:**
+```r
+library(sandwich)
+library(lmtest)
+
+fit <- lm(recall ~ predictor1 + predictor2, data = df)
+coeftest(fit, vcov = vcovCL(fit, cluster = ~subject_id))
+```
+
+**In Python (statsmodels):**
+```python
+import statsmodels.formula.api as smf
+
+fit = smf.ols("recall ~ predictor1 + predictor2", data=df).fit(
+    cov_type="cluster", cov_kwds={"groups": df["subject_id"]}
+)
+```
+
+With 80 clusters this is in a workable range (the rule of thumb is ≥30 clusters for reliable sandwich variance; 80 is solid).
+
+### Option 2: Linear mixed-effects model (preferred)
+With 80 participants × 60 trials, you have exactly the data structure LMM is built for. It does everything CRSEs do, plus:
+
+- Partitions variance into within-person and between-person components (ICC)
+- Lets you add **random slopes** for within-person predictors — if any predictor varies trial-by-trial within a participant, a random slope captures the fact that different people show different effect sizes
+- Gives you proper inference at both the trial level and the person level
+
+```r
+library(lme4)
+library(lmerTest)
+
+# Minimal: random intercept only
+fit <- lmer(recall ~ predictor1 + predictor2 + (1 | subject_id), data = df)
+
+# Better if predictor1 varies within person:
+fit <- lmer(recall ~ predictor1 + predictor2 + (1 + predictor1 | subject_id), data = df)
+
+summary(fit)  # lmerTest adds Satterthwaite p-values
+```
+
+## The key question for your design
+
+Do any of your predictors vary **trial-by-trial within the same participant** (e.g., encoding condition, word frequency, lag, list position)? If yes, those predictors need random slopes in an LMM — a random-intercept-only model or CRSEs will still understate the uncertainty on those effects. If all your predictors are between-participants (each person has only one value), CRSEs are sufficient and simpler.
+
+**Bottom line:** HC3 is the right fix for a different problem. Before writing up, swap in cluster-robust SEs clustered by participant, or better yet fit a mixed model. Your substantive conclusions may hold, but your standard errors and *p*-values will change.

@@ -43,7 +43,7 @@
         {"text": "Explains that mixing raw CBCL (0-118), T-score (0-100), and z-score (unit SD) produces incomparable regression coefficients — the differences reflect unit scaling, not robustness", "type": "scored"},
         {"text": "States that the DV operationalization decision would dominate the variance decomposition (decision_importance) for trivial scale reasons, not substantive ones", "type": "scored"},
         {"text": "Recommends putting all DVs on a common scale before running the multiverse — e.g., fully standardized coefficients, Cohen's d, or using a consistently scaled DV", "type": "scored"},
-        {"text": "Notes that T-score and z-score are linear transformations of each other (or equivalent), making them redundant options that violate the non-redundancy criterion", "type": "scored"},
+        {"text": "Notes that the within-sample z-score is a linear transformation of the raw CBCL (using the sample's own mean and SD), making it redundant with the raw option — including both runs the same analysis twice with rescaled output", "type": "scored"},
         {"text": "Does NOT say 'yes, include all three as-is' without flagging the scale comparability problem", "type": "must_pass"}
       ]
     },

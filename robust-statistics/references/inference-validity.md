@@ -94,3 +94,27 @@ Selecting a model or variable set from the data and then reporting CIs and p-val
 - **Honest labeling.** Exploratory results should be labeled as exploratory. Do not present a data-driven analysis as pre-specified confirmatory inference.
 
 **Stepwise regression in particular** combines several problems: the model-based p-values in the final model are not valid (selection effect), the standard errors assume fixed predictors (not a search), and the model often does not generalize (overfits the search). Using final-model p-values from stepwise selection for inference is not defensible — treat results as hypotheses to be tested on new data.
+
+---
+
+## Multiple comparisons: when correction is and isn't required
+
+Multiple comparisons corrections are widely mandated but widely misunderstood. The correct question is not "did you run more than one test?" but "what error rate are you trying to control, and is that the right criterion here?"
+
+**Family-wise error rate (FWER).** FWER is the probability of at least one false positive across a family of tests. With k independent tests at α = .05, FWER ≈ 1 − .95^k. Bonferroni controls FWER by testing each hypothesis at α/k — simple and exact under independence, slightly conservative under positive correlation (the Holm–Bonferroni step-down procedure is uniformly more powerful than Bonferroni and should be preferred: it applies α/k to the most significant, then α/(k−1) to the next, stopping at first non-rejection).
+
+**When FWER control is appropriate.** The logical structure matters:
+- *OR logic* (any significant outcome declares success): unadjusted FWER is ~ 1 − (1−α)^k and is a real problem.
+- *AND logic* (all outcomes must be significant for a claim): no correction is needed — the conjunction is automatically more conservative than a single test.
+- *Pre-specified confirmatory outcomes* in a clinical trial: regulatory bodies typically require FWER control because a single false positive triggers approval.
+- *Post-hoc or exploratory tests*: Bonferroni is the wrong frame; FDR control or honest exploratory labeling is more appropriate.
+
+**False discovery rate (FDR).** When the goal is to identify a list of interesting findings (genomics, neuroimaging, social science with many predictors), FWER is too strict — it keeps the false-positive count near zero at the cost of missing most true positives. The Benjamini–Hochberg (BH) procedure controls FDR: the expected proportion of false positives among declared significant results. BH is appropriate when you can tolerate some false positives if most declared findings are true.
+
+**Pre-specified outcomes — the nuance reviewers miss.** Pre-specifying a small number of primary outcomes does not eliminate multiplicity — it just makes the family well-defined. For three pre-specified primary outcomes, multiplicity control is a judgment call:
+- If the trial claims success on *any* significant primary outcome, FWER control is needed.
+- If the three outcomes are independent scientific questions (not a single claim), each can be treated separately.
+- Bonferroni at k=3 is conservative (power loss is modest); Holm is strictly better and should be preferred when correction is needed.
+- Reviewers who say "you must apply Bonferroni" without engaging with the logical structure and number of outcomes are applying a rote rule, not statistical reasoning.
+
+**The key principle.** Correction protects the false-positive rate in the current study; whether that matters depends on the inferential goal, the logical structure of the claims, and the downstream consequences of a false positive. A blanket "correct all tests" rule and a blanket "pre-specified tests need no correction" rule are both wrong.

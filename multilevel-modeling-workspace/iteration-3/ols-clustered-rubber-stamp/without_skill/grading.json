@@ -1,0 +1,41 @@
+{
+  "run_id": "ols-clustered-rubber-stamp-without_skill",
+  "eval_id": 8,
+  "eval_name": "ols-clustered-rubber-stamp",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output does NOT validate HC3 as addressing the non-independence / clustering problem",
+      "passed": true,
+      "evidence": "The response opens with 'HC3 Does Not Fix Non-Independence \u2014 You Still Have a Clustering Problem' and explicitly states 'HC3 solves the first [heteroskedasticity]. It does nothing for the second [non-independence].'"
+    },
+    {
+      "text": "Output explicitly distinguishes HC3 (heteroskedasticity-robust standard errors \u2014 corrects for non-constant variance) from cluster-robust standard errors (corrects for within-cluster correlation)",
+      "passed": true,
+      "evidence": "The table clearly separates the two: 'Heteroskedasticity | Unequal residual variances | HC-type SEs (HC1\u2013HC3)' vs 'Non-independence | Correlated observations within clusters | Cluster-robust SEs or mixed models'"
+    },
+    {
+      "text": "Output explains that HC3 does not account for within-participant correlation across trials \u2014 observations from the same participant are correlated, and HC3 ignores that",
+      "passed": true,
+      "evidence": "'Your 60 trials from Participant 1 are correlated with each other in ways that trials from Participant 2 are not. That's within-cluster correlation (clustering by participant)... HC3 solves the first. It does nothing for the second.'"
+    },
+    {
+      "text": "Output recommends cluster-robust SEs clustered at the participant level (e.g., vcovCL, coeftest in R; vce(cluster) in Stata) as the minimum fix, OR recommends a multilevel model as the principled approach",
+      "passed": true,
+      "evidence": "Option 1 provides R code using vcovCL clustered by participant_id; Option 2 recommends lmer with random intercepts by participant_id, calling the mixed model 'the standard in cognitive/memory research.'"
+    },
+    {
+      "text": "Output does NOT accept 'the SEs got larger' as evidence that the clustering problem has been addressed",
+      "passed": true,
+      "evidence": "'The fact that HC3 SEs are a bit larger is consistent with minor heteroskedasticity, but tells you nothing about whether the clustering problem is resolved.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

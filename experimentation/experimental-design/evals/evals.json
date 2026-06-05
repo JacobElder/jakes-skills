@@ -94,6 +94,32 @@
         {"text": "Flags that the runtime is long and names CUPED / variance reduction as a lever to shorten it", "passed": null, "evidence": null},
         {"text": "Notes the visible weekday/weekend seasonality and recommends whole-week runs to avoid confounding", "passed": null, "evidence": null}
       ]
+    },
+    {
+      "id": 8,
+      "name": "reading-results-ship-decision",
+      "prompt": "Our checkout A/B test ran for 3 weeks. We had 9,200 users per arm. The result is p=0.031, and we saw a +0.4% absolute lift on purchase completion (4.0% → 4.4%). Our VP wants to ship today. How should I interpret this result and what should we tell the VP?",
+      "expected_output": "Checks SRM before reading results. Reports the confidence interval, not just p-value. Compares the observed lift to the pre-specified MDE (not to zero). Notes that +0.4pp on a ~4% base is a 10% relative lift and contextualizes practical significance. If the test was borderline-powered, warns about winner's curse / Type-M inflation. Distinguishes 'statistically detectable' from 'large enough to matter.' Does not simply validate shipping without working through these checks.",
+      "assertions": [
+        {"text": "Checks or asks about SRM (sample-ratio mismatch) before interpreting the result — treats SRM verification as a prerequisite step, not an afterthought", "passed": null, "evidence": null},
+        {"text": "Reports a confidence interval for the lift, not just the p-value alone — e.g. 'the 95% CI on the absolute lift is roughly X to Y percentage points'", "passed": null, "evidence": null},
+        {"text": "Compares the observed +0.4pp lift to the pre-specified MDE, not just to zero — asks for the MDE or notes it is required to judge whether the result is 'large enough to care about'", "passed": null, "evidence": null},
+        {"text": "Distinguishes statistical significance from practical significance — a p=0.031 result is detectable but may or may not be worth the shipping cost depending on the MDE threshold", "passed": null, "evidence": null},
+        {"text": "Does not unconditionally validate 'ship today' — qualifies the recommendation on SRM passing and the lift meeting the pre-specified threshold", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 9,
+      "name": "cant-test-this-retrospective-pricing",
+      "prompt": "We changed our pricing across all markets simultaneously 8 months ago. Revenue is up 18% since then. The CFO wants a rigorous analysis proving the pricing change caused the revenue increase. How do we prove it?",
+      "expected_output": "States plainly that a post-hoc causal claim cannot be established with certainty: the RCT opportunity is gone, there is no control group, and 8 months of confounding (macro conditions, marketing, product changes, seasonality) have accumulated. Offers the best available alternatives: interrupted time series on pre/post revenue, synthetic control using comparable markets or products that did not change pricing, and a holdout going forward if any flexibility remains. States the identifying assumption each method requires. Does not pretend the causal claim can be made cleanly.",
+      "assertions": [
+        {"text": "States that a clean causal claim is not possible: the simultaneous rollout eliminated the control group and the RCT opportunity is gone", "passed": null, "evidence": null},
+        {"text": "Names at least two concrete alternative explanations for the 18% revenue increase that have nothing to do with pricing (e.g. macro conditions, marketing spend, seasonality, product changes, competitive dynamics)", "passed": null, "evidence": null},
+        {"text": "Offers at least one credible observational alternative: interrupted time series, synthetic control using comparable markets/products, or diff-in-diff against a suitable comparison", "passed": null, "evidence": null},
+        {"text": "States the identifying assumption the recommended alternative requires (e.g. ITS requires no concurrent shocks; synthetic control requires donor markets that did not change pricing)", "passed": null, "evidence": null},
+        {"text": "Does not frame the analysis as 'proving' causation — is honest that the best available methods yield suggestive evidence under stated assumptions, not proof", "passed": null, "evidence": null}
+      ]
     }
   ]
 }

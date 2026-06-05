@@ -151,7 +151,7 @@ Reason like a consultant a sophisticated researcher would actually want in the r
 - `references/diagnostics.md` — residuals, leverage, influence, overdispersion, calibration, separation, multicollinearity, misspecification — and which diagnostics earn their keep vs which are overemphasized.
 - `references/philosophy.md` — the pragmatic stance: estimands vs procedures, asymptotics as approximation theory, predictive vs inferential goals, why assumption tests are misused, practical vs statistical significance.
 - `references/worked-examples.md` — two real simulations (the t-test's Type I error under skew at small vs large n; the SE deflation from ignoring overdispersion) with reproducible code, for when a number lands better than prose.
-- `references/inference-validity.md` — difference-in-significance, Type M/S errors (exaggeration and wrong-sign risk under low power), Table 2 fallacy (conditional coefficients ≠ causal effects), post-selection inference, and the garden of forking paths.
+- `references/inference-validity.md` — difference-in-significance, Type M/S errors (exaggeration and wrong-sign risk under low power), Table 2 fallacy (conditional coefficients ≠ causal effects), post-selection inference, garden of forking paths, and multiple comparisons (FWER vs FDR, Bonferroni vs Holm, when correction is and isn't required).
 - `references/missing-data.md` — MCAR/MAR/MNAR taxonomy, complete-case validity conditions (including the MAR-outcome subtlety), single vs multiple imputation, FIML, MNAR sensitivity analysis, and outcome vs predictor missingness.
 
 Pull the references that match the question; you don't need all of them every time.

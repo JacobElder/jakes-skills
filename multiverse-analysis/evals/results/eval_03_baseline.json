@@ -1,0 +1,25 @@
+{
+  "eval_id": 3,
+  "condition": "baseline",
+  "prompt": "I'm running a multiverse analysis on the probability of winning a contract bid. The outcome is binary (win=1, lose=0). My decisions are:\n- Model: (a) linear probability model (OLS), (b) logistic regression\n- Covariates: (a) no controls, (b) bid_amount + firm_size, (c) bid_amount + firm_size + their interaction\n- Outlier rule: (a) none, (b) exclude bids > 3 SD on bid_amount\n\nI want to run all combinations. What nonsensical cells should I identify and encode as constraints before running? Please give me the constraint code for the bundled Python engine.",
+  "response": "Now I have a clear picture of the engine API. Let me reason through the constraint logic.\n\n---\n\n## Constraint analysis: 2 \u00d7 3 \u00d7 2 = 12 cells\n\n**One genuinely nonsensical cell family (2 cells):**\n\n**`outlier_rule = exclude_3sd` + `covariates = none`**\n\nThe 3-SD rule screens observations using `bid_amount`'s distribution, so it conditions the analytic sample on that variable \u2014 then the model includes zero information about `bid_amount`. You've induced selection on an unmodeled predictor. This isn't a modeling tradeoff; it's an analytical incoherence. If `bid_amount` is consequential enough to gate sample inclusion, it belongs in the model (or the gate should be dropped).\n\nThis kills 2 of 12 cells (one per model type), leaving **10 valid universes**.\n\n**Why the others are not constraints:**\n\n| Candidate | Verdict | Reason |\n|---|---|---|\n| LPM on binary outcome | Keep | Explicitly a decision under study \u2014 that's the point of including it |\n| Logit with no covariates | Keep | Valid intercept-only null model |\n| LPM + interaction term | Keep | Mechanically valid; misspecification risk is the *finding*, not a reason to exclude |\n| Interaction term always includes main effects | Non-issue | Option (c) is already specified as main + interaction |\n\n---\n\n## Constraint code\n\n```python\nfrom multiverse import Multiverse\n\ndecisions = {\n    \"model\": {\n        \"lpm\":   \"lpm\",\n        \"logit\": \"logit\",\n    },\n    \"covariates\": {\n        \"none\":        [],\n        \"main\":        [\"bid_amount\", \"firm_size\"],\n        \"interaction\": [\"bid_amount\", \"firm_size\", \"bid_amount:firm_size\"],\n    },\n    \"outlier_rule\": {\n        \"none\":        None,\n        \"exclude_3sd\": 3.0,\n    },\n}\n\nconstraints = [\n    # Incoherent: sample is restricted on bid_amount but bid_amount is absent from the model.\n    # The 3-SD screen conditions on bid_amount's distribution, making the no-covariate\n    # model a specification that conditions on a variable it doesn't adjust for.\n    lambda c: not (c[\"outlier_rule\"] == \"exclude_3sd\" and c[\"covariates\"] == \"none\"),\n]\n\nmv = Multiverse(decisions=decisions, constraints=constraints)\nprint(mv.summary())\n# Expected: 12 total, 10 valid (2 excluded)\n```\n\nThe constraint is deliberately a single lambda rather than two (one per model type) because the incoherence is in the `outlier_rule \u00d7 covariates` cross, not `model \u00d7 outlier_rule`. This makes the logical structure explicit and avoids redundancy if you add a third model later.",
+  "assertions": [
+    "Correctly assesses whether covariate option (c) = interaction + main effects is a nonsensical combination with any model option \u2014 and correctly identifies that it is NOT strictly nonsensical (main effects are included)",
+    "Notes that OLS / linear probability model on a binary DV can produce predictions outside [0,1] and is a methodological concern \u2014 frames it as a caveat or caution even if not a hard constraint",
+    "Provides Python lambda constraint syntax using the Multiverse engine format: constraints=[lambda c: ...]",
+    "Explains the general principle: constraints should drop combinations that are *incoherent* (interaction without its main effects), not just less preferred methods",
+    "Does NOT encode the linear probability model as a hard forbidden constraint without acknowledging that LPM is sometimes defended as a reasonable specification"
+  ],
+  "assertion_types": [
+    "scored",
+    "scored",
+    "scored",
+    "scored",
+    "must_pass"
+  ],
+  "assertion_results": null,
+  "passed": null,
+  "total": 5,
+  "pass_rate": null,
+  "eval_passes": null
+}

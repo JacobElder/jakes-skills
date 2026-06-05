@@ -1,0 +1,74 @@
+The model runs clean, but the sequential-dropping approach has likely left you with an anti-conservative test for the effects you care most about. Let me be direct about what's happening and why it matters.
+
+---
+
+## The core problem: you dropped the wrong error term
+
+`time` varies *within* students — it's the repeated-measures factor. That means the test of `time` and `time × treatment` should be evaluated against *within-student variability in growth trajectories*. A by-student random slope for `time` is that error term.
+
+When you drop `(1 + time | school:student)` and keep only `(1 | school:student)`, you're asserting that every student grows at exactly the same rate — only intercepts differ. The residual now absorbs all the individual variation in slopes. The standard error for `time` and `time × treatment` shrinks, and your *p*-values look better than they should. This is the classic anti-conservative error from an underspecified random-effects structure.
+
+The fact that it "runs clean" just means the optimizer converged. It says nothing about whether the model is correctly specified.
+
+---
+
+## Singular fit is a diagnostic signal, not a verdict
+
+The singular fit on the student-level slope doesn't mean the slope should be dropped — it means something made it hard to estimate. The most common culprits are fixable:
+
+**1. Time isn't centered or scaled**
+If `time` is coded `1, 2, 3, ...` or `0, 7, 14, ...` (days), the slope variance is tiny relative to the intercept variance. Rescale time so its range is roughly −1 to +1 (or at minimum center it at the midpoint of the study), then refit:
+
+```r
+df$time_c <- scale(df$time, center = TRUE, scale = TRUE)  # or manual center
+```
+
+**2. You haven't tried alternate optimizers**
+lme4's default BOBYQA sometimes gets stuck. `allFit()` runs all available optimizers and lets you see whether the singularity is genuine or optimizer-dependent:
+
+```r
+library(lme4)
+m_full <- lmer(score ~ time_c * treatment + (1 + time_c | school) + 
+                 (1 + time_c | school:student), data = df)
+library(lme4)
+all_fits <- allFit(m_full)
+summary(all_fits)  # look for agreement across optimizers
+```
+
+**3. Zero-correlation parameterization**
+Estimating the correlation between the intercept and slope variance is the hardest part of the random-effects structure. Try freeing that constraint:
+
+```r
+# Estimate variance of intercept and slope, but not their correlation
+lmer(score ~ time_c * treatment + (1 + time_c || school) + 
+       (1 + time_c || school:student), data = df)
+```
+
+This often resolves singularity caused by an unstable correlation estimate while keeping the slope variance in the model — which is what you actually need for a valid test.
+
+---
+
+## What the school-level random slope was doing
+
+Before you dropped it, the school-level random slope on `time` captured whether schools differed in their growth trajectories on average. Whether that's estimable depends on how many schools you have — Hox's guideline is 50+ for stable level-3 variance estimates, and fewer yet for cross-level interactions. If you have, say, 20–30 schools, it's plausible the school-level slope variance genuinely can't be estimated reliably, and keeping it as a random intercept only at that level is reasonable. But this should be a conclusion you reach *after* the diagnostics above, not the first move.
+
+---
+
+## One question before you proceed
+
+**What does `treatment` vary at — schools or students?** If schools are randomized to treatment (between-schools design), then `treatment` is purely a level-3 predictor. In that case the school-level random slope that went singular almost certainly was for `time`, and the student-level one too. If students within schools are randomized (between-students within schools), the structure is different and the random-effects implications shift.
+
+Either way the student-level slope for `time` is the critical one.
+
+---
+
+## Recommended path forward
+
+| Step | Action |
+|---|---|
+| 1 | Center and scale `time`; refit the model you had before simplification |
+| 2 | Run `allFit()` on that model; check whether singularity is optimizer-dependent |
+| 3 | If still singular, try the `||` zero-correlation version to decouple slope variance from the correlation |
+| 4 | If that's still singular, *then* consider dropping — but report it explicitly and note it as a limitation affecting inference on `time` and `time × treatment` |
+
+The current model with only random intercepts is likely underspecified for a growth-curve design. Don't trust the *p*-values on `time` and `time × treatment` until you've gone through these steps.
