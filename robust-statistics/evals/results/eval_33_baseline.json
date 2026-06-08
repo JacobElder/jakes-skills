@@ -2,18 +2,18 @@
   "eval_id": 33,
   "condition": "baseline",
   "prompt": "I have a trial with 3 pre-specified primary outcomes. I tested each with a planned t-test and got p-values of 0.04, 0.03, and 0.08. A reviewer says I must apply Bonferroni correction. Is that right?",
-  "response": "The reviewer's direction is largely correct, but \"must apply Bonferroni\" is an oversimplification worth pushing back on carefully.\n\n## The core issue\n\nWith 3 tests each at \u03b1 = 0.05, the familywise error rate (FWER) inflates to 1 \u2212 0.95\u00b3 \u2248 14.3%. In a confirmatory trial where **any** significant primary outcome = success, FWER correction is appropriate.\n\nWith Bonferroni (\u03b1 = 0.05/3 = 0.0167): none of your three p-values survive (0.04, 0.03, 0.08 all > 0.0167).\n\n## Where the reviewer is oversimplifying\n\n**1. Bonferroni is not the only valid method \u2014 and it's the most conservative one.**\n\nHolm-Bonferroni uniformly dominates Bonferroni (same FWER control, more power) and is almost always preferable:\n\n| Step | Sorted p-value | Threshold (0.05 / k remaining) | Decision |\n|------|---------------|-------------------------------|----------|\n| 1 | 0.03 | 0.05/3 = 0.0167 | Fail \u2192 stop |\n\nStill no survivors here, but the method is more defensible statistically.\n\n**2. Trial design matters \u2014 specifically, whether your primaries are conjunctive or disjunctive.**\n\n- **Conjunctive (co-primary):** trial succeeds only if *all* endpoints are significant \u2192 FWER is automatically controlled, no correction needed\n- **Disjunctive:** trial succeeds if *any* endpoint is significant \u2192 correction required (your situation, presumably)\n\nIf your SAP specifies all three must be significant, you may not need correction at all.\n\n**3. Pre-specification reduces researcher degrees of freedom, but doesn't eliminate the multiplicity problem.** The reviewer is right that you can't just ignore the family.\n\n## Practical recommendation\n\n1. **Confirm** whether the design is conjunctive or disjunctive \u2014 this determines whether correction is required at all\n2. If correction is required, **use Holm-Bonferroni** rather than Bonferroni; it's more powerful and equally valid\n3. Be transparent: with any FWER correction, your results (0.03, 0.04, 0.08) do not meet the corrected threshold \u2014 this is the honest conclusion\n\nThe reviewer is right in spirit; \"must be Bonferroni specifically\" is the part worth negotiating.",
+  "response": "The reviewer has a point, but it's more nuanced than a blanket \"always Bonferroni.\"\n\n## When correction IS required\n\nIf your decision rule is \"a trial succeeds if **any** primary outcome is significant,\" you are implicitly running a union test. With 3 independent tests at \u03b1=0.05, the familywise error rate is 1-(0.95)\u00b3 \u2248 14.3%. Correction is warranted here regardless of pre-specification.\n\n## When correction is NOT required\n\n- **All-must-win rule:** If the trial succeeds only when **all three** outcomes are significant (intersection-union test), no upward \u03b1 adjustment is needed \u2014 the requirement is actually stricter than a single test.\n- **Purely descriptive reporting:** If you're reporting all three as separate findings without a combined success/failure verdict, many methodologists argue pre-specification is sufficient justification for per-comparison \u03b1=0.05, with the caveat that readers interpret the ensemble.\n\n## Practical consequence with your numbers\n\nBonferroni threshold: \u03b1/3 \u2248 **0.017**. None of your p-values (0.04, 0.03, 0.08) survive. The same is true under Holm-Bonferroni (more powerful, preferred over Bonferroni) and even Benjamini-Hochberg FDR at 5%.\n\n| Method | Threshold | p=0.03 | p=0.04 | p=0.08 |\n|---|---|---|---|---|\n| Uncorrected | 0.050 | sig | sig | \u2014 |\n| Bonferroni | 0.017 | \u2014 | \u2014 | \u2014 |\n| Holm | 0.017 | \u2014 | \u2014 | \u2014 |\n| BH FDR 5% | 0.033 | \u2014 | \u2014 | \u2014 |\n\n## Recommendation\n\nAsk yourself: **what decision does a significant result trigger?** If any one positive outcome is treated as a trial success, correct \u2014 and use Holm-Bonferroni rather than Bonferroni (it's uniformly more powerful with the same FWER control). If all three must win, no correction is needed and you can report honestly that two outcomes reached uncorrected significance but none reached your pre-specified threshold.\n\nWith these p-values, the honest framing is likely that the trial did not demonstrate significance on its primary composite of outcomes under any multiplicity-corrected standard.",
   "assertions": [
     {
       "text": "Does NOT simply endorse 'must apply Bonferroni' without engaging with the pre-specification context",
       "type": "must_pass"
     },
     {
-      "text": "Distinguishes pre-specified primary outcomes from exploratory comparisons as relevant to the correction decision",
+      "text": "Engages with the pre-specification context \u2014 notes it defines the family or reduces data-dredging concerns, rather than treating pre-specification as irrelevant to the multiplicity question",
       "type": "scored"
     },
     {
-      "text": "Notes that Bonferroni is conservative and that alternatives (Holm, FDR/BH) are available and often preferable",
+      "text": "Mentions Holm or another less-conservative alternative to Bonferroni (Holm, FDR/BH, Benjamini-Hochberg) as preferable or more powerful when correction is warranted",
       "type": "scored"
     },
     {
@@ -27,14 +27,14 @@
   ],
   "assertion_results": [
     true,
-    false,
-    false,
+    true,
+    true,
     true,
     true
   ],
-  "passed": 3,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.6,
-  "eval_passes": false,
+  "pass_rate": 1.0,
+  "eval_passes": true,
   "must_pass_failed_indices": []
 }

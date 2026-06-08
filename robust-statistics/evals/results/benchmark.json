@@ -1,95 +1,14 @@
 {
   "skill_name": "robust-statistics",
-  "results": [
-    {
-      "eval_id": 33,
-      "condition": "baseline",
-      "prompt": "I have a trial with 3 pre-specified primary outcomes. I tested each with a planned t-test and got p-values of 0.04, 0.03, and 0.08. A reviewer says I must apply Bonferroni correction. Is that right?",
-      "response": "The reviewer's blanket \"must apply Bonferroni\" is too strong. Whether correction is required \u2014 and which method to use \u2014 depends on how your trial defines success.\n\n## The key distinction: conjunctive vs. disjunctive endpoints\n\n**Conjunctive** (all three must be significant to claim trial success): No correction needed. The family-wise error rate is actually *lower* than 0.05 because you require every test to pass.\n\n**Disjunctive** (any one significant = success): Yes, multiplicity correction is warranted. Without it, the probability of at least one false positive across three tests at \u03b1 = 0.05 is roughly 1 \u2212 (0.95)\u00b3 \u2248 14%.\n\nMost multi-primary trials without a pre-specified hierarchy fall into the disjunctive case, which is likely why the reviewer raised it.\n\n## If correction is warranted, Bonferroni is valid but conservative\n\nBonferroni threshold: 0.05 / 3 \u2248 **0.0167** \u2014 none of your p-values survive.\n\nBut Bonferroni assumes independence. If your three outcomes are positively correlated (common in trials measuring the same construct multiple ways), it over-corrects. Better options:\n\n| Method | Threshold behavior | Under correlation |\n|---|---|---|\n| Bonferroni | 0.05/k per test | Too conservative |\n| Holm (step-down) | Sequentially less stringent | Still conservative |\n| Hochberg (step-up) | Similar to Holm, slightly more power | Better |\n| Permutation / bootstrap | Respects empirical correlation | Best, but requires raw data |\n\nRunning Holm on your values (ranked: 0.03, 0.04, 0.08): the smallest must clear 0.0167, which it doesn't \u2014 so none survive Holm either.\n\n## What to tell the reviewer\n\n1. **Clarify your trial's success criterion.** If all three outcomes were required to be significant (which your p = 0.08 already prevents), no adjustment is needed \u2014 say so explicitly with a citation (e.g., Vickerstaff et al. 2019, *BMC Med Res Methodol*).\n\n2. **If it's disjunctive,** concede the point but push back on *Bonferroni specifically*: argue for Holm or a permutation-based FWER that accounts for the correlation structure of your outcomes.\n\n3. **Pre-specification is not a free pass** for disjunctive hypotheses \u2014 it prevents data dredging but doesn't eliminate the inflation from testing multiple outcomes.\n\nThe honest bottom line: with p-values of 0.04, 0.03, and 0.08, if correction is required you likely lose significance on all three. The more important question is whether your trial was powered and designed for a corrected threshold from the outset.",
-      "assertions": [
-        {
-          "text": "Does NOT simply endorse 'must apply Bonferroni' without engaging with the pre-specification context",
-          "type": "must_pass"
-        },
-        {
-          "text": "Distinguishes pre-specified primary outcomes from exploratory comparisons as relevant to the correction decision",
-          "type": "scored"
-        },
-        {
-          "text": "Notes that Bonferroni is conservative and that alternatives (Holm, FDR/BH) are available and often preferable",
-          "type": "scored"
-        },
-        {
-          "text": "Acknowledges the reviewer's multiplicity concern as legitimate \u2014 does not dismiss correction entirely",
-          "type": "scored"
-        },
-        {
-          "text": "Does NOT say multiple comparisons corrections are never needed",
-          "type": "must_pass"
-        }
-      ],
-      "assertion_results": [
-        true,
-        false,
-        false,
-        true,
-        true
-      ],
-      "passed": 3,
-      "total": 5,
-      "pass_rate": 0.6,
-      "eval_passes": false,
-      "must_pass_failed_indices": []
-    },
-    {
-      "eval_id": 33,
-      "condition": "with_skill",
-      "prompt": "I have a trial with 3 pre-specified primary outcomes. I tested each with a planned t-test and got p-values of 0.04, 0.03, and 0.08. A reviewer says I must apply Bonferroni correction. Is that right?",
-      "response": "The reviewer is applying a rote rule. Whether correction is required depends on the **logical structure of your claim**, which they haven't engaged with \u2014 and that distinction matters a lot at k=3.\n\n**Two cases where correction is not required.** If these three outcomes represent independent scientific questions (each can stand on its own without implication for the others), you can assess each separately at \u03b1 = .05. Similarly, if your claim requires *all three* to be significant (AND logic), no correction is needed \u2014 the conjunction is already more conservative than any single test. Neither of those is multiplicity in the sense that inflates false positives.\n\n**One case where it is required.** If your claim is \"the intervention works\" based on *any* one of the three reaching significance (OR logic), then FWER control is warranted, because under the null the probability of at least one spurious significant result across three tests is ~14%, not 5%. In that case, Holm\u2013Bonferroni is strictly better than Bonferroni (same FWER control, more power) and should be preferred. With your p-values of 0.03, 0.04, and 0.08: sorted, compare 0.03 to \u03b1/3 = 0.017 \u2014 it doesn't clear the threshold, so under Holm none would be declared significant.\n\n**What to push back with.** Ask the reviewer to specify which inferential structure applies. A blanket \"must Bonferroni\" ignores (a) that pre-specification already narrows the family to a well-defined three, (b) that the logical structure of the claim determines whether FWER is the right criterion, and (c) that Bonferroni is dominated by Holm when correction is actually warranted. The review comment as written is a rule, not a statistical argument.",
-      "assertions": [
-        {
-          "text": "Does NOT simply endorse 'must apply Bonferroni' without engaging with the pre-specification context",
-          "type": "must_pass"
-        },
-        {
-          "text": "Distinguishes pre-specified primary outcomes from exploratory comparisons as relevant to the correction decision",
-          "type": "scored"
-        },
-        {
-          "text": "Notes that Bonferroni is conservative and that alternatives (Holm, FDR/BH) are available and often preferable",
-          "type": "scored"
-        },
-        {
-          "text": "Acknowledges the reviewer's multiplicity concern as legitimate \u2014 does not dismiss correction entirely",
-          "type": "scored"
-        },
-        {
-          "text": "Does NOT say multiple comparisons corrections are never needed",
-          "type": "must_pass"
-        }
-      ],
-      "assertion_results": [
-        true,
-        false,
-        false,
-        true,
-        true
-      ],
-      "passed": 3,
-      "total": 5,
-      "pass_rate": 0.6,
-      "eval_passes": false,
-      "must_pass_failed_indices": []
-    }
-  ],
+  "results": [],
   "summary": {
     "baseline": {
-      "passed": 3,
-      "total": 5
+      "passed": 0,
+      "total": 0
     },
     "with_skill": {
-      "passed": 3,
-      "total": 5
+      "passed": 0,
+      "total": 0
     }
   }
 }

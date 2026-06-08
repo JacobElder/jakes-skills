@@ -1,0 +1,40 @@
+{
+  "eval_id": 34,
+  "condition": "baseline",
+  "prompt": "I want to estimate the causal effect of a new training program on employee performance. I'll compare trained vs untrained employees using a t-test. Participation was voluntary. Is there anything wrong with that approach?",
+  "response": "Yes, the core problem is **selection bias**. Since participation was voluntary, the employees who chose to train are almost certainly systematically different from those who didn't \u2014 more motivated, more ambitious, better-supported by their managers, etc. Those same pre-existing differences independently drive performance, so any difference you measure is a mix of the training effect and the pre-existing group difference. The t-test will give you a valid test of \"did the groups differ in outcome?\" but cannot tell you *why*, and it has no mechanism to separate the causal effect from selection.\n\nThis is the fundamental identification problem: voluntary treatment assignment means treatment and potential outcomes are correlated, violating the key assumption behind a simple comparison.\n\n**What you'd actually be estimating:** the difference between high-motivation employees (who self-selected in) and lower-motivation employees (who didn't), not the effect of training itself.\n\n**What to do instead depends on your situation:**\n\n- **Ideal:** Randomize who gets offered training (RCT). Even a waitlist control design helps.\n- **If you have pre-training performance data:** Difference-in-differences \u2014 compare the *change* in performance for trained vs. untrained. This controls for stable baseline differences.\n- **If you have good observables (tenure, prior ratings, department, etc.):** Propensity score matching or a regression with controls can reduce (not eliminate) bias by making the comparison more apples-to-apples.\n- **If there was some eligibility threshold or lottery:** Regression discontinuity or instrumental variables can recover a causal estimate.\n\nThe t-test itself isn't broken \u2014 it's the design that can't support a causal claim. No amount of statistical sophistication fixes selection bias in the data; it has to be addressed in how you collect or design the comparison.",
+  "assertions": [
+    {
+      "text": "Identifies voluntary participation / self-selection as the core problem \u2014 the comparison is confounded",
+      "type": "must_pass"
+    },
+    {
+      "text": "Distinguishes the descriptive contrast (t-test gives this) from a causal estimand (which requires handling selection)",
+      "type": "scored"
+    },
+    {
+      "text": "Names at least one approach to causal identification given the observational design (e.g. propensity scores, DiD, IV, matching)",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the issue as an identification problem, not a distributional/assumption problem",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT accept the t-test as an estimator of the causal effect of training without flagging the confounding",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

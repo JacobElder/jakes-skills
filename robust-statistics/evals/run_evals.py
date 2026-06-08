@@ -97,9 +97,10 @@ def _assertion_text(a) -> str:
 
 
 def grade_assertions(response: str, assertions: list,
-                     grader_model: str = "claude-haiku-4-5-20251001") -> list[bool]:
-    """Grade assertions; uses Haiku by default to conserve Sonnet quota."""
-    if response == RATE_LIMIT_SENTINEL:
+                     grader_model: str = "claude-haiku-4-5-20251001") -> list[bool] | None:
+    """Grade assertions; uses Haiku by default to conserve Sonnet quota.
+    Returns None if the grader itself is rate-limited."""
+    if not response or response == RATE_LIMIT_SENTINEL:
         return [False] * len(assertions)
     texts = [_assertion_text(a) for a in assertions]
     numbered = "\n".join(f"{i+1}. {t}" for i, t in enumerate(texts))
@@ -109,6 +110,8 @@ def grade_assertions(response: str, assertions: list,
         f"Assertions to evaluate:\n{numbered}"
     )
     raw = call_claude(prompt, system_extra=GRADER_SYSTEM, model=grader_model)
+    if not raw or raw == RATE_LIMIT_SENTINEL:
+        return None  # grader itself was rate-limited
     results = []
     for line in raw.strip().splitlines():
         line = line.strip()
@@ -149,6 +152,10 @@ def run(eval_ids: list[int] | None, conditions: list[str],
             print("grader...", end=" ", flush=True)
             passes = grade_assertions(response, assertions, grader_model=grader_model)
             time.sleep(delay)
+
+            if passes is None:
+                print("GRADER RATE-LIMITED — skipping")
+                continue
 
             n_pass = sum(passes)
             n_total = len(assertions)

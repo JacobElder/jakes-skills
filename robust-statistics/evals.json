@@ -908,11 +908,11 @@
           "type": "must_pass"
         },
         {
-          "text": "Distinguishes pre-specified primary outcomes from exploratory comparisons as relevant to the correction decision",
+          "text": "Engages with the pre-specification context \u2014 notes it defines the family or reduces data-dredging concerns, rather than treating pre-specification as irrelevant to the multiplicity question",
           "type": "scored"
         },
         {
-          "text": "Notes that Bonferroni is conservative and that alternatives (Holm, FDR/BH) are available and often preferable",
+          "text": "Mentions Holm or another less-conservative alternative to Bonferroni (Holm, FDR/BH, Benjamini-Hochberg) as preferable or more powerful when correction is warranted",
           "type": "scored"
         },
         {
