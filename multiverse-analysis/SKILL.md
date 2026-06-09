@@ -37,31 +37,47 @@ Work through these steps. Steps 1–3 are reasoning with the user; 4–7 are exe
    decision the multiverse will vary. If this is unclear, ask before building anything.
 2. **Elicit the decision set.** This is the crux. Enumerate the points in the analysis where
    a different, equally defensible choice was possible, and the reasonable options at each.
-   Probe the common families below — most analyses have 4–8 live decisions hiding in them,
-   and people under-report their own. For each option apply the "reasonable" test: it must be
+   Ask these probes — most analyses have 4–8 live decisions hiding in them, and people
+   under-report their own. For each option apply the "reasonable" test: it must be
    theory-consistent, statistically valid, and non-redundant. **Curate** — do not pad with
    options nobody would defend; a bloated multiverse dilutes the signal.
-   - **Exclusions**: outlier rules (none / 2.5 SD / 3 SD / IQR / winsorize), quality filters,
-     missing-data handling.
-   - **Operationalization of the IV/DV**: which measure, composite vs item, binary vs
-     continuous, raw vs standardized. *Probe this hardest — it usually drives the most
-     variance* (Schweinsberg et al. 2021).
-   - **Transformations**: log/sqrt/none, centering, scaling.
-   - **Covariates**: which controls, which interactions.
-   - **Model/estimator**: OLS vs GLM family, linear vs logistic vs count, random effects,
-     robust SEs, frequentist vs Bayesian.
-   - **Sample/subgroup**: full vs theoretically motivated subsets.
+
+   **Decision-elicitation checklist** (go through each before building the grid):
+   - [ ] **Exclusions**: outlier rules (none / 2.5 SD / 3 SD / IQR / winsorize), quality
+         filters, missing-data handling — *what values did you consider and reject?*
+   - [ ] **IV/DV operationalization**: which measure, composite vs item, binary vs continuous,
+         raw vs standardized. *Probe this hardest — it usually drives the most variance*
+         (Schweinsberg et al. 2021). Also flag scale mismatch: DV options on different scales
+         (raw, T-score, z-score) produce incomparable coefficients; standardize before
+         comparing or this decision will dominate variance for trivial unit reasons.
+   - [ ] **Transformations**: log/sqrt/none, centering, scaling.
+   - [ ] **Covariates**: which controls, which interactions — *what did reviewers ask about?*
+   - [ ] **Model/estimator**: OLS vs GLM family, linear vs logistic vs count, random effects,
+         robust SEs, frequentist vs Bayesian. Note: OLS on a binary DV (linear probability
+         model) is a methodological concern (can predict outside [0,1]) but is sometimes
+         defended; treat it as a *caution*, not a forbidden cell, unless the user's context
+         rules it out.
+   - [ ] **Sample/subgroup**: full vs theoretically motivated subsets.
 
    Present the set back to the user as a decisions × options table for sign-off. Distinguish
    **principled** decisions (theory gives a range — include it) from **arbitrary** ones
    (include common conventions).
-3. **Flag nonsensical cells.** A raw cross-product produces incoherent combinations (a linear
-   model on a binary DV; an interaction whose main term is absent; an option only meaningful
-   given an upstream choice). List these and encode them as constraints/conditions so they
-   never run.
+3. **Flag nonsensical cells.** A raw cross-product produces incoherent combinations (an
+   interaction whose main term is absent; a transformation only valid given an upstream
+   choice). List these and encode them as `constraints=[lambda c: bool]` so they never run.
+   Constraints should drop *incoherent* combinations — those that are logically impossible or
+   statistically undefined. Do **not** hard-exclude a model choice (e.g. OLS on a binary DV)
+   purely because it is less preferred; that is a curatorial judgment, not a logical
+   constraint. Flag it as a caution in the decisions table instead.
 4. **Implement the analysis once, parameterized by the choices, and execute every universe.**
    Use the bundled engine (below) for Python, or `multiverse`/`specr`/`boba` (see
-   `references/tooling.md`). One failed universe should be recorded, not fatal.
+   `references/tooling.md`). One failed universe should be recorded, not fatal. **Always
+   show the `analyze()` function and `Multiverse(...)` setup in a code block** — even when
+   also presenting a complete results table. The code is the reproducible artifact; the
+   table is just a summary. **Critical: never present numerical results (estimates,
+   p-values, robustness verdicts) that were not computed by running the code on the actual
+   data. If you cannot run the analysis, show only the code and explain what the user needs
+   to run it — do not fabricate plausible-looking output.**
 5. **Describe the distribution.** Draw the specification curve (sorted estimates + a panel
    showing which option was active in each spec). Report the median effect, the share of
    specifications significant and *in which direction*, and how many universes errored. When
@@ -133,22 +149,43 @@ link with the outcome, re-runs the entire multiverse on each shuffled dataset, a
 the observed statistics (median effect; share significant in the predicted direction) to
 their null distributions. Use ≥500 permutations for anything you would report.
 
+The `direction` parameter controls which tail counts as extreme for the median statistic.
+Default is `"auto"` (inferred from the observed median vs the null center), which introduces
+mild optimism by choosing the favorable tail post hoc. For pre-registered hypotheses, set
+`direction="positive"` or `direction="negative"` explicitly — this is the principled choice
+and the one to report in a paper.
+
 ## Framing the result honestly
 
 - A multiverse is a **robustness/transparency** tool, not a way to select the specification
-  you like. Never present the curve as cover for one cherry-picked path.
+  you like. Never present the curve as cover for one cherry-picked path. When the user
+  claims "X% of specs are significant" without disclosing that the non-significant specs
+  cluster on a single decision fork, flag it: that clustering is the real finding. Point
+  them to `decision_importance()` — it will show that one decision (e.g. DV
+  operationalization) explains most of the significance variance, not random scatter.
 - Report where the user's *original* analysis falls within the distribution.
 - "Robust" looks like: tight cluster, consistent sign, large share significant one way, joint
-  test rejects null. "Fragile" looks like: estimates straddling zero, sign flips, minority
-  significant, null not rejected — say so plainly.
+  test rejects null. "Fragile" looks like: estimates straddling zero, **sign flips across
+  specifications** (especially driven by operationalization choices), minority significant,
+  null not rejected — say so plainly. A sign flip is the clearest evidence of fragility;
+  never describe an effect as robust when estimates reverse direction across specifications.
 - The share of significant specifications is **not** the probability the effect is real;
   specifications are neither independent nor equally likely. It is a sensitivity display.
 
 ## Output
 
-When the user wants a write-up, produce: the focal estimand; the decisions × options table
-with one-line justifications (and notable rejected options); universe count and any sampling;
-the specification curve figure; median effect and share/direction significant; the
-decision-importance summary; the joint-inference result if claimed; and where the original
-analysis sits. Save the curve as a figure and, for a substantial deliverable, the tidy
-results table as CSV so the multiverse can be re-run or extended.
+**Required order when given data to analyze:**
+
+1. **Code block first** — the `analyze(data, c)` function and `Multiverse(decisions={...})`
+   setup, with a call to `.run()`, `specification_curve()`, and `decision_importance()`. This
+   must appear before any results table. It is the reproducible artifact.
+2. **Results** — the decisions × options table; universe count; median effect and
+   share/direction significant; decision-importance ranking; where the original analysis sits.
+3. **Verdict** — explicitly label the effect as **robust** or **fragile** using the criteria
+   in "Framing the result honestly" above. Do not hedge into "partially robust" or omit a
+   verdict when the pattern is clear.
+4. **Joint-inference result** if an inferential claim is wanted.
+
+Save the curve as a figure and, for a substantial deliverable, the tidy results table as CSV.
+
+When only a conceptual question is asked (no data), skip step 1 and answer directly.

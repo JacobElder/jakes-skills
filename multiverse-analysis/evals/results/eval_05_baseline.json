@@ -1,0 +1,31 @@
+{
+  "eval_id": 5,
+  "condition": "baseline",
+  "prompt": "I ran a multiverse analysis on whether caffeine improves reaction time. I have 3 outlier rules, 2 covariate options, and 2 DV operationalizations = 12 specifications total. 9 of 12 are significant (p<0.05). The 3 non-significant ones all use the log-transformed DV. My original pre-registered analysis used the raw DV and no outliers, no covariate \u2014 it's significant (p=0.008). Since 9/12 are significant and my original spec is among them, can I report this as 'the effect is robust across 75% of specifications and my pre-registered analysis confirms the effect'?",
+  "response": "There are a few problems with that framing worth unpacking before you write it up.\n\n## The structured pattern is the finding, not background noise\n\nYour 9/12 figure buries the most important result. The three non-significant specs don't fall randomly across the specification space \u2014 they cluster entirely within one fork: log-transformed DV. That means:\n\n- **Raw DV: 6/6 significant (100%)**\n- **Log DV: 3/6 significant (50%)**\n\nReporting \"75% robust\" averages over a clean, systematic split. A reviewer will spot this immediately, and the framing will look evasive.\n\n## The log transform is often the *more defensible* choice for RT data\n\nReaction time distributions are right-skewed. Log-transforming RT is standard practice precisely because it stabilizes variance and reduces leverage from extreme values. If the statistically better-justified operationalization is where your effect weakens, that's not a nuisance \u2014 that's signal about what's driving the effect. The multiverse is telling you something: the effect may be sensitive to how outliers and tail observations are handled.\n\n## Your preregistered spec isn't independent confirmation\n\nIt's already one of the 12 specs contributing to the 9/12 figure. Citing it separately as \"confirmation\" double-counts it and conflates preregistration's purpose (protecting against researcher degrees of freedom *before* data collection) with post-hoc interpretation of a multiverse. Preregistration doesn't make one cell of a multiverse more epistemically privileged than the others for this purpose.\n\n## What honest reporting looks like\n\nInstead of \"robust across 75%,\" report the DV-by-DV breakdown explicitly, flag that log-RT is often preferred for theoretical reasons, and interpret the split: *why* does the effect attenuate under log-transform? Possibilities include outlier-driven effects, skew in the raw distribution, or a genuine scale-of-measurement dependency.\n\nThe multiverse gave you a more interesting and defensible story than \"it mostly worked\" \u2014 use it.",
+  "assertions": [
+    "Flags that all 3 non-significant specifications cluster on the log-DV fork \u2014 identifies this as a systematic pattern (effect depends on DV operationalization), not random scatter across specifications",
+    "Warns that reporting '75% significant' without disclosing the systematic pattern is misleading \u2014 the DV operationalization decision, not robustness in general, governs significance",
+    "Recommends the decision-importance or equivalent analysis to show that the DV operationalization fork explains most of the significance variance in the curve",
+    "Does NOT endorse the claim that the effect is 'robust across 75% of specifications' as stated, without qualification",
+    "Does NOT suggest or imply that the pre-registered analysis being significant validates the choice of raw DV over log-transformed"
+  ],
+  "assertion_types": [
+    "scored",
+    "scored",
+    "scored",
+    "must_pass",
+    "must_pass"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": false
+}

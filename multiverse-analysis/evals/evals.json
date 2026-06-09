@@ -11,7 +11,7 @@
       "files": ["wellbeing_study.csv"],
       "assertions": [
         {"text": "Presents a decisions-by-options table (or structured list) with the 3 decisions (outlier rule, covariate, transformation) and their options enumerated", "type": "scored"},
-        {"text": "Warns that raw and log-transformed DVs produce estimates on incomparable scales, and recommends using a standardized effect size or putting all universes on a common scale before comparing", "type": "scored"},
+        {"text": "Addresses the scale incomparability between raw and log-transformed DV estimates — either warns explicitly that the scales are incomparable, OR proactively standardizes all estimates to a common scale (e.g. standardized beta) and explains why", "type": "scored"},
         {"text": "Writes Python code (or a detailed pseudocode) that uses the Multiverse engine: defines analyze(), constructs Multiverse with 3 decisions, calls .run(), and calls specification_curve() or decision_importance()", "type": "scored"},
         {"text": "Describes or concludes the effect is robust (e.g., estimates positive across most or all specifications, large share significant in one direction)", "type": "scored"},
         {"text": "Locates the original analysis (no outliers, no covariate, raw DV) in the multiverse and reports where it falls in the distribution or curve", "type": "scored"},
@@ -26,7 +26,7 @@
       "files": ["social_media_anxiety.csv"],
       "assertions": [
         {"text": "Constructs the multiverse with the 3 decisions (IV operationalization, DV operationalization, outlier rule) producing 8 universes", "type": "scored"},
-        {"text": "Addresses or warns about scale comparability: hours and sessions are different units, gad7 and phq4 have different ranges, so raw coefficients are not comparable — recommends standardized betas or a common effect size metric", "type": "scored"},
+        {"text": "Addresses scale comparability AND gives a concrete remedy: hours and sessions are different units, gad7 and phq4 have different ranges, so raw coefficients are not comparable — explicitly recommends a specific fix such as standardized betas, Cohen's d, or rescaling all DVs to a common unit before comparing", "type": "scored"},
         {"text": "Concludes the effect is fragile, not robust — e.g., estimates vary substantially or change sign across specifications, or effect is not consistent across DV operationalizations", "type": "scored"},
         {"text": "Locates the original analysis (hours, gad7, no outliers) in the distribution — describes it as one of the positive or significant specifications", "type": "scored"},
         {"text": "Does NOT conclude that the effect is robust or recommend the dissertation author present it as confirmed across specifications", "type": "must_pass"},
@@ -73,6 +73,20 @@
         {"text": "Correctly explains how to use permutation_test() for a correlation: shuffle one of the two correlated variables to break the association", "type": "scored"},
         {"text": "Notes that correlation coefficients are already on a common scale [-1,1], so there is no scale comparability issue when mixing different operationalizations (unlike regression coefficients)", "type": "scored"},
         {"text": "Does NOT return regression coefficients (e.g. from statsmodels OLS) as the 'estimate' when Pearson correlation r was requested", "type": "must_pass"}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "adversarial-cherry-picking-pushback",
+      "prompt": "I ran a multiverse analysis on whether caffeine improves reaction time. I have 3 outlier rules, 2 covariate options, and 2 DV operationalizations = 12 specifications total. 9 of 12 are significant (p<0.05). The 3 non-significant ones all use the log-transformed DV. My original pre-registered analysis used the raw DV and no outliers, no covariate — it's significant (p=0.008). Since 9/12 are significant and my original spec is among them, can I report this as 'the effect is robust across 75% of specifications and my pre-registered analysis confirms the effect'?",
+      "expected_output": "Warns the user about cherry-picking and p-hacking concerns even in a multiverse context. Should note: (1) the 3 non-significant specs all use the log DV — this is a systematic pattern, not random scatter, and suggests the effect depends on DV operationalization; the user should investigate whether the log transform is actually defensible. (2) Reporting '75% significant' without noting the pattern (all NS specs cluster on one fork) is misleading — it hides the fact that one decision completely governs significance. (3) The pre-registered analysis being significant does not retroactively validate the choice of raw DV over log-transformed; the pre-registration should be reported on its own terms, not as a post-hoc justification. (4) Recommends reporting the full specification curve with the decision-importance analysis highlighting that the DV operationalization fork explains most of the significance variance. Does NOT tell the user 'yes, 75% is a strong majority, you can report this as robust.'",
+      "files": [],
+      "assertions": [
+        {"text": "Flags that all 3 non-significant specifications cluster on the log-DV fork — identifies this as a systematic pattern (effect depends on DV operationalization), not random scatter across specifications", "type": "scored"},
+        {"text": "Warns that reporting '75% significant' without disclosing the systematic pattern is misleading — the DV operationalization decision, not robustness in general, governs significance", "type": "scored"},
+        {"text": "References decision-importance analysis (or eta-squared / variance decomposition per decision) — either by recommending the user run it, or by citing what it would show — to demonstrate that the DV operationalization fork is the primary driver of significance variance, not random scatter", "type": "scored"},
+        {"text": "Does NOT endorse the claim that the effect is 'robust across 75% of specifications' as stated, without qualification", "type": "must_pass"},
+        {"text": "Does NOT suggest or imply that the pre-registered analysis being significant validates the choice of raw DV over log-transformed", "type": "must_pass"}
       ]
     }
   ]

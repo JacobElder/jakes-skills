@@ -169,7 +169,8 @@ def specification_curve(results: pd.DataFrame, estimate: str = "estimate",
                         ci: tuple[str, str] | None = ("ci_low", "ci_high"),
                         decisions: list[str] | None = None, outfile: str | None = None,
                         title: str = "Specification curve", figsize=(11, 9),
-                        highlight: dict | int | None = None):
+                        highlight: dict | int | None = None,
+                        max_display: int | None = None, seed: int = 0):
     """Draw the standard two-panel specification curve (Simonsohn et al., 2020).
 
     Top panel: every universe's point estimate, sorted ascending, with optional CIs,
@@ -180,6 +181,12 @@ def specification_curve(results: pd.DataFrame, estimate: str = "estimate",
     `highlight` marks the analyst's original/preferred specification on the curve (the
     reporting guidance asks you to locate it): pass a `.universe` index, or a dict of
     {decision: option_name} identifying it. It is drawn as a labelled vertical marker.
+
+    `max_display` downsamples the plot for very large multiverses (Simonsohn et al.
+    suggest ~150 specs is readable). When set, the N/4 lowest and N/4 highest estimates
+    are always shown, and the remaining display budget is filled with a random sample from
+    the middle — following the recommendation to anchor on the tails. All statistics
+    (median, share significant) are computed on the full results, not the display subset.
     """
     import matplotlib.pyplot as plt
 
@@ -187,6 +194,24 @@ def specification_curve(results: pd.DataFrame, estimate: str = "estimate",
     df = df.dropna(subset=[estimate]).sort_values(estimate).reset_index(drop=True)
     if df.empty:
         raise ValueError("No successful universes with a non-null estimate to plot.")
+
+    # compute stats on the FULL frame before any downsampling
+    sig_full = (df[p_value] < alpha) if (p_value and p_value in df) else None
+    med = df[estimate].median()
+    share_sig = float(sig_full.mean()) if sig_full is not None else float("nan")
+    n_total = len(df)
+
+    # downsample for display only
+    if max_display is not None and len(df) > max_display:
+        n_tail = max(1, max_display // 4)
+        n_mid  = max_display - 2 * n_tail
+        tail_idx  = list(range(n_tail)) + list(range(len(df) - n_tail, len(df)))
+        mid_pool  = [i for i in range(n_tail, len(df) - n_tail) if i not in tail_idx]
+        rng       = np.random.default_rng(seed)
+        mid_idx   = sorted(rng.choice(mid_pool, size=min(n_mid, len(mid_pool)), replace=False))
+        keep      = sorted(set(tail_idx) | set(mid_idx))
+        df        = df.iloc[keep].reset_index(drop=True)
+
     x = np.arange(len(df))
 
     if decisions is None:
@@ -212,7 +237,7 @@ def specification_curve(results: pd.DataFrame, estimate: str = "estimate",
     ax_top.scatter(x, df[estimate], c=colors, s=10, zorder=2)
     ax_top.axhline(0, color="black", lw=0.8, ls="--")
     med = df[estimate].median()
-    ax_top.axhline(med, color="#2980b9", lw=1.0, ls=":")
+    ax_top.axhline(med, color="#2980b9", lw=1.0, ls=":")  # pre-computed on full frame
 
     # mark the analyst's original/preferred specification, if given
     if highlight is not None:
@@ -235,10 +260,9 @@ def specification_curve(results: pd.DataFrame, estimate: str = "estimate",
                             fontweight="bold")
     ax_top.set_ylabel(estimate)
     ax_top.set_title(title, loc="left", fontweight="bold")
-    share_sig = float(sig.mean()) if sig is not None else float("nan")
     ax_top.text(0.99, 0.02,
-                f"median={med:.3g}   {len(df)} specs"
-                + (f"   {share_sig:.0%} p<{alpha}" if sig is not None else ""),
+                f"median={med:.3g}   {n_total} specs"
+                + (f"   {share_sig:.0%} p<{alpha}" if not np.isnan(share_sig) else ""),
                 transform=ax_top.transAxes, ha="right", va="bottom", fontsize=9, color="0.3")
 
     # bottom: which option was active
