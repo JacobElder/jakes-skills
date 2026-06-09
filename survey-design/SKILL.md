@@ -1,20 +1,19 @@
 ---
 name: survey-design
 description: >-
-  Design, review, or repair self-report surveys and questionnaires for accurate,
-  low-bias data. Use whenever someone writes survey questions, chooses a response
-  format (Likert, multiple choice, rating, ranking, slider, open-ended), decides
-  how many scale points (5 vs 7 vs more) or whether to use a midpoint, labels
-  scale points, orders questions, worries about acquiescence, extreme-response,
-  midpoint, social-desirability, or nonresponse bias, sets survey length, picks a
-  mode (web/phone/mail), or pretests an instrument. Trigger even on casual asks
-  ("look over my survey", "how many points for my scale") and when "survey" isn't
-  said but the artifact is clearly a questionnaire (engagement form, customer-sat
-  rating, NPS). Covers QUESTION and INSTRUMENT design and the errors
-  arising there. Does NOT cover after-the-fact measurement modeling — reliability
-  coefficients, factor analysis, IRT, measurement invariance, or statistical
-  correction of response styles — which belong to the psychometrics skill; hand
-  those off.
+  Use for any question about building, reviewing, or improving surveys and
+  questionnaires. Triggers on: checking whether a question is double-barreled,
+  leading, or ambiguous; choosing how many scale points to use (5 vs 7 vs more);
+  whether to label all points or just endpoints; where to place demographic
+  questions; reducing acquiescence ("everyone just picks agree"); handling
+  sensitive topics (income, race, gender) in survey form; evaluating NPS or
+  customer-satisfaction question formats; picking response formats (Likert,
+  rating, ranking, multiple choice, open-ended); setting survey length or
+  question order. Also triggers on casual review requests ("look over my survey
+  questions") and on feedback forms, rating scales, or engagement polls even when
+  "survey" is not said. Does NOT cover post-collection psychometrics: reliability
+  coefficients, factor analysis, IRT, and statistical correction of response
+  styles belong to the psychometrics skill.
 ---
 
 # Survey Design
