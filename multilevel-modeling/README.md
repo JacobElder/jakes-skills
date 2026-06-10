@@ -194,7 +194,7 @@ Expanded to 16 evals (80 total expectations). Added three traps covering growth 
 
 | | With skill | Without skill | Delta |
 |--|:---:|:---:|:---:|
-| **Total expectations** | **79/80 (98.8%)** | **68/80 (85.0%)** | **+13.8pp** |
+| **Total expectations** | **80/80 (100%)** | **69/80 (86.2%)** | **+13.7pp** |
 
 | Eval | With skill | Without skill | Delta |
 |------|:---:|:---:|:---:|

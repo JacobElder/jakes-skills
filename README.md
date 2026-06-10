@@ -15,7 +15,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [comp-modeling](#comp-modeling) | Computational & cognitive modeling | Eval suite included |
 | [sequence-analysis-hmm](#sequence-analysis-hmm) | Hidden Markov Models & sequence analysis | +40pp across 10 content evals |
 | [survival-analysis](#survival-analysis) | Time-to-event modeling (R & Python) | 26/26 analytically graded evals passing |
-| [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | +13.8pp across 16 trap-based evals (98.8% vs 85.0%); +80pp on singular-fit simplification, +60pp on growth curve time slopes |
+| [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | +13.7pp across 16 trap-based evals (100% vs 86.2%); +80pp on singular-fit simplification, +60pp on growth curve time slopes |
 | [network-analysis](#network-analysis) | Network science & social network analysis | +32.5pp across 8 trap-based evals |
 | [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +15.4pp across 8 scenarios (intersection skill) |
 
@@ -109,7 +109,7 @@ Apply hierarchical / multilevel / mixed-effects models correctly across the full
 
 **Why it matters:** The base model knows multilevel modeling but defaults to hedging on wrong analyses. The most consequential failure is validating or gently caveating a random-intercepts-only model when the design has within-cluster manipulations — an omission that inflates Type I error 2–5× at nominal α = .05 (Barr et al., 2013; Schielzeth & Forstmeier, 2009). The skill opens with a firm no on that case, enforces diagnosis before any simplification of singular models, and corrects the common reflex to recommend MLM for every repeated-measures question even when a paired t-test is the defensible answer.
 
-**Gap:** +13.8pp across 16 trap-based evals (98.8% with skill, 85.0% without). Six evals discriminate: singular-fit simplification (+80pp — base model skips allFit() and upstream fixes, accepts iterative dropping), growth curve time slope (+60pp — validates advisor's "drop slope if variance ≈ 0" convention), convergence simplification with Bates et al. citation (+20pp), reviewer-requested cluster means (+20pp), CRSE vs. MLM cases (+20pp), and cluster RCT G*Power (+20pp). Ten evals show no gap — gaps appear when wrong practice is framed as established convention or backed by authority; the base model handles direct descriptions of wrong analyses correctly.
+**Gap:** +13.7pp across 16 trap-based evals (100% with skill, 86.2% without). Six evals discriminate: singular-fit simplification (+80pp — base model skips allFit() and upstream fixes, accepts iterative dropping), growth curve time slope (+60pp — validates advisor's "drop slope if variance ≈ 0" convention), convergence simplification with Bates et al. citation (+20pp), reviewer-requested cluster means (+20pp), CRSE vs. MLM cases (+20pp), and cluster RCT G*Power (+20pp). Ten evals show no gap — gaps appear when wrong practice is framed as established convention or backed by authority; the base model handles direct descriptions of wrong analyses correctly.
 
 → [multilevel-modeling/](multilevel-modeling/)
 
