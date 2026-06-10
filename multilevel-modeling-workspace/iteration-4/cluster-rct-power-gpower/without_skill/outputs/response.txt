@@ -1,67 +1,75 @@
-The power analysis has a real gap that needs to be addressed before the grant goes out. The committee sign-off doesn't change the methodological requirements reviewers will apply. Here's a precise breakdown:
+The approach has a legitimate foundation, but there are several issues that need to be resolved before this is grant-ready. Let me walk through what's right, what's incomplete, and what's potentially wrong.
 
 ---
 
-## What You Did Right
+## What's Actually Valid
 
-Aggregating to the school level (N = 20 per arm) and running a t-test on school means is a **legitimate approach** to cluster RCT power analysis — it's the "aggregate analysis" strategy described in Donner & Klar (2000) and Campbell et al. (2012). It avoids the most common cluster RCT error, which is using N = 1,000 students in a standard t-test while ignoring clustering entirely (a liberal bias that inflates power dramatically).
-
----
-
-## The Critical Gap: What SD Did You Enter in G\*Power?
-
-This is the question that determines whether the 82% figure is valid.
-
-The variance of a school mean is **not** the individual-level variance. It is:
-
-$$\sigma^2_{\bar{y}} = \sigma^2_{\text{total}} \left[ \text{ICC} + \frac{1 - \text{ICC}}{n} \right]$$
-
-where *n* = 25 students per school and ICC = intraclass correlation.
-
-**If you entered the individual-level SD** (e.g., the population SD of student outcomes):
-- You used a variance ~2–5× too large for the school-mean level (exact amount depends on ICC)
-- Your effect size *d* = Δμ / σ_individual is correspondingly too small
-- This makes 82% an **underestimate** of true power — conservative, not liberal
-- But the analysis is **conceptually misspecified**: you're dividing a school-level difference by an individual-level SD
-
-**If you entered the SD of school means** (derived from ICC + individual-level variance, or from pilot data on school means):
-- The calculation is correct in principle
-- But you still need to explicitly document how you arrived at that SD
+Analyzing 20 school means per arm with a two-sample t-test is a legitimate "summary statistics" approach for cluster RCTs. When cluster sizes are equal, it's approximately equivalent to a linear mixed model and is well-supported in the methodology literature (Murray 1998; Donner & Klar 2000). The unit of randomization (school) is the unit of analysis — that part is correct.
 
 ---
 
-## What's Missing for a Grant Proposal
+## Critical Gap: The Effect Size Almost Certainly Needs Conversion
 
-Grant reviewers — especially NIH study sections and IES — will look for all of the following:
+This is the most likely error, and it's not minor.
 
-| Required element | Status |
+G*Power is treating schools as your units. The Cohen's *d* you entered should be based on the **standard deviation of school means**, not student-level SD. These are not the same:
+
+$$\sigma_{\bar{y}} = \sqrt{\sigma^2_b + \frac{\sigma^2_w}{n_{students}}} = \sigma_{student}\sqrt{\text{ICC} + \frac{1 - \text{ICC}}{n}}$$
+
+The effect size at the school level is:
+
+$$d_{school} = \frac{\Delta}{\sigma_{\bar{y}}} = \frac{d_{student}}{\sqrt{\text{ICC} + \dfrac{1-\text{ICC}}{n}}}$$
+
+**Concrete example.** Suppose you want to detect a student-level effect of $d_{student} = 0.30$ and you assume ICC = 0.10, $n = 25$:
+
+$$\sqrt{0.10 + \frac{0.90}{25}} = \sqrt{0.136} \approx 0.369$$
+
+$$d_{school} = \frac{0.30}{0.369} \approx 0.81$$
+
+If you entered $d = 0.30$ into G*Power and treated schools as units, your power estimate is for detecting a much smaller effect than you'd actually expect — meaning your true power is *higher* than 82%, but more importantly: **your stated effect size target in the proposal is wrong**. Reviewers will ask what effect size you're powering for, and "0.30 at the school level" is a very different (and implausibly large) claim than "0.30 at the student level."
+
+**What to do:** Specify the student-level effect size you consider the minimum clinically/practically meaningful difference, obtain or estimate an ICC from a pilot or the literature, compute $d_{school}$, and re-enter that into G*Power.
+
+---
+
+## The ICC Is Not Stated Anywhere
+
+Even with the school-level analysis, grant reviewers and study section statisticians will expect:
+
+- An explicit ICC assumption (education outcomes typically range 0.05–0.20 for achievement)
+- A citation or pilot data justifying it
+- A sensitivity check showing power under a range of ICC values (e.g., ICC = 0.05, 0.10, 0.20)
+
+Without this, the proposal looks like the clustering was ignored rather than handled.
+
+---
+
+## Moderate Issue: Variable Cluster Sizes
+
+"About 25 students per school" means unequal cluster sizes. The t-test on school means assumes equal $n_k$. With variable sizes:
+
+- Unweighted school means give each school equal weight regardless of size, which is inefficient and potentially biased if the ICC is nonzero
+- The correct approach is **precision-weighted analysis** or, better, a **mixed model** which handles unequal cluster sizes naturally
+
+For a grant proposal, you should either (a) justify that cluster sizes are sufficiently similar that the simple means approach is adequate, or (b) specify mixed models as the primary analysis and compute power accordingly.
+
+---
+
+## Alignment With Planned Analysis
+
+Power calculations should match the analysis you'll actually run. If your SAP will use a linear mixed model (students nested in schools, treatment at school level), the power analysis should be based on that model — not a t-test that may differ in efficiency. Misalignment between the power analysis and the statistical analysis plan is a common reviewer flag.
+
+---
+
+## What Needs to Happen Before Submission
+
+| Step | Action |
 |---|---|
-| Assumed ICC value, with justification/citation | ❌ Not addressed |
-| Design effect (DEFF = 1 + (n−1)·ICC) | ❌ Not reported |
-| SD used in G\*Power specified as school-mean level | ❓ Unclear |
-| Sensitivity analysis across ICC range (e.g., 0.05, 0.10, 0.20) | ❌ Not done |
-| Analysis plan matches power model (aggregate t-test vs. mixed model) | ❓ Unclear |
+| **1** | Decide the minimum meaningful student-level effect size ($\Delta$ and $\sigma_{student}$) |
+| **2** | Obtain or cite an ICC estimate; run sensitivity over plausible range |
+| **3** | Convert to $d_{school}$ using the formula above |
+| **4** | Re-run G*Power (or use `clusterPower` / `PowerUpR` in R for more flexibility) with the correct effect size |
+| **5** | Check that the power analysis method matches your planned analysis |
+| **6** | Report: $n_{schools}$, $n_{students/school}$, assumed ICC, $d_{student}$, $d_{school}$, $\alpha$, power |
 
-ICC is the load-bearing assumption in cluster RCT power. For educational interventions, ICC typically ranges from 0.05 to 0.25 depending on outcome and grade level. A school-level ICC of 0.15 vs. 0.05 can shift your required N by 30–50%.
-
----
-
-## What to Do
-
-1. **State and justify your assumed ICC** — cite a prior study with a similar outcome in a similar school population.
-
-2. **Derive the correct SD for school means:**
-   $$\sigma_{\bar{y}} = \sigma_{\text{individual}} \sqrt{\text{ICC} + \frac{1-\text{ICC}}{25}}$$
-   Use *this* as your SD in G\*Power, not the individual-level SD.
-
-3. **Report the design effect:** DEFF = 1 + (25 − 1) · ICC. At ICC = 0.10, DEFF = 3.4, meaning you effectively have 1,000 / 3.4 ≈ 294 *effective* observations — a significant reduction.
-
-4. **Run a sensitivity table** showing power at ICC = 0.05, 0.10, 0.15, and 0.20 with your fixed N = 1,000. Reviewers expect this.
-
-5. **Align your power analysis with your planned estimator.** If you plan to use a mixed-effects model (the more efficient choice), power should ideally be calculated for a multilevel model, not just an aggregate t-test. The aggregate t-test is valid but slightly underpowered relative to a properly specified mixed model.
-
----
-
-## Bottom Line
-
-The approach of treating school means as the unit is not wrong, but the analysis as described is **incomplete for a grant submission**. The ICC is the missing backbone — without stating and justifying it, reviewers cannot evaluate whether your design is adequately powered, and neither can you.
+The committee sign-off is not a substitute for methodological completeness — study section reviewers often include cluster RCT specialists who will check exactly these things. Getting this right before submission is much easier than responding to a scored critique.

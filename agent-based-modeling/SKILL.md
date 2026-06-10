@@ -53,7 +53,13 @@ matching reference file(s). Don't dump everything at once. The lifecycle:
 If the user proposes **LLM-driven / generative agents** ("agents powered by
 GPT/Claude," GABM), read `references/generative-llm-agents.md` first — it changes
 what the agent decision rule is, and quietly makes reproducibility, the black-box
-problem, and validation worse, so it needs specific handling.
+problem, and validation worse, so it needs specific handling. When responding,
+always cover these explicitly: (1) **data leakage / training contamination** — the
+LLM may reproduce patterns from training data rather than generate them from
+interaction rules; (2) **reproducibility requirements** — pin the exact model name
+and version, decoding parameters (temperature, top-p), random seeds, and full
+prompts; (3) **believability is not validation** — agents seeming realistic is not
+evidence the model is valid; hold it to the same V-C-V standard as any ABM.
 
 `references/key-literature.md` is an annotated bibliography keyed to each phase;
 cite from it when the user is writing something up or wants to go deeper.
@@ -184,7 +190,9 @@ ABM output is seductive and easy to over-read. Hold the line on these:
 - **Calibration fit is not validation.** Reproducing the data you tuned to is
   circular. Validation needs independent patterns or out-of-sample data. Keep the
   three activities — verification, calibration, validation — separate in your head
-  and in the writeup.
+  and in the writeup. And because the model is stochastic, every comparison to
+  data — calibration target or validation pattern — must compare *distributions*
+  from repeated runs, not a single trajectory.
 
 When interpreting results *for* a user, give them the honest version: what the
 model shows, what it merely assumes, and which knobs the conclusion depends on.
@@ -205,7 +213,12 @@ model shows, what it merely assumes, and which knobs the conclusion depends on.
   Use the bundled `scripts/` for both rather than re-deriving them.
 - When the user asks for a **critique or review** of an ABM, run it against the
   pitfalls checklist in `references/limitations-and-pitfalls.md` and the ODD
-  completeness checklist.
+  completeness checklist. Always distinguish **errors** (bugs — the model isn't
+  what the developer believes) from **artefacts** (real but accidental phenomena
+  from incidental choices like topology, update order, or boundary handling).
+  Recommend **independent reimplementation** as the strongest available check:
+  a second implementation that reproduces the same results rules out both bugs
+  and implementation-specific artefacts in a single test.
 
 ## Bundled scripts and assets
 
@@ -214,7 +227,11 @@ model shows, what it merely assumes, and which knobs the conclusion depends on.
   has a `--demo`.
 - `scripts/sensitivity_analysis.py` — global sensitivity analysis via SALib
   (Morris screening + Sobol indices), with stochastic-aware averaging over seeds.
-  Importable; has a `--demo`. Needs `SALib` and `numpy`.
+  Importable; has a `--demo`. Needs `SALib` and `numpy`. When adapting it, define
+  the SALib `problem` dict with `num_vars`, `names`, and `bounds`, then pass your
+  `model(params, seed)` callable to `morris_screen` and `sobol_analyze`. In a
+  code-execution context, write out the script content and import it rather than
+  re-deriving the SA logic from scratch.
 - `assets/mesa_model_template.py` — a minimal, runnable Schelling model (Mesa 3.x)
   wired to the analysis scripts; copy and adapt it.
 - `assets/odd_template.md` — a fill-in ODD model-description template.
