@@ -337,17 +337,17 @@
       "category": "consistency",
       "prompt": "Using the lifelines `load_lung` dataset (or equivalent), fit a Cox model with all default predictors. Report the HR and 95% CI for age.",
       "base": {
-        "response": "You've hit your limit \u00b7 resets 12pm (America/New_York)",
-        "pass": false,
+        "response": "## Cox Model Results: Age Hazard Ratio\n\n**HR for age: 1.0129 (95% CI: [0.9895, 1.0369])**\n\nThis indicates that each 1-year increase in age is associated with a 1.29% increase in the hazard of death. However, the 95% confidence interval includes 1.0, meaning this effect is not statistically significant (p = 0.283).\n\nThe model was fit on the lifelines lung dataset (n=167 after removing missing values) with all 8 default predictors: inst, age, sex, ph.ecog, ph.karno, pat.karno, meal.cal, and wt.loss.",
+        "pass": true,
         "notes": [
-          "no rubric keywords matched (any of: ['1.02', '1.01', '1.03', 'age', 'cox', 'hazard ratio', 'hr', 'lifelines', 'lung', 'CoxPHFitter'])"
+          "matched: ['1.01', '1.03', 'age', 'cox', 'hazard ratio', 'hr', 'lifelines', 'lung']"
         ]
       },
       "skill": {
-        "response": "You've hit your limit \u00b7 resets 12pm (America/New_York)",
-        "pass": false,
+        "response": "## Results\n\nFitted a Cox proportional hazards model on the lifelines `load_lung()` dataset (N = 167 after removing missing values, 120 events observed).\n\n**Age Hazard Ratio and 95% CI:**\n\n- **HR = 1.0129** \n- **95% CI: [0.9895, 1.0369]**\n- **p-value = 0.284** (not significant)\n\n**Interpretation:** For each additional year of age, the instantaneous hazard of the event increases by ~1.29%, though this effect is not statistically significant. The confidence interval includes 1, consistent with the non-significant p-value.\n\nThe model included all 8 predictors in the dataset (inst, age, sex, ph.ecog, ph.karno, pat.karno, meal.cal, wt.loss) with a concordance index of 0.65.",
+        "pass": true,
         "notes": [
-          "no rubric keywords matched (any of: ['1.02', '1.01', '1.03', 'age', 'cox', 'hazard ratio', 'hr', 'lifelines', 'lung', 'CoxPHFitter'])"
+          "matched: ['1.01', '1.03', 'age', 'cox', 'hazard ratio', 'hr', 'lifelines', 'lung']"
         ]
       }
     },
@@ -355,17 +355,17 @@
       "category": "consistency",
       "prompt": "Do a log-rank test for sex in `survival::lung`. Report the p-value.",
       "base": {
-        "response": "You've hit your limit \u00b7 resets 12pm (America/New_York)",
-        "pass": false,
+        "response": "The log-rank test for sex in the `survival::lung` dataset yields:\n\n**p-value: 0.001** (or more precisely, 0.001311)\n\nThis indicates a statistically significant difference in survival between the two sex groups (\u03c7\u00b2 = 10.3, df = 1). Males (sex=1) had more observed deaths (112) than expected (91.6) under the null hypothesis, while females (sex=2) had fewer observed deaths (53) than expected (73.4).",
+        "pass": true,
         "notes": [
-          "no rubric keywords matched (any of: ['p-value', 'p =', 'sex', 'log-rank', 'survdiff', '0.001', '0.002', 'significant'])"
+          "matched: ['p-value', 'sex', 'log-rank', '0.001', 'significant']"
         ]
       },
       "skill": {
-        "response": "You've hit your limit \u00b7 resets 12pm (America/New_York)",
-        "pass": false,
+        "response": "The log-rank test for sex in the `survival::lung` dataset yields:\n\n**p-value = 0.0013**\n\nThis indicates a statistically significant difference in survival between males (sex=1) and females (sex=2). Males had 112 observed deaths out of 138 subjects, while females had 53 observed deaths out of 90 subjects, suggesting worse survival in males.",
+        "pass": true,
         "notes": [
-          "no rubric keywords matched (any of: ['p-value', 'p =', 'sex', 'log-rank', 'survdiff', '0.001', '0.002', 'significant'])"
+          "matched: ['p-value', 'sex', 'log-rank', '0.001', 'significant']"
         ]
       }
     },
@@ -373,17 +373,17 @@
       "category": "consistency",
       "prompt": "Do a log-rank test comparing survival by sex in the lifelines `lung` dataset. Report the p-value.",
       "base": {
-        "response": "You've hit your limit \u00b7 resets 12pm (America/New_York)",
-        "pass": false,
+        "response": "The log-rank test comparing survival by sex in the lifelines `lung` dataset yields:\n\n**p-value: 0.001311**\n\nThis is a highly significant result (p < 0.01), indicating a statistically significant difference in survival between the two sex groups. The test statistic is 10.33 with 1 degree of freedom.",
+        "pass": true,
         "notes": [
-          "no rubric keywords matched (any of: ['p-value', 'p =', 'sex', 'log-rank', 'logrank_test', '0.001', '0.002', 'significant', 'lifelines'])"
+          "matched: ['p-value', 'sex', 'log-rank', '0.001', 'significant', 'lifelines']"
         ]
       },
       "skill": {
-        "response": "You've hit your limit \u00b7 resets 12pm (America/New_York)",
-        "pass": false,
+        "response": "The log-rank test comparing survival by sex in the lifelines `lung` dataset yields:\n\n**p-value: 0.001311**\n\nThis is highly statistically significant (p < 0.005), indicating that survival curves differ significantly between males and females in the dataset.",
+        "pass": true,
         "notes": [
-          "no rubric keywords matched (any of: ['p-value', 'p =', 'sex', 'log-rank', 'logrank_test', '0.001', '0.002', 'significant', 'lifelines'])"
+          "matched: ['p-value', 'sex', 'log-rank', '0.001', 'significant', 'lifelines']"
         ]
       }
     },

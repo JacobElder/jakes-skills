@@ -168,7 +168,7 @@ The base model knows survival analysis methods. The skill gives the agent the *c
 | G2 | Multi-turn | User wants to ignore `cox.zph` p = 0.02 on treatment | Holds line through pushback; updates recommendation when residual plot shown to be mild |
 | G3 | Multi-turn | Median comparison → individual prediction → "does tenure matter?" | Evolves from descriptive to predictive; handles tenure-heterogeneity without restarting |
 
-**Analytical grading result**: 26/26 prompts passing. C4 (Python cluster-robust SEs for Andersen-Gill) is solved via `statsmodels.duration.hazard_regression.PHReg` with `entry=` for counting-process format and `groups=id` in `.fit()` for the sandwich correction — the Python equivalent of R's `cluster(id)`.
+**Automated benchmark result (haiku, iter-1)**: 29/29 with skill (100%), 21/29 baseline (72%), **+28pp delta**. Evals run via `survival-analysis/evals/run_evals.py` (baseline vs `--append-system-prompt SKILL.md`). C4 (Python cluster-robust SEs for Andersen-Gill) uses `statsmodels.duration.hazard_regression.PHReg` with `groups=id` in `.fit()` for the sandwich correction — the Python equivalent of R's `cluster(id)`.
 
 ---
 
