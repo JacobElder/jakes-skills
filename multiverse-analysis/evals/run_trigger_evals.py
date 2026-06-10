@@ -69,14 +69,6 @@ def call_claude(prompt: str, system_extra: str | None = None,
     return text
 
 
-def grade_trigger(response: str, should_trigger: bool) -> bool:
-    """Returns True (PASS) if trigger detection matches should_trigger."""
-    prompt = f"Response:\n{response[:3000]}"
-    raw = call_claude(prompt, system_extra=GRADER_SYSTEM_TRIGGER,
-                      model=GRADER_MODEL, timeout=60)
-    triggered = "TRIGGERED" in raw.upper() and "NOT_TRIGGERED" not in raw.upper()
-    return triggered == should_trigger
-
 
 def run(eval_ids: list[int] | None, conditions: list[str],
         delay: float = 1.5, skip_existing: bool = False) -> None:
@@ -119,12 +111,11 @@ def run(eval_ids: list[int] | None, conditions: list[str],
 
             print("grader…", end=" ", flush=True)
             try:
-                passes = grade_trigger(response, should_trigger)
-                # also get the raw triggered flag for logging
                 raw = call_claude(f"Response:\n{response[:3000]}",
                                   system_extra=GRADER_SYSTEM_TRIGGER,
                                   model=GRADER_MODEL, timeout=60)
                 triggered = "TRIGGERED" in raw.upper() and "NOT_TRIGGERED" not in raw.upper()
+                passes = triggered == should_trigger
             except subprocess.TimeoutExpired:
                 print("TIMEOUT (grader)")
                 continue

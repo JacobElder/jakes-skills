@@ -1,18 +1,17 @@
 ---
 name: multiverse-analysis
 description: >-
-  Run, build, or report a multiverse / specification-curve analysis: making the
-  arbitrary-but-defensible choices in a data analysis explicit, running the analysis under
-  every reasonable combination of those choices, and reporting the whole distribution of
-  results instead of one hand-picked number. Use this whenever someone wants to test how
-  robust a finding is to analytic choices, asks "would the result hold under different
-  specifications / outlier rules / covariates / operationalizations", mentions multiverse
-  analysis, specification curve analysis, researcher degrees of freedom, garden of
-  forking paths, vibration of effects, or sensitivity-to-specification — and also when a
-  user is anxious that their regression/effect "might just be an artifact of how I set up
-  the analysis" even without knowing the term. Covers eliciting the decision set, enumerating
-  and executing universes, plotting the specification curve, quantifying which decisions
-  matter, and joint permutation inference, in Python (bundled engine) or R.
+  Run a multiverse / specification-curve analysis: enumerate the arbitrary-but-defensible
+  analytic choices, run every reasonable combination, and report the full distribution of
+  results. Trigger when the user wants to test robustness to analytic choices, mentions
+  multiverse analysis, specification curve analysis, researcher degrees of freedom, garden
+  of forking paths, vibration of effects, or sensitivity-to-specification — or when anxious
+  their result "might be an artifact of how I set up the analysis." Covers decision
+  elicitation, executing universes, the specification curve, decision importance (eta-sq),
+  and joint permutation inference, in Python (bundled engine) or R. Do NOT trigger for:
+  financial sensitivity / scenario analysis, single robustness checks, subgroup replication,
+  non-statistical "universe" (dataset column, franchise label), hyperparameter sweeps, or
+  neural architecture search.
 ---
 
 # Multiverse analysis

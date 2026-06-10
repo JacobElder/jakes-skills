@@ -64,6 +64,24 @@ The skill is opinionated — deliberately so. It will tell you when your effect 
 
 ---
 
+## Benchmark
+
+Evaluated on 6 tasks spanning the full skill surface. Graded with `claude-sonnet-4-6` executor and `claude-haiku-4-5` grader; an eval passes when all must-pass assertions hold and ≥ 80 % of scored assertions hold.
+
+| Eval | Topic | Base | With skill |
+|------|-------|------|------------|
+| 0 | Full pipeline — robust effect | 5/6 ✓ | **6/6 ✓** |
+| 1 | Fragile effect detection | 5/6 | **6/6 ✓** |
+| 2 | Scale-comparability warning | 3/5 | **5/5 ✓** |
+| 3 | Constraint elicitation (binary DV) | 4/5 | **5/5 ✓** |
+| 4 | Correlation estimand setup | 4/5 | **5/5 ✓** |
+| 5 | Adversarial cherry-picking pushback | 4/5 | **5/5 ✓** |
+| **Total** | | 25/32 (78 %) | **32/32 (100 %)** |
+
+**+21.9 pp** over the base model across all 6 evals.
+
+---
+
 ## References
 
 - Steegen, S., Tuerlinckx, F., Gelman, A., & Vanpaemel, W. (2016). Increasing transparency through a multiverse analysis. *Perspectives on Psychological Science*, 11(5), 702–712.
