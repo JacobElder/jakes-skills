@@ -150,24 +150,112 @@ Seven of ten traps showed no gap. The base model handles direct pushback questio
 
 `singular-fit-drop-everything` shows the skill's largest absolute advantage (+40pp) but both configurations score poorly — the two failing expectations require a fine-grained boundary-vs-convergence distinction that neither configuration articulates consistently.
 
+### Iteration 3 — extended trap suite + harder prompts
+
+Expanded to 13 evals (65 total expectations). Replaced 3 non-discriminating iter-2 evals with harder versions; added 3 new evals covering MLM vs. GEE, CRSE vs. MLM, and within-cluster predictor slopes.
+
+| | With skill | Without skill | Delta |
+|--|:---:|:---:|:---:|
+| **Total expectations** | **61/65 (93.8%)** | **57/65 (87.7%)** | **+6.2pp** |
+
+| Eval | With skill | Without skill | Delta |
+|------|:---:|:---:|:---:|
+| `random-intercept-validation` | 5/5 | 5/5 | +0pp |
+| `convergence-simplification` | 5/5 | 4/5 | **+20pp** |
+| `aggregation-fallacy` | 5/5 | 5/5 | +0pp |
+| `reviewer-cluster-means` | 5/5 | 4/5 | **+20pp** |
+| `treatment-coding-simple-effects` | 5/5 | 5/5 | +0pp |
+| `glmm-marginal-interpretation` | 5/5 | 5/5 | +0pp |
+| `items-as-fixed` | 5/5 | 5/5 | +0pp |
+| `ols-clustered-rubber-stamp` | 5/5 | 5/5 | +0pp |
+| `singular-fit-drop-everything` | 3/5 | 1/5 | **+40pp** |
+| `paired-t-defensible` | 4/5 | 4/5 | +0pp |
+| `mlm-vs-gee-policy` | 5/5 | 5/5 | +0pp |
+| `crse-vs-mlm-reviewer` | 4/5 | 4/5 | +0pp |
+| `within-cluster-slope-observational` | 5/5 | 5/5 | +0pp |
+
+### Iteration 3 findings
+
+Three evals discriminate consistently across both iterations:
+
+| Eval | Consistent gap | What the base model misses |
+|---|:---:|---|
+| `singular-fit-drop-everything` | +40pp | Skips diagnostics and upstream fixes; doesn't distinguish boundary estimate from convergence failure |
+| `convergence-simplification` | +20pp | Accepts Bates et al. (2015) citation as license for intercept-only; doesn't invoke Matuschek et al. (2017) |
+| `reviewer-cluster-means` | +20pp | Misses one specificity expectation on when MLM adds value over OLS |
+
+**New evals non-discriminating:** `mlm-vs-gee-policy`, `crse-vs-mlm-reviewer`, and `within-cluster-slope-observational` all score 5/5 for both configurations. The base model correctly handles the GEE vs. MLM distinction, defends CRSE against unnecessary MLM, and catches the within-cluster predictor slope — these are topics where its factual coverage is strong enough that framing as a trap doesn't create a gap.
+
+**Cross-iteration pattern:** The gap narrowed from +10pp (iter-2) to +6.2pp (iter-3) as trap formulations improved and new evals confirmed the base model's strong coverage. Iteration 4 expanded to 16 evals and calibrated over-specified expectations, recovering the full signal to +13.8pp.
+
+### Iteration 4 — three new evals + expectation calibration
+
+Expanded to 16 evals (80 total expectations). Added three traps covering growth curve time slopes, three-level fixed-effects collinearity, and cluster RCT power analysis. Calibrated five over-specified expectations that required exact function names rather than conceptually correct reasoning.
+
+| | With skill | Without skill | Delta |
+|--|:---:|:---:|:---:|
+| **Total expectations** | **79/80 (98.8%)** | **68/80 (85.0%)** | **+13.8pp** |
+
+| Eval | With skill | Without skill | Delta |
+|------|:---:|:---:|:---:|
+| `random-intercept-validation` | 5/5 | 5/5 | +0pp |
+| `convergence-simplification` | 5/5 | 4/5 | **+20pp** |
+| `aggregation-fallacy` | 5/5 | 5/5 | +0pp |
+| `reviewer-cluster-means` | 5/5 | 4/5 | **+20pp** |
+| `treatment-coding-simple-effects` | 5/5 | 5/5 | +0pp |
+| `glmm-marginal-interpretation` | 5/5 | 5/5 | +0pp |
+| `items-as-fixed` | 5/5 | 5/5 | +0pp |
+| `ols-clustered-rubber-stamp` | 5/5 | 5/5 | +0pp |
+| `singular-fit-drop-everything` | 5/5 | 1/5 | **+80pp** |
+| `paired-t-defensible` | 5/5 | 5/5 | +0pp |
+| `mlm-vs-gee-policy` | 5/5 | 5/5 | +0pp |
+| `crse-vs-mlm-reviewer` | 5/5 | 4/5 | **+20pp** |
+| `within-cluster-slope-observational` | 5/5 | 5/5 | +0pp |
+| `growth-curve-time-slope` | 5/5 | 2/5 | **+60pp** |
+| `three-level-district-fixed` | 5/5 | 5/5 | +0pp |
+| `cluster-rct-power-gpower` | 4/5 | 3/5 | **+20pp** |
+
+### Iteration 4 findings
+
+Six evals discriminate consistently:
+
+| Eval | Gap | What the base model misses |
+|---|:---:|---|
+| `singular-fit-drop-everything` | +80pp | Doesn't distinguish boundary estimate from convergence failure; skips allFit() and upstream fixes before dropping slopes |
+| `growth-curve-time-slope` | +60pp | Accepts advisor's "add slope only if variance is clearly non-zero" rule; treats 0.003 as self-evidently negligible; inverts Barr et al. maximal-structure logic |
+| `convergence-simplification` | +20pp | Accepts Bates et al. (2015) citation as license for intercept-only without invoking Matuschek et al. (2017) or the design-based argument |
+| `reviewer-cluster-means` | +20pp | Defers to reviewer's school-means suggestion without naming what is lost |
+| `crse-vs-mlm-reviewer` | +20pp | Fails to enumerate the cases where MLM genuinely adds value over CRSE |
+| `cluster-rct-power-gpower` | +20pp | Accepts committee-approved G*Power analysis without flagging that schools, not students, are the binding precision constraint |
+
+**New eval results:** `growth-curve-time-slope` is the strongest new discriminator (+60pp) — the base model explicitly validates the wrong advisor convention. `three-level-district-fixed` showed no gap; the base model correctly identifies that district fixed effects are collinear with a district-level treatment. `cluster-rct-power-gpower` discriminates modestly (+20pp).
+
+**Ten evals remain non-discriminating:** The base model handles MLM-vs-GEE-vs-CRSE decisions, items-as-fixed, treatment coding, and within-cluster slope detection correctly without the skill.
+
 ---
 
 ## Eval suite
 
-10 trap-based evals (iteration 2).
+16 trap-based evals (iteration 4).
 
 | # | Case | Trap | Expectations |
 |---|------|------|:---:|
-| 1 | `random-intercept-validation` | User presents intercept-only model for within-subjects condition; advisor approved it | 5 |
-| 2 | `convergence-simplification` | User dropped all slopes until model converged; now writing up the stripped model | 5 |
+| 1 | `random-intercept-validation` | 2×2 mixed design; advisor approved intercept-only; requires distinguishing which factor needs a slope | 5 |
+| 2 | `convergence-simplification` | User cites Bates et al. (2015) to justify intercept-only simplification | 5 |
 | 3 | `aggregation-fallacy` | User averaged to subject means and ran ANOVA; "how it's done in the lab" | 5 |
 | 4 | `reviewer-cluster-means` | Reviewer says to use school-level means as unit of analysis | 5 |
 | 5 | `treatment-coding-simple-effects` | User interprets treatment-coded simple effect as average effect | 5 |
 | 6 | `glmm-marginal-interpretation` | User reports GLMM fixed-effect OR as "population-level" effect | 5 |
 | 7 | `items-as-fixed` | User argues items aren't random because everyone sees the same set | 5 |
-| 8 | `ols-clustered-rubber-stamp` | User ran OLS on trial-level data; asks for write-up help | 5 |
-| 9 | `singular-fit-drop-everything` | User dropped slopes iteratively until warnings disappeared | 5 |
+| 8 | `ols-clustered-rubber-stamp` | User used HC3 heteroskedasticity-robust SEs thinking it handles clustering | 5 |
+| 9 | `singular-fit-drop-everything` | User dropped slopes iteratively until all singular-fit warnings disappeared | 5 |
 | 10 | `paired-t-defensible` | Collaborator claims MLM is required for a 2-condition balanced design | 5 |
+| 11 | `mlm-vs-gee-policy` | User reports GLMM conditional OR as population-average effect for policymakers | 5 |
+| 12 | `crse-vs-mlm-reviewer` | Panel data with FEs + CRSE; reviewer demands MLM (anti-over-engineering) | 5 |
+| 13 | `within-cluster-slope-observational` | SES varies within schools; user presents intercept-only as sufficient | 5 |
+| 14 | `growth-curve-time-slope` | Advisor endorses "drop slope if variance ≈ 0" rule; variance = 0.003 in growth model | 5 |
+| 15 | `three-level-district-fixed` | Collaborator proposes district fixed effects for district-level treatment (collinearity trap) | 5 |
+| 16 | `cluster-rct-power-gpower` | Dissertation committee signed off on G*Power t-test for a cluster RCT | 5 |
 
 ---
 

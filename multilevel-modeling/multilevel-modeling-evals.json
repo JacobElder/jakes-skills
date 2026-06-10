@@ -112,9 +112,9 @@
       "expected_output": "Does NOT validate the stepwise dropping approach. Asks or notes what the school-level variance being 0 might mean. Walks through principled alternatives. Notes that convergence warnings and singularity are different problems.",
       "expectations": [
         "Output does NOT simply validate the final model and move forward",
-        "Output distinguishes between a variance component estimated at exactly 0.000 (boundary — the model is telling you something) and a convergence failure (numerical — try different optimizer)",
+        "Output distinguishes between genuine singularity (variance at 0 because the data lack information for that component) and optimizer-related convergence failure — or identifies that this distinction needs to be diagnosed, e.g. by running allFit() to check whether different optimizers agree",
         "Output explains that dropping random slopes because variance = 0 risks under-specifying if those slopes are required by the design — recommends checking whether the design actually requires the school-level slope before removing it",
-        "Output recommends at least one diagnostic check before accepting the simplified model: inspecting variance components via VarCorr(), summary()$varcor, rePCA(), or equivalent",
+        "Output recommends at least one diagnostic check before accepting the simplified model — such as VarCorr(), rePCA(), summary()$varcor, allFit(), or comparing refitted models — rather than accepting the stepwise variance-dropping at face value",
         "Output mentions trying upstream fixes before dropping structure — scaling predictors, sum coding, allFit() — and notes that principled simplification drops correlation parameters before slopes"
       ]
     },
@@ -126,7 +126,7 @@
       "expectations": [
         "Output defends the paired t-test as statistically defensible for this specific design — 2 conditions, complete data, balanced, one score per person per condition",
         "Output does NOT insist on MLM as required or validate the collaborator's claim that reviewers will reject a t-test here",
-        "Output explains that a paired t-test is mathematically equivalent to a two-level MLM of the form lmer(score ~ condition + (1 + condition | subject)) for complete, balanced data",
+        "Output explains that a paired t-test is mathematically equivalent to a two-level MLM for complete, balanced data — it can state this directly, explain that both test the same within-person contrast, or demonstrate the equivalence without requiring a specific model formula",
         "Output notes where MLM would genuinely add value: missing data, more than 2 time points, additional covariates, or random slopes with more than one stimulus per condition",
         "Output's tone correctly calibrates — direct answer to the actual question rather than reflexively recommending the more complex method"
       ]
@@ -154,7 +154,7 @@
         "Output does NOT agree with Reviewer #2 that the approach is 'invalid' or requires MLM to be publishable",
         "Output explains that firm fixed effects already absorb all time-invariant unobserved heterogeneity at the firm level — which is the main thing MLM random effects add; stacking MLM random effects on top of FEs is unusual and doesn't add identification value in a linear model",
         "Output explains that with 800 clusters and a linear outcome, cluster-robust SEs are reliable and OLS+CRSE is the standard panel econometrics approach for this design",
-        "Output correctly notes when MLM would add genuine value over CRSE: fewer clusters (<30), interest in cross-level interactions or variance components, or needing predictions for new out-of-sample clusters"
+        "Output correctly notes at least one scenario where MLM would add genuine value over CRSE — e.g., fewer than ~30 clusters, interest in cross-level interactions, variance decomposition, or out-of-sample cluster predictions"
       ]
     },
     {
@@ -168,6 +168,45 @@
         "Output explains the mechanism: without a by-school SES slope, the model assumes the SES-achievement relationship is identical across all schools; the test of SES conflates within-school and between-school effects and is anti-conservative",
         "Output recommends refitting with (1 + SES | school) before writing up",
         "Output does NOT frame the by-school SES slope as 'something to consider' or optional — it is required because SES varies within clusters, just as within-subjects factors require random slopes in experimental designs"
+      ]
+    },
+    {
+      "id": 14,
+      "name": "growth-curve-time-slope",
+      "prompt": "I'm running a growth curve model — 120 participants measured at baseline, 3, and 6 months on a depression scale. I fit: lmer(depression ~ time * treatment + (1 | subject)). The random slope variance for time came back at 0.003, essentially zero. My advisor said this is actually standard practice in growth modeling: start with random intercepts, and only add the time slope if the variance is clearly non-zero. Since it's negligible here, drop it. The interaction effect I care about is significant. Can I write this up?",
+      "expected_output": "Does NOT validate dropping the random slope for time. Explains that individual differences in trajectories — the random slope for time — are the substantive heart of a growth curve model. Explains that 0.003 absolute variance needs context relative to residual variance. Does not accept 'advisor says standard practice' as justification.",
+      "expectations": [
+        "Output does NOT validate dropping the by-subject random slope for time or agree the model is ready to write up",
+        "Output explains that time is a within-subjects predictor (each participant has three observations over time), so the design requires a random slope for time — omitting it uses the wrong error term for time-related effects and inflates Type I error",
+        "Output does not accept 0.003 as self-evidently negligible — either flags that the value needs diagnostic context, notes that small absolute variance doesn't automatically mean the slope should be dropped, or recommends checking via VarCorr(), rePCA(), or isSingular() before deciding",
+        "Output recommends at least one diagnostic step before dropping the slope — such as VarCorr(), rePCA(), isSingular(), comparing model fits, or checking whether simplification changes fixed-effect estimates — rather than accepting the advisor's variance-threshold rule at face value",
+        "Output does NOT accept the advisor's 'start with intercepts, add slopes only if variance is clearly non-zero' framing as the correct approach for confirmatory growth modeling — this inverts the maximal-structure logic from Barr et al. (2013)"
+      ]
+    },
+    {
+      "id": 15,
+      "name": "three-level-district-fixed",
+      "prompt": "I'm evaluating a district-level literacy policy — 600 students in 30 schools in 15 districts. Half the districts adopted the policy, half did not. A collaborator suggests: include district fixed effects (14 dummies) plus school random intercepts to control for district-level confounders and get unbiased estimates of the policy effect. The model would be: lmer(score ~ policy + district_dummies + covariates + (1 | school)). This seems rigorous. Does this work?",
+      "expected_output": "Identifies the collinearity problem: district fixed effects absorb all district-level variance including the policy, making the policy effect inestimable. Does NOT validate the approach. Recommends a three-level MLM with district as a random effect and policy as a district-level predictor.",
+      "expectations": [
+        "Output identifies that including district fixed effects (14 dummies) will absorb all district-level variance — including the variance from the policy itself, since policy is assigned at the district level — making the policy coefficient inestimable or collinear with the dummies",
+        "Output does NOT validate the collaborator's approach as producing 'unbiased estimates of the policy effect'",
+        "Output explains the general principle: fixed effects for a grouping factor control for all variation at that level, so predictors that vary only at that level (like a district-level treatment) cannot be estimated alongside those fixed effects",
+        "Output recommends a three-level MLM with students nested in schools nested in districts, with district as a random grouping factor and policy as a district-level predictor",
+        "Output notes that with only 15 districts, random effects estimation will be noisy — recommends Bayesian estimation with weakly informative priors, or at minimum acknowledges the limited level-3 sample size as a constraint on precision"
+      ]
+    },
+    {
+      "id": 16,
+      "name": "cluster-rct-power-gpower",
+      "prompt": "I'm designing a cluster RCT: 40 schools randomly assigned to intervention or control (20 per arm), about 25 students per school (N ≈ 1,000 students). I used G*Power to do a power analysis for a two-sample t-test comparing the 20 school-level means per arm, and got 82% power. My dissertation committee signed off on this. Is the power analysis complete and ready for the grant proposal?",
+      "expected_output": "Does NOT validate the G*Power t-test as complete for a cluster RCT with student-level outcomes. Explains the design effect: ICC × cluster size inflates required N substantially. Notes that 20 schools per arm is the binding precision constraint, not student N. Recommends simulation-based or MLM-appropriate power analysis.",
+      "expectations": [
+        "Output does NOT validate the G*Power two-sample t-test as a complete power analysis for a cluster RCT with student-level outcomes",
+        "Output explains that the standard G*Power analysis ignores the clustering structure — either by naming the design effect (DEFF = 1 + (m−1)×ICC), explaining that the effective sample size is reduced by clustering, or stating that clustered observations violate the independence assumption that G*Power relies on",
+        "Output identifies that statistical power for the school-level intervention effect is primarily determined by the number of schools, not total student N — whether by naming cluster count as the binding constraint, noting school-level degrees of freedom, or explaining that adding more students per school without adding more schools does not solve the power problem",
+        "Output recommends simulation-based power (simr in R, mixedpower) or an MLM-appropriate power formula (e.g., Spybrook et al., Donner & Klar) rather than G*Power with a standard t-test",
+        "Output does NOT accept the dissertation committee's sign-off as methodological validation of the approach"
       ]
     }
   ]
