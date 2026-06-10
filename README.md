@@ -18,6 +18,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | +13.7pp across 16 trap-based evals (100% vs 86.2%); +80pp on singular-fit simplification, +60pp on growth curve time slopes |
 | [network-analysis](#network-analysis) | Network science & social network analysis | +32.5pp across 8 trap-based evals |
 | [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +15.4pp across 8 scenarios (intersection skill) |
+| [survey-design](#survey-design) | Survey & questionnaire design | +52pp across 6 evals (100% vs. 48.5%) |
 
 ---
 
@@ -136,6 +137,18 @@ Apply the network approach to psychological measurement — GGMs on questionnair
 **Gap:** +15.4pp across 8 scenarios (100% with skill, 84.6% without). Largest gaps on node selection (+25pp), Expected Influence vs. Strength (+20pp), hairball diagnosis (+20pp), bootstrap CI vs. difference test (+20pp), and reporting standards (+20pp).
 
 → [psychometric-networks/](psychometric-networks/)
+
+---
+
+## survey-design
+
+Design, review, and repair self-report surveys and questionnaires. Covers question wording, response format selection, scale construction, instrument assembly, response-bias mitigation, and the errors that originate at design time — before any data is collected.
+
+**Why it matters:** The base model knows survey design facts but gives accommodating responses. When a user insists on a methodologically weak design, it validates the choices and provides formatting tips rather than explaining the data-quality cost. The skill gives the agent the conviction to explain the *specific* mechanism behind each design problem — the variance loss from a 2-point scale, the satisficing dynamic that causes "select all that apply" to undercount late items, the acquiescence inflation from agree/disagree batteries — and hold that position under pushback. It also enforces a clean boundary with psychometrics: questions about reliability coefficients, factor analysis, and IRT are handed off rather than improvised.
+
+**Gap:** +52pp — 100% with skill vs. 48.5% base (36/36 assertions across 6 evals). Biggest gaps on the pushback eval (+83pp — base model validates user's bad choices; skill explains the data-quality cost and recommends the correct alternative) and the calibration eval (correctly avoids inventing flaws in a well-designed instrument).
+
+→ [survey-design/](survey-design/)
 
 ---
 
