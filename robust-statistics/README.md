@@ -98,43 +98,48 @@ The skill's most important moves:
 
 ## Benchmark: skill vs. base model
 
-Evaluated against 34 evals: 21 from the original suite (testing a range of statistical reasoning), 13 new evals (targeting the specific failure modes above). Each eval uses `must_pass` assertions (necessary conditions) and `scored` assertions (80% threshold required).
+Evaluated against 37 evals: 21 from the original suite (testing a range of statistical reasoning), 16 new evals (targeting specific failure modes). Each eval uses `must_pass` assertions (necessary conditions) and `scored` assertions (80% threshold required). All 37 evals confirmed across both conditions.
 
-| | With skill | Without skill | Delta |
-|--|:---:|:---:|:---:|
-| **Selected differentiating evals** | **19/18** | **14/18** | **+~28pp** |
+| | With skill | Without skill |
+|--|:---:|:---:|
+| **Differentiating evals (skill wins)** | **15/15 PASS** | **14/15 FAIL** |
+| **Non-differentiating evals (both pass)** | **22/22 PASS** | **22/22 PASS** |
 
-### Where the base model fails — confirmed differentiating evals
+### Where the base model fails — the 15 differentiating evals
 
-| Eval | Trap | With skill | Without skill |
-|---|---|:---:|:---:|
-| RCT causal estimand | Randomized experiment presented; asks about "average spend difference" without flagging causal claim | 5/5 PASS | 4/5 FAIL |
-| Subgroup comparison fallacy | "Significant in men (p=0.03), not women (p=0.12) — effect differs" | 5/5 PASS | 0/5 FAIL* |
-| Log-transform false rule | "Everyone knows you must log-transform right-skewed data" | 5/5 PASS | 4/5 FAIL |
-| Shapiro-Wilk false comfort | "p = 0.08, so normality is fine and inference is valid" | 4/4 PASS | 3/4 FAIL |
-
-\* Baseline eval hit an API overload error during grading; the response itself contained no correction of the false premise.
+| Eval | What it tests | Delta |
+|---|---|:---:|
+| Subgroup comparison fallacy | "Significant in men (p=0.03), not women (p=0.12) — effect differs" | +100pp |
+| Lord's paradox (ANCOVA vs change score) | "Which is correct: change score or ANCOVA?" — baseline declares ANCOVA always correct | +80pp |
+| Residual diagnostics (QQ + funnel) | Non-normal QQ and heteroskedasticity pattern — what to do and what it means | +40pp |
+| Median income estimand | Asking for median difference; deciding between t-test, Mann-Whitney, quantile regression | +40pp |
+| Large-n asymptotics scope | "n=2.3M so I don't have to worry about assumptions" — what large n actually rescues | +25pp |
+| Shapiro-Wilk false comfort | "p = 0.08, so normality is fine and inference is valid" | +25pp |
+| Count regression estimand | Support-ticket counts: when Poisson/NB vs OLS, and what each buys | +20pp |
+| Beta regression scope | Proportions outcome: when to use beta vs logit-transformed OLS vs LPM | +20pp |
+| Pre/post matched groups | ANCOVA on matched pre/post data — what the pre-score adjustment achieves | +20pp |
+| RCT causal estimand | Randomized experiment: difference in means is the unbiased causal estimand | +20pp |
+| Table 2 fallacy | Reporting all logistic regression coefficients as causal effects | +20pp |
+| MAR subtlety for complete-case | 20% outcome missingness: when complete-case is valid beyond MCAR | +20pp |
+| Quantile regression nuance | Distribution-free property and heterogeneous-effects estimand | +20pp |
+| Log-transform false rule | "Everyone knows you must log-transform right-skewed data" | +20pp |
+| VIF multicollinearity | Reviewer demands dropping variables due to VIF > 5 — what VIF actually means for inference | +20pp |
 
 ### Non-discriminating evals — base model already handles these
 
-| Eval | Case |
-|---|---|
-| Permutation test at n=45, skew ~1.5 | Base model correctly says t-test is fine and permutation offers no protection |
-| Bonferroni with 3 pre-specified outcomes | Base model engages with OR/AND logic and mentions Holm |
-| Voluntary training program t-test for causal effect | Base model correctly identifies self-selection as confounding |
-| n=150 with non-normal histogram | Base model correctly invokes CLT |
+The base model passes 22 evals without the skill. These span: Type M/S errors under low power, post-selection inference, permutation sharp vs weak null, CLT at large n, Bonferroni vs Holm, zero-inflated counts, logistic regression separation, bootstrap CIs, causal confounding from voluntary participation, LPM vs logistic, mediator/collider identification, regression to the mean, and standard GLM family selection.
 
-The skill's differential value concentrates on **cases where the false premise is stated confidently by the user** (difference-in-significance, false universal rules, assumption-test as confirmation) rather than on knowledge gaps the base model simply lacks.
+The skill's differential value concentrates on **subtle nuances the base model glosses over** (the mediator-specific MAR subtlety, quantile regression's distribution-free property, what exactly large n rescues) and on **cases where the user states a false premise confidently** (false universal rules, subgroup comparison fallacy, assumption-test as confirmation, Lord's paradox). The base model handles direct knowledge questions well; the skill changes behavior when the question is framed as "is my approach right?" with a flawed premise embedded.
 
 ---
 
 ## Eval suite
 
-34 evals across two categories.
+37 evals across two categories.
 
-**Category 1 — Statistical reasoning (evals 1–21):** Two-group comparisons, GLM family selection, overdispersion, zero-inflation, count regression, logistic regression, survival analysis, causal identification, quantile regression, missing data, heteroskedasticity, clustered SEs, bootstrap, permutation tests.
+**Category 1 — Statistical reasoning (evals 1–21):** Two-group comparisons, GLM family selection, overdispersion, zero-inflation, count regression, logistic regression, survival analysis, causal identification, quantile regression, missing data, heteroskedasticity, clustered SEs, bootstrap, permutation tests, proportions outcomes, pre/post designs.
 
-**Category 2 — Targeted failure modes (evals 22–34):** Difference-in-significance fallacy, Type M/S errors, Table 2 fallacy, post-selection inference, missing data MCAR/MAR/MNAR, quantile regression estimand, permutation test over-engineering, adversarial false premises, Shapiro-Wilk as normality confirmation, Bonferroni mandatory rule, causal identification.
+**Category 2 — Targeted failure modes (evals 22–37):** Difference-in-significance fallacy, Type M/S errors, Table 2 fallacy, post-selection inference, missing data MCAR/MAR/MNAR, quantile regression estimand, permutation test over-engineering, adversarial false premises, Shapiro-Wilk as normality confirmation, Bonferroni mandatory rule, Lord's paradox / ANCOVA vs change score, mediator vs confounder identification, regression to the mean.
 
 ---
 

@@ -1,0 +1,40 @@
+{
+  "eval_id": 8,
+  "condition": "baseline",
+  "prompt": "A reviewer is demanding I drop variables because my VIFs are above 5. I care about the coefficient on price, which has a VIF of 2.1. The high-VIF variables are control variables I'm not interpreting. What should I do?",
+  "response": "The reviewer is applying the VIF rule incorrectly. Here's the situation:\n\n**VIF only matters for variables you're interpreting.** High VIF inflates the standard error of *that variable's* coefficient. If your controls have high VIF, their SEs are imprecise \u2014 but that's irrelevant if you're not interpreting them. Your price coefficient has VIF = 2.1, which is fine.\n\n**Dropping controls to reduce VIF is dangerous.** If those controls belong in the model on theoretical grounds, removing them introduces omitted variable bias \u2014 which distorts the coefficient you *do* care about (price). You'd be trading a cosmetic problem for a real one.\n\n**What to tell the reviewer:**\n\n1. VIF is a diagnostic for precision of interpretation, not model validity. The variable being interpreted (price) has VIF = 2.1, well within any reasonable threshold.\n2. The high-VIF controls are included to satisfy the conditional independence assumption, not to be interpreted. Their collinearity is a known property of including related covariates.\n3. Dropping them risks biasing the price estimate \u2014 the opposite of the reviewer's goal.\n\n**Practical response options:**\n\n- Cite Kutner et al. or Greene's *Econometric Analysis*: VIF thresholds are heuristics, and the concern applies to coefficients being interpreted.\n- Add a robustness check: run the model without the high-VIF controls and show the price coefficient is stable (it should be if they're collinear with each other but not with price). Stability = no omitted variable bias concern.\n- Point out that if two controls are collinear with *each other* but not with price, dropping one changes nothing about price's estimate or SE \u2014 demonstrating the reviewer's concern is misplaced.\n\nThe robustness check is the most persuasive move: show price = X.XX (SE = Y) with and without the contested controls, and the reviewer has no ground to stand on.",
+  "assertions": [
+    {
+      "text": "States that multicollinearity inflates standard errors of the collinear coefficients but does not bias estimates",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that collinearity among controls does not impair the coefficient of interest (price) when price itself is not highly collinear",
+      "type": "scored"
+    },
+    {
+      "text": "Warns that dropping the control variables could introduce omitted-variable bias",
+      "type": "scored"
+    },
+    {
+      "text": "Pushes back on the reflexive 'VIF > 5 so drop variables' rule rather than complying with it",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the decision in terms of the goal/estimand (the price coefficient) rather than a mechanical threshold",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    false,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

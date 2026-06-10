@@ -1,0 +1,40 @@
+{
+  "eval_id": 14,
+  "condition": "baseline",
+  "prompt": "My count outcome has a ton of zeros (about 60% zeros). I read that I need a zero-inflated model. Is that right?",
+  "response": "Not necessarily \u2014 60% zeros is a symptom, not a diagnosis. Whether you need zero-inflation depends on whether those zeros are *excess* relative to what a standard count model already predicts.\n\n**The key distinction**\n\nA Poisson model with mean \u03bb = 0.5 already predicts ~61% zeros (P(X=0) = e^(-0.5)). If your outcome has a low mean, many zeros may be entirely expected under a standard model. Zero-inflation is warranted only when zeros are in excess of that baseline.\n\n**How to actually check**\n\n1. Fit a standard Negative Binomial (NegBin) first \u2014 not Poisson. NegBin handles overdispersion, which often absorbs apparent excess zeros.\n2. Compare predicted vs. observed zero count. A **rootogram** visualizes this cleanly.\n3. If zeros are still in excess, compare ZIP/ZINB to NegBin via Vuong test or AIC/BIC.\n\nIn R:\n```r\nlibrary(MASS); library(pscl); library(countreg)\n\nm_nb   <- glm.nb(y ~ x1 + x2, data = df)\nm_zinb <- zeroinfl(y ~ x1 + x2 | x1, data = df, dist = \"negbin\")\n\n# Rootogram to visualize fit\nrootogram(m_nb)\n\n# Vuong test: positive z favors zero-inflated\nvuong(m_zinb, m_nb)\n```\n\n**Also consider whether your zeros are structurally different**\n\nZero-inflated models assume two data-generating processes: a \"never\" group (structural zeros) and a \"sometimes\" group that can produce zeros by chance. If that's not theoretically justified \u2014 e.g., every unit in your sample *could* have a nonzero count \u2014 a **hurdle model** (`pscl::hurdle`) is often a cleaner choice, because it separates \"zero vs. any count\" from \"how many, given > 0.\"\n\n**Bottom line:** Fit NegBin, check the rootogram, then decide. Many datasets with 60% zeros are fine with NegBin alone.",
+  "assertions": [
+    {
+      "text": "Says a zero-inflated model is not automatically required and recommends first checking whether negative binomial absorbs the zeros",
+      "type": "scored"
+    },
+    {
+      "text": "Distinguishes hurdle (single zero process) from zero-inflated (structural zeros plus a count process that also yields zeros)",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the choice around the substantive data-generating story (e.g. 'never at risk' structural zeros vs incidental zeros) rather than the zero percentage alone",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions checking model adequacy on the zeros (e.g. posterior predictive / comparing observed vs predicted zero counts)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT reflexively prescribe zero-inflation just because there are many zeros",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

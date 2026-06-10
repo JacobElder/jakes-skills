@@ -1,0 +1,40 @@
+{
+  "eval_id": 8,
+  "condition": "with_skill",
+  "prompt": "A reviewer is demanding I drop variables because my VIFs are above 5. I care about the coefficient on price, which has a VIF of 2.1. The high-VIF variables are control variables I'm not interpreting. What should I do?",
+  "response": "Your analysis is fine. Push back on the reviewer.\n\n**The VIF on price is 2.1.** That is the only number that matters for your inferential goal. A VIF of 2.1 means the SE on the price coefficient is inflated by a factor of \u221a2.1 \u2248 1.45 relative to an orthogonal design \u2014 a modest cost, fully reflected in your reported CI. There is no bias anywhere. Your estimate of the price coefficient is unaffected by the collinearity among the controls.\n\n**The high-VIF controls are irrelevant to your claim.** Collinearity inflates the SEs of the collinear variables themselves. Since you are not interpreting those coefficients, their inflated SEs don't hurt you. The collinearity among controls does not contaminate the coefficient on price.\n\n**Dropping controls to reduce VIF would be strictly worse.** If those high-VIF variables are genuine confounders of price (the reason you included them), removing them introduces omitted-variable bias in your price estimate. You'd be trading a clean, correctly-specified model for a misspecified one \u2014 in exchange for cosmetically lower VIFs on variables you weren't going to interpret anyway.\n\n**The VIF > 5 rule has no statistical foundation as a drop-the-variable decision criterion.** It is a heuristic, not a theorem. The relevant question is always \"does this inflate the SE on the coefficient I care about to the point that my inference is useless?\" At VIF = 2.1, the answer is clearly no.\n\nThe response to the reviewer: \"The variable of interest has a VIF of 2.1; multicollinearity is not inflating its standard error to a degree that affects inference. The high-VIF variables are controls included to reduce confounding bias; removing them would introduce omitted-variable bias in the primary estimate, which is the worse tradeoff.\"",
+  "assertions": [
+    {
+      "text": "States that multicollinearity inflates standard errors of the collinear coefficients but does not bias estimates",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that collinearity among controls does not impair the coefficient of interest (price) when price itself is not highly collinear",
+      "type": "scored"
+    },
+    {
+      "text": "Warns that dropping the control variables could introduce omitted-variable bias",
+      "type": "scored"
+    },
+    {
+      "text": "Pushes back on the reflexive 'VIF > 5 so drop variables' rule rather than complying with it",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the decision in terms of the goal/estimand (the price coefficient) rather than a mechanical threshold",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

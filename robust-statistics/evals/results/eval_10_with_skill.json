@@ -1,0 +1,40 @@
+{
+  "eval_id": 10,
+  "condition": "with_skill",
+  "prompt": "Should I model my outcome (proportion of a budget spent on category X, between 0 and 1) with logistic regression?",
+  "response": "No \u2014 logistic regression is designed for Bernoulli/binomial outcomes: either a 0/1 indicator or a count of successes out of a *known* number of trials. A continuous proportion like budget share has no such denominator, so the binomial variance function V(\u03bc) = \u03bc(1\u2212\u03bc)/n is simply inapplicable.\n\n**The right tool is beta regression.** Budget shares are continuous values in (0,1) where the spread tends to scale with the mean (a 5% share and a 50% share don't have the same absolute variability), which is exactly the structure beta regression models. With a logit link it gives you interpretable log-odds effects on the proportion scale, and it jointly models the precision (spread) parameter rather than assuming it away.\n\n**One catch: exact zeros and ones.** Beta regression requires the open interval (0,1). If any unit spent *nothing* or *everything* on the category, the standard beta model breaks. The usual fixes are a zero-one-inflated beta (a three-component mixture model for the point masses and the interior) or a pragmatic squish like `(y*(n-1) + 0.5)/n` before fitting.\n\n**The Papke\u2013Wooldridge fractional logit is a defensible alternative.** This fits a quasi-binomial GLM with the logistic mean function but abandons the binomial likelihood, using sandwich SEs instead. It keeps fitted values in [0,1] and is robust to misspecification of the variance structure. It's sometimes what people mean when they say \"logistic regression for proportions,\" and it's fine \u2014 just not the same as standard logistic regression.\n\n**If your only goal is a mean contrast and n is large** and the average share isn't near 0 or 1, OLS with heteroskedasticity-robust SEs is valid (CLT + sandwich). The tradeoff is that OLS can predict outside [0,1] and gives additive effects on the raw proportion scale rather than the log-odds scale, which may or may not be what you want.\n\nSo: beta regression for a principled full model, fractional logit as a simpler alternative, OLS+robust SEs if you just want a mean comparison at adequate n. Standard logistic regression is the one thing to avoid.",
+  "assertions": [
+    {
+      "text": "Distinguishes a continuous proportion in (0,1) from a count of successes out of trials",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends beta regression (or fractional/quasi-binomial logit) for a continuous bounded proportion",
+      "type": "scored"
+    },
+    {
+      "text": "Says plain logistic regression is appropriate when the outcome is successes out of a known number of trials",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions handling exact 0s and 1s (e.g. zero/one-inflated beta or a transformation) if beta regression is used",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply endorse logistic regression without qualification",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

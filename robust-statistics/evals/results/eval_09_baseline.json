@@ -1,0 +1,40 @@
+{
+  "eval_id": 9,
+  "condition": "baseline",
+  "prompt": "I have data from 6 hospitals, with hundreds of patients each, and treatment was assigned at the hospital level. I clustered my standard errors by hospital. Is that enough?",
+  "response": "No \u2014 6 clusters is too few for standard cluster-robust SEs to be reliable, and your setup makes this especially acute.\n\n## The core problem\n\nStandard cluster-robust SEs (the \"sandwich\" estimator) have an asymptotic justification \u2014 they require many clusters to behave correctly. With only 6, they are typically **downward biased**, producing standard errors that are too small and p-values that are too low. You'll over-reject the null.\n\n## Why your setup is particularly exposed\n\nTreatment was assigned at the hospital level. That means you have **6 independent units of randomization**, regardless of how many patients are in each hospital. All those within-hospital observations are informative about precision of patient-level outcomes, but they don't give you additional independent treatment assignments. The effective \"sample size\" for the treatment effect is 6.\n\n## What to do instead\n\n**Randomization inference (permutation test)** is the most principled approach here. Enumerate all possible ways treatment could have been assigned across 6 hospitals. If 3 treated / 3 control, there are C(6,3) = 20 possible assignments \u2014 meaning the minimum achievable p-value is **0.05**. This is an honest reflection of how much information you actually have.\n\n**Aggregate first, then test.** Collapse to hospital-level means (or residuals after adjusting for covariates), then run a t-test on 6 observations. This is conservative but correct \u2014 you're working with the actual units of randomization.\n\n**Wild cluster bootstrap** (Cameron, Gelbach & Miller 2008) improves on standard cluster SEs but still struggles with 6 clusters, particularly when treatment is at the cluster level and clusters are balanced 3v3.\n\n**CR2 estimator with Satterthwaite df correction** (Pustejovsky & Tipton 2018) is the best \"just fix the SE\" option and will at least give you honest degrees of freedom \u2014 likely around 4-5, which dramatically widens your intervals.\n\n## The honest framing\n\nNo statistical correction changes the fact that you observed 6 hospitals. If your effect is only marginally significant under standard clustering, it almost certainly won't survive any of the above. If the effect is large and robust, these approaches will still detect it.",
+  "assertions": [
+    {
+      "text": "States that the relevant asymptotics are in the number of clusters, not the number of patients, so hundreds per cluster does not rescue inference",
+      "type": "scored"
+    },
+    {
+      "text": "Identifies 6 clusters as too few for standard cluster-robust SEs (downward bias / over-rejection)",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends an appropriate response to few clusters (e.g. wild cluster bootstrap, a small-cluster degrees-of-freedom correction, or design-based inference) or at minimum flags that standard cluster-robust SEs are unreliable with so few clusters",
+      "type": "scored"
+    },
+    {
+      "text": "Confirms hospital is the appropriate clustering level given treatment was assigned at that level",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT say that clustering by hospital with large per-hospital n is sufficient",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

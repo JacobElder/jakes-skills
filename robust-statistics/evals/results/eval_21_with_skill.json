@@ -1,0 +1,40 @@
+{
+  "eval_id": 21,
+  "condition": "with_skill",
+  "prompt": "Here's my Poisson regression output for daily complaint counts. Coefficients look reasonable and several are highly significant (p < 0.001). Residual deviance = 4,812 on 1,180 degrees of freedom. Is this model good to report?",
+  "response": "No \u2014 the coefficients are likely fine, but the standard errors and p-values are not trustworthy. This is a textbook overdispersion problem and it's severe.\n\n**The signal:** Under a well-specified Poisson model, the residual deviance \u2248 degrees of freedom (ratio \u2248 1). Yours is 4,812 / 1,180 \u2248 **4.1**. That means the variance in your data is roughly 4\u00d7 the mean, but Poisson assumes variance = mean.\n\n**What this does:** Overdispersion leaves the coefficients essentially unbiased \u2014 Poisson is consistent for the mean model regardless. But the model-based SEs are deflated by roughly \u221a4 \u2248 **2\u00d7**. Your confidence intervals are about half as wide as they should be, and p-values are dramatically too small. Results reported as p < 0.001 may not be significant at all under the correct variance model. The worked-example simulation in the skill (NB data analyzed with plain Poisson) showed nominal 95% CIs covering the truth only ~60% of the time at a dispersion ratio of 2.3 \u2014 yours is nearly twice that.\n\n**The fix:** Choose based on which variance structure fits better:\n\n- **Negative binomial** \u2014 variance grows quadratically with the mean (V(\u03bc) = \u03bc + \u03bc\u00b2/\u03b8). Principled likelihood-based fix; allows AIC comparison.\n- **Quasi-Poisson** \u2014 variance grows linearly but scaled (V(\u03bc) = \u03c6\u03bc, here \u03c6 \u2248 4). Simpler; inflates SEs by \u221a\u03c6. Not a full likelihood so no AIC, but often adequate.\n\nTo pick: bin your fitted values and plot empirical variance against mean. If the variance-mean relationship looks linear, quasi-Poisson; if it curves upward, negative binomial. In practice, negative binomial handles complaint count data well because unobserved heterogeneity (which NB models as a Poisson-gamma mixture) is the usual driver of this kind of overdispersion.\n\n**Bottom line:** Refit with NB or quasi-Poisson before reporting. The coefficients will barely move; the SEs and significance will change substantially.",
+  "assertions": [
+    {
+      "text": "Computes or notes the dispersion ratio (deviance/df ~ 4) and identifies substantial overdispersion",
+      "type": "scored"
+    },
+    {
+      "text": "States that under overdispersion the Poisson coefficients may be okay but the SEs are too small and the reported p-values are over-optimistic",
+      "type": "scored"
+    },
+    {
+      "text": "Warns that the highly-significant results may not survive once dispersion is handled",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends negative binomial or quasi-Poisson, or robust SEs, as the fix",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT accept the model as report-ready on the basis of significance alone",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

@@ -1,0 +1,40 @@
+{
+  "eval_id": 11,
+  "condition": "baseline",
+  "prompt": "I'm comparing pre/post test scores for a treatment and control group that were NOT randomized. Should I analyze change scores (post minus pre) or run ANCOVA controlling for the pre-test? I got different answers from each.",
+  "response": "**Use ANCOVA. The different answers are expected \u2014 they're answering slightly different questions.**\n\n## Why they differ (Lord's Paradox)\n\nChange scores ask: *did the groups change by different amounts?*\nANCOVA asks: *among participants with the same pre-test score, did groups differ on post-test?*\n\nIn non-randomized designs where groups differ at baseline, these questions diverge because of **regression to the mean** \u2014 lower-scoring groups improve more on average regardless of treatment. Change scores don't correct for this; ANCOVA does by conditioning directly on the pre-test value.\n\n## Why ANCOVA wins here\n\n1. **Regression to the mean** \u2014 change scores conflate treatment effects with natural regression toward the mean. ANCOVA partials it out.\n2. **Statistical efficiency** \u2014 ANCOVA has lower standard errors (more power) whenever the pre-post correlation is > 0.\n3. **Better baseline adjustment** \u2014 with non-random assignment, groups almost certainly differ at pre-test. ANCOVA's within-group regression adjustment handles this more rigorously than subtraction.\n\nThe methodological consensus (Senn 2006, van Breukelen 2006) is clear: for non-randomized designs, ANCOVA is preferred over change scores.\n\n## The caveat neither method solves\n\nNeither ANCOVA nor change scores fixes unmeasured confounding from non-randomization. Both assume the groups are exchangeable once you condition on the pre-test. If group membership is correlated with other unmeasured predictors of post-test scores, your effect estimate is still biased \u2014 just in different ways.\n\n**Practical check:** test the homogeneity-of-slopes assumption in your ANCOVA (interaction of pre-test \u00d7 group). If that interaction is significant, the groups have different pre-post relationships and ANCOVA's adjustment is itself mis-specified \u2014 at which point you'd want a more flexible model or to report both estimates with the caveat.",
+  "assertions": [
+    {
+      "text": "Names or describes Lord's paradox / that the two methods target different estimands and can legitimately disagree",
+      "type": "scored"
+    },
+    {
+      "text": "States that the choice depends on the causal model and assignment mechanism, not a purely statistical rule",
+      "type": "scored"
+    },
+    {
+      "text": "Explains the difference in what each estimates (amount of change vs follow-up adjusted for baseline)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that because it is non-randomized, there is no purely statistical resolution and the causal assumptions must be made explicit",
+      "type": "scored"
+    },
+    {
+      "text": "Avoids declaring one method universally correct without reference to the causal question",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

@@ -1,0 +1,40 @@
+{
+  "eval_id": 20,
+  "condition": "baseline",
+  "prompt": "My churn-prediction model has an AUC of 0.86. Stakeholders want to use the predicted probabilities to prioritize retention spend. Is the model good enough?",
+  "response": "AUC of 0.86 is solid for **rank-ordering** customers \u2014 it means the model correctly separates a churner from a non-churner 86% of the time, which is what prioritization fundamentally requires.\n\nBut there's a critical gap between \"good AUC\" and \"trustworthy predicted probabilities\":\n\n**AUC measures discrimination, not calibration.** A model can rank customers perfectly and still report systematically wrong probabilities \u2014 e.g., the model says 0.7 but the true churn rate for those customers is 0.45. That's fine for rank-ordering, but it breaks any expected-value math (e.g., \"spend $X on customers where `p(churn) \u00d7 CLV > threshold`\").\n\nWhat to actually check:\n\n1. **Calibration plot (reliability diagram)**: bin predicted probabilities, plot mean predicted vs. observed churn rate per bin. If the line deviates from the diagonal, your probabilities are miscalibrated.\n2. **Brier score / Expected Calibration Error**: quantifies calibration quality beyond just a visual check.\n3. **Calibration fix if needed**: `sklearn.calibration.CalibratedClassifierCV` (Platt scaling or isotonic regression) can often fix this post-hoc without retraining.\n\n**Practical verdict:**\n- If stakeholders are just rank-ordering and treating top-decile as the spend target \u2192 AUC 0.86 is likely sufficient, check the lift curve to confirm the top decile actually captures a disproportionate share of churners.\n- If they're doing expected-value calculations with the probabilities as probabilities \u2192 calibration check is mandatory before trusting those numbers.\n\nThe single most common mistake here is treating a high-AUC model as ready for probability-driven decisions without ever checking calibration.",
+  "assertions": [
+    {
+      "text": "Distinguishes discrimination (AUC/ranking) from calibration (probabilities correct in magnitude)",
+      "type": "scored"
+    },
+    {
+      "text": "States that AUC alone does not establish that the predicted probabilities are trustworthy",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that because the probabilities drive a spending/decision, calibration is the property that matters here",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends checking calibration (reliability/calibration plot) and recalibrating (e.g. Platt/isotonic) if needed",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT declare the model adequate for the decision on the basis of AUC alone",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

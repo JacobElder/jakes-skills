@@ -1,0 +1,40 @@
+{
+  "eval_id": 4,
+  "condition": "with_skill",
+  "prompt": "We ran a randomized A/B test on checkout flow. Someone on my team says we need to control for device type, browser, and whether the user completed onboarding, since those differ a bit between the two arms. Should I add those as covariates?",
+  "response": "In a randomized A/B test, **randomization already handles confounding** \u2014 the unadjusted difference in conversion rates between arms is an unbiased causal estimate. The covariates differing \"a bit\" between arms is normal sampling variation, not evidence of a problem, and you don't need to control for anything to get an unbiased answer.\n\nThat said, there's a real reason to add pre-treatment covariates: **variance reduction**. If device type or browser strongly predicts checkout conversion, including them as covariates (ANCOVA-style) tightens your standard errors and increases power. The point estimate barely moves; the SE shrinks. This is desirable, not just cosmetic.\n\n**The critical issue is onboarding completion.** Before adding it, you need to answer: was it measured before randomization, or could the treatment itself affect whether users complete onboarding? If a user's onboarding status could in any way be downstream of which arm they were assigned to, it's a post-treatment variable \u2014 controlling for it would strip out part of the treatment effect and bias the estimate. Device and browser are clearly pre-treatment; onboarding completion needs scrutiny. If it reflects behavior from before the experiment started (e.g., a flag set weeks ago), it's fine. If it could be contaminated by exposure to the treatment, leave it out.\n\n**Practical verdict:**\n- Device + browser: safe to add for precision if they predict conversion, not needed for unbiasedness\n- Onboarding: only include if you're confident it was set before any arm exposure; otherwise exclude it\n\nDon't let the \"they differ a bit\" framing drive this \u2014 that's always true in randomized data and fixes itself in expectation. The reason to adjust is precision, and the reason to be careful is post-treatment contamination, not covariate imbalance.",
+  "assertions": [
+    {
+      "text": "States that in a randomized experiment the unadjusted difference is already unbiased for the causal effect and adjustment is mainly for precision",
+      "type": "scored"
+    },
+    {
+      "text": "Flags that 'completed onboarding' may be post-treatment / a mediator or collider and that controlling for it can introduce bias",
+      "type": "scored"
+    },
+    {
+      "text": "Distinguishes pre-treatment covariates (okay to adjust, ideally pre-specified) from post-treatment variables (do not adjust)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that small covariate imbalances under randomization are expected and not evidence of confounding",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT advise blindly adding all three covariates as 'more rigorous'",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

@@ -1,0 +1,40 @@
+{
+  "eval_id": 7,
+  "condition": "baseline",
+  "prompt": "My logistic regression has one coefficient that came back as 14.2 with a standard error of 3400. What's going on and how do I fix it?",
+  "response": "This is **complete separation** (or quasi-complete separation) \u2014 a predictor perfectly (or near-perfectly) predicts the outcome in your sample, so the maximum likelihood estimate for that coefficient diverges toward infinity. The optimizer keeps climbing with no bound, and the standard error inflates correspondingly because the likelihood surface is essentially flat in that direction.\n\n**Why it happens:** If every case where `x > threshold` has `y = 1` and every case below has `y = 0`, the log-likelihood has no finite maximum \u2014 a steeper slope always fits better. The algorithm stops at some large-but-arbitrary value, hence 14.2 \u00b1 3400.\n\n**Diagnosing it:**\n\n```python\n# Check the cross-tab of the suspect variable vs outcome\npd.crosstab(df['suspect_var'], df['outcome'])\n\n# Or bin a continuous predictor\npd.crosstab(pd.cut(df['suspect_var'], bins=5), df['outcome'])\n```\n\nLook for any cell with zero counts \u2014 that's your separation.\n\n**Fixes, in order of preference:**\n\n1. **Firth logistic regression** (penalized likelihood \u2014 the gold standard for separation)\n   ```python\n   # pip install statsmodels (>=0.14) or use the `logistf` R package\n   import statsmodels.formula.api as smf\n   # Python: use `firthlogist` package\n   from firthlogist import FirthLogisticRegression\n   fl = FirthLogisticRegression()\n   fl.fit(X, y)\n   ```\n\n2. **Ridge / L2 penalty** \u2014 shrinks coefficients toward zero, prevents divergence\n   ```python\n   from sklearn.linear_model import LogisticRegression\n   LogisticRegression(penalty='l2', C=1.0)  # tune C\n   ```\n\n3. **Drop or bin the offending predictor** \u2014 if it's collinear with the outcome by construction (e.g., a post-treatment measure), it shouldn't be in the model.\n\n4. **Collect more data** \u2014 separation is often a small-sample problem; with more outcome variation the MLE stabilizes.\n\n**Firth regression is the right default** if you want unbiased inference \u2014 it was specifically designed for this problem and doesn't require tuning a regularization hyperparameter.",
+  "assertions": [
+    {
+      "text": "Diagnoses (quasi-)complete separation as the cause of the huge coefficient and enormous SE",
+      "type": "scored"
+    },
+    {
+      "text": "Explains that under separation the MLE diverges / has no finite maximum",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends a fix such as Firth penalized logistic regression or weakly-informative Bayesian priors",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions checking for sparse / small cell counts or a near-perfect predictor",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT misattribute the symptom to multicollinearity or non-normality",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

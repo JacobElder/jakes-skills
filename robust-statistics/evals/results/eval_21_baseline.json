@@ -1,0 +1,40 @@
+{
+  "eval_id": 21,
+  "condition": "baseline",
+  "prompt": "Here's my Poisson regression output for daily complaint counts. Coefficients look reasonable and several are highly significant (p < 0.001). Residual deviance = 4,812 on 1,180 degrees of freedom. Is this model good to report?",
+  "response": "No \u2014 this model has a serious overdispersion problem that invalidates your standard errors and p-values.\n\n**The diagnostic:** Poisson assumes mean = variance, which implies residual deviance / df \u2248 1.0. Yours is:\n\n```\n4,812 / 1,180 = 4.08\n```\n\nThat's roughly 4\u00d7 overdispersion. When count data is overdispersed, Poisson underestimates standard errors by a factor of \u221adispersion \u2248 \u221a4.08 \u2248 2\u00d7. Your \"highly significant\" p-values are almost certainly inflated artifacts of this, not true signal.\n\n**What to do:**\n\n| Fix | When to use |\n|-----|-------------|\n| **Negative Binomial** | Most common; adds a dispersion parameter, re-estimates everything properly |\n| **Quasi-Poisson** | Quick SEs fix; same point estimates, inflated SEs by \u221adispersion; no AIC |\n| **Zero-inflated NB/Poisson** | If complaints have excess zeros (e.g., weekends/holidays with zero complaints) |\n\nFor complaint counts, Negative Binomial is almost always the right call. In R:\n\n```r\nlibrary(MASS)\nnb_model <- glm.nb(complaints ~ predictors, data = df)\nsummary(nb_model)\n```\n\nAfter fitting NB, check that the new residual deviance/df is near 1.0, and expect some previously \"significant\" coefficients to lose significance once SEs are corrected. Those were false positives from the Poisson.\n\n**Bottom line:** Do not report the Poisson results. Refit with Negative Binomial first.",
+  "assertions": [
+    {
+      "text": "Computes or notes the dispersion ratio (deviance/df ~ 4) and identifies substantial overdispersion",
+      "type": "scored"
+    },
+    {
+      "text": "States that under overdispersion the Poisson coefficients may be okay but the SEs are too small and the reported p-values are over-optimistic",
+      "type": "scored"
+    },
+    {
+      "text": "Warns that the highly-significant results may not survive once dispersion is handled",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends negative binomial or quasi-Poisson, or robust SEs, as the fix",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT accept the model as report-ready on the basis of significance alone",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

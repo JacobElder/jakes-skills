@@ -1,0 +1,40 @@
+{
+  "eval_id": 12,
+  "condition": "with_skill",
+  "prompt": "My costs data are very right-skewed and positive. My instinct is to log-transform and run OLS. A colleague says use a gamma GLM with a log link. Does it matter which?",
+  "response": "Yes, it matters \u2014 but not because one is more \"valid.\" They target **different estimands**, and which is right depends on what you actually want to know.\n\n**Log-OLS** fits E[log Y | X] = X\u03b2. The coefficient is an effect on the log scale \u2014 exponentiated, it gives a multiplicative effect on the **geometric mean**. If you naively back-transform fitted values to get predicted costs (exp(\u0177)), you get the geometric mean, not E[Y]. Because of Jensen's inequality, E[Y] > exp(E[log Y]) whenever there's residual variance \u2014 so naive back-transformation systematically *understates* expected costs. Recovering E[Y] requires Duan's smearing estimator or a parametric retransformation correction.\n\n**Gamma GLM with log link** fits log E[Y | X] = X\u03b2 directly. The coefficient is still a multiplicative effect, but on the **arithmetic mean**. Back-transformation is immediate \u2014 no smearing needed \u2014 and predictions live on the arithmetic-mean scale automatically.\n\n**For cost data, the arithmetic mean is almost always what you want.** Budgets, total program costs, and policy-relevant quantities scale with E[Y], not the geometric mean. If your question is \"how much more does the treated group cost on average?\", the gamma GLM gives you that directly; log-OLS doesn't without extra work.\n\nThe variance structures are actually similar (both imply roughly constant coefficient of variation), so the choice isn't about distributional fit \u2014 it's about which quantity your coefficients describe. The gamma GLM wins for cost data not because it's more \"correct\" statistically, but because it natively answers the arithmetic-mean question and avoids the retransformation trap.\n\nOne practical note: check for overdispersion diagnostics (deviance/df ratio after fitting the gamma). If you're uncertain, inverse-Gaussian is an option for heavier tails, but gamma is the right starting point for costs.",
+  "assertions": [
+    {
+      "text": "States that log-OLS estimates E[log Y] (geometric mean upon exponentiation) while gamma-log estimates log E[Y] (arithmetic mean) \u2014 i.e. different estimands",
+      "type": "scored"
+    },
+    {
+      "text": "Explains the retransformation / Jensen's inequality problem with naively exponentiating log-OLS predictions to recover E[Y]",
+      "type": "scored"
+    },
+    {
+      "text": "Notes the retransformation correction (smearing) depends on the error variance and is complicated by heteroskedasticity",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the decision as which estimand/scale you want rather than which is 'more correct'",
+      "type": "scored"
+    },
+    {
+      "text": "Treats both as defensible rather than dismissing one outright",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

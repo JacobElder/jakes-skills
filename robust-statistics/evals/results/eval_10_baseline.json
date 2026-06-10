@@ -1,0 +1,40 @@
+{
+  "eval_id": 10,
+  "condition": "baseline",
+  "prompt": "Should I model my outcome (proportion of a budget spent on category X, between 0 and 1) with logistic regression?",
+  "response": "No \u2014 logistic regression is for binary outcomes (0 or 1), not continuous proportions. Using it on a continuous proportion will give you predictions in the right range but wrong standard errors and inference.\n\n**Better choices:**\n\n- **Beta regression** \u2014 the canonical model for continuous proportions strictly in (0, 1). The beta distribution is defined on that interval and handles skew naturally. Use `betareg` in R or `statsmodels.formula.api` with `Beta` in Python.\n\n- **Fractional logit (quasi-binomial GLM)** \u2014 logistic link + quasi-likelihood. Doesn't assume a specific distributional shape; robust to variance misspecification. Papke & Wooldridge (1996) is the key reference. In R: `glm(..., family = quasibinomial)`.\n\n**If you have exact 0s or 1s** (someone spent nothing or everything on category X), neither beta regression nor fractional logit handles boundary values cleanly. Options:\n- **Zero/one-inflated beta regression** (`zoib` in R) \u2014 models the probability of a boundary value as a separate component.\n- **Two-part model** \u2014 logistic for P(Y > 0), then beta/fractional logit on the positive portion.\n\n**Quick decision rule:**\n- No exact 0s or 1s \u2192 beta regression\n- Exact 0s/1s present, or you want distributional robustness \u2192 fractional logit or zero-one inflated beta",
+  "assertions": [
+    {
+      "text": "Distinguishes a continuous proportion in (0,1) from a count of successes out of trials",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends beta regression (or fractional/quasi-binomial logit) for a continuous bounded proportion",
+      "type": "scored"
+    },
+    {
+      "text": "Says plain logistic regression is appropriate when the outcome is successes out of a known number of trials",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions handling exact 0s and 1s (e.g. zero/one-inflated beta or a transformation) if beta regression is used",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply endorse logistic regression without qualification",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

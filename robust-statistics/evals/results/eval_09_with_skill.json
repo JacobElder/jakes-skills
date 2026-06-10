@@ -1,0 +1,40 @@
+{
+  "eval_id": 9,
+  "condition": "with_skill",
+  "prompt": "I have data from 6 hospitals, with hundreds of patients each, and treatment was assigned at the hospital level. I clustered my standard errors by hospital. Is that enough?",
+  "response": "No \u2014 cluster-robust SEs are not reliable here, and this is a well-known failure mode worth taking seriously.\n\n**The problem.** Cluster-robust SEs are asymptotic in the *number of clusters*, not the number of observations. The asymptotic approximation is typically considered trustworthy at ~40+ clusters. At 6 clusters, the variance estimate is biased downward \u2014 you get SEs that are too small and p-values too optimistic. The hundreds of patients per hospital do not help; once treatment is assigned at the hospital level, every patient within a hospital is informationally redundant for the treatment contrast. Your effective sample size for inference about the treatment effect is essentially 6.\n\n**The fix: wild cluster bootstrap.** The Cameron\u2013Gelbach\u2013Miller wild cluster bootstrap performs far better than asymptotic cluster-robust SEs at small cluster counts. It resamples residuals with random sign flips at the cluster level, which properly accounts for within-cluster correlation without relying on the large-cluster approximation. This should replace the analytic clustered SEs as your primary inference method.\n\n**An honest accounting of what you have.** With 6 hospitals and treatment at the hospital level, you are running an analysis where the treatment contrast is identified by 6 observations. The large within-hospital sample buys you precision in estimating each hospital's outcome, not degrees of freedom for the treatment effect. This is worth stating clearly when you report results \u2014 the inferential leverage is limited regardless of method.\n\n**One additional option to consider.** Aggregating to the hospital level (computing hospital-mean outcomes, weighted by patient count) and running the analysis there is also defensible. It makes the actual degrees of freedom completely transparent and avoids any clustering-correction machinery entirely. The tradeoff is that you lose the ability to adjust for patient-level covariates efficiently \u2014 though you can still include hospital-level covariates.\n\nBottom line: switch to the wild cluster bootstrap for your SEs, and be explicit in the paper that inference is limited by having 6 hospital-level treatment assignments.",
+  "assertions": [
+    {
+      "text": "States that the relevant asymptotics are in the number of clusters, not the number of patients, so hundreds per cluster does not rescue inference",
+      "type": "scored"
+    },
+    {
+      "text": "Identifies 6 clusters as too few for standard cluster-robust SEs (downward bias / over-rejection)",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends an appropriate response to few clusters (e.g. wild cluster bootstrap, a small-cluster degrees-of-freedom correction, or design-based inference) or at minimum flags that standard cluster-robust SEs are unreliable with so few clusters",
+      "type": "scored"
+    },
+    {
+      "text": "Confirms hospital is the appropriate clustering level given treatment was assigned at that level",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT say that clustering by hospital with large per-hospital n is sufficient",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

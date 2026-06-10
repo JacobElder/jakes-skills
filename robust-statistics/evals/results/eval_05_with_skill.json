@@ -1,0 +1,40 @@
+{
+  "eval_id": 5,
+  "condition": "with_skill",
+  "prompt": "My residuals aren't normal (clear deviation in the QQ plot) and there's some funneling. The model is an OLS of revenue on a handful of predictors, n=400. Walk me through what to do.",
+  "response": "Two separate violations \u2014 they go in different buckets and need different fixes.\n\n## The non-normal residuals: probably not your problem\n\nAt n=400, the sampling distribution of your OLS coefficients is approximately normal by the CLT regardless of what the residuals look like. Non-normal residuals don't bias your estimates or your SEs \u2014 they only matter for small-n exact inference and prediction intervals. My guess is this issue is largely *caused by* the heteroskedasticity (unequal variance across fitted values creates residuals that look non-normal in a QQ plot). Fix the variance problem and the QQ plot often improves.\n\n## The funneling: this one matters, but in a specific way\n\nHeteroskedasticity does **not** bias your coefficients \u2014 they're still the right numbers. What's wrong is the classical SEs, which assume constant variance. Where variance is higher, your SEs are too small, so p-values are too optimistic.\n\n**The fix is straightforward: use HC3 robust standard errors.** That's it. Refit the same OLS model and swap the SE estimator. Everything else stays the same. Don't run Breusch-Pagan and decide based on its p-value \u2014 just use robust SEs by default, since they're nearly identical to classical SEs when variance *is* constant and protect you when it isn't.\n\nIn R: `lm_robust()` from `estimatr`, or `coeftest(model, vcov = vcovHC(model, type = \"HC3\"))` from `sandwich` + `lmtest`. In Python: `model.get_robustcov_results(cov_type='HC3')` in statsmodels.\n\n## One thing worth checking given the revenue outcome\n\nRevenue is typically positive and right-skewed, and funneling that fans out as fitted values increase is the signature of a *multiplicative* error structure \u2014 variance growing with the mean. This raises an estimand question, not just a variance question: do you want additive effects on raw revenue (\"X raises revenue by $50\"), or multiplicative effects (\"X raises revenue by 8%\")? If the latter, a log-link model (gamma GLM with log link, or log-OLS if you're aware of the geometric-mean interpretation) matches the generative structure better and would likely eliminate the heteroskedasticity at the source rather than patching the SEs.\n\nIf additive effects on raw revenue are what you want, HC3 SEs on your current OLS model is the right and complete answer.",
+  "assertions": [
+    {
+      "text": "Identifies funneling as heteroskedasticity and recommends heteroskedasticity-robust (sandwich/HC, ideally HC3) standard errors",
+      "type": "scored"
+    },
+    {
+      "text": "States that heteroskedasticity affects the standard errors, not the unbiasedness of the OLS coefficients",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that non-normal residuals at n=400 are of limited concern for coefficient inference due to the CLT",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends checking whether the residual pattern signals a misspecified mean structure (nonlinearity / omitted terms) rather than only a distributional issue",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions that a GLM (e.g. gamma/log) may fit revenue's generative structure better, OR cautions against transforming purely to normalize residuals (changing the estimand)",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

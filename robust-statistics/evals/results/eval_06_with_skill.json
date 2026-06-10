@@ -1,0 +1,40 @@
+{
+  "eval_id": 6,
+  "condition": "with_skill",
+  "prompt": "I want to report the difference in median household income between two neighborhoods. A colleague says just use a t-test. Is that right?",
+  "response": "Your colleague's suggestion has an estimand problem, not an assumption problem. A t-test estimates the **difference in means** \u2014 if you report that, you're answering a different question than \"difference in medians.\" No amount of large-n CLT reasoning fixes that, because the issue isn't the sampling distribution's validity; it's that the number produced isn't the number you said you wanted.\n\nFor household income this matters in practice: income is heavily right-skewed, so the mean is pulled up by top earners and can diverge substantially from the median. The neighborhoods' means could differ in the opposite direction from their medians if their high-income tails are different shapes.\n\n**What to do instead:**\n\nIf you want the difference in *medians* as a point estimate with a confidence interval, the clean options are:\n\n1. **Quantile regression at the 0.5 quantile.** `quantreg` in R or `statsmodels.regression.quantile_regression` in Python. Directly models the conditional median, CI via bootstrap. This is the principled tool when the estimand is a quantile contrast.\n\n2. **Bootstrap the difference of sample medians.** Straightforward and transparent: resample each neighborhood independently, compute `median(A) \u2212 median(B)` on each resample, take the 2.5th and 97.5th percentiles.\n\n**One common wrong turn to avoid:** Mann\u2013Whitney is not a test of medians in general. It tests stochastic ordering \u2014 P(X > Y) = \u00bd \u2014 which only coincides with a median comparison under a pure location-shift model (identical distributional shape, just shifted). With two neighborhoods that probably have different income distributions overall, Mann\u2013Whitney doesn't cleanly answer the median question either.\n\nShort answer: use quantile regression or bootstrap the median difference. The t-test is not wrong because income is non-normal; it's wrong because you'd be reporting the wrong quantity.",
+  "assertions": [
+    {
+      "text": "Identifies that the question is about the median (the estimand) while a t-test targets the mean",
+      "type": "scored"
+    },
+    {
+      "text": "Frames this primarily as an estimand mismatch rather than an assumption violation",
+      "type": "scored"
+    },
+    {
+      "text": "Suggests a method that actually targets the median (quantile/median regression, or bootstrap CI for the median difference)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that Mann-Whitney does not directly estimate the median difference unless a location-shift assumption holds",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply endorse the t-test as a test of medians",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

@@ -1,0 +1,40 @@
+{
+  "eval_id": 14,
+  "condition": "with_skill",
+  "prompt": "My count outcome has a ton of zeros (about 60% zeros). I read that I need a zero-inflated model. Is that right?",
+  "response": "Not necessarily. \"Lots of zeros\" is the wrong criterion; the right question is whether your zeros come from two *conceptually distinct processes*.\n\n**Check negative binomial first.** NB's quadratic variance function naturally produces high zero proportions \u2014 60% zeros is not unusual for overdispersed counts with a small mean. Fit a NB model and compare the predicted probability of a zero (from the fitted mean and dispersion) to your observed zero rate. If they're close, you don't need zero-inflation. This diagnostic is more informative than counting zeros.\n\n**The conceptual test.** Zero-inflation is the right tool when there are genuinely two kinds of zeros:\n- *Structural zeros* \u2014 units that can never produce a count (a non-smoker can never smoke cigarettes on a given day, no matter how long you observe them)\n- *Sampling zeros* \u2014 units that are at risk but happened to score zero this occasion\n\nIf every unit in your sample *could* in principle produce a non-zero count, your zeros are sampling zeros and NB or a hurdle model is the more honest choice. Zero-inflation forces a two-class mixture on data that may not have one.\n\n**Hurdle vs. zero-inflation is also a substantive choice**, not a fit question. A hurdle model says there's a clean binary \u2014 did the event happen at all, and if so, how much? Zero-inflation says there's an unobserved latent class that is structurally incapable of non-zero outcomes. These encode different theories about your data-generating process.\n\n**Practical workflow:**\n1. Fit NB, check predicted vs. observed zero proportion\n2. Ask: are some of my units *structurally* incapable of non-zero counts?\n3. If NB fits zeros well \u2192 you're done\n4. If you have a clear structural-zero story \u2192 zero-inflated NB\n5. If zeros are \"did the event occur at all?\" \u2192 hurdle NB\n\nThe common mistake is reaching for zero-inflation as an automatic fix for high zero rates, when the real issue is usually just overdispersion that NB already handles.",
+  "assertions": [
+    {
+      "text": "Says a zero-inflated model is not automatically required and recommends first checking whether negative binomial absorbs the zeros",
+      "type": "scored"
+    },
+    {
+      "text": "Distinguishes hurdle (single zero process) from zero-inflated (structural zeros plus a count process that also yields zeros)",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the choice around the substantive data-generating story (e.g. 'never at risk' structural zeros vs incidental zeros) rather than the zero percentage alone",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions checking model adequacy on the zeros (e.g. posterior predictive / comparing observed vs predicted zero counts)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT reflexively prescribe zero-inflation just because there are many zeros",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

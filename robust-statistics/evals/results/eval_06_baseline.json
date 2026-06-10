@@ -1,0 +1,40 @@
+{
+  "eval_id": 6,
+  "condition": "baseline",
+  "prompt": "I want to report the difference in median household income between two neighborhoods. A colleague says just use a t-test. Is that right?",
+  "response": "Your colleague is wrong \u2014 a t-test is the wrong tool here, for two compounding reasons.\n\n**1. A t-test tests means, not medians.**\nYou said you want to report the *median* difference. A t-test tests whether *means* differ. These can give opposite answers when the distribution is skewed: a few high-income households can shift the mean substantially while leaving the median unchanged. The test would answer a question you didn't ask.\n\n**2. Income data violates the normality assumption.**\nHousehold income is strongly right-skewed. The t-test assumes approximately normal residuals (or relies on the Central Limit Theorem for large n), but with small neighborhood samples \u2014 which is common \u2014 that assumption doesn't hold. Extreme values in the upper tail will dominate the result.\n\n**Better options, depending on your goal:**\n\n| Goal | Method |\n|---|---|\n| Test whether the *distributions* differ | Mann-Whitney U (Wilcoxon rank-sum) \u2014 non-parametric, no normality assumption |\n| Directly test the *difference in medians* with a confidence interval | Bootstrap CI for the median difference |\n| Report and model the median formally | Quantile regression at \u03c4 = 0.5 |\n\nFor a simple two-neighborhood comparison, a **bootstrap confidence interval for the difference in medians** is the most honest approach \u2014 it directly estimates what you care about, reports uncertainty, and makes no distributional assumptions.\n\nThe Mann-Whitney U is also fine if you just need a p-value, but note it technically tests whether one distribution is stochastically greater, not specifically that medians differ \u2014 though that distinction rarely matters in practice for income data.",
+  "assertions": [
+    {
+      "text": "Identifies that the question is about the median (the estimand) while a t-test targets the mean",
+      "type": "scored"
+    },
+    {
+      "text": "Frames this primarily as an estimand mismatch rather than an assumption violation",
+      "type": "scored"
+    },
+    {
+      "text": "Suggests a method that actually targets the median (quantile/median regression, or bootstrap CI for the median difference)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that Mann-Whitney does not directly estimate the median difference unless a location-shift assumption holds",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply endorse the t-test as a test of medians",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    false,
+    true
+  ],
+  "passed": 3,
+  "total": 5,
+  "pass_rate": 0.6,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

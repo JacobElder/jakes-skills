@@ -1,0 +1,40 @@
+{
+  "eval_id": 11,
+  "condition": "with_skill",
+  "prompt": "I'm comparing pre/post test scores for a treatment and control group that were NOT randomized. Should I analyze change scores (post minus pre) or run ANCOVA controlling for the pre-test? I got different answers from each.",
+  "response": "Getting different answers is expected and is itself diagnostic \u2014 it means your groups differ at baseline. This is Lord's paradox, and it has no purely statistical resolution. Here's the reasoning:\n\n**What each method actually estimates**\n\n- **Change scores** answer: \"Did the groups improve by different amounts?\" They don't adjust for baseline level, so any pre-existing difference in scores contributes to the comparison.\n- **ANCOVA** answers: \"Do the groups differ at follow-up *among people who started at the same baseline*?\" It conditions on the pre-test.\n\nThese are genuinely different estimands. Neither is universally correct \u2014 the right choice depends on your causal structure.\n\n**Why this matters in a non-randomized design**\n\nThe two methods diverge when groups differ at baseline (which they almost certainly do if assignment wasn't random). Two specific hazards:\n\n1. **Regression to the mean.** If the treatment group was selected because of lower pre-scores (e.g., a remedial program, or self-selection by struggling students), they will tend to improve more regardless of treatment. Change scores are contaminated by this; ANCOVA partially addresses it by conditioning on baseline.\n\n2. **ANCOVA's extrapolation risk.** When baseline imbalance is large, ANCOVA is implicitly asking \"how would the treatment group perform if they'd started at the control group's baseline?\" That's extrapolation, and it relies on the linearity assumption holding outside the observed range.\n\n**Practical recommendation**\n\nFor a quasi-experimental pre/post design, **ANCOVA is generally preferred** \u2014 controlling for baseline makes the comparison less confounded by pre-existing differences and is more efficient. But the honest caveat is that neither method resolves confounding from unmeasured variables that predicted both group membership and post-scores.\n\nThe most important diagnostic: **how large is the baseline difference?** Run it:\n```\nt.test(pre ~ group)   # or equivalent\n```\n\nIf the groups are substantially imbalanced at baseline, you should:\n1. Report both estimates and note they diverge (this is transparency, not a problem)\n2. Favor ANCOVA as your main estimate, with the baseline difference disclosed\n3. Consider whether regression to the mean is a plausible alternative explanation for your finding\n4. If imbalance is severe, consider propensity score matching before ANCOVA \u2014 matching on pre-score (and other covariates that drove selection) first, then estimating treatment effects within matched pairs\n\nOne additional check worth running: **test the ANCOVA assumption that the pre\u2013post slope is the same in both groups** (add a `pre \u00d7 group` interaction). If slopes differ, ANCOVA's adjustment is itself group-specific, and the standard ANCOVA estimate is a weighted average that may not mean much.\n\nThe bottom line: the divergence between your two estimates is telling you something real about your data, not something to resolve by picking the estimate you prefer.",
+  "assertions": [
+    {
+      "text": "Names or describes Lord's paradox / that the two methods target different estimands and can legitimately disagree",
+      "type": "scored"
+    },
+    {
+      "text": "States that the choice depends on the causal model and assignment mechanism, not a purely statistical rule",
+      "type": "scored"
+    },
+    {
+      "text": "Explains the difference in what each estimates (amount of change vs follow-up adjusted for baseline)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that because it is non-randomized, there is no purely statistical resolution and the causal assumptions must be made explicit",
+      "type": "scored"
+    },
+    {
+      "text": "Avoids declaring one method universally correct without reference to the causal question",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

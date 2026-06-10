@@ -1,0 +1,40 @@
+{
+  "eval_id": 13,
+  "condition": "with_skill",
+  "prompt": "Is it valid to use linear regression on a binary outcome (the linear probability model)? Someone told me it is always wrong to use LPM and you must use logistic regression instead.",
+  "response": "The \"always wrong\" claim is false, and it conflates several distinct issues.\n\n**LPM is a linear regression of a 0/1 outcome \u2014 it estimates additive effects on the probability scale (risk differences).** Logistic regression estimates conditional log odds ratios. These are different estimands. Neither is inherently more correct; the choice should follow what you actually want to know.\n\nThe two real objections to LPM, stated precisely:\n\n1. **Heteroskedasticity.** Since Var(Y) = p(1\u2212p) varies with the mean, OLS errors are heteroskedastic by construction. But this is a standard error problem, not a coefficient problem \u2014 OLS coefficients remain unbiased. Fix it with HC robust SEs (HC3 for small n) and the inference is fine.\n\n2. **Out-of-bounds predictions.** Fitted values can fall outside [0,1]. This matters if you need well-calibrated predicted probabilities for individuals, or if probabilities are near 0 or 1 (rare events, near-ceiling effects). It matters much less for inference on a mean contrast or average treatment effect.\n\n**Where LPM is actually preferable to logistic:**\n\n- In a **randomized experiment**, OLS on a binary outcome gives a direct, unbiased estimate of the ATE (the average difference in probability). Logistic gives a conditional odds ratio, which is harder to interpret as a causal effect and non-collapsible (adding covariates changes the coefficient even without confounding \u2014 pure non-collapsibility, not adjustment).\n- When the estimand is a **risk difference** \u2014 which is usually more policy-relevant and directly interpretable than an OR.\n- When you want **collapsibility**: unlike the OR, risk differences are collapsible, so the marginal and conditional effects are comparable across models with different covariate sets.\n\n**Where logistic is clearly better:**\n\n- When the **estimand is an odds ratio or log-OR** (some clinical or epidemiological contexts).\n- When probabilities are **near 0 or 1** \u2014 LPM predictions go out of bounds more severely and the linear approximation is poor.\n- When you need **well-calibrated individual predicted probabilities** for decisions.\n- When **efficiency** matters at small n (logistic is more efficient when its model is correct).\n\nThe standard advice to \"always use logistic\" often reflects a legitimate concern (out-of-bounds predictions, heteroskedasticity) but applies the fix to the wrong problem. For inference on a probability contrast \u2014 especially in a randomized or near-randomized setting \u2014 LPM with robust SEs is a completely defensible, often preferable choice. The decisive question is: do you want a risk difference or an odds ratio? That's an estimand decision, not a diagnostic.",
+  "assertions": [
+    {
+      "text": "Declines to give a bare yes/no and explains why the answer is conditional",
+      "type": "scored"
+    },
+    {
+      "text": "Notes legitimate uses of the LPM (interpretable marginal effects / risk differences; common in applied econometrics)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes drawbacks: predictions can fall outside [0,1], built-in heteroskedasticity requiring robust SEs, poor behavior near the bounds",
+      "type": "scored"
+    },
+    {
+      "text": "Ties the choice to the estimand (risk difference / marginal effect vs probabilities / odds ratios)",
+      "type": "scored"
+    },
+    {
+      "text": "Presents both LPM and logistic as defensible depending on the goal rather than declaring one always correct",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

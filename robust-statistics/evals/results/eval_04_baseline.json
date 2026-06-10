@@ -2,7 +2,7 @@
   "eval_id": 4,
   "condition": "baseline",
   "prompt": "We ran a randomized A/B test on checkout flow. Someone on my team says we need to control for device type, browser, and whether the user completed onboarding, since those differ a bit between the two arms. Should I add those as covariates?",
-  "response": "Short answer: yes, but for the right reason \u2014 and there's a trap to avoid.\n\n**Why to add them: variance reduction, not bias correction.**\nRandomization already guarantees unbiased treatment effect estimates without any covariates. Your teammate's framing (\"they differ between arms\") implies you need them to fix a bias problem \u2014 you don't. Any imbalance in a properly randomized trial is sampling noise, not confounding. The *actual* reason to include them is that covariates predictive of the outcome (especially onboarding completion, which likely strongly predicts checkout conversion) soak up residual variance and give you a more precise estimate and more power.\n\n**The trap: post-hoc covariate selection.**\nIf you're adding these because you *looked at the imbalance after seeing results*, that's a form of specification search that inflates false positive rates. The principled approach:\n\n- Covariates specified **before** looking at results \u2192 include them, clearly labeled as pre-specified\n- Covariates selected **after** seeing imbalance \u2192 treat the adjusted analysis as sensitivity/exploratory, report both, and be transparent\n\n**Practical recommendation for your case:**\nAll three covariates (device, browser, onboarding) are plausibly predictive of conversion regardless of which arm they fall in \u2014 so including them is defensible even post-hoc as a robustness check. Run both the unadjusted and covariate-adjusted model. If the estimates agree, your conclusion is robust. If they diverge meaningfully, that's a signal worth investigating before shipping.\n\nThe Lin (2013) estimator \u2014 OLS regressing outcome on treatment, covariates, and treatment \u00d7 covariate interactions \u2014 is the standard robust approach for this in experiments; it's asymptotically at least as efficient as the unadjusted estimate.",
+  "response": "Short answer: probably yes for device/browser, but be careful with onboarding completion \u2014 it depends on timing.\n\n**Why covariate adjustment is fine in an RCT**\n\nWith true randomization, pre-treatment covariates that \"differ a bit\" are just sampling noise \u2014 they don't bias your estimate. But adding them anyway is still worthwhile: regression adjustment (ANCOVA-style) reduces residual variance and tightens your confidence intervals without touching the point estimate's unbiasedness. Device type and browser are clearly pre-treatment, so including them is a free precision gain.\n\n**The onboarding flag is the risky one**\n\nAsk: did users *complete* onboarding before or after being randomized into arms?\n\n- **Before randomization** \u2192 clean pre-treatment covariate, include it\n- **After randomization** \u2192 it's potentially a mediator or collider; conditioning on it can block the causal path or introduce selection bias. Don't include it.\n\nIf the checkout flow treatment *itself* could affect whether someone finishes onboarding, then onboarding completion is downstream of treatment, and you should not condition on it.\n\n**On the \"they differ a bit\" framing**\n\nSmall imbalance in a randomized trial is expected \u2014 that's not a sign something is broken, and it's not the reason to add covariates. The right reason is precision. If your teammate is implying that imbalance *biases* the result and therefore *must* be corrected, that's a misconception worth pushing back on. Covariate adjustment in an RCT is about efficiency, not deconfounding.\n\n**Bottom line:** Add device + browser for precision. For onboarding, verify whether it's pre- or post-treatment before including it.",
   "assertions": [
     {
       "text": "States that in a randomized experiment the unadjusted difference is already unbiased for the causal effect and adjustment is mainly for precision",
@@ -27,14 +27,14 @@
   ],
   "assertion_results": [
     true,
-    false,
-    false,
+    true,
+    true,
     true,
     true
   ],
-  "passed": 3,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.6,
-  "eval_passes": false,
+  "pass_rate": 1.0,
+  "eval_passes": true,
   "must_pass_failed_indices": []
 }

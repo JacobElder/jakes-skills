@@ -1,0 +1,40 @@
+{
+  "eval_id": 7,
+  "condition": "with_skill",
+  "prompt": "My logistic regression has one coefficient that came back as 14.2 with a standard error of 3400. What's going on and how do I fix it?",
+  "response": "That's **complete or quasi-complete separation**. One of your predictors (or a combination) perfectly or near-perfectly predicts the outcome in your sample \u2014 every case with high values of that variable is in one class, with no counterexamples. The log-likelihood has no finite maximum for that coefficient, so the MLE tries to push it toward \u00b1\u221e. The exploding SE is the tell: the optimizer is chasing a diverging likelihood ridge.\n\n**How to confirm:** look at a crosstab (for categorical predictors) or a side-by-side boxplot (for continuous ones) of that variable against the outcome. You'll see zero or near-zero cells on one side.\n\n**Three fixes, in order of preference:**\n\n1. **Firth's bias-reduced logistic regression** \u2014 adds a Jeffreys-prior penalty to the likelihood that pulls the coefficient back to a finite value without requiring you to restructure the model. This is the standard fix and what you should reach for first.\n   - R: `logistf::logistf()`\n   - Python: `statsmodels` doesn't have it natively, but the `firthlogist` package does, or use `sklearn` with an L1/L2 penalty\n\n2. **Weakly-informative Bayesian prior** \u2014 a `Normal(0, 2.5)` prior on the log-odds scale (Gelman's recommendation) regularizes extreme coefficients the same way. In R, `rstanarm::stan_glm()` uses this by default.\n\n3. **Restructure the predictor** \u2014 if a continuous variable is causing separation (e.g. everyone above a threshold is in class 1), consider whether it should be kept as-is, binned differently, or whether your sample is just too small to support this predictor. Sometimes separation signals that a covariate is *too good* and the model is overfitting perfectly on a small sample.\n\n**What not to do:** don't drop the variable, don't dichotomize it to make the problem go away, and don't report the 14.2 / SE=3400 estimate \u2014 it's meaningless.\n\nThe Firth estimator is almost always the right answer here. It has good frequentist properties, reduces the small-sample bias that logistic regression has even without separation, and the coefficients are interpretable log-odds ratios just like standard logistic output.",
+  "assertions": [
+    {
+      "text": "Diagnoses (quasi-)complete separation as the cause of the huge coefficient and enormous SE",
+      "type": "scored"
+    },
+    {
+      "text": "Explains that under separation the MLE diverges / has no finite maximum",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends a fix such as Firth penalized logistic regression or weakly-informative Bayesian priors",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions checking for sparse / small cell counts or a near-perfect predictor",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT misattribute the symptom to multicollinearity or non-normality",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

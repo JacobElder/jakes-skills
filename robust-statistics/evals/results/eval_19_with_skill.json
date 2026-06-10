@@ -1,0 +1,40 @@
+{
+  "eval_id": 19,
+  "condition": "with_skill",
+  "prompt": "I have a small, heavy-tailed sample (n=40) and I want a confidence interval for the maximum value the process can produce. I'll just bootstrap the maximum \u2014 that's assumption-free, right?",
+  "response": "No \u2014 bootstrapping the maximum is one of the clearest known failure cases of the bootstrap, and heavy tails make it worse, not better.\n\n**Why the bootstrap breaks for the maximum.** The bootstrap works by approximating the sampling distribution of your statistic using the empirical CDF. But the empirical CDF assigns zero probability to values beyond the observed maximum. So every bootstrap resample has a maximum \u2264 your observed maximum. The upper tail of the bootstrap CI \u2014 exactly the part you care about \u2014 is hard-bounded at the observed sample max. The interval systematically undercovers the true upper quantile. This isn't a sample-size limitation that disappears at larger n; it's structural. The bootstrap requires the statistic to be a smooth functional of the distribution (loosely, small perturbations to the distribution produce small, estimable perturbations to the statistic). The maximum is maximally non-smooth in this sense.\n\n**Heavy tails compound the problem.** The behavior of the maximum is governed by the tail of the distribution. With 40 observations, your empirical CDF is a coarse approximation in exactly the region that controls how large the maximum gets. The bootstrap is resampling from that approximation, amplifying the tail misspecification precisely where it matters most.\n\n**The estimand is also worth examining.** \"Maximum the process can produce\" is ambiguous if the support is unbounded \u2014 that quantity is infinite and no finite-sample estimator reaches it. You likely want a high quantile (say the 99th or 99.9th percentile), or the expected maximum of a new sample of size *n*, or a return-level at a stated exceedance probability. These are different targets requiring different methods.\n\n**What actually works.** The principled tools for extreme-value inference are from **Extreme Value Theory**:\n- *Peaks-over-threshold / GPD*: fit a Generalized Pareto distribution to exceedances above a threshold; CI from the profile likelihood.\n- *Block maxima / GEV*: fit a Generalized Extreme Value distribution to block maxima; CI similarly from the profile likelihood.\n\nBoth methods have their own assumptions (stationarity, the process is in the domain of attraction of an extreme value distribution), but they are calibrated to the right inferential problem. At n=40 you'll get wide intervals and uncertain tail-index estimation \u2014 that's honest uncertainty, not a flaw. A bootstrap \"interval\" that excludes the possibility of values larger than your observed max is false precision, not a tighter answer.\n\nThe bottom line: the bootstrap is not assumption-free; one of its core requirements is a smooth functional, and the maximum violates it badly. EVT is the right framework here, with honest acknowledgment that n=40 limits how precisely the tail can be characterized.",
+  "assertions": [
+    {
+      "text": "States that the naive bootstrap is not assumption-free and fails (is inconsistent) for the maximum / extreme order statistics",
+      "type": "scored"
+    },
+    {
+      "text": "Explains why: the maximum is a non-smooth functional pinned to the observed extreme, so the bootstrap distribution doesn't converge correctly",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that small n and heavy tails make estimating an extreme quantity especially fragile",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends a more appropriate approach (extreme-value theory / GEV / peaks-over-threshold, or m-out-of-n / subsampling)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT endorse the plan as a valid assumption-free procedure",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

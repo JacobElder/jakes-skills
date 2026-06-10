@@ -341,7 +341,7 @@
     },
     {
       "id": 13,
-      "prompt": "Just give me a yes or no: is it valid to use linear regression on a binary outcome (the linear probability model)?",
+      "prompt": "Is it valid to use linear regression on a binary outcome (the linear probability model)? Someone told me it is always wrong to use LPM and you must use logistic regression instead.",
       "expected_output": "Declines the pure yes/no and gives nuance: the LPM gives consistent estimates of marginal effects / risk differences and is popular in econometrics, but has drawbacks (predictions outside [0,1], inherent heteroskedasticity -> use robust SEs, nonlinearity near the bounds). It's defensible when the estimand is the average marginal effect / risk difference and probabilities are away from 0/1; logistic is better when you need valid probabilities or odds ratios or have extreme probabilities. Multiple approaches defensible depending on estimand.",
       "files": [],
       "assertions": [
