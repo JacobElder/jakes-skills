@@ -14,7 +14,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [psychometrics](#psychometrics) | Measurement theory & scale development | +97.5pp across 8 scenarios |
 | [comp-modeling](#comp-modeling) | Computational & cognitive modeling | Eval suite included |
 | [sequence-analysis-hmm](#sequence-analysis-hmm) | Hidden Markov Models & sequence analysis | +40pp across 10 content evals |
-| [survival-analysis](#survival-analysis) | Time-to-event modeling (R & Python) | 26/26 analytically graded evals passing |
+| [survival-analysis](#survival-analysis) | Time-to-event modeling (R & Python) | +28pp (29/29 with skill, 21/29 base) |
 | [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | +13.7pp across 16 trap-based evals (100% vs 86.2%); +80pp on singular-fit simplification, +60pp on growth curve time slopes |
 | [network-analysis](#network-analysis) | Network science & social network analysis | +32.5pp across 8 trap-based evals |
 | [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +15.4pp across 8 scenarios (intersection skill) |
@@ -97,7 +97,7 @@ Apply survival analysis (time-to-event modeling) correctly in R and Python. Cove
 
 **Why it matters:** The base model validates common errors rather than catching them. It accepts immortal-time-biased covariate definitions, treats competing events as censoring and reports 1−KM as cumulative incidence, follows up a crossing-curve KM with a standard log-rank test and reports "no significant difference," and returns `coxph` output as a real HR when complete separation makes the partial likelihood diverge. The skill names these errors by name and provides the specific fix — time-varying covariate for immortal time bias, Aalen-Johansen CIF and Fine-Gray for competing risks, MaxCombo or FH(0,1) for non-PH alternatives, Firth-penalized Cox for separation.
 
-**Gap:** 26/26 analytically graded eval prompts passing across 7 categories (method selection, pitfall detection, code correctness, communication, R/Python consistency, adversarial cases, multi-turn coherence).
+**Gap:** +28pp — 29/29 with skill (100%) vs. 21/29 base (72%) on haiku, across 6 automated categories (method selection, pitfall detection, code correctness, communication, R/Python consistency, adversarial cases). Biggest gains on method selection (+80pp) and pitfall detection (+40pp).
 
 → [survival-analysis/](survival-analysis/)
 

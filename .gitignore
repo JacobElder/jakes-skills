@@ -2,3 +2,5 @@
 DS_attributes
 .claude.md
 .claude/
+__pycache__/
+*.pyc
