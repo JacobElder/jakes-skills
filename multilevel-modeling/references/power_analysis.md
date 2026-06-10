@@ -6,7 +6,7 @@ Power for multilevel models depends on more than total *n* — it depends on the
 
 1. **Where does the effect of interest live?**
    - Level 1 (within-cluster predictor): power scales with total *n*, attenuated by ICC. Generally well-powered if you have a reasonable number of observations per cluster.
-   - Level 2 (between-cluster predictor): power scales with *number of clusters*, not total *n*. Often underpowered even in studies with thousands of observations.
+   - Level 2 (between-cluster predictor): power scales with *number of clusters*, not total *n*. Often underpowered even in studies with thousands of observations. **In a cluster RCT where treatment is randomized at the cluster level, the number of clusters per arm is the binding precision constraint — not the total student N.** Adding more students within existing clusters does not add any cluster-level degrees of freedom and does not improve power for the treatment effect. A study with 20 schools per arm has 20 school-level units of comparison regardless of whether each school has 25 students or 250.
    - Cross-level interaction (e.g., does the level-1 effect vary by level-2 group?): power is poor unless both cluster *n* and observations-per-cluster are substantial. Hox suggests ~100 clusters for adequate power on cross-level interactions; simulation is essential.
 
 2. **What ICC are you assuming?** Higher ICC → less effective information per observation for within-cluster effects (more redundancy). Lower ICC → less power for between-cluster effects (less between-cluster signal to detect). Pilot data or published ICC norms for your domain are the right input; don't guess.
@@ -137,7 +137,7 @@ Spell out the assumptions. A power analysis without stated assumed effect size, 
 
 ## Common pitfalls
 
-1. **Using OLS power formulas for MLM** (G*Power without the multilevel module, etc.). Massively overestimates power for clustered designs.
+1. **Using OLS power formulas for MLM** (G*Power without the multilevel module, etc.). Massively overestimates power for clustered designs. For cluster RCTs specifically: G*Power run on the number of *clusters* per arm tells you power for a school-means comparison, which ignores the ICC and design effect on student outcomes. G*Power run on total *students* assumes independence. Neither is correct — use `simr`, PowerUp!, or the Spybrook et al. formulas.
 2. **Assuming ICC = 0 to get a "best case" estimate.** That's not best case; that's "no clustering, no MLM needed." Use realistic ICC.
 3. **Powering on the pilot estimate of the effect.** Pilot estimates are biased upward (the ones that get followed up are the ones that looked promising). Power on the smallest effect you'd care about, not the one you observed.
 4. **Ignoring power for variance components** when those are the inferential target (e.g., is there meaningful between-school variation?). Variance components need many clusters to be precisely estimated, far more than fixed effects do.

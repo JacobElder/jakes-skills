@@ -1,0 +1,45 @@
+{
+  "eval_id": 1,
+  "condition": "with_skill",
+  "prompt": "I have two groups, about 80 people each, and I want to compare their average monthly spend. The data are right-skewed and a Shapiro-Wilk test on each group rejects normality (p < .001). Can I still use a t-test, or do I have to switch to Mann-Whitney?",
+  "response": "Yes, Welch's t-test is fine here. The Shapiro-Wilk result is not evidence that the test will mislead you \u2014 it's evidence that the data aren't exactly normal, which was never in doubt.\n\nHere's why it doesn't matter: the t-test doesn't require normal *data*. It requires that the sampling distribution of the *sample mean* is approximately normal. Those are different objects. The CLT governs the sampling distribution, and at n \u2248 80 per group it has substantially done its work for most real-world spend distributions. Berry-Esseen makes the rate concrete: the approximation error shrinks like skewness/\u221an, so at \u221a80 \u2248 9, you need the data to be extraordinarily skewed (think power-law with a very fat tail, not just the typical right-skewed spend pattern) before the level of the test is materially distorted.\n\nThe two-sample structure helps further: skew partially cancels across groups when comparing means, making the two-sample t-test more robust than the one-sample case.\n\nShapiro-Wilk at n = 80 is overpowered for deciding this \u2014 it will reject on trivial, inconsequential deviations from normality at that sample size. A p < .001 tells you the data aren't exactly normal (already obvious from the histogram); it doesn't tell you the violation is large enough to distort the t-test's level or coverage.\n\n**Mann-Whitney is not a safe substitute here.** It tests P(spend_A > spend_B) = \u00bd \u2014 stochastic ordering \u2014 not the difference in means. If you care about average spend, switching to Mann-Whitney doesn't give you a more reliable answer to your question; it gives you a precise answer to a different question.\n\nUse **Welch's t-test** (not Student's \u2014 skip the equal-variance pretest and use Welch unconditionally), report the mean difference with a confidence interval. The one thing worth actually checking: if there are a handful of extreme values dominating the result, note that fragility (refit without them and see whether the conclusion holds). That's an influence check, not a normality issue.",
+  "assertions": [
+    {
+      "text": "States or implies the relevant object is the sampling distribution of the mean, not the distribution of the raw data",
+      "type": "scored"
+    },
+    {
+      "text": "Says the t-test is approximately valid / okay here given n~80 per group (does not forbid it)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that Shapiro-Wilk rejecting at this sample size is uninformative or expected, and does not treat it as a decisive gate",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends or mentions Welch's t-test (or otherwise addresses unequal variances) rather than the equal-variance pretest",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that Mann-Whitney tests stochastic ordering / P(X>Y), not equality of means or medians in general (location-shift caveat)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT mechanically conclude 'normality rejected therefore use a nonparametric test'",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 6,
+  "total": 6,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

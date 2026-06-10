@@ -1,0 +1,57 @@
+## Short answer: Your collaborator is wrong for this specific design.
+
+A paired *t*-test is the statistically correct, fully sufficient tool here. Here's the full reasoning.
+
+---
+
+## Why the paired *t*-test already solves the non-independence problem
+
+The whole reason we use MLM is to handle **non-independence** — observations from the same person can't be treated as if they came from different people. The paired *t*-test handles this *directly* and *exactly* by computing difference scores:
+
+$$d_i = y_{i,\text{cond1}} - y_{i,\text{cond2}}$$
+
+then testing whether $\bar{d} \neq 0$. By working on difference scores, it perfectly partitions out between-person variance and tests only within-person variance. That *is* the right error term. There is no residual non-independence to worry about.
+
+---
+
+## What happens if you fit an LMM anyway?
+
+| Model | Result |
+|---|---|
+| `y ~ condition + (1 \| id)` | **Numerically identical** to the paired *t*-test for your balanced, complete data. Same *t*, same *p*, same CI. |
+| `y ~ condition + (1 + condition \| id)` | **Singular fit / degenerate.** With exactly 2 observations per person, the variance components (random intercept σ², random slope σ², and their covariance) are *not identified* — you've saturated the model at the individual level. You'll get a boundary estimate and a warning. |
+
+The random-intercept LMM is just a roundabout way to run a paired *t*-test. The maximal LMM actively breaks on this design.
+
+---
+
+## When would the collaborator's instinct be right?
+
+There are genuine cases where MLM beats a paired *t*-test:
+
+- **Missing data**: LMM with REML/ML handles missingness under MAR more gracefully than listwise deletion in a *t*-test.
+- **Covariates**: If you want to add person-level or trial-level predictors, LMM is the natural extension.
+- **More than 2 conditions**: Especially if conditions vary in a structured way (e.g., a continuous dose).
+- **Additional nesting**: Participants nested within sites, items as a second random factor, etc.
+- **Repeated trials per condition**: If each person has *multiple* observations per condition (not just one), then MLM is necessary and the paired *t*-test is insufficient.
+
+None of those apply to your design as described.
+
+---
+
+## What to tell the reviewer (or your collaborator)
+
+The paired *t*-test is a special case of a mixed model. For a balanced, complete, 2-condition within-subjects design, they are algebraically equivalent. Running the LMM adds no information, adds a layer of complexity, and forces you to pick a random-effects structure that is either (a) redundant or (b) unidentifiable. A well-informed reviewer should not object to a paired *t*-test here — and if one does, the right response is to show the equivalence, not to switch methods.
+
+If journal norms in your field genuinely push toward LMM framing, you can fit `y ~ condition + (1|id)` and report it, noting it is equivalent to a paired *t*-test. But that's a stylistic choice, not a statistical necessity.
+
+---
+
+## The one thing worth double-checking
+
+You said "one score per condition" — make sure that's true at the level of analysis. If each "score" is itself an aggregate over multiple trials, then:
+
+1. The aggregation threw away within-condition variability, which is fine if that's what you want.
+2. But if trial-level data exist and you want to model them, MLM on trials (with participants *and* items as crossed random effects if applicable) is the right approach — and the paired *t*-test on aggregates would be the simplification.
+
+If the scores really are single observations per condition per person, proceed with the paired *t*-test without apology.

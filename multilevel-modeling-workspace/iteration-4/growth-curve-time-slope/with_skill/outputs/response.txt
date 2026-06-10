@@ -1,0 +1,88 @@
+Your advisor's heuristic is widely used, but it's specifically the wrong decision for a growth model where the interaction you care about is `time × treatment` — and the write-up question has a real answer: **not yet, not with this model.** Here's why, and how to fix it.
+
+---
+
+## The core problem: you're testing a slope effect without modeling slope variance
+
+The `time × treatment` interaction tests whether the *rate of change over time* differs between groups — i.e., it's a test about **individual growth trajectories**. The proper error term for that test comes from between-person variation in those trajectories, which is exactly what a random slope for time captures.
+
+When you drop `(time | subject)` down to `(1 | subject)`, the model has no term for "people vary in how fast they change." That variance doesn't disappear from your data — it gets absorbed into the level-1 residual. The residual now conflates two things:
+
+- **True within-person noise** (measurement error around an individual's trajectory)
+- **Between-person trajectory heterogeneity** (some people improve quickly, others slowly)
+
+The result: the standard error on `time:treatment` shrinks, your *t*-statistic is inflated, and the test is anti-conservative. The "significant" interaction may or may not survive a correctly-specified model.
+
+---
+
+## Why the near-zero variance estimate doesn't justify dropping the slope
+
+The variance being estimated near 0.003 tells you the model's *estimate* is small — not that individuals truly don't differ in their growth rates. With only 3 time points per person, you have very little information to separate each person's slope from residual noise. A boundary estimate near zero is the expected outcome of too little level-1 data per person to identify slope variance precisely, not evidence that the true variance is zero.
+
+The advisor's logic — "check the estimate, drop if small" — is a form of data-driven model selection based on a parameter that directly affects the validity of your inferential test. The decision about whether to include the random slope should be driven by the **design** (does time vary within subjects? yes) not by whether the ML estimate happens to be large.
+
+---
+
+## What to actually do
+
+### Step 1: Fit the random-slopes model and check for singularity
+
+```r
+library(lme4)
+library(lmerTest)
+
+# Maximal model (with correlation between intercept and slope)
+m_max <- lmer(depression ~ time * treatment + (time | subject), data = df, REML = TRUE)
+isSingular(m_max)
+```
+
+With 3 time points, this model is **identified** (3 observations can estimate a random intercept, slope, and correlation), but the covariance between intercept and slope is often poorly determined. A common first simplification is to remove the covariance:
+
+```r
+# Intercept-slope correlation freed (zero-correlation parameterization)
+m_zcp <- lmer(depression ~ time * treatment + (1 | subject) + (0 + time | subject), 
+              data = df, REML = TRUE)
+isSingular(m_zcp)
+```
+
+This is almost always preferable to dropping the slope entirely. The `(0 + time | subject)` term estimates slope variance without constraining it to be correlated with the intercept variance.
+
+### Step 2: Look at the fixed-effect test before and after
+
+```r
+# Compare the interaction p-value across models
+summary(m_max)        # or m_zcp
+summary(m_intercept)  # your current model
+
+# Also: likelihood ratio comparison (REML=FALSE for fixed effects)
+m_zcp_ml   <- update(m_zcp, REML = FALSE)
+m_intercept_ml <- update(m_intercept, REML = FALSE)
+```
+
+If the `time:treatment` p-value holds up (or even grows slightly more conservative), your conclusion is robust. If it evaporates, that's important information — the result was artifact of the misspecified error term.
+
+### Step 3: If `m_zcp` is still singular for the slope
+
+A near-zero estimate with singularity, even after decoupling the correlation, suggests the 3-timepoint design genuinely can't separate individual slope variation from residual noise in this sample. At that point your options are:
+
+| Option | Notes |
+|---|---|
+| **Keep `m_zcp`, report slope variance near-zero, acknowledge limitation** | Defensible if you explicitly note the random slope is retained by design and the boundary estimate is a precision issue, not evidence of zero variance |
+| **Fit in brms with a weakly informative prior on slope SD** | Priors prevent collapse to zero; even `prior(normal(0, 1), class = sd)` on the slope regularizes appropriately |
+| **Report the intercept-only model as a sensitivity check, not the primary model** | Flip the framing — your main model includes the slope; the advisor's simpler model is the check |
+
+---
+
+## What a defensible write-up looks like
+
+You need to specify the random-effects structure **and your rationale for it**. Something like:
+
+> We fit a linear mixed-effects model with depression as the outcome, time, treatment, and their interaction as fixed effects, and by-subject random intercepts and slopes for time (zero-correlation parameterization: `depression ~ time * treatment + (1 | subject) + (0 + time | subject)`). The random slope for time was retained *a priori* because time varies within subjects and the interaction of interest concerns differential rates of change; variance in individual growth trajectories was estimated as [value]. Degrees of freedom and *p*-values were estimated using Satterthwaite's method (lmerTest).
+
+If a reviewer asks why you kept the slope when its variance is small, the answer is: **the test of differential growth rates requires that the error term account for individual trajectory variation; dropping the slope conflates trajectory heterogeneity with residual noise and produces anti-conservative inference.**
+
+---
+
+## The bottom line
+
+The advisor's heuristic describes common practice — but "common" here means "commonly produces inflated Type I error on the effect you care most about." The fact that the variance estimate is near zero doesn't make the random-intercepts model right; it means the 3-timepoint design gives you imprecise slope variance estimates. Retain the slope, use the zero-correlation parameterization, check for singularity, and report what you find. Only then can you write it up with confidence.

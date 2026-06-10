@@ -1,0 +1,60 @@
+This approach has a well-known limitation that psycholinguistics reviewers will almost certainly flag. Here's what's at stake and what to do about it.
+
+## The core problem: you only have F1
+
+What you've run is a **by-participants analysis (F1)** — participants are the unit of replication, items are treated as fixed. That means your inference is:
+
+> *"This effect replicates across participants, for these specific sentences."*
+
+But the scientific claim you almost certainly want to make is that the effect generalizes to **sentences of this type** — which requires items to be a random effect too.
+
+Clark (1973) formalized this as the **language-as-fixed-effect fallacy**: if items aren't a random effect, you can't generalize beyond your exact stimulus set, and Type I error is inflated because item-level variance gets absorbed into error.
+
+---
+
+## What the field actually expects now
+
+The by-participants-only ANOVA was standard practice before ~2010. **Linear mixed-effects models (LMEMs)** are now the de facto standard in psycholinguistics (Baayen et al., 2008; Barr et al., 2013), and most journals (JML, Cognition, Psych Science, JEPLMC) expect them.
+
+A minimal acceptable model in `lme4`:
+
+```r
+library(lme4)
+library(lmerTest)  # gives p-values via Satterthwaite df
+
+m <- lmer(RT ~ CondA * CondB + (1 + CondA * CondB | participant) + (1 + CondA * CondB | item),
+          data = df, REML = TRUE)
+summary(m)
+```
+
+If the maximal random effects structure doesn't converge (common with 2x2 designs), follow Barr et al.'s keep-it-maximal advice iteratively — try removing correlations first, then random slopes for the interaction.
+
+---
+
+## What this means for your current result
+
+Your effect is significant in F1. That's necessary but not sufficient. The honest possibilities are:
+
+| Scenario | Implication |
+|---|---|
+| Effect holds in LMEM | You're fine — report both, LMEMs as primary |
+| Effect drops in LMEM | The effect is driven by item variance, not a robust finding |
+| Effect is marginal in LMEM | You'll want to discuss power and random effects structure |
+
+**Don't assume the result is robust until you've fit the mixed model.** A significant F1 can coexist with a non-significant mixed model when a few items drive the effect.
+
+---
+
+## What to add to your reporting (at minimum)
+
+If you submit with only the by-participants ANOVA, add at least:
+
+1. **F2 (by-items)** — run the same ANOVA treating items as the unit. This was the pre-LMEM convention and is still accepted as a fallback (min-F' or both F1 and F2 significant).
+2. **Effect size** — partial η² or generalized η² for ANOVA; Cohen's *d* is appropriate for simple 2-level comparisons.
+3. **A note on the aggregation** — acknowledge that trial-level variance is not modeled.
+
+But honestly: **fit the LMEM**. It's the right model for the design, it will almost certainly be required at review, and it's better to know now whether the effect survives it.
+
+---
+
+**Bottom line:** The "lab tradition" here reflects pre-2010 practice. The analysis isn't wrong in isolation, but it's incomplete by current standards and will invite revision requests. Run the mixed model before submission — if the effect holds, you have a stronger paper; if it doesn't, you need to know that.

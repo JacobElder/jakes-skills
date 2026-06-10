@@ -1,0 +1,40 @@
+{
+  "eval_id": 37,
+  "condition": "with_skill",
+  "prompt": "We selected the 20 worst-performing stores in our chain, rolled out a new training program, and measured performance 3 months later. 17 of 20 stores improved their performance. Our CMO says this is strong evidence the training program works. Is it?",
+  "response": "No. This is almost certainly regression to the mean, not evidence the training works \u2014 and the design cannot separate the two.\n\n**The core problem.** When you select the 20 *worst* stores, you're selecting units that are performing poorly for two reasons: (1) genuinely low-quality operations, and (2) transient bad luck \u2014 a rough quarter, a manager out sick, an anomalous data window. On the next measurement, the transient component partially reverses on its own. Most of the 17 \"improvements\" would likely have happened with no intervention at all.\n\nThis is a selection artifact, not a statistical one. No amount of sample size or distributional finesse fixes it \u2014 it's a fundamental identification problem baked into the design.\n\n**The null expectation.** Before seeing the data, you should have predicted that most selected-worst stores would improve by month 3, even under the pure null of zero training effect. Observing 17/20 can't update your beliefs about the training, because it's consistent with both \"the training works\" and \"regression to the mean is real.\" You have no way to distinguish them.\n\n**What's missing.** The causal estimand requires a counterfactual: what would these 20 stores have done without the training? You need one of:\n- A **control group** of similarly low-performing stores that didn't receive training\n- A **randomized rollout** across the chain (assign training to randomly selected stores, measure all)\n- At minimum, a **comparison to the chain-wide trend** over the same period (though this is weaker)\n\n**The CMO's error.** Treating 17/20 as strong evidence conflates the improvement *happening* with the training *causing* it. These are very different claims. The design answers \"did these stores improve?\" (yes), not \"did the training cause improvement?\" (unknown).\n\nIf you want to know whether the training program works, you need a design where the counterfactual is observable \u2014 not one where the selection mechanism guarantees the result you're hoping to see.",
+  "assertions": [
+    {
+      "text": "Identifies regression to the mean as the primary alternative explanation \u2014 stores selected for being extreme will tend to improve regardless of intervention",
+      "type": "must_pass"
+    },
+    {
+      "text": "Explains the mechanism: extreme observed values partly reflect random error; on remeasurement the random component regresses toward the population mean",
+      "type": "scored"
+    },
+    {
+      "text": "States that a control group of similar low-performing stores not receiving training is needed to separate RTM from a true treatment effect",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT validate the 17/20 improvement rate as strong causal evidence without raising RTM",
+      "type": "must_pass"
+    },
+    {
+      "text": "Notes that the design as described (select low performers, treat all, measure again) makes RTM confounding unresolvable without a control group",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

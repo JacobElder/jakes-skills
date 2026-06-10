@@ -1,0 +1,125 @@
+{
+  "skill_name": "agent-based-modeling",
+  "description": "Capability evals for the agent-based-modeling skill. Each eval is a realistic task spanning a phase of the ABM lifecycle (decide / design / document / validate / analyze / interpret / critique). Assertions are objectively checkable properties a good skill-guided answer should have. On Claude.ai, run each prompt with the skill loaded and grade the response text against the assertions.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "tool-choice-abm-vs-ode",
+      "prompt": "I'm modeling how a rumor spreads through a company of about 8,000 employees. I have org-chart data on who reports to whom and some Slack interaction logs. A colleague says to just use a SIR-style differential equation model like for epidemics. Should I do that, or build an agent-based model? Walk me through how to decide.",
+      "expected_output": "A reasoned decision, not a default to ABM. Should identify that network/contact structure and heterogeneity are the deciding factors, note that well-mixed ODE/compartmental models can closely match ABM output when interaction is homogeneous, and conclude that because the user HAS network structure that plausibly drives the outcome, ABM is justified here (or a hybrid). Should mention data availability and what claim the user wants to make.",
+      "assertions": [
+        {"text": "Frames the decision around whether heterogeneity and/or network/local-interaction structure materially affect the outcome, rather than defaulting to ABM", "passed": null, "evidence": null},
+        {"text": "Notes that calibrated equation-based/compartmental (e.g. SIR/ODE) models can closely reproduce ABM output under well-mixed conditions, so ABM is unnecessary when interaction is homogeneous", "passed": null, "evidence": null},
+        {"text": "Uses the user's actual network data (org chart / Slack contacts) as a reason that interaction structure is non-trivial and therefore favors ABM (or a hybrid)", "passed": null, "evidence": null},
+        {"text": "Mentions data availability for grounding agent rules and/or what kind of claim (explanation vs. point prediction) the user wants", "passed": null, "evidence": null},
+        {"text": "Does not assert the ABM will give reliable point predictions", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 1,
+      "name": "design-and-odd-documentation",
+      "prompt": "Help me design a simple agent-based model of foragers competing for patchily distributed food on a landscape, and write up the model description so it could go in a paper's methods section and be reproduced by someone else.",
+      "expected_output": "A model design that starts simple (KISS), names entities/state/scheduling, and a written description structured as ODD with all seven elements and the design concepts addressed. Should treat ODD as the documentation standard and flag the emergent-vs-imposed distinction.",
+      "assertions": [
+        {"text": "Structures the model description using the ODD protocol with its three blocks (Overview, Design concepts, Details)", "passed": null, "evidence": null},
+        {"text": "Includes all seven ODD elements: purpose (and patterns); entities/state variables/scales; process overview and scheduling; design concepts; initialization; input data; submodels", "passed": null, "evidence": null},
+        {"text": "Makes scheduling/update order explicit (e.g. order of agent actions, synchronous vs asynchronous)", "passed": null, "evidence": null},
+        {"text": "Addresses the design concepts including at minimum emergence and stochasticity, and distinguishes which outcomes emerge vs. are imposed", "passed": null, "evidence": null},
+        {"text": "Specifies submodels with parameters and notes they need values/units/sources for reproducibility", "passed": null, "evidence": null},
+        {"text": "Advocates starting simple rather than front-loading complexity", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "calibration-validation-distinction",
+      "prompt": "My agent-based model of farmer technology adoption reproduces the historical adoption curve really well after I tuned six parameters. I want to claim the model is validated. How should I actually go about validating it?",
+      "expected_output": "Should push back that reproducing the calibration target is not validation (circularity), distinguish verification/calibration/validation, recommend independent patterns / out-of-sample data, raise over-parameterization/identifiability concerns about six tuned parameters, and recommend pattern-oriented modeling and comparing distributions.",
+      "assertions": [
+        {"text": "States explicitly that matching the data used for calibration is not validation (circularity), and that validation needs independent patterns or out-of-sample data", "passed": null, "evidence": null},
+        {"text": "Distinguishes verification, calibration, and validation as three separate activities", "passed": null, "evidence": null},
+        {"text": "Raises over-parameterization / identifiability / equifinality concern given six freely tuned parameters (multiple parameter sets could fit the same curve)", "passed": null, "evidence": null},
+        {"text": "Recommends pattern-oriented modeling: validating against multiple independent patterns at different scales", "passed": null, "evidence": null},
+        {"text": "Notes the model is stochastic and that comparison to data should use distributions, not a single trajectory", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "replications-and-sensitivity-analysis",
+      "prompt": "I built a NetLogo model and ran it once and got an interesting result. How many times should I run it, and how do I figure out which of my parameters actually matter for the outcome?",
+      "expected_output": "Should explain that one stochastic run is insufficient, give the CV-convergence method for choosing replication count, and explain sensitivity analysis distinguishing OFAT/local from global (Morris/Sobol), noting OFAT misses interactions. Should mention BehaviorSpace and reporting distributions.",
+      "assertions": [
+        {"text": "Explains that a single run of a stochastic model is insufficient and results must be reported as distributions over many runs with different random seeds", "passed": null, "evidence": null},
+        {"text": "Gives an empirical method for choosing the number of replications (e.g. increase replications and watch the coefficient of variation / running mean converge) rather than a fixed magic number", "passed": null, "evidence": null},
+        {"text": "Distinguishes local/one-factor-at-a-time (OFAT) sensitivity analysis from global SA, and notes OFAT misses parameter interactions", "passed": null, "evidence": null},
+        {"text": "Names at least one global SA approach (e.g. Morris screening or Sobol/variance-based indices)", "passed": null, "evidence": null},
+        {"text": "Mentions a practical tool for running the experiments (e.g. NetLogo BehaviorSpace)", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "critique-and-artefacts",
+      "prompt": "A reviewer is skeptical of our agent-based model. The striking finding is a sharp tipping point that emerges on our grid. What should I check before I trust this result, and how do I defend it?",
+      "expected_output": "Should raise the error-vs-artefact distinction, recommend checking that the tipping point survives changes to incidental modeling choices (grid topology, update order, boundaries, seeds), recommend independent reimplementation, full parameter-space exploration, sensitivity analysis, and stating boundary conditions. Should treat emergence as possibly an artefact.",
+      "assertions": [
+        {"text": "Warns that an emergent result can be an artefact of incidental modeling choices rather than the mechanism of interest", "passed": null, "evidence": null},
+        {"text": "Recommends testing robustness to incidental choices such as grid topology/neighborhood, update order (synchronous vs asynchronous), boundary handling, and random seeds", "passed": null, "evidence": null},
+        {"text": "Recommends independent reimplementation/replication as a strong check", "passed": null, "evidence": null},
+        {"text": "Distinguishes errors (bugs) from artefacts (significant phenomena from accessory assumptions), or clearly conveys both categories", "passed": null, "evidence": null},
+        {"text": "Recommends sensitivity analysis and/or stating the boundary conditions (parameter ranges, scales) under which the tipping point holds", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "interpretation-guardrails",
+      "prompt": "Our ABM shows that if individual agents follow a simple imitation rule, you get the same wealth inequality pattern we see in the real data. Can we conclude that imitation is what causes real-world inequality?",
+      "expected_output": "Should explain the sufficiency-vs-necessity / equifinality point: the model shows imitation is SUFFICIENT to produce the pattern, not that it is what operates in reality, since other rules could produce the same pattern. Should frame it as a generative/sufficiency claim and suggest discriminating among candidate mechanisms.",
+      "assertions": [
+        {"text": "Explains that reproducing the pattern shows the rule is sufficient to generate it, not that it is the actual/necessary cause", "passed": null, "evidence": null},
+        {"text": "Raises equifinality: other mechanisms could produce the same macro pattern", "passed": null, "evidence": null},
+        {"text": "Reframes the legitimate claim as a generative/sufficiency claim rather than a causal claim about the real world", "passed": null, "evidence": null},
+        {"text": "Suggests a way to strengthen the inference (e.g. discriminating among candidate mechanisms via multiple independent patterns, or seeking evidence the rule actually operates)", "passed": null, "evidence": null},
+        {"text": "Does NOT endorse the conclusion that imitation causes real-world inequality as stated", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 6,
+      "name": "dont-build-abm-simpler-suffices",
+      "prompt": "I want to project how a new 10% tax credit changes total national heat-pump adoption over the next 5 years. I have national time-series data on adoption rates and prices. A consultant proposed building an agent-based model with millions of individual household agents. Is that the right call?",
+      "expected_output": "Should push back rather than endorse ABM. The question is aggregate, the data is national time-series, and nothing stated indicates that local interaction/network effects or heterogeneity drive the outcome — so a simpler diffusion/econometric/compartmental model is more appropriate, and millions of agents add cost without benefit. Should say what WOULD justify ABM (e.g. strong peer/neighbor effects) and not overclaim ABM's predictive value.",
+      "assertions": [
+        {"text": "Recommends against (or seriously questions) building an ABM for this aggregate, well-mixed forecasting problem rather than endorsing it", "passed": null, "evidence": null},
+        {"text": "Proposes a simpler appropriate alternative (e.g. Bass/diffusion model, econometric/time-series model, or compartmental model)", "passed": null, "evidence": null},
+        {"text": "Identifies the deciding factors (heterogeneity / local interaction / network effects) and notes they do not appear essential as described", "passed": null, "evidence": null},
+        {"text": "Notes that millions of agents add computational cost without clear benefit absent interaction effects", "passed": null, "evidence": null},
+        {"text": "States what WOULD justify ABM here (e.g. strong peer/neighbor influence on adoption)", "passed": null, "evidence": null},
+        {"text": "Does NOT claim an ABM would by default give a better or more reliable forecast", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 7,
+      "name": "run-global-sensitivity-analysis-code",
+      "prompt": "I have a stochastic SIR-style infection ABM in Python with three parameters — infection_rate (0.01-0.5), recovery_rate (0.05-0.4), and n_contacts (2-20) — and I want to know which ones actually drive the final outbreak size. I have a function run(params, seed) that runs one replication and returns the final number infected. Can you actually run a proper global sensitivity analysis and tell me what matters, not just describe how?",
+      "expected_output": "Should use (or adapt) the bundled scripts/sensitivity_analysis.py: define a SALib problem with the three parameters and bounds, average several seeds per sample point to handle stochasticity, screen with Morris first, then run Sobol, actually execute it, and interpret S1 vs ST. Should not just hand-roll an OFAT sweep or only describe the method.",
+      "assertions": [
+        {"text": "Uses or directly adapts the bundled SALib-based sensitivity_analysis.py (Morris + Sobol) rather than hand-rolling a one-factor-at-a-time sweep", "passed": null, "evidence": null},
+        {"text": "Defines a SALib problem dict with the three named parameters and their bounds", "passed": null, "evidence": null},
+        {"text": "Averages multiple seeds per sampled parameter point to separate parameter effects from stochastic noise", "passed": null, "evidence": null},
+        {"text": "Screens with Morris before/alongside Sobol and interprets first-order (S1) vs total-effect (ST) indices, noting ST captures interactions", "passed": null, "evidence": null},
+        {"text": "Actually executes the analysis and reports which parameters dominate (real output), not only an explanation of how to do it", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 8,
+      "name": "generative-abm-data-leakage",
+      "prompt": "We built a generative ABM where each agent is an LLM prompted with a social-media-user persona. We observed polarized echo chambers emerge, matching patterns in real Twitter data. Can we conclude that our agent interaction rules cause polarization?",
+      "expected_output": "Should raise data leakage/training contamination as the central problem (the LLM likely 'knows' echo-chamber dynamics from training data, so it may reproduce rather than generate the pattern), note the worsened black-box and reproducibility issues, recommend a leakage test and a rule-based baseline, and point out that matching data / believability is not validation. Sufficiency-vs-necessity also applies.",
+      "assertions": [
+        {"text": "Raises data leakage / training contamination: the LLM may reproduce echo-chamber/polarization patterns from its training data rather than generate them from the interaction rules", "passed": null, "evidence": null},
+        {"text": "Recommends a concrete leakage check (e.g. withhold or scramble the supposed mechanism, or use counterfactual/fictional scenarios the model cannot have memorized)", "passed": null, "evidence": null},
+        {"text": "Recommends comparison against a transparent rule-based ABM baseline", "passed": null, "evidence": null},
+        {"text": "Notes that matching real data / believability is not validation, and that reproducibility requires pinning model version, decoding params, seeds, and prompts", "passed": null, "evidence": null},
+        {"text": "Does NOT endorse the causal conclusion that the interaction rules cause polarization as stated", "passed": null, "evidence": null}
+      ]
+    }
+  ]
+}

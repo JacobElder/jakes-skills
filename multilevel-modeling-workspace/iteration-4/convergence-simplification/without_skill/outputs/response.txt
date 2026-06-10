@@ -1,0 +1,57 @@
+There's a real problem with the model as simplified, and the Bates et al. citation doesn't cover it. Here's why.
+
+## The core issue: wrong error terms, not just "too complex"
+
+In a 2×2 **within-subjects** design, both `condA` and `condB` vary within subjects. The test of `condA` requires variance in how much the `condA` effect differs across participants — that's the random slope. Without it, the residual that lme4 uses as the denominator for the `condA` fixed effect lumps together within-subject trial noise *and* between-subject variation in the condA effect. The test is anti-conservative. Barr et al. (2013) demonstrate this inflates Type I error rates to 2–5× the nominal level, even with moderate effect heterogeneity.
+
+`(1 | subject)` only accounts for baseline differences between people. It doesn't account for the fact that some people may respond differently to condA or condB. For a confirmatory 2×2 within-subjects design, that's not parsimony — it's the wrong model.
+
+## What Bates et al. (2015) actually recommend
+
+Bates et al. argue for parsimony through a **principled process**, not "drop to random intercepts when singular." Their specific workflow:
+
+1. Fit the maximal model.
+2. Identify which variance components are near zero (use PCA of the random-effects covariance matrix — `rePCA(model)` or inspect the singular fit details).
+3. Remove the components that are genuinely unsupported, typically starting with **correlation parameters** and the **highest-order interaction slope**.
+4. Keep lower-order slopes unless they too are clearly degenerate.
+
+Dropping from `(condA * condB | subject)` all the way to `(1 | subject)` in one step skips that ladder. Reviewers who know this literature will push back.
+
+## A more defensible simplification path
+
+For a 2×2 within-subjects design with 50 participants, try these in order:
+
+```r
+# Step 1: Remove correlations only — often fixes singular fits
+lmer(score ~ condA * condB + (condA * condB || subject))
+
+# Step 2: Drop the interaction slope, keep main effect slopes
+lmer(score ~ condA * condB + (condA + condB || subject))
+
+# Step 3: Keep only the slopes most critical to your hypotheses
+# e.g., if condA is your key manipulation:
+lmer(score ~ condA * condB + (condA || subject))
+```
+
+Check `isSingular()` and `VarCorr()` at each step. Stop at the first model that converges cleanly and retains structure for the effects under test.
+
+## If the slopes truly have near-zero variance
+
+If steps 1–3 all show near-zero variance for both `condA` and `condB` slopes, that's substantively informative (people respond very similarly to the manipulation), and `(1 | subject)` may be defensible. But then **report that finding explicitly** — state what the random-slope variance estimates were, why they were removed, and acknowledge the Type I error implication. Don't bury it in "we followed Bates et al."
+
+## How to report it
+
+Rather than "we used a parsimonious random effects structure per Bates et al.," a defensible write-up looks like:
+
+> "We initially fit the maximal model `score ~ condA * condB + (condA * condB | subject)`, which produced a singular fit (variance component for the condA × condB slope: *σ* = 0.000; correlation parameters on the boundary). Following Bates et al. (2015), we pruned the random-effects structure by first removing correlation parameters and then the interaction slope. The model `score ~ condA * condB + (condA + condB || subject)` converged without singularity [or: also remained singular, at which point we further removed...]. We retained random slopes for condA and condB to preserve the correct error term for the within-subjects tests (Barr et al., 2013)."
+
+## Bottom line
+
+| Question | Answer |
+|---|---|
+| Can you cite Bates et al. and call it done? | No — that misrepresents a principled process as a single-step drop |
+| Is `(1\|subject)` defensible for within-subjects factors? | Only after exhausting intermediate simplifications and documenting near-zero slope variance |
+| What's the Type I error risk? | Real and potentially substantial — the interaction and main effect tests may be anti-conservative |
+| What should you try next? | Remove `||` correlations first, then the interaction slope; check `isSingular()` at each step |
+
+The Barr et al. vs. Bates et al. debate isn't resolved by picking one side. For confirmatory inference in a within-subjects design, the burden is on demonstrating that the random slopes are genuinely unsupported *before* dropping them — not treating singularity as automatic permission.

@@ -1,0 +1,125 @@
+{
+  "skill_name": "robust-statistics",
+  "results": [
+    {
+      "eval_id": 2,
+      "condition": "baseline",
+      "prompt": "My sample is huge (2.3 million rows). Does that mean I don't have to worry about my regression assumptions anymore?",
+      "response": "No \u2014 large N actually sharpens the knife in both directions. Here's what changes and what doesn't:\n\n**What large N genuinely helps with**\n- Normality of residuals matters less because the CLT ensures the sampling distribution of your coefficients is approximately normal regardless\n- Individual outliers have less leverage on estimates\n\n**What large N does NOT fix**\n- **Linearity** \u2014 a misspecified functional form is still misspecified; you just now have overwhelming power to detect the departure\n- **Independence** \u2014 clustered or autocorrelated errors are structurally wrong; adding more rows in the same clusters doesn't buy you more independent information\n- **Homoscedasticity** \u2014 heteroscedastic errors still bias your standard errors (and thus p-values and CIs), just as they would in a small sample\n\n**The hidden trap with large N**\nDiagnostic tests (Breusch-Pagan, White, Durbin-Watson, etc.) will flag *trivially small* violations as highly significant because you have so much power. You'll get p < .0001 on a heteroscedasticity test for variance that differs by 0.2% across the range. The question shifts from \"is there a violation?\" to \"is the violation large enough to distort my inference?\"\n\n**Practical guidance**\n- Always plot residuals vs. fitted values \u2014 eyes beat omnibus tests for judging practical severity\n- Use heteroscedasticity-robust (HC3/HC4) standard errors by default at this scale; the cost is near zero\n- If rows are clustered (users, firms, schools), cluster-robust SEs or a multilevel model are non-negotiable regardless of N\n- Test for nonlinearity substantively, not just with a p-value\n\nBig N shifts your worry from \"do I have enough power?\" to \"am I modeling the right thing?\"",
+      "assertions": [
+        {
+          "text": "States that large N helps with the level/normal-approximation of tests (CLT) but does not fix everything",
+          "type": "scored"
+        },
+        {
+          "text": "Names at least two things large N does NOT fix from: dependence/clustering, confounding/identification, model/mean misspecification, wrong estimand",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that at this N nearly everything is statistically significant and effect sizes / intervals matter more than p-values",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT claim that large N makes assumptions irrelevant wholesale",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "passed": 3,
+      "total": 4,
+      "pass_rate": 0.75,
+      "eval_passes": false,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 2,
+      "condition": "with_skill",
+      "prompt": "My sample is huge (2.3 million rows). Does that mean I don't have to worry about my regression assumptions anymore?",
+      "response": "No \u2014 and the misconception here is worth unpacking precisely, because large N fixes one narrow thing while leaving the violations that actually matter completely untouched.\n\n**What large N actually buys you:** Via the CLT, the sampling distribution of your coefficient estimates becomes approximately normal, so your t-statistics and standard errors are reliable for inference on *means and linear contrasts* \u2014 even if the residuals aren't normally distributed. Normality of residuals as a concern for coefficient inference is essentially gone at 2.3M rows.\n\n**What it doesn't fix:**\n\n- **Bias from misspecification.** Wrong functional form, omitted variables, or controlling for a mediator or collider biases your coefficients. Large N gives you an extremely precise estimate of the wrong thing. The confidence intervals shrink to nothing; they just exclude the true value very confidently.\n- **Dependence / clustering.** If observations are correlated within groups (people nested in firms, repeated measures, geographic clustering), standard errors are too small regardless of total N. The relevant sample size is the number of independent clusters, not rows. At 2.3M observations with 50 clusters, you have an effective N of 50 for inference purposes.\n- **Causal identification.** An unmeasured confounder at N = 2.3M is exactly as confounding as at N = 100. Large N does nothing for the identification assumptions that determine whether your regression estimates a causal effect or a confounded description.\n- **Wrong estimand.** If you want a rate ratio but you're running OLS, or you want a conditional median but you're estimating a mean, N doesn't resolve the mismatch between what you're measuring and what you care about.\n\n**The irony of large N:** At 2.3M rows, *every* assumption test \u2014 Shapiro-Wilk, Breusch-Pagan, Levene \u2014 will reject for completely negligible deviations that couldn't possibly matter. And every coefficient will be \"significant\" regardless of effect size. So large N actually makes p-values *less* informative as your main result, not more. Lead with effect sizes and intervals; the significance column is almost uninformative at that scale.\n\nThe practical checklist for your regression: (1) Is the functional form right, or are there nonlinearities you're ignoring? (2) Are there unmeasured confounders, or variables you're controlling for that might be mediators or colliders? (3) Are observations independent, or clustered in some way? (4) Is the mean the estimand you actually want? These are the questions that matter. Normality of residuals and the level validity of your tests are not.",
+      "assertions": [
+        {
+          "text": "States that large N helps with the level/normal-approximation of tests (CLT) but does not fix everything",
+          "type": "scored"
+        },
+        {
+          "text": "Names at least two things large N does NOT fix from: dependence/clustering, confounding/identification, model/mean misspecification, wrong estimand",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that at this N nearly everything is statistically significant and effect sizes / intervals matter more than p-values",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT claim that large N makes assumptions irrelevant wholesale",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 5,
+      "condition": "baseline",
+      "prompt": "My residuals aren't normal (clear deviation in the QQ plot) and there's some funneling. The model is an OLS of revenue on a handful of predictors, n=400. Walk me through what to do.",
+      "response": "Two separate problems with different urgency levels. The funneling (heteroscedasticity) is the more serious one \u2014 it makes your standard errors wrong. Non-normality at n=400 is less critical for inference due to the CLT, but it often signals the same root cause.\n\n## Step 1: Check whether they share a cause\n\nFunneling means variance grows with the fitted value \u2014 classic for revenue, which is right-skewed and multiplicative. Non-normal residuals with right-skew likely stem from the same issue. **Try log-transforming revenue first** \u2014 it often fixes both simultaneously.\n\n```r\nm2 <- lm(log(revenue) ~ x1 + x2 + ..., data = df)\nplot(m2)  # check whether QQ and scale-location improve\n```\n\nInterpret coefficients as: a one-unit increase in `x` \u2192 `(exp(coef) - 1) * 100`% change in revenue.\n\n## Step 2: If log-transform doesn't fully resolve the funneling\n\nAdd **robust (sandwich) standard errors** \u2014 this fixes inference without changing the model:\n\n```r\nlibrary(sandwich); library(lmtest)\ncoeftest(m2, vcov = vcovHC(m2, type = \"HC3\"))\n```\n\nUse HC3 specifically \u2014 it's the most conservative and performs best in small-to-medium samples.\n\n## Step 3: If the log scale doesn't fit well\n\nConsider a **Gamma GLM with log link**. This is theoretically better for strictly positive, right-skewed outcomes like revenue \u2014 it models multiplicative effects directly and handles variance that scales with the mean:\n\n```r\nm3 <- glm(revenue ~ x1 + x2 + ..., family = Gamma(link = \"log\"), data = df)\nsummary(m3)\n```\n\n## Step 4: Verify the fix worked\n\nAfter each change, check:\n- **Scale-location plot**: points should scatter horizontally with no slope\n- **QQ plot**: should hug the diagonal more tightly\n- **Residuals vs. leverage**: watch for high-leverage outliers that reappear\n\n## What to avoid\n\nDon't transform predictors to fix residual non-normality \u2014 that changes the model's meaning and rarely helps. Don't drop outliers without substantive justification.\n\n**Most likely path for revenue data:** log-transform + check plots \u2192 probably done. If you still see a slope in scale-location, layer on HC3 SEs.\n\nWhat does your QQ plot look like \u2014 heavy right tail (skew), or heavy tails on both sides (kurtosis)? That'd tell me whether log is likely to be sufficient.",
+      "assertions": [
+        {
+          "text": "Identifies funneling as heteroskedasticity and recommends heteroskedasticity-robust (sandwich/HC, ideally HC3) standard errors",
+          "type": "scored"
+        },
+        {
+          "text": "States that heteroskedasticity affects the standard errors, not the unbiasedness of the OLS coefficients",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that non-normal residuals at n=400 are of limited concern for coefficient inference due to the CLT",
+          "type": "scored"
+        },
+        {
+          "text": "Recommends checking whether the residual pattern signals a misspecified mean structure (nonlinearity / omitted terms) rather than only a distributional issue",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions that a GLM (e.g. gamma/log) may fit revenue's generative structure better, OR cautions against transforming purely to normalize residuals (changing the estimand)",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        true,
+        false,
+        true,
+        false,
+        true
+      ],
+      "passed": 3,
+      "total": 5,
+      "pass_rate": 0.6,
+      "eval_passes": false,
+      "must_pass_failed_indices": []
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "passed": 6,
+      "total": 9
+    },
+    "with_skill": {
+      "passed": 4,
+      "total": 4
+    }
+  }
+}

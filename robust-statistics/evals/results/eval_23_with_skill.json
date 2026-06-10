@@ -2,7 +2,7 @@
   "eval_id": 23,
   "condition": "with_skill",
   "prompt": "We ran a small pilot study \u2014 9 people per group, so n=18 total \u2014 and found d = 0.9, p = 0.04. The effect is large and significant! This is great news for the intervention, right?",
-  "response": "Not quite \u2014 and the specific combination of \"large, significant, small n\" is actually a warning sign, not a green light. Here's what's actually happening.\n\n**Power is around 40\u201350%.** With n=9 per group and a true effect of d=0.9, a two-sample t-test has roughly that probability of clearing p < .05. That means most runs of this study would *miss* the effect even if it's real.\n\n**The exaggeration problem (Type M error).** When power is ~40\u201350%, the estimates that happen to cross the significance threshold are drawn from the tail of the sampling distribution \u2014 they are not a representative sample of the true effect. Conditional on being significant, the observed d is systematically inflated relative to the true d. The winner's curse applies in full: d=0.9 is your best estimate of the *observed-significant* effect, not the underlying effect. The true effect could be d=0.3\u20130.5, with a fortunate random fluctuation pushing you past p=.05.\n\n**p=0.04 is modest evidence.** With a single small study and no preregistration, the probability the observed effect replicates at similar magnitude is substantially below what p=.04 implies. The p-value answers \"how often would I get a result this extreme if the null were true?\" \u2014 it doesn't tell you how much to trust the point estimate.\n\n**What you actually have.** Promising pilot data that's consistent with a real effect and justifies a properly powered follow-up. That's genuinely useful. But the d=0.9 estimate should not be used for effect-size claims or as the basis for resource decisions \u2014 it almost certainly overstates the true effect, possibly by a factor of 2 or more.\n\nThe right framing: design the confirmatory study with a more conservative assumed effect (d=0.4\u20130.5 is a reasonable hedge), compute the n needed for 80\u201390% power at that effect, and pre-register the analysis. If the effect is real, you'll find it. If d=0.9 is what's real, you'll have plenty of power.",
+  "response": "Not quite \u2014 this is actually a textbook setup for Type M error, and \"large + significant + small n\" deserves skepticism rather than celebration.\n\nWith n = 9 per group, the study has roughly 48% power to detect a true d = 0.9 at \u03b1 = .05 (two-tailed). That means if the true effect really is 0.9, the study fails to detect it about half the time. Crucially, the estimates that *do* clear the significance threshold are drawn from the right tail of the sampling distribution \u2014 they are not a representative sample of the true effect. At ~50% power, the exaggeration ratio is substantial: significant estimates will typically be 1.5\u20132\u00d7 the true effect or larger. If the true d is something more modest \u2014 say 0.3 to 0.5, a plausible prior for a behavioral intervention \u2014 power drops to 10\u201320% and the exaggeration becomes severe. The p = 0.04 landing just past the threshold makes this worse, not better: barely-significant results from underpowered studies carry maximum winner's-curse inflation.\n\nThe confidence interval makes the uncertainty concrete. For d = 0.9 at this n, the 95% CI is roughly (\u22120.05, 1.85) \u2014 spanning near-zero to nearly two standard deviations. The data are consistent with a negligible effect and with an enormous one. That's not a finding; it's a noise-dominated estimate with a lucky tail draw. The right interpretation is: the direction is consistent with your hypothesis and the effect could be real, so run a properly powered replication. A study powered to detect a more conservative, pre-specified effect size \u2014 say d = 0.4 at 80% power \u2014 needs roughly 100 participants per group. The pilot gives you a plausible direction, not validation of the intervention.",
   "assertions": [
     {
       "text": "Flags low power as a concern \u2014 n=18 is a very small sample for an effect of this magnitude",
@@ -13,7 +13,7 @@
       "type": "scored"
     },
     {
-      "text": "Notes the Type S / wrong-sign risk at low power",
+      "text": "Notes that at low power the true effect could be much smaller, negligible, or even in the wrong direction \u2014 the observed large effect is not trustworthy at face value",
       "type": "scored"
     },
     {
@@ -28,13 +28,13 @@
   "assertion_results": [
     true,
     true,
-    false,
+    true,
     true,
     true
   ],
-  "passed": 4,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.8,
-  "eval_passes": false,
+  "pass_rate": 1.0,
+  "eval_passes": true,
   "must_pass_failed_indices": []
 }

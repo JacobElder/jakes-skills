@@ -1,0 +1,31 @@
+{
+  "eval_id": 5,
+  "condition": "with_skill",
+  "prompt": "I ran a multiverse analysis on whether caffeine improves reaction time. I have 3 outlier rules, 2 covariate options, and 2 DV operationalizations = 12 specifications total. 9 of 12 are significant (p<0.05). The 3 non-significant ones all use the log-transformed DV. My original pre-registered analysis used the raw DV and no outliers, no covariate \u2014 it's significant (p=0.008). Since 9/12 are significant and my original spec is among them, can I report this as 'the effect is robust across 75% of specifications and my pre-registered analysis confirms the effect'?",
+  "response": "No \u2014 that framing is precisely what the multiverse methodology is designed to prevent. Here's why it's misleading and what honest reporting looks like.\n\n## The real finding: DV operationalization is doing all the work\n\nThe 3 non-significant specs don't scatter randomly across the curve \u2014 they cluster perfectly on a single decision fork (log-transformed DV). That is not 75% robustness. That is **the effect being fully contingent on whether you use raw vs. log reaction time.**\n\nThe skill's methodology is explicit on this: \"When the user claims 'X% of specs are significant' without disclosing that the non-significant specs cluster on a single decision fork, flag it: that clustering is the real finding. Point them to `decision_importance()` \u2014 it will show that one decision explains most of the significance variance.\"\n\n`decision_importance()` will almost certainly show DV operationalization with near-total \u03b7\u00b2. The outlier and covariate decisions are probably noise.\n\n## Two compounding problems\n\n**1. Raw vs. log coefficients aren't comparable.** Reaction time is log-normal in most tasks, so a raw-DV coefficient (ms units) and a log-DV coefficient (log-ms units) measure different things on different scales. Pooling them into a \"75% significant\" count conflates a unit question with a robustness question. You should standardize before comparing \u2014 or report the two sub-curves separately.\n\n**2. The pre-registered spec doesn't \"confirm\" the effect.** It simply lands in the raw-DV cluster. Saying \"my pre-registered analysis confirms the effect\" when the effect disappears under a defensible alternative operationalization is exactly the cherry-picking a multiverse exists to expose. Pre-registration fixes one arbitrary path; it doesn't settle the operationalization debate.\n\n## What honest reporting looks like\n\nThe correct read is: **the effect is present under raw reaction time (all 6 raw-DV specs significant) and absent under log reaction time (all 6 log-DV specs non-significant).** That's not 75% robustness \u2014 that's a clear sign the effect is fragile to DV operationalization.\n\nHonest framing:\n- \"The effect was significant in all 6 raw-DV specifications (p < .05) but in none of the 6 log-DV specifications, suggesting the result is sensitive to DV operationalization.\"\n- Report where your pre-registered spec falls: \"Our pre-registered specification (raw DV, no exclusions, no covariate) was significant (p = .008) and falls within the raw-DV cluster.\"\n- Note that log-transformation is theoretically motivated for reaction time (reaction time is typically right-skewed and log-normal), so the log results deserve equal standing, not dismissal.\n- Run `decision_importance()` and report the \u03b7\u00b2 to make the DV-fork dominance explicit.\n\nThe effect may still be real \u2014 but the honest conclusion is: **\"the effect depends on whether reaction time is analyzed on a raw or log scale, which warrants investigation rather than dismissal.\"** That's a more useful and credible finding than \"75% significant.\"",
+  "assertions": [
+    "Flags that all 3 non-significant specifications cluster on the log-DV fork \u2014 identifies this as a systematic pattern (effect depends on DV operationalization), not random scatter across specifications",
+    "Warns that reporting '75% significant' without disclosing the systematic pattern is misleading \u2014 the DV operationalization decision, not robustness in general, governs significance",
+    "References decision-importance analysis (or eta-squared / variance decomposition per decision) \u2014 either by recommending the user run it, or by citing what it would show \u2014 to demonstrate that the DV operationalization fork is the primary driver of significance variance, not random scatter",
+    "Does NOT endorse the claim that the effect is 'robust across 75% of specifications' as stated, without qualification",
+    "Does NOT suggest or imply that the pre-registered analysis being significant validates the choice of raw DV over log-transformed"
+  ],
+  "assertion_types": [
+    "scored",
+    "scored",
+    "scored",
+    "must_pass",
+    "must_pass"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

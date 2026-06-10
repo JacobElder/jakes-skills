@@ -1,0 +1,41 @@
+{
+  "run_id": "glmm-marginal-interpretation-with_skill",
+  "eval_id": 6,
+  "eval_name": "glmm-marginal-interpretation",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output flags the conditional vs. marginal (cluster-specific vs. population-average) distinction",
+      "passed": true,
+      "evidence": "The response opens by stating: 'logistic GLMM coefficients are conditional (cluster-specific) estimates' and contrasts with 'marginal (population-average) effect', making the distinction explicit and prominent."
+    },
+    {
+      "text": "Output explains that the GLMM fixed-effect coefficient is cluster-specific \u2014 it represents the log-odds ratio for a given clinic at its random-effect value \u2014 not a population-average effect",
+      "passed": true,
+      "evidence": "'For a patient in a given clinic (holding that clinic's random effect constant), receiving the intervention multiplies the odds of adhering by 3.32.' The response explains the conditional nature explicitly and notes the random effect is implicit/held constant."
+    },
+    {
+      "text": "Output does NOT validate the phrase 'in the population' applied to a GLMM fixed-effect coefficient without qualification",
+      "passed": true,
+      "evidence": "The response directly labels it a 'critical interpretation error' and has a section titled 'Why \"in the population\" is wrong here', with no hedged validation that would let the user proceed with the original wording."
+    },
+    {
+      "text": "Output recommends using emmeans, marginaleffects, or re.form=NA on the response scale to get the population-average marginal effect",
+      "passed": true,
+      "evidence": "The response recommends `marginaleffects` with working R code: 'Use `marginaleffects` (R) to average predicted probabilities across the observed covariate distribution'. The expectation lists these as alternatives (or), so recommending marginaleffects suffices."
+    },
+    {
+      "text": "Output notes that the conditional and population-average ORs are numerically different due to the nonlinearity of the logistic function \u2014 the population-average OR is closer to 1 than 3.32",
+      "passed": true,
+      "evidence": "'The population-average OR \u2014 what you'd get from integrating over the distribution of clinic random effects \u2014 is always attenuated toward 1 relative to the cluster-specific OR.' The accompanying table shows marginal ORs ranging from ~2.51 to ~3.14, all below 3.32, with explicit attribution to the nonlinearity of the logistic link."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

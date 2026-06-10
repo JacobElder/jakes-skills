@@ -1,0 +1,40 @@
+{
+  "eval_id": 3,
+  "condition": "baseline",
+  "prompt": "I'm modeling the number of support tickets each customer files per month. Should I use Poisson or negative binomial regression?",
+  "response": "**Negative binomial, almost certainly.**\n\nPoisson assumes the mean equals the variance (equidispersion). Support ticket counts are almost always **overdispersed** \u2014 customers vary enormously in how often they file tickets, and that heterogeneity inflates the variance well above the mean. If you fit Poisson to overdispersed data, standard errors are underestimated and you'll get spuriously significant predictors.\n\n**Quick diagnostic:** fit the Poisson model first, then check the dispersion statistic. In R:\n\n```r\nlibrary(AER)\ndispersiontest(poisson_model)  # p < .05 \u2192 overdispersed \u2192 use NB\n```\n\nIn Python (statsmodels):\n```python\nimport statsmodels.formula.api as smf\n\npoisson_fit = smf.poisson(\"tickets ~ x1 + x2\", data=df).fit()\nnb_fit = smf.negativebinomial(\"tickets ~ x1 + x2\", data=df).fit()\n\n# Compare log-likelihoods or use a likelihood ratio test\n```\n\n**One exception:** if your data has far more zeros than either distribution predicts (many customers never file a ticket), consider a **zero-inflated** variant (ZIP or ZINB). Check by comparing observed vs. predicted zero counts from the NB fit.\n\nThe practical decision tree:\n1. Overdispersion? \u2192 NB over Poisson\n2. Excess zeros beyond what NB predicts? \u2192 ZINB\n3. Near-equidispersion? \u2192 Poisson is fine, but this is rare in real customer behavior data",
+  "assertions": [
+    {
+      "text": "Frames the decision around the mean-variance relationship / equidispersion vs overdispersion",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that count data like this are usually overdispersed and therefore NB or quasi-Poisson is typically preferred over plain Poisson",
+      "type": "scored"
+    },
+    {
+      "text": "Explains how to detect overdispersion (dispersion statistic relative to df, or variance-vs-mean plot)",
+      "type": "scored"
+    },
+    {
+      "text": "States that overdispersion mainly deflates the standard errors rather than biasing the point estimates (if the mean model is right)",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions at least one of: offset for exposure, NB-vs-quasi-Poisson variance shape difference, or checking excess zeros",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    false,
+    true
+  ],
+  "passed": 3,
+  "total": 5,
+  "pass_rate": 0.6,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

@@ -28,6 +28,8 @@ Follow these steps in order. Don't skip to fitting until you've done steps 1–3
 
 If the user is in the planning phase (pre-data-collection) rather than analyzing existing data, also see `references/power_analysis.md` — power in MLM depends on the number of clusters at each level (not total *n*), the ICC, and where the effect lives in the hierarchy, and the field-specific minimums (e.g., 50+ clusters for stable level-2 inference, 100+ for cross-level interactions) are commonly missed.
 
+**Cluster RCT binding constraint (common error):** When treatment is randomized at the cluster level (e.g., schools assigned to intervention vs. control), the number of clusters per arm — not total student N — is the binding precision constraint. Adding more students within existing schools does not add any cluster-level degrees of freedom and does not improve power for the treatment effect. A study with 20 schools per arm has 20 school-level units of comparison regardless of whether each school has 25 or 250 students. Standard power tools (G*Power, typical t-test calculators) ignore this — use `simr`, PowerUp!, or Spybrook et al. formulas that account for ICC and cluster count explicitly.
+
 ### Step 1: Map the data structure before touching code
 
 Before writing any model syntax, identify and write down:
@@ -147,6 +149,7 @@ Prefer cluster-robust SEs when:
 5. **Reporting only the fixed-effect *p*-values** with no variance components, ICC, or random-effects structure. Reviewers (and methodologists) will rightly object.
 6. **"My model didn't converge so I dropped the random slopes"** without diagnosing why. Often the fix is centering, scaling, or a different optimizer — not dropping structure that the design requires.
 7. **Using likelihood-ratio tests on variance components against a χ² distribution** without the boundary correction (the true null distribution is a mixture because variances can't be negative).
+8. **Using total student N (not cluster N) as the basis for cluster RCT power.** When treatment is randomized at the cluster level, power for the treatment effect scales with the *number of clusters per arm*, not with total student N. A study with 20 schools per arm has 20 school-level comparisons regardless of whether each school has 25 or 250 students. Adding students within existing schools does not add cluster-level degrees of freedom and does not solve a cluster-level power problem. Flag this when reviewing any power analysis for a cluster RCT that uses G*Power, a t-test calculator, or any tool that ignores the clustering structure.
 
 ## A note on AI-generated MLM code
 

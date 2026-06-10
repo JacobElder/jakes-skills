@@ -1,0 +1,40 @@
+{
+  "eval_id": 28,
+  "condition": "with_skill",
+  "prompt": "I have a randomized experiment comparing two groups, but the outcome has a weird, heavy-tailed distribution. Someone suggests a permutation test because it's 'assumption-free.' Is that right, and what exactly does a permutation test test?",
+  "response": "\"Assumption-free\" is an overstatement, but the real assumption is one you've already satisfied \u2014 so the suggestion is good, just for the wrong reason.\n\n**What it actually requires: exchangeability.** A permutation test works by asking: if the treatment had no effect, the outcome of each unit would be the same regardless of which group it was assigned to \u2014 so permuting the labels should produce a test statistic as extreme as the observed one only by chance. That reasoning is justified *because you randomized*. Randomization makes the labels exchangeable under the null, not any distributional property of the outcome. So the test is valid here, but \"assumption-free\" is the wrong description \u2014 it's \"assumption-satisfied-by-design.\"\n\n**What null it tests: the sharp null, not equal means.** This is the subtlety that gets glossed over. The permutation test tests H\u2080: *no treatment effect for any individual unit* \u2014 the treatment moved every person's outcome by exactly zero. The t-test tests H\u2080: *equal group means in the population*. These are different nulls. Under effect heterogeneity (the treatment helps some people, hurts others, with zero average), a permutation test on the mean difference can reject even when the mean difference is zero. Conversely, in a well-behaved experiment they usually agree, but you should know which one you're answering.\n\n**On the heavy tails specifically.** The permutation test gives you *exact* finite-sample level control regardless of the outcome distribution \u2014 this is the genuine advantage over the t-test, which relies on the CLT for the sampling distribution of the mean to be approximately normal. If the tails are so heavy that \"large enough n\" is very large, the permutation test is the cleaner choice. But here's the catch: if you use the *difference in means* as your test statistic, the permutation test inherits the same power problem from heavy tails that the t-test has. A few extreme observations dominate the mean and inflate variability, reducing power against a real effect. If power is a concern with this distribution, use a rank-based or trimmed-mean statistic inside the permutation framework instead \u2014 that's where the robustness to heavy tails actually comes from.\n\n**Bottom line:** Permutation test is a solid choice for your setting. The randomization justifies it. Just be precise: it tests the sharp null, not a statement about means; and if you care about power under heavy tails, the test statistic matters as much as the testing framework.",
+  "assertions": [
+    {
+      "text": "States that exchangeability (from the randomization) is the key assumption justifying the permutation test, not that it is entirely assumption-free",
+      "type": "scored"
+    },
+    {
+      "text": "States that the null being tested is the sharp null (no effect for any unit), which is stronger than equality of means",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that distributional assumptions (normality, etc.) are not needed and exact Type I error control holds in finite samples",
+      "type": "scored"
+    },
+    {
+      "text": "Notes at least one limitation or nuance: e.g. sensitivity to variance differences under heterogeneous effects, or the sharp vs composite null distinction",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT claim the permutation test is entirely assumption-free",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

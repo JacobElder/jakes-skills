@@ -1,0 +1,41 @@
+{
+  "run_id": "singular-fit-drop-everything-with_skill",
+  "eval_id": 9,
+  "eval_name": "singular-fit-drop-everything",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output does NOT simply validate the final model and move forward",
+      "passed": true,
+      "evidence": "The response opens with 'probably not \u2014 the p-values are likely anti-conservative' and explicitly flags the sequential singularity-driven dropping as 'the exact anti-pattern the skill flags,' directly challenging the final model rather than endorsing it."
+    },
+    {
+      "text": "Output distinguishes between genuine singularity (variance at 0 because the data lack information for that component) and optimizer-related convergence failure \u2014 or identifies that this distinction needs to be diagnosed, e.g. by running allFit() to check whether different optimizers agree",
+      "passed": true,
+      "evidence": "The response lists 'Optimizer hitting a local saddle \u2014 Try allFit() to compare optimizers' as a distinct cause from 'Genuinely near-zero variance,' and later says 'run allFit(m) and check whether the singularity is consistent across all optimizers or an artifact of one.'"
+    },
+    {
+      "text": "Output explains that dropping random slopes because variance = 0 risks under-specifying if those slopes are required by the design \u2014 recommends checking whether the design actually requires the school-level slope before removing it",
+      "passed": true,
+      "evidence": "The response explains 'without it, individual variation in growth trajectories gets absorbed into the level-1 residual instead of being partitioned correctly' and distinguishes the two levels: the school-level slope 'may be defensible to drop' (data limitation, few schools) while the student-level one 'is a different story \u2014 dropping it to achieve convergence while time is your key predictor is trading a warning for a wrong answer,' implicitly requiring design-based justification before removal."
+    },
+    {
+      "text": "Output recommends at least one diagnostic check before accepting the simplified model \u2014 such as VarCorr(), rePCA(), summary()$varcor, allFit(), or comparing refitted models \u2014 rather than accepting the stepwise variance-dropping at face value",
+      "passed": true,
+      "evidence": "The response recommends allFit() ('run allFit(m) and check whether the singularity is consistent across all optimizers'), profile confidence intervals via 'confint(m_reduced, parm = \"theta_\", method = \"profile\")', and checking variance components across optimizers before dropping any structure."
+    },
+    {
+      "text": "Output mentions trying upstream fixes before dropping structure \u2014 scaling predictors, sum coding, allFit() \u2014 and notes that principled simplification drops correlation parameters before slopes",
+      "passed": true,
+      "evidence": "Step 1 is explicitly 'scale time before anything else' with code shown; Step 2 tries a different optimizer (bobyqa) and allFit(); Step 4 says 'check whether the correlation parameter is the issue' and shows the || syntax to remove correlation before dropping the slope entirely, stating 'Only drop the student-level slope entirely if the variance is genuinely near zero across multiple optimizers.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

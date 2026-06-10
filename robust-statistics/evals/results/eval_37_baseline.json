@@ -1,0 +1,40 @@
+{
+  "eval_id": 37,
+  "condition": "baseline",
+  "prompt": "We selected the 20 worst-performing stores in our chain, rolled out a new training program, and measured performance 3 months later. 17 of 20 stores improved their performance. Our CMO says this is strong evidence the training program works. Is it?",
+  "response": "No \u2014 this is a textbook **regression to the mean** problem, and it's a serious threat to the CMO's conclusion.\n\n## What's going wrong\n\nWhen you deliberately select the *worst* performers, you've selected a group that is extreme partly due to transient factors \u2014 bad luck, temporary staffing problems, a local event, a rough quarter. Those factors don't persist. Three months later, many stores would drift back toward average *with no intervention at all*.\n\nThe key question the CMO hasn't asked: **how many of those 20 stores would have improved anyway?**\n\n## Why the design can't answer the causal question\n\n| Problem | What it means |\n|---|---|\n| No control group | You have no counterfactual. What did the 20 worst stores that *didn't* get training do? |\n| Selection on extremes | The worst-performing group has maximum room to regress upward. |\n| No pre-trend analysis | Were these stores already recovering before training started? |\n| Hawthorne effect | Stores selected for a special program know they're being watched. |\n\n## What the evidence actually supports\n\n17/20 improving tells you: *stores that were at a low point mostly didn't stay at a low point.* That's expected from regression to the mean alone. It says very little about the training.\n\n## What would constitute stronger evidence\n\n- A **randomized controlled trial**: randomly assign some bottom-quintile stores to training, leave others as controls\n- A **difference-in-differences** design: compare pre\u2192post change in treated stores vs. a matched control group of similarly low-performing stores\n- At minimum, a **synthetic control**: project what those stores' trajectories would have been without training based on historical trends\n\nThe CMO's enthusiasm is understandable, but the study design as described can't distinguish \"training works\" from \"bad stretches end.\" You'd need a control condition to make that claim.",
+  "assertions": [
+    {
+      "text": "Identifies regression to the mean as the primary alternative explanation \u2014 stores selected for being extreme will tend to improve regardless of intervention",
+      "type": "must_pass"
+    },
+    {
+      "text": "Explains the mechanism: extreme observed values partly reflect random error; on remeasurement the random component regresses toward the population mean",
+      "type": "scored"
+    },
+    {
+      "text": "States that a control group of similar low-performing stores not receiving training is needed to separate RTM from a true treatment effect",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT validate the 17/20 improvement rate as strong causal evidence without raising RTM",
+      "type": "must_pass"
+    },
+    {
+      "text": "Notes that the design as described (select low performers, treat all, measure again) makes RTM confounding unresolvable without a control group",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

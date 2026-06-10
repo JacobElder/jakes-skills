@@ -1,0 +1,35 @@
+{
+  "eval_id": 2,
+  "condition": "baseline",
+  "prompt": "My sample is huge (2.3 million rows). Does that mean I don't have to worry about my regression assumptions anymore?",
+  "response": "No \u2014 large N actually sharpens the knife in both directions. Here's what changes and what doesn't:\n\n**What large N genuinely helps with**\n- Normality of residuals matters less because the CLT ensures the sampling distribution of your coefficients is approximately normal regardless\n- Individual outliers have less leverage on estimates\n\n**What large N does NOT fix**\n- **Linearity** \u2014 a misspecified functional form is still misspecified; you just now have overwhelming power to detect the departure\n- **Independence** \u2014 clustered or autocorrelated errors are structurally wrong; adding more rows in the same clusters doesn't buy you more independent information\n- **Homoscedasticity** \u2014 heteroscedastic errors still bias your standard errors (and thus p-values and CIs), just as they would in a small sample\n\n**The hidden trap with large N**\nDiagnostic tests (Breusch-Pagan, White, Durbin-Watson, etc.) will flag *trivially small* violations as highly significant because you have so much power. You'll get p < .0001 on a heteroscedasticity test for variance that differs by 0.2% across the range. The question shifts from \"is there a violation?\" to \"is the violation large enough to distort my inference?\"\n\n**Practical guidance**\n- Always plot residuals vs. fitted values \u2014 eyes beat omnibus tests for judging practical severity\n- Use heteroscedasticity-robust (HC3/HC4) standard errors by default at this scale; the cost is near zero\n- If rows are clustered (users, firms, schools), cluster-robust SEs or a multilevel model are non-negotiable regardless of N\n- Test for nonlinearity substantively, not just with a p-value\n\nBig N shifts your worry from \"do I have enough power?\" to \"am I modeling the right thing?\"",
+  "assertions": [
+    {
+      "text": "States that large N helps with the level/normal-approximation of tests (CLT) but does not fix everything",
+      "type": "scored"
+    },
+    {
+      "text": "Names at least two things large N does NOT fix from: dependence/clustering, confounding/identification, model/mean misspecification, wrong estimand",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that at this N nearly everything is statistically significant and effect sizes / intervals matter more than p-values",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT claim that large N makes assumptions irrelevant wholesale",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

@@ -1,0 +1,41 @@
+{
+  "run_id": "ols-clustered-rubber-stamp-with_skill",
+  "eval_id": 8,
+  "eval_name": "ols-clustered-rubber-stamp",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output does NOT validate HC3 as addressing the non-independence / clustering problem",
+      "passed": true,
+      "evidence": "The response opens with 'No \u2014 and this is worth catching before you write up, because the mistake is subtle but consequential.' and explicitly states 'HC3 still assumes observations are independent of each other. It relaxes the constant-variance assumption, not the independence assumption.'"
+    },
+    {
+      "text": "Output explicitly distinguishes HC3 (heteroskedasticity-robust standard errors \u2014 corrects for non-constant variance) from cluster-robust standard errors (corrects for within-cluster correlation)",
+      "passed": true,
+      "evidence": "'HC3 (and the whole HC sandwich family) corrects for heteroskedasticity... Unlike HC3, CRSEs allow arbitrary within-cluster correlation \u2014 they estimate the error covariance block-by-block across participants rather than observation-by-observation.'"
+    },
+    {
+      "text": "Output explains that HC3 does not account for within-participant correlation across trials \u2014 observations from the same participant are correlated, and HC3 ignores that",
+      "passed": true,
+      "evidence": "'Each of your 80 participants contributes 60 correlated trials. Trials from the same person share that person's baseline memory ability, strategy, fatigue trajectory, etc. HC3 does nothing about that correlation structure \u2014 it treats all 4,800 observations as if they came from 4,800 different people.'"
+    },
+    {
+      "text": "Output recommends cluster-robust SEs clustered at the participant level (e.g., vcovCL, coeftest in R; vce(cluster) in Stata) as the minimum fix, OR recommends a multilevel model as the principled approach",
+      "passed": true,
+      "evidence": "The response provides both options with code: 'vcovCL(fit, cluster = ~subject_id)' in R and 'cov_type=\"cluster\"' in Python, plus lmer() mixed-effects model code."
+    },
+    {
+      "text": "Output does NOT accept 'the SEs got larger' as evidence that the clustering problem has been addressed",
+      "passed": true,
+      "evidence": "'Why your SEs being \"a bit larger\" is the wrong signal... HC3 typically widens SEs relative to naive OLS when you have high-leverage observations or heteroskedasticity. But for clustered data, cluster-robust SEs are usually substantially larger than HC3...The comparison point you want is not \"HC3 vs. naive OLS\" but \"cluster-robust vs. HC3.\"'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

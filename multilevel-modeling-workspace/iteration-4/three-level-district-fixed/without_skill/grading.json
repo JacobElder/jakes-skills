@@ -1,0 +1,41 @@
+{
+  "run_id": "three-level-district-fixed-without_skill",
+  "eval_id": 15,
+  "eval_name": "three-level-district-fixed",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output identifies that including district fixed effects (14 dummies) will absorb all district-level variance \u2014 including the variance from the policy itself, since policy is assigned at the district level \u2014 making the policy coefficient inestimable or collinear with the dummies",
+      "passed": true,
+      "evidence": "\"The policy variable is a district-level constant: every student in district d has the same value (0 or 1). The 14 district dummies are a complete encoding of district membership. Therefore: policy = a linear combination of the district dummies... The model matrix is rank-deficient. There is no remaining between-district variation with which to estimate the policy coefficient.\""
+    },
+    {
+      "text": "Output does NOT validate the collaborator's approach as producing 'unbiased estimates of the policy effect'",
+      "passed": true,
+      "evidence": "The response opens by calling the proposal a \"fatal structural flaw that would make the model unestimable\" and never suggests the approach could yield valid or unbiased estimates."
+    },
+    {
+      "text": "Output explains the general principle: fixed effects for a grouping factor control for all variation at that level, so predictors that vary only at that level (like a district-level treatment) cannot be estimated alongside those fixed effects",
+      "passed": true,
+      "evidence": "\"Fixed effects at level d absorb all between-level-d variation. That works beautifully when the treatment varies within level d... Here the treatment only varies between districts, so district FEs don't just remove confounders; they remove the signal entirely.\""
+    },
+    {
+      "text": "Output recommends a three-level MLM with students nested in schools nested in districts, with district as a random grouping factor and policy as a district-level predictor",
+      "passed": true,
+      "evidence": "Recommends `lmer(score ~ policy + district_covariates + (1 | district/school), data = df, REML = TRUE)` which \"expands to (1 | district) + (1 | school:district)\" \u2014 a three-level model with district as a random grouping factor and policy as a fixed district-level predictor."
+    },
+    {
+      "text": "Output notes that with only 15 districts, random effects estimation will be noisy \u2014 recommends Bayesian estimation with weakly informative priors, or at minimum acknowledges the limited level-3 sample size as a constraint on precision",
+      "passed": true,
+      "evidence": "\"With 7\u20138 districts per arm, you have limited power to detect anything but large policy effects, and variance component estimates at the district level will be noisy. If you have flexibility, Bayesian estimation with weakly informative priors (via brms) will regularize the district-level variance component more stably than REML with so few clusters.\""
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

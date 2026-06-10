@@ -1,0 +1,40 @@
+{
+  "eval_id": 36,
+  "condition": "with_skill",
+  "prompt": "I measured depression scores before and after a 12-week intervention. My colleague says I should use the change score (post minus pre) as the outcome in a t-test. My advisor says I should use the post-score as the outcome with the pre-score as a covariate (ANCOVA). We're arguing about which is correct. Which one should I use?",
+  "response": "Your advisor is right, and here's why in a way that should end the argument.\n\n**The change-score approach is actually a constrained version of ANCOVA.** If you run ANCOVA \u2014 `post ~ treatment + pre` \u2014 you get a freely estimated coefficient on the pre-score. If that coefficient turns out to be exactly 1.0, ANCOVA and the change-score t-test give identical answers. But ANCOVA never *forces* it to be 1.0; it estimates it from the data.\n\nIn practice the pre-score coefficient is almost always less than 1.0 due to regression to the mean: people with very high baseline depression scores tend to improve somewhat just by chance, independent of treatment. When the true coefficient is less than 1, ANCOVA is more efficient (smaller standard errors, more power) and change scores are subtly wrong.\n\n**For a randomized design specifically:** both approaches are unbiased for the causal effect \u2014 randomization handles confounding by design. But ANCOVA uses the baseline to soak up residual variance, so you get a tighter estimate for free. There is essentially no downside to ANCOVA over change scores in an RCT.\n\n**The one place they genuinely diverge:** if your groups weren't randomly assigned and had meaningfully different baseline scores, the two estimands differ. Change score asks *\"did the groups change by different amounts?\"*; ANCOVA asks *\"do the groups differ at follow-up among people with the same baseline score?\"* In an observational pre/post study with baseline imbalance, these can even give opposite-signed answers (Lord's paradox), and the right choice requires thinking about your causal model \u2014 not a coin flip.\n\n**Practical verdict:** Use ANCOVA (`post ~ treatment + pre`). It is never worse than the change-score approach and usually better. Check that your treatment assignment was random; if so, you're done. If not, be explicit that you're estimating the *conditional* effect (same baseline), not the *average change*.",
+  "assertions": [
+    {
+      "text": "Recognizes this as a legitimate estimand question, not merely a procedural preference \u2014 the two approaches can give different answers",
+      "type": "must_pass"
+    },
+    {
+      "text": "States that ANCOVA estimates the effect conditional on baseline (adjusting for pre-score) while the change score estimates mean gain without that conditioning",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that in a randomized experiment both are unbiased but ANCOVA is more efficient (gains power by explaining baseline variance)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that in observational settings with unequal baseline distributions, neither approach is automatically unbiased \u2014 the right choice depends on causal structure and the chosen estimand, not on statistical convention",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply declare one approach universally correct without considering the study design",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

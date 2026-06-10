@@ -1,0 +1,40 @@
+{
+  "eval_id": 3,
+  "condition": "with_skill",
+  "prompt": "I'm modeling the number of support tickets each customer files per month. Should I use Poisson or negative binomial regression?",
+  "response": "**Default to negative binomial.** Here's the reasoning:\n\nThe decision hinges on the **mean-variance relationship**. Poisson assumes variance = mean (equidispersion). Real support ticket counts almost always violate this because of unobserved customer heterogeneity \u2014 some customers are inherently high-filers regardless of what covariates you've measured. Negative binomial models this naturally as a Poisson-gamma mixture, giving variance = \u03bc + \u03bc\u00b2/\u03b8 (quadratic growth).\n\n**Verify it before committing:**\n\n```r\n# Fit both and compare\nfit_pois <- glm(tickets ~ x1 + x2, family = poisson, data = df)\nfit_nb   <- MASS::glm.nb(tickets ~ x1 + x2, data = df)\n\n# Quick overdispersion check on Poisson\ndeviance(fit_pois) / df.residual(fit_pois)  # ratio >> 1 means overdispersed\n\n# Formal comparison\nAIC(fit_pois, fit_nb)\nlmtest::lrtest(fit_pois, fit_nb)\n```\n\nA deviance/df ratio near 1 \u2192 Poisson is fine. Ratio of 2, 5, 10 (common with ticket data) \u2192 use NB.\n\n**Quasi-Poisson vs NB:** if you only care about point estimates and robust SEs (not likelihood-based model comparison), quasi-Poisson works too \u2014 it just inflates SEs by \u221adispersion without a full likelihood. NB is preferred when you want AIC/BIC comparisons, likelihood-ratio tests, or out-of-sample predictions, because it's a proper probability model. They also weight observations differently (NB downweights high-count customers more, since its variance grows quadratically), so they're not cosmetically interchangeable.\n\n**Also worth checking:** if your data have many zeros (customers who filed no tickets), fit NB first \u2014 it often absorbs the zeros without needing a zero-inflated model. Only reach for hurdle/ZIP if NB still underpredicts zeros substantially.\n\nThe bottom line: Poisson is the hypothesis to test, negative binomial is the safe default.",
+  "assertions": [
+    {
+      "text": "Frames the decision around the mean-variance relationship / equidispersion vs overdispersion",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that count data like this are usually overdispersed and therefore NB or quasi-Poisson is typically preferred over plain Poisson",
+      "type": "scored"
+    },
+    {
+      "text": "Explains how to detect overdispersion (dispersion statistic relative to df, or variance-vs-mean plot)",
+      "type": "scored"
+    },
+    {
+      "text": "States that overdispersion mainly deflates the standard errors rather than biasing the point estimates (if the mean model is right)",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions at least one of: offset for exposure, NB-vs-quasi-Poisson variance shape difference, or checking excess zeros",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

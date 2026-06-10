@@ -1,0 +1,82 @@
+## Power Analysis Assessment: Mostly Right Framing, But Gaps That Grant Reviewers Will Catch
+
+The good news: you've avoided the most common cluster RCT error — using N = 1,000 students as the unit of analysis. Using 20 school means per arm in G*Power is the correct framing. Your committee signing off on that piece was warranted.
+
+The bad news: there are **three gaps** that are likely to draw reviewer pushback before this is grant-ready.
+
+---
+
+## Gap 1 (Critical): Where did the effect size come from?
+
+This is the crux. A t-test on school means requires an effect size expressed in units of **school-mean SD**, not individual student SD. These are numerically different, and conflating them is the most common error in this exact scenario.
+
+The variance of a school mean is:
+
+$$\sigma^2_{\text{school mean}} = \sigma^2_{\text{individual}} \left[ \rho + \frac{1-\rho}{n} \right]$$
+
+where ρ is the ICC and n is students per school. So the Cohen's d for your t-test is:
+
+$$d_{\text{cluster}} = \frac{\Delta}{\sigma_{\text{individual}} \cdot \sqrt{\rho + (1-\rho)/n}}$$
+
+If you had individual-level pilot data with $d_{\text{ind}}$, the correct cluster-level effect size is:
+
+$$d_{\text{cluster}} = \frac{d_{\text{ind}}}{\sqrt{\rho + (1-\rho)/n}}$$
+
+For your design (n = 25 per school), here's how individual-level d maps to cluster-level d across plausible ICCs:
+
+| ICC (ρ) | Conversion factor | $d_{\text{ind}} = 0.30$ → | $d_{\text{ind}} = 0.40$ → |
+|---------|-------------------|--------------------------|--------------------------|
+| 0.05 | ÷ 0.297 | $d_{\text{cluster}} = 1.01$ | 1.35 |
+| 0.10 | ÷ 0.369 | $d_{\text{cluster}} = 0.81$ | 1.08 |
+| 0.15 | ÷ 0.430 | $d_{\text{cluster}} = 0.70$ | 0.93 |
+| 0.20 | ÷ 0.482 | $d_{\text{cluster}} = 0.62$ | 0.83 |
+
+To get 82% power with n = 20 per arm at α = .05, you need $d_{\text{cluster}} \approx 0.91$. **Ask yourself: does the effect size you entered in G*Power correspond to school-mean SD or individual SD?** If it was individual SD, your power calculation is based on a mislabeled denominator.
+
+---
+
+## Gap 2 (Important): ICC sensitivity table is expected in grant proposals
+
+Your 82% number is a point estimate. Grant reviewers — especially NIH and IES study sections — want to see how power behaves across a plausible ICC range. Educational interventions typically fall in ρ = 0.05–0.20, and power is **not** robust across this range:
+
+| ICC | $d_{\text{cluster}}$ (if $d_{\text{ind}} = 0.30$) | Power, k = 20/arm |
+|-----|---------------------------------------------------|--------------------|
+| 0.05 | 1.01 | >99% |
+| 0.10 | 0.81 | ~97% |
+| 0.15 | 0.70 | ~90% |
+| 0.20 | 0.62 | ~80% |
+| 0.25 | 0.56 | ~70% |
+
+The grant proposal should identify a defensible prior for the ICC (cite a prior study in the same population/outcome), report power at that value as primary, and show the sensitivity table.
+
+---
+
+## Gap 3 (Moderate): G*Power is a credibility problem for grant reviewers
+
+G*Power is designed for simple designs — it doesn't natively handle ICC, cluster size, and between-cluster variance components as explicit inputs. Using it here requires you to manually pre-compute $d_{\text{cluster}}$ and hope the reviewer doesn't ask how you did it. That's a fragile position.
+
+Stronger alternatives for a grant proposal:
+
+- **PowerUp!** (free Excel tool, Dong & Maynard 2013) — purpose-built for cluster RCTs, ICC is an explicit input, widely cited in IES proposals
+- **Spybrook et al. formulas** — the analytic standard for two-level cluster RCTs in education research
+- **`simr` in R** — simulation-based, can handle unequal cluster sizes, covariate adjustment, and your exact random-effects structure; produces a power curve rather than a point estimate
+
+---
+
+## Gap 4 (Minor but worth flagging): Does the analysis plan match?
+
+You're planning a t-test on school means, but will that actually be your primary analysis in the paper? Most cluster RCTs in education use **HLM with baseline covariates** as the primary analysis (students nested in schools, treatment at level 2, pretest as a level-1 covariate). That's more efficient and uses the individual-level data properly.
+
+If HLM is the plan, the power analysis should reflect that, because covariate adjustment substantially increases power (often equivalent to doubling cluster count). A t-test on unadjusted school means is a valid analysis but an inefficient one — and the power analysis would be mismatched to the actual analysis.
+
+---
+
+## What the grant proposal needs
+
+1. **State the ICC assumption explicitly** with a citation (prior study in same domain)
+2. **Show how $d_{\text{cluster}}$ was derived** from individual-level effect sizes (or directly from prior school-level data)
+3. **Provide a power sensitivity table** across ICC = 0.05–0.20
+4. **Use PowerUp! or simr** rather than G*Power — or at minimum show G*Power inputs explicitly so reviewers can verify
+5. **Align the power analysis with the actual primary analysis** (HLM with covariates vs. t-test on means)
+
+The structure is sound; the documentation around effect size provenance and ICC assumptions is what needs to be tightened before this is grant-ready.

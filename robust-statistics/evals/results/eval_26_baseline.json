@@ -1,0 +1,40 @@
+{
+  "eval_id": 26,
+  "condition": "baseline",
+  "prompt": "About 20% of my observations are missing on the outcome variable. I'm planning to just drop them and do complete-case analysis. Walk me through when that's okay and when it's not.",
+  "response": "Complete-case analysis (CCA) is safe or dangerous depending entirely on *why* data are missing, not how much is missing. The 20% figure matters less than the mechanism.\n\n## The three mechanisms\n\n**MCAR \u2014 Missing Completely At Random**\nMissingness is unrelated to anything, observed or unobserved. A blood sample got dropped. A survey form was lost in the mail. CCA is unbiased here \u2014 you just lose power. You can partially test for this by comparing completers vs. non-completers on observed covariates (Little's MCAR test, or just t-tests/chi-squares on predictors). If completers and non-completers look identical on everything you measured, MCAR is plausible.\n\n**MAR \u2014 Missing At Random**\nMissingness depends on *observed* variables but not on the unobserved outcome itself. For example: older participants are less likely to report income, but conditional on age, the probability of missingness doesn't depend on income. CCA is *biased* here because you're systematically dropping certain types of people. Multiple imputation or FIML handle MAR correctly.\n\n**MNAR \u2014 Missing Not At Random**\nMissingness depends on the outcome itself (or unobserved variables). People with high depression scores skip the depression item. People who earned very little skip the income question. CCA produces biased estimates, and so does standard MI. You need sensitivity analyses, pattern-mixture models, or selection models.\n\n## When 20% MCAR is fine\n\nDrop them. Your standard errors will be wider (you lost n), but estimates are unbiased. Document it and move on.\n\n## When 20% MAR is a problem\n\nBiased estimates, and the bias can be large. Check: do your completers systematically differ from drop-outs on your predictors? If yes, CCA is suspect. Multiple imputation (via `mice` in R or `IterativeImputer` in sklearn) recovers the missing information under MAR.\n\n## The hard case: suspecting MNAR\n\nYou can't distinguish MAR from MNAR from the data alone \u2014 MNAR is fundamentally unverifiable because the missing values are, well, missing. But you can reason about it substantively:\n\n- Is the outcome something people would selectively skip *because of its value*? (income, symptoms, embarrassing behavior) \u2192 MNAR likely\n- Is missingness related to things you didn't measure? \u2192 MNAR possible\n\nIf MNAR is plausible, CCA gives you a number but not necessarily the right one. Run sensitivity analyses (e.g., tipping-point analysis: \"how strong would the MNAR process need to be to change my conclusion?\").\n\n## Practical checklist for your 20%\n\n1. Compare completers vs. non-completers on all observed predictors\n2. Look at whether missingness correlates with your predictors (tabulate or regress a missing indicator)\n3. Ask: is there a reason people would skip *this outcome* based on its value?\n\nIf (1) and (2) show no systematic differences and (3) is implausible, MCAR is defensible and CCA is fine. If either fails, consider MI as a robustness check at minimum \u2014 even if you report CCA as the primary analysis.",
+  "assertions": [
+    {
+      "text": "States that complete-case validity depends on the missingness mechanism (MCAR / MAR / MNAR)",
+      "type": "scored"
+    },
+    {
+      "text": "Correctly states MCAR \u2192 complete-case is unbiased (though inefficient)",
+      "type": "scored"
+    },
+    {
+      "text": "States the MAR subtlety: complete-case is valid for regression coefficients when outcome missingness depends only on covariates in the model, not on the unobserved outcome given those covariates",
+      "type": "scored"
+    },
+    {
+      "text": "States that MNAR \u2192 complete-case is biased and cannot be fixed from data alone; requires sensitivity analysis or explicit MNAR modeling",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply endorse dropping the 20% without qualification or mention of the missingness mechanism",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

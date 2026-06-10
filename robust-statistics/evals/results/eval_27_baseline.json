@@ -1,0 +1,40 @@
+{
+  "eval_id": 27,
+  "condition": "baseline",
+  "prompt": "I'm studying how a job training program affects wages. I suspect the effect might be different for people at the bottom of the wage distribution than for those in the middle or top. OLS gives me an average effect. What should I use instead?",
+  "response": "**Quantile regression** is the right tool here.\n\nInstead of estimating the mean effect (OLS), quantile regression estimates the effect at specific quantiles of the outcome distribution. You fit a separate model at each quantile of interest \u2014 e.g., \u03c4 = 0.10, 0.25, 0.50, 0.75, 0.90 \u2014 and the coefficient on your training indicator at each \u03c4 gives you the **conditional quantile treatment effect** at that point in the wage distribution.\n\nIn R:\n\n```r\nlibrary(quantreg)\n\nfit_q10 <- rq(wage ~ training + age + education, tau = 0.10, data = df)\nfit_q50 <- rq(wage ~ training + age + education, tau = 0.50, data = df)\nfit_q90 <- rq(wage ~ training + age + education, tau = 0.90, data = df)\n\n# Or fit all at once and compare\nfit_all <- rq(wage ~ training + age + education, tau = c(0.10, 0.25, 0.50, 0.75, 0.90), data = df)\nsummary(fit_all)  # use se = \"boot\" for heteroskedastic-robust SEs\n```\n\nA few things to keep in mind:\n\n- **Inference**: use bootstrapped standard errors (`se = \"boot\"`) \u2014 asymptotic SEs assume iid errors, which is unlikely in wage data.\n- **Interpretation**: the coefficient at \u03c4 = 0.10 tells you the effect on workers who would be at the 10th percentile of wages *given their covariates*, not unconditionally on the population 10th percentile. This is a conditional quantile effect.\n- **If you want unconditional quantile effects** (effect on the population 10th percentile regardless of covariates), look at **unconditional quantile regression (UQR)** via the `recentered influence function` approach \u2014 the `uqr` or `drdid` packages in R handle this.\n- **Plotting**: `plot(summary(fit_all))` gives a visual of how the training coefficient varies across \u03c4, which directly answers your substantive question.\n\nThe key diagnostic: if the training coefficient is larger at low quantiles than high quantiles, training disproportionately helps workers at the bottom \u2014 which is exactly the hypothesis you're testing.",
+  "assertions": [
+    {
+      "text": "Recommends quantile regression as the appropriate method for this question",
+      "type": "scored"
+    },
+    {
+      "text": "Explains that quantile regression models the conditional quantile (not the conditional mean) at specified percentiles",
+      "type": "scored"
+    },
+    {
+      "text": "Notes it reveals heterogeneous effects across the distribution that OLS would average away",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that no parametric distributional assumption on the errors is needed (distribution-free in that sense)",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT recommend only OLS or treating the average effect as sufficient for this distributional question",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

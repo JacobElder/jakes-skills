@@ -1,0 +1,40 @@
+{
+  "eval_id": 35,
+  "condition": "with_skill",
+  "prompt": "I'm studying the causal effect of obesity on heart disease risk. I have data on obesity status, age, smoking, and cardiovascular fitness. I included cardiovascular fitness as a covariate in my logistic regression because it seemed like an important variable to control for. Is that the right approach?",
+  "response": "Cardiovascular fitness is almost certainly a **mediator**, not a confounder \u2014 and controlling for it biases your estimate of the total causal effect of obesity.\n\nThe likely causal structure is: obesity causes reduced cardiovascular fitness, which in turn raises heart disease risk. That's a pathway *through which* obesity harms the heart, not an independent common cause. When you include a mediator as a covariate, you block that indirect pathway in the regression, and the coefficient on obesity shrinks toward the \"direct\" effect only \u2014 the part of obesity's harm that doesn't run through fitness. That's a different, smaller estimand than what you probably want.\n\nAge and smoking are genuine confounders \u2014 they plausibly affect both obesity likelihood and heart disease risk independently \u2014 so those belong in the model. Cardiovascular fitness doesn't fit that role; it sits downstream of obesity on the causal path.\n\nThe right move depends on which estimand you're after:\n\n- **Total causal effect of obesity on heart disease**: Drop cardiovascular fitness from the model. Adjust only for confounders (age, smoking, and anything else that's a common cause of both obesity and heart disease).\n- **Direct effect of obesity not mediated through fitness** (a legitimate but narrower question): Then conditioning on fitness is appropriate, but you'd need to be explicit that this is what you're estimating, and the causal interpretation still requires additional assumptions (no unmeasured common causes of fitness and heart disease, which seems questionable \u2014 genetics and exercise habits could do that).\n\nThe practical takeaway: \"seemed like an important variable\" is not a justification for adjustment. Each control variable needs a causal rationale \u2014 is it a confounder, or does including it introduce post-treatment or mediator bias? Drawing a simple DAG with your four variables before specifying the model is the cleanest way to make that structure explicit.",
+  "assertions": [
+    {
+      "text": "Identifies that cardiovascular fitness is plausibly a mediator (on the causal path from obesity to heart disease) rather than a confounder",
+      "type": "must_pass"
+    },
+    {
+      "text": "States that adjusting for a mediator blocks the causal pathway running through it, so the estimate no longer reflects the total causal effect \u2014 instead estimating some version of the direct effect",
+      "type": "scored"
+    },
+    {
+      "text": "Frames the issue in terms of what estimand is wanted: total effect vs direct effect not through fitness",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply endorse including fitness 'because it's important' without discussing its causal role",
+      "type": "must_pass"
+    },
+    {
+      "text": "Notes that adjustment decisions should be guided by causal structure (e.g. DAG, or explicit reasoning about whether variables are confounders vs mediators vs colliders) \u2014 not by statistical importance, correlation with the outcome, or model fit",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

@@ -1,0 +1,91 @@
+## Your advisor is right. Reviewer #2 is wrong — and conflating disciplinary conventions.
+
+Here's the full methodological picture so you can push back with confidence.
+
+---
+
+### What you're actually doing is well-justified
+
+Your `reghdfe` specification with two-way fixed effects and firm-clustered SEs is the **canonical approach in applied microeconometrics** and appears routinely in AER, QJE, ReStud, and JPE without methodological comment. It isn't a shortcut or a workaround — it's a deliberate modeling choice that is often *stronger* than the MLM alternative for your design.
+
+The three components each do something specific:
+
+| Component | What it does |
+|---|---|
+| Firm FE (`absorb(firmid)`) | Removes **all time-invariant** unobserved firm heterogeneity — productivity culture, geography, founding conditions, etc. — without any distributional assumption |
+| Year FE (`absorb(year)`) | Removes common time shocks — recessions, sector-wide demand shifts, policy changes — that hit all firms simultaneously |
+| Clustered SEs (`vce(cluster firmid)`) | Corrects for arbitrary serial correlation within firms across years, which is the key inferential problem in panel data |
+
+This is not "OLS ignoring the multilevel structure." It is a principled fixed-effects estimator that handles firm-level clustering more aggressively than MLM, not less.
+
+---
+
+### The key distinction the reviewer is missing
+
+The reviewer appears to be thinking in terms of "observations are correlated → must use MLM." But there are **three valid ways to handle clustered panel data**, and they are not interchangeable:
+
+| Approach | Assumes | Best for |
+|---|---|---|
+| **FE + clustered SEs** (yours) | Firm effects may be correlated with regressors; arbitrary serial correlation within firms | Causal identification; observational data where selection into treatment is plausible |
+| **MLM / random effects** | Firm-level error is **uncorrelated** with all regressors (`E[u_i | x_it] = 0`) | Efficiency gains when RE assumption is defensible; estimating between-firm effects |
+| **GEE** | Population-average effect; specified working correlation structure | When you want a marginal, not cluster-conditional, coefficient |
+
+For **linear outcomes**, fixed effects and random effects give the same point estimate *if and only if* the random-effects assumption holds. When they differ — as is common in observational firm data, where larger or more productive firms systematically differ in treatment uptake — the RE estimator is **inconsistent** (biased even in large samples). The FE estimator remains consistent.
+
+This is Hausman's (1978) classic result, and it's why econometricians default to FE for observational panel data: it's not that RE/MLM is wrong in principle, it's that the identifying assumption it requires (exogeneity of random effects) is rarely defensible when firms or individuals self-select into conditions.
+
+---
+
+### Why MLM would actually be *weaker* here, not stronger
+
+A multilevel model with random firm intercepts would estimate:
+
+```
+productivity_it = μ + u_i + v_t + β·treatment_it + ε_it
+    u_i ~ N(0, σ²_u)
+```
+
+Problems with this for your design:
+
+1. **It's less robust to endogeneity.** If high-productivity firms are more likely to adopt treatment (plausible), `Cov(u_i, treatment_it) ≠ 0` and your treatment estimate is biased. FE absorbs `u_i` entirely rather than assuming it's mean-zero and independent.
+
+2. **You have 800 firms × 8 years.** You are not in the regime where MLM's partial-pooling benefit matters. Partial pooling is valuable with very few observations per cluster (< 5–10) or very few clusters (< 30), where variance component estimates are noisy. With 8 time points per firm, your within-firm estimates are well-identified.
+
+3. **For linear outcomes, the coefficient interpretation is identical.** The conditional-vs-marginal distinction that makes MLM meaningfully different from robust OLS only bites for nonlinear outcomes (logit, Poisson). For a continuous productivity measure, `β_FE = β_RE` when RE is consistent, and `β_FE ≠ β_RE` precisely when RE is inconsistent. There is no advantage to switching.
+
+---
+
+### One thing worth checking: two-way clustering
+
+The one kernel of legitimate concern the reviewer might be gesturing at (even if they diagnosed it wrong) is whether your standard errors account for **cross-sectional dependence**. If a macroeconomic shock hits all firms in year *t* simultaneously, observations in the same year are correlated — and firm-only clustering doesn't account for this.
+
+Test this by adding year-level clustering using Cameron, Gelbach & Miller (2011) two-way clustering:
+
+```stata
+* Two-way clustered SEs (firm and year)
+reghdfe productivity treatment controls, absorb(firmid year) vce(cluster firmid year)
+```
+
+If your year FEs fully absorb the common time shock, this won't change your SEs much. If it does change them substantially, that's worth reporting. Either way, this is an adjustment to your existing specification, not a reason to abandon it for MLM.
+
+---
+
+### Language for your response to Reviewer #2
+
+Here's a draft paragraph:
+
+> "We appreciate the reviewer's concern about non-independence of observations. However, two-way fixed effects with cluster-robust standard errors is the standard approach in applied microeconometrics for panel data of this structure (Wooldridge 2010, *Econometric Analysis of Cross Section and Panel Data*; Cameron & Miller 2015, *Journal of Human Resources*). Relative to a multilevel random-effects model, the fixed-effects specification makes the weaker identifying assumption: it permits arbitrary correlation between firm-level heterogeneity and treatment assignment, whereas random-effects/MLM requires that the firm random intercept be uncorrelated with all regressors — an assumption that is difficult to defend in observational data where selection into treatment is plausible. The Hausman test (χ²(k) = XX, p = XX) formally rejects the random-effects specification in favor of fixed effects, confirming that switching to MLM would introduce inconsistency. Clustered standard errors at the firm level account for serial correlation within firms across years; in supplementary analyses we additionally two-way cluster by firm and year following Cameron et al. (2011) and find substantively identical results."
+
+---
+
+### The bottom line
+
+| Claim | Verdict |
+|---|---|
+| "OLS with firm FE is invalid because observations are correlated" | **Wrong.** FE is a valid, consistent estimator; clustering is a nuisance, not a modeling failure |
+| "MLM is required for non-independent observations" | **Wrong.** MLM (RE) is one of three valid approaches; it's not the default or the superior choice |
+| "Switching to MLM would improve causal validity" | **Backwards.** In observational firm panel data, MLM's RE assumption is harder to defend than FE |
+| "With 800 firms and 8 years, clustered SEs are reliable" | **Correct.** ≥30 clusters for reliable sandwich variance; you have 800 |
+| Worth checking two-way clustering | **Yes** — small addendum, not a redesign |
+
+Your specification is defensible to any applied econometrician. The reviewer appears to be applying statistics/psychometrics norms from a different methodological tradition where MLM is the default response to clustering — reasonable in that tradition, but not in yours.

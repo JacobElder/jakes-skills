@@ -1,0 +1,41 @@
+{
+  "run_id": "glmm-marginal-interpretation-without_skill",
+  "eval_id": 6,
+  "eval_name": "glmm-marginal-interpretation",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output flags the conditional vs. marginal (cluster-specific vs. population-average) distinction",
+      "passed": true,
+      "evidence": "Entire section titled 'The core issue: conditional vs. marginal' explicitly draws this distinction: 'the fixed-effect coefficient is a subject-specific (conditional) estimate' vs. 'marginal (population-average) interpretation'"
+    },
+    {
+      "text": "Output explains that the GLMM fixed-effect coefficient is cluster-specific \u2014 it represents the log-odds ratio for a given clinic at its random-effect value \u2014 not a population-average effect",
+      "passed": true,
+      "evidence": "'For a patient in a given clinic (i.e., holding the clinic-level random effect constant), what is the odds ratio for the intervention?' \u2014 directly describes the conditional/cluster-specific nature of the fixed effect"
+    },
+    {
+      "text": "Output does NOT validate the phrase 'in the population' applied to a GLMM fixed-effect coefficient without qualification",
+      "passed": true,
+      "evidence": "Response immediately flags it: '\"In the population\" is the wrong frame for a logistic GLMM fixed effect, and this is a meaningful error worth fixing before submission.' No hedging or effective permission to proceed with the original phrasing."
+    },
+    {
+      "text": "Output recommends using emmeans, marginaleffects, or re.form=NA on the response scale to get the population-average marginal effect",
+      "passed": true,
+      "evidence": "'Marginalize over the random-effects distribution (simulation, GHQ integration, or `marginaleffects` in R)' \u2014 marginaleffects is explicitly named as a tool for obtaining the marginal effect"
+    },
+    {
+      "text": "Output notes that the conditional and population-average ORs are numerically different due to the nonlinearity of the logistic function \u2014 the population-average OR is closer to 1 than 3.32",
+      "passed": true,
+      "evidence": "'Because the logit link is nonlinear, the conditional and marginal ORs are not equal' and 'The marginal OR is always attenuated toward 1 relative to the conditional OR' and 'attenuation could easily shift your OR from 3.32 down to something like 2.6\u20132.9'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

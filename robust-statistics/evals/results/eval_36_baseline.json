@@ -1,0 +1,42 @@
+{
+  "eval_id": 36,
+  "condition": "baseline",
+  "prompt": "I measured depression scores before and after a 12-week intervention. My colleague says I should use the change score (post minus pre) as the outcome in a t-test. My advisor says I should use the post-score as the outcome with the pre-score as a covariate (ANCOVA). We're arguing about which is correct. Which one should I use?",
+  "response": "Your advisor is right. **Use ANCOVA** (post-score as outcome, pre-score as covariate). Here's why the change score approach is inferior:\n\n## The core problem with change scores\n\nThe change score approach implicitly **forces the pre-score coefficient to exactly 1.0**. ANCOVA estimates that coefficient from the data. If the true relationship between pre and post isn't exactly 1:1 \u2014 and it almost never is \u2014 the change score analysis is misspecified.\n\n## Regression to the mean\n\nThis is the biggest practical issue. People with extreme baseline depression scores tend to regress toward the mean at follow-up regardless of treatment. Change scores don't correct for this; ANCOVA does, by partialing out the pre-score flexibly.\n\nConcretely: if high-scorers improve more on average just due to regression to the mean, a change-score analysis will overestimate treatment effects for that subgroup (and underestimate for low-scorers).\n\n## ANCOVA has more power\n\nBecause ANCOVA uses the pre-score as a covariate rather than baking it in with a fixed weight, it explains more residual variance. This translates directly into narrower confidence intervals and lower p-values \u2014 often substantially so.\n\n## When they're equivalent\n\nThe two approaches give identical point estimates only when the pre-post correlation is exactly **r = 0.5**. Below 0.5, change scores underweight the pre-score; above 0.5 (typical for depression measures), they overweight it. For something like a PHQ-9 or BDI, test-retest correlations over 12 weeks are usually 0.5\u20130.7, meaning change scores are biased.\n\n## The practical recommendation\n\n```\nlm(post_score ~ condition + pre_score, data = df)\n```\n\nReport the coefficient on `condition`. This is your treatment effect estimate, properly adjusted for baseline.\n\nIf you want to double-check your assumption that ANCOVA is warranted, look at the estimated pre-score coefficient. If it's close to 1.0, the two approaches will give similar answers. If it's notably less than 1.0, you'll be glad you used ANCOVA.\n\n**Reference**: Vickers & Altman (2001), *BMJ* 323:1123 \u2014 a clear, short paper that settles this debate empirically and is worth sending to your colleague.",
+  "assertions": [
+    {
+      "text": "Recognizes this as a legitimate estimand question, not merely a procedural preference \u2014 the two approaches can give different answers",
+      "type": "must_pass"
+    },
+    {
+      "text": "States that ANCOVA estimates the effect conditional on baseline (adjusting for pre-score) while the change score estimates mean gain without that conditioning",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that in a randomized experiment both are unbiased but ANCOVA is more efficient (gains power by explaining baseline variance)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that in observational settings with unequal baseline distributions, neither approach is automatically unbiased \u2014 the right choice depends on causal structure and the chosen estimand, not on statistical convention",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply declare one approach universally correct without considering the study design",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 1,
+  "total": 5,
+  "pass_rate": 0.2,
+  "eval_passes": false,
+  "must_pass_failed_indices": [
+    5
+  ]
+}

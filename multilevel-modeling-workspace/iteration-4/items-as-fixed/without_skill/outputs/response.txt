@@ -1,0 +1,49 @@
+Your advisor is right that a random intercept for subject is necessary — but **there's a critical missing piece**: a random intercept for image.
+
+## The crossed random-effects structure
+
+Your design is **fully crossed**: 60 subjects × 48 images, every subject sees every image. That gives you two independent sources of non-independence that both need to be in the model:
+
+```r
+lmer(rating ~ condition + (1 | subject) + (1 | image))
+```
+
+Without `(1 | image)`, the variance due to images (some images are just rated higher than others) gets absorbed into the residual — and that inflates your Type I error rate for the condition test. This is Clark's (1973) "language-as-fixed-effect fallacy" generalized to visual stimuli, and it's directly addressed by Judd, Westfall & Kenny (2012).
+
+## The "but my images are fixed/selected" objection
+
+This is where your advisor's reasoning needs one more step. The argument "images aren't random, so no random effect" conflates two different questions:
+
+| Question | Answer |
+|---|---|
+| Were images randomly sampled from a population? | No — you selected them |
+| Do images vary in their baseline rating, and do I want to generalize beyond these 48? | Almost certainly yes |
+
+Even if your 48 images are a purposive set, they still differ in mean rating — that variance needs to be partitioned out. And you almost certainly want the condition effect to generalize beyond *exactly these 48 images*. Without `(1 | image)`, you're not testing that.
+
+## Before you run: one critical question
+
+**How is `condition` assigned?** This changes the random slopes you need:
+
+**Condition is a property of the image** (e.g., 24 images are emotionally positive, 24 negative):
+```r
+# Minimum defensible model — condition varies only between images,
+# so no random slope for condition by subject is estimable
+lmer(rating ~ condition + (1 | subject) + (1 | image))
+```
+Be aware: with only 48 images, you're testing condition with 48 image-level units. That's modest power.
+
+**Condition varies within subjects AND within images** (e.g., subjects see each image twice under different instructions):
+```r
+# Maximal model — condition varies within both subjects and images
+lmer(rating ~ condition + (condition | subject) + (condition | image))
+```
+Start maximal and simplify only if you hit convergence problems.
+
+## What to check after fitting
+
+- **Singular fit warning?** Check if the image variance component collapsed to zero. If so, your 48 images are surprisingly homogeneous — worth knowing, but still report it.
+- **ICC for image**: How much of the total variance is between images? This is the quantity that quantifies how badly omitting `(1 | image)` would have hurt you.
+- **Compare the condition *p*-value** between your original model and the crossed model — if it changes substantially, that's the inflated-error problem made visible.
+
+The bottom line: `(1 | subject) + (1 | image)` is the minimum for a fully-crossed subjects-by-stimuli design. The single random intercept your advisor approved is a common starting point but misses half the crossed structure.

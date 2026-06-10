@@ -1,0 +1,41 @@
+{
+  "run_id": "within-cluster-slope-observational-with_skill",
+  "eval_id": 13,
+  "eval_name": "within-cluster-slope-observational",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output does NOT help write up the random effects specification without first flagging that the model may be under-specified",
+      "passed": true,
+      "evidence": "The response opens with 'Before writing up the methods, I need to flag two specification issues that should be addressed first \u2014 otherwise the write-up would be documenting a model that doesn't match the design.' The write-up template is only offered at the end, explicitly conditioned on refitting: 'Once you've refit, here's the structure for the methods section.'"
+    },
+    {
+      "text": "Output identifies that SES varies within schools (students in the same school differ in SES), which means a by-school random slope for SES is needed \u2014 random-intercepts-only for a within-cluster predictor uses the wrong error term",
+      "passed": true,
+      "evidence": "'SES varies within schools \u2014 you said so explicitly. That means a random slope belongs in the model.' and 'omitting the random slope means the test of SES uses the wrong error term.'"
+    },
+    {
+      "text": "Output explains the mechanism: without a by-school SES slope, the model assumes the SES-achievement relationship is identical across all schools; the test of SES conflates within-school and between-school effects and is anti-conservative",
+      "passed": true,
+      "evidence": "On identity assumption: 'assumes the SES\u2192achievement relationship is identical across all 60 schools.' On anti-conservatism: 'lme4 underestimates the variance in that slope and produces an anti-conservative p-value. In simulation, this inflates Type I error for the focal predictor by 2\u20135\u00d7.' On conflation: Issue 2 explains 'a grand-mean-centered (or raw) coefficient is a weighted average of two theoretically different effects.'"
+    },
+    {
+      "text": "Output recommends refitting with (1 + SES | school) before writing up",
+      "passed": true,
+      "evidence": "The corrected random-effects structure is specified as '(1 + SES_cwc | school)' (after centering), and the write-up template is explicitly conditioned on refitting: 'Once you've refit, here's the structure.'"
+    },
+    {
+      "text": "Output does NOT frame the by-school SES slope as 'something to consider' or optional \u2014 it is required because SES varies within clusters, just as within-subjects factors require random slopes in experimental designs",
+      "passed": true,
+      "evidence": "'That means a random slope belongs in the model' (declarative, not hedged). The issues are framed as things 'that should be addressed first' and the bottom line is 'refit the model with the two changes above' \u2014 no optional framing anywhere."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

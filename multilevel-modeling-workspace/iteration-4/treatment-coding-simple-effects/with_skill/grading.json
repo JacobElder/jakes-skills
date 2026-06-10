@@ -1,0 +1,41 @@
+{
+  "run_id": "treatment-coding-simple-effects-with_skill",
+  "eval_id": 5,
+  "eval_name": "treatment-coding-simple-effects",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output explicitly states that the interpretation 'treatment effect of A on average' is incorrect given treatment coding with an interaction term",
+      "passed": true,
+      "evidence": "The response opens with 'No \u2014 that interpretation is incorrect, and the error is consequential here.' and elaborates throughout."
+    },
+    {
+      "text": "Output explains that the \u03b2 = 0.45 coefficient represents the simple effect of A at the reference level (low) of B \u2014 not an average across levels of B",
+      "passed": true,
+      "evidence": "The table explicitly labels \u03b2_A = 0.45 as 'Effect of A only when B = low', and the prose states: '\u03b2_A = 0.45 is not the treatment effect of A on average \u2014 it's the simple effect of A at B = low.'"
+    },
+    {
+      "text": "Output does NOT validate the write-up language as written",
+      "passed": true,
+      "evidence": "The response immediately rejects the interpretation ('No \u2014 that interpretation is incorrect') and provides a corrected write-up, never endorsing the original phrasing."
+    },
+    {
+      "text": "Output recommends either (a) switching to sum/effects coding so that the main effect IS the average, OR (b) using emmeans or marginaleffects to compute the marginalized average effect of A across levels of B",
+      "passed": true,
+      "evidence": "Fix 1 recommends \u00b10.5 contrast coding with R code: 'contrasts(df$A) <- c(-0.5, 0.5)'. Fix 2 recommends emmeans with code: 'emmeans(model, ~ A | B)'. Both routes are covered."
+    },
+    {
+      "text": "Output references Schad et al. (2020) OR explains the issue clearly enough (the coefficient in an interaction model is conditional on the other factor being at its reference level)",
+      "passed": true,
+      "evidence": "No citation to Schad et al., but the conceptual explanation is clear and sufficient: 'With treatment (dummy) coding in a 2\u00d72 design, main effects are not average effects \u2014 they are conditional effects at the reference level of the other factor.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

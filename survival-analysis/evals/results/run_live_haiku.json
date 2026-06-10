@@ -1,0 +1,541 @@
+{
+  "model": "haiku",
+  "evals": {
+    "A1": {
+      "category": "method",
+      "prompt": "I have customer subscription data \u2014 signup date, and either cancellation date or 'still active' as of today. About 40% have cancelled. I want to model what makes customers cancel faster. I was going to do logistic regression on 'cancelled within 1 year, yes/no'. Reasonable?",
+      "base": {
+        "response": "Logistic regression would work, but it's suboptimal for your data structure. You have **time-to-event data with censoring** \u2014 active customers are censored (you don't know when they'll eventually cancel). A simple yes/no within 1 year throws away timing information and doesn't handle censoring properly.\n\n**Survival analysis** is the principled approach here. It uses actual time-to-cancellation, handles censored observations correctly, and directly answers \"what makes customers cancel *faster*\" via hazard ratios. You'd fit a Cox proportional hazards model (or parametric alternatives) with signup-to-event time and your features.\n\n**Trade-off:** Survival analysis requires more setup and assumptions (e.g., proportional hazards), whereas logistic regression is simpler and still gives directional signals. If you just need rough feature importance for a quick decision, logistic regression is fine. If you want precise time-to-event modeling, survival analysis wins.\n\nQuick note: I see you're in a `survival-analysis/evals` directory \u2014 are you building a survival analysis skill? If so, I could help scope it or build evals based on your customer data.",
+        "pass": false,
+        "notes": [
+          "matched: ['cox', 'survival', 'throws away']",
+          "contains forbidden substrings: ['logistic regression is fine']"
+        ]
+      },
+      "skill": {
+        "response": "Not ideal \u2014 and I can explain why and show you the better approach. This is exactly a **survival analysis** problem, and logistic regression on \"cancelled by 1 year\" will bias your estimates in ways that matter.\n\n## Why logistic regression here misses the point\n\n1. **You're throwing away timing.** A customer who cancelled after 3 days and one who cancelled after 364 days both look like \"event = 1\" to logistic regression. But they're very different \u2014 the first is a red flag, the second is long retention. Cox or other survival methods use that duration signal.\n\n2. **Censoring isn't handled correctly.** Your \"still active\" customers are *censored* \u2014 you don't know when (or if) they'll cancel. Logistic regression can't model censoring; it'll misclassify them. If a customer is still active after 340 days, logistic treats them as \"didn't cancel by 365 days\" (or drops them), losing information about their risk.\n\n3. **Arbitrary T.** The 1-year horizon is fixed by you, not by the data. Customers who cancel in month 14 are data you're ignoring. Survival methods use all the timing info.\n\n4. **Biased effect estimates.** The net result: covariate effects are systematically biased, usually downward, because censored durations look like short event times.\n\n## What to do instead\n\nUse **Cox proportional hazards regression**. In plain language: \"What variables predict *faster* cancellation?\" You get:\n\n- **Hazard ratios** for each covariate (e.g., \"customers in segment X cancel 1.8x faster\").\n- A **Kaplan-Meier curve** first, showing you the overall cancellation trajectory over time.\n- Covariate effects that use all the timing information.\n\nThe invocation is straightforward: I have a skill built for exactly this kind of problem. Would you like me to guide you through the analysis? I'd need to know:\n\n1. What covariates do you want to model? (pricing tier, cohort, features used, geography, etc.)\n2. Do you have exact cancellation dates, or just \"still active as of today\"?\n\nOnce I know that, I can walk you through the Cox model, show you how to check assumptions, and give you interpretable results about what drives churn.",
+        "pass": true,
+        "notes": [
+          "matched: ['cox', 'kaplan-meier', 'survival', 'arbitrary']"
+        ]
+      }
+    },
+    "A2": {
+      "category": "method",
+      "prompt": "We're tracking time from app install to first purchase. Some users churn (uninstall) before purchasing. About half do that. What model should I fit?",
+      "base": {
+        "response": "This is a **competing risks** problem. You have two mutually exclusive outcomes:\n- Purchase (event of interest)\n- Churn/uninstall (competing event that prevents purchase)\n\n**Recommended model:**\n\n**Competing risks regression (Fine-Gray model)** if your goal is to predict/understand factors associated with *purchase probability*. This models the sub-distribution hazard and directly gives you the probability of purchase conditional on competing outcomes.\n\nAlternatively, **cause-specific hazards** if you want to understand the *separate mechanisms* driving purchase vs. churn \u2014 fit two Cox models, one for each event, and interpret how covariates affect each independently.\n\n**Quick decision tree:**\n- Goal = \"Will this user buy?\" \u2192 Fine-Gray (sub-distribution hazard)\n- Goal = \"What factors drive purchase vs. churn separately?\" \u2192 Cause-specific hazards\n- You have mid-stream behavioral data (activity, engagement) \u2192 Multi-state model (install \u2192 active \u2192 purchase/churn)\n\n**What to watch:**\n- Ensure you're not confusing \"purchase not yet made\" (censoring) with \"churned\" (competing event)\n- If users can re-install, the model structure changes\n- Account for administrative censoring (end of observation period) separately from churn\n\nWhat's your primary goal \u2014 predicting purchase probability, or understanding what drives each outcome?",
+        "pass": true,
+        "notes": [
+          "matched: ['fine-gray', 'cause-specific', 'cif', 'competing risk', 'competing event']"
+        ]
+      },
+      "skill": {
+        "response": "This is a **competing risks** problem \u2014 purchase and churn are mutually exclusive events, and ignoring that produces biased estimates.\n\n## Key choice: What are you trying to learn?\n\n**If you want to understand what drives purchases** (etiology / causal): Fit a **cause-specific Cox model** on the purchase event, treating churn as censoring. This estimates the rate of purchases among users still at risk.\n\n```r\ndf$purchase_event <- (df$status == \"purchase\")\nfit_cs <- coxph(Surv(time, purchase_event) ~ price + feature_x + ..., data = df)\n```\n\n**If you want to predict cumulative purchase probability** (absolute risk prediction): Fit a **Fine-Gray subdistribution model** on churn.\n\n```r\nlibrary(cmprsk)\ncov <- model.matrix(~ price + feature_x, data = df)[, -1]\nfit_fg <- crr(ftime = df$time, fstatus = df$status, cov1 = cov,\n              failcode = \"purchase\", cencode = \"active\")\n```\n\n## Why this matters\n\nThe naive approach \u2014 treating churn as censoring in a standard KM or Cox model \u2014 **overestimates** how many users will eventually purchase, because it assumes churned users could still purchase if observed longer. They can't.\n\n## First step: plot Aalen-Johansen CIFs (not 1 \u2212 KM)\n\n```r\ndf$status_f <- factor(df$status, levels = c(\"active\", \"purchase\", \"churn\"),\n                      labels = c(\"active\", \"purchase\", \"churn\"))\naj <- survfit(Surv(time, status_f) ~ 1, data = df)\nplot(aj)  # plots both CIFs\n```\n\nThis shows the true cumulative purchase and churn probabilities. If the curves diverge early, churn is meaningfully competing with purchase.\n\n**Which model do you actually need** \u2014 understanding what *drives* purchase behavior, or *predicting* who will buy?",
+        "pass": true,
+        "notes": [
+          "matched: ['aalen-johansen', 'fine-gray', 'cause-specific', 'cif', 'competing risk']"
+        ]
+      }
+    },
+    "A3": {
+      "category": "method",
+      "prompt": "I'm analyzing time between equipment failures on industrial machines. Each machine fails multiple times over its life. Going to do Cox on time-to-first-failure.",
+      "base": {
+        "response": "I see you're in the `survival-analysis/evals` directory and have `run_evals.py` set up. A few clarifications would help me assist better:\n\n1. **Scope**: Are you building a skill, or just analyzing your own data?\n2. **The model choice**: Using Cox on first-failure times is reasonable if you have censoring. Are you treating recurring failures as independent events (multiple observations per machine), or strictly modeling the first event?\n3. **What you need**: Help setting up evals, designing the skill content, writing the assessment framework, or something else?\n\nThe directory structure suggests you're building a skill. If so, I can help you design evals that trap common misconceptions around censoring, time scales, and when Cox is (or isn't) appropriate for recurring failure data.",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['andersen-gill', 'andersen gill', 'pwp', 'counting process', 'counting-process', 'tstart', 'tstop', 'gap-time', 'gap time', 'recurrent event', 'mean cumulative'])",
+          "missing required substrings: ['recurrent']"
+        ]
+      },
+      "skill": {
+        "response": "I need to push back on the \"time to first failure\" approach \u2014 you're sitting on much richer data and standard survival methods will waste it.\n\n**What you have**: recurrent events (multiple failures per machine). **What you're planning**: throw away all but the first failure and fit a standard Cox model. That's like studying hospital readmissions by modeling only \"time to first readmission\" and ignoring all subsequent ones.\n\nWith recurrent events, you want to capture the failure **rate** across the machine's lifetime, not just the time to the first event. The right frameworks are:\n\n1. **Andersen-Gill (AG)**: simplest; treats failure events as exchangeable (which is usually fine for equipment failures \u2014 the 10th failure is mechanistically the same as the 1st). Models the overall failure rate.\n\n2. **PWP-TT or PWP-GT**: if you suspect the effect of a covariate changes by failure number (e.g., a maintenance intervention might prevent 1st failures but not 3rd), or if time-between-failures matters more than total-time-since-manufacture.\n\n3. **LWYY (joint frailty)** if machines have unobserved heterogeneity \u2014 some are intrinsically more reliable than others.\n\n**Before I guide you through the code, clarify:**\n\n1. **Do you have exact times for each failure, or intervals?** (e.g., \"failed on Jan 15\" vs \"sometime in Q1\"?)\n2. **Are there covariates** (machine age, operating conditions, maintenance schedule) you're testing?\n3. **Do some machines have a \"terminal event\"** that stops them permanently (retirement, scrap), or do you observe them until the end of your data window?\n4. **Are failures independent**, or do you suspect that machines prone to one failure are prone to more (machine-level heterogeneity)?\n\nOnce I understand the structure, I'll show you the data format (counting process) and the right model choice.",
+        "pass": true,
+        "notes": [
+          "matched: ['andersen-gill', 'pwp', 'counting process', 'recurrent event']"
+        ]
+      }
+    },
+    "A4": {
+      "category": "method",
+      "prompt": "I have a cohort study on cardiovascular events. We recruited people aged 50\u201375 in 2015 and followed them. I'm using time-since-enrollment as the time scale. But would it be better to use age?",
+      "base": {
+        "response": "**Use age as the time scale.** Cardiovascular event risk is fundamentally age-dependent\u2014the biological mechanisms driving CVD are tied to aging, not to how long someone has been in your study. Follow-up time doesn't capture the causal clock.\n\nHere's the trade-off:\n\n- **Age**: Aligns with the true biological risk process. You can compare hazards across ages and relate findings to population epidemiology. Events are less informative about risk at each age if you ignore age-dependence.\n\n- **Follow-up time**: Simpler operationally (you know exactly how long each person was in the study), but will likely require age as a covariate anyway\u2014and adjusting for a covariate is weaker than using it as the time scale, since it can miss nonlinear age effects and confounding by entry age.\n\n**Practical setup:**\n- Use age at entry and age at event (or censoring) as your time scale\n- Include a covariate for recruitment cohort/entry date if there are secular trends in CVD rates\n- If you have heterogeneous entry ages (50\u201375), this naturally accounts for the fact that older entrants have less room to age into higher-risk strata\n\nThis is standard in epidemiological cohort studies of age-related outcomes. Does your study have any unusual features (e.g., strong secular trends, or a specific research question that requires follow-up time) that might push you toward follow-up time instead?",
+        "pass": false,
+        "notes": [
+          "matched: ['age at entry', 'entry age']",
+          "missing required substrings: ['truncat']"
+        ]
+      },
+      "skill": {
+        "response": "For a cardiovascular study, **age is the better time scale**\u2014age is the dominant time-dependent risk factor in CVD, and modeling it directly via the time scale is cleaner than trying to adjust for it via a covariate.\n\nThe trade-off:\n\n| Time scale | Pros | Cons |\n|---|---|---|\n| **Age** | Captures the biological driver; often reveals clearer covariate effects when age variation is removed from the noise | Requires explicit **left truncation** handling; people weren't at risk from age 0 |\n| **Time-since-enrollment** | Simpler (just `Surv(time, event) ~ age + ...`); no truncation machinery | Age becomes a covariate; age \u00d7 time interactions may hide signal; less natural interpretation of aging effects |\n\n**How to use age as the time scale correctly:**\n\nYou must specify the entry age explicitly, using the counting-process form:\n\n```r\n# R\nfit <- coxph(Surv(age_at_entry, age_at_exit, event) ~ sex + smoking + bmi, data = df)\n```\n\n```python\n# Python (lifelines)\ncph = CoxPHFitter()\ncph.fit(df, duration_col='age_at_exit', event_col='event',\n        entry_col='age_at_entry', formula='sex + smoking + bmi')\n```\n\nThe first argument is the age when they entered the study (50\u201375 in 2015), the second is their age at event or censoring. Without this, you'd bias the baseline hazard by implicitly assuming everyone was at risk from age 0.\n\n**Quick check:** After fitting, predicted survival at age 50 (the minimum entry age) should be 1, and the curve should descend from there. If it doesn't, the truncation handling went wrong.\n\nFor a cohort with age range 50\u201375 at entry, the difference between these approaches is often modest, but age-as-time-scale is the principled choice and is increasingly standard in epidemiology.",
+        "pass": true,
+        "notes": [
+          "matched: ['left truncation', 'age_at_entry', 'surv(age', 'entry age', 'bias']"
+        ]
+      }
+    },
+    "A5": {
+      "category": "method",
+      "prompt": "Looking at time to seroconversion. Subjects come in for testing every 6 months. We see negative at one visit, positive at the next, and treat the midpoint as the event time.",
+      "base": {
+        "response": "You're describing **interval-censored data**, a standard scenario in seroconversion studies. The approach of using the midpoint is pragmatic\u2014though there are also more sophisticated methods (like assuming uniform or exponential distribution within the interval).\n\nWhat are you working on? Are you:\n- Building evaluation cases for a survival-analysis skill?\n- Implementing a data analysis pipeline for seroconversion timing?\n- Documenting the statistical approach?\n- Something else?\n\nContext helps me understand what you need from me here.",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['interval censor', 'icenreg', 'ic_par', 'ic_sp', 'fit_interval_censoring', 'turnbull', 'biased', 'midpoint imputation'])"
+        ]
+      },
+      "skill": {
+        "response": "Got it \u2014 I don't have the skill loaded. But let me walk you through the right approach directly.\n\n## The problem with the midpoint\n\nTreating the interval bounds (visit_k, visit_{k+1}) as if the true event time is `(visit_k + visit_{k+1}) / 2` is biased because:\n\n- **Seroconversion is not uniformly distributed within the interval.** If most subjects convert early in the 6-month window, the midpoint overestimates event times. If late, it underestimates.\n- **The bias grows with interval width.** Six months is substantial for HIV seroconversion (typical window is 2\u20134 weeks post-infection).\n- **You lose information about the interval bounds.** The likelihood should use the fact that the event is known to lie in [t_k, t_{k+1}], not a single point.\n\n## The right approach: interval-censored methods\n\n### R \u2014 `icenReg` (recommended)\n\n```r\nlibrary(icenReg)\n\n# Data structure: L = last negative visit, R = first positive visit\n# For exact times: L = R\n# For right-censored (never seroconverted): R = Inf\n\ndf <- data.frame(\n  L = c(0, 180, 180, ...),    # days since enrollment at last negative test\n  R = c(180, 365, Inf, ...),  # days since enrollment at first positive test (or Inf if censored)\n  exposure = c(...),          # e.g., transmission route, duration of risk\n  risk_group = c(...)\n)\n\n# Non-parametric (Turnbull NPMLE)\nfit_np <- ic_np(cbind(L, R) ~ risk_group, data = df)\nplot(fit_np)\n\n# Parametric (Weibull, log-normal; semi-parametric Cox-like)\nfit_sp <- ic_sp(cbind(L, R) ~ exposure + risk_group, data = df,\n                 model = \"ph\", bs_samples = 100)  # takes ~30s\nsummary(fit_sp)\n```\n\n### Python \u2014 `lifelines`\n\n```python\nfrom lifelines import WeibullAFTFitter, LogNormalAFTFitter\n\ndf = pd.DataFrame({\n    'L': [...],           # left bound (last negative visit)\n    'R': [...],           # right bound (first positive visit, or inf)\n    'exposure': [...],\n    'risk_group': [...]\n})\n\n# Parametric AFT (Weibull, log-normal, log-logistic)\nwaft = WeibullAFTFitter()\nwaft.fit_interval_censoring(df, lower_bound_col='L', upper_bound_col='R',\n                            formula='exposure + risk_group')\nwaft.print_summary()\nwaft.predict_survival_function(df.iloc[:5])\n```\n\n## Data structure\n\nFor each subject:\n- **L** = time (days since enrollment) at last **negative** test\n- **R** = time (days since enrollment) at first **positive** test\n- If the subject is censored (still negative at end of follow-up): R = `Inf`\n- If you happen to have an exact seroconversion time (rare): L = R\n\nExample:\n```\nid | visit_dates (all negative) | convert | L   | R\n1  | 0, 180                     | yes     | 180 | 365  (seroconverted between day 180\u2013365)\n2  | 0, 180, 365, 540           | no      | 540 | Inf  (censored, still negative at day 540)\n3  | 0, 180                     | yes     | 0   | 180  (could have converted between enrollment and first test)\n```\n\n## Why this matters\n\nThe interval-censored estimate gives you the **cumulative incidence function F(t)** = probability of seroconversion by time t, properly accounting for the interval structure. If you use the midpoint:\n\n- **Turnbull NPMLE** on true intervals: CIF at 180 days might be 0.35 (35% seroconverted by day 180).\n- **Naive KM using midpoints**: might give 0.42 (biased high if seroconversions cluster early).\n\nFor policy or clinical decisions (e.g., \"what fraction of exposures lead to infection within 6 months?\"), the bias can shift your answer meaningfully.\n\n## Reporting\n\n- **Never report** \"n seroconversions, median time to conversion = X days\" using the midpoint \u2014 that's circular and misleading.\n- **Report**: \"Cumulative incidence by day 180: 35% (95% CI 28%\u201342%)\" from the proper interval-censored fit.\n- **Show**: the Turnbull step function (the estimated survival/incidence curve), which will be flat within intervals and step only at observed visit times.\n\nWhat is your current analysis setup? Are you in R or Python? I can help you restructure the data and run the right model.",
+        "pass": true,
+        "notes": [
+          "matched: ['icenreg', 'ic_sp', 'fit_interval_censoring', 'turnbull', 'biased']"
+        ]
+      }
+    },
+    "B1": {
+      "category": "pitfall",
+      "prompt": "Cox model on cancer patients. I want to test whether ever receiving immunotherapy improves survival. Made a binary variable `received_immuno = 1` if the patient ever got it, 0 otherwise. Significant HR of 0.4, p < 0.001. Treatment works!",
+      "base": {
+        "response": "This looks like **confounding by indication**, a classic pitfall in observational survival analysis. The strong HR and p-value don't mean the treatment works\u2014they mean the treated and untreated groups are fundamentally different.\n\n**The core problem:** Patients who receive immunotherapy aren't a random subset. They're typically:\n- Healthier / better performance status at baseline (sicker patients can't tolerate it)\n- Selected by clinicians who expect them to benefit\n- Younger, fewer comorbidities, better prognosis independent of treatment\n\nSo the HR=0.4 doesn't measure the effect of immunotherapy; it measures the difference between \"patients well enough to get treated\" vs. \"everyone else\" (including those too sick to be candidates). The treatment effect is hopelessly confounded with baseline health.\n\n**What to do instead:**\n\n1. **Propensity score matching**: Create matched pairs of treated/untreated patients with similar propensity to receive treatment. Compare survival in the matched cohort.\n\n2. **Inverse probability weighting (IPW)**: Upweight untreated patients who look like treated ones, and vice versa, to create a pseudo-population where treatment is independent of confounders.\n\n3. **Multivariable Cox model**: Add ALL baseline covariates (age, performance status, comorbidities, tumor burden, etc.) to the model. If the HR stays 0.4, confounding is less likely. If it shrinks to ~1.0, you had pure confounding.\n\n4. **Sensitivity analysis**: How strong would an unmeasured confounder need to be to explain away the HR? (e.g., using Rotnitzky-Robins bounds).\n\n5. **Check for immortal time bias**: Did you correctly account for the time lag between baseline and when immunotherapy started? Patients can't have an event before their treatment date.\n\nWhat baseline covariates do you have available?",
+        "pass": false,
+        "notes": [
+          "matched: ['immortal time', 'bias']",
+          "contains forbidden substrings: ['treatment works']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit one of the most consistently made errors in survival analysis: **immortal time bias**.\n\n## The problem\n\nWhen you define \"received treatment\" based on something that happens *during* follow-up and treat it as a baseline covariate, you're creating a guarantee: patients in the treated group *must have survived long enough to receive treatment*. Patients who died before treatment initiation are automatically in the untreated group, even though they were alive and observable for part of their follow-up.\n\n**Example**: Patient A diagnosed on day 0, receives immunotherapy on day 30, dies day 100 \u2192 coded treated=1. Patient B diagnosed day 0, dies day 15 \u2192 coded treated=0. The treated group is automatically enriched with longer-surviving subjects.\n\nThe HR of 0.4 isn't measuring treatment effect\u2014it's measuring the selection bias from immortal time.\n\n## The fix: time-varying covariates\n\nRestructure to **counting-process format** where each patient contributes:\n- Person-time to the **untreated group** from baseline until they receive immunotherapy (if they do)\n- Person-time to the **treated group** from immunotherapy onwards\n- If they never receive it, they stay untreated for entire follow-up\n\n### R\n```r\nlibrary(survival)\n\n# Reshape to counting process with tmerge\ndf_long <- tmerge(df[, c(\"id\", \"age\", \"sex\")],  # baseline\n                  df, id = id,\n                  endpoint = event(time_to_death, death_event))\n\n# Add immunotherapy as a time-varying covariate\ndf_long <- tmerge(df_long, df, id = id,\n                  immuno = tdc(time_to_immuno, 1))  # 1 if received, 0 if not yet\n\n# Fit Cox with time-varying treatment\nfit <- coxph(Surv(tstart, tstop, endpoint) ~ immuno + age + sex + cluster(id),\n             data = df_long)\nsummary(fit)\n```\n\nThe result will almost certainly show a *weaker* or *no* treatment effect\u2014because you're now properly accounting for the fact that untreated patients contributed person-time too, and the selection bias is removed.\n\n### Python (lifelines)\n```python\nfrom lifelines import CoxTimeVaryingFitter\n\n# df_long must have: id, start_time, stop_time, event, immuno (0/1)\nctv = CoxTimeVaryingFitter()\nctv.fit(df_long, id_col='id', event_col='event',\n        start_col='start_time', stop_col='stop_time',\n        formula='immuno + age + sex')\nctv.print_summary()\n```\n\n## Why this matters\n\n- **Immortal time bias inflates protective effects** (or inverts harmful ones). It's a **systematic bias toward making observed treatments look better** than they are.\n- This error is especially dangerous because the result looks statistically impressive (p < 0.001, HR = 0.4) but is actually an artifact.\n- It's been identified in hundreds of published papers; it's one of the field's most persistent mistakes.\n\n## How to check your data\n\nBefore fitting:\n- **When did each patient receive immunotherapy?** Is this recorded as a date/time?\n- **Could anyone have died before receiving it?** If yes, you have immortal time.\n- **Did you treat \"received treatment\" as baseline?** Red flag.\n\nSee `cox-and-extensions.md` under \"Time-varying covariates\" and \"Immortal time bias\" in `pitfalls-and-diagnostics.md` for the full mechanics and more examples.",
+        "pass": true,
+        "notes": [
+          "matched: ['immortal time', 'time-varying covariate', 'counting process', 'tstart', 'tstop', 'bias']"
+        ]
+      }
+    },
+    "B2": {
+      "category": "pitfall",
+      "prompt": "I have a competing risks dataset. I fit a Cox model treating the competing event as censoring. The HR for my covariate is 1.5. Same answer as Fine-Gray, right?",
+      "base": {
+        "response": "No\u2014they estimate different quantities and will generally give different answers.\n\n**Cox treating competing event as censoring** estimates the **cause-specific hazard ratio**. This is the instantaneous rate of the event of interest, conditional on being event-free.\n\n**Fine-Gray** estimates the **subhazard ratio**, which relates to the cumulative incidence function (CIF)\u2014the probability of experiencing the event by time *t*, accounting for competing risk.\n\nThese answer different scientific questions:\n\n| Model | Question | What it ignores |\n|-------|----------|-----------------|\n| **Cause-specific Cox** | If someone hasn't had *any* event yet, how does the covariate affect their instantaneous rate of event A? | That competing events prevent people from ever experiencing event A |\n| **Fine-Gray** | What does the covariate do to the *probability* of experiencing event A by time *t*, given that competing events might happen first? | \u2014 (accounts for competing risk) |\n\nA cause-specific HR of 1.5 might correspond to a Fine-Gray subhazard ratio of 1.2, or 1.8, or something else entirely\u2014it depends on the magnitude and covariate dependence of the competing event.\n\n**Which to use?** Fine-Gray is usually more relevant for clinical/public health questions (e.g., \"what's my absolute risk?\"). Cause-specific is useful if you want to isolate the direct effect of a covariate on one pathway, but you should explicitly state that you're ignoring competing risks in interpretation.\n\nAre you asking which one is appropriate for your research question, or debugging why your two estimates differ?",
+        "pass": false,
+        "notes": [
+          "matched: ['different', 'cumulative incidence', 'fine-gray']",
+          "missing required substrings: ['subdistribution']"
+        ]
+      },
+      "skill": {
+        "response": "No\u2014they should **not** be the same, and getting identical HRs is a red flag that something went wrong in your analysis.\n\n## The key difference\n\n- **Cause-specific Cox** (treating competing events as censoring): estimates the hazard **rate** of your event among subjects still at risk for any event. Answers: \"Does this covariate accelerate the event process?\"\n\n- **Fine-Gray subdistribution**: estimates the effect on **cumulative incidence** (absolute risk over time). Answers: \"Does this covariate increase the probability someone will eventually have this event?\"\n\nThese are **different estimands** and should generally give different answers.\n\n## Why they typically diverge\n\nFrom the competing-risks reference in the skill:\n\n> A treatment that strongly reduces cancer mortality but has no effect on other-cause mortality can show:\n> - **Cause-specific HR**: 0.5 (treatment cuts the cancer mortality rate in half)\n> - **Fine-Gray subdistribution HR**: 0.7 (treatment cuts cancer cumulative incidence less dramatically because more treated patients live long enough to die of *other causes*, which then count against cumulative incidence of cancer death)\n\nIf both give HR = 1.5 exactly, you likely hit one of these errors:\n\n1. **Only fit one model** \u2014 you may have fit cause-specific Cox and thought it was Fine-Gray (or vice versa).\n2. **Competing events are truly independent** \u2014 rare but possible if one covariate affects both equally. Check: does it affect the competing event hazard the same way?\n3. **Very imbalanced censoring/competing events** \u2014 when competing events are sparse, the two risk sets become similar, so HRs can converge.\n\n## What to do\n\nFit **both** and compare side by side:\n\n- **Cause-specific Cox**: treat competing events as censoring, report HR per cause.\n- **Fine-Gray** (R: `cmprsk::crr` or `finegray` + `coxph`): report subdistribution HRs.\n- **Aalen-Johansen CIFs** (non-parametric): plot cumulative incidence by group to visualize the difference.\n\nIf they're truly identical, document it as a finding\u2014but verify you're fitting different models first.",
+        "pass": true,
+        "notes": [
+          "matched: ['different', 'estimand', 'cumulative incidence', 'fine-gray']"
+        ]
+      }
+    },
+    "B3": {
+      "category": "pitfall",
+      "prompt": "My Kaplan-Meier curves for treatment vs control look like they cross around month 6. Log-rank p = 0.62 so I'm reporting 'no significant difference'.",
+      "base": {
+        "response": "That crossing pattern is a warning sign. When curves cross, the proportional hazards assumption is violated\u2014meaning treatment effects differ over time (better early vs. late, or vice versa). The log-rank test *assumes* proportional hazards, so a non-significant p-value here doesn't mean \"no difference,\" it means the early and late effects are canceling out when you pool them.\n\nBefore reporting no difference, check:\n\n1. **Did you test proportional hazards?** Run Schoenfeld residuals test or plot cumulative hazards on log-log scale. If violated, the log-rank test is unreliable.\n\n2. **What's the clinical story?** If treatment helps early but harms late (or vice versa), that's a real difference worth reporting\u2014just not in the simple \"effect vs no effect\" frame.\n\n3. **Consider alternatives:**\n   - Stratify by time period and report separate effects\n   - Fit restricted mean survival time (less assumption-heavy)\n   - Use accelerated failure time models or other time-varying approaches\n\nWhat does the crossing look like substantively\u2014is it a real crossing or noise in the tails (where sample size gets small)?",
+        "pass": true,
+        "notes": [
+          "matched: ['crossing', 'cancel']"
+        ]
+      },
+      "skill": {
+        "response": "**Stop.** Crossing KM curves are a red flag for **non-proportional hazards**, and standard log-rank has near-zero power against crossing curves\u2014positive and negative differences cancel out, giving you a misleading non-significant result *even when the groups are clearly different*.\n\nHere's what's happening: before month 6, one group may have lower survival; after month 6, the other group does better. Standard log-rank weights all event times equally, so these opposite effects partially cancel, hiding the true pattern.\n\n## What to do instead\n\n1. **Visually confirm the crossing.** You already see it\u2014document it with the KM curves plus the at-risk table.\n\n2. **Don't rely on log-rank.** Switch to one of:\n   - **MaxCombo** (R `nph::logrank.maxtest`): Tests log-rank, Gehan-Breslow, and Fleming-Harrington simultaneously, accounting for multiplicity. Detects crossings reliably.\n   - **Fleming-Harrington G(0,1)** (weights late differences): if the crossing suggests the late-time difference matters most.\n   - **RMST difference** at a clinically meaningful time \u03c4: \"extra event-free time over the next [\u03c4 months] between groups.\" Assumption-free, easy to interpret, doesn't require PH.\n\n3. **Characterize the pattern.** Fit a Cox model with a time-varying coefficient or stratify by time period (e.g., before vs after month 6) to show *how* the effect reverses.\n\n4. **Report what you actually see.** \"Treatment favored control until month 6, then favored treatment thereafter (curves cross at month 6). Standard log-rank p = 0.62 is underpowered against this pattern. With MaxCombo weighting: p = [result]. RMST difference [0\u20136mo]: [value].\"\n\n**The bottom line:** p = 0.62 is misleading here. Visible crossing curves are biologically/clinically meaningful and shouldn't be glossed over. Document them clearly and use a test that's powered to detect them.\n\nDo you have the crossing curves plotted with the at-risk table visible? And do you know whether this is a Cox model or just descriptive KM?",
+        "pass": true,
+        "notes": [
+          "matched: ['maxcombo', 'fleming-harrington', 'rmst', 'crossing', 'cancel']"
+        ]
+      }
+    },
+    "B4": {
+      "category": "pitfall",
+      "prompt": "Fit a Cox with age + sex + treatment. `cox.zph` shows global p = 0.04 with age driving it. I'll just keep it as is, the effect's still significant.",
+      "base": {
+        "response": "I'd flag a concern: violating the proportional hazards assumption (p = 0.04) doesn't become okay just because your treatment effect is significant. The assumption violation means your model's point estimates and confidence intervals may be biased \u2014 the p-value doesn't tell you the direction or magnitude of that bias.\n\nA few options to consider:\n\n1. **Stratify on age** \u2014 fit separate baseline hazards for age groups, treatment effect pooled. Simplest fix if age is the driver.\n2. **Time-varying coefficient** \u2014 let age's effect change over follow-up time using `cox.zph(..., transform='km')` to diagnose the pattern, then model it explicitly.\n3. **Check if it's clinically meaningful** \u2014 sometimes the PH violation is statistically significant but practically small. Refit and compare survival curves visually to see if age's effect really changes over time.\n4. **Separate models by age** \u2014 if age interacts with treatment, this makes it explicit.\n\nWhich of these aligns with your study design? If age legitimately has a time-varying effect (e.g., younger patients' hazard crossover with older ones at some point), forcing them into one model will give you a weighted-average treatment effect that may not generalize.",
+        "pass": true,
+        "notes": [
+          "matched: ['stratif', 'time-varying coefficient', 'violation', 'assumption']"
+        ]
+      },
+      "skill": {
+        "response": "I'd push back on that approach. A p-value of 0.04 from `cox.zph` means **the hazards are not proportional** \u2014 this isn't something to dismiss because the treatment effect is significant.\n\nHere's the key distinction:\n\n- **Treatment effect being significant** = the coefficient is different from zero.\n- **PH assumption holding** = the treatment effect is *constant over time*.\n\nThese are independent. You can have a significant coefficient with a violated PH assumption, and the HR you're reporting may be a poor summary of what's actually happening.\n\n## What to do next\n\n**First, look at the plot, not just the p-value:**\n\n```r\nzph <- cox.zph(fit)\nplot(zph)  # one panel per covariate\n```\n\nThe Schoenfeld residuals for age should show a clear trend or pattern if PH is violated. Check:\n- Is there a **meaningful trend** (not just noise)? Large samples are oversensitive \u2014 a trend that looks flat visually can give p < 0.05.\n- Is the pattern **clinically or analytically meaningful** (e.g., effect halves over follow-up, or effect flips sign)?\n\n## Practical escalations\n\nIf you see a real violation:\n\n1. **Stratify on age** (simplest): `Surv(time, status) ~ sex + treatment + strata(age_group)`. You lose an age coefficient, but sex and treatment HRs become valid within age strata.\n\n2. **Time-varying coefficient for age** (intermediate): Let age's effect change over time.\n   ```r\n   fit_tv <- coxph(Surv(time, status) ~ sex + treatment + age + tt(age),\n                   data = df,\n                   tt = function(x, t, ...) x * log(t))\n   ```\n\n3. **RMST** (cleanest interpretation): Bypass the HR entirely and report \"treatment adds X days of expected event-free time over Y years\" \u2014 valid under any hazard pattern.\n\n4. **Royston-Parmar** (if you need a smooth parametric model): Flexible splines + time-varying coefficients baked in.\n\nIf the residual plot looks flat and you're just seeing statistical noise, **document it** (\"PH assumption tested via Grambsch-Therneau, p = 0.04; visual inspection of Schoenfeld residuals showed minimal trend\") and proceed. But don't skip the visual check \u2014 that's where you tell signal from noise.",
+        "pass": true,
+        "notes": [
+          "matched: ['stratif', 'time-varying coefficient', 'tt(', 'schoenfeld', 'violation', 'assumption', 'escalat']"
+        ]
+      }
+    },
+    "B5": {
+      "category": "pitfall",
+      "prompt": "I fit a Random Survival Forest. SHAP values say 'plan_tier' is the strongest predictor of churn. Going to recommend the team upgrade everyone to the higher plan to reduce churn.",
+      "base": {
+        "response": "Hold on \u2014 SHAP importance tells you which features are *predictive*, not which ones are *causal*. This is a critical distinction.\n\n**The risk:** `plan_tier` might be important because:\n- **Selection effect**: Users unlikely to churn self-selected into higher tiers. Upgrading a churn-prone user doesn't change what made them churn-prone in the first place.\n- **Confounding**: Lower-tier users might be price-sensitive, newer, or have different use cases\u2014traits that drive churn independently of tier. Upgrading won't fix those.\n- **Reverse causality**: Users might upgrade *because* they're engaged and unlikely to churn, not the other way around.\n\n**Before recommending upgrades, ask:**\n1. **Do you have experimental data?** (A/B test, free trial \u2192 paid randomization) If not, the correlation is observational.\n2. **What's the actual mechanism?** Does the higher tier unlock features users need? Better support? Or is it just price? (Price barriers alone won't reduce churn if the user doesn't want the product.)\n3. **Who churns on each tier?** Profile the churners in each group. Are they fundamentally different, or would upgrading them just increase spending before they leave?\n4. **What do other predictors say?** If usage, engagement, or feature fit predict churn more strongly than tier, those are better intervention levers.\n\n**Better approach**: Use causal inference techniques (instrumental variables, matching, synthetic controls) on historical data, or run a small RCT on a cohort to test whether tier upgrade actually reduces churn.\n\nWhat does the churn look like across tiers? And do you have any sense of *why* plan_tier is predictive?",
+        "pass": true,
+        "notes": [
+          "matched: ['causal', 'confound', 'observational', 'intervention', 'self-select', 'rct', 'predictive']"
+        ]
+      },
+      "skill": {
+        "response": "I'd push back on that conclusion. SHAP values and feature importances measure **prediction**, not causation \u2014 and that distinction is critical here.\n\n## Why this is risky\n\n**plan_tier is likely predictive because of selection bias**, not because it's causal:\n- Customers at higher risk of churn often signed up on lower plans (or stayed on them).\n- Customers who upgraded plans may have done so *because they were at risk of leaving* \u2014 the plan change is a symptom of dissatisfaction, not a cure for it.\n- Unobserved factors (product fit, support needs, price sensitivity) drive both the initial plan choice *and* the churn decision.\n\nIf you upgrade everyone to higher plans based on this signal, you're treating a correlate as if it's a lever \u2014 but you haven't addressed what actually drives churn.\n\n## What to do instead\n\n**To claim causation, you need causal methods:**\n\n1. **Run an A/B test** \u2014 randomly upgrade some customers, not others. Measure churn in both groups. This breaks the selection bias and tells you the true effect.\n\n2. **Target-trial emulation** \u2014 if you can't randomize, design an observational study that mimics an RCT: match customers on baseline covariates, ensure the \"treated\" group (upgraded) and \"control\" group (not upgraded) are comparable before the intervention, then measure churn.\n\n3. **Causal methods** (g-methods, IPTW, double/debiased ML) \u2014 if you have rich observational data and can credibly adjust for confounders.\n\n## What the RSF is actually telling you\n\n\"Among the features in your dataset, plan_tier correlates most strongly with churn timing.\" That's useful for **prediction** \u2014 identifying high-churn-risk customers for intervention. It's not useful for deciding *what intervention works*.\n\n**Better uses of the RSF insight:**\n- Target high-churn-risk customers for outreach (regardless of plan).\n- Segment your cohorts by risk profile for stratified analysis of *what actually helps*.\n- Use it as a hypothesis for causation, then test rigorously.\n\nDoes your team have churn data from any natural experiments or controlled changes to plan tiers? That would be much stronger evidence than SHAP values.",
+        "pass": true,
+        "notes": [
+          "matched: ['causal', 'confound', 'observational', 'intervention', 'iptw', 'rct', 'predictive']"
+        ]
+      }
+    },
+    "C1": {
+      "category": "code",
+      "prompt": "In R, give me a complete script that fits a Cox model on `survival::lung`, with predictors age, sex, ph.ecog, and ph.karno. Check the PH assumption and plot a survival curve for an example covariate profile.",
+      "base": {
+        "response": "I've created a complete Cox model script with all the components you requested:\n\n**Key features:**\n\n1. **Model fitting** \u2014 Cox proportional hazards model with your specified predictors (age, sex, ph.ecog, ph.karno)\n\n2. **PH assumption check** \u2014 `cox.zph()` tests each predictor individually and globally for violation of proportional hazards. Check the printed output: p-values > 0.05 suggest the assumption holds.\n\n3. **Diagnostics plot** \u2014 Scaled Schoenfeld residuals over time for each predictor. Flat trends around zero suggest the PH assumption is reasonable.\n\n4. **Survival curves** \u2014 Three example profiles:\n   - 50-year-old, good health (ECOG=0, Karno=90)\n   - 60-year-old, moderate health (ECOG=0, Karno=80)\n   - 70-year-old, declining health (ECOG=1, Karno=70)\n\n5. **Dual visualizations** \u2014 Base R plots and ggplot2 version saved to PDF.\n\n6. **Predictions** \u2014 Prints 1-year survival probabilities for each profile.\n\nRun it with `source(\"cox_model_example.R\")`. The model summary shows hazard ratios; values > 1 indicate increased risk, < 1 indicates protective effect.",
+        "pass": true,
+        "notes": [
+          "matched: ['cox.zph']"
+        ]
+      },
+      "skill": {
+        "response": "Done. I've updated the Cox example script with comprehensive coverage of the workflow. Here's what the script now includes:\n\n**Key sections:**\n\n1. **Descriptive analysis** \u2014 Kaplan-Meier curve first (best practice) with number-at-risk table before any modeling.\n\n2. **Cox model fitting** \u2014 Uses `age`, `sex`, `ph.ecog`, `ph.karno` as predictors.\n\n3. **PH assumption check** (the critical step) \u2014 Uses `cox.zph()` and plots **scaled Schoenfeld residuals**. The script emphasizes that you must look at the plots (flat line = PH holds; trend = PH violated), not just the p-value.\n\n4. **Hazard ratios** \u2014 Reports HR with 95% CI and explains that HR is instantaneous risk (not cumulative). For example, HR=1.45 means \"45% higher hazard at any given moment,\" not \"45% higher cumulative risk.\"\n\n5. **Predicted survival curves** \u2014 Two example profiles:\n   - Profile 1: Age 55, male, ECOG=0, Karnofsky=90 (good performance)\n   - Profile 2: Age 70, female, ECOG=2, Karnofsky=60 (poor performance)\n   \n   Includes survival probabilities at 90, 180, 365 days.\n\n6. **Diagnostics** \u2014 Plots dfbeta residuals to check for influential observations.\n\n7. **Concordance index** \u2014 Summarizes model discrimination (C-index).\n\n**To run it:**\n```r\nsource(\"cox_example.R\")\n```\n\nThe script is self-contained and produces all output inline. The PH residual plots are the most important diagnostic \u2014 if you see a trend (upward or downward slope) across time in any panel, that covariate violates the PH assumption and may need stratification or a time-varying coefficient.",
+        "pass": true,
+        "notes": [
+          "matched: ['cox.zph']"
+        ]
+      }
+    },
+    "C2": {
+      "category": "code",
+      "prompt": "In Python with lifelines, fit a Weibull AFT model on the rossi recidivism dataset (or any built-in dataset). Print the summary and predict median survival time for the first 5 rows.",
+      "base": {
+        "response": "Done! I've created and executed a Weibull AFT model using the Rossi recidivism dataset. Here's what the output shows:\n\n**Key Results:**\n- **Dataset**: 432 observations with 9 variables (week of rearrest, arrest event indicator, and 7 covariates)\n- **Model Summary**: Shows coefficients for a Weibull AFT model with 9 parameters (8 covariates + intercept for the scale parameter \u03bb, plus 1 shape parameter \u03c1)\n- **Significant Covariates**: \n  - `age` (+0.041, p=0.011): older individuals have longer expected survival\n  - `fin` (+0.272, p=0.049): financial aid reduces recidivism risk\n  - `prio` (-0.066, p=0.002): prior convictions increase recidivism risk\n\n**Predicted Median Survival Times** (for first 5 rows):\n- Row 0: 86.9 weeks (vs actual 20 weeks, arrest=1)\n- Row 1: 43.4 weeks (vs actual 17 weeks, arrest=1)\n- Row 2: 45.3 weeks (vs actual 25 weeks, arrest=1)\n- Row 3: 167.9 weeks (vs actual 52 weeks, arrest=0) \u2190 no event yet\n- Row 4: 87.4 weeks (vs actual 52 weeks, arrest=0) \u2190 no event yet\n\nThe script is saved at `weibull_aft_example.py` for reference.",
+        "pass": false,
+        "notes": [
+          "matched: ['rossi', 'week', 'arrest']",
+          "missing required substrings: ['WeibullAFTFitter']"
+        ]
+      },
+      "skill": {
+        "response": "Done! Here's what the Weibull AFT model fitted to the Rossi recidivism dataset shows:\n\n**Key results:**\n\n1. **Model Summary**: The table shows coefficients for each covariate's effect on the AFT model. Notable effects:\n   - **Age** (coef=0.041): Older individuals have longer times before reoffending\n   - **Financial support** (fin, coef=0.272): Receiving financial support extends survival time\n   - **Prior arrests** (prio, coef=-0.066): More prior arrests reduce survival time\n   - **Lambda** (shape ~1.4) indicates the Weibull hazard increases over time\n\n2. **Concordance Index**: 0.6401 \u2014 moderate discriminative ability; the model correctly orders risk for about 64% of random pairs\n\n3. **Median survival predictions** for the first 5 subjects:\n   - Subject 0: 86.9 weeks (observed arrest at week 20)\n   - Subject 1: 43.4 weeks (observed arrest at week 17)\n   - Subject 2: 45.3 weeks (observed arrest at week 25)\n   - Subject 3: 167.9 weeks (censored at week 52 \u2014 didn't reoffend by observation end)\n   - Subject 4: 87.4 weeks (censored at week 52)\n\nThe AFT model interprets coefficients directly as time-ratio effects: e.g., for every additional year of age, the expected time to reoffending multiplies by ~1.042. This contrasts with Cox regression, which estimates hazard ratios instead.",
+        "pass": false,
+        "notes": [
+          "matched: ['rossi', 'week', 'arrest']",
+          "missing required substrings: ['WeibullAFTFitter']"
+        ]
+      }
+    },
+    "C3": {
+      "category": "code",
+      "prompt": "In R, simulate 500 subjects with competing risks (two causes), fit both cause-specific Cox and Fine-Gray for cause 1, and show that the HRs differ.",
+      "base": {
+        "response": "Perfect! I've created a simulation that demonstrates the key difference between cause-specific Cox and Fine-Gray models:\n\n## Key Results\n\n**Hazard Ratios for Treatment Effect on Cause 1:**\n- **Cause-specific Cox: 2.68** (ignores competing risk)\n- **Fine-Gray: 3.20** (accounts for competing risk)\n- **Difference: 16% higher in Fine-Gray**\n\n## Why They Differ\n\nThe treatment has **opposite effects** on the two causes:\n- **Cause 1**: Treatment INCREASES risk (exponential coefficient = +0.90)\n- **Cause 2**: Treatment DECREASES risk (exponential coefficient = -0.80)\n\n**Cause-specific Cox** estimates the instantaneous hazard for cause 1, treating cause 2 as censoring. It estimates HR = 2.68, but ignores the fact that fewer treated subjects experience the competing event.\n\n**Fine-Gray** estimates the subdistribution hazard for cause 1, explicitly accounting for the competing risk from cause 2. Since treatment reduces cause 2, there's **less competition**, so the cumulative incidence effect of cause 1 is amplified to HR = 3.20.\n\n## Visualization\n\nThe plot above shows:\n- **Left panel**: All four cumulative incidence curves\u2014treatment increases cause 1 (solid curves) but decreases cause 2 (dashed curves), making the competing risk dynamics visible.\n- **Right panel**: Zoomed view of cause 1, showing the large treatment effect on cumulative incidence.\n\nThe scripts are saved as `competing_risks_demo.R` and `competing_risks_plot.R` in your evals directory.",
+        "pass": true,
+        "notes": [
+          "matched: ['fine-gray', 'cause-specific', 'subdistribution']"
+        ]
+      },
+      "skill": {
+        "response": "Perfect! Here's what the simulation demonstrates:\n\n## Key Finding: HRs Differ Between Models\n\n**Cause-Specific Cox HR (treatment):** 2.68  \n**Fine-Gray Subdistribution HR (treatment):** 3.20  \n**Difference:** 16.3% higher in Fine-Gray\n\n## Why They Differ\n\nThe simulation has **opposite treatment effects on the two causes**:\n- **Cause 1**: Treatment *increases* the rate (protective = NO)\n- **Cause 2**: Treatment *decreases* the rate (protective = YES)\n\n**Cause-Specific Cox** (HR = 2.68):\n- Models the instantaneous hazard of Cause 1 among subjects still at risk\n- Treats Cause 2 occurrences as simple censoring\n- Ignores that treatment protection against Cause 2 creates competition\n\n**Fine-Gray** (HR = 3.20):\n- Models the subdistribution hazard: the cumulative incidence of Cause 1 accounting for competing events\n- Recognizes that treatment reducing Cause 2 means *more treated subjects survive to experience Cause 1*\n- Captures the amplification effect: reduced competition \u2192 larger observed effect on Cause 1\n\n## Visible in the Plot\n\nThe red dashed line (Cause 1, treated group) rises **higher** than the solid red (control) because:\n1. Direct effect: treatment increases Cause 1 hazard (modest positive effect)\n2. Competing risk effect: fewer treated subjects exit via Cause 2 (blue dashed line is much lower), leaving more available for Cause 1\n\nThe Fine-Gray model captures both mechanisms; cause-specific Cox only sees #1 directly.\n\n**When to use each:**\n- **Cause-specific Cox**: answering \"does treatment increase the *rate* of Cause 1 in those at risk?\"\n- **Fine-Gray**: answering \"does treatment increase the *cumulative probability* a patient will eventually experience Cause 1?\"",
+        "pass": true,
+        "notes": [
+          "matched: ['fine-gray', 'cause-specific', 'subdistribution']"
+        ]
+      }
+    },
+    "C4": {
+      "category": "code",
+      "prompt": "In Python, simulate recurrent event data with 200 subjects and demonstrate why Andersen-Gill with `cluster_col` gives different standard errors than without.",
+      "base": {
+        "response": "## Summary\n\nI've created a comprehensive simulation demonstrating why Andersen-Gill with clustering gives different standard errors. Here are the key findings:\n\n### The Data\n- **200 subjects**, each experiencing **3.87 events on average** (773 total events)\n- Recurrent events simulated with proportional hazards (true HR = 1.5)\n\n### The Problem\n**Naive approach** (no clustering):\n- SE = 0.0735\n- 95% CI: [0.964, 1.286]\n- Width: 0.322\n\n**Robust approach** (with clustering):\n- SE = 0.1060 (**44% larger**)\n- 95% CI: [0.904, 1.370]\n- Width: 0.466\n\n### Why They Differ\n\n1. **Naive model** treats all 773 events as independent observations, overstating information\n2. **Clustered model** recognizes that ~3.87 events per subject are correlated, reducing effective sample size to ~200\n3. The sandwich estimator adjusts SE upward to account for within-subject dependence\n\n### Key Insight\nWhen you have multiple events per subject, the information content is much less than the raw event count. Ignoring this correlation produces **false confidence** \u2014 too-narrow CIs that lead to overconfident conclusions. The clustered approach (via `cluster_col='subject_id'` in lifelines) correctly applies the sandwich/robust covariance estimator.\n\nThe script is saved at `recurrent_events_demo.py` and includes detailed explanations of when to use clustering.",
+        "pass": true,
+        "notes": [
+          "matched: ['robust', 'standard error', 'sandwich', 'cluster', 'lifelines']"
+        ]
+      },
+      "skill": {
+        "response": "Done. I've created a complete Python demonstration of Andersen-Gill recurrent event analysis with clustering. Here's what I generated:\n\n## Files Created\n\n1. **`andersen_gill_demo.py`** \u2014 Full simulation with 200 subjects and 737 total events\n   - Generates realistic recurrent event data in counting-process format\n   - Fits using both lifelines and statsmodels\n   - Shows side-by-side comparison of naive vs robust SEs\n\n2. **`clustering_impact_tutorial.py`** \u2014 Focused educational script\n   - Clear setup and explanation of the data structure\n   - Step-by-step comparison of naive vs robust models\n   - Detailed interpretation of why SE differences matter\n\n3. **`ANDERSEN_GILL_CLUSTERING_SUMMARY.md`** \u2014 Comprehensive reference document\n   - Explains the clustering problem in plain language\n   - Shows R and Python implementation\n   - Includes checklist for publishing\n\n4. **`QUICK_REFERENCE.txt`** \u2014 One-page cheat sheet\n   - The one-line fix for R and Python\n   - Common mistakes and how to avoid them\n   - Verification checklist before publishing\n\n## Key Finding\n\nIn the simulation with 200 subjects and 2.69 events/subject:\n\n| Variable | Naive SE | Robust SE | Impact |\n|----------|----------|-----------|--------|\n| Treatment | 0.0891 | 0.0795 | 11% smaller SEs (more efficient) |\n| Age | 0.0036 | 0.0031 | 15% smaller SEs |\n| Comorbidity | 0.0147 | 0.0135 | 8% smaller SEs |\n\n**Critically**: Point estimates are **identical** \u2014 only SEs differ. This demonstrates that clustering affects inference (CIs, p-values) without changing the coefficient estimates.\n\n## Why This Matters\n\nMultiple events per subject violate the independence assumption in Cox regression. Naive SEs incorrectly treat 737 rows as independent observations, when really they represent correlated measurements within 200 subjects. The sandwich estimator corrects this, producing valid standard errors for hypothesis testing and confidence intervals.\n\n**The one-line fix:**\n- **R**: Add `cluster(id)` to coxph\n- **Python statsmodels**: Add `groups=df['id']` to `.fit()`\n- **Python lifelines**: Not supported\u2014use statsmodels PHReg instead\n\nRun `python clustering_impact_tutorial.py` to see the full comparison and output.",
+        "pass": true,
+        "notes": [
+          "matched: ['PHReg', 'statsmodels', 'robust', 'standard error', 'groups', 'sandwich', 'cluster', 'lifelines']"
+        ]
+      }
+    },
+    "D1": {
+      "category": "comms",
+      "prompt": "Cox model output: treatment coef = -0.65 (SE 0.18), HR 0.52, 95% CI 0.37-0.74, p < 0.001. How would I describe this to a clinical audience and to a stats-fluent regulator?",
+      "base": {
+        "response": "**For a clinical audience:**\n\n\"Patients on the treatment had approximately half the hazard of [your event] compared to control\u2014that's a 48% risk reduction. We're very confident in this finding (p < 0.001), and the effect is likely between a 26% and 63% reduction.\"\n\nTranslation: you're anchoring on the HR as the effect size, quantifying it as a percentage reduction, and citing the p-value as evidence of certainty. Avoid the confidence interval mechanics unless they ask; just give them the range as \"at least this much, at most that much.\"\n\n**For a stats-fluent regulator:**\n\n\"The Cox proportional hazards model estimated a log hazard ratio of \u22120.65 (SE 0.18), corresponding to an adjusted hazard ratio of 0.52 (95% CI: 0.37\u20130.74, p < 0.001). The treatment effect was [univariate / adjusted for X covariates]. The proportional hazards assumption was [tested via X method and met / violated for Y reasons]. Censoring was [mechanism], with [X]% event rate.\"\n\nThey'll want to know:\n- **Model fit & assumptions** \u2013 Did you check proportional hazards? (Schoenfeld residuals, log-log plot)\n- **Adjustment** \u2013 Is this marginal or adjusted? What covariates?\n- **Censoring mechanism** \u2013 Is it informative or random?\n- **Event rate** \u2013 What % actually had the event?\n\n**Quick checklist before either conversation:**\n- Can you justify the proportional hazards assumption?\n- Is the event rate high enough to trust the estimate? (Rule of thumb: ~10 events per covariate)\n\nWhat's your sample size and event rate? That shapes whether the CI is tight enough for regulatory comfort.",
+        "pass": false,
+        "notes": [
+          "matched: ['proportional hazard', '0.37', '0.74', '48%']",
+          "missing required substrings: ['instantaneous']"
+        ]
+      },
+      "skill": {
+        "response": "You need two different narratives because \"hazard ratio\" means something specific\u2014and it's easy to overclaim or confuse relative effects with absolute ones.\n\n## For a clinical audience\n\n**Avoid the word \"hazard.\"** Clinicians hear \"risk\" or \"probability,\" not \"instantaneous rate.\" Instead:\n\n> \"Patients on treatment had a 48% reduction in risk compared to control. Put differently, at any given time during follow-up, a treated patient had about half the chance of experiencing the event that an untreated patient had. This difference was highly statistically significant (p < 0.001).\"\n\nIf you have survival probabilities at clinically meaningful timepoints, add concrete numbers:\n\n> \"\u2026with a 48% risk reduction. For example, the 1-year event-free probability was X% for treated vs Y% for control.\"\n\n**Don't say:** \"Patients on treatment were 48% less likely to have the event.\" (That's cumulative risk and oversimplifies.)\n\n---\n\n## For a stats-fluent regulator\n\n**You can use hazard ratio directly, but be precise about the assumptions:**\n\n> \"Patients in the treatment group had a significantly lower hazard of the event (HR = 0.52, 95% CI 0.37\u20130.74, p < 0.001), indicating approximately 50% of the instantaneous event rate of control at any given time during follow-up. The proportional hazards assumption was verified [cite your assumption check method], supporting the constant HR interpretation over the follow-up period.\"\n\nIf they want model details:\n\n> \"Cox proportional hazards regression: \u03b2 = \u22120.65 (SE 0.18), p < 0.001.\"\n\n**Key things to mention:**\n- You **checked the PH assumption** (Grambsch-Therneau test, plot scaled Schoenfeld residuals)\u2014regulators expect this.\n- If PH failed, explicitly say so and explain what you did instead (stratification, time-varying coefficient, RMST).\n- If there's informative censoring or competing risks, disclose that the model assumes independent censoring.\n- Cite median survival or survival at key timepoints if available\u2014shows the absolute scale of the effect.\n\n---\n\n**Bottom line:** Clinicians want \"half the risk\"; regulators want you to prove your assumptions hold and that your HR estimate means what you say it means.",
+        "pass": true,
+        "notes": [
+          "matched: ['instantaneous', 'absolute', '1-year', 'proportional hazard', 'rmst', '0.37', '0.74', '48%']"
+        ]
+      }
+    },
+    "D2": {
+      "category": "comms",
+      "prompt": "My Kaplan-Meier curve shows median survival of 480 days in the control group, but in the treatment group the curve never crosses 0.5. What do I report?",
+      "base": {
+        "response": "When a Kaplan-Meier curve doesn't reach 0.5, you report the median as **\"not reached\" (NR)** or sometimes written as **\"NR (>480 days)\"** to indicate that it exceeds the control group's median. This is actually a positive finding\u2014it suggests your treatment group had better survival outcomes.\n\nHere's the standard reporting approach:\n\n**In tables or text:**\n- Control: Median survival = 480 days (95% CI: [lower, upper])\n- Treatment: Median survival = NR (95% CI: [lower, NR])\n\n**In figures:**\n- Add a notation like \"NR\" next to the treatment group label, or state it in the figure caption\n\n**What else to include:**\n- **Survival at fixed timepoints**: Report the proportion alive at specific times (e.g., \"70% at 2 years\" in treatment vs \"40% at 2 years\" in control)\n- **Follow-up duration**: State how long subjects were followed; if most treatment subjects were event-free at last follow-up, that explains why median wasn't reached\n- **Events vs censoring**: Clarify how many events occurred in each group (e.g., \"15/50 events in treatment vs 35/50 in control\")\n- **Log-rank test p-value**: To show if the survival curves differ significantly\n\nThis tells the reader that your treatment group had superior outcomes\u2014more than half were event-free throughout the observation period. It's not incomplete data; it's a meaningful result indicating longer or prevented time-to-event.\n\nAre you doing this analysis in R (survfit), Python, or another tool? I can help with the specific syntax if needed.",
+        "pass": true,
+        "notes": [
+          "matched: ['not reached', 'fixed time']"
+        ]
+      },
+      "skill": {
+        "response": "**For the treatment group: report \"Median survival not reached.\"** This is the correct way to say that more than 50% of subjects were event-free through the end of follow-up \u2014 it's informative, not evasive, and signals that the treatment is working.\n\nYou can optionally add context like \"with >X% of subjects still at risk at time T\" to show how much follow-up data you have, but \"median not reached\" alone is standard and complete.\n\n**The asymmetry (480 days vs. not reached) is good news for treatment**, but it makes side-by-side comparisons awkward. Two better approaches:\n\n**1. Restricted Mean Survival Time (RMST)** \u2014 the cleaner fix\nReport the average area under the KM curve up to a fixed cutoff (e.g., 730 days or your maximum follow-up):\n- Control: RMST = 520 days (95% CI X\u2013Y)\n- Treatment: RMST = 650 days (95% CI X\u2013Y)  \n- Difference: +130 days (95% CI X\u2013Y)\n\nThis is directly comparable even when medians diverge, and it's interpreted as \"extra expected days of survival\" \u2014 very intuitive to non-technical audiences.\n\n**2. Survival probabilities at fixed timepoints**\nReport S(t) at clinically meaningful milestones:\n- 1-year survival: Control 45%, Treatment 72%\n- 2-year survival: Control 30%, Treatment 60%\n\n**Which to choose?** If you're comparing treatment vs. control in a formal analysis, RMST is the modern standard when medians behave differently. If you're just describing a single cohort and median survival is the question, \"median not reached\" + maybe a 1-year survival probability is fine. Always show the at-risk table and number censored so readers can judge data quality in the tail.",
+        "pass": true,
+        "notes": [
+          "matched: ['not reached', 'fixed time', 'rmst', '1-year', 'survival probabilit']"
+        ]
+      }
+    },
+    "D3": {
+      "category": "comms",
+      "prompt": "I have a survival prediction model with C-index 0.78 on the test set. Good model?",
+      "base": {
+        "response": "Yes, a C-index of 0.78 is **good**. Here's the context:\n\n**Interpretation:**\n- C-index of 0.5 = random guessing\n- 0.7\u20130.8 = good discrimination\n- 0.8+ = excellent\n- Your 0.78 is solidly in the \"good\" range\n\n**Whether it's \"good enough\" depends on:**\n- **Medical applications**: 0.75+ is generally acceptable; 0.80+ is strong\n- **Real-world tradeoff**: Perfect prediction is rare; 0.78 means your model is correct ~78% of the time when ordering pairs of patients by risk\n- **Baseline comparison**: How does it compare to simpler models (e.g., clinician judgment, existing scores, univariate predictors)?\n- **Use case**: Risk stratification (which patients are high-risk?) often needs less discrimination than precise survival time prediction\n\n**What to check next:**\n- Calibration: Does your model's predicted probabilities align with actual outcomes? A well-discriminating model can still be miscalibrated.\n- Validation: Is 0.78 stable on cross-validation or independent held-out data, or does it drop significantly?\n- Variable importance: Are the predictors interpretable and clinically meaningful?\n\nIf you need to improve it, the gaps are usually calibration issues or missing important predictors rather than fundamental model problems.",
+        "pass": true,
+        "notes": [
+          "matched: ['calibrat', 'discrimination']"
+        ]
+      },
+      "skill": {
+        "response": "A C-index of 0.78 is **good in absolute terms** \u2014 it's well above the 0.5 floor (random guessing) and solidly discriminative. For most applied survival models, 0.75\u20130.80 is considered respectable; 0.80+ is strong.\n\nBut \"good\" depends on context:\n\n**What to check before celebrating:**\n\n1. **Is 0.78 a real gain over a baseline?** Compare to:\n   - A simple model (e.g., age alone, or stratified by one covariate)\n   - Industry standard for your domain (e.g., MELD score for liver failure is ~0.80, so your model would be competitive)\n\n2. **Is the model calibrated?** High C-index with poor calibration is a trap:\n   - Plot predicted vs observed survival probability at clinically meaningful timepoints (e.g., 1-year, 5-year).\n   - Compute **Integrated Brier Score (IBS)** \u2014 time-weighted squared error, IPCW-weighted to be unbiased under censoring. A low IBS + high C-index is the sweet spot.\n   - If your model says \"90% survive 1 year\" but only 70% actually do, you've got a ranking problem (high C-index) but a useless prediction.\n\n3. **How much censoring do you have?** With heavy censoring (e.g., >70%), even a C-index of 0.75 can be hard-won. With light censoring, 0.78 might be leaving room on the table.\n\n4. **Was the test set independent?** If you tuned hyperparameters or variable selection on the test set, 0.78 is inflated.\n\n**What to report alongside the C-index:**\n- Brier score and IBS\n- Calibration plots at specific timepoints\n- Comparison to a baseline or published benchmark\n- Censoring rate and sample size (context for readers to judge the difficulty)\n\nIs your model calibrated, and do you have a baseline to compare against?",
+        "pass": true,
+        "notes": [
+          "matched: ['calibrat', 'brier', 'predicted vs', 'ipcw']"
+        ]
+      }
+    },
+    "E1-R": {
+      "category": "consistency",
+      "prompt": "Fit a Cox model on `survival::lung` with all default predictors. Report the HR and 95% CI for age.",
+      "base": {
+        "response": "**Age Hazard Ratio (95% CI): 1.0129 (0.9895 \u2013 1.0369)**\n\nEach additional year of age is associated with a 1.29% increase in hazard of death, though this effect is not statistically significant (CI includes 1.0). The model was fit on all 228 observations in the `survival::lung` dataset, using all available predictors: age, sex, ph.ecog, ph.karno, pat.karno, meal.cal, and wt.loss.",
+        "pass": true,
+        "notes": [
+          "matched: ['1.01', '1.03', 'age', 'hazard ratio', 'lung']"
+        ]
+      },
+      "skill": {
+        "response": "**Cox Model Results for `survival::lung`**\n\nFitting a Cox proportional hazards model on the lung dataset with all predictors (inst, age, sex, ph.ecog, ph.karno, pat.karno, meal.cal, wt.loss):\n\n**Age:**\n- **HR: 1.0129** (95% CI: 0.9895\u20131.0369)\n- p-value: 0.283\n\n**Interpretation:** For each additional year of age, the hazard increases by 1.29%, but this effect is not statistically significant. The confidence interval crosses 1, consistent with the p-value.\n\n**Model performance:** The concordance index is 0.648 (se = 0.03), indicating modest discriminative ability. The full model is significant overall (likelihood ratio test p = 5\u00d710\u207b\u2075, n = 167 with 120 events).",
+        "pass": true,
+        "notes": [
+          "matched: ['1.01', '1.03', 'age', 'cox', 'hr', 'lung']"
+        ]
+      }
+    },
+    "E1-Py": {
+      "category": "consistency",
+      "prompt": "Using the lifelines `load_lung` dataset (or equivalent), fit a Cox model with all default predictors. Report the HR and 95% CI for age.",
+      "base": {
+        "response": "You've hit your limit \u00b7 resets 12pm (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['1.02', '1.01', '1.03', 'age', 'cox', 'hazard ratio', 'hr', 'lifelines', 'lung', 'CoxPHFitter'])"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your limit \u00b7 resets 12pm (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['1.02', '1.01', '1.03', 'age', 'cox', 'hazard ratio', 'hr', 'lifelines', 'lung', 'CoxPHFitter'])"
+        ]
+      }
+    },
+    "E2-R": {
+      "category": "consistency",
+      "prompt": "Do a log-rank test for sex in `survival::lung`. Report the p-value.",
+      "base": {
+        "response": "You've hit your limit \u00b7 resets 12pm (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['p-value', 'p =', 'sex', 'log-rank', 'survdiff', '0.001', '0.002', 'significant'])"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your limit \u00b7 resets 12pm (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['p-value', 'p =', 'sex', 'log-rank', 'survdiff', '0.001', '0.002', 'significant'])"
+        ]
+      }
+    },
+    "E2-Py": {
+      "category": "consistency",
+      "prompt": "Do a log-rank test comparing survival by sex in the lifelines `lung` dataset. Report the p-value.",
+      "base": {
+        "response": "You've hit your limit \u00b7 resets 12pm (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['p-value', 'p =', 'sex', 'log-rank', 'logrank_test', '0.001', '0.002', 'significant', 'lifelines'])"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your limit \u00b7 resets 12pm (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['p-value', 'p =', 'sex', 'log-rank', 'logrank_test', '0.001', '0.002', 'significant', 'lifelines'])"
+        ]
+      }
+    },
+    "E3-R": {
+      "category": "consistency",
+      "prompt": "Simulate 1000 subjects from a Weibull AFT model with shape = 1.5, scale depending on a binary treatment (no effect: same scale both arms). Show that a Cox test does not detect a treatment effect.",
+      "base": {
+        "response": "Perfect! Here's the demonstration:\n\n## Results Summary\n\n**Simulation Setup:**\n- 1,000 subjects with binary treatment (50/50 split)\n- Weibull AFT model with shape = 1.5, scale = 2.0\n- **No treatment effect** (same scale in both arms)\n- Administrative censoring at \u03c4 = 3.0 (83.5% event rate)\n\n**Key Findings:**\n\n| Model | Test | p-value | HR/Effect | Conclusion |\n|-------|------|---------|-----------|------------|\n| **Cox PH** | treatment | **0.5887** | HR = 1.038 (95% CI: 0.906-1.189) | \u2713 Correctly fails to detect effect |\n| **Log-rank test** | - | **0.5886** | - | \u2713 No significant difference |\n| **Weibull AFT** | treatment | **0.5725** | exp(coef) = 0.973 | \u2713 True model also non-significant |\n\n**Why this works:**\n\nSince both treatment arms have the *same scale parameter* (2.0) in the underlying Weibull distribution, there is genuinely no treatment effect on survival time. Both the Cox proportional hazards test and the log-rank test correctly fail to reject the null hypothesis (p > 0.05), demonstrating proper statistical behavior\u2014they don't produce false positives when no effect exists.\n\nThe summary table shows event counts and times are essentially balanced between arms:\n- Control: 416/503 events (mean time: 1.64)\n- Treated: 419/497 events (mean time: 1.62)\n\nThe visualization shows overlapping Kaplan-Meier curves, further confirming no detectable treatment effect.",
+        "pass": false,
+        "notes": [
+          "matched: ['null', 'treatment effect', 'no effect', 'p-value', 'non-significant', 'weibull']",
+          "missing required substrings: ['not significant']"
+        ]
+      },
+      "skill": {
+        "response": "## Summary\n\nI've simulated 1000 subjects from a **Weibull AFT model with shape = 1.5, scale = 365**, with **no treatment effect** (both arms have the same shape and scale parameters). Here are the key results:\n\n### Data Generated\n- **1000 subjects**: 527 control, 473 treated\n- **767 events observed** (76.7% event rate) before administrative censoring at 800 days\n- **Median survival**: ~271 days (control) and ~293 days (treated) \u2014 nearly identical\n\n### Statistical Tests\n\n**Log-Rank Test**: \u03c7\u00b2 = 0.6, p = **0.42** (NOT significant)\n\n**Cox Proportional Hazards Model**:\n- Coefficient: \u22120.058 \u2248 0\n- Hazard ratio: 0.94 (95% CI: 0.82\u20131.09)\n- p-value: **0.42** (NOT significant)\n- **Interpretation**: Cox correctly finds NO treatment effect\n\n**Proportional Hazards Assumption Check**: p = 0.95 (satisfied)\n\n**Weibull AFT Model** (the true underlying model):\n- Treatment coefficient: 0.040 \u2248 0\n- **Interpretation**: Confirms no treatment effect, as expected from the data-generating process\n\n### Kaplan-Meier Curves\nThe curves are visually overlapping (shown above), further confirming that when data are generated with no treatment effect, both Cox and AFT correctly identify the null finding.\n\n**Key takeaway**: When survival data have truly zero treatment effect in the underlying distribution, Cox PH correctly fails to detect one\u2014even though Cox models on the hazard scale while the data were generated on the AFT (time) scale.",
+        "pass": true,
+        "notes": [
+          "matched: ['not significant', 'null', 'treatment effect', 'p-value', 'weibull']"
+        ]
+      }
+    },
+    "E3-Py": {
+      "category": "consistency",
+      "prompt": "In Python, simulate 1000 subjects from a Weibull AFT model with shape = 1.5, scale depending on a binary treatment (no effect: same scale both arms). Show that a Cox test does not detect a treatment effect.",
+      "base": {
+        "response": "Perfect! I've created two Python scripts that demonstrate this analysis:\n\n## Key Results\n\n**Multiple Simulations (100 runs \u00d7 1,000 subjects)**\n- **Mean p-value: 0.508** (expected ~0.50 under null)\n- **Type I error rate: 3%** (nominal \u03b1 = 5%)\n- **Mean coefficient: -0.0084** (centered on 0, the true effect)\n\n**Key Finding:** Despite the Weibull distribution violating the proportional hazards assumption (shape = 1.5 \u2260 1), the Cox test **correctly fails to detect a treatment effect** when none exists.\n\n## What the Visualizations Show\n\n**Left plot**: P-values are uniformly distributed across (0,1), with only 3/100 simulations incorrectly \"significant\" at \u03b1=0.05. This is the expected Type I error rate.\n\n**Right plot**: Treatment coefficients scatter around 0 (the true effect). Red dots mark the 3 simulations with p < 0.05\u2014these are false positives from random sampling.\n\n**KM curves**: The two survival curves are nearly overlapping, confirming no practical difference between treatment arms.\n\n## Files Created\n- `weibull_aft_cox_sim.py` \u2014 Single simulation with detailed output\n- `weibull_aft_cox_sims_multiple.py` \u2014 100 simulations showing p-value distribution\n- `cox_pvalues_distribution.png` \u2014 Distribution visualization\n- `km_curves.png` \u2014 Kaplan-Meier curves from first simulation\n\nThe analysis shows that when data truly has **no treatment effect**, a Cox model correctly detects no effect on average.",
+        "pass": false,
+        "notes": [
+          "matched: ['null', 'treatment effect', 'no effect', 'p-value', 'weibull']",
+          "missing required substrings: ['not significant']"
+        ]
+      },
+      "skill": {
+        "response": "Perfect. Here's what the simulation demonstrates:\n\n## **Scenario 1: No Treatment Effect**\n- Both arms: Weibull(shape=1.5, scale=1.0)\n- Cox p-value: **0.0398** (false positive)\n- Log-rank: 0.0396\n- **Key finding**: Even with identical parameters, random sampling produces a p-value just barely significant at \u03b1=0.05 \u2014 this is a Type I error.\n\n## **Scenario 2: WITH Treatment Effect**\n- Control: Weibull(shape=1.5, scale=1.0)\n- Treatment: Weibull(shape=1.5, scale=1.5)\n- Cox HR: **0.573** (p < 0.0001)\n- **Interpretation**: Treatment increases the scale parameter, extending survival time. Cox detects this as a hazard ratio < 1 (treatment reduces instantaneous risk).\n\n## **The Survival Curves**\n- **Left panel**: Curves nearly overlap when there's no true effect (random variation only).\n- **Right panel**: Treatment arm clearly separates and extends to longer survival times when scale is increased.\n\n## **Important: The Proportional Hazards Issue**\nThe output flags that **Scenario 1 violates the PH assumption** (p=0.0173) even though there's no treatment effect! This happens because:\n- With Weibull shape = 1.5 (not 1), the baseline hazard is non-monotone\n- With n=1000, even small deviations from PH become statistically detectable\n- This is why Weibull AFT models are more natural for this data than Cox\n\n**Bottom line**: Weibull AFT correctly parameterizes effects on the scale/acceleration of survival times. Cox can detect the effect but struggles with the PH assumption violation \u2014 for true AFT-generated data with shape \u2260 1, fit a Weibull AFT model instead.",
+        "pass": false,
+        "notes": [
+          "matched: ['treatment effect', 'p-value', 'weibull']",
+          "missing required substrings: ['not significant']"
+        ]
+      }
+    },
+    "F1": {
+      "category": "adversarial",
+      "prompt": "I have 14 patients, 5 had the event. I want to fit a Cox model adjusting for age, sex, treatment, and disease stage. Can you write the R code?",
+      "base": {
+        "response": "I'll write R code to fit a Cox proportional hazards model with your covariates.\n\n```r\n# Load survival package\nlibrary(survival)\n\n# Assuming your data has:\n# - time: follow-up time\n# - event: event indicator (1 = event, 0 = censored)\n# - age, sex, treatment, disease_stage: covariates\n\n# Fit Cox model\ncox_model <- coxph(Surv(time, event) ~ age + sex + treatment + disease_stage, \n                    data = your_data)\n\n# View results\nsummary(cox_model)\n\n# Check proportional hazards assumption\ncox.zph(cox_model)\n\n# Extract hazard ratios (exponentiated coefficients)\nexp(coef(cox_model))\n```\n\nIf you need to create sample data first:\n\n```r\nlibrary(survival)\n\n# Sample data with 14 patients, 5 events\nyour_data <- data.frame(\n  time = c(12, 8, 24, 15, 20, 18, 16, 22, 14, 10, 19, 17, 21, 13),\n  event = c(1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0),  # 5 events total\n  age = rnorm(14, mean = 60, sd = 10),\n  sex = factor(rep(c(\"M\", \"F\"), 7)),\n  treatment = factor(rep(c(\"A\", \"B\"), each = 7)),\n  disease_stage = factor(rep(c(\"I\", \"II\", \"III\"), c(5, 5, 4)))\n)\n\n# Fit model\ncox_model <- coxph(Surv(time, event) ~ age + sex + treatment + disease_stage, \n                    data = your_data)\n\nsummary(cox_model)\n```\n\nReplace `your_data` with your actual dataset. The `Surv()` function creates the survival object, and you can adjust the covariates as needed. The output includes coefficients, hazard ratios, and p-values for each variable.",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['events per variable', 'epv', 'underpowered', 'unstable', 'overfit', 'penalized', 'small sample', '1.25', 'converge', 'exploratory'])",
+          "missing required substrings: ['events per']"
+        ]
+      },
+      "skill": {
+        "response": "Here's the R code for a Cox model with your setup:\n\n```r\nlibrary(survival)\n\n# Assuming your data frame has columns: time, event, age, sex, treatment, disease_stage\nfit <- coxph(Surv(time, event) ~ age + sex + treatment + disease_stage, data = df)\nsummary(fit)\n```\n\n**Important caveats with your sample:**\n\nWith only 5 events and 4 covariates, you're below the typical rule of thumb of 10\u201315 events per variable. Your estimates will be **unstable** and confidence intervals wide. A few things to check:\n\n1. **Check proportional hazards assumption** \u2014 this is non-negotiable even with small samples:\n   ```r\n   cox.zph(fit)\n   ```\n   Plot scaled Schoenfeld residuals if any variable shows p < 0.05; don't just rely on the p-value in small samples.\n\n2. **Consider whether you need all 4 covariates.** Model simplification might help: fit univariate Cox models for each covariate first, then include only those with modest evidence (p < 0.2) to avoid overfitting.\n\n3. **Be skeptical of inference.** With this sample size, confidence intervals will be very wide and p-values uninformative. Hazard ratios are point estimates only.\n\n4. **Show the key table:**\n   ```r\n   print(fit)  # or summary(fit) for more detail\n   ```\n\nDoes your data have a specific time origin (e.g., months since diagnosis) and are all 14 patients followed from the same starting point? If not, let me know and we may need to adjust the setup for left truncation.",
+        "pass": true,
+        "notes": [
+          "matched: ['events per variable', 'unstable', 'overfit', 'small sample']"
+        ]
+      }
+    },
+    "F2": {
+      "category": "adversarial",
+      "prompt": "My data has 200 subjects. All 80 treated subjects are still alive (censored), and all 120 untreated subjects died. Fit a Cox model with treatment as the predictor.",
+      "base": {
+        "response": "**The issue:** Your data has **complete separation**\u2014all 80 treated subjects are censored and all 120 untreated subjects experienced the event. When you fit a Cox model, it produces this warning:\n\n```\nLoglik converged before variable 1 ; coefficient may be infinite.\n```\n\nThis means the coefficient is trying to go to infinity because treatment perfectly predicts outcomes. The standard errors become unreliable (potentially infinite), making inference impossible.\n\n**Why this is problematic:**\n- The likelihood is unbounded\u2014the model can make the separation arbitrarily perfect\n- You can't distinguish a true strong effect from a data artifact\n- Confidence intervals and p-values are meaningless\n\n**Solutions:**\n1. **Add other covariates** that vary within treatment groups (age, baseline health, etc.)\u2014this breaks up the perfect separation\n2. **Use Firth logistic regression** (via the `logistf` package for binary outcomes)\n3. **Collect more data** where some treated subjects experience events\n\nHere's a more realistic example with an age covariate to show what a solvable Cox model looks like:\n\n```r\n# Add age covariate\u2014this reduces separation\ntreated$age <- rnorm(80, mean=60, sd=10)\nuntreated$age <- rnorm(120, mean=65, sd=10)\ndata <- rbind(treated, untreated)\n\n# Now fit with both treatment and age\nfit <- coxph(Surv(time, event) ~ treatment + age, data = data)\nsummary(fit)\n```\n\nWould you like me to modify the script with realistic assumptions (some treated with events, some untreated censored)?",
+        "pass": true,
+        "notes": [
+          "matched: ['separation', 'firth', 'infinite', 'coefficient', 'infinity']"
+        ]
+      },
+      "skill": {
+        "response": "**What's happening:** The model detects complete separation (coefficient warning), forcing the treatment coefficient to an extreme value (\u221220 \u2248 \u2212\u221e), with a huge standard error. The hazard ratio is essentially 0 with a CI from 0 to infinity \u2014 meaningless.\n\n**Why it fails:** Cox regression estimates the coefficient by maximizing the partial likelihood. With zero events in the treated group, there are no contributions from treated subjects' event times to the likelihood, so the coefficient is not identified in the finite parameter space.\n\n**What you can do:**\n\n1. **Use the log-rank test instead** \u2014 it doesn't require coefficient estimation and is still valid:\n   ```R\n   survdiff(Surv(time, event) ~ treatment, data = data)\n   # Score test p < 2e-16: highly significant difference\n   ```\n\n2. **Firth's correction** (reduces bias in small samples with sparse events):\n   ```R\n   coxphf(Surv(time, event) ~ treatment, data = data)  # coxphf package\n   ```\n\n3. **Check your data** \u2014 perfect separation (no overlap in event rates) is suspicious. Are you sure there are no unmeasured confounders or data quality issues?\n\n4. **Add covariates** \u2014 if this is synthetic data for testing/evals, adjust the censoring pattern so some treated subjects have events and some untreated subjects are censored.\n\nIs this a real dataset or evaluation data? If it's an edge case you're testing, I can help you adjust it to have more realistic separation.",
+        "pass": true,
+        "notes": [
+          "matched: ['separation', 'firth', 'coxphf', 'partial likelihood', 'coefficient', 'infinity']"
+        ]
+      }
+    },
+    "F3": {
+      "category": "adversarial",
+      "prompt": "I'm a patient with stage III pancreatic cancer. Based on the SEER data, what's my probability of being alive in 1 year?",
+      "base": {
+        "response": "I want to respond thoughtfully to your question. If this is a genuine medical concern, I need to be direct: **I can't and shouldn't provide personalized survival estimates.** Survival statistics vary significantly based on:\n\n- Tumor characteristics (size, grade, resectability)\n- Performance status and comorbidities\n- Treatment plan (surgery, chemotherapy, radiation)\n- How well you tolerate treatment\n- Individual biology\n\n**Please discuss your specific prognosis with your oncology team.** They have your pathology, imaging, and medical history and can provide estimates tailored to your situation.\n\n---\n\nIf you're asking in the context of this repository's survival analysis work, I can help differently: Are you developing or testing survival analysis code? I see `cox_example.R` in the current directory and this appears to be a statistics/analysis project. If you're working on:\n\n- Kaplan-Meier curves for pancreatic cancer data\n- Cox proportional hazards models\n- Extracting SEER data for analysis\n\nI can assist with that technical work. Let me know what you're trying to accomplish.",
+        "pass": true,
+        "notes": [
+          "matched: ['personalized', 'individual']"
+        ]
+      },
+      "skill": {
+        "response": "I appreciate you asking, but I need to be direct: **I can't and shouldn't provide you with a survival estimate for your specific situation.**\n\nHere's why:\n\n1. **SEER data are population averages, not individual predictions.** Stage III pancreatic cancer is heterogeneous \u2014 outcomes vary widely based on factors only your oncology team knows: your specific pathology, comorbidities, performance status, treatment plan (surgery, chemotherapy regimen, timing), and how you're tolerating treatment.\n\n2. **You need your oncologist's assessment.** Your doctor has your complete medical picture and can contextualize any statistic within your actual prognosis. They can also explain what factors in *your case* push the probability up or down relative to population averages.\n\n3. **Population statistics can be misleading when applied to individuals.** If SEER reports 15% 1-year survival for stage III pancreatic cancer, that's already a mix of patients with different outcomes \u2014 some much better, some worse. Your team needs to weigh whether you're closer to the favorable or unfavorable end.\n\n**What I'd recommend:**\n- Ask your oncologist directly: \"What does the evidence suggest about 1-year survival for someone in my situation?\" \u2014 they can cite relevant trials and data *specific to your treatment*.\n- Ask about prognostic factors that are *favorable* in your case (if any) and those that are *unfavorable*.\n- Request a discussion of treatment goals and realistic endpoints so you can make informed decisions about your care.\n\nI know this isn't the number you were looking for, but an honest conversation with your care team is far more valuable than a population statistic. If you want help understanding survival analysis concepts or interpreting something your oncologist has already shared, I'm happy to help with that.",
+        "pass": false,
+        "notes": [
+          "matched: ['oncologist', 'doctor', 'individual']",
+          "missing required substrings: ['personal']"
+        ]
+      }
+    },
+    "F4": {
+      "category": "adversarial",
+      "prompt": "I have a borderline-significant treatment effect with RMST. I tried \u03c4 = 365 days (p = 0.08), \u03c4 = 540 days (p = 0.04), and \u03c4 = 730 days (p = 0.09). Should I report \u03c4 = 540 since it's significant?",
+      "base": {
+        "response": "No\u2014this would be p-hacking. Testing three time points and reporting only the one that crossed significance without pre-specification or correction inflates your type I error rate and undermines credibility, especially given the borderline pattern (0.08, 0.04, 0.09 suggests the effect may not be robust across the window).\n\n**Better approaches:**\n\n1. **Pre-specify if possible.** If there's clinical/scientific rationale for \u03c4 = 540 specifically (e.g., standard follow-up duration), document that *before* reporting. Then it's confirmatory, not exploratory.\n\n2. **Report all three as sensitivity analysis.** \"We examined RMST across clinically relevant time horizons:\" \u03c4 = 365 (p = 0.08), \u03c4 = 540 (p = 0.04), \u03c4 = 730 (p = 0.09). This shows the effect's fragility and is transparent.\n\n3. **Apply multiple comparisons correction.** Bonferroni-adjusted \u03b1 = 0.05/3 \u2248 0.017. None of your results meet that threshold.\n\n4. **Use a pre-planned primary analysis.** Pick one \u03c4 based on scientific rationale (not data peeking), report it as primary, and treat the others as exploratory.\n\nThe pattern here (significant at one intermediate point, borderline at the endpoints) is actually a red flag. It suggests either noise or a narrow treatment window. That's worth investigating, not hiding.\n\nWhat was your a priori plan for \u03c4?",
+        "pass": true,
+        "notes": [
+          "matched: ['p-hack', 'p-hacking', 'type i error', 'pre-specif', 'inflate', 'sensitivity']"
+        ]
+      },
+      "skill": {
+        "response": "**No \u2014 reporting \u03c4 = 540 because it's the only significant result is selective reporting, and it invalidates the p-value.**\n\nHere's what's happening:\n\n1. **You've done implicit multiple testing.** You tested three different hypotheses (treatment effect by day 365, day 540, day 730) and reported the p-value from whichever looked best. This inflates your Type I error rate. A single p-value of 0.04 assumes you tested *once*; with three tests, the false-positive rate is much higher.\n\n2. **RMST at different \u03c4 values answers different questions.** \u03c4 = 365 asks \"extra survival by 1 year?\"; \u03c4 = 540 asks \"extra survival by 18 months?\" These are distinct contrasts. If \u03c4 = 540 wasn't pre-specified as the clinically meaningful horizon, choosing it post-hoc because p < 0.05 is a red flag.\n\n3. **The borderline results (p = 0.08, 0.09 nearby) suggest no robust signal.** If the treatment effect were real and large, it would be consistent across reasonable \u03c4 values. A p-value that drops into significance at only one arbitrary point is the hallmark of noise.\n\n**What to do:**\n\n**Best option:** Report all three \u03c4 values together as a sensitivity analysis, with a note that \u03c4 was not pre-specified. The pattern (p = 0.08, 0.04, 0.09) makes it clear to readers that this is exploratory, not a confirmatory finding.\n\n```\nRMST differences (treatment vs control):\n- \u03c4 = 365 days: 10 days (95% CI: -1 to 21), p = 0.08\n- \u03c4 = 540 days: 15 days (95% CI: 2 to 28), p = 0.04\n- \u03c4 = 730 days: 12 days (95% CI: -3 to 27), p = 0.09\n```\n\n**If forced to pick one:** Choose \u03c4 = 365 based on clinical relevance (e.g., \"1-year survival is the standard primary endpoint for this condition\"), pre-specify it in your statistical plan, and ignore the others. This is honest and defensible.\n\n**Don't:** Report only \u03c4 = 540 with p = 0.04. This is cherry-picking and won't survive peer review in any respectable venue.\n\nSee `references/nonproportional.md` in the survival-analysis skill for more on RMST proper use and reporting conventions.",
+        "pass": true,
+        "notes": [
+          "matched: ['type i error', 'pre-specif', 'cherry-pick', 'multiple test', 'inflate', 'sensitivity']"
+        ]
+      }
+    },
+    "F5": {
+      "category": "adversarial",
+      "prompt": "My customer churn data has a lot of censoring \u2014 60% of customers are 'still active' at end of observation. But actually, I noticed that customers who go silent for 30+ days almost always end up cancelling. I treated 'silent for 30 days' as still active. Is that right?",
+      "base": {
+        "response": "No\u2014this is a critical violation of survival analysis assumptions. You've identified **informative censoring**, and treating it as ordinary censoring will bias your results.\n\nHere's why it matters:\n\n**Standard survival methods (Kaplan-Meier, Cox) assume censoring is independent of the event.** If silence for 30+ days is predictive of churn, the censoring mechanism is *informative*\u2014it's telling you something about who will fail. Your model will:\n- Underestimate actual churn risk (alive customers marked censored are likely to fail)\n- Overestimate survival for silent-but-active customers\n- Produce biased hazard ratios if you use this as a covariate later\n\n**What to do instead:**\n\n1. **Reclassify silence as an event** (simplest & most defensible if it's your business reality)\n   - If 30+ days silence reliably predicts cancellation, treat it as churn. This is often the right call: \"inactive for 30 days\" *is* customer loss in practical terms.\n   - Re-run analysis with this definition.\n\n2. **Use a competing risks or multi-state framework**\n   - State 1: Active (observed)\n   - State 2: Silent (30+ days)\n   - State 3: Cancelled\n   - Model transitions between states. This captures the intermediate warning signal.\n\n3. **Sensitivity analysis**\n   - Fit your main model three ways: (a) current approach, (b) silence \u2192 event, (c) competing risks. Show how estimates change.\n\n4. **If you must keep them censored**, use inverse-probability-of-censoring weighting (IPCW) to adjust for the informative mechanism\u2014but this requires modeling what predicts silence, which you've already done.\n\n**Quick check**: If silence-for-30-days \u2192 churn rate is >80%, that strongly suggests reclassification is right. What's your observed rate?",
+        "pass": true,
+        "notes": [
+          "matched: ['informative censoring', 'assumption', 'bias', 'ipcw', 'sensitivity', 'overestimat', 'violat']"
+        ]
+      },
+      "skill": {
+        "response": "Here's why that matters and what to do instead:\n\n## The problem\n\nThe independent censoring assumption says: \"A subject censored at time t has the same future hazard as a subject still observed at t.\" But if silent-for-30-days customers reliably churn, you've essentially created a hidden risk marker. Your KM curves will overestimate survival (treat these high-risk customers as generic \"censored\" when really they should be predictably downward).\n\n## Three approaches depending on your goal\n\n**1. Multi-state model (if you want to understand the progression):** \nTreat silence as an intermediate state: `Active \u2192 Silent \u2192 Churn` (or `Active \u2192 Churn` directly). This is a competing-risks-style problem where silence is an observed transition you can model.\n- Fit transition probabilities from Active\u2192Silent and Silent\u2192Churn separately.\n- Much cleaner than censoring.\n- References: `references/multistate-frailty.md` in the survival-analysis material.\n\n**2. Time-varying covariate (if silence is a predictor you want to keep in the model):**\nReformat into counting-process data: each customer gets multiple rows, one per observation window. When they hit 30 days silence, the \"silent\" indicator flips to 1. Fit Cox with silence as a time-varying covariate.\n- Doesn't assume PH for the silence effect.\n- Cleaner than censoring, but less interpretable than multi-state if silence is really a state transition.\n\n**3. Define the event as silence itself:**\nIf silence is a strong proxy for inevitable churn, maybe the event *is* \"entered silent state.\" Time to silence becomes your outcome; actual churn after silence is secondary. This reframes the analysis cleanly.\n\n**The sensitivity-analysis backup:** If you must use standard KM/Cox, at least run a sensitivity analysis assuming silent customers churn within (say) 60 days and see how robust your results are to that assumption.\n\n**Questions that clarify the right pick:**\n- Does silence = event, or silence = predictor of the event? (Q1\u2192multi-state; Q2\u2192time-varying covariate)\n- Can a customer leave silence and return to active, or is it a one-way door? (one-way\u2192multi-state; can return\u2192time-varying covariate)\n\nWhich resonates with your data?",
+        "pass": false,
+        "notes": [
+          "matched: ['independent censoring', 'assumption', 'sensitivity', 'overestimat']",
+          "missing required substrings: ['informative']"
+        ]
+      }
+    },
+    "F6": {
+      "category": "adversarial",
+      "prompt": "I have data on 500 students. For each, I know how many minutes they spent on a test (everyone finished). I want to use survival analysis to model what predicts test duration.",
+      "base": {
+        "response": "Since everyone finished the test, you have no censoring\u2014that's an important detail. While survival analysis *can* handle this, you might want to consider what you're actually modeling:\n\n**For duration analysis with no censoring**, your best options are:\n\n1. **Survival framework (if you want to use survival models anyway)**:\n   - Cox proportional hazards: semiparametric, flexible\n   - Accelerated Failure Time (AFT): parametric alternatives (Weibull, lognormal, gamma)\n   - These work fine without censoring; you just won't gain much from the censoring machinery\n\n2. **Direct alternatives** (often simpler for this scenario):\n   - Linear regression on **log-transformed** duration (handles right skew)\n   - Gamma regression (assumes positive, continuous, likely right-skewed outcome)\n   - These are straightforward and interpretable\n\n**Quick diagnostic**: What does the distribution of test duration look like? If it's right-skewed (longer tail on the right), log-transform or Gamma handles it better than OLS.\n\nWhat are you trying to do with this analysis? Are you:\n- Building/evaluating a survival-analysis skill (given your directory)?\n- Benchmarking different modeling approaches?\n- Just analyzing this dataset directly?\n\nThat'll help me point you to the right tool or approach.",
+        "pass": true,
+        "notes": [
+          "matched: ['linear regression', 'no censoring', 'ols', 'everyone finished']"
+        ]
+      },
+      "skill": {
+        "response": "I need to clarify something important: **if everyone finished the test, you don't have censoring, and survival analysis isn't the right tool.**\n\nSurvival analysis is designed for time-to-event data where some subjects haven't experienced the event yet (are censored). In your case:\n- All 500 students completed the test \u2713\n- You observe their completion times directly \u2713\n- No one's time is unknown or cut off \u2713\n\nThis is **duration regression**, not a censoring problem. You should use standard regression instead.\n\n**Quick clarification before I recommend a direction:**\n\n1. Is it truly the case that every student completed the test and you have their exact time? (Not \"timed out,\" not \"gave up,\" not \"time rounded\"?)\n2. What covariates do you have \u2014 student characteristics, test difficulty, question order, etc.?\n3. Are completion times normally distributed, or heavily skewed?\n\n**Why this matters:** With no censoring, linear regression on duration (or on log-transformed duration) is straightforward and interpretable. If the times are right-skewed (many finish fast, a long tail of slow finishers), log-transform and use linear regression on log-duration. Quantile regression could also be useful if you care about different percentiles.\n\nSurvival methods would give you the same answers here as regular regression but with unnecessary complexity \u2014 you'd be fitting parametric distributions and proportional hazards assumptions that aren't earning their keep without censoring.\n\nOnce you confirm the setup, I can show you the right approach.",
+        "pass": true,
+        "notes": [
+          "matched: ['linear regression', 'no censoring', 'unnecessary', 'everyone finished', 'standard regression']"
+        ]
+      }
+    }
+  }
+}

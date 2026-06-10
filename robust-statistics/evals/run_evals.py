@@ -48,7 +48,7 @@ def call_claude(prompt: str, system_extra: str | None = None,
                 model: str = "claude-sonnet-4-6",
                 timeout: int = 600,
                 retries: int = 2,
-                retry_delay: float = 15.0) -> str:
+                retry_delay: float = 30.0) -> str:
     """Call claude CLI with retry on rate-limit errors."""
     for attempt in range(retries + 1):
         cmd = ["claude",
@@ -124,7 +124,7 @@ def grade_assertions(response: str, assertions: list,
 
 
 def run(eval_ids: list[int] | None, conditions: list[str],
-        delay: float = 3.0,
+        delay: float = 15.0,
         executor_model: str = "claude-sonnet-4-6",
         grader_model: str = "claude-haiku-4-5-20251001") -> None:
     evals_data = json.loads(EVALS_JSON.read_text())["evals"]
@@ -242,8 +242,8 @@ if __name__ == "__main__":
                         help="model to use for assertion grading (default: haiku)")
     parser.add_argument("--executor-model", default="claude-sonnet-4-6",
                         help="model to use for generating responses (default: sonnet)")
-    parser.add_argument("--delay", type=float, default=3.0,
-                        help="seconds to wait between API calls (default: 3)")
+    parser.add_argument("--delay", type=float, default=15.0,
+                        help="seconds to wait between API calls (default: 15)")
     args = parser.parse_args()
 
     eval_ids = [int(x) for x in args.evals.split(",")] if args.evals else None

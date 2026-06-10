@@ -1,0 +1,41 @@
+{
+  "run_id": "paired-t-defensible-without_skill",
+  "eval_id": 10,
+  "eval_name": "paired-t-defensible",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output defends the paired t-test as statistically defensible for this specific design \u2014 2 conditions, complete data, balanced, one score per person per condition",
+      "passed": true,
+      "evidence": "\"For your specific design, a paired t-test is not a methodological shortcut; it is the correct, fully defensible analysis\" and \"Your design \u2014 80 participants, 2 conditions, one observation per person per condition, balanced, no missing data \u2014 is precisely the textbook use case for a paired t-test.\""
+    },
+    {
+      "text": "Output does NOT insist on MLM as required or validate the collaborator's claim that reviewers will reject a t-test here",
+      "passed": true,
+      "evidence": "\"Your collaborator is wrong \u2014 or at least significantly overstating the case\" and \"The 'reviewers will reject without MLM' claim reflects a common overgeneralization.\""
+    },
+    {
+      "text": "Output explains that a paired t-test is mathematically equivalent to a two-level MLM for complete, balanced data \u2014 it can state this directly, explain that both test the same within-person contrast, or demonstrate the equivalence without requiring a specific model formula",
+      "passed": true,
+      "evidence": "\"the fixed-effect estimate for condition, its standard error, and the resulting p-value from this MLM are algebraically identical to those from a paired t-test. You are not approximating the MLM \u2014 you are computing the same quantity. This is a known result, not a rule-of-thumb.\""
+    },
+    {
+      "text": "Output notes where MLM would genuinely add value: missing data, more than 2 time points, additional covariates, or random slopes with more than one stimulus per condition",
+      "passed": true,
+      "evidence": "The table explicitly lists missing data (FIML handles dropout), >2 time points (models growth curves), random slopes, and level-2 predictors. The prose section also adds: \"between-person covariates you want to include as interactions with condition (e.g., does the condition effect depend on age, trait anxiety, etc.)\""
+    },
+    {
+      "text": "Output's tone correctly calibrates \u2014 direct answer to the actual question rather than reflexively recommending the more complex method",
+      "passed": true,
+      "evidence": "The response opens immediately with \"Your collaborator is wrong\" and closes with \"Run the paired t-test.\" It does not hedge toward recommending MLM as a safer or more publishable choice."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "eval_id": 28,
+  "condition": "baseline",
+  "prompt": "I have a randomized experiment comparing two groups, but the outcome has a weird, heavy-tailed distribution. Someone suggests a permutation test because it's 'assumption-free.' Is that right, and what exactly does a permutation test test?",
+  "response": "The \"assumption-free\" claim has a grain of truth but is importantly incomplete. Here's the full picture:\n\n## What a permutation test actually tests\n\nA permutation test tests **Fisher's sharp null**: that treatment assignment has *no effect on any unit* \u2014 i.e., Y_i(1) = Y_i(0) for every individual. It asks: if labels were randomly reshuffled, how often would we see a test statistic as extreme as observed?\n\nThis is **not** the same as testing equal means. The sharp null is a stronger claim. You could have equal group means but heterogeneous individual treatment effects, and the permutation test might still reject.\n\n## Where \"assumption-free\" is right\n\nIn a randomized experiment, the randomization mechanism itself justifies the reference distribution \u2014 you don't need to assume normality, homoscedasticity, or any particular outcome distribution. The p-value is exact under the sharp null regardless of how weird the distribution looks. That's real.\n\n## Where it's wrong\n\nThe test still requires:\n\n1. **Exchangeability under the null** \u2014 units must be interchangeable when the null is true. Randomization buys you this; observational designs generally don't.\n2. **Independence** \u2014 if you have clustering, repeated measures, or other dependence, standard permutation tests break.\n3. **A correctly chosen test statistic** \u2014 the permutation wrapper doesn't fix this. With heavy tails, a mean-difference statistic still has high variance and low power. You'd want a rank-based statistic (Wilcoxon/Mann-Whitney) *inside* the permutation framework.\n\n## The practical upshot for your case\n\nFor a randomized experiment with heavy-tailed outcomes:\n\n- A permutation test with a **rank-based statistic** (e.g., Wilcoxon rank-sum) gives you exact Type I error control *and* better power than permuting the raw mean difference.\n- A permutation test with a raw mean difference is valid but often underpowered.\n- A parametric t-test on heavy-tailed data can have inflated Type I error in small samples, so the switch to permutation is well-motivated \u2014 just pair it with the right statistic.\n\nThe bottom line: permutation tests are \"assumption-light,\" not assumption-free, and they're testing something slightly different than most people think. In your randomized experiment, they're well-suited \u2014 but choose your test statistic deliberately given the heavy tails.",
+  "assertions": [
+    {
+      "text": "States that exchangeability (from the randomization) is the key assumption justifying the permutation test, not that it is entirely assumption-free",
+      "type": "scored"
+    },
+    {
+      "text": "States that the null being tested is the sharp null (no effect for any unit), which is stronger than equality of means",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that distributional assumptions (normality, etc.) are not needed and exact Type I error control holds in finite samples",
+      "type": "scored"
+    },
+    {
+      "text": "Notes at least one limitation or nuance: e.g. sensitivity to variance differences under heterogeneous effects, or the sharp vs composite null distinction",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT claim the permutation test is entirely assumption-free",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

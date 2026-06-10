@@ -1,14 +1,135 @@
 {
   "skill_name": "robust-statistics",
-  "results": [],
+  "results": [
+    {
+      "eval_id": 3,
+      "condition": "baseline",
+      "prompt": "I'm modeling the number of support tickets each customer files per month. Should I use Poisson or negative binomial regression?",
+      "response": "**Negative binomial, almost certainly.**\n\nPoisson assumes the mean equals the variance (equidispersion). Support ticket counts are almost always **overdispersed** \u2014 customers vary enormously in how often they file tickets, and that heterogeneity inflates the variance well above the mean. If you fit Poisson to overdispersed data, standard errors are underestimated and you'll get spuriously significant predictors.\n\n**Quick diagnostic:** fit the Poisson model first, then check the dispersion statistic. In R:\n\n```r\nlibrary(AER)\ndispersiontest(poisson_model)  # p < .05 \u2192 overdispersed \u2192 use NB\n```\n\nIn Python (statsmodels):\n```python\nimport statsmodels.formula.api as smf\n\npoisson_fit = smf.poisson(\"tickets ~ x1 + x2\", data=df).fit()\nnb_fit = smf.negativebinomial(\"tickets ~ x1 + x2\", data=df).fit()\n\n# Compare log-likelihoods or use a likelihood ratio test\n```\n\n**One exception:** if your data has far more zeros than either distribution predicts (many customers never file a ticket), consider a **zero-inflated** variant (ZIP or ZINB). Check by comparing observed vs. predicted zero counts from the NB fit.\n\nThe practical decision tree:\n1. Overdispersion? \u2192 NB over Poisson\n2. Excess zeros beyond what NB predicts? \u2192 ZINB\n3. Near-equidispersion? \u2192 Poisson is fine, but this is rare in real customer behavior data",
+      "assertions": [
+        {
+          "text": "Frames the decision around the mean-variance relationship / equidispersion vs overdispersion",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that count data like this are usually overdispersed and therefore NB or quasi-Poisson is typically preferred over plain Poisson",
+          "type": "scored"
+        },
+        {
+          "text": "Explains how to detect overdispersion (dispersion statistic relative to df, or variance-vs-mean plot)",
+          "type": "scored"
+        },
+        {
+          "text": "States that overdispersion mainly deflates the standard errors rather than biasing the point estimates (if the mean model is right)",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions at least one of: offset for exposure, NB-vs-quasi-Poisson variance shape difference, or checking excess zeros",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        true,
+        false,
+        true,
+        false,
+        true
+      ],
+      "passed": 3,
+      "total": 5,
+      "pass_rate": 0.6,
+      "eval_passes": false,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 3,
+      "condition": "with_skill",
+      "prompt": "I'm modeling the number of support tickets each customer files per month. Should I use Poisson or negative binomial regression?",
+      "response": "**Default to negative binomial.** Here's the reasoning:\n\nThe decision hinges on the **mean-variance relationship**. Poisson assumes variance = mean (equidispersion). Real support ticket counts almost always violate this because of unobserved customer heterogeneity \u2014 some customers are inherently high-filers regardless of what covariates you've measured. Negative binomial models this naturally as a Poisson-gamma mixture, giving variance = \u03bc + \u03bc\u00b2/\u03b8 (quadratic growth).\n\n**Verify it before committing:**\n\n```r\n# Fit both and compare\nfit_pois <- glm(tickets ~ x1 + x2, family = poisson, data = df)\nfit_nb   <- MASS::glm.nb(tickets ~ x1 + x2, data = df)\n\n# Quick overdispersion check on Poisson\ndeviance(fit_pois) / df.residual(fit_pois)  # ratio >> 1 means overdispersed\n\n# Formal comparison\nAIC(fit_pois, fit_nb)\nlmtest::lrtest(fit_pois, fit_nb)\n```\n\nA deviance/df ratio near 1 \u2192 Poisson is fine. Ratio of 2, 5, 10 (common with ticket data) \u2192 use NB.\n\n**Quasi-Poisson vs NB:** if you only care about point estimates and robust SEs (not likelihood-based model comparison), quasi-Poisson works too \u2014 it just inflates SEs by \u221adispersion without a full likelihood. NB is preferred when you want AIC/BIC comparisons, likelihood-ratio tests, or out-of-sample predictions, because it's a proper probability model. They also weight observations differently (NB downweights high-count customers more, since its variance grows quadratically), so they're not cosmetically interchangeable.\n\n**Also worth checking:** if your data have many zeros (customers who filed no tickets), fit NB first \u2014 it often absorbs the zeros without needing a zero-inflated model. Only reach for hurdle/ZIP if NB still underpredicts zeros substantially.\n\nThe bottom line: Poisson is the hypothesis to test, negative binomial is the safe default.",
+      "assertions": [
+        {
+          "text": "Frames the decision around the mean-variance relationship / equidispersion vs overdispersion",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that count data like this are usually overdispersed and therefore NB or quasi-Poisson is typically preferred over plain Poisson",
+          "type": "scored"
+        },
+        {
+          "text": "Explains how to detect overdispersion (dispersion statistic relative to df, or variance-vs-mean plot)",
+          "type": "scored"
+        },
+        {
+          "text": "States that overdispersion mainly deflates the standard errors rather than biasing the point estimates (if the mean model is right)",
+          "type": "scored"
+        },
+        {
+          "text": "Mentions at least one of: offset for exposure, NB-vs-quasi-Poisson variance shape difference, or checking excess zeros",
+          "type": "scored"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "passed": 4,
+      "total": 5,
+      "pass_rate": 0.8,
+      "eval_passes": true,
+      "must_pass_failed_indices": []
+    },
+    {
+      "eval_id": 4,
+      "condition": "baseline",
+      "prompt": "We ran a randomized A/B test on checkout flow. Someone on my team says we need to control for device type, browser, and whether the user completed onboarding, since those differ a bit between the two arms. Should I add those as covariates?",
+      "response": "Short answer: yes, but for the right reason \u2014 and there's a trap to avoid.\n\n**Why to add them: variance reduction, not bias correction.**\nRandomization already guarantees unbiased treatment effect estimates without any covariates. Your teammate's framing (\"they differ between arms\") implies you need them to fix a bias problem \u2014 you don't. Any imbalance in a properly randomized trial is sampling noise, not confounding. The *actual* reason to include them is that covariates predictive of the outcome (especially onboarding completion, which likely strongly predicts checkout conversion) soak up residual variance and give you a more precise estimate and more power.\n\n**The trap: post-hoc covariate selection.**\nIf you're adding these because you *looked at the imbalance after seeing results*, that's a form of specification search that inflates false positive rates. The principled approach:\n\n- Covariates specified **before** looking at results \u2192 include them, clearly labeled as pre-specified\n- Covariates selected **after** seeing imbalance \u2192 treat the adjusted analysis as sensitivity/exploratory, report both, and be transparent\n\n**Practical recommendation for your case:**\nAll three covariates (device, browser, onboarding) are plausibly predictive of conversion regardless of which arm they fall in \u2014 so including them is defensible even post-hoc as a robustness check. Run both the unadjusted and covariate-adjusted model. If the estimates agree, your conclusion is robust. If they diverge meaningfully, that's a signal worth investigating before shipping.\n\nThe Lin (2013) estimator \u2014 OLS regressing outcome on treatment, covariates, and treatment \u00d7 covariate interactions \u2014 is the standard robust approach for this in experiments; it's asymptotically at least as efficient as the unadjusted estimate.",
+      "assertions": [
+        {
+          "text": "States that in a randomized experiment the unadjusted difference is already unbiased for the causal effect and adjustment is mainly for precision",
+          "type": "scored"
+        },
+        {
+          "text": "Flags that 'completed onboarding' may be post-treatment / a mediator or collider and that controlling for it can introduce bias",
+          "type": "scored"
+        },
+        {
+          "text": "Distinguishes pre-treatment covariates (okay to adjust, ideally pre-specified) from post-treatment variables (do not adjust)",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that small covariate imbalances under randomization are expected and not evidence of confounding",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT advise blindly adding all three covariates as 'more rigorous'",
+          "type": "must_pass"
+        }
+      ],
+      "assertion_results": [
+        true,
+        false,
+        false,
+        true,
+        true
+      ],
+      "passed": 3,
+      "total": 5,
+      "pass_rate": 0.6,
+      "eval_passes": false,
+      "must_pass_failed_indices": []
+    }
+  ],
   "summary": {
     "baseline": {
-      "passed": 0,
-      "total": 0
+      "passed": 6,
+      "total": 10
     },
     "with_skill": {
-      "passed": 0,
-      "total": 0
+      "passed": 4,
+      "total": 5
     }
   }
 }

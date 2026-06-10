@@ -1,0 +1,40 @@
+{
+  "eval_id": 26,
+  "condition": "with_skill",
+  "prompt": "About 20% of my observations are missing on the outcome variable. I'm planning to just drop them and do complete-case analysis. Walk me through when that's okay and when it's not.",
+  "response": "The answer hinges almost entirely on **why** the 20% is missing, not on how much. Here's the breakdown:\n\n## When complete-case is fine\n\n**MCAR.** Missingness is purely random \u2014 unrelated to anything measured or unmeasured. Dropping incomplete rows is equivalent to having collected a random subsample. Your coefficient estimates are unbiased; you just lose some efficiency (wider SEs than if you'd kept everything). 20% loss is noticeable but survivable.\n\n**MAR where missingness depends only on observed predictors in your model.** This is the most underappreciated case. If the probability of the outcome being missing is determined by covariates you're already including in the regression \u2014 but *not* by the outcome value itself conditional on those covariates \u2014 then complete-case analysis gives unbiased coefficient estimates. The intuition: the model is already conditioning on the very things that explain the dropout, so the remaining variation in missingness is effectively random.\n\nExample: attrition in a study where older participants are more likely to drop out, and age is a predictor in your model. Missingness is explained by an observed covariate you're adjusting for \u2192 complete-case is fine for the coefficients.\n\n## When it's not fine\n\n**MNAR.** Missingness depends on the unobserved outcome value itself, even after accounting for everything you can measure. High earners skip the income question *because* their income is high. People with worse outcomes drop out of a study *because* their outcomes are bad. Here, complete cases are a systematically selected subsample and your estimates are biased. No amount of n, no modeling trick within the observed data, fixes this. You need either an explicit MNAR model (selection model / pattern-mixture) with untestable assumptions, or a sensitivity analysis showing how large the MNAR departure would have to be to change your conclusions.\n\n**MAR where missingness depends on the outcome given covariates.** If dropout is related to the outcome value in ways not fully explained by your predictors \u2014 even if there are no \"unmeasured confounders\" in the classic sense \u2014 complete-case is biased in the direction of the selection.\n\n## The hard part\n\nYou cannot distinguish MAR from MNAR from the observed data alone. Both are consistent with what you can see. You argue for the mechanism from subject-matter knowledge, not from any statistical test.\n\nA practical diagnostic: compare completers vs. non-completers on every observed predictor. If they differ substantially, that's at least evidence against MCAR, and it prompts the question of whether those differences fully explain the dropout or whether the outcome value itself is driving it.\n\n## What to do at 20%\n\n- **Run the comparison above** (completers vs. non-completers on observed covariates). If they look similar, MCAR or MAR is more plausible.\n- **If MAR is defensible and your covariates explain missingness well**, complete-case is valid and the main cost is the ~20% efficiency loss. Consider reporting that SEs are wider than they'd be with full data.\n- **If there's any reason to suspect MNAR** (e.g., the outcome is something stigmatized, or people with bad outcomes stopped showing up), run a tipping-point sensitivity analysis: how bad would the MNAR departure have to be (how much worse are the missing outcomes than the observed ones) to flip your conclusion? If the answer is \"a lot,\" you have some protection; if \"a little,\" that's a real vulnerability to flag.\n- **20% is also the threshold where multiple imputation under MAR starts to meaningfully outperform complete-case** in terms of efficiency. If MAR is defensible and you have good auxiliary predictors of the outcome (variables correlated with the outcome that are observed for everyone), MI is worth considering for the precision gain.\n\nShort version: complete-case is defensible if you can argue the mechanism is MCAR or MAR-given-model-covariates. The argument has to come from knowledge of how and why data went missing \u2014 not from any test you can run.",
+  "assertions": [
+    {
+      "text": "States that complete-case validity depends on the missingness mechanism (MCAR / MAR / MNAR)",
+      "type": "scored"
+    },
+    {
+      "text": "Correctly states MCAR \u2192 complete-case is unbiased (though inefficient)",
+      "type": "scored"
+    },
+    {
+      "text": "States the MAR subtlety: complete-case is valid for regression coefficients when outcome missingness depends only on covariates in the model, not on the unobserved outcome given those covariates",
+      "type": "scored"
+    },
+    {
+      "text": "States that MNAR \u2192 complete-case is biased and cannot be fixed from data alone; requires sensitivity analysis or explicit MNAR modeling",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT simply endorse dropping the 20% without qualification or mention of the missingness mechanism",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

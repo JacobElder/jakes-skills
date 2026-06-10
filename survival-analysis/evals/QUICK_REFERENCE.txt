@@ -1,0 +1,145 @@
+================================================================================
+ANDERSEN-GILL CLUSTERING: QUICK REFERENCE
+================================================================================
+
+QUESTION: Why do I need clustering in recurrent event analysis?
+ANSWER: Because rows from the same subject are correlated, not independent.
+
+================================================================================
+WHAT CLUSTERING DOES
+================================================================================
+
+WITHOUT clustering:
+  Standard Errors = too small, too confident
+  Confidence Intervals = too narrow
+  P-values = too small (false positives easier)
+
+WITH clustering (robust):
+  Standard Errors = adjusted for within-subject correlation
+  Confidence Intervals = correctly calibrated
+  P-values = valid (correct Type I error rate)
+
+================================================================================
+THE DATA STRUCTURE PROBLEM
+================================================================================
+
+Your data looks like this:
+
+  id | tstart | tstop | event | treatment | age
+  1  |   0    |  30   |   1   | 1         | 65
+  1  |  30    |  90   |   1   | 1         | 65    <-- Same subject
+  1  |  90    | 120   |   0   | 1         | 65    <-- Same subject
+  2  |   0    |  50   |   1   | 0         | 72
+  2  |  50    | 120   |   0   | 0         | 72    <-- Same subject
+  ...
+
+Standard Cox assumes all 5+ rows are independent.
+They're not. Rows 1-3 are from subject 1 (correlated).
+Rows 4-5 are from subject 2 (correlated).
+
+Result: Naive SE underestimates correlation → SEs are biased.
+
+================================================================================
+THE ONE-LINE FIX
+================================================================================
+
+R (survival package):
+  ---
+  fit_naive  <- coxph(Surv(tstart, tstop, event) ~ treatment + age, data=df)
+  fit_robust <- coxph(Surv(tstart, tstop, event) ~ treatment + age + cluster(id), data=df)
+  summary(fit_robust)  # Use this one!
+  ---
+
+Python (statsmodels):
+  ---
+  import statsmodels.duration.hazard_regression as smh
+  
+  mod = smh.PHReg(endog=df['tstop'], exog=df[['treatment','age']], 
+                  status=df['event'], entry=df['tstart'])
+  res_naive  = mod.fit(disp=False)
+  res_robust = mod.fit(groups=df['id'], disp=False)  # Use this one!
+  print(res_robust.summary())
+  ---
+
+Python (lifelines):
+  ---
+  from lifelines import CoxTimeVaryingFitter
+  
+  ctv = CoxTimeVaryingFitter()
+  ctv.fit(df, id_col='id', event_col='event', 
+          start_col='tstart', stop_col='tstop', formula='treatment + age')
+  # ⚠️ robust=True NOT IMPLEMENTED. Use statsmodels PHReg instead.
+  ---
+
+================================================================================
+WHAT THIS MEANS FOR YOUR RESULTS
+================================================================================
+
+Naive (wrong):
+  Treatment: HR = 0.80, 95% CI (0.75, 0.86), p < 0.001
+
+Robust (correct):
+  Treatment: HR = 0.80, 95% CI (0.72, 0.89), p < 0.001
+
+Difference:
+  - Coefficient: SAME (0.80)
+  - CI width: Robust is WIDER (0.17 vs 0.11)
+  - P-value: Robust is LARGER (less confident)
+  
+The point estimate doesn't change, but the confidence/precision does.
+
+================================================================================
+WHEN YOU MUST USE CLUSTERING
+================================================================================
+
+✓ ALWAYS:
+  - Multiple events per subject (readmissions, crashes, purchases)
+  - Andersen-Gill counting-process model
+  - Any time rows are NOT independent due to subject nesting
+
+✗ NEVER (not needed):
+  - Single event per subject (standard Cox)
+  - Cross-sectional data (one observation per subject)
+
+================================================================================
+COMMON MISTAKES
+================================================================================
+
+MISTAKE #1: "I have p < 0.05 without clustering, so it's fine."
+WRONG: The p-value AND the SE are biased. Use clustering anyway.
+
+MISTAKE #2: "Clustering inflates my SE, so the effect isn't real."
+WRONG: Larger SE reflects correct accounting for correlation. Believe it.
+
+MISTAKE #3: "I'll just report both naive and robust results."
+WRONG: Report ONLY the robust results. Naive is biased.
+
+MISTAKE #4: "Clustering doesn't apply to my data because effects are large."
+WRONG: Effect size doesn't determine whether correlation exists. Always cluster.
+
+================================================================================
+HOW TO REPORT RESULTS
+================================================================================
+
+CORRECT:
+  "Using Andersen-Gill regression with cluster-robust standard errors,
+   the treatment reduced readmission hazard by 30% (HR = 0.71, 95% CI
+   0.61-0.83, p < 0.001)."
+
+WRONG:
+  "Logistic regression: treatment effect HR = 0.71 (p < 0.001)."
+  (No clustering, no SE, no CI.)
+
+================================================================================
+VERIFICATION CHECKLIST
+================================================================================
+
+Before publishing:
+  [ ] Data is in counting-process format (tstart, tstop, event)
+  [ ] Using Andersen-Gill or similar recurrent-event model
+  [ ] Applied clustering via cluster(id) [R] or groups=id [Python]
+  [ ] Reported point estimate AND 95% confidence interval
+  [ ] Not just relying on p-value (report CI!)
+  [ ] Explained why clustering was necessary
+
+================================================================================

@@ -1,0 +1,46 @@
+Your collaborator is **wrong in the absolute sense** — and understanding why will put you in a strong position with reviewers.
+
+## The short answer
+
+For a clean, balanced, 2-condition within-subjects design with no missing data, a **paired-samples t-test is the correct, defensible, and standard analysis**. It will give you *identical inferential results* to the MLM your collaborator is recommending.
+
+## Why they're mathematically equivalent here
+
+The paired t-test works by computing a difference score for each participant (condition B − condition A) and testing whether the mean of those differences ≠ 0. What it's doing implicitly is exactly what an MLM does explicitly:
+
+| What paired t-test does | What MLM does |
+|---|---|
+| Differences out participant-level variance | Partitions variance into between-person (random intercept) and within-person residual |
+| Tests mean difference across participants | Tests fixed effect of condition, controlling for random intercept |
+| Assumes one difference score per person | Assumes 2 observations per person with correlated errors |
+
+With exactly **2 observations per person**, a random-intercept MLM for condition produces the **identical t-statistic, degrees of freedom, and p-value** as the paired t-test. You can verify this empirically in R: `lmer(score ~ condition + (1|id))` will match `t.test(..., paired=TRUE)` to rounding error.
+
+## When MLM genuinely adds value over a paired t-test
+
+Your collaborator's instinct isn't baseless — MLM *does* matter in the right circumstances:
+
+- **Missing data**: MLM handles participants missing one condition under MAR; paired t-test requires listwise deletion. *(You have no missing data, so irrelevant.)*
+- **More than 2 conditions/timepoints**: Paired t-tests don't generalize cleanly; MLM handles arbitrary within-person structure.
+- **Continuous within-person predictors**: MLM models trajectories; paired t-tests can't.
+- **Unbalanced designs or variable numbers of observations per person.**
+
+None of these apply to your design.
+
+## What to say to your collaborator (and reviewers)
+
+> "The paired t-test is a special case of the linear mixed model for balanced two-condition within-subjects designs. Both approaches partial out between-person variance and test the same fixed effect of condition; they produce identical results. We used the paired t-test because it is the conventional, parsimonious choice for this design."
+
+You can cite: **Judd, Westfall, & Kenny (2012)** *Treating stimuli as a random factor in social psychology* (Psych Methods) or **Barr et al. (2013)** for the general principle that model complexity should match design complexity — not exceed it.
+
+## Bottom line
+
+| Claim | Verdict |
+|---|---|
+| "A paired t-test is inappropriate here" | ❌ False |
+| "An MLM would give different results" | ❌ False for this design |
+| "Using an MLM is harmless" | ✅ True — but adds no inferential value |
+| "Reviewers *might* prefer MLM framing" | ✅ Possibly, journal-dependent |
+| "You *must* use MLM or face rejection" | ❌ Overstated |
+
+If your target journal skews toward MLM-heavy methods sections (e.g., *JEP: General*, *Psychological Science*), you could report the MLM for optics while noting equivalence — but you are not methodologically obligated to.

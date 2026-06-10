@@ -2,7 +2,7 @@
   "eval_id": 25,
   "condition": "with_skill",
   "prompt": "I had 15 candidate predictors. I ran backward stepwise selection (dropping variables by p-value > 0.10) and ended up with 6 in the final model. I'm now reporting the coefficients and p-values from that final model. Is this a valid inference procedure?",
-  "response": "No, the p-values and standard errors from that final model are not valid for inference. This is the post-selection inference problem, and it's one of the clearest cases where nominal error rates are just wrong.\n\n**Why it fails.** The p-values from a regression model are calibrated assuming the model specification was fixed before seeing the data. Your backward selection searched through up to 2\u00b9\u2075 implicit candidate models, using the outcome's relationship to the data to decide which 6 predictors to keep. The final model's standard errors have no memory of that search \u2014 they act as if you had always planned to fit exactly those 6 predictors. The true Type I error rate for each \"significant\" coefficient is substantially higher than 0.05, and there's no simple correction factor because it depends on the correlation structure of the 15 predictors and how the search actually proceeded.\n\nThe p > 0.10 dropping rule is essentially a pretest-and-switch applied 9 times. Each step uses the data to decide the model, compounding the distortion.\n\n**There's also a coefficient bias.** The estimates that survived selection are biased away from zero \u2014 they're the winners of a noisy selection contest. Even the point estimates shouldn't be taken at face value, not just the p-values.\n\n**What to do, depending on your goal:**\n\nIf the goal is *inference on specific predictors*: the cleanest fix is **sample splitting** \u2014 use one half to run the stepwise selection, then fit exactly the selected model (fixed specification) on the held-out half and report those p-values. They're valid because the selection didn't touch those data.\n\nIf the goal is *prediction*: stepwise is a poor variable selection method anyway (greedy, unstable, prone to overfitting). Use regularization (lasso/ridge/elastic net) with cross-validated tuning. Don't report p-values from a prediction model.\n\nIf you must report the current results: label them explicitly as exploratory and hypothesis-generating \u2014 not confirmatory. The honest framing is \"these predictors emerged from a data-driven selection process; the reported p-values should not be interpreted as controlling Type I error.\"\n\nThe short version: you've got 6 candidate predictors worth taking seriously, and a set of coefficient directions worth examining, but the p-values tell you very little. The selection process consumed the inferential currency that those p-values are pretending to spend.",
+  "response": "No. The p-values and confidence intervals from that final model are not valid for confirmatory inference, and the problem is structural, not fixable by Bonferroni.\n\n**Why it fails.** Standard errors and p-values assume the model was fully specified before seeing the data. Backward stepwise selection uses the data to search through model space \u2014 which variables to keep, which to drop \u2014 and then hands off the \"winning\" model for inference as if no search occurred. The 6 remaining variables cleared the threshold partly because of real signal and partly because of noise that happened to favor them in this sample. The final model's p-values are computed as if you had pre-specified those 6 variables, but you didn't: you implicitly tested all 15 across multiple elimination rounds. The true Type I error rate on those 6 coefficients is substantially higher than the nominal values suggest. The confidence intervals are too narrow for the same reason \u2014 they don't reflect the uncertainty from the selection step itself.\n\nThis is a specific instance of **post-selection inference**: the data that chose the model are also the data being used to estimate it. The resulting p-values are not calibrated, even for variables that would have been truly significant regardless of selection.\n\n**What to do instead, in rough order of rigor:**\n\n- *Honest labeling* \u2014 report results as exploratory/hypothesis-generating and do not make Type I error claims. This is often the right call when no hold-out sample exists.\n- *Sample splitting* \u2014 use one subset for variable selection and the other for estimation and inference. The held-out p-values are valid because selection never touched those data.\n- *Pre-specified model* going forward \u2014 if you have a theoretical basis for some of those 6 predictors, write them down and test them in a new dataset.\n- *Selective inference methods* \u2014 procedures like PoSI or the debiased LASSO provide valid CIs conditional on the selected model, but they're conservative and typically produce wide intervals that accurately reflect how much the selection cost you.\n\nRegularization (LASSO, ridge) with post-selection inference is often the principled modern alternative to stepwise for settings like this \u2014 it selects and shrinks in one step with methods available for valid inference afterward.\n\nThe bottom line: treat those 6 coefficients and their p-values as suggesting where to look, not as confirming that effects exist.",
   "assertions": [
     {
       "text": "States that reporting p-values from a model selected by the same data is invalid / anti-conservative (post-selection inference problem)",
@@ -13,7 +13,7 @@
       "type": "scored"
     },
     {
-      "text": "Notes this is related to but subtler than standard multiple testing \u2014 search inflates false positives even without explicit multiplicity",
+      "text": "Notes that the inflation of false positives comes from the implicit search across models, not only from explicitly running the same test many times",
       "type": "scored"
     },
     {
@@ -28,13 +28,13 @@
   "assertion_results": [
     true,
     true,
-    false,
+    true,
     true,
     true
   ],
-  "passed": 4,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.8,
-  "eval_passes": false,
+  "pass_rate": 1.0,
+  "eval_passes": true,
   "must_pass_failed_indices": []
 }

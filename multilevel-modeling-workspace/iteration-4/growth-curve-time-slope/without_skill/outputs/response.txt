@@ -1,0 +1,62 @@
+There are a few things worth untangling here before you write this up — some of your advisor's reasoning is sound, but a few steps are missing that could create problems at review.
+
+---
+
+## What your advisor got right
+
+The **build-up strategy** (random intercepts first, add slopes only if warranted) is a legitimate approach, associated with Bates et al. (2015) and the *parsimonious mixed model* philosophy. It's a real alternative to the Barr et al. (2013) "keep it maximal" position. Your advisor isn't wrong that a near-zero slope variance can justify dropping it.
+
+---
+
+## What's incomplete — and why it matters
+
+### 1. "Essentially zero" needs a formal test, not a visual call
+
+You should run a likelihood ratio test comparing the two models:
+
+```r
+m0 <- lmer(depression ~ time * treatment + (1 | subject), REML = FALSE)
+m1 <- lmer(depression ~ time * treatment + (1 + time | subject), REML = FALSE)
+anova(m0, m1)
+```
+
+> **Critical note:** Switch to `REML = FALSE` for comparing fixed or random effect structures via LRT. `lmer`'s default is REML, which gives biased LRTs for this purpose.
+
+A variance of 0.003 is strongly suggestive of zero, but the formal test result is what you report in the manuscript — reviewers will ask for it.
+
+Also check:
+
+```r
+isSingular(m1)  # TRUE confirms the boundary/zero-variance problem
+```
+
+### 2. The scale of 0.003 matters
+
+A random slope variance of 0.003 is only interpretable relative to your outcome's scale. On a 0–60 PHQ-9 scale, that's trivially small. On a 0–3 item mean, it could mean something different. State what it is.
+
+### 3. The core risk: inflated Type I error for your key interaction
+
+This is the part that matters most for your write-up. When you drop the random slope for `time`, the standard errors for **all** fixed effects involving `time` — including your `time × treatment` interaction — are estimated under the assumption that every participant changes at exactly the same rate, differing only in their starting point. If there's *any* true individual variation in trajectories, this deflates those SEs and inflates your t-ratios.
+
+With a slope variance of 0.003 that's genuinely near zero, this inflation is probably small. But you cannot simply assert the interaction is significant without acknowledging the model comparison result.
+
+### 4. Three time points is tight but workable
+
+With only baseline, 3-month, and 6-month observations, you have exactly enough degrees of freedom to estimate a random slope — but it will be estimated from very sparse data per person, which is exactly why near-zero variance estimates are common here. This is worth a sentence in your limitations.
+
+---
+
+## What the write-up should include
+
+| Element | What to say |
+|---|---|
+| Model selection rationale | "We compared random-intercept-only and random-intercept-plus-slope models via LRT; the slope variance was negligible (σ² = 0.003) and the simpler model was retained (χ²(2) = X.XX, *p* = .XX)" |
+| Singularity | Note if `isSingular()` confirmed the boundary issue |
+| Fixed effects | Report as normal — coefficients, SEs, t-values, p-values or CIs |
+| Limitation | Brief acknowledgment that the sparse time-point design limits precision on individual trajectory estimation |
+
+---
+
+## Bottom line
+
+You **can** write this up with the random-intercept-only model — but only after you've run the formal LRT and can report it. Don't write "the slope variance was negligible so we dropped it." Write "a likelihood ratio test confirmed the random slope did not improve model fit (report the test), so the parsimonious model was retained." That's the difference between an assertion and evidence.

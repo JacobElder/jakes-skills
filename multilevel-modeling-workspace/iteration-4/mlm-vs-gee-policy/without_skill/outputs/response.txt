@@ -1,0 +1,57 @@
+There are actually **three separate problems** with the draft and your collaborator's reassurance. Let me work through each one, because at least one of them is policy-critical.
+
+---
+
+## Problem 1: The direction may be backwards (critical)
+
+You described the outcome as **"readmitted yes/no,"** which conventionally codes readmission = 1. A positive coefficient (β = 0.85 > 0) means the intervention **increases** the log-odds of readmission — i.e., the OR = 2.34 means the intervention group had 2.34× the odds of **being readmitted**, not of avoiding it.
+
+Your draft says the opposite: *"2.34 times the odds of **avoiding** readmission."*
+
+Before anything else, you need to confirm your outcome coding:
+
+| Outcome coded as | What β = 0.85 means |
+|---|---|
+| 1 = readmitted (standard) | Intervention → 2.34× odds of **readmission** ← bad news |
+| 1 = not readmitted | Intervention → 2.34× odds of **avoiding readmission** ← good news |
+
+If it's the standard coding, the health department is about to recommend scaling up an intervention that nearly doubles readmission risk. That's not a write-up problem — it's the actual finding.
+
+---
+
+## Problem 2: The GLMM gives the wrong *type* of odds ratio for policy
+
+Even if the direction is correct, your collaborator is wrong that "the GLMM gives us" the right number to report.
+
+Logistic GLMMs produce **subject-specific (conditional) odds ratios** — the effect for a *particular patient within their particular hospital*, holding the random effect constant. This answers: *"For a patient at a given hospital, how do their personal odds change?"*
+
+Policymakers scaling an intervention statewide need the **population-averaged (marginal) odds ratio** — what happens to the distribution of outcomes across all patients and all hospitals if the program rolls out. These answer different questions and are numerically different: the marginal OR is always attenuated toward 1.0 compared to the conditional OR, sometimes substantially so.
+
+To get the population-averaged effect, you need either:
+- **GEE** (Generalized Estimating Equations), which directly estimates marginal effects
+- **Average Marginal Effects (AMEs)** computed by integrating your GLMM predictions over the random effects distribution (e.g., `margins` in Stata, `marginaleffects` in R)
+
+---
+
+## Problem 3: Odds ratios are the wrong metric for policy decisions
+
+Even a correctly-specified, correctly-directed OR is insufficient for a scaling decision. An OR of 2.34 could represent a large absolute effect or a trivially small one depending on the baseline readmission rate. Policymakers need:
+
+| Metric | Why it matters |
+|---|---|
+| **Absolute Risk Reduction (ARR)** | If baseline readmission is 5%, even a large OR may shift the rate by only 2–3 pp |
+| **Number Needed to Treat (NNT)** | How many patients must be enrolled to prevent one readmission? |
+| **Baseline rate by hospital** | With 42 hospitals, there's likely substantial variation in who benefits |
+
+These should accompany — or arguably replace — the OR in the policy report.
+
+---
+
+## What to do before submitting
+
+1. **Verify your outcome coding.** Run a cross-tab of the intervention variable against observed readmission rates. The intervention group should have the *lower* raw readmission rate if your hypothesis is that it works.
+2. **Refit with GEE or compute AMEs** from your GLMM to get the population-averaged effect.
+3. **Report absolute risk alongside relative risk.** Predicted probabilities at mean covariate values, with and without intervention, make the effect interpretable.
+4. **Report hospital-level variance** (the random effect variance, τ²). A large τ² means the intervention effect is highly variable across hospitals — critical context for a statewide rollout decision.
+
+Your collaborator is right that β = 0.85 / OR = 2.34 is what the GLMM output shows. They're wrong that this makes the write-up fine.

@@ -1,0 +1,46 @@
+The math is right — exp(1.2) ≈ 3.32 ✓ — but **"In the population" is the wrong frame for a logistic GLMM fixed effect**, and this is a meaningful error worth fixing before submission.
+
+---
+
+## The core issue: conditional vs. marginal
+
+In a **logistic** GLMM, the fixed-effect coefficient is a **subject-specific (conditional)** estimate. It answers:
+
+> *For a patient in a **given clinic** (i.e., holding the clinic-level random effect constant), what is the odds ratio for the intervention?*
+
+"In the population" implies a **marginal (population-average)** interpretation — the OR you'd observe if you averaged over the entire distribution of clinics. Because the logit link is nonlinear, the conditional and marginal ORs are **not equal** (unlike in a linear mixed model, where they coincide). The marginal OR is always attenuated toward 1 relative to the conditional OR.
+
+This is the classic Zeger, Liang & Albert (1988) distinction between subject-specific and population-average models.
+
+---
+
+## Why it matters here
+
+With 40 clinics and a non-trivial random-intercept variance (which your ICC will tell you), the attenuation could easily shift your OR from 3.32 down to something like 2.6–2.9 on a marginal basis. Reporting 3.32 as a population-average effect overstates the marginal association.
+
+---
+
+## Two paths forward
+
+| What you want to say | What you need |
+|---|---|
+| Conditional (within-clinic) effect | Your current β = 1.2 / OR = 3.32 — just reframe the language |
+| Marginal (population-average) effect | Marginalize over the random-effects distribution (simulation, GHQ integration, or `marginaleffects` in R) — will yield OR < 3.32 |
+
+---
+
+## Revised write-up (conditional framing)
+
+> *"Within a given clinic, patients who received the intervention had 3.32 times the odds of adhering compared to those in the control condition (β = 1.20 on the log-odds scale)."*
+
+Or equivalently: *"Conditional on clinic, the intervention was associated with…"*
+
+---
+
+## Minor note on the OR wording
+
+"3.32 **times** the odds" is the correct way to express an OR > 1 — better than "3.32 times **more** likely" (which conflates odds with probability) or "232% higher odds" (less conventional in clinical writing). That part is fine.
+
+---
+
+**Bottom line:** Change "In the population" → "Within a given clinic" (or "Conditional on clinic"). Everything else holds.

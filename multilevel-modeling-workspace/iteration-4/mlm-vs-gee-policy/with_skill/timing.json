@@ -1,0 +1,6 @@
+{
+  "eval_name": "mlm-vs-gee-policy",
+  "config": "with_skill",
+  "executor_duration_seconds": 79.58,
+  "total_duration_seconds": 79.58
+}

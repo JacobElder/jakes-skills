@@ -1,0 +1,35 @@
+{
+  "eval_id": 2,
+  "condition": "with_skill",
+  "prompt": "My sample is huge (2.3 million rows). Does that mean I don't have to worry about my regression assumptions anymore?",
+  "response": "No \u2014 and the misconception here is worth unpacking precisely, because large N fixes one narrow thing while leaving the violations that actually matter completely untouched.\n\n**What large N actually buys you:** Via the CLT, the sampling distribution of your coefficient estimates becomes approximately normal, so your t-statistics and standard errors are reliable for inference on *means and linear contrasts* \u2014 even if the residuals aren't normally distributed. Normality of residuals as a concern for coefficient inference is essentially gone at 2.3M rows.\n\n**What it doesn't fix:**\n\n- **Bias from misspecification.** Wrong functional form, omitted variables, or controlling for a mediator or collider biases your coefficients. Large N gives you an extremely precise estimate of the wrong thing. The confidence intervals shrink to nothing; they just exclude the true value very confidently.\n- **Dependence / clustering.** If observations are correlated within groups (people nested in firms, repeated measures, geographic clustering), standard errors are too small regardless of total N. The relevant sample size is the number of independent clusters, not rows. At 2.3M observations with 50 clusters, you have an effective N of 50 for inference purposes.\n- **Causal identification.** An unmeasured confounder at N = 2.3M is exactly as confounding as at N = 100. Large N does nothing for the identification assumptions that determine whether your regression estimates a causal effect or a confounded description.\n- **Wrong estimand.** If you want a rate ratio but you're running OLS, or you want a conditional median but you're estimating a mean, N doesn't resolve the mismatch between what you're measuring and what you care about.\n\n**The irony of large N:** At 2.3M rows, *every* assumption test \u2014 Shapiro-Wilk, Breusch-Pagan, Levene \u2014 will reject for completely negligible deviations that couldn't possibly matter. And every coefficient will be \"significant\" regardless of effect size. So large N actually makes p-values *less* informative as your main result, not more. Lead with effect sizes and intervals; the significance column is almost uninformative at that scale.\n\nThe practical checklist for your regression: (1) Is the functional form right, or are there nonlinearities you're ignoring? (2) Are there unmeasured confounders, or variables you're controlling for that might be mediators or colliders? (3) Are observations independent, or clustered in some way? (4) Is the mean the estimand you actually want? These are the questions that matter. Normality of residuals and the level validity of your tests are not.",
+  "assertions": [
+    {
+      "text": "States that large N helps with the level/normal-approximation of tests (CLT) but does not fix everything",
+      "type": "scored"
+    },
+    {
+      "text": "Names at least two things large N does NOT fix from: dependence/clustering, confounding/identification, model/mean misspecification, wrong estimand",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that at this N nearly everything is statistically significant and effect sizes / intervals matter more than p-values",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT claim that large N makes assumptions irrelevant wholesale",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

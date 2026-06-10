@@ -1,0 +1,125 @@
+{
+  "skill_name": "experimental-design",
+  "description": "Capability evals for the experimental-design skill. Seven tasks spanning the full design workflow: A/B test briefs, scoped sample-size questions, design critiques, quasi-experiments, interference problems, and file-based power calculations. Assertions are objectively checkable properties a well-guided response should have.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "checkout-ab-full-brief",
+      "prompt": "We're launching a redesigned checkout flow and want to run an experiment. Current purchase-completion rate at the cart is roughly 3%, and we get about 40,000 cart sessions per week. Walk me through designing this experiment end-to-end.",
+      "expected_output": "A full design brief covering: randomization unit (user, not session), ITT estimand, guardrail metrics (revenue per session, latency, error rate), sample-size calculation via the script for a stated MDE, runtime in whole weeks, no-peeking stopping rule (and the >30% false-positive rate warning if peeking), novelty-effect mitigation (≥2 weeks), SRM check, and an open-decisions section.",
+      "assertions": [
+        {"text": "Randomizes by user (not session), explaining that session-level randomization would expose the same user to both flows", "passed": null, "evidence": null},
+        {"text": "Asks for or states a specific MDE and runs the bundled script (power_analysis.py) to produce the required N per arm — does NOT report a sample size from mental math alone", "passed": null, "evidence": null},
+        {"text": "Specifies guardrail metrics beyond the primary (e.g. revenue per session, latency, or payment-error rate)", "passed": null, "evidence": null},
+        {"text": "States a fixed stopping rule and warns that peeking against a fixed test can push the real false-positive rate well above 5% (e.g. '>30%' or 'dramatically')", "passed": null, "evidence": null},
+        {"text": "Recommends running at least two full weeks and mentions novelty effect or weekly seasonality as the reason", "passed": null, "evidence": null},
+        {"text": "Mentions an SRM (sample-ratio mismatch) check before reading results", "passed": null, "evidence": null},
+        {"text": "Frames the analysis as ITT (intent-to-treat) on the triggered population", "passed": null, "evidence": null},
+        {"text": "Includes a section or note on open decisions the user still needs to make (e.g. the MDE threshold)", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "scoped-sample-size-onboarding",
+      "prompt": "We're testing a new onboarding screen. Our baseline completion rate is 22%. We want to detect a 2-percentage-point absolute improvement (22% → 24%). How many users per arm do we need, assuming α=0.05 two-sided and 80% power?",
+      "expected_output": "A focused, short answer: ~6,950 users per arm (from the script), a note that '2pp' is being treated as absolute (and flagging what a 2% relative lift would cost), and a brief runtime translation. No unsolicited full brief.",
+      "assertions": [
+        {"text": "Reports approximately 6,950 users per arm (within ±200 of the script output), derived from running power_analysis.py, not from a formula quoted inline", "passed": null, "evidence": null},
+        {"text": "Clarifies the absolute vs. relative interpretation of '2 percentage points', noting the two interpretations give very different sample sizes", "passed": null, "evidence": null},
+        {"text": "Translates the per-arm N to a runtime given daily traffic (or asks for traffic to do so)", "passed": null, "evidence": null},
+        {"text": "Stays scoped — does not produce a full experiment brief when only sample size was asked", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "critique-no-control-before-after",
+      "prompt": "We shipped a feed redesign to 100% of users last week. Active minutes went up 8% week-over-week. Our VP wants to use this as proof the redesign worked and greenlight more redesigns like it. Is this strong evidence?",
+      "expected_output": "A clear critique: no control group means no counterfactual, before-after comparisons absorb all other changes (seasonality, marketing, other releases), so the 8% cannot be attributed to the redesign. Offer the best available alternatives (holdback going forward, DiD if a comparable segment exists, ITS). Do not validate the causal claim.",
+      "assertions": [
+        {"text": "States explicitly that the absence of a control group means there is no counterfactual, so the 8% cannot be attributed to the redesign", "passed": null, "evidence": null},
+        {"text": "Names at least two concrete alternative explanations for the observed lift (e.g. seasonality, marketing push, other concurrent changes, day-of-week effects)", "passed": null, "evidence": null},
+        {"text": "Does not endorse the VP's causal claim or frame the result as strong evidence", "passed": null, "evidence": null},
+        {"text": "Offers at least one constructive path forward (holdback, diff-in-diff, interrupted time series, or staggered rollout)", "passed": null, "evidence": null},
+        {"text": "Keeps ethics or moralizing proportionate — this is a low-stakes observational analysis, not a harm scenario", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "within-subjects-navigation-study",
+      "prompt": "We're running a usability study comparing 3 navigation layouts. We can recruit about 30 participants. Each session measures task-completion time and error rate. How should we design this?",
+      "expected_output": "Recommends within-subjects (every participant sees all 3 layouts), explains that between-subjects with 10/cell is hopeless given person-to-person variance, specifies counterbalancing via Latin square, and requires mixed-effects analysis (random intercept per participant) for both outcomes. Honest about power limits.",
+      "assertions": [
+        {"text": "Recommends a within-subjects design where every participant sees all three layouts", "passed": null, "evidence": null},
+        {"text": "Explains WHY within-subjects: it removes between-person variance (each person is their own control), making n=30 feasible where between-subjects would not be", "passed": null, "evidence": null},
+        {"text": "Specifies counterbalancing order across participants (Latin square or equivalent) to control for order and carryover effects", "passed": null, "evidence": null},
+        {"text": "Specifies a repeated-measures analysis method (mixed-effects model, repeated-measures ANOVA, or equivalent) rather than treating the observations as independent", "passed": null, "evidence": null},
+        {"text": "Is honest about the power limitation: 30 participants only reliably detects large within-person differences; a null is inconclusive, not proof of equivalence", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "quasi-experiment-state-fee-cap",
+      "prompt": "California passed a fee cap law on January 1st. I have monthly state-level panel data for all 50 states for the past 3 years. How can I estimate the causal effect of the fee cap?",
+      "expected_output": "DiD as the primary method, with the parallel-trends assumption stated as the load-bearing caveat (and how to check it). Synthetic control recommended as a complement. Key threats named (concurrent CA-only shocks, anticipation, donor-state contamination). Suggests falsification. Does not claim randomization equivalence.",
+      "assertions": [
+        {"text": "Recommends difference-in-differences (DiD) as the primary method, with California as treated and other states as comparison", "passed": null, "evidence": null},
+        {"text": "Names the parallel-trends assumption as the key identifying assumption that DiD rests on, and explains how to check it (pre-period plot or formal test)", "passed": null, "evidence": null},
+        {"text": "Suggests synthetic control as a complement or alternative, noting it is purpose-built for a single treated unit", "passed": null, "evidence": null},
+        {"text": "Names at least one concrete threat specific to this design (e.g. concurrent CA-only shock, anticipation effects, other states passing similar laws)", "passed": null, "evidence": null},
+        {"text": "Recommends a falsification or placebo check (e.g. placebo date, placebo outcome, or permutation inference)", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 6,
+      "name": "social-interference-cluster-randomization",
+      "prompt": "We're building a 'what your friends are watching' recommendation feature. We want to A/B test it with a standard 50/50 user-level random split. My colleague says this will give us a biased answer. Who is right?",
+      "expected_output": "Colleague is right. A user-level split violates SUTVA because treated users affect control users through the social graph, diluting the measured effect. Fix: cluster-randomize by social community. Name the power cost (design effect from ICC). Recommend sizing with --icc / --cluster-size flags.",
+      "assertions": [
+        {"text": "States the colleague is correct and explains WHY: the feature creates interference (SUTVA violation) because treated users affect control-group users through the social graph", "passed": null, "evidence": null},
+        {"text": "Explains the direction of bias: spillover from treated to control dilutes the measured effect, causing underestimation of the true treatment effect", "passed": null, "evidence": null},
+        {"text": "Recommends cluster randomization at the level of social communities (or ego-network / geo clusters as fallback)", "passed": null, "evidence": null},
+        {"text": "Warns about the power cost: within-cluster correlation (ICC) inflates the design effect and reduces effective sample size, so the test will need more units than a naive user-level calculation implies", "passed": null, "evidence": null},
+        {"text": "Suggests using the power script's cluster options (--icc / --cluster-size) or equivalent to size the test correctly under the design effect", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 7,
+      "name": "file-based-power-from-csv",
+      "prompt": "I've attached checkout_history.csv — it has 63 days of daily sessions and conversions for our payment step. We want to run an A/B test targeting a 5% relative lift. Use the file to compute the required sample size and estimate how long the test would need to run.",
+      "expected_output": "Reads the CSV, computes ~4.1% baseline conversion and ~4,600 sessions/day, runs the script with --mde 0.05 --relative to get ~149,000-150,000/arm, translates to ~9-10 weeks at 50/50 split, flags the long runtime and names variance reduction (CUPED) and MDE reconsideration as the key levers, mentions weekly seasonality requiring whole-week runs.",
+      "assertions": [
+        {"text": "Reads the CSV file to derive baseline conversion rate and average daily traffic — does not ask the user to supply these numbers manually", "passed": null, "evidence": null},
+        {"text": "Runs power_analysis.py with --mde 0.05 --relative (or equivalent) on the computed baseline to get approximately 149,000-150,000 per arm (exact value depends on computed baseline; accept any result in the 145K–155K range)", "passed": null, "evidence": null},
+        {"text": "Translates N to a runtime estimate using the traffic from the file, arriving at approximately 9-10 weeks", "passed": null, "evidence": null},
+        {"text": "Flags that the runtime is long and names CUPED / variance reduction as a lever to shorten it", "passed": null, "evidence": null},
+        {"text": "Notes the visible weekday/weekend seasonality and recommends whole-week runs to avoid confounding", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 8,
+      "name": "reading-results-ship-decision",
+      "prompt": "Our checkout A/B test ran for 3 weeks. We had 9,200 users per arm. The result is p=0.031, and we saw a +0.4% absolute lift on purchase completion (4.0% → 4.4%). Our VP wants to ship today. How should I interpret this result and what should we tell the VP?",
+      "expected_output": "Checks SRM before reading results. Reports the confidence interval, not just p-value. Compares the observed lift to the pre-specified MDE (not to zero). Notes that +0.4pp on a ~4% base is a 10% relative lift and contextualizes practical significance. If the test was borderline-powered, warns about winner's curse / Type-M inflation. Distinguishes 'statistically detectable' from 'large enough to matter.' Does not simply validate shipping without working through these checks.",
+      "assertions": [
+        {"text": "Checks or asks about SRM (sample-ratio mismatch) before interpreting the result — treats SRM verification as a prerequisite step, not an afterthought", "passed": null, "evidence": null},
+        {"text": "Reports a confidence interval for the lift, not just the p-value alone — e.g. 'the 95% CI on the absolute lift is roughly X to Y percentage points'", "passed": null, "evidence": null},
+        {"text": "Compares the observed +0.4pp lift to the pre-specified MDE, not just to zero — asks for the MDE or notes it is required to judge whether the result is 'large enough to care about'", "passed": null, "evidence": null},
+        {"text": "Distinguishes statistical significance from practical significance — a p=0.031 result is detectable but may or may not be worth the shipping cost depending on the MDE threshold", "passed": null, "evidence": null},
+        {"text": "Does not unconditionally validate 'ship today' — qualifies the recommendation on SRM passing and the lift meeting the pre-specified threshold", "passed": null, "evidence": null}
+      ]
+    },
+    {
+      "id": 9,
+      "name": "cant-test-this-retrospective-pricing",
+      "prompt": "We changed our pricing across all markets simultaneously 8 months ago. Revenue is up 18% since then. The CFO wants a rigorous analysis proving the pricing change caused the revenue increase. How do we prove it?",
+      "expected_output": "States plainly that a post-hoc causal claim cannot be established with certainty: the RCT opportunity is gone, there is no control group, and 8 months of confounding (macro conditions, marketing, product changes, seasonality) have accumulated. Offers the best available alternatives: interrupted time series on pre/post revenue, synthetic control using comparable markets or products that did not change pricing, and a holdout going forward if any flexibility remains. States the identifying assumption each method requires. Does not pretend the causal claim can be made cleanly.",
+      "assertions": [
+        {"text": "States that a clean causal claim is not possible: the simultaneous rollout eliminated the control group and the RCT opportunity is gone", "passed": null, "evidence": null},
+        {"text": "Names at least two concrete alternative explanations for the 18% revenue increase that have nothing to do with pricing (e.g. macro conditions, marketing spend, seasonality, product changes, competitive dynamics)", "passed": null, "evidence": null},
+        {"text": "Offers at least one credible observational alternative: interrupted time series, synthetic control using comparable markets/products, or diff-in-diff against a suitable comparison", "passed": null, "evidence": null},
+        {"text": "States the identifying assumption the recommended alternative requires (e.g. ITS requires no concurrent shocks; synthetic control requires donor markets that did not change pricing)", "passed": null, "evidence": null},
+        {"text": "Does not frame the analysis as 'proving' causation — is honest that the best available methods yield suggestive evidence under stated assumptions, not proof", "passed": null, "evidence": null}
+      ]
+    }
+  ]
+}

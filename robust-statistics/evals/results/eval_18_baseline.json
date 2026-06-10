@@ -2,7 +2,7 @@
   "eval_id": 18,
   "condition": "baseline",
   "prompt": "I have 500,000 rows. The outcome is a count (number of purchases in a window) and I just want the average difference between two cohorts. Do I have to use a Poisson or negative binomial model, or can I just use OLS / a t-test on the counts?",
-  "response": "With 500k rows, you can almost certainly use OLS or a Welch t-test and be fine. Here's the reasoning:\n\n## Why OLS is defensible\n\n**Point estimate:** OLS estimates E[Y|X] directly \u2014 the same quantity Poisson regression targets when you want an additive difference. The coefficients are the same thing you want.\n\n**Central Limit Theorem:** At N=500k, the sampling distribution of the mean difference is extremely well-approximated by a normal distribution regardless of the underlying count distribution. Your inference is valid.\n\n## The one real concern: heteroscedastic standard errors\n\nCount data almost always has variance that scales with the mean (Poisson: Var = \u03bc; NB: Var > \u03bc). Vanilla OLS standard errors assume homoscedasticity, so they'll be wrong \u2014 but the fix is trivial:\n\n- **t-test:** use Welch's (unequal variances) \u2014 this is the default in most software\n- **OLS regression:** use **HC3 robust standard errors** (`cov_type='HC3'` in statsmodels, `vcov = \"HC3\"` in R's `lm_robust`)\n\nWith robust SEs, OLS gives you valid inference on the mean difference.\n\n## When you'd actually need Poisson/NB\n\n| Situation | Use count model |\n|---|---|\n| Want rate ratios, not differences | Yes \u2014 Poisson gives IRR directly |\n| Very sparse counts (mean < 1, many zeros) | Possibly \u2014 distribution shape matters more |\n| Adding covariates with effect modification | Poisson avoids predicted negatives in margins |\n| Already have Poisson/NB pipeline | Stick with it, no reason to switch |\n\n## Bottom line\n\nFor \"what's the average difference between two cohorts\" with 500k rows: **Welch t-test or OLS with robust SEs is the right call.** It's simpler, faster, and the asymptotics are thoroughly on your side. Poisson/NB would give you essentially identical inference and isn't worth the added complexity unless you need ratio-scale interpretations or have a covariate-adjustment story that benefits from the GLM link function.",
+  "response": "With 500,000 rows and a goal of estimating a mean difference, **OLS with robust standard errors is fine.** Here's the reasoning:\n\n**Why OLS works here**\n\n- OLS is unbiased for the mean regardless of the outcome's distribution \u2014 it estimates E[Y|cohort] correctly whether or not the DGP is Poisson.\n- The only real concern is the standard errors. Count data has variance that scales with the mean (heteroskedasticity), which violates OLS's homoskedasticity assumption. With 500k rows, use **HC robust SEs** (heteroskedasticity-consistent) and this is fully resolved.\n- At N=500,000, the CLT has done its job \u2014 the sampling distribution of the mean difference is normal regardless of the raw distribution of purchases.\n\n**What Poisson/NB actually buy you**\n\nThey don't give you a better estimate of the mean difference. They give you:\n1. A multiplicative (rate ratio) interpretation instead of additive (mean difference) \u2014 irrelevant if you just want the difference\n2. More efficient estimates when counts are very sparse (mean < ~2, lots of zeros)\n3. A principled likelihood if you care about model fit or are building on the model downstream\n\n**When you'd still want count models**\n\n- If purchases are highly zero-inflated and you care about model fit\n- If you want an IRR (incidence rate ratio) rather than a mean difference\n- If you're building a predictive model or adding many covariates where efficiency matters\n\n**Practical recommendation**\n\n```python\nimport statsmodels.formula.api as smf\n\nmodel = smf.ols('purchases ~ cohort', data=df).fit(cov_type='HC3')\nprint(model.summary())\n```\n\nOr just a Welch t-test (`scipy.stats.ttest_ind` with `equal_var=False`), which handles unequal variances across cohorts and is exactly right for this.\n\nThe point estimate will match what Poisson would give you; the SEs will be correct with the robust option.",
   "assertions": [
     {
       "text": "States that for the difference in mean counts, OLS+robust SEs (or a t-test) is valid here and a GLM is not required for validity",
@@ -34,12 +34,12 @@
     true,
     true,
     true,
-    true,
+    false,
     true
   ],
-  "passed": 6,
+  "passed": 5,
   "total": 6,
-  "pass_rate": 1.0,
+  "pass_rate": 0.8333333333333334,
   "eval_passes": true,
   "must_pass_failed_indices": []
 }

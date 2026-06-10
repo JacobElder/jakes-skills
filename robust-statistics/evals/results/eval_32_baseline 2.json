@@ -1,0 +1,35 @@
+{
+  "eval_id": 32,
+  "condition": "baseline",
+  "prompt": "I have two groups, n=45 per group, with moderately right-skewed outcomes (skewness ~1.5). My collaborator says I should use a permutation test instead of a t-test because it's 'safer' for non-normal data. Should I switch?",
+  "response": "Your collaborator's intuition is understandable but the advice is imprecise. Here's why the switch is probably unnecessary \u2014 and why the framing matters.\n\n**At n=45 per group, the t-test is fine.** The CLT is doing heavy lifting here. With ~45 observations, the sampling distribution of the mean converges to near-normal even under skewness ~1.5. Welch's t-test (unequal variances, which you should default to anyway) is well-calibrated at this sample size for moderate skew. Simulations typically show nominal Type I error holding up past skewness of 2 for n\u226530.\n\n**The permutation test isn't \"safer\" \u2014 it tests something different.** The two-sample permutation test assumes *exchangeability*: under the null, all labels are arbitrary. This means it's sensitive to *any* distributional difference \u2014 mean, variance, shape. If your two groups have different variances (common with skewed data), the permutation test will reject even when means are equal. That's not conservative; it's a different and often broader null hypothesis than you intend.\n\n**If you want a robustness check, use Wilcoxon rank-sum (Mann-Whitney U) instead.** It's nonparametric, well-understood, and tests a well-defined location-shift hypothesis. It pairs naturally with an effect size (rank-biserial correlation). Running it alongside the t-test and reporting concordance is a defensible sensitivity analysis.\n\n**Bottom line:** Stick with Welch's t-test as your primary test. If a reviewer or collaborator pushes back on normality, add a Wilcoxon as a sensitivity check. The permutation test isn't wrong, but \"safer for non-normal data\" overstates what it guarantees.",
+  "assertions": [
+    {
+      "text": "States the t-test is approximately valid at n=45 with moderate skew (~1.5), citing CLT or Berry-Esseen reasoning",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT recommend switching to a permutation test as necessary for this case",
+      "type": "must_pass"
+    },
+    {
+      "text": "Does NOT characterize the t-test as unsafe or problematic at this n and skew level",
+      "type": "must_pass"
+    },
+    {
+      "text": "Explains why switching to a permutation test provides no meaningful protection benefit at this n and skew \u2014 e.g. asymptotic equivalence, or that the sampling distribution error is already small",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
+}

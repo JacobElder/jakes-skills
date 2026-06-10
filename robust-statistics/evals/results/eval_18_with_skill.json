@@ -2,7 +2,7 @@
   "eval_id": 18,
   "condition": "with_skill",
   "prompt": "I have 500,000 rows. The outcome is a count (number of purchases in a window) and I just want the average difference between two cohorts. Do I have to use a Poisson or negative binomial model, or can I just use OLS / a t-test on the counts?",
-  "response": "No, you don't need Poisson or negative binomial here. With n = 500,000 and a mean-difference estimand, OLS (or Welch's t-test) is entirely valid.\n\n**Why it's fine.** The t-test and OLS don't assume the *data* are normal \u2014 they assume the *sampling distribution of the mean* is approximately normal. The CLT delivers that, and the Berry-Esseen approximation error shrinks like skewness/\u221an. At \u221a500,000 \u2248 707, even badly skewed count distributions have a negligible approximation error. The CLT has done its work many times over.\n\n**The one thing to fix: standard errors.** Counts have variance that grows with the mean (like Poisson), so the homoskedastic SE assumption is wrong. Use:\n- **Welch's t-test** (handles unequal variances automatically), or\n- **OLS with HC3 robust SEs** (`sandwich` in R, `HC3` in statsmodels).\n\nThe point estimate \u2014 the mean difference \u2014 is unbiased either way. Heteroskedasticity only affects the SE, not the coefficient, and robust SEs fix that.\n\n**What Poisson/NB would actually add** (and why you don't need it):\n- A *multiplicative* estimand (rate ratio) \u2014 not what you want\n- Efficiency gains \u2014 irrelevant when you have 500K rows\n- Better behavior near a boundary \u2014 not a concern at this n\n\nIf you later want \"cohort B purchases 23% more than cohort A\" instead of \"cohort B averages 1.2 more purchases,\" that's when a log-link GLM becomes the right tool \u2014 because you've changed the estimand, not because OLS was invalid.\n\n**Bottom line:** OLS with robust SEs is the right call. Simple, interpretable, valid.",
+  "response": "No, you don't need a GLM here. OLS or Welch's t-test is fine, and here's why.\n\n**The estimand you named is a difference in means.** OLS and the t-test target exactly that. Poisson and negative binomial models target a *rate ratio* (a multiplicative contrast on the log scale) \u2014 a different quantity. Neither is \"more correct\"; they answer different questions. Since you want the average difference in purchase counts, stay on the additive scale.\n\n**At n = 500,000, the CLT has completely done its work.** The t-test doesn't assume count data are normal \u2014 it assumes the sampling distribution of the *mean* is approximately normal. Even for heavily overdispersed counts, the average of 250,000 observations per cohort is so well-behaved that the approximation is essentially exact. The residual risk from non-normality at your sample size is negligible.\n\n**One practical adjustment worth making:** count data are almost always heteroskedastic (higher means come with higher variance). Use **Welch's t-test** (not Student's, which assumes equal variances) or **OLS with HC3 robust standard errors**. This doesn't change the point estimate \u2014 only protects the standard errors. At n = 500k this matters less than at small n, but it's the right default.\n\n**When would you actually want Poisson or NB here?**\n- You want a *rate ratio* / *% difference* as the estimand (multiplicative effect, not additive)\n- You need valid *predicted counts* (OLS can produce negatives)\n- You have exposure time that differs across users and need an offset\n\nNone of those apply to \"average difference between two cohorts,\" so OLS with robust SEs is the right call \u2014 interpretable, valid, and simpler.",
   "assertions": [
     {
       "text": "States that for the difference in mean counts, OLS+robust SEs (or a t-test) is valid here and a GLM is not required for validity",
@@ -30,18 +30,16 @@
     }
   ],
   "assertion_results": [
+    true,
+    true,
+    true,
+    true,
     false,
-    false,
-    false,
-    false,
-    false,
-    false
+    true
   ],
-  "passed": 0,
+  "passed": 5,
   "total": 6,
-  "pass_rate": 0.0,
-  "eval_passes": false,
-  "must_pass_failed_indices": [
-    6
-  ]
+  "pass_rate": 0.8333333333333334,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
 }

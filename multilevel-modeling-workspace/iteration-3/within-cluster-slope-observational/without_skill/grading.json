@@ -1,0 +1,41 @@
+{
+  "run_id": "within-cluster-slope-observational-without_skill",
+  "eval_id": 13,
+  "eval_name": "within-cluster-slope-observational",
+  "config": "without_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output does NOT help write up the random effects specification without first flagging that the model may be under-specified",
+      "passed": true,
+      "evidence": "The response opens with 'Before drafting the write-up, I need to flag two issues...' and explicitly defers the methods write-up: 'Once you fit the corrected model, I'm happy to draft the full methods write-up.' No write-up is provided."
+    },
+    {
+      "text": "Output identifies that SES varies within schools (students in the same school differ in SES), which means a by-school random slope for SES is needed \u2014 random-intercepts-only for a within-cluster predictor uses the wrong error term",
+      "passed": true,
+      "evidence": "'Since SES varies within schools, the SES \u2192 achievement relationship may not be uniform across all 60 schools.' The response also states the random slope 'uses the correct error term for testing the SES fixed effect,' directly invoking the wrong-error-term logic."
+    },
+    {
+      "text": "Output explains the mechanism: without a by-school SES slope, the model assumes the SES-achievement relationship is identical across all schools; the test of SES conflates within-school and between-school effects and is anti-conservative",
+      "passed": true,
+      "evidence": "'Your current spec forces that effect to be constant' (identical across schools); 'your \u03b2 = 0.31 is an uninterpretable blend of both' (within/between conflation); 'the SES test is anti-conservative (per Barr et al., 2013; Schielzeth & Forstmeier, 2009).' All three mechanism components are present."
+    },
+    {
+      "text": "Output recommends refitting with (1 + SES | school) before writing up",
+      "passed": true,
+      "evidence": "The 'Recommended revised model' section explicitly provides: 'lmer(achievement ~ SES_within + SES_school_mean + school_resources + (1 + SES_within | school), data = df, REML = TRUE)' and instructs the user to run this before writing up."
+    },
+    {
+      "text": "Output does NOT frame the by-school SES slope as 'something to consider' or optional \u2014 it is required because SES varies within clusters, just as within-subjects factors require random slopes in experimental designs",
+      "passed": true,
+      "evidence": "The slope is framed as a Type I error necessity ('the SES test is anti-conservative' without it) and as 'The appropriate starting point for a confirmatory test.' Fallback simplifications are offered only for convergence failure, not as alternatives to including the slope \u2014 the slope itself is never labeled optional or discretionary."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

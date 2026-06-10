@@ -1,0 +1,43 @@
+## HC3 Does Not Fix Non-Independence — You Still Have a Clustering Problem
+
+This is a critical distinction, and it's worth getting exactly right before writing up.
+
+### What HC3 actually corrects
+
+HC3 addresses **heteroskedasticity** — non-constant residual variance *across observations*. It allows each observation to have its own variance, but it still assumes all observations are **independent of one another**.
+
+### What repeated measures actually violates
+
+Your 60 trials from Participant 1 are correlated with each other in ways that trials from Participant 2 are not. That's **within-cluster correlation** (clustering by participant), not heteroskedasticity. These are two separate problems:
+
+| Problem | Source | Fix |
+|---|---|---|
+| Heteroskedasticity | Unequal residual variances | HC-type SEs (HC1–HC3) |
+| Non-independence | Correlated observations within clusters | Cluster-robust SEs or mixed models |
+
+HC3 solves the first. It does nothing for the second.
+
+### Why this matters in practice
+
+With 80 participants × 60 trials, your **effective N is far closer to 80 than to 4,800**. Observations within a person share variance from that person's ability, attention, speed, and response tendencies. Ignoring this clustering causes standard errors to be **anti-conservatively biased** — likely far more so than any heteroskedasticity correction recovers. The fact that HC3 SEs are "a bit larger" is consistent with minor heteroskedasticity, but tells you nothing about whether the clustering problem is resolved.
+
+### What to actually use
+
+**Option 1 — Cluster-robust SEs** (minimal change, same OLS estimates):
+Cluster at the participant level. In R:
+```r
+library(sandwich); library(lmtest)
+coeftest(model, vcov = vcovCL(model, cluster = ~participant_id))
+```
+This is the direct analog of HC3 but for clustered data. Use CR2 (the clustered equivalent of HC2/HC3) for small-cluster corrections with only 80 participants.
+
+**Option 2 — Mixed-effects model** (preferred for a memory experiment):
+```r
+library(lme4)
+lmer(outcome ~ predictors + (1 | participant_id), data = df)
+```
+Add random slopes `(1 + within_subject_predictor | participant_id)` if you have within-subject manipulations. This is the standard in cognitive/memory research and lets you properly partition between- and within-person variance.
+
+### Bottom line for your write-up
+
+Do not write up the HC3 results as having addressed non-independence — a reviewer familiar with multilevel data will flag this immediately. Switch to cluster-robust SEs or a mixed model before submission. If the fixed-effect estimates change substantially, that itself tells you something important about what the clustering was masking.

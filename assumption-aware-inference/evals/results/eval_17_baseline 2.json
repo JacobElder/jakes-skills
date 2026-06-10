@@ -1,0 +1,33 @@
+{
+  "eval_id": 17,
+  "condition": "baseline",
+  "prompt": "n = 300 in each of two independent groups, outcome roughly symmetric, I want to compare means. Anything I actually need to worry about before running a two-sample t-test?",
+  "response": "With n=300 per group and a roughly symmetric outcome, normality is essentially a non-issue \u2014 the CLT has you covered well before this sample size.\n\n**What actually matters:**\n\n1. **Independence** \u2014 within and between groups. This is the assumption large samples can't rescue. Repeated measures, clustering, matched pairs, or any data-generating process that links observations will invalidate the standard t-test regardless of n. Worth verifying explicitly.\n\n2. **Equal vs. unequal variances** \u2014 use Welch's t-test by default. It doesn't assume equal variances and loses essentially nothing when variances happen to be equal. Most software defaults to Welch's now, but worth confirming. If you're using Student's (pooled), at least check that the variance ratio isn't extreme (>4:1 is a rough flag).\n\n3. **Extreme outliers** \u2014 a handful of wild values won't break your Type I error rate at this n, but they inflate within-group variance, which hurts power. Worth eyeballing the distributions.\n\n**What you can safely ignore:**\n\n- Normality testing (Shapiro-Wilk etc.) \u2014 uninformative and unnecessary here\n- Levene's test as a prerequisite \u2014 just use Welch's unconditionally\n\nShort version: confirm independence, use Welch's, glance at the distributions for egregious outliers, and run it.",
+  "assertions": [
+    {
+      "text": "Reassures that the t-test is fine / there is little to worry about given n=300 and symmetry",
+      "type": "scored"
+    },
+    {
+      "text": "Mentions Welch as the sensible default and/or that an equal-variance pretest is unnecessary",
+      "type": "scored"
+    },
+    {
+      "text": "Keeps the response brief and proportionate rather than enumerating many diagnostics or alternative methods",
+      "type": "must_pass"
+    },
+    {
+      "text": "Does NOT invoke normality tests as a gate or recommend a nonparametric switch",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0
+}

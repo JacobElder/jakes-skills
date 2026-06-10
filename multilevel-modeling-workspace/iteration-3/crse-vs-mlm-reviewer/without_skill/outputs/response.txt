@@ -1,0 +1,70 @@
+## Your advisor is right. Reviewer #2 is wrong — but here's how to respond effectively.
+
+### Why your TWFE approach is valid
+
+Your `reghdfe` specification is the **gold-standard identification strategy** in empirical economics for exactly this data structure. Here's what it does and why it's defensible:
+
+| Feature | What it does | Why it matters |
+|---|---|---|
+| **Firm FEs** | Differences out all time-invariant unobserved firm heterogeneity | Controls for anything stable about a firm (industry, location, founding culture, etc.) |
+| **Year FEs** | Differences out all time-varying shocks common to all firms | Controls for macroeconomic conditions, policy regimes, etc. |
+| **Cluster-robust SEs at firm level** | Allows arbitrary serial correlation within firms over time | Correct for within-panel dependence; 800 clusters is well above any threshold for asymptotic validity (rule of thumb: ≥ 30–50) |
+
+This is two-way fixed effects (TWFE) — the workhorse of applied microeconometrics. It appears in thousands of papers in the *AER*, *QJE*, *JPE*, and *ReStud* precisely because it's valid.
+
+---
+
+### Why Reviewer #2's objection is mistaken
+
+The reviewer is likely reasoning from a biostatistics or psychology tradition where multilevel/mixed-effects models are emphasized. The key issue: **fixed effects are strictly more robust than the random effects in a multilevel model**, not less.
+
+**The random effects assumption (required by multilevel models):**
+> The firm-level random effects must be *uncorrelated* with your regressors (treatment and controls).
+
+In observational economics data, this assumption almost always fails — firm productivity shocks are correlated with treatment assignment. FE eliminates this bias entirely. Going from TWFE to a multilevel model would be a step *backward* for identification.
+
+A **Hausman test** formalizes this: it tests whether RE and FE estimates differ systematically. In economics panel data, FE almost always wins. The reviewer is asking you to adopt a more restrictive (and likely misspecified) model.
+
+---
+
+### Where Reviewer #2 might have a kernel of a point (and where they don't)
+
+| Concern | Legitimate? | Response |
+|---|---|---|
+| "FE doesn't model firm heterogeneity" | No — FE *absorbs* it, which is stronger than modeling it | Standard textbook result (Wooldridge, Cameron & Trivedi) |
+| "You need partial pooling / shrinkage" | Unlikely — 8 obs/firm is enough; shrinkage matters more for 1–2 obs/group | T=8 is comfortable for linear FE |
+| "Nested structure isn't accounted for" | Only relevant if treatment varies at a *higher* level (e.g., industry) — clarify your design | If treatment is at firm level, firm clustering is correct |
+| "Incidental parameters bias" | Real for nonlinear models (logit, Poisson), **not for linear OLS** | Your outcome is linear, so this doesn't apply |
+
+---
+
+### How to respond to Reviewer #2
+
+Draft language for your response:
+
+> "We respectfully disagree with this methodological recommendation. The two-way fixed effects estimator with firm- and year-level absorbing effects (`reghdfe`) is the standard identification strategy for firm-level panel data in applied microeconomics (Wooldridge 2010; Cameron & Miller 2015). Firm fixed effects nonparametrically absorb all time-invariant unobserved heterogeneity, making the key identifying assumption (conditional on controls and year shocks, treatment is as-good-as-random within firms over time) far weaker than the random-effects assumption required by multilevel models. The latter requires firm effects to be uncorrelated with treatment — an assumption likely to fail in observational data and testable via a Hausman test. Standard errors clustered at the firm level (N=800 clusters) follow Bertrand, Duflo & Mullainathan (2004) and are well-powered for asymptotic validity. As a robustness check, we have added Table X reporting mixed-effects estimates, which are qualitatively and quantitatively consistent with our main results."
+
+Then **run a multilevel model as a robustness check only** — show coefficients are nearly identical. This defuses the reviewer without conceding the main specification.
+
+---
+
+### Key references to cite
+
+1. **Wooldridge, J.M. (2010).** *Econometric Analysis of Cross Section and Panel Data* (2nd ed.) — Chapter 10–11 on FE vs RE
+2. **Bertrand, Duflo & Mullainathan (2004).** "How Much Should We Trust Differences-in-Differences Estimates?" *QJE* — the definitive paper on clustering in panel DiD
+3. **Cameron & Miller (2015).** "A Practitioner's Guide to Cluster-Robust Inference." *Journal of Human Resources* — clustering with 800 firms is textbook safe
+4. **Mundlak (1978)** / **Hausman (1978)** — formal basis for why FE dominates RE under endogeneity
+
+---
+
+### Bottom line
+
+| | TWFE (your current spec) | Multilevel model (reviewer's request) |
+|---|---|---|
+| Handles time-invariant confounders | ✅ Fully absorbs them | ⚠️ Only if uncorrelated with regressors |
+| Handles serial correlation | ✅ Cluster-robust SEs | ✅ Via random slope structure |
+| Robustness to endogenous selection into treatment | ✅ Strong | ❌ Weaker |
+| Standard in economics journals | ✅ Ubiquitous | ❌ Uncommon in top econ |
+| Appropriate for your design | ✅ Yes | ⚠️ Valid but inferior here |
+
+Hold your ground, add a multilevel robustness check, and cite Cameron & Miller (2015). This is a case of a reviewer applying the wrong methodological framework for your discipline.

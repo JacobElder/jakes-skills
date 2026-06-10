@@ -1,0 +1,6 @@
+{
+  "eval_name": "within-cluster-slope-observational",
+  "config": "with_skill",
+  "executor_duration_seconds": 78.3,
+  "total_duration_seconds": 78.3
+}

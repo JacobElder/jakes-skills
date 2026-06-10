@@ -1,0 +1,69 @@
+Before drafting the write-up, I need to flag two issues with the current specification — one is a silent bias problem that affects the interpretation of your main finding, and one is a Type I error concern.
+
+---
+
+## Issue 1: Within/between confound (affects your β = 0.31 interpretation)
+
+You noted that SES varies **both within and between schools**. In a standard random-intercept model, the single SES coefficient conflates two distinct effects:
+
+- **Within-school effect**: how a student's SES *relative to their school's average* predicts achievement
+- **Between-school effect**: how school-average SES predicts school-average achievement
+
+These effects can differ substantially in magnitude and even direction (a classic case of Simpson's paradox at the cluster level). Your β = 0.31 is an uninterpretable blend of both. This also creates a direct problem for `school_resources`: it's likely correlated with school-mean SES, which is currently sitting undecomposed inside your SES coefficient — a probable reason it's non-significant.
+
+**The fix** is a within/between decomposition (Raudenbush & Bryk call this "group-mean centering with the cluster mean as a level-2 covariate"):
+
+```r
+# Compute school-mean SES
+df <- df %>%
+  group_by(school) %>%
+  mutate(
+    SES_school_mean = mean(SES),          # between-school component (L2)
+    SES_within = SES - SES_school_mean    # within-school component (L1)
+  )
+
+# Decomposed model
+lmer(achievement ~ SES_within + SES_school_mean + school_resources + (1 | school))
+```
+
+Now `SES_within` = the pure within-school effect; `SES_school_mean` = the between-school contextual effect; and `school_resources` is estimated after properly controlling for school-level SES. The difference between `SES_school_mean` and `SES_within` is the **contextual effect** — and it's a substantively meaningful quantity in educational research.
+
+---
+
+## Issue 2: Missing random slope for SES (affects Type I error)
+
+Since SES varies within schools, the SES → achievement relationship may not be uniform across all 60 schools — some schools might show stronger SES gradients than others. Your current spec forces that effect to be constant. The appropriate starting point for a confirmatory test is:
+
+```r
+lmer(achievement ~ SES_within + SES_school_mean + school_resources + 
+       (1 + SES_within | school))
+```
+
+The random slope for `SES_within` gives each school its own SES gradient and uses the correct error term for testing the SES fixed effect. Without it, the SES test is anti-conservative (per Barr et al., 2013; Schielzeth & Forstmeier, 2009). With 60 schools and ~25 students each, this model is estimable — you have plenty of clusters and observations per cluster.
+
+If it fails to converge or is singular, simplify in this order:
+1. Remove the random intercept–slope correlation: `(1 + SES_within || school)`
+2. If still singular, consider whether the variance in slopes is near zero (may be genuinely homogeneous)
+
+---
+
+## Recommended revised model
+
+```r
+lmer(achievement ~ SES_within + SES_school_mean + school_resources + 
+       (1 + SES_within | school),
+     data = df, REML = TRUE)
+```
+
+Run this and check:
+- Does it converge cleanly?
+- Is the random-slope variance near zero (suggesting homogeneous SES effects across schools) or meaningfully non-zero?
+- How do `SES_within` and `SES_school_mean` compare? Are they similar (no contextual effect) or diverge (a real contextual effect worth reporting)?
+
+---
+
+## On your current results
+
+Your ICC = 0.18 is solid and clearly justifies the multilevel approach. The SES significance is plausible, but until you've decomposed within/between, you can't confidently say *which* SES effect is driving it. Once you fit the corrected model, I'm happy to draft the full methods write-up (model equations in both multilevel and lme4 notation, estimation rationale, random-effects justification, ICC interpretation) — that'll also be a much cleaner story for reviewers.
+
+Want to run the revised model and share the output?

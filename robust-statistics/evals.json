@@ -952,6 +952,90 @@
           "type": "must_pass"
         }
       ]
+    },
+    {
+      "id": 35,
+      "prompt": "I'm studying the causal effect of obesity on heart disease risk. I have data on obesity status, age, smoking, and cardiovascular fitness. I included cardiovascular fitness as a covariate in my logistic regression because it seemed like an important variable to control for. Is that the right approach?",
+      "expected_output": "Identifies that cardiovascular fitness is likely a mediator of obesity on heart disease (obesity \u2192 reduced fitness \u2192 heart disease), not a confounder. Adjusting for a mediator blocks the causal path and biases the estimate of the total effect. Also notes fitness could be a collider in some DAGs. Recommends thinking about the DAG and whether the estimand is the total effect or the direct effect not through fitness.",
+      "files": [],
+      "assertions": [
+        {
+          "text": "Identifies that cardiovascular fitness is plausibly a mediator (on the causal path from obesity to heart disease) rather than a confounder",
+          "type": "must_pass"
+        },
+        {
+          "text": "States that adjusting for a mediator blocks the causal pathway running through it, so the estimate no longer reflects the total causal effect \u2014 instead estimating some version of the direct effect",
+          "type": "scored"
+        },
+        {
+          "text": "Frames the issue in terms of what estimand is wanted: total effect vs direct effect not through fitness",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT simply endorse including fitness 'because it's important' without discussing its causal role",
+          "type": "must_pass"
+        },
+        {
+          "text": "Notes that adjustment decisions should be guided by causal structure (e.g. DAG, or explicit reasoning about whether variables are confounders vs mediators vs colliders) \u2014 not by statistical importance, correlation with the outcome, or model fit",
+          "type": "scored"
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "prompt": "I measured depression scores before and after a 12-week intervention. My colleague says I should use the change score (post minus pre) as the outcome in a t-test. My advisor says I should use the post-score as the outcome with the pre-score as a covariate (ANCOVA). We're arguing about which is correct. Which one should I use?",
+      "expected_output": "Explains that this is Lord's paradox / the ANCOVA vs change score debate. They are not testing the same estimand: ANCOVA estimates the treatment effect adjusting for baseline (conditional effect); change score tests mean change without conditioning on baseline level. ANCOVA is more powerful and less biased when baseline predicts outcome (true regression to the mean); change score is unbiased regardless. In a randomized experiment both are unbiased but ANCOVA is more efficient. In observational studies ANCOVA conditions on baseline which can introduce or remove bias depending on design.",
+      "files": [],
+      "assertions": [
+        {
+          "text": "Recognizes this as a legitimate estimand question, not merely a procedural preference \u2014 the two approaches can give different answers",
+          "type": "must_pass"
+        },
+        {
+          "text": "States that ANCOVA estimates the effect conditional on baseline (adjusting for pre-score) while the change score estimates mean gain without that conditioning",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that in a randomized experiment both are unbiased but ANCOVA is more efficient (gains power by explaining baseline variance)",
+          "type": "scored"
+        },
+        {
+          "text": "Notes that in observational settings with unequal baseline distributions, neither approach is automatically unbiased \u2014 the right choice depends on causal structure and the chosen estimand, not on statistical convention",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT simply declare one approach universally correct without considering the study design",
+          "type": "must_pass"
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "prompt": "We selected the 20 worst-performing stores in our chain, rolled out a new training program, and measured performance 3 months later. 17 of 20 stores improved their performance. Our CMO says this is strong evidence the training program works. Is it?",
+      "expected_output": "Identifies regression to the mean as a major alternative explanation: stores selected for being unusually bad will tend to improve on the next measurement even with no intervention, because extreme values partly reflect random fluctuation. The 17/20 improvement rate could be entirely explained by RTM without any causal effect of training. The correct design is a control group of similarly poor-performing stores that did not receive training, or a pre-registered time-series comparison.",
+      "files": [],
+      "assertions": [
+        {
+          "text": "Identifies regression to the mean as the primary alternative explanation \u2014 stores selected for being extreme will tend to improve regardless of intervention",
+          "type": "must_pass"
+        },
+        {
+          "text": "Explains the mechanism: extreme observed values partly reflect random error; on remeasurement the random component regresses toward the population mean",
+          "type": "scored"
+        },
+        {
+          "text": "States that a control group of similar low-performing stores not receiving training is needed to separate RTM from a true treatment effect",
+          "type": "scored"
+        },
+        {
+          "text": "Does NOT validate the 17/20 improvement rate as strong causal evidence without raising RTM",
+          "type": "must_pass"
+        },
+        {
+          "text": "Notes that the design as described (select low performers, treat all, measure again) makes RTM confounding unresolvable without a control group",
+          "type": "scored"
+        }
+      ]
     }
   ]
 }

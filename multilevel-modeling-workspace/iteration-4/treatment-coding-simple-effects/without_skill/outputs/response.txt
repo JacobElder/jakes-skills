@@ -1,0 +1,42 @@
+## Short answer: No — and this is one of the most common MLM interpretation errors.
+
+With **treatment (dummy) coding** and a **significant interaction**, β for condition A is **not** an average effect. It is a **conditional (simple) effect**: the effect of A specifically when B is at its reference level (B = "low").
+
+---
+
+### Why coding matters here
+
+With treatment coding, each lower-order coefficient is interpreted **holding all other predictors at zero** — and zero means the reference category. Your model estimates:
+
+| Coefficient | What it actually means |
+|---|---|
+| Intercept | Predicted outcome when A = control **and** B = low |
+| β_A = 0.45 | Effect of A (treat vs. control) **when B = low** |
+| β_B = 0.12 | Effect of B (high vs. low) **when A = control** |
+| β_AB = 0.55 | How much the A effect *changes* going from B=low → B=high |
+
+So **β_A = 0.45 is the simple effect of A at B = low**, not the marginal effect averaged across B.
+
+---
+
+### What the actual cell effects look like
+
+| | B = low | B = high |
+|---|---|---|
+| **Effect of A** | **0.45** (= β_A) | **1.00** (= β_A + β_AB) |
+
+These are very different. Your significant interaction (β = 0.55) tells you A's effect nearly doubles across levels of B. Saying 0.45 is the "average" effect obscures this entirely — and the true average would be (0.45 + 1.00)/2 = **0.725**, not 0.45.
+
+---
+
+### How to fix the write-up
+
+❌ *"The treatment effect of condition A was significant on average (β = 0.45)"*
+
+✅ *"The simple effect of condition A was significant at the low level of condition B (β = 0.45, p = .02). However, given the significant A × B interaction (β = 0.55, p = .01), this effect should not be interpreted as an average — the effect of A when B was high was estimated at β = 1.00."*
+
+---
+
+### If you actually want a marginal average effect
+
+Switch from treatment coding to **effects coding (sum-to-zero / deviation coding)** for both factors. Under effects coding, the main effect of A *is* interpretable as the effect of A averaged across the levels of B — because zero on a ±1-coded predictor corresponds to the grand mean, not a reference cell. Effects coding is generally preferred when you have a meaningful interaction and want to report marginal effects.

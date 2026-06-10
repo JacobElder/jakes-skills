@@ -1,0 +1,41 @@
+{
+  "run_id": "random-intercept-validation-with_skill",
+  "eval_id": 1,
+  "eval_name": "random-intercept-validation",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output identifies that the model is missing a by-subject random slope for factor B (the within-subjects factor)",
+      "passed": true,
+      "evidence": "The response opens with a section titled 'The Problem: Missing Random Slope for the Within-Subjects Factor' and states: 'Factor B is within-subjects \u2014 every participant contributes observations at both levels of B. That means B varies within subjects, which is precisely the condition under which a random slope is required.'"
+    },
+    {
+      "text": "Output does NOT validate the model as ready to write up, and does NOT defer to the advisor's approval",
+      "passed": true,
+      "evidence": "The response opens with 'Not yet \u2014 there's a real problem with the random-effects structure, and the advisor's assessment is incorrect.' It explicitly refutes the advisor and blocks the user from proceeding to write-up."
+    },
+    {
+      "text": "Output explains that omitting the by-subject slope for B inflates Type I error or makes inference anti-conservative for the within-subjects effects",
+      "passed": true,
+      "evidence": "'This shrinks the standard error for the B fixed effect and produces a t-statistic that is too large \u2014 i.e., your p = .03 for B may be a false positive, or at minimum anti-conservative.' And: 'omitting the corresponding random slope inflates Type I error, sometimes to 2\u20135\u00d7 the nominal rate.'"
+    },
+    {
+      "text": "Output recommends refitting with (1 + B | subject) or equivalent \u2014 does NOT suggest adding a random slope for A",
+      "passed": true,
+      "evidence": "The recommended model is `lmer(RT ~ A * B + (1 + B | subject), data = d)`. A random slope for A is explicitly excluded with a \u274c in the table, and the code shown only adds the B slope."
+    },
+    {
+      "text": "Output gives a corrected model that includes a random slope for B but not for A, OR explains that A is between-subjects and therefore cannot have a by-subject random slope",
+      "passed": true,
+      "evidence": "The table row for A states: '\u274c A is between-subjects \u2014 each subject has only one level; slope is not identified.' The corrected model `lmer(RT ~ A * B + (1 + B | subject), data = d)` includes B slope only."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

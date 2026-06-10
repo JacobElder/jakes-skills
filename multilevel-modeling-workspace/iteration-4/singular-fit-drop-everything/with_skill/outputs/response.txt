@@ -1,0 +1,100 @@
+## Short answer: probably not — the p-values are likely anti-conservative
+
+The sequential singularity-driven dropping is the exact anti-pattern the skill flags, and the "good p-values" are a symptom rather than a reassurance. Here's what's going on.
+
+---
+
+## The core problem: dropped slopes change the error term
+
+In your design, `time` varies **within students** (repeated measurements). For the test of `time` and `time × treatment` to be valid, the model needs a random slope for time at the student level. Without it, individual variation in growth trajectories gets absorbed into the level-1 residual instead of being partitioned correctly — this deflates the denominator of the test, producing *p*-values that are too small.
+
+The "my model converged cleanly" signal is not reassuring here. Convergence and valid inference are separate things. A model with only random intercepts almost always converges cleanly.
+
+---
+
+## Why the singularity happened — and why dropping slopes isn't the right fix
+
+A near-zero variance estimate can mean several different things:
+
+| Cause | Fix |
+|---|---|
+| `time` not scaled/centered | Center `time` (e.g., at the first wave), divide by SD or range |
+| Too few schools to estimate a school-level slope variance | Justified simplification — see below |
+| Optimizer hitting a local saddle | Try `allFit()` to compare optimizers |
+| Genuinely near-zero variance | Check with LRT or confidence interval on the variance component before dropping |
+
+The school-level random slope collapsing to zero may be a **genuine data limitation** (few schools → unstable level-3 variance estimates). That one may be defensible to drop. But the student-level slope is a different story — dropping it to achieve convergence while `time` is your key predictor is trading a warning for a wrong answer.
+
+---
+
+## What to actually do
+
+**Step 1 — scale `time` before anything else**
+```r
+dat$time_c <- scale(dat$time, center = TRUE, scale = TRUE)
+```
+
+**Step 2 — try the student-level slope model again with a different optimizer**
+```r
+library(lme4)
+library(lmerTest)
+
+m <- lmer(score ~ time_c * treatment + 
+            (time_c | school) + 
+            (time_c | school:student),
+          data = dat,
+          control = lmerControl(optimizer = "bobyqa",
+                                optCtrl = list(maxfun = 2e5)))
+```
+
+If that's still singular, run `allFit(m)` and check whether the singularity is consistent across all optimizers or an artifact of one.
+
+**Step 3 — if the school-level slope stays at zero across optimizers**
+
+That's likely a genuine level-3 limitation (you probably have relatively few schools). The Bates et al. (2015) / Matuschek et al. (2017) guidance supports dropping it in this case:
+
+```r
+m_reduced <- lmer(score ~ time_c * treatment + 
+                    (1 | school) + 
+                    (time_c | school:student),   # keep student-level slope
+                  data = dat,
+                  control = lmerControl(optimizer = "bobyqa"))
+```
+
+**This is the model to defend in your write-up** — not the intercepts-only version.
+
+**Step 4 — if the student-level slope is still singular**
+
+Before dropping it, check whether the correlation parameter is the issue (a common cause of singularity even when the variance itself is non-trivial):
+
+```r
+# Decorrelate the random effects first
+m_nocor <- lmer(score ~ time_c * treatment + 
+                  (1 | school) + 
+                  (time_c || school:student),   # || removes correlation parameter
+                data = dat,
+                control = lmerControl(optimizer = "bobyqa"))
+```
+
+Only drop the student-level slope entirely if the variance is genuinely near zero across multiple optimizers *and* you confirm it with a profile confidence interval:
+
+```r
+confint(m_reduced, parm = "theta_", method = "profile")
+```
+
+---
+
+## The question I'd want answered first
+
+**How many schools do you have, and is treatment randomized at the school level or the student level?**
+
+- If treatment is school-level (cluster RCT), you may have 20–40 schools split across conditions — that's the binding constraint on what's estimable at level 3, and it explains the school-level singularity
+- If treatment is within-school, the story is different
+
+The answer also determines whether `time × treatment` is a cross-level interaction (school-level treatment × student-level time), which has its own power and reporting implications.
+
+---
+
+## The bottom line for your current model
+
+`(1 | school) + (1 | school:student)` with no random slopes is likely producing *p*-values for `time * treatment` that are too small. The good news is the fix — keeping `(time_c | school:student)` — usually converges once `time` is properly scaled, and it's the model your design actually calls for.

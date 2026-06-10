@@ -1,0 +1,405 @@
+{
+  "skill_name": "multiverse-analysis",
+  "executor_model": "claude-sonnet-4-6",
+  "grader_model": "claude-haiku-4-5-20251001",
+  "results": [
+    {
+      "eval_id": 0,
+      "condition": "baseline",
+      "prompt": "I ran a randomized mindfulness intervention study (n=120). The outcome is `wellbeing_post` (0-100 scale), the key predictor is `group` (1=treatment, 0=control). I also measured `wellbeing_pre` at baseline. I want to test how robust the treatment effect is to three sets of analytic choices: (1) outlier rule: no exclusion, exclude >2.5 SD on the outcome, or exclude >3 SD; (2) covariate: none or include `wellbeing_pre` as a baseline control; (3) outcome transformation: raw `wellbeing_post` or log-transformed. Please run a full multiverse analysis. I'll tell you now that my original analysis was: no outliers, no covariate, raw outcome.\n\nHere are the first 20 rows of the data (full dataset: 120 rows):\n\nsubject_id,group,wellbeing_pre,wellbeing_post\nS001,0,56.3,59.0\nS002,0,60.0,64.0\nS003,0,52.5,59.5\nS004,1,58.7,74.5\nS005,0,49.7,72.5\nS006,1,52.1,20.0\nS007,1,51.9,74.6\nS008,0,45.4,39.7\nS009,0,58.9,63.1\nS010,0,51.2,52.9\nS011,1,55.1,59.1\nS012,1,58.8,63.6\nS013,1,58.6,68.4\nS014,0,60.3,72.4\nS015,0,54.2,49.7\nS016,1,51.6,68.9\nS017,1,54.4,65.4\nS018,0,41.5,53.7\nS019,1,43.4,74.4\nS020,1,44.4,70.6",
+      "response": "All 12 universes ran cleanly. Here are the full results.\n\n---\n\n## Decision set (3 decisions \u00d7 2\u20133 options = 12 specifications)\n\n| Decision | Options | Justification |\n|---|---|---|\n| **Outlier rule** | none, >3 SD, >2.5 SD | Standard exclusion thresholds in intervention research |\n| **Covariate** | none, `wellbeing_pre` | ANCOVA-style baseline control is common in RCT analysis |\n| **Transformation** | raw, log | Log-transform sometimes applied to skewed wellbeing scales |\n\nNo nonsensical combinations (log applies equally with/without covariate; all outlier rules work on any DV). All 12 specifications ran.\n\n---\n\n## All 12 universes (estimates standardized by within-universe SD for cross-scale comparability)\n\n| Outliers | Covariate | Transform | \u03b2 (std) | raw \u03b2 | *p* | *n* |\n|---|---|---|---|---|---|---|\n| **none** | **none** | **raw** | **0.749** | **8.607** | **<.001** | **120** |\n| none | none | log | 0.631 | 0.124 | .0004 | 120 |\n| none | wellbeing_pre | raw | 0.824 | 9.465 | <.001 | 120 |\n| none | wellbeing_pre | log | 0.702 | 0.137 | .0001 | 120 |\n| 3 SD | none | raw | 0.881 | 9.454 | <.001 | 119 |\n| 3 SD | none | log | 0.881 | 0.144 | <.001 | 119 |\n| 3 SD | wellbeing_pre | raw | 0.958 | 10.285 | <.001 | 119 |\n| 3 SD | wellbeing_pre | log | 0.961 | 0.158 | <.001 | 119 |\n| 2.5 SD | none | raw | 0.867 | 8.985 | <.001 | 118 |\n| 2.5 SD | none | log | 0.881 | 0.144 | <.001 | 119 |\n| 2.5 SD | wellbeing_pre | raw | 0.945 | 9.794 | <.001 | 118 |\n| 2.5 SD | wellbeing_pre | log | 0.961 | 0.158 | <.001 | 119 |\n\n**Your original analysis** (bolded): \u03b2 = 0.749, *p* < .001 \u2014 the most conservative specification in the entire multiverse.\n\n---\n\n## Decision importance\n\n| Decision | Options | Median spread | \u03b7\u00b2 |\n|---|---|---|---|\n| **Outlier rule** | 3 | 0.194 | **0.748** |\n| Covariate | 2 | 0.078 | 0.138 |\n| Transformation | 2 | 0.007 | 0.028 |\n\nThe outlier rule accounts for ~75% of the variance in point estimates. The driver is S006 (treatment, `wellbeing_post` = 20.0), which is ~2.7 SD below the treatment mean on the raw outcome \u2014 just outside the 2.5 SD threshold. Excluding it shifts the estimate from ~0.75 to ~0.88. The covariate adds a modest precision boost (~14%). Transformation is negligible.\n\n---\n\n## Joint permutation inference (500 permutations, direction = positive)\n\n| Statistic | Observed | Null median | *p* |\n|---|---|---|---|\n| Median estimate | 0.881 | \u22120.014 | **0.002** |\n| Share significant (positive) | 100% | 0% | **0.008** |\n| Share significant (negative) | 0% | 0% | 1.000 |\n\nThe specification curve as a whole is inconsistent with the null (*p* = .002). Not a single one of the 500 shuffled multiverses produced a median estimate or positive-significant share as extreme as the observed values.\n\n---\n\n## Verdict\n\n**The finding is robust.** Every one of the 12 specifications is statistically significant in the expected direction, with standardized effects ranging from 0.63 to 0.96 (all large by conventional benchmarks). There are no sign flips, no zero crossings, no non-significant specifications. Your original analysis (no outlier exclusion, no covariate, raw outcome) is actually the *floor* of the multiverse \u2014 the most conservative choice \u2014 so if anything, it understates the effect. The primary source of specification-to-specification variation is whether S006 (a treatment-group outlier scoring 20/100 post-intervention) is retained; even with that participant included, the effect holds comfortably.\n\nThe curve figure is saved to `evals/multiverse_wellbeing_curve.png` and the full tidy results to `evals/multiverse_wellbeing_results.csv`.",
+      "assertions": [
+        "Presents a decisions-by-options table (or structured list) with the 3 decisions (outlier rule, covariate, transformation) and their options enumerated",
+        "Warns that raw and log-transformed DVs produce estimates on incomparable scales, and recommends using a standardized effect size or putting all universes on a common scale before comparing",
+        "Writes Python code (or a detailed pseudocode) that uses the Multiverse engine: defines analyze(), constructs Multiverse with 3 decisions, calls .run(), and calls specification_curve() or decision_importance()",
+        "Describes or concludes the effect is robust (e.g., estimates positive across most or all specifications, large share significant in one direction)",
+        "Locates the original analysis (no outliers, no covariate, raw DV) in the multiverse and reports where it falls in the distribution or curve",
+        "Does NOT recommend selecting the log-transformed or covariate-adjusted specification over others as a preferred or better estimate"
+      ],
+      "assertion_types": [
+        "scored",
+        "scored",
+        "scored",
+        "scored",
+        "scored",
+        "must_pass"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 6,
+      "pass_rate": 0.8333333333333334,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 0,
+      "condition": "with_skill",
+      "prompt": "I ran a randomized mindfulness intervention study (n=120). The outcome is `wellbeing_post` (0-100 scale), the key predictor is `group` (1=treatment, 0=control). I also measured `wellbeing_pre` at baseline. I want to test how robust the treatment effect is to three sets of analytic choices: (1) outlier rule: no exclusion, exclude >2.5 SD on the outcome, or exclude >3 SD; (2) covariate: none or include `wellbeing_pre` as a baseline control; (3) outcome transformation: raw `wellbeing_post` or log-transformed. Please run a full multiverse analysis. I'll tell you now that my original analysis was: no outliers, no covariate, raw outcome.\n\nHere are the first 20 rows of the data (full dataset: 120 rows):\n\nsubject_id,group,wellbeing_pre,wellbeing_post\nS001,0,56.3,59.0\nS002,0,60.0,64.0\nS003,0,52.5,59.5\nS004,1,58.7,74.5\nS005,0,49.7,72.5\nS006,1,52.1,20.0\nS007,1,51.9,74.6\nS008,0,45.4,39.7\nS009,0,58.9,63.1\nS010,0,51.2,52.9\nS011,1,55.1,59.1\nS012,1,58.8,63.6\nS013,1,58.6,68.4\nS014,0,60.3,72.4\nS015,0,54.2,49.7\nS016,1,51.6,68.9\nS017,1,54.4,65.4\nS018,0,41.5,53.7\nS019,1,43.4,74.4\nS020,1,44.4,70.6",
+      "response": "Here are the complete results.\n\n---\n\n## Code\n\n```python\nimport sys, os, numpy as np, pandas as pd\nimport statsmodels.formula.api as smf\nsys.path.insert(0, \"<skill>/scripts\")\nfrom multiverse import Multiverse, specification_curve, decision_importance, permutation_test\n\ndata = pd.read_csv(\"wellbeing_study.csv\")\n\ndef analyze(data, c):\n    df = data.copy()\n    if c[\"outliers\"] is not None:\n        z = (df[\"wellbeing_post\"] - df[\"wellbeing_post\"].mean()) / df[\"wellbeing_post\"].std()\n        df = df[z.abs() <= c[\"outliers\"]]\n    if c[\"transform\"] == \"log\":\n        df = df.assign(dv=np.log(df[\"wellbeing_post\"]))\n    else:\n        df = df.assign(dv=df[\"wellbeing_post\"])\n    rhs = \" + \".join([\"group\"] + c[\"covariate\"])\n    m = smf.ols(f\"dv ~ {rhs}\", data=df).fit()\n    est, dv_sd, ci = m.params[\"group\"], df[\"dv\"].std(), m.conf_int().loc[\"group\"]\n    return {\"estimate\": est / dv_sd, \"raw_estimate\": est,\n            \"p_value\": m.pvalues[\"group\"],\n            \"ci_low\": ci[0] / dv_sd, \"ci_high\": ci[1] / dv_sd, \"n\": int(len(df))}\n\nmv = Multiverse(\n    decisions={\n        \"outliers\":  {\"none\": None, \"3sd\": 3.0, \"2.5sd\": 2.5},\n        \"covariate\": {\"none\": [], \"pre\": [\"wellbeing_pre\"]},\n        \"transform\": {\"raw\": \"raw\", \"log\": \"log\"},\n    },\n    constraints=[lambda c: True],\n)\nres = mv.run(analyze, data)\nspecification_curve(res, outfile=\"mindfulness_curve.png\")\ndecision_importance(res)\npermutation_test(mv, analyze, data, shuffle=\"group\", n_perm=500, direction=\"positive\")\n```\n\n---\n\n## Results\n\n**12 universes, 0 errors, 0 sign flips.**\n\n| outliers | covariate | transform | d (std) | raw \u03b2 | p |\n|---|---|---|---|---|---|\n| none | none | log | 0.631 | 0.123 | < .001 |\n| none | pre | log | 0.702 | 0.137 | < .001 |\n| **none** | **none** | **raw** | **0.749** | **8.607** | **< .001** |\n| none | pre | raw | 0.824 | 9.464 | < .001 |\n| 2.5sd | none | log | 0.865 | 0.139 | < .001 |\n| 2.5sd | none | raw | 0.867 | 8.985 | < .001 |\n| 3sd | none | log | 0.881 | 0.144 | < .001 |\n| 3sd | none | raw | 0.881 | 9.454 | < .001 |\n| 2.5sd | pre | raw | 0.945 | 9.794 | < .001 |\n| 2.5sd | pre | log | 0.946 | 0.152 | < .001 |\n| 3sd | pre | raw | 0.958 | 10.285 | < .001 |\n| 3sd | pre | log | 0.961 | 0.158 | < .001 |\n\n*Bold = your original analysis.*\n\n**Median d = 0.874. 100% of specifications significant in the positive direction (p < .05).**\n\nYour original analysis (d = 0.749) ranks 3rd of 12 \u2014 it is one of the more conservative estimates.\n\n---\n\n## Decision importance\n\n| Decision | \u03b7\u00b2 | Median spread in d |\n|---|---|---|\n| **outliers** | **0.742** | **0.194** |\n| covariate | 0.142 | 0.080 |\n| transform | 0.038 | 0.001 |\n\n**Outlier exclusion drives 74% of the variance in estimates.** What's happening: there are a handful of low-scoring treatment participants (S006 at 20.0 is visible in your first 20 rows) whose inclusion pulls the treatment mean \u2014 and thus d \u2014 down. When they're excluded under the 2.5 or 3 SD rule, d jumps ~0.13 units. Adding `wellbeing_pre` as a baseline control accounts for pre-randomization variance and consistently nudges d up by ~0.07\u20130.08. The outcome transformation (raw vs. log) barely matters once estimates are standardized (\u03b7\u00b2 = 0.038).\n\n---\n\n## Joint permutation inference\n\n- **Median d**: observed = 0.874, null \u2248 \u22120.013, **p = 0.002**\n- **Share positive-significant**: observed = 100%, null \u2248 0%, **p = 0.008**\n\nThe curve as a whole is inconsistent with the null.\n\n---\n\n## Verdict: ROBUST\n\nThe treatment effect is consistent in sign, direction, and significance across every reasonable combination of analytic choices. There are no sign flips, no null universes, and the joint permutation test strongly rejects H\u2080. The finding does not hinge on any particular analytic decision. The main sensitivity is to outlier handling \u2014 but even in the most conservative specification (no exclusions, no covariate, raw outcome \u2014 your original analysis), d = 0.749, p < .001. You can report that the effect is robust with confidence.",
+      "assertions": [
+        "Presents a decisions-by-options table (or structured list) with the 3 decisions (outlier rule, covariate, transformation) and their options enumerated",
+        "Addresses the scale incomparability between raw and log-transformed DV estimates \u2014 either warns explicitly that the scales are incomparable, OR proactively standardizes all estimates to a common scale (e.g. standardized beta) and explains why",
+        "Writes Python code (or a detailed pseudocode) that uses the Multiverse engine: defines analyze(), constructs Multiverse with 3 decisions, calls .run(), and calls specification_curve() or decision_importance()",
+        "Describes or concludes the effect is robust (e.g., estimates positive across most or all specifications, large share significant in one direction)",
+        "Locates the original analysis (no outliers, no covariate, raw DV) in the multiverse and reports where it falls in the distribution or curve",
+        "Does NOT recommend selecting the log-transformed or covariate-adjusted specification over others as a preferred or better estimate"
+      ],
+      "assertion_types": [
+        "scored",
+        "scored",
+        "scored",
+        "scored",
+        "scored",
+        "must_pass"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 6,
+      "total": 6,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 1,
+      "condition": "baseline",
+      "prompt": "My dissertation found that daily social media use predicts higher anxiety (b=0.47, p=0.02). A reviewer is asking about robustness to analytic choices. I have two operationalizations of each variable: IV is either `social_media_hours` (continuous daily hours) or `social_media_sessions` (weekly session count); DV is either `anxiety_gad7` (GAD-7 total, 0-21) or `anxiety_phq4` (PHQ-4 anxiety subscale, 0-12). Outlier rule: no exclusion or exclude >3 SD on the IV. My original analysis was: hours -> gad7, no outlier exclusion, no covariate.\n\nHere are 20 of the 200 rows (full dataset: 200 rows):\n\nid,social_media_hours,social_media_sessions,anxiety_gad7,anxiety_phq4\nP001,3.32,12,7.4,3.2\nP002,2.55,12,6.6,1.0\nP003,3.27,16,7.4,4.7\nP004,4.16,16,7.2,3.6\nP005,0.74,12,4.2,1.7\nP006,5.56,14,8.2,1.6\nP007,2.56,17,5.0,3.1\nP008,2.37,8,1.4,2.2\nP009,1.73,10,5.6,2.5\nP010,4.5,12,3.4,5.4\nP011,11.5,6,18.0,6.9\nP012,4.94,7,5.6,5.9\nP013,4.45,14,8.2,2.8\nP014,3.57,9,5.6,5.5\nP015,3.66,13,10.9,2.0\nP016,4.51,11,8.2,5.9\nP017,1.97,16,5.3,3.2\nP018,3.14,12,1.4,8.6\nP019,3.73,12,7.8,6.0\nP020,2.57,10,6.6,6.1\n\nPlease run a full multiverse analysis and tell me whether my effect is robust or fragile. Where does my original specification fall in the distribution?",
+      "response": "Here is what the multiverse tells you.\n\n---\n\n## Verdict: **Fragile**\n\nYour original result is the single outlier in a landscape of null or negative effects. The multiverse does not support it.\n\n---\n\n## Where your original spec sits\n\nYour original specification \u2014 `hours \u2192 gad7`, no outlier exclusion \u2014 produces **the largest positive b in the entire multiverse** (b = +1.259, rank 8/8). It is also the **only significant result** (1/8 specs, p < .0001). Every other specification either fails significance or reverses sign.\n\n---\n\n## What is driving the fragility\n\n**Three faults compound:**\n\n1. **IV choice is decisive.** Switching from `social_media_hours` to `social_media_sessions` reverses the sign entirely (b \u2248 \u22120.20 to \u22120.24, both non-significant). Hours and sessions are capturing different constructs \u2014 hours is dominated by a single high-leverage observation (P011: 11.5 hrs, GAD-7 = 18.0), while sessions doesn't weight that person nearly as heavily.\n\n2. **The outlier exclusion rule matters for your IV.** When P011 is excluded (>3 SD on `social_media_hours`), your original spec drops from b = +1.259, p < .001 to b = +0.786, p = .089 \u2014 direction preserved but no longer significant. P011 is likely the engine of your result.\n\n3. **DV choice weakens the effect.** Switching to `anxiety_phq4` cuts the coefficient roughly in half even within the `hours` IV family, and significance disappears.\n\n---\n\n## What to report to your reviewer\n\n| Dimension | Result |\n|---|---|\n| Specs positive & significant | 1 / 8 |\n| Specs positive (any p) | 4 / 8 |\n| Specs negative (any p) | 4 / 8 |\n| Median b across specs | +0.09 |\n| Range of b | [\u22120.24, +1.26] |\n\nThe reviewer is right to push. The most defensible response is: (a) acknowledge that the effect is contingent on operationalization of both variables, (b) run the high-leverage diagnostic on P011 and report it explicitly, and (c) if P011 is a genuine outlier, present the 3SD-excluded result as the primary and note that it is marginal (p = .089).\n\n> **Caveat:** This analysis used your 20-row sample. With your full n = 200, SEs will shrink and patterns may stabilize \u2014 but the sign-reversal across IV operationalizations is a structural finding that more data won't fix unless hours and sessions correlate much more tightly in the full sample than they appear to here (they don't correlate strongly in these 20 rows).",
+      "assertions": [
+        "Constructs the multiverse with the 3 decisions (IV operationalization, DV operationalization, outlier rule) producing 8 universes",
+        "Addresses scale comparability AND gives a concrete remedy: hours and sessions are different units, gad7 and phq4 have different ranges, so raw coefficients are not comparable \u2014 explicitly recommends a specific fix such as standardized betas, Cohen's d, or rescaling all DVs to a common unit before comparing",
+        "Concludes the effect is fragile, not robust \u2014 e.g., estimates vary substantially or change sign across specifications, or effect is not consistent across DV operationalizations",
+        "Locates the original analysis (hours, gad7, no outliers) in the distribution \u2014 describes it as one of the positive or significant specifications",
+        "Does NOT conclude that the effect is robust or recommend the dissertation author present it as confirmed across specifications",
+        "Does NOT advise selecting the original specification or the most significant specification as the one to report"
+      ],
+      "assertion_types": [
+        "scored",
+        "scored",
+        "scored",
+        "scored",
+        "must_pass",
+        "must_pass"
+      ],
+      "assertion_results": [
+        true,
+        false,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 6,
+      "pass_rate": 0.8333333333333334,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 1,
+      "condition": "with_skill",
+      "prompt": "My dissertation found that daily social media use predicts higher anxiety (b=0.47, p=0.02). A reviewer is asking about robustness to analytic choices. I have two operationalizations of each variable: IV is either `social_media_hours` (continuous daily hours) or `social_media_sessions` (weekly session count); DV is either `anxiety_gad7` (GAD-7 total, 0-21) or `anxiety_phq4` (PHQ-4 anxiety subscale, 0-12). Outlier rule: no exclusion or exclude >3 SD on the IV. My original analysis was: hours -> gad7, no outlier exclusion, no covariate.\n\nHere are 20 of the 200 rows (full dataset: 200 rows):\n\nid,social_media_hours,social_media_sessions,anxiety_gad7,anxiety_phq4\nP001,3.32,12,7.4,3.2\nP002,2.55,12,6.6,1.0\nP003,3.27,16,7.4,4.7\nP004,4.16,16,7.2,3.6\nP005,0.74,12,4.2,1.7\nP006,5.56,14,8.2,1.6\nP007,2.56,17,5.0,3.1\nP008,2.37,8,1.4,2.2\nP009,1.73,10,5.6,2.5\nP010,4.5,12,3.4,5.4\nP011,11.5,6,18.0,6.9\nP012,4.94,7,5.6,5.9\nP013,4.45,14,8.2,2.8\nP014,3.57,9,5.6,5.5\nP015,3.66,13,10.9,2.0\nP016,4.51,11,8.2,5.9\nP017,1.97,16,5.3,3.2\nP018,3.14,12,1.4,8.6\nP019,3.73,12,7.8,6.0\nP020,2.57,10,6.6,6.1\n\nPlease run a full multiverse analysis and tell me whether my effect is robust or fragile. Where does my original specification fall in the distribution?",
+      "response": "All 8 universes ran successfully on the full n=200. Let me now synthesize these results.\n\n---\n\n## Dissertation multiverse results \u2014 social media use \u2192 anxiety\n\n> **Important note on your reported b:** The full 200-row dataset yields b=0.764, p<.001 for hours\u2192GAD-7 (unstandardized), not b=0.47, p=.02. This suggests the 20 rows you shared are not fully representative of the complete sample, or the original model used different preprocessing. The multiverse below runs on the actual n=200 data.\n\n---\n\n### Decision set (3 decisions \u00d7 2 options = 8 universes)\n\n| Decision | Options | Justification |\n|---|---|---|\n| **IV operationalization** | `social_media_hours` (daily hrs) vs `social_media_sessions` (weekly count) | Both are defensible measures of social media use; they capture distinct aspects (duration vs frequency) |\n| **DV operationalization** | `anxiety_gad7` (GAD-7, 0-21) vs `anxiety_phq4` (PHQ-4 anxiety subscale, 0-12) | Both are validated anxiety screeners; different scale ranges and factor structure |\n| **Outlier rule** | None vs exclude >3 SD on IV | Common conventions; only one participant was excluded (P011, 11.5 hrs) |\n\nAll estimates are **standardized \u03b2** (z-scored IV and DV within each universe) so they are comparable across the different scales.\n\n---\n\n### All 8 specifications\n\n| IV | DV | Outliers | \u03b2 (std) | p | n |\n|---|---|---|---|---|---|\n| sessions | phq4 | none | **\u22120.286** | <.001 | 200 |\n| sessions | phq4 | 3 SD | \u22120.286 | <.001 | 200 |\n| sessions | gad7 | none | 0.008 | .911 | 200 |\n| sessions | gad7 | 3 SD | 0.008 | .911 | 200 |\n| hours | phq4 | 3 SD | 0.034 | .636 | 199 |\n| hours | phq4 | none | 0.065 | .360 | 200 |\n| hours | gad7 | 3 SD | 0.370 | <.001 | 199 |\n| **hours** | **gad7** | **none** | **0.458** | **<.001** | **200** |\n\nYour original spec is **rank 8 of 8** \u2014 the single highest estimate in the entire multiverse.\n\n---\n\n### Decision importance (what drives the dispersion)\n\n| Decision | Median spread | \u03b7\u00b2 |\n|---|---|---|\n| **IV operationalization** | 0.356 | **0.55** |\n| **DV operationalization** | 0.315 | **0.43** |\n| Outlier rule | 0.016 | 0.004 |\n\nBoth operationalization forks are nearly equally consequential. The outlier rule is essentially irrelevant \u2014 removing one extreme participant changes estimates by <0.1 \u03b2 points.\n\n---\n\n### Distribution summary\n\n- **Median \u03b2 across all 8 specs: 0.021** (near zero)\n- Range: [\u22120.286, 0.458]\n- **Sign flips: YES** \u2014 sessions\u2192PHQ-4 is significantly *negative* (\u03b2=\u22120.286, p<.001)\n- Significant positive: 2/8 (25%) | Significant negative: 2/8 (25%)\n\n---\n\n### Joint permutation inference (n=500, direction=positive)\n\n| Statistic | Observed | Null median | p |\n|---|---|---|---|\n| Median \u03b2 | 0.021 | 0.001 | .289 |\n| Share significant (positive) | 25% | 0% | .094 |\n| Share significant (negative) | 25% | 0% | .080 |\n\n**The joint test does not reject the null** \u2014 the curve as a whole is consistent with the null hypothesis at conventional thresholds.\n\n---\n\n### Verdict: **Fragile**\n\nThis is the worst-case pattern a multiverse can reveal: the original specification sits at the extreme high end of the distribution, the median effect across reasonable alternatives is near zero, there are sign reversals, and joint inference fails to reject the null.\n\nThe specific story the multiverse tells:\n\n- **Hours \u2192 GAD-7 (your original):** strong positive (\u03b2=0.46). This is real within this specification.\n- **Hours \u2192 PHQ-4:** essentially null (\u03b2=0.07). The effect does not generalize to a different anxiety measure.\n- **Sessions \u2192 GAD-7:** null (\u03b2=0.008). Frequency of use has no relationship with GAD-7 anxiety.\n- **Sessions \u2192 PHQ-4:** significant *negative* (\u03b2=\u22120.29). More frequent sessions predicts *lower* PHQ-4 scores \u2014 possibly reflecting a different use pattern (passive vs active, or social connectivity benefit).\n\nThe honest conclusion for the reviewer: **the positive effect of social media use on anxiety holds when social media is operationalized as daily hours and anxiety as GAD-7, but does not generalize to a session-based IV or a different anxiety subscale.** The finding is contingent on these operationalization choices \u2014 it is not a finding about \"social media use and anxiety\" in general, but about one specific measurement pair.\n\nThe specification curve figure has been saved to `evals/dissertation_curve.png` with your original specification highlighted.",
+      "assertions": [
+        "Constructs the multiverse with the 3 decisions (IV operationalization, DV operationalization, outlier rule) producing 8 universes",
+        "Addresses scale comparability AND gives a concrete remedy: hours and sessions are different units, gad7 and phq4 have different ranges, so raw coefficients are not comparable \u2014 explicitly recommends a specific fix such as standardized betas, Cohen's d, or rescaling all DVs to a common unit before comparing",
+        "Concludes the effect is fragile, not robust \u2014 e.g., estimates vary substantially or change sign across specifications, or effect is not consistent across DV operationalizations",
+        "Locates the original analysis (hours, gad7, no outliers) in the distribution \u2014 describes it as one of the positive or significant specifications",
+        "Does NOT conclude that the effect is robust or recommend the dissertation author present it as confirmed across specifications",
+        "Does NOT advise selecting the original specification or the most significant specification as the one to report"
+      ],
+      "assertion_types": [
+        "scored",
+        "scored",
+        "scored",
+        "scored",
+        "must_pass",
+        "must_pass"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 6,
+      "total": 6,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 2,
+      "condition": "baseline",
+      "prompt": "I'm running a multiverse analysis on the effect of parental warmth (the key predictor) on child externalizing behavior (the DV). I have three operationalizations of the DV and I want to include all three as options in my multiverse: (1) the raw CBCL total problems score (range 0-118), (2) a normative T-score standardized to the published norms (mean=50, SD=10), and (3) a within-sample z-score (standardized using my own sample's mean and SD). The IV is a continuous parental warmth scale. Should I include all three as separate options in my multiverse? If so, how?",
+      "response": "No \u2014 you should not include all three as separate multiverse forks, and doing so would actually distort your multiverse.\n\n**Why they are not independent analytic choices**\n\nIn a linear regression (OLS or mixed), all three are exact linear transformations of each other within your sample. Dividing the DV by a constant rescales the coefficient but leaves the t-statistic, p-value, and R\u00b2 completely unchanged. Including all three artificially triple-counts every model family that uses one of these DV versions, biasing the specification curve toward whichever conclusion those three share.\n\n**Where the distinction does matter**\n\nThe only meaningful fork is between **normative standardization** (T-score) and **sample-relative standardization** (z-score), and only if you care about interpretation, not inference:\n\n- T-score answers: *is this child's score elevated relative to the normative population?*\n- Within-sample z-score answers: *is this child's score elevated relative to your specific sample?*\n\nIf your sample is atypical (e.g., high-risk or clinical), these tell substantively different stories \u2014 and the gap between them is actually informative about your sample's composition. That distinction is worth noting in your paper, but it is not a source of analytic uncertainty that a multiverse is designed to capture.\n\n**What to do instead**\n\n- Pick **one DV operationalization** as your primary analysis. The T-score is most defensible for CBCL because it preserves the normative reference the measure was designed for.\n- If you want to include a multiverse fork here at all, fork on the **raw score vs. T-score** (not all three), and explicitly frame it as a sensitivity check on whether normative vs. absolute scoring changes conclusions \u2014 acknowledging they will not change inference, only interpretive benchmarking.\n- Reserve your genuine multiverse forks for decisions that actually alter inference: covariate selection, handling of missing data, subsample restrictions, time point choices, or whether to use total problems vs. the externalizing subscale specifically.\n\nThe within-sample z-score adds nothing beyond the raw score in any regression and should be dropped from the multiverse entirely.",
+      "assertions": [
+        "Explains that mixing raw CBCL (0-118), T-score (0-100), and z-score (unit SD) produces incomparable regression coefficients \u2014 the differences reflect unit scaling, not robustness",
+        "States that the DV operationalization decision would dominate the variance decomposition (decision_importance) for trivial scale reasons, not substantive ones",
+        "Recommends putting all DVs on a common scale before running the multiverse \u2014 e.g., fully standardized coefficients, Cohen's d, or using a consistently scaled DV",
+        "Notes that the within-sample z-score is a linear transformation of the raw CBCL (using the sample's own mean and SD), making it redundant with the raw option \u2014 including both runs the same analysis twice with rescaled output",
+        "Does NOT say 'yes, include all three as-is' without flagging the scale comparability problem"
+      ],
+      "assertion_types": [
+        "scored",
+        "scored",
+        "scored",
+        "scored",
+        "must_pass"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
+        false,
+        true
+      ],
+      "passed": 3,
+      "total": 5,
+      "pass_rate": 0.6,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 2,
+      "condition": "with_skill",
+      "prompt": "I'm running a multiverse analysis on the effect of parental warmth (the key predictor) on child externalizing behavior (the DV). I have three operationalizations of the DV and I want to include all three as options in my multiverse: (1) the raw CBCL total problems score (range 0-118), (2) a normative T-score standardized to the published norms (mean=50, SD=10), and (3) a within-sample z-score (standardized using my own sample's mean and SD). The IV is a continuous parental warmth scale. Should I include all three as separate options in my multiverse? If so, how?",
+      "response": "Good question with a sharp methodological wrinkle. Short answer: **include raw and normative T-score, drop the within-sample z-score, and standardize estimates before plotting.** Here's why each part:\n\n---\n\n## Drop the within-sample z-score\n\nIn OLS, a within-sample z-score is a **pure linear rescaling** of the raw score \u2014 same rank order, same mean (now 0), just divided by your sample SD. The regression t-statistics, p-values, and R\u00b2 are algebraically identical whether you use the raw or z-scored DV; only the coefficient's magnitude changes (multiplied by 1/SD_raw). It fails the **non-redundancy** criterion for multiverse options (Simonsohn et al.'s test 3). Including it alongside the raw score would pad your universe count, make the specification curve look more variable than it is, and give you a misleading decision-importance signal \u2014 \"DV operationalization\" would appear to matter when really you're just seeing a unit conversion.\n\n---\n\n## Keep raw CBCL vs. normative T-score\n\nThese are genuinely different operationalizations because they answer different questions:\n\n- **Raw score**: absolute symptom burden \u2014 how many problems does this child have?\n- **Normative T-score**: deviation from age/sex norms \u2014 how unusual is this child relative to children like them?\n\nIf your sample has meaningful age or sex variation and norms are applied group-specifically (as CBCL norms are), the T-score is **not** a simple linear rescaling of raw \u2014 it applies different offsets and slopes per subgroup. This is a real substantive fork worth including.\n\n---\n\n## The critical implementation step: put estimates on a common scale\n\nThis is exactly the trap the methodology warns about. Raw CBCL coefficients live on a 0\u2013118 scale; T-score coefficients live on a \u00b1SD=10 scale. If you plot raw unstandardized *b* across both DVs, the specification curve will be dominated by the unit difference rather than robustness, and `decision_importance` will flag \"DV\" as the biggest driver when it's just arithmetic.\n\n**Fix: report fully standardized coefficients (\u03b2) in every universe.** Standardize both the DV and the IV *within each universe* before fitting:\n\n```python\ndef analyze(data, c):\n    df = data.copy()\n\n    # outlier exclusion (applied to whichever DV is active)\n    if c[\"outliers\"] is not None:\n        z = (df[c[\"dv\"]] - df[c[\"dv\"]].mean()) / df[c[\"dv\"]].std()\n        df = df[z.abs() <= c[\"outliers\"]]\n\n    # standardize IV and DV within this universe so \u03b2 is comparable across scales\n    df[\"dv_z\"] = (df[c[\"dv\"]] - df[c[\"dv\"]].mean()) / df[c[\"dv\"]].std()\n    df[\"iv_z\"] = (df[\"warmth\"] - df[\"warmth\"].mean()) / df[\"warmth\"].std()\n\n    rhs = \" + \".join([\"iv_z\"] + c[\"covariate\"])\n    m = smf.ols(f\"dv_z ~ {rhs}\", data=df).fit()\n\n    return {\n        \"estimate\": m.params[\"iv_z\"],   # fully standardized \u03b2\n        \"p_value\":  m.pvalues[\"iv_z\"],\n        \"ci_low\":   m.conf_int().loc[\"iv_z\", 0],\n        \"ci_high\":  m.conf_int().loc[\"iv_z\", 1],\n        \"n\": len(df),\n    }\n\nmv = Multiverse(\n    decisions={\n        \"dv\":       {\"raw\": \"cbcl_raw\", \"tnorm\": \"cbcl_tnorm\"},\n        \"outliers\": {\"none\": None, \"3sd\": 3.0, \"2.5sd\": 2.5},\n        \"covariate\": {\"none\": [], \"age_sex\": [\"child_age\", \"child_sex\"]},\n    },\n    constraints=[...],\n)\n```\n\nNow every estimate is \u03b2 (SD-of-warmth \u2192 SD-of-DV), comparable across both DV options, and the specification curve is an honest robustness display rather than a unit-conversion display.\n\n---\n\n## What to report\n\nIn your write-up, be explicit that (a) you excluded the within-sample z-score because it is non-redundant only in scale and (b) you standardized estimates to make the raw and T-score universes comparable. Both are the right calls \u2014 and flagging rejected options is part of honest multiverse reporting.",
+      "assertions": [
+        "Explains that mixing raw CBCL (0-118), T-score (0-100), and z-score (unit SD) produces incomparable regression coefficients \u2014 the differences reflect unit scaling, not robustness",
+        "States that the DV operationalization decision would dominate the variance decomposition (decision_importance) for trivial scale reasons, not substantive ones",
+        "Recommends putting all DVs on a common scale before running the multiverse \u2014 e.g., fully standardized coefficients, Cohen's d, or using a consistently scaled DV",
+        "Notes that the within-sample z-score is a linear transformation of the raw CBCL (using the sample's own mean and SD), making it redundant with the raw option \u2014 including both runs the same analysis twice with rescaled output",
+        "Does NOT say 'yes, include all three as-is' without flagging the scale comparability problem"
+      ],
+      "assertion_types": [
+        "scored",
+        "scored",
+        "scored",
+        "scored",
+        "must_pass"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 3,
+      "condition": "baseline",
+      "prompt": "I'm running a multiverse analysis on the probability of winning a contract bid. The outcome is binary (win=1, lose=0). My decisions are:\n- Model: (a) linear probability model (OLS), (b) logistic regression\n- Covariates: (a) no controls, (b) bid_amount + firm_size, (c) bid_amount + firm_size + their interaction\n- Outlier rule: (a) none, (b) exclude bids > 3 SD on bid_amount\n\nI want to run all combinations. What nonsensical cells should I identify and encode as constraints before running? Please give me the constraint code for the bundled Python engine.",
+      "response": "Good \u2014 the engine uses lambda constraints passed to `Multiverse(constraints=[...])`, each receiving a resolved `dict` and returning `bool`.\n\n## Nonsensical cells to flag\n\nAcross 2 \u00d7 3 \u00d7 2 = 12 combinations, one structural incoherence stands out:\n\n**`outlier_rule = \"3sd\"` AND `covariates = \"none\"`** (2 cells \u2014 one per model type)\n\nThe 3 SD exclusion is defined entirely on `bid_amount`, but when no covariates are included the model never sees `bid_amount`. The sample restriction is anchored to a variable that plays no role in the specification \u2014 you're trimming observations on a criterion that is orthogonal to what the model actually estimates. The excluded vs. included observations differ systematically on `bid_amount`, yet that variable is absent from the outcome equation. The two decisions contradict each other in a way that has no coherent interpretation.\n\nNo other cells are nonsensical:\n- LPM on binary outcomes is a defensible analytical choice (valid universe, not an error)\n- Intercept-only models (`covariates = \"none\"` with either estimator) are valid baselines\n- Interaction specs (c) already include both main effects, so there's no \"interaction without mains\" problem\n- The outlier rule is well-defined whenever `bid_amount` is actually in the model\n\n## Constraint code\n\n```python\nconstraints = [\n    # The 3 SD exclusion is defined on bid_amount. When covariates=\"none\",\n    # bid_amount is absent from the model \u2014 the sample restriction references\n    # a variable the estimator never uses, making the cell incoherent.\n    lambda c: not (c[\"outlier_rule\"] == \"3sd\" and c[\"covariates\"] == \"none\"),\n]\n\nmv = Multiverse(\n    decisions={\n        \"model\":        [\"lpm\", \"logistic\"],\n        \"covariates\":   [\"none\", \"main\", \"interaction\"],\n        \"outlier_rule\": [\"none\", \"3sd\"],\n    },\n    constraints=constraints,\n)\n```\n\nThis drops 2 of 12 combinations and runs the remaining 10. If you want an explicit list of what was excluded for your appendix, call `mv.grid()` before and after applying constraints and diff the lengths.",
+      "assertions": [
+        "Correctly assesses whether covariate option (c) = interaction + main effects is a nonsensical combination with any model option \u2014 and correctly identifies that it is NOT strictly nonsensical (main effects are included)",
+        "Notes that OLS / linear probability model on a binary DV can produce predictions outside [0,1] and is a methodological concern \u2014 frames it as a caveat or caution even if not a hard constraint",
+        "Provides Python lambda constraint syntax using the Multiverse engine format: constraints=[lambda c: ...]",
+        "Explains the general principle: constraints should drop combinations that are *incoherent* (interaction without its main effects), not just less preferred methods",
+        "Does NOT encode the linear probability model as a hard forbidden constraint without acknowledging that LPM is sometimes defended as a reasonable specification"
+      ],
+      "assertion_types": [
+        "scored",
+        "scored",
+        "scored",
+        "scored",
+        "must_pass"
+      ],
+      "assertion_results": [
+        true,
+        false,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 5,
+      "pass_rate": 0.8,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 3,
+      "condition": "with_skill",
+      "prompt": "I'm running a multiverse analysis on the probability of winning a contract bid. The outcome is binary (win=1, lose=0). My decisions are:\n- Model: (a) linear probability model (OLS), (b) logistic regression\n- Covariates: (a) no controls, (b) bid_amount + firm_size, (c) bid_amount + firm_size + their interaction\n- Outlier rule: (a) none, (b) exclude bids > 3 SD on bid_amount\n\nI want to run all combinations. What nonsensical cells should I identify and encode as constraints before running? Please give me the constraint code for the bundled Python engine.",
+      "response": "Good question to ask before running \u2014 but the honest answer here is that **this particular 12-universe grid has no genuinely nonsensical cells.** Let me walk through each potential concern:\n\n**OLS on a binary DV (linear probability model)**\nThis is the most obvious candidate, but per the multiverse methodology it is a *caution*, not a constraint. The LPM is methodologically debated (predictions can fall outside [0,1]; heteroskedasticity is structural) but it is a defended specification in applied econometrics. Excluding it would bias the curve toward logistic \u2014 which is itself an analytic choice you're supposed to be varying. Keep it in; flag it in your decisions table.\n\n**Interaction without main effects**\nYour option (c) already includes `bid_amount + firm_size + interaction`, so the hierarchical principle is satisfied in all universes where the interaction is present. No incoherence.\n\n**Outlier rule \u00d7 model**\nBoth models can be fit on either the full sample or the trimmed one. No logical conflict.\n\nAll 12 cells are coherent. The constraint lambda is therefore:\n\n```python\nmv = Multiverse(\n    decisions={\n        \"model\":    {\"ols\": \"ols\", \"logit\": \"logit\"},\n        \"covars\":   {\n            \"none\":        [],\n            \"mains\":       [\"bid_amount\", \"firm_size\"],\n            \"interaction\": [\"bid_amount\", \"firm_size\", \"bid_amount:firm_size\"],\n        },\n        \"outliers\": {\"none\": None, \"3sd\": 3.0},\n    },\n    constraints=[lambda c: True],   # all 12 cells are coherent; no exclusions needed\n)\n```\n\n**What to flag in your decisions table instead of constraining:**\n\n| Decision | Option | Caution |\n|---|---|---|\n| model | ols | LPM: predictions can fall outside [0,1]; heteroskedastic by construction. Retain for transparency \u2014 its position in the curve is informative. |\n| model | logit | Coefficients are on log-odds scale; not directly comparable to OLS estimates. |\n\n**One scale issue to handle before plotting:** OLS returns a probability-unit coefficient; logistic returns a log-odds coefficient. These are not comparable across universes, so a \"model\" fork will dominate the specification curve for trivial unit reasons. Before calling `specification_curve()`, standardize \u2014 either convert both to marginal effects at the mean, or report AMEs from the logit alongside the OLS coefficient (which is already a marginal effect). Pass `estimate=\"ame\"` from your `analyze()` return dict so the curve compares apples to apples.",
+      "assertions": [
+        "Correctly assesses whether covariate option (c) = interaction + main effects is a nonsensical combination with any model option \u2014 and correctly identifies that it is NOT strictly nonsensical (main effects are included)",
+        "Notes that OLS / linear probability model on a binary DV can produce predictions outside [0,1] and is a methodological concern \u2014 frames it as a caveat or caution even if not a hard constraint",
+        "Provides Python lambda constraint syntax using the Multiverse engine format: constraints=[lambda c: ...]",
+        "Explains the general principle: constraints should drop combinations that are *incoherent* (interaction without its main effects), not just less preferred methods",
+        "Does NOT encode the linear probability model as a hard forbidden constraint without acknowledging that LPM is sometimes defended as a reasonable specification"
+      ],
+      "assertion_types": [
+        "scored",
+        "scored",
+        "scored",
+        "scored",
+        "must_pass"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 4,
+      "condition": "baseline",
+      "prompt": "I'm studying whether sleep quality predicts academic performance. I have two operationalizations of each: sleep quality is either total sleep time in hours (TST) or sleep efficiency percentage (SE%, 0-100); GPA is either cumulative GPA (0-4 scale) or semester GPA. I also want to test two outlier rules: no exclusion, or exclude participants > 2.5 SD on TST.\n\nI want to use Pearson correlation as my estimand (not regression \u2014 I don't have a clear IV/DV direction and I want the symmetric association). How do I set up the bundled Python engine for this? Give me the analyze() function, the Multiverse setup, and explain how to run permutation_test() for a correlation estimand.",
+      "response": "Here's how to set up this analysis. You have 2 \u00d7 2 \u00d7 2 = **8 universes**.\n\n---\n\n## The `analyze()` function\n\n```python\nimport sys\nsys.path.insert(0, \"~/.claude/skills/multiverse-analysis/scripts\")\nfrom multiverse import Multiverse, specification_curve, decision_importance, permutation_test\n\nimport numpy as np\nimport pandas as pd\nfrom scipy import stats\n\ndef analyze(data: pd.DataFrame, c: dict) -> dict:\n    df = data.copy()\n\n    # Outlier exclusion is always based on TST (your rule specifies TST, not SE%)\n    if c[\"outliers\"] is not None:\n        tst_z = (df[\"tst\"] - df[\"tst\"].mean()) / df[\"tst\"].std()\n        df = df[tst_z.abs() <= c[\"outliers\"]]\n\n    x = df[c[\"sleep\"]]   # resolved to \"tst\" or \"se_pct\"\n    y = df[c[\"gpa\"]]     # resolved to \"gpa_cum\" or \"gpa_sem\"\n\n    r, p = stats.pearsonr(x, y)\n\n    # Fisher z-transform CI (standard for Pearson r)\n    n = len(df)\n    se = 1.0 / np.sqrt(n - 3)\n    z = np.arctanh(r)\n    ci_low  = float(np.tanh(z - 1.96 * se))\n    ci_high = float(np.tanh(z + 1.96 * se))\n\n    return {\n        \"estimate\": float(r),\n        \"p_value\":  float(p),\n        \"ci_low\":   ci_low,\n        \"ci_high\":  ci_high,\n        \"n\":        n,\n    }\n```\n\nTwo things to note: the Fisher z-transform gives CIs that stay in [\u22121, 1] and are correct for small samples; and the outlier threshold is always applied to `tst` regardless of which sleep variable the universe selects, because that's how your rule is defined.\n\n---\n\n## The `Multiverse` setup\n\n```python\nmv = Multiverse(\n    decisions={\n        \"sleep\":    {\"TST\":  \"tst\",     \"SE%\":  \"se_pct\"},\n        \"gpa\":      {\"cumGPA\": \"gpa_cum\", \"semGPA\": \"gpa_sem\"},\n        \"outliers\": {\"none\":  None,      \"2.5SD\": 2.5},\n    }\n)\n\nprint(mv.summary())   # sanity check: should show 8 valid universes\n\nresults = mv.run(analyze, data)\nspecification_curve(results, outfile=\"sleep_gpa_curve.png\")\nprint(decision_importance(results))\n```\n\nThe values in each inner dict are what `analyze()` receives in `c` \u2014 so `c[\"sleep\"]` is `\"tst\"` or `\"se_pct\"`, not the human-readable label.\n\n---\n\n## Running `permutation_test()` for a correlation estimand\n\n```python\nperm = permutation_test(\n    mv,\n    analyze,\n    data,\n    shuffle=[\"tst\", \"se_pct\"],   # shuffle BOTH sleep columns together\n    stat_col=\"estimate\",          # Pearson r\n    p_col=\"p_value\",\n    alpha=0.05,\n    n_perm=500,\n    direction=\"auto\",             # infers positive/negative from observed median r\n)\nprint(perm)\n```\n\n**Why shuffle both columns together.** The engine permutes the listed columns as a block \u2014 swapping whole rows \u2014 so the TST\u2013SE% correlation within participants is preserved. What breaks is their joint association with GPA. If you only shuffled `tst`, the `se_pct` universes would get un-permuted data, giving you an invalid null.\n\n**What the test returns.** Three statistics with their null distributions and p-values:\n\n| stat | meaning |\n|---|---|\n| `median_estimate` | median r across all 8 universes vs permuted medians |\n| `share_significant` | fraction of specs with p < \u03b1 in predicted direction |\n| `share_opposite` | fraction of specs significant in the *wrong* direction |\n\nFor a correlation estimand there's no IV/DV asymmetry, but `direction=\"auto\"` still works \u2014 it infers the sign of the observed median r and evaluates consistency.\n\n---\n\n## Quick sanity check before running\n\n```python\n# Confirm column names match your DataFrame\nassert \"tst\" in data.columns\nassert \"se_pct\" in data.columns\nassert \"gpa_cum\" in data.columns\nassert \"gpa_sem\" in data.columns\n\n# Confirm grid looks right\nfor u in mv.grid():\n    print(u)\n```\n\nYou'll see all 8 `{sleep: \u2026, gpa: \u2026, outliers: \u2026}` dicts printed before any computation runs.",
+      "assertions": [
+        "Writes a correct analyze(data, c) function that computes a Pearson correlation (or equivalent) between the selected sleep and GPA variables and returns a dict containing 'estimate' (the r value) and 'p_value'",
+        "Sets up Multiverse with 3 decisions producing 8 universes: sleep operationalization (2 options), GPA operationalization (2 options), outlier rule (2 options)",
+        "Correctly explains how to use permutation_test() for a correlation: shuffle one of the two correlated variables to break the association",
+        "Notes that correlation coefficients are already on a common scale [-1,1], so there is no scale comparability issue when mixing different operationalizations (unlike regression coefficients)",
+        "Does NOT return regression coefficients (e.g. from statsmodels OLS) as the 'estimate' when Pearson correlation r was requested"
+      ],
+      "assertion_types": [
+        "scored",
+        "scored",
+        "scored",
+        "scored",
+        "must_pass"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "passed": 4,
+      "total": 5,
+      "pass_rate": 0.8,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 4,
+      "condition": "with_skill",
+      "prompt": "I'm studying whether sleep quality predicts academic performance. I have two operationalizations of each: sleep quality is either total sleep time in hours (TST) or sleep efficiency percentage (SE%, 0-100); GPA is either cumulative GPA (0-4 scale) or semester GPA. I also want to test two outlier rules: no exclusion, or exclude participants > 2.5 SD on TST.\n\nI want to use Pearson correlation as my estimand (not regression \u2014 I don't have a clear IV/DV direction and I want the symmetric association). How do I set up the bundled Python engine for this? Give me the analyze() function, the Multiverse setup, and explain how to run permutation_test() for a correlation estimand.",
+      "response": "Three things to work through before code: the `analyze()` signature, a scale note that simplifies your life, and a permutation wrinkle specific to your 2\u00d72 design.\n\n**Scale note.** Pearson *r* \u2208 [\u22121, 1] regardless of whether the sleep variable is hours or a percentage, and regardless of GPA scale. You do **not** need to standardize estimates before plotting the specification curve \u2014 the curve is already on a common scale. This is one of the cleanest properties of choosing correlation as your estimand.\n\n---\n\n## The `analyze()` function\n\n```python\nimport numpy as np\nfrom scipy.stats import pearsonr\n\ndef analyze(data, c):\n    df = data.copy()\n\n    # Outlier exclusion: always keyed to TST (the objective sleep measure),\n    # applied regardless of which sleep operationalization is used in the correlation.\n    if c[\"outlier\"] == \"2.5sd\":\n        z_tst = (df[\"TST\"] - df[\"TST\"].mean()) / df[\"TST\"].std()\n        df = df[z_tst.abs() <= 2.5]\n\n    x = df[c[\"sleep_var\"]].dropna()\n    y = df[c[\"gpa_var\"]].reindex(x.index).dropna()\n    x = x.reindex(y.index)           # align after any NaN drops on y\n\n    r, p = pearsonr(x, y)\n    n = len(x)\n\n    # Fisher z confidence interval (appropriate for r; SE = 1/sqrt(n-3))\n    z = np.arctanh(r)\n    se = 1.0 / np.sqrt(n - 3)\n    ci_low  = np.tanh(z - 1.96 * se)\n    ci_high = np.tanh(z + 1.96 * se)\n\n    return {\"estimate\": r, \"p_value\": p, \"ci_low\": ci_low, \"ci_high\": ci_high, \"n\": n}\n```\n\nThe TST-based exclusion is applied even in SE% specifications \u2014 this is a data-cleaning decision, not a modelling decision, so it's correct to hold it constant. That's worth one sentence in your write-up.\n\n---\n\n## Multiverse setup\n\n```python\nimport sys; sys.path.insert(0, \"<path-to-skill>/scripts\")\nfrom multiverse import Multiverse, specification_curve, decision_importance\n\nmv = Multiverse(\n    decisions={\n        \"sleep_var\": {\"TST\": \"TST\",       \"SE_pct\": \"SE_pct\"},\n        \"gpa_var\":   {\"cumGPA\": \"cumGPA\", \"semGPA\": \"semGPA\"},\n        \"outlier\":   {\"none\": \"none\",     \"2.5sd\":  \"2.5sd\"},\n    },\n    constraints=[lambda c: True],   # all 8 cells are coherent \u2014 no exclusions needed\n)\n\nprint(mv.summary())          # \u2192 8 universes\nres = mv.run(analyze, data)\nprint(decision_importance(res))\nspecification_curve(res, outfile=\"curve.png\")\n```\n\n---\n\n## Permutation test \u2014 why the engine's `shuffle=` needs a workaround here\n\nThe engine's `permutation_test()` shuffles a **single named column**. Your multiverse has two operationalizations on the sleep side (TST, SE%) and two on the GPA side (cumGPA, semGPA). Shuffling only `TST` leaves SE% specs with an unbroken association; shuffling only `cumGPA` leaves semGPA specs unbroken. Either choice biases the null.\n\nThe clean solution: shuffle **both sleep columns with the same permutation** so the sleep\u2013GPA link is broken for all 8 specs while the within-person TST/SE% correlation is preserved.\n\n```python\nfrom multiverse import decision_importance   # already imported above\n\ndef run_permutation_test(mv, analyze, data, n_perm=500, seed=42):\n    rng = np.random.default_rng(seed)\n\n    # Observed statistics\n    obs = mv.run(analyze, data)\n    obs_median = obs[\"estimate\"].median()\n    obs_sig_share = (\n        (obs[\"p_value\"] < 0.05) & (obs[\"estimate\"] > 0)\n    ).mean()\n\n    null_medians, null_sig_shares = [], []\n\n    for _ in range(n_perm):\n        perm_idx = rng.permutation(len(data))\n        d_perm = data.copy()\n        # Shuffle both sleep operationalizations with the same index \u2014\n        # breaks the sleep\u2013GPA association while preserving TST/SE% covariance.\n        d_perm[[\"TST\", \"SE_pct\"]] = (\n            data[[\"TST\", \"SE_pct\"]].iloc[perm_idx].values\n        )\n        perm_res = mv.run(analyze, d_perm)\n        null_medians.append(perm_res[\"estimate\"].median())\n        null_sig_shares.append(\n            ((perm_res[\"p_value\"] < 0.05) & (perm_res[\"estimate\"] > 0)).mean()\n        )\n\n    p_median   = np.mean(np.array(null_medians)   >= obs_median)\n    p_sig      = np.mean(np.array(null_sig_shares) >= obs_sig_share)\n\n    print(f\"Observed median r:          {obs_median:.3f}\")\n    print(f\"Observed share sig (r > 0): {obs_sig_share:.2%}\")\n    print(f\"Permutation p (median r):   {p_median:.3f}  [{n_perm} permutations]\")\n    print(f\"Permutation p (sig share):  {p_sig:.3f}  [{n_perm} permutations]\")\n    return {\"p_median\": p_median, \"p_sig_share\": p_sig,\n            \"null_medians\": null_medians, \"null_sig_shares\": null_sig_shares}\n\nresults = run_permutation_test(mv, analyze, data, n_perm=500)\n```\n\nUse `n_perm=500` for a reportable result (\u2265500 is the standard threshold).\n\n---\n\n## What to report\n\nWith 8 specs and correlation as the estimand, your write-up needs: (1) the decisions \u00d7 options table with one-line justifications, (2) the specification curve figure, (3) median *r* and share of the 8 specs that are significant in the positive direction, (4) the decision-importance table (which fork \u2014 sleep operationalization, GPA operationalization, or outlier rule \u2014 drives the most variance in *r*), and (5) the two permutation *p*-values. Note where your preferred/original specification falls on the curve.",
+      "assertions": [
+        "Writes a correct analyze(data, c) function that computes a Pearson correlation (or equivalent) between the selected sleep and GPA variables and returns a dict containing 'estimate' (the r value) and 'p_value'",
+        "Sets up Multiverse with 3 decisions producing 8 universes: sleep operationalization (2 options), GPA operationalization (2 options), outlier rule (2 options)",
+        "Correctly explains how to use permutation_test() for a correlation: shuffle one of the two correlated variables to break the association",
+        "Notes that correlation coefficients are already on a common scale [-1,1], so there is no scale comparability issue when mixing different operationalizations (unlike regression coefficients)",
+        "Does NOT return regression coefficients (e.g. from statsmodels OLS) as the 'estimate' when Pearson correlation r was requested"
+      ],
+      "assertion_types": [
+        "scored",
+        "scored",
+        "scored",
+        "scored",
+        "must_pass"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 5,
+      "condition": "baseline",
+      "prompt": "I ran a multiverse analysis on whether caffeine improves reaction time. I have 3 outlier rules, 2 covariate options, and 2 DV operationalizations = 12 specifications total. 9 of 12 are significant (p<0.05). The 3 non-significant ones all use the log-transformed DV. My original pre-registered analysis used the raw DV and no outliers, no covariate \u2014 it's significant (p=0.008). Since 9/12 are significant and my original spec is among them, can I report this as 'the effect is robust across 75% of specifications and my pre-registered analysis confirms the effect'?",
+      "response": "There are a few problems with that framing worth unpacking before you write it up.\n\n## The structured pattern is the finding, not background noise\n\nYour 9/12 figure buries the most important result. The three non-significant specs don't fall randomly across the specification space \u2014 they cluster entirely within one fork: log-transformed DV. That means:\n\n- **Raw DV: 6/6 significant (100%)**\n- **Log DV: 3/6 significant (50%)**\n\nReporting \"75% robust\" averages over a clean, systematic split. A reviewer will spot this immediately, and the framing will look evasive.\n\n## The log transform is often the *more defensible* choice for RT data\n\nReaction time distributions are right-skewed. Log-transforming RT is standard practice precisely because it stabilizes variance and reduces leverage from extreme values. If the statistically better-justified operationalization is where your effect weakens, that's not a nuisance \u2014 that's signal about what's driving the effect. The multiverse is telling you something: the effect may be sensitive to how outliers and tail observations are handled.\n\n## Your preregistered spec isn't independent confirmation\n\nIt's already one of the 12 specs contributing to the 9/12 figure. Citing it separately as \"confirmation\" double-counts it and conflates preregistration's purpose (protecting against researcher degrees of freedom *before* data collection) with post-hoc interpretation of a multiverse. Preregistration doesn't make one cell of a multiverse more epistemically privileged than the others for this purpose.\n\n## What honest reporting looks like\n\nInstead of \"robust across 75%,\" report the DV-by-DV breakdown explicitly, flag that log-RT is often preferred for theoretical reasons, and interpret the split: *why* does the effect attenuate under log-transform? Possibilities include outlier-driven effects, skew in the raw distribution, or a genuine scale-of-measurement dependency.\n\nThe multiverse gave you a more interesting and defensible story than \"it mostly worked\" \u2014 use it.",
+      "assertions": [
+        "Flags that all 3 non-significant specifications cluster on the log-DV fork \u2014 identifies this as a systematic pattern (effect depends on DV operationalization), not random scatter across specifications",
+        "Warns that reporting '75% significant' without disclosing the systematic pattern is misleading \u2014 the DV operationalization decision, not robustness in general, governs significance",
+        "Recommends the decision-importance or equivalent analysis to show that the DV operationalization fork explains most of the significance variance in the curve",
+        "Does NOT endorse the claim that the effect is 'robust across 75% of specifications' as stated, without qualification",
+        "Does NOT suggest or imply that the pre-registered analysis being significant validates the choice of raw DV over log-transformed"
+      ],
+      "assertion_types": [
+        "scored",
+        "scored",
+        "scored",
+        "must_pass",
+        "must_pass"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 5,
+      "pass_rate": 0.8,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 5,
+      "condition": "with_skill",
+      "prompt": "I ran a multiverse analysis on whether caffeine improves reaction time. I have 3 outlier rules, 2 covariate options, and 2 DV operationalizations = 12 specifications total. 9 of 12 are significant (p<0.05). The 3 non-significant ones all use the log-transformed DV. My original pre-registered analysis used the raw DV and no outliers, no covariate \u2014 it's significant (p=0.008). Since 9/12 are significant and my original spec is among them, can I report this as 'the effect is robust across 75% of specifications and my pre-registered analysis confirms the effect'?",
+      "response": "No \u2014 that framing is precisely what the multiverse methodology is designed to prevent. Here's why it's misleading and what honest reporting looks like.\n\n## The real finding: DV operationalization is doing all the work\n\nThe 3 non-significant specs don't scatter randomly across the curve \u2014 they cluster perfectly on a single decision fork (log-transformed DV). That is not 75% robustness. That is **the effect being fully contingent on whether you use raw vs. log reaction time.**\n\nThe skill's methodology is explicit on this: \"When the user claims 'X% of specs are significant' without disclosing that the non-significant specs cluster on a single decision fork, flag it: that clustering is the real finding. Point them to `decision_importance()` \u2014 it will show that one decision explains most of the significance variance.\"\n\n`decision_importance()` will almost certainly show DV operationalization with near-total \u03b7\u00b2. The outlier and covariate decisions are probably noise.\n\n## Two compounding problems\n\n**1. Raw vs. log coefficients aren't comparable.** Reaction time is log-normal in most tasks, so a raw-DV coefficient (ms units) and a log-DV coefficient (log-ms units) measure different things on different scales. Pooling them into a \"75% significant\" count conflates a unit question with a robustness question. You should standardize before comparing \u2014 or report the two sub-curves separately.\n\n**2. The pre-registered spec doesn't \"confirm\" the effect.** It simply lands in the raw-DV cluster. Saying \"my pre-registered analysis confirms the effect\" when the effect disappears under a defensible alternative operationalization is exactly the cherry-picking a multiverse exists to expose. Pre-registration fixes one arbitrary path; it doesn't settle the operationalization debate.\n\n## What honest reporting looks like\n\nThe correct read is: **the effect is present under raw reaction time (all 6 raw-DV specs significant) and absent under log reaction time (all 6 log-DV specs non-significant).** That's not 75% robustness \u2014 that's a clear sign the effect is fragile to DV operationalization.\n\nHonest framing:\n- \"The effect was significant in all 6 raw-DV specifications (p < .05) but in none of the 6 log-DV specifications, suggesting the result is sensitive to DV operationalization.\"\n- Report where your pre-registered spec falls: \"Our pre-registered specification (raw DV, no exclusions, no covariate) was significant (p = .008) and falls within the raw-DV cluster.\"\n- Note that log-transformation is theoretically motivated for reaction time (reaction time is typically right-skewed and log-normal), so the log results deserve equal standing, not dismissal.\n- Run `decision_importance()` and report the \u03b7\u00b2 to make the DV-fork dominance explicit.\n\nThe effect may still be real \u2014 but the honest conclusion is: **\"the effect depends on whether reaction time is analyzed on a raw or log scale, which warrants investigation rather than dismissal.\"** That's a more useful and credible finding than \"75% significant.\"",
+      "assertions": [
+        "Flags that all 3 non-significant specifications cluster on the log-DV fork \u2014 identifies this as a systematic pattern (effect depends on DV operationalization), not random scatter across specifications",
+        "Warns that reporting '75% significant' without disclosing the systematic pattern is misleading \u2014 the DV operationalization decision, not robustness in general, governs significance",
+        "References decision-importance analysis (or eta-squared / variance decomposition per decision) \u2014 either by recommending the user run it, or by citing what it would show \u2014 to demonstrate that the DV operationalization fork is the primary driver of significance variance, not random scatter",
+        "Does NOT endorse the claim that the effect is 'robust across 75% of specifications' as stated, without qualification",
+        "Does NOT suggest or imply that the pre-registered analysis being significant validates the choice of raw DV over log-transformed"
+      ],
+      "assertion_types": [
+        "scored",
+        "scored",
+        "scored",
+        "must_pass",
+        "must_pass"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "passed": 25,
+      "total": 32,
+      "evals_pass": 1,
+      "evals_total": 6
+    },
+    "with_skill": {
+      "passed": 32,
+      "total": 32,
+      "evals_pass": 6,
+      "evals_total": 6
+    }
+  }
+}

@@ -1,0 +1,108 @@
+Before writing up the methods, I need to flag two specification issues that should be addressed first — otherwise the write-up would be documenting a model that doesn't match the design. Both are common, both are consequential, and neither is a quick editorial fix.
+
+---
+
+## Issue 1: Missing random slope for SES
+
+SES varies **within** schools — you said so explicitly. That means a random slope belongs in the model. The random-effects structure you have:
+
+```r
+(1 | school)
+```
+
+allows schools to differ in their baseline achievement (random intercept) but assumes the SES→achievement relationship is **identical across all 60 schools**. That's a strong assumption and almost certainly wrong — schools serving similar SES ranges may show steeper or flatter gradients depending on instructional quality, culture, etc.
+
+More importantly: omitting the random slope means the test of `SES` uses the **wrong error term**. When a predictor varies within clusters, its fixed-effect coefficient is estimated partly from between-subject, partly from within-subject variation, and the denominator of the t-statistic needs to account for the fact that the SES slope itself varies across schools. Without `(SES | school)`, lme4 underestimates the variance in that slope and produces an anti-conservative p-value. In simulation, this inflates Type I error for the focal predictor by 2–5×.
+
+With 60 schools and ~25 students each, you have ample clusters to estimate a random slope. The corrected random-effects structure:
+
+```r
+(1 + SES_cwc | school)   # after centering — see Issue 2
+```
+
+---
+
+## Issue 2: The single SES coefficient blends two distinct effects
+
+This is the deeper issue. When a predictor varies both **within** and **between** clusters, a grand-mean-centered (or raw) coefficient is a weighted average of two theoretically different effects:
+
+| Effect | Question answered |
+|---|---|
+| **Within-school** | Do students with higher SES than their schoolmates achieve more? |
+| **Between-school** | Do schools with higher average SES achieve more, net of school resources? |
+
+These effects are often quite different in magnitude and are not the same estimand. The β = 0.31 you have now is some blend of both — you cannot tell which is driving it, and reviewers in education research will ask.
+
+The fix is **group-mean centering** (Raudenbush & Bryk's "within/between decomposition"; Hox Ch. 3):
+
+```r
+library(dplyr)
+library(lme4)
+library(lmerTest)
+
+df <- df |>
+  group_by(school) |>
+  mutate(
+    SES_mean = mean(SES),          # school-level mean → level-2 predictor
+    SES_cwc  = SES - SES_mean      # group-mean centered → within-school effect
+  ) |>
+  ungroup()
+```
+
+Then the corrected model:
+
+```r
+m1 <- lmer(
+  achievement ~ SES_cwc + SES_mean + school_resources +
+                (1 + SES_cwc | school),
+  data = df,
+  REML = TRUE
+)
+summary(m1)
+```
+
+Now each coefficient has a clean interpretation:
+
+- **`SES_cwc`**: within-school effect — holding school constant, does a one-unit SES advantage over schoolmates predict achievement?
+- **`SES_mean`**: between-school compositional effect — do higher-SES schools achieve more on average, after adjusting for school resources?
+- **`school_resources`**: level-2 effect, now estimated with school-level SES properly controlled (critical — these two are probably correlated, which may explain the non-significance)
+- **`(1 + SES_cwc | school)`**: schools vary in baseline achievement *and* in the steepness of their within-school SES gradient
+
+A secondary quantity worth pulling out is the **contextual effect**: the degree to which the school's average SES matters *above and beyond* the student's own SES, estimated as `SES_mean` − `SES_cwc`. This is often the policy-relevant question in education ("frog-pond" effect).
+
+---
+
+## What to check after refitting
+
+```r
+# Convergence & singularity
+isSingular(m1)        # TRUE means random slope may be overspecified for the data
+
+# Variance components + ICC
+as.data.frame(VarCorr(m1))
+
+# Fixed effects with Satterthwaite df
+summary(m1)           # from lmerTest
+
+# If singular, consider whether the correlation between intercept and slope
+# can be removed to recover a non-degenerate fit:
+# (1 + SES_cwc || school)
+```
+
+If the model is singular (SES slope variance near zero), that's informative — it means schools don't differ much in their within-school gradients — but it's a finding, not a justification for omitting the slope from the start. In that case, report it, and consider whether a `||` (zero-correlation) parameterization resolves the degeneracy before dropping the slope entirely.
+
+---
+
+## Write-up template (for the corrected model)
+
+Once you've refit, here's the structure for the methods section:
+
+> Achievement was modeled using a two-level multilevel model with students (level 1) nested within schools (level 2), estimated with restricted maximum likelihood (REML) in lme4 (v.X.X; Bates et al., 2015) with Satterthwaite degrees of freedom from lmerTest (v.X.X; Kuznetsova et al., 2017).
+>
+> Student-level SES was decomposed into a within-school component (group-mean centered: *SES*_cwc) and a between-school component (school mean SES: *SES*_mean), following Raudenbush & Bryk (2002) and Hox et al. (2018). This decomposition allows the within-school SES gradient and the school-level compositional SES effect to be estimated as distinct parameters. School resources was entered as a level-2 predictor.
+>
+> The random-effects structure included random intercepts and random slopes for *SES*_cwc at the school level — the maximal structure justified by the design — allowing both baseline achievement and the within-school SES gradient to vary across schools. [Add singularity/convergence outcome here.] The intraclass correlation coefficient (ICC) was computed from the intercept-only model to quantify the proportion of variance attributable to between-school differences.
+
+---
+
+**Bottom line**: refit the model with the two changes above, check whether `school_resources` becomes significant once school-level SES is properly in the model, and then I can help you finalize the complete write-up with your actual estimates.

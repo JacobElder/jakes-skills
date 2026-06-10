@@ -1,0 +1,41 @@
+{
+  "run_id": "growth-curve-time-slope-with_skill",
+  "eval_id": 14,
+  "eval_name": "growth-curve-time-slope",
+  "config": "with_skill",
+  "passed": 5,
+  "total": 5,
+  "expectations": [
+    {
+      "text": "Output does NOT validate dropping the by-subject random slope for time or agree the model is ready to write up",
+      "passed": true,
+      "evidence": "The response opens with 'not yet, not with this model' and spends the entire response arguing against dropping the random slope, recommending instead that the slope be retained with a zero-correlation parameterization."
+    },
+    {
+      "text": "Output explains that time is a within-subjects predictor (each participant has three observations over time), so the design requires a random slope for time \u2014 omitting it uses the wrong error term for time-related effects and inflates Type I error",
+      "passed": true,
+      "evidence": "'The result: the standard error on time:treatment shrinks, your t-statistic is inflated, and the test is anti-conservative.' Also: 'The decision about whether to include the random slope should be driven by the design (does time vary within subjects? yes)'"
+    },
+    {
+      "text": "Output does not accept 0.003 as self-evidently negligible \u2014 either flags that the value needs diagnostic context, notes that small absolute variance doesn't automatically mean the slope should be dropped, or recommends checking via VarCorr(), rePCA(), or isSingular() before deciding",
+      "passed": true,
+      "evidence": "'The variance being estimated near 0.003 tells you the model's estimate is small \u2014 not that individuals truly don't differ in their growth rates.' The response also recommends isSingular() checks explicitly in Step 1."
+    },
+    {
+      "text": "Output recommends at least one diagnostic step before dropping the slope \u2014 such as VarCorr(), rePCA(), isSingular(), comparing model fits, or checking whether simplification changes fixed-effect estimates \u2014 rather than accepting the advisor's variance-threshold rule at face value",
+      "passed": true,
+      "evidence": "Step 1 explicitly calls `isSingular(m_max)` and `isSingular(m_zcp)`. Step 2 instructs comparing the interaction p-value across models and running likelihood ratio comparisons."
+    },
+    {
+      "text": "Output does NOT accept the advisor's 'start with intercepts, add slopes only if variance is clearly non-zero' framing as the correct approach for confirmatory growth modeling \u2014 this inverts the maximal-structure logic from Barr et al. (2013)",
+      "passed": true,
+      "evidence": "'The advisor's logic \u2014 check the estimate, drop if small \u2014 is a form of data-driven model selection based on a parameter that directly affects the validity of your inferential test.' And: 'The advisor's heuristic describes common practice \u2014 but common here means commonly produces inflated Type I error on the effect you care most about.'"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1.0
+  }
+}

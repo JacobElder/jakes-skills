@@ -1,0 +1,40 @@
+{
+  "eval_id": 4,
+  "condition": "baseline",
+  "prompt": "We ran a randomized A/B test on checkout flow. Someone on my team says we need to control for device type, browser, and whether the user completed onboarding, since those differ a bit between the two arms. Should I add those as covariates?",
+  "response": "Short answer: yes, but for the right reason \u2014 and there's a trap to avoid.\n\n**Why to add them: variance reduction, not bias correction.**\nRandomization already guarantees unbiased treatment effect estimates without any covariates. Your teammate's framing (\"they differ between arms\") implies you need them to fix a bias problem \u2014 you don't. Any imbalance in a properly randomized trial is sampling noise, not confounding. The *actual* reason to include them is that covariates predictive of the outcome (especially onboarding completion, which likely strongly predicts checkout conversion) soak up residual variance and give you a more precise estimate and more power.\n\n**The trap: post-hoc covariate selection.**\nIf you're adding these because you *looked at the imbalance after seeing results*, that's a form of specification search that inflates false positive rates. The principled approach:\n\n- Covariates specified **before** looking at results \u2192 include them, clearly labeled as pre-specified\n- Covariates selected **after** seeing imbalance \u2192 treat the adjusted analysis as sensitivity/exploratory, report both, and be transparent\n\n**Practical recommendation for your case:**\nAll three covariates (device, browser, onboarding) are plausibly predictive of conversion regardless of which arm they fall in \u2014 so including them is defensible even post-hoc as a robustness check. Run both the unadjusted and covariate-adjusted model. If the estimates agree, your conclusion is robust. If they diverge meaningfully, that's a signal worth investigating before shipping.\n\nThe Lin (2013) estimator \u2014 OLS regressing outcome on treatment, covariates, and treatment \u00d7 covariate interactions \u2014 is the standard robust approach for this in experiments; it's asymptotically at least as efficient as the unadjusted estimate.",
+  "assertions": [
+    {
+      "text": "States that in a randomized experiment the unadjusted difference is already unbiased for the causal effect and adjustment is mainly for precision",
+      "type": "scored"
+    },
+    {
+      "text": "Flags that 'completed onboarding' may be post-treatment / a mediator or collider and that controlling for it can introduce bias",
+      "type": "scored"
+    },
+    {
+      "text": "Distinguishes pre-treatment covariates (okay to adjust, ideally pre-specified) from post-treatment variables (do not adjust)",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that small covariate imbalances under randomization are expected and not evidence of confounding",
+      "type": "scored"
+    },
+    {
+      "text": "Does NOT advise blindly adding all three covariates as 'more rigorous'",
+      "type": "must_pass"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    false,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 5,
+  "pass_rate": 0.6,
+  "eval_passes": false,
+  "must_pass_failed_indices": []
+}

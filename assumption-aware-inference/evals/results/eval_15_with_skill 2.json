@@ -1,0 +1,38 @@
+{
+  "eval_id": 15,
+  "condition": "with_skill",
+  "prompt": "Before every analysis I run normality tests, Levene's test, and Breusch-Pagan, and I pick my method based on the results. Is this a good workflow?",
+  "response": "No \u2014 this is one of the most common methodological mistakes in applied work, and it has three compounding problems.\n\n## Problem 1: The tests answer the wrong question\n\nShapiro-Wilk, Levene, and Breusch-Pagan test whether an assumption is *exactly* true. The answer is always no \u2014 no real data have exactly normal errors or exactly constant variance. The question you actually need to answer is **\"is this violation large enough to matter for my goal at this sample size?\"** No pretest answers that.\n\n## Problem 2: Sample-size pathology\n\nThese tests have the worst possible operating characteristics for use as gatekeepers:\n\n- **Small n** (where violations would actually hurt you): the tests are underpowered and miss consequential violations \u2014 you get a false pass.\n- **Large n** (where the CLT is already rescuing you): the tests are hypersensitive and reject trivially harmless deviations \u2014 you get a spurious alarm and switch to a less efficient method for no reason.\n\nThe tests are most informative at exactly the n's where they're least needed, and least informative where they'd actually matter.\n\n## Problem 3: Pretest distortion\n\n\"Run a diagnostic test, then pick the method based on the result\" is a two-stage procedure, and the second stage's operating characteristics depend on the first stage's outcome. The final test's actual Type I error rate is a mix of both stages \u2014 meaning your 0.05 threshold is no longer what you think it is. The procedure has worse properties than just committing to the robust method from the start.\n\n---\n\n## What to do instead\n\n**Adopt robust-by-design defaults and skip the pretests:**\n\n| Instead of | Use unconditionally |\n|---|---|\n| Test variances \u2192 Student or Welch | **Welch's t-test always** \u2014 trivial efficiency cost when variances are equal, real protection when they aren't |\n| Test heteroskedasticity \u2192 choose SEs | **HC3 robust SEs always** \u2014 same estimand, no decision required |\n| Test normality \u2192 t-test or rank test | **Reason directly**: is n large enough given the skew? Look at residual plots for curvature (mean structure), not QQ plots as gatekeepers |\n\n**What's worth actually looking at:**\n- Residuals vs. fitted \u2014 for nonlinearity in the mean structure (this *can* bias estimates and matters)\n- Influence/Cook's distance \u2014 does one observation drive the result?\n- Overdispersion check for count models \u2014 ratio of Pearson statistic to df\n- Calibration plots for probability models\n\nThe heuristic: spend diagnostic effort on things in the *bias* bucket (wrong mean structure, influential points) and handle variance-structure issues with robust methods by default, rather than running gatekeeping tests that distort your inference.",
+  "assertions": [
+    {
+      "text": "Pushes back on the test-then-choose workflow rather than endorsing it",
+      "type": "scored"
+    },
+    {
+      "text": "Explains that assumption tests check exact truth, not whether the violation is consequential, and are underpowered at small n / overpowered at large n",
+      "type": "scored"
+    },
+    {
+      "text": "Notes that pretesting distorts the level/coverage of the final inference (pretest bias)",
+      "type": "scored"
+    },
+    {
+      "text": "Recommends robust-by-design methods (e.g. Welch, robust/HC SEs, appropriate model family) and/or graphical diagnostics for magnitude instead",
+      "type": "scored"
+    },
+    {
+      "text": "Frames good practice as reasoning about consequences for the estimand/goal rather than a mechanical pipeline",
+      "type": "scored"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0
+}

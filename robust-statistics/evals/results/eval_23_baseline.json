@@ -2,7 +2,7 @@
   "eval_id": 23,
   "condition": "baseline",
   "prompt": "We ran a small pilot study \u2014 9 people per group, so n=18 total \u2014 and found d = 0.9, p = 0.04. The effect is large and significant! This is great news for the intervention, right?",
-  "response": "There are a few issues worth flagging here, one of which is a hard internal inconsistency.\n\n## The numbers don't add up\n\nFor an independent-samples t-test with n = 9 per group (df = 16):\n\n```\nt = d \u00d7 \u221a(n/2) = 0.9 \u00d7 \u221a4.5 \u2248 1.91\n```\n\nThat gives **p \u2248 0.074**, not 0.04. To reach p = 0.04 with df = 16 you'd need t \u2248 2.24, which corresponds to d \u2248 1.06. So d = 0.9 and p = 0.04 are mutually inconsistent \u2014 one of these numbers is wrong.\n\n## Even if the numbers were consistent: winner's curse\n\nWhen a study is underpowered and still achieves significance, it did so because the observed effect was inflated by sampling noise. This is the **winner's curse**: small-n studies that cross the significance threshold are selected precisely because their estimates ran large. The true effect is almost certainly smaller than d = 0.9.\n\nThe 95% CI on d with n = 9/group is roughly **\u00b10.7 Cohen's d units** \u2014 you could plausibly have anything from a small to a very large effect.\n\n## Power sanity check\n\nEven if the true effect really were d = 0.9, a study of this size has only about **48% power**. That means half of all true positives get missed \u2014 and the ones that do squeak through are the flukes that ran large.\n\n## What this pilot can and can't tell you\n\nPilots with n \u2248 9/group are useful for:\n- Feasibility and procedure refinement\n- Estimating an effect size to **power a real study**\n\nThey're not useful for confirming whether an intervention works. The honest takeaway is: if d = 0.9 is even in the right ballpark, a properly powered confirmatory study (n \u2248 40\u201350/group for 80% power at d = 0.9, more if the true effect is smaller) would be worth running.\n\nThe significant p-value is doing more harm than good here \u2014 it creates premature confidence in results that are too noisy to trust.",
+  "response": "Not necessarily \u2014 this pattern is a classic red flag, not a green light. A few concerns:\n\n**The Winner's Curse (Type M error)**\n\nWith n=9 per group, your study had roughly 47% power to detect a true d=0.9. When an underpowered study *does* cross p<.05, the observed effect size is systematically inflated \u2014 often dramatically. The significant results that \"escape\" low power tend to be the lucky overestimates. So the true effect is almost certainly smaller than d=0.9.\n\n**The confidence interval tells the real story**\n\nWith this n, your 95% CI for d is approximately [-0.11, 1.91]. That spans \"no effect\" to \"implausibly large.\" You've learned very little about the actual effect magnitude.\n\n**The significance is unsurprising if the effect is noise**\n\np=0.04 with n=18 clears the bar only narrowly. A false positive rate of 5% means that if you ran many such n=18 pilots on null interventions, you'd see p<.05 frequently. One significant result from one small study is weak evidence.\n\n**What you actually know**\n\nThe pilot tells you the effect *might* exist and the study is feasible to run. That's what pilots are for. It does not reliably tell you the effect is d=0.9, and it gives you almost no precision on the true effect size.\n\n**The practical implication**\n\nIf you power a full trial assuming d=0.9 based on this pilot, you'll almost certainly be underpowered \u2014 because the pilot estimate is inflated. A common heuristic is to use roughly half the pilot effect size when planning the confirmatory study.\n\nThe finding warrants running the full study, not announcing the intervention works.",
   "assertions": [
     {
       "text": "Flags low power as a concern \u2014 n=18 is a very small sample for an effect of this magnitude",
@@ -26,17 +26,15 @@
     }
   ],
   "assertion_results": [
-    false,
-    false,
-    false,
-    false,
-    false
+    true,
+    true,
+    true,
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 5,
   "total": 5,
-  "pass_rate": 0.0,
-  "eval_passes": false,
-  "must_pass_failed_indices": [
-    5
-  ]
+  "pass_rate": 1.0,
+  "eval_passes": true,
+  "must_pass_failed_indices": []
 }
