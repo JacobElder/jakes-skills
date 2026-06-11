@@ -1,4 +1,4 @@
-# agent-based-modeling
+# Agent-Based Modeling Skill
 
 A skill for AI assistants that encodes the full agent-based modeling (ABM)
 lifecycle: deciding whether ABM is the right tool, designing and documenting
@@ -37,7 +37,21 @@ evals/
   run_evals.py                    — eval harness (requires claude CLI)
 ```
 
-## Install
+## Installation
+
+```bash
+npx skills add https://github.com/JacobElder/jakes-skills/tree/main/agent-based-modeling
+```
+
+Or manually:
+
+```bash
+cp -r jakes-skills/agent-based-modeling ~/.claude/skills/agent-based-modeling
+```
+
+Once installed, the skill applies automatically whenever you ask about agent-based models, multi-agent simulations, ABM methodology, ODD protocol, Mesa/NetLogo/Agents.jl, sensitivity analysis, model calibration or validation, or emergent behavior.
+
+To run the bundled scripts, install Python dependencies first:
 
 ```bash
 pip install -r requirements.txt
@@ -99,15 +113,3 @@ actually is, not an undifferentiated capability dump.
 skill explicitly directs users to them rather than re-deriving these computations
 by hand each time.
 
-## License
-
-[MIT / Apache-2.0 / CC-BY-4.0 — confirm with Jake before publishing]
-
-## Citation
-
-If you use this skill in published work, please cite it as:
-
-```
-Elder, J. (2026). agent-based-modeling: A skill for AI-assisted ABM.
-GitHub. https://github.com/[REPO]
-```

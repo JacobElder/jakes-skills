@@ -1,0 +1,375 @@
+{
+  "skill_name": "cluster-analysis",
+  "results": [
+    {
+      "eval_id": 7,
+      "condition": "baseline",
+      "prompt": "I have 800 patients each described by 250 genomic expression features. I want to find patient subtypes. I was going to run HDBSCAN directly on the raw 250-dimensional data. Any concerns?",
+      "response": "Three real concerns:\n\n**1. Curse of dimensionality kills density estimates.** HDBSCAN infers clusters from local density differences. In 250 dimensions, pairwise Euclidean distances concentrate \u2014 nearly all point pairs become nearly equidistant \u2014 so the mutual reachability distances that HDBSCAN relies on lose their structure. You'll get noisy, unstable cluster assignments.\n\n**2. Your n/p ratio is ~3.** 800 samples in 250 dimensions is quite thin. Reliable density estimation typically needs the neighborhood around each point to contain enough neighbors, which becomes geometrically improbable as dimensions grow.\n\n**3. Correlated features inflate effective distance.** Genomic expression features are heavily correlated (co-expressed gene modules, batch effects). Redundant dimensions artificially stretch distances in those directions, distorting the density landscape.\n\n**Recommended fix:** Reduce first, then cluster. The standard pipeline:\n\n1. **Standardize** features (zero mean, unit variance per feature, or use log-normalization if counts-based).\n2. **PCA** \u2014 project to ~20\u201350 PCs. Use a scree plot; stop where variance explained levels off. This is lossless for the signal you care about and is what Seurat/Scanpy do for single-cell data.\n3. **(Optional) UMAP** on the PCA-reduced data if you want further nonlinear compression or visualization, though clustering directly on PCA components is often more stable.\n4. **HDBSCAN** on the 20\u201350 dimensional PCA representation.\n\nThe main tradeoff: PCA reduction assumes linear structure in the manifold. If your subtypes are separated by nonlinear combinations of features, step 3 (UMAP) earns its keep \u2014 but UMAP embeddings can distort global distances, so if interpretability of cluster distances matters, stick with PCA.",
+      "expectations": [
+        "Flags that density-based methods like HDBSCAN fail in high dimensions due to the curse of dimensionality",
+        "Explains that pairwise distances concentrate or become less discriminative in high dimensions (distances between near and far points converge), undermining density estimation",
+        "Recommends dimensionality reduction (PCA or UMAP) before applying any clustering algorithm",
+        "Notes that the choice of dimensionality reduction affects the clustering outcome"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 7,
+      "condition": "with_skill",
+      "prompt": "I have 800 patients each described by 250 genomic expression features. I want to find patient subtypes. I was going to run HDBSCAN directly on the raw 250-dimensional data. Any concerns?",
+      "response": "Two concrete concerns, in order of severity:\n\n**1. 250 dimensions will break HDBSCAN's density estimates.**\n\nThis is the curse of dimensionality in its most damaging form for density-based methods. With n=800 and d=250, pairwise distances concentrate \u2014 the ratio of max-to-min distance shrinks toward 1, so the \"dense region / sparse region\" contrast that HDBSCAN depends on collapses. In practice you'll see one of two failure modes: everything gets labeled noise, or everything gets lumped into one cluster. The skill's preprocessing guide calls this out explicitly: *reduce dimensions before density methods, mandatory.*\n\nFix: PCA down to ~20\u201350 components (retain 80\u201390% of variance) before passing to HDBSCAN. For genomic data, PCA on log-normalized expression is standard and interpretable. UMAP is an option but adds a caveat \u2014 it can manufacture visual clusters and distorts inter-cluster distances, so don't validate clusters using the same UMAP embedding that fed them.\n\n**2. Raw features probably aren't scaled.**\n\nHDBSCAN uses Euclidean distance by default. If your 250 features are on different scales (or even the same nominal scale but with very different variances), high-variance genes silently dominate the distance computation. At minimum: standardize or log-normalize first.\n\n**Recommended workflow:**\n\n1. Log-normalize expression (if not done) \u2192 z-score across genes\n2. PCA \u2192 keep enough components for ~80\u201390% variance (likely 20\u201350 for this data shape)\n3. Run HDBSCAN on the PCA embedding\n4. Validate stability (bootstrap ARI), check what fraction gets labeled noise\n\nIf you want a comparison method that degrades more gracefully in moderately high dimensions, a GMM on the same PCA reduction is worth running in parallel \u2014 it won't find non-convex subtypes but gives BIC for model selection and soft memberships.",
+      "expectations": [
+        "Flags that density-based methods like HDBSCAN fail in high dimensions due to the curse of dimensionality",
+        "Explains that pairwise distances concentrate or become less discriminative in high dimensions (distances between near and far points converge), undermining density estimation",
+        "Recommends dimensionality reduction (PCA or UMAP) before applying any clustering algorithm",
+        "Notes that the choice of dimensionality reduction affects the clustering outcome"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 8,
+      "condition": "baseline",
+      "prompt": "I ran k-means on my survey data and got silhouette = 0.61 at k=4. My manager wants to present these 4 segments to the board next week. I'm pretty confident the segments are real. Should I go ahead?",
+      "response": "A few things to check before presenting these as definitive segments:\n\n**The silhouette score alone isn't enough validation.** 0.61 is reasonable, but you need:\n- **Algorithm agreement** \u2014 do hierarchical clustering or GMM produce similar groupings? If k-means is the only method that gives you 4 clean clusters, that's a warning sign.\n- **Stability across seeds** \u2014 run k-means 20+ times with different random seeds and measure cluster assignment consistency (Adjusted Rand Index across runs). Unstable clusters shouldn't be presented as real.\n- **Competing k values** \u2014 what are silhouette scores at k=3 and k=5? If k=3 scores 0.59, the 4-cluster solution isn't clearly superior.\n\n**Survey data and k-means have a specific tension.** K-means uses Euclidean distance, which assumes continuous, interval-scaled data. Likert items are ordinal. Depending on your scale, you may want to consider k-medoids with Gower distance, or latent class analysis (LCA), which is purpose-built for clustering on categorical/ordinal survey responses.\n\n**The biggest red flag is \"my manager wants 4 segments.\"** Was k=4 chosen because the analysis supported it, or because it was the target? If the latter, you're in confirmation bias territory \u2014 and boards sometimes ask hard questions about methodology.\n\n**Concrete suggestion:** Before next week, run a stability check and at least one alternative algorithm. If they converge on similar 4-cluster solutions, you have a defensible story. If they don't, you need to say so \u2014 boards tend to remember when segments don't hold up in follow-on work.\n\nThe question isn't whether the silhouette is good; it's whether the structure is robust enough to stake business decisions on.",
+      "expectations": [
+        "Does not simply confirm the segments are real based on silhouette = 0.61",
+        "Recommends a null comparison \u2014 clustering shuffled or random data to establish a baseline silhouette",
+        "Explains that k-means always returns clusters, even on noise, so a positive silhouette alone is insufficient evidence",
+        "Recommends a stability check (bootstrap or resampling) before treating clusters as confirmed",
+        "Frames clustering output as hypothesis generation requiring validation, not discovery"
+      ],
+      "assertion_results": [
+        true,
+        false,
+        false,
+        true,
+        true
+      ],
+      "passed": 3,
+      "total": 5,
+      "pass_rate": 0.6,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 8,
+      "condition": "with_skill",
+      "prompt": "I ran k-means on my survey data and got silhouette = 0.61 at k=4. My manager wants to present these 4 segments to the board next week. I'm pretty confident the segments are real. Should I go ahead?",
+      "response": "Not yet \u2014 silhouette = 0.61 at k=4 is a *decent internal index score*, but it's not evidence the segments are real. Here's what you're missing:\n\n**The fundamental problem**\nK-means always returns clusters. Silhouette always has a peak somewhere. A high silhouette on noise data still looks like 0.61 at some k. The score tells you the 4-cluster partition is geometrically tidy \u2014 it doesn't tell you the structure exists.\n\n**The three things you need before a board presentation**\n\n1. **Stability.** Resample your data 50\u2013100 times (bootstrap or subsample) and recluster. If the same 4 segments reliably emerge (mean pairwise ARI \u2265 ~0.75), that's real signal. If the segments reshuffle, you're pattern-matching noise. This is the single most important check and takes 30 minutes of code.\n\n2. **A null comparison.** Does structureless data score just as well? Run k-means on permuted versions of your dataset (shuffle each column independently) and check their silhouette. If permuted data also peaks at 0.6x, your result is unremarkable.\n\n3. **Method-data fit.** Survey data is often ordinal or categorical, not continuous Euclidean \u2014 which is what k-means assumes. If your items are Likert scales or binary, LCA or LPA is more defensible and gives you model-selection statistics (BIC) and classification entropy. A board presentation on segments built with the wrong geometry is a liability.\n\n**What 0.61 actually buys you**\nIt's above the \"weak\" threshold (~0.5), which means the partition is reasonably coherent. It's useful as one piece of evidence, not the conclusion. Pair it with stability ARI and a Davies-Bouldin check (confirms from a different angle), and you have something defensible.\n\n**Practical recommendation**\nRun bootstrap stability this week. If ARI > 0.75 consistently, you're on solid ground and can present with confidence. If it's unstable, the right move is to tell your manager now \u2014 far better than a board question exposing it. \"Silhouette of 0.61\" alone will not survive a sharp question about whether the segments hold up.",
+      "expectations": [
+        "Does not simply confirm the segments are real based on silhouette = 0.61",
+        "Recommends a null comparison \u2014 clustering shuffled or random data to establish a baseline silhouette",
+        "Explains that k-means always returns clusters, even on noise, so a positive silhouette alone is insufficient evidence",
+        "Recommends a stability check (bootstrap or resampling) before treating clusters as confirmed",
+        "Frames clustering output as hypothesis generation requiring validation, not discovery"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 9,
+      "condition": "baseline",
+      "prompt": "HDBSCAN labeled 35% of my 10,000 data points as noise (label -1). That seems way too high. Something must be wrong with the method.",
+      "response": "35% noise isn't necessarily wrong \u2014 HDBSCAN is *designed* to label sparse or borderline points as noise rather than force them into clusters. This is a feature, not a bug. The real question is whether the noise rate reflects your data's actual structure or a parameter choice that's too aggressive.\n\nThe most likely culprits, in order:\n\n**`min_samples` is too high.** This parameter controls how dense a neighborhood must be for a point to be considered a \"core point.\" Higher values mean more points fall below the density threshold and get labeled noise. If you didn't set it explicitly, it defaults to `min_cluster_size`, which may be larger than appropriate.\n\n**`min_cluster_size` is too large.** If your clusters are genuinely small, a high `min_cluster_size` collapses them into noise entirely.\n\n**`cluster_selection_method='eom'` (the default) is aggressive.** The excess-of-mass method prunes more aggressively than `'leaf'`. Try switching to `cluster_selection_method='leaf'` \u2014 it tends to recover more clusters and fewer noise points, at the cost of smaller, more fragmented clusters.\n\nConcrete things to check:\n\n```python\nimport hdbscan\nimport numpy as np\n\n# What parameters did you use?\nclusterer = hdbscan.HDBSCAN(min_cluster_size=5, min_samples=1)  # min_samples=1 is least aggressive\nlabels = clusterer.fit_predict(X)\nprint(f\"Noise: {(labels == -1).mean():.1%}\")\n\n# Inspect the condensed tree \u2014 are there many small clusters being pruned?\nclusterer.condensed_tree_.plot(select_clusters=True)\n\n# Check soft clustering \u2014 are \"noise\" points actually borderline?\nsoft_clusters = hdbscan.all_points_membership_vectors(clusterer)\nmax_membership = soft_clusters.max(axis=1)\nprint(f\"Avg max membership of noise points: {max_membership[labels == -1].mean():.3f}\")\n```\n\nIf the noise points have high soft-cluster membership scores (close to 1.0), they're borderline cluster members that got pruned \u2014 lower `min_samples`. If their membership is genuinely low (near 0), your data may actually have 35% sparse outliers.\n\nWhat values did you use for `min_cluster_size` and `min_samples`?",
+      "expectations": [
+        "Explains that a high noise fraction is informative and may reflect the true structure of the data, not a flaw",
+        "Recommends reducing min_cluster_size and/or min_samples to allow smaller clusters to form",
+        "Warns against artificially forcing noise points into clusters just to reduce the -1 count",
+        "Suggests inspecting the noise points to understand whether they represent genuine outliers or a diffuse population"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "passed": 3,
+      "total": 4,
+      "pass_rate": 0.75,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 9,
+      "condition": "with_skill",
+      "prompt": "HDBSCAN labeled 35% of my 10,000 data points as noise (label -1). That seems way too high. Something must be wrong with the method.",
+      "response": "35% noise isn't necessarily wrong \u2014 it's a signal worth diagnosing, not evidence the method failed. HDBSCAN is doing exactly what it's designed to do: refusing to force sparse points into clusters. Whether that's a bug or an honest answer depends on why it's happening.\n\n**Diagnose before tuning**\n\nThe three most common causes, in order of likelihood:\n\n**1. `min_samples` is too high.** This is the most common cause. `min_samples` (defaults to `min_cluster_size`) controls how conservative the density threshold is \u2014 higher means more points fall below it and get labeled noise. Try halving it:\n\n```python\n# If you used defaults:\nhdb = HDBSCAN(min_cluster_size=50)  # min_samples defaults to 50\n\n# Try:\nhdb = HDBSCAN(min_cluster_size=50, min_samples=5)\n```\n\n**2. Unscaled or high-dimensional features.** HDBSCAN is density-based \u2014 if features aren't scaled, one high-variance feature dominates all distances and genuine density structure disappears. If dimensionality is high (d > ~20), distances concentrate and density becomes meaningless. Verify:\n- Features are standardized before fitting\n- If d is large, run PCA first and cluster on components retaining ~90% variance\n\n**3. `min_cluster_size` is set relative to your full n but your clusters are small.** With 10k points, the default `min_cluster_size=5` is tiny, but if you set it higher (e.g., 500), small-but-real clusters get dissolved into noise.\n\n**The honest possibility**\n\nIf you lower `min_samples` substantially and noise stays above ~20%, the data may genuinely be sparse \u2014 a diffuse blob with a few dense cores. That's a real result, not a method failure. Check it: plot the HDBSCAN outlier scores (`hdb.outlier_scores_`) \u2014 if they form a continuous distribution rather than a bimodal one, you don't have clean cluster/noise separation and k-means or GMM might be more appropriate for your data's geometry.\n\n**Quick diagnostic sequence**\n\n```python\nimport numpy as np\n\n# Check outlier score distribution\nprint(np.percentile(hdb.outlier_scores_, [25, 50, 75, 90, 95, 99]))\n\n# Check membership probabilities for non-noise points\nnon_noise = hdb.labels_ != -1\nprint(f\"Mean membership prob (non-noise): {hdb.probabilities_[non_noise].mean():.3f}\")\n\n# Try a sweep\nfor ms in [1, 3, 5, 10, 20]:\n    h = HDBSCAN(min_cluster_size=50, min_samples=ms).fit(X_scaled)\n    noise_pct = (h.labels_ == -1).mean()\n    print(f\"min_samples={ms}: {noise_pct:.1%} noise, {h.labels_.max()+1} clusters\")\n```\n\nWhat does your current `min_cluster_size` / `min_samples` setup look like, and have you scaled the features?",
+      "expectations": [
+        "Explains that a high noise fraction is informative and may reflect the true structure of the data, not a flaw",
+        "Recommends reducing min_cluster_size and/or min_samples to allow smaller clusters to form",
+        "Warns against artificially forcing noise points into clusters just to reduce the -1 count",
+        "Suggests inspecting the noise points to understand whether they represent genuine outliers or a diffuse population"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 10,
+      "condition": "baseline",
+      "prompt": "I'm running LPA in mclust. BIC says 4 classes is best. But the entropy-based classification accuracy (AveCAPP) is only 0.66, which feels low. Do I just go with 4 classes because BIC says so?",
+      "response": "No \u2014 BIC and AveCAPP measure different things, and a conflict between them is a real signal worth investigating rather than ignoring.\n\n**What each index tells you**\n\n- **BIC** rewards log-likelihood penalized for complexity. It finds the solution that best fits the covariance structure, but it will happily pick a solution where profiles bleed into each other.\n- **AveCAPP** (average posterior class-assignment probability) measures *separation*. 0.66 means the average person is assigned to their modal class with only 66% confidence \u2014 substantial overlap. A common benchmark is \u2265 0.70 per class, with \u2265 0.80 being clean separation.\n\n**Diagnosis before deciding**\n\n1. Pull class-specific CAPPs, not just the average. `mclust` gives you posterior probabilities \u2014 compute mean posterior for each class separately. A global 0.66 might be dragged down by one poorly-separated class (often the \"middle\" profile that's splitting a continuous distribution).\n\n2. Check the BIC curve shape. If the improvement from 3\u21924 classes is a small marginal gain relative to the 2\u21923 or 3\u21924 jump, the extra class may be a statistical artifact. Plot it with `plot(BIC_object)`.\n\n3. Look at profile means for the 3-class solution. If two of your four profiles look nearly identical except in scale (both \"moderate\" but slightly offset), that's the 4-class solution over-extracting.\n\n4. Compute entropy for all candidate solutions \u2014 `mclust` doesn't give this directly but it's easy to derive from the posterior matrix:\n\n```r\nentropy <- function(z) {\n  -sum(z * log(z + 1e-10)) / (nrow(z) * log(ncol(z)))\n}\n# z is model$z from an Mclust object\n1 - entropy(fit4$z)   # relative entropy, want > 0.60\n```\n\n**Decision framework**\n\n| Situation | Recommendation |\n|---|---|\n| 3-class AveCAPP \u2265 0.80, BIC drop is small | Favor 3 classes |\n| 4-class separation low in one class only | Report 4-class but flag that class as poorly-resolved |\n| 4-class profiles are all theoretically distinct and BIC gain is large | Keep 4, acknowledge entropy limitation |\n| AveCAPP low across all classes | The latent structure may be continuous \u2014 consider factor analytic or dimensional alternatives |\n\n**Practical takeaway**: with AveCAPP of 0.66, I'd run the 3-class solution seriously before committing to 4. If 3 classes gives AveCAPP \u2265 0.75\u20130.80 and the BIC difference is modest (say < 10 points), the 3-class solution is probably the better scientific choice even though BIC technically prefers 4. Report both, show the profile plots, and let the interpretability argument do the work.",
+      "expectations": [
+        "Does not simply defer to BIC; treats AveCAPP / entropy as a substantively important criterion",
+        "Explains that low entropy/AveCAPP (0.66) means substantial classification uncertainty and undermines profile interpretation",
+        "Recommends inspecting adjacent solutions (3 and 5 classes) rather than taking the BIC winner outright",
+        "Mentions ICL or notes that entropy and BIC can point in different directions and both carry meaning",
+        "Connects class interpretability and size to the decision, not just statistical fit"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
+        true,
+        false
+      ],
+      "passed": 3,
+      "total": 5,
+      "pass_rate": 0.6,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 10,
+      "condition": "with_skill",
+      "prompt": "I'm running LPA in mclust. BIC says 4 classes is best. But the entropy-based classification accuracy (AveCAPP) is only 0.66, which feels low. Do I just go with 4 classes because BIC says so?",
+      "response": "No \u2014 BIC alone isn't sufficient justification, and 0.66 AveCAPP is a meaningful red flag worth taking seriously.\n\n## What 0.66 AveCAPP actually means\n\nAveCAPP = average posterior probability of the most-likely-class assignment. At 0.66, the average person is being pushed into their best-fitting class with only 66% confidence. The classes exist in the model, but individuals straddle them substantially. A useful rule of thumb: AveCAPP > 0.80 is typically considered adequate classification certainty; below 0.70 is hard to defend in most applied contexts.\n\n## What to do before committing to 4 classes\n\n**1. Check ICL alongside BIC.** ICL = BIC + entropy penalty \u2014 it explicitly rewards well-separated classes. If ICL prefers k=3, that's a strong signal that 4 classes fit the density better but aren't practically distinguishable. In mclust:\n\n```r\nsummary(fit)$BIC   # already have this\n# ICL is reported in the mclust summary output or:\nmclustICL(yourdata)\n```\n\n**2. Look at the full AveCAPP matrix**, not just the diagonal average. `classError` and the confusion matrix from `mclust` will show you *which* classes are bleeding into each other. Two of your four classes may be nearly indistinguishable \u2014 that's a 4\u21923 split candidate.\n\n**3. Check class sizes.** A class with <5% of the sample is often noise or an artifact, not a theoretically meaningful profile. mclust will report mixing proportions.\n\n**4. Fit k=3 and compare.** Even if BIC(4) < BIC(3), ask: does k=3 give you AveCAPP > 0.80, interpretable profiles, and only a modest BIC penalty? If yes, k=3 is often the more defensible and communicable solution.\n\n## The decision rule\n\n| Situation | Call |\n|---|---|\n| BIC(4) clearly lower, AveCAPP \u2265 0.80, classes interpretable | 4 classes |\n| BIC(4) modestly lower, AveCAPP < 0.70, ICL prefers 3 | Strong case for 3 |\n| BIC(4) lower but one class is tiny (<5%) | Investigate \u2014 likely artifact |\n| Profiles for 4 classes don't map to distinct theory | Go with interpretable solution and say why |\n\nThe LPA literature (and this is standard Nylund et al. / Masyn guidance) is explicit: BIC narrows the field, but **entropy + interpretability + parsimony pick the solution**. Choosing k=3 when k=4 has marginally better BIC, with a clear rationale, is not a weakness \u2014 it's honest reporting.",
+      "expectations": [
+        "Does not simply defer to BIC; treats AveCAPP / entropy as a substantively important criterion",
+        "Explains that low entropy/AveCAPP (0.66) means substantial classification uncertainty and undermines profile interpretation",
+        "Recommends inspecting adjacent solutions (3 and 5 classes) rather than taking the BIC winner outright",
+        "Mentions ICL or notes that entropy and BIC can point in different directions and both carry meaning",
+        "Connects class interpretability and size to the decision, not just statistical fit"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 5,
+      "pass_rate": 0.8,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 11,
+      "condition": "baseline",
+      "prompt": "I have 500 data points that clearly form two crescent/half-moon shapes when I plot them. k-means with k=2 cuts right through the middle instead of following the shapes. What clustering method handles this?",
+      "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+      "expectations": [
+        "Recommends spectral clustering and/or HDBSCAN as appropriate for non-convex crescent shapes",
+        "Explains that k-means assumes spherical/convex clusters and uses Euclidean centroid distance, causing it to fail on this geometry",
+        "Connects the failure to the shape assumption mismatch rather than treating it as a parameter-tuning problem",
+        "Notes that spectral clustering uses graph/connectivity structure (or similarly that HDBSCAN uses density connectivity) to handle non-convex shapes"
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 4,
+      "pass_rate": 0.0,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 11,
+      "condition": "with_skill",
+      "prompt": "I have 500 data points that clearly form two crescent/half-moon shapes when I plot them. k-means with k=2 cuts right through the middle instead of following the shapes. What clustering method handles this?",
+      "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+      "expectations": [
+        "Recommends spectral clustering and/or HDBSCAN as appropriate for non-convex crescent shapes",
+        "Explains that k-means assumes spherical/convex clusters and uses Euclidean centroid distance, causing it to fail on this geometry",
+        "Connects the failure to the shape assumption mismatch rather than treating it as a parameter-tuning problem",
+        "Notes that spectral clustering uses graph/connectivity structure (or similarly that HDBSCAN uses density connectivity) to handle non-convex shapes"
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 4,
+      "pass_rate": 0.0,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 12,
+      "condition": "baseline",
+      "prompt": "Write me Python code to cluster a customer dataset with mixed-type features: age and total_spend (numeric), and subscription_tier (low/medium/high) and acquisition_channel (organic/paid/referral) (categorical). I want cluster labels I can attach back to the original dataframe.",
+      "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+      "expectations": [
+        "Does not use one-hot encoding + k-means as the primary approach for mixed-type data",
+        "Uses a proper mixed-data method: Gower + KMedoids, or k-prototypes (kmodes library)",
+        "Scales/standardizes the numeric features (age, total_spend) as part of the pipeline",
+        "Produces code that extracts cluster labels and attaches them back to the original dataframe"
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 4,
+      "pass_rate": 0.0,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 12,
+      "condition": "with_skill",
+      "prompt": "Write me Python code to cluster a customer dataset with mixed-type features: age and total_spend (numeric), and subscription_tier (low/medium/high) and acquisition_channel (organic/paid/referral) (categorical). I want cluster labels I can attach back to the original dataframe.",
+      "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+      "expectations": [
+        "Does not use one-hot encoding + k-means as the primary approach for mixed-type data",
+        "Uses a proper mixed-data method: Gower + KMedoids, or k-prototypes (kmodes library)",
+        "Scales/standardizes the numeric features (age, total_spend) as part of the pipeline",
+        "Produces code that extracts cluster labels and attaches them back to the original dataframe"
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 4,
+      "pass_rate": 0.0,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 13,
+      "condition": "baseline",
+      "prompt": "You said I should scale my features before clustering. But I don't want to \u2014 the raw values are meaningful to me and I want revenue (in dollars) to have more influence on the clusters than a 1-5 satisfaction score. Is scaling actually required?",
+      "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+      "expectations": [
+        "Does not simply capitulate and say 'yes, scaling is optional, raw values are fine'",
+        "Reframes the issue: raw magnitude dominance is implicit and arbitrary, not a principled weighting decision",
+        "Recommends explicit feature weighting if the user wants revenue to dominate, rather than relying on scale differences",
+        "Conveys that scaling is a modeling choice \u2014 the question is whether the implicit weighting matches the user's actual intent"
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 4,
+      "pass_rate": 0.0,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 13,
+      "condition": "with_skill",
+      "prompt": "You said I should scale my features before clustering. But I don't want to \u2014 the raw values are meaningful to me and I want revenue (in dollars) to have more influence on the clusters than a 1-5 satisfaction score. Is scaling actually required?",
+      "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+      "expectations": [
+        "Does not simply capitulate and say 'yes, scaling is optional, raw values are fine'",
+        "Reframes the issue: raw magnitude dominance is implicit and arbitrary, not a principled weighting decision",
+        "Recommends explicit feature weighting if the user wants revenue to dominate, rather than relying on scale differences",
+        "Conveys that scaling is a modeling choice \u2014 the question is whether the implicit weighting matches the user's actual intent"
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 4,
+      "pass_rate": 0.0,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 14,
+      "condition": "baseline",
+      "prompt": "I ran k-means five times on the same data and got completely different cluster assignments each time. The clusters look reasonable in each run but they disagree. Which result should I use?",
+      "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+      "expectations": [
+        "Explains that k-means is sensitive to random initialization and converges to local optima",
+        "Recommends using k-means++ initialization to reduce variance across runs",
+        "Recommends running n_init=10 or more and selecting the best run by inertia",
+        "Treats high variability across runs as a signal about cluster instability or wrong k, not just a parameter-tuning nuisance"
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 4,
+      "pass_rate": 0.0,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 14,
+      "condition": "with_skill",
+      "prompt": "I ran k-means five times on the same data and got completely different cluster assignments each time. The clusters look reasonable in each run but they disagree. Which result should I use?",
+      "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+      "expectations": [
+        "Explains that k-means is sensitive to random initialization and converges to local optima",
+        "Recommends using k-means++ initialization to reduce variance across runs",
+        "Recommends running n_init=10 or more and selecting the best run by inertia",
+        "Treats high variability across runs as a signal about cluster instability or wrong k, not just a parameter-tuning nuisance"
+      ],
+      "assertion_results": [
+        false,
+        false,
+        false,
+        false
+      ],
+      "passed": 0,
+      "total": 4,
+      "pass_rate": 0.0,
+      "eval_passes": false
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "passed": 13,
+      "total": 34
+    },
+    "with_skill": {
+      "passed": 17,
+      "total": 34
+    }
+  }
+}

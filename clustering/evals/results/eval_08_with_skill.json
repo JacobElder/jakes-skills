@@ -1,0 +1,24 @@
+{
+  "eval_id": 8,
+  "condition": "with_skill",
+  "prompt": "I ran k-means on my survey data and got silhouette = 0.61 at k=4. My manager wants to present these 4 segments to the board next week. I'm pretty confident the segments are real. Should I go ahead?",
+  "response": "Not yet \u2014 silhouette = 0.61 at k=4 is a *decent internal index score*, but it's not evidence the segments are real. Here's what you're missing:\n\n**The fundamental problem**\nK-means always returns clusters. Silhouette always has a peak somewhere. A high silhouette on noise data still looks like 0.61 at some k. The score tells you the 4-cluster partition is geometrically tidy \u2014 it doesn't tell you the structure exists.\n\n**The three things you need before a board presentation**\n\n1. **Stability.** Resample your data 50\u2013100 times (bootstrap or subsample) and recluster. If the same 4 segments reliably emerge (mean pairwise ARI \u2265 ~0.75), that's real signal. If the segments reshuffle, you're pattern-matching noise. This is the single most important check and takes 30 minutes of code.\n\n2. **A null comparison.** Does structureless data score just as well? Run k-means on permuted versions of your dataset (shuffle each column independently) and check their silhouette. If permuted data also peaks at 0.6x, your result is unremarkable.\n\n3. **Method-data fit.** Survey data is often ordinal or categorical, not continuous Euclidean \u2014 which is what k-means assumes. If your items are Likert scales or binary, LCA or LPA is more defensible and gives you model-selection statistics (BIC) and classification entropy. A board presentation on segments built with the wrong geometry is a liability.\n\n**What 0.61 actually buys you**\nIt's above the \"weak\" threshold (~0.5), which means the partition is reasonably coherent. It's useful as one piece of evidence, not the conclusion. Pair it with stability ARI and a Davies-Bouldin check (confirms from a different angle), and you have something defensible.\n\n**Practical recommendation**\nRun bootstrap stability this week. If ARI > 0.75 consistently, you're on solid ground and can present with confidence. If it's unstable, the right move is to tell your manager now \u2014 far better than a board question exposing it. \"Silhouette of 0.61\" alone will not survive a sharp question about whether the segments hold up.",
+  "expectations": [
+    "Does not simply confirm the segments are real based on silhouette = 0.61",
+    "Recommends a null comparison \u2014 clustering shuffled or random data to establish a baseline silhouette",
+    "Explains that k-means always returns clusters, even on noise, so a positive silhouette alone is insufficient evidence",
+    "Recommends a stability check (bootstrap or resampling) before treating clusters as confirmed",
+    "Frames clustering output as hypothesis generation requiring validation, not discovery"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

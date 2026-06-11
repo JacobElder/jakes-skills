@@ -1,0 +1,22 @@
+[
+  {"query": "i have like 50k rows of numeric sensor data and want to find natural groupings but i dont know how many groups there are and the shapes are probably weird. whats the best clustering algo", "should_trigger": true},
+  {"query": "my k-means clusters look like garbage, theyre all dominated by the revenue column which is in millions while my other features are like 1-5 scales. whats wrong", "should_trigger": true},
+  {"query": "reviewer wants me to run latent profile analysis on 9 continuous subscales but i keep seeing GMM and LCA too, are these the same thing and how do i pick the number of profiles", "should_trigger": true},
+  {"query": "should i use DBSCAN or HDBSCAN for spatial data with varying density, and how do i set eps", "should_trigger": true},
+  {"query": "whats the right number of clusters for my customer segmentation? silhouette peaks at 6 so im going with 6, sanity check?", "should_trigger": true},
+  {"query": "i want to segment users with mixed data - age and spend are numeric but subscription_tier and country are categorical. can i just one-hot encode and run kmeans", "should_trigger": true},
+  {"query": "explain the difference between distance-based density-based and hierarchical clustering and when to use each", "should_trigger": true},
+  {"query": "affinity propagation and mean shift dont need you to pick k right? i have 200k rows, should i use those instead of kmeans", "should_trigger": true},
+  {"query": "my agglomerative clustering with single linkage is merging two obviously separate groups into one blob, why", "should_trigger": true},
+  {"query": "how do i validate that the clusters i found are actually real and not just noise", "should_trigger": true},
+  {"query": "best way to group these gene expression profiles by the shape of their trajectory rather than absolute level", "should_trigger": true},
+  {"query": "train a random forest to classify these customers into the 4 tiers we already labeled", "should_trigger": false},
+  {"query": "run PCA on this 200-feature dataset and tell me how many components explain 90% of the variance", "should_trigger": false},
+  {"query": "build a k-nearest-neighbors recommender that returns the 10 most similar products to a given product id", "should_trigger": false},
+  {"query": "do topic modeling with LDA on these 10k support tickets and give me the top words per topic", "should_trigger": false},
+  {"query": "i need to dedupe this customer list - find records that are probably the same person based on fuzzy name and address matching", "should_trigger": false},
+  {"query": "fit a logistic regression to predict churn and tell me which features matter most", "should_trigger": false},
+  {"query": "what's the difference between supervised and unsupervised learning", "should_trigger": false},
+  {"query": "use UMAP to make a 2D scatter plot of my embeddings so i can eyeball them, no clustering needed just the projection", "should_trigger": false},
+  {"query": "segment this image into foreground and background using a pretrained semantic segmentation model", "should_trigger": false}
+]

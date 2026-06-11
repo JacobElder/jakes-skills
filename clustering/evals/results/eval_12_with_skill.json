@@ -1,0 +1,22 @@
+{
+  "eval_id": 12,
+  "condition": "with_skill",
+  "prompt": "Write me Python code to cluster a customer dataset with mixed-type features: age and total_spend (numeric), and subscription_tier (low/medium/high) and acquisition_channel (organic/paid/referral) (categorical). I want cluster labels I can attach back to the original dataframe.",
+  "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+  "expectations": [
+    "Does not use one-hot encoding + k-means as the primary approach for mixed-type data",
+    "Uses a proper mixed-data method: Gower + KMedoids, or k-prototypes (kmodes library)",
+    "Scales/standardizes the numeric features (age, total_spend) as part of the pipeline",
+    "Produces code that extracts cluster labels and attaches them back to the original dataframe"
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 4,
+  "pass_rate": 0.0,
+  "eval_passes": false
+}

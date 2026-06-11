@@ -4,20 +4,14 @@ A skill that applies Pearl's framework for causal reasoning — the Ladder of Ca
 
 ## Installation
 
-Copy the skill into your skills directory:
-
 ```bash
-# Clone the repo (or pull if you already have it)
-git clone https://github.com/JacobElder/jakes-skills.git
-
-# Install the skill
-cp -r jakes-skills/causal-inference ~/.claude/skills/causal-inference
+npx skills add https://github.com/JacobElder/jakes-skills/tree/main/causal-inference
 ```
 
-To keep it up to date automatically, symlink instead of copy:
+Or manually:
 
 ```bash
-ln -s "$(pwd)/jakes-skills/causal-inference" ~/.claude/skills/causal-inference
+cp -r jakes-skills/causal-inference ~/.claude/skills/causal-inference
 ```
 
 Once installed, the skill will apply automatically whenever you ask about causal questions, experiment validity, or whether a data analysis supports a cause-and-effect conclusion.

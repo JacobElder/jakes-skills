@@ -1,7 +1,0 @@
-__pycache__/
-*.pyc
-*.pyo
-*.skill
-*.png
-evals/results/
-.DS_Store

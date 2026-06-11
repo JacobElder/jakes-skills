@@ -1,0 +1,22 @@
+{
+  "eval_id": 7,
+  "condition": "with_skill",
+  "prompt": "I have 800 patients each described by 250 genomic expression features. I want to find patient subtypes. I was going to run HDBSCAN directly on the raw 250-dimensional data. Any concerns?",
+  "response": "Two concrete concerns, in order of severity:\n\n**1. 250 dimensions will break HDBSCAN's density estimates.**\n\nThis is the curse of dimensionality in its most damaging form for density-based methods. With n=800 and d=250, pairwise distances concentrate \u2014 the ratio of max-to-min distance shrinks toward 1, so the \"dense region / sparse region\" contrast that HDBSCAN depends on collapses. In practice you'll see one of two failure modes: everything gets labeled noise, or everything gets lumped into one cluster. The skill's preprocessing guide calls this out explicitly: *reduce dimensions before density methods, mandatory.*\n\nFix: PCA down to ~20\u201350 components (retain 80\u201390% of variance) before passing to HDBSCAN. For genomic data, PCA on log-normalized expression is standard and interpretable. UMAP is an option but adds a caveat \u2014 it can manufacture visual clusters and distorts inter-cluster distances, so don't validate clusters using the same UMAP embedding that fed them.\n\n**2. Raw features probably aren't scaled.**\n\nHDBSCAN uses Euclidean distance by default. If your 250 features are on different scales (or even the same nominal scale but with very different variances), high-variance genes silently dominate the distance computation. At minimum: standardize or log-normalize first.\n\n**Recommended workflow:**\n\n1. Log-normalize expression (if not done) \u2192 z-score across genes\n2. PCA \u2192 keep enough components for ~80\u201390% variance (likely 20\u201350 for this data shape)\n3. Run HDBSCAN on the PCA embedding\n4. Validate stability (bootstrap ARI), check what fraction gets labeled noise\n\nIf you want a comparison method that degrades more gracefully in moderately high dimensions, a GMM on the same PCA reduction is worth running in parallel \u2014 it won't find non-convex subtypes but gives BIC for model selection and soft memberships.",
+  "expectations": [
+    "Flags that density-based methods like HDBSCAN fail in high dimensions due to the curse of dimensionality",
+    "Explains that pairwise distances concentrate or become less discriminative in high dimensions (distances between near and far points converge), undermining density estimation",
+    "Recommends dimensionality reduction (PCA or UMAP) before applying any clustering algorithm",
+    "Notes that the choice of dimensionality reduction affects the clustering outcome"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

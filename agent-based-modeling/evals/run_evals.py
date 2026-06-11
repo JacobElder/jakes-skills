@@ -74,7 +74,7 @@ GRADER_SYSTEM = (
 
 def grade_assertions(response: str, assertions: list[str]) -> list[bool]:
     numbered = "\n".join(f"{i+1}. {a}" for i, a in enumerate(assertions))
-    resp = response[:8000] + ("…" if len(response) > 8000 else "")
+    resp = response[:20000] + ("…" if len(response) > 20000 else "")
     prompt = f"Response:\n{resp}\n\nAssertions:\n{numbered}"
     raw = call_claude(prompt, system_extra=GRADER_SYSTEM,
                       model=GRADER_MODEL, timeout=120)

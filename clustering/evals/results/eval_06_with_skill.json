@@ -1,0 +1,22 @@
+{
+  "eval_id": 6,
+  "condition": "with_skill",
+  "prompt": "I read that Affinity Propagation and Mean Shift are great because you don't have to choose the number of clusters. I have ~200k rows. Should I use one of them instead of k-means so I don't have to pick k?",
+  "response": "No \u2014 at 200k rows, both are completely off the table, and they don't actually solve the problem you think they solve.\n\n**The O(n\u00b2) wall**\n\nAffinity Propagation materializes a full n\u00d7n similarity matrix. At 200k rows, that's 40 billion entries \u2014 you'll exhaust RAM long before the algorithm runs. Mean Shift is also ~O(n\u00b2) per iteration. Neither is feasible above a few thousand points.\n\n**\"No k\" is a half-truth**\n\nBoth methods still require a parameter that implicitly controls the cluster count:\n- AP: `preference` \u2014 lower values \u2192 fewer clusters, higher \u2192 more. You're still choosing something.\n- Mean Shift: `bandwidth` \u2014 this is just k in disguise; the bandwidth determines how many modes you find.\n\nYou trade choosing k directly for tuning a different knob that's arguably *less* interpretable, while getting O(n\u00b2) as the tax.\n\n**What to actually do at 200k rows**\n\nIf you want the data to suggest the cluster count rather than you hardcoding it:\n\n- **HDBSCAN** \u2014 the best general-purpose option. Set `min_cluster_size` (the smallest cluster you'd consider meaningful \u2014 intuitive to choose) and let it find the rest. Handles noise, arbitrary shapes, and variable density. With `hdbscan` or sklearn \u22651.3. Slower than k-means but tractable at 200k.\n- **GMM with BIC** \u2014 fit k=2\u202610 and pick the BIC minimum. Systematic and principled. Scales to 200k with diagonal or spherical covariance.\n- **MiniBatch k-means + silhouette sweep** \u2014 if you want pure speed and blobby clusters are fine. Sweep k and let silhouette + gap narrow it down. At 200k, this is very fast.\n\nThe skill has a diagnostic script that automates the sweep: `python scripts/cluster_diagnostics.py data.csv --max-k 10 --methods kmeans,gmm,hdbscan`. The \"no k needed\" tutorials are pattern-matching on a cute property and ignoring the complexity cost entirely.",
+  "expectations": [
+    "States that Affinity Propagation and Mean Shift are O(n^2) / do not scale and are unsuitable for ~200k rows",
+    "Explains that these methods are not truly free of choosing cluster count \u2014 preference/bandwidth implicitly set it",
+    "Redirects to a scalable alternative (HDBSCAN for the no-preset-k goal, or MiniBatch k-means)",
+    "Conveys that no clustering method is genuinely parameter-free"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

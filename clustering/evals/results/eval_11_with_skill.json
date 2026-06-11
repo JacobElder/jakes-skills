@@ -1,0 +1,22 @@
+{
+  "eval_id": 11,
+  "condition": "with_skill",
+  "prompt": "I have 500 data points that clearly form two crescent/half-moon shapes when I plot them. k-means with k=2 cuts right through the middle instead of following the shapes. What clustering method handles this?",
+  "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+  "expectations": [
+    "Recommends spectral clustering and/or HDBSCAN as appropriate for non-convex crescent shapes",
+    "Explains that k-means assumes spherical/convex clusters and uses Euclidean centroid distance, causing it to fail on this geometry",
+    "Connects the failure to the shape assumption mismatch rather than treating it as a parameter-tuning problem",
+    "Notes that spectral clustering uses graph/connectivity structure (or similarly that HDBSCAN uses density connectivity) to handle non-convex shapes"
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 4,
+  "pass_rate": 0.0,
+  "eval_passes": false
+}

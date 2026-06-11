@@ -1,0 +1,22 @@
+{
+  "eval_id": 5,
+  "condition": "with_skill",
+  "prompt": "I want to segment users for a marketing campaign. My data has both numeric fields (age, total_spend, sessions_per_week) and categorical fields (subscription_tier, acquisition_channel, country). I was going to one-hot encode the categoricals and run k-means on everything. Will that work?",
+  "response": "It will *run*, but the geometry will be misleading in two ways that tend to quietly wreck the results.\n\n**Problem 1: Unscaled numerics will dominate.**\n`total_spend` likely spans thousands; `sessions_per_week` spans single digits. Without standardizing, k-means is essentially clustering on spend and ignoring everything else.\n\n**Problem 2: One-hot encoding imposes wrong geometry on categoricals.**\nOne-hot makes all categories equidistant from each other (every pair of countries has the same distance: \u221a2). It also inflates dimensionality proportional to cardinality \u2014 if `country` has 30 values, it suddenly contributes 30 dimensions, silently dominating the distance calculation and drowning out the numeric features.\n\n---\n\n**Better options for mixed continuous + categorical data:**\n\n| Approach | When to use |\n|---|---|\n| **Gower distance + k-medoids (PAM)** | Best general-purpose choice. Gower computes per-feature normalized distance, averaged across types \u2014 it handles mixed data honestly. k-medoids accepts any distance matrix. |\n| **k-prototypes** | k-means/k-modes hybrid; faster than PAM on large data, but requires tuning a `gamma` weight that balances numeric vs. categorical distance \u2014 it's a real modeling decision, not a detail. |\n| **GMM after encoding** | Only if you constrain covariance and reduce dimensions first; still not ideal for mixed types. |\n\n**Recommended path for your case:**\n\n```python\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn_extra.cluster import KMedoids\nimport gower\n\n# 1. Compute Gower distance (handles mixed types natively)\ndist_matrix = gower.gower_matrix(df)  # pip install gower\n\n# 2. k-medoids on the distance matrix\nkm = KMedoids(n_clusters=4, metric='precomputed', init='k-medoids++')\nlabels = km.fit_predict(dist_matrix)\n```\n\nGower handles the scaling of numerics internally (normalizes each to [0,1] range before computing distances), so you don't separately standardize \u2014 but verify the numeric ranges aren't dominated by outliers, since Gower uses min-max normalization which is outlier-sensitive.\n\nOne practical note: if `country` has high cardinality and isn't meaningfully differentiating your segments, consider grouping it (e.g., region) or dropping it before clustering \u2014 irrelevant high-cardinality categoricals add noise to every pairwise distance.",
+  "expectations": [
+    "Flags that one-hot encoding categoricals + Euclidean k-means is a poor approach for mixed-type data",
+    "Recommends a mixed-data method: Gower distance with k-medoids/PAM, and/or k-prototypes",
+    "Notes the problem with high-cardinality categoricals (e.g., country) dominating or exploding the distance/dimensionality",
+    "Mentions scaling the numeric features as part of the pipeline"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

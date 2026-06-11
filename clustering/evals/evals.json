@@ -1,0 +1,217 @@
+{
+  "skill_name": "cluster-analysis",
+  "description": "Task evals for the cluster-analysis skill. Each prompt is a realistic clustering decision a practitioner would actually bring. Expectations check for the skill's opinionated, assumption-first reasoning — not just naming an algorithm. A baseline model without the skill tends to name a popular algorithm and hand over boilerplate code; a model with the skill should interrogate assumptions, preprocessing, and validation, and give a defensible recommendation with its catch.",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I've got about 50k points of sensor readings (8 numeric features) and I want to find natural groupings. I don't know how many groups there are, the groups are probably weird shapes, some regions are way denser than others, and there's definitely junk/outlier readings I'd rather not force into a group. I was going to use k-means with the elbow method. Good plan?",
+      "expected_output": "Pushes back on k-means + elbow for this data and recommends HDBSCAN (density-based, no preset k, variable density, labels noise), with the reasoning tied to the stated data characteristics. Explains why k-means is wrong here (spherical/convex assumption, forces every point into a cluster, needs k) and why plain DBSCAN is worse than HDBSCAN (single global eps can't handle variable density). Mentions scaling the 8 features first and that the elbow method is weak.",
+      "files": [],
+      "expectations": [
+        "Recommends HDBSCAN as the primary choice",
+        "Explains k-means assumes spherical/convex clusters and forces all points into clusters, which mismatches the stated data",
+        "Notes that varying density specifically breaks plain DBSCAN's single global eps, motivating HDBSCAN over DBSCAN",
+        "Mentions that the data should be scaled/standardized before clustering",
+        "Characterizes the elbow method as weak or advisory rather than endorsing it",
+        "Notes HDBSCAN labels noise/outliers rather than forcing them into clusters"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "What's the right number of clusters for my customer dataset? I ran k-means and the silhouette score is highest at k=6, so I'm going with 6. Just want a sanity check.",
+      "expected_output": "Validates that silhouette beats the elbow but refuses to bless k=6 on one number. Recommends triangulating multiple criteria (gap statistic, Davies-Bouldin), checking stability via bootstrap/reinitialization, and confirming clusterability (that structure exists at all vs. a null). Notes silhouette assumes convex clusters and that interpretability is a legitimate tiebreaker. Frames the choice of k as under-determined, not a single correct value.",
+      "files": [],
+      "expectations": [
+        "Does not simply confirm k=6; treats a single index as insufficient justification",
+        "Recommends using multiple validation criteria (e.g., gap statistic, Davies-Bouldin, silhouette together)",
+        "Recommends a stability check (bootstrap resampling and/or reinitialization)",
+        "Raises clusterability / whether real structure exists (e.g., null comparison, Hopkins, or visualization)",
+        "States there is no single purely data-driven 'correct' k and/or that interpretability matters"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "For my psych study I have ~600 participants and 9 continuous questionnaire subscales. A reviewer suggested latent profile analysis. But I also keep seeing people use Gaussian mixture models and latent class analysis for this kind of thing. Are these different methods? Which should I use and how do I decide the number of profiles?",
+      "expected_output": "Explains that LPA, GMM, and LCA are the same finite-mixture machinery differing by indicator type and research culture: LPA = Gaussian mixture on continuous indicators (so for 9 continuous subscales, LPA and GMM are the same model), LCA = mixture on categorical indicators. Recommends LPA/GMM here. For choosing profiles, recommends BIC (and ICL/BLRT), reporting entropy/classification certainty, considering class sizes, and using interpretability — not a single statistic. May mention tooling (mclust/tidyLPA/tidySEM/Mplus or sklearn GaussianMixture).",
+      "files": [],
+      "expectations": [
+        "States that LPA is (a) Gaussian mixture modeling, i.e., LPA and GMM are essentially the same model for continuous indicators",
+        "Explains LCA differs by using categorical/binary indicators rather than continuous ones",
+        "Recommends LPA (or equivalently a Gaussian mixture) as appropriate for 9 continuous subscales",
+        "Recommends BIC for choosing the number of profiles, and mentions at least one of ICL or BLRT",
+        "Mentions entropy / classification certainty or interpretability as part of the decision, not just one fit statistic"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "My k-means clustering gives garbage results — the clusters don't make any sense and they're dominated by one or two variables. I have features like annual_revenue (millions), employee_count (hundreds to thousands), founding_year, and a satisfaction_score from 1-5. What's going wrong?",
+      "expected_output": "Diagnoses the cause as preprocessing, specifically unscaled features on wildly different ranges: annual_revenue and employee_count dominate the Euclidean distance, so satisfaction_score (1-5) and founding_year contribute almost nothing. Recommends standardizing/scaling before clustering. May go further: consider whether features are even comparable, whether to log-transform skewed monetary/count variables, and that scaling is a modeling choice. Frames preprocessing as the dominant driver of results.",
+      "files": [],
+      "expectations": [
+        "Identifies that the features are on vastly different scales and that large-range features (revenue, employee_count) dominate the distance",
+        "Recommends scaling/standardizing the features before running k-means",
+        "Connects the symptom (clusters dominated by one or two variables) to the unscaled distance metric rather than to k-means itself being wrong",
+        "Mentions that preprocessing/distance choices drive clustering results (possibly suggesting log-transforming skewed monetary/count variables)"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "I want to segment users for a marketing campaign. My data has both numeric fields (age, total_spend, sessions_per_week) and categorical fields (subscription_tier, acquisition_channel, country). I was going to one-hot encode the categoricals and run k-means on everything. Will that work?",
+      "expected_output": "Warns that one-hot + k-means on mixed data is problematic: Euclidean distance on one-hot categories imposes arbitrary geometry and high-cardinality fields (like country) inflate dimensionality and dominate distance. Recommends a proper mixed-data approach: Gower distance with k-medoids (PAM), or k-prototypes (with its gamma weight balancing numeric vs categorical). Mentions scaling the numeric part and handling high-cardinality categoricals (e.g., country). May mention LCA only if framed for categorical-only.",
+      "files": [],
+      "expectations": [
+        "Flags that one-hot encoding categoricals + Euclidean k-means is a poor approach for mixed-type data",
+        "Recommends a mixed-data method: Gower distance with k-medoids/PAM, and/or k-prototypes",
+        "Notes the problem with high-cardinality categoricals (e.g., country) dominating or exploding the distance/dimensionality",
+        "Mentions scaling the numeric features as part of the pipeline"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I read that Affinity Propagation and Mean Shift are great because you don't have to choose the number of clusters. I have ~200k rows. Should I use one of them instead of k-means so I don't have to pick k?",
+      "expected_output": "Warns that both Affinity Propagation and Mean Shift are O(n^2) in time/memory and will not scale to 200k rows; 'not choosing k' is misleading because both have parameters (preference, bandwidth) that implicitly control the cluster count. Redirects: if you genuinely don't want to pick k at this scale, use HDBSCAN (density params, scales better, handles noise) or MiniBatch k-means with a principled k-selection. Notes that no method is truly parameter-free. May note AP tends to produce many clusters and Mean Shift's niche is low-dimensional / image data.",
+      "files": [],
+      "expectations": [
+        "States that Affinity Propagation and Mean Shift are O(n^2) / do not scale and are unsuitable for ~200k rows",
+        "Explains that these methods are not truly free of choosing cluster count — preference/bandwidth implicitly set it",
+        "Redirects to a scalable alternative (HDBSCAN for the no-preset-k goal, or MiniBatch k-means)",
+        "Conveys that no clustering method is genuinely parameter-free"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "I have 800 patients each described by 250 genomic expression features. I want to find patient subtypes. I was going to run HDBSCAN directly on the raw 250-dimensional data. Any concerns?",
+      "expected_output": "Flags the curse of dimensionality: in high dimensions, Euclidean distances become uninformative (all pairwise distances converge), density-based methods like HDBSCAN fail badly because the notion of 'dense regions' breaks down. Recommends dimensionality reduction first — PCA (retain 80-90% variance) or UMAP (to ~10-20 dims) — before clustering. Mentions that the choice of reduction method affects downstream clusters. May also note: in genomics, feature selection (variance filtering, DEG) is common before reduction; spectral or GMM on reduced data may outperform HDBSCAN on the embedding.",
+      "files": [],
+      "expectations": [
+        "Flags that density-based methods like HDBSCAN fail in high dimensions due to the curse of dimensionality",
+        "Explains that pairwise distances concentrate or become less discriminative in high dimensions (distances between near and far points converge), undermining density estimation",
+        "Recommends dimensionality reduction (PCA or UMAP) before applying any clustering algorithm",
+        "Notes that the choice of dimensionality reduction affects the clustering outcome"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "I ran k-means on my survey data and got silhouette = 0.61 at k=4. My manager wants to present these 4 segments to the board next week. I'm pretty confident the segments are real. Should I go ahead?",
+      "expected_output": "Cautions: a silhouette of 0.61 with no null comparison could be misleading — k-means returns clusters even on structureless noise, and gets respectable silhouette scores on it too. Recommends running the same procedure on shuffled/permuted data (or uniform noise over the data's bounding box) to establish a null baseline. Only if real-data silhouette substantially beats the null is 0.61 meaningful. Also recommends a stability check (bootstrap) before a board presentation. Frames this as hypothesis generation, not confirmed discovery.",
+      "files": [],
+      "expectations": [
+        "Does not simply confirm the segments are real based on silhouette = 0.61",
+        "Recommends a null comparison — clustering shuffled or random data to establish a baseline silhouette",
+        "Notes that clustering algorithms return clusters even on structureless data (or frames silhouette as insufficient without a null/gap comparison)",
+        "Recommends a stability check (bootstrap or resampling) before treating clusters as confirmed",
+        "Frames clustering output as hypothesis generation requiring validation, not discovery"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "HDBSCAN labeled 35% of my 10,000 data points as noise (label -1). That seems way too high. Something must be wrong with the method.",
+      "expected_output": "Explains that high noise fraction is informative, not a bug: 35% noise means a large fraction of points don't belong to any dense cluster — that might be true of the data. Before assuming something is wrong: (1) try decreasing min_cluster_size to allow smaller clusters to form, and/or decreasing min_samples to relax the core-point requirement; (2) check whether the noise points form a meaningful group (maybe they're genuine outliers or a diffuse background). Warns against forcing noise points into clusters just to reduce the -1 count — doing so defeats the purpose of using a density method.",
+      "files": [],
+      "expectations": [
+        "Explains that a high noise fraction is informative and may reflect the true structure of the data, not a flaw",
+        "Recommends reducing min_cluster_size and/or min_samples to allow smaller clusters to form",
+        "Warns against artificially forcing noise points into clusters just to reduce the -1 count",
+        "Suggests inspecting the noise points to understand whether they represent genuine outliers or a diffuse population"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "I'm running LPA in mclust. BIC says 4 classes is best. But the entropy-based classification accuracy (AveCAPP) is only 0.66, which feels low. Do I just go with 4 classes because BIC says so?",
+      "expected_output": "No — both criteria matter and they serve different purposes. BIC measures model fit/parsimony; entropy/AveCAPP measures how cleanly respondents are classified. An AveCAPP of 0.66 means substantial fuzziness — many people are nearly equally likely to belong to multiple classes, which undermines interpretation. Recommends: examine 3 and 5 class solutions too, compare entropy alongside BIC (ICL explicitly penalizes entropy), look at class sizes (very small classes inflate entropy), and check whether classes are interpretable and meaningfully distinct. BIC is a tie-breaker among plausible solutions, not the final word.",
+      "files": [],
+      "expectations": [
+        "Does not simply defer to BIC; treats AveCAPP / entropy as a substantively important criterion",
+        "Explains that low entropy/AveCAPP (0.66) means substantial classification uncertainty and undermines profile interpretation",
+        "Recommends inspecting adjacent solutions (3 and 5 classes) rather than taking the BIC winner outright",
+        "Mentions ICL or notes that entropy and BIC can point in different directions and both carry meaning",
+        "Connects class interpretability and size to the decision, not just statistical fit"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "I have 500 data points that clearly form two crescent/half-moon shapes when I plot them. k-means with k=2 cuts right through the middle instead of following the shapes. What clustering method handles this?",
+      "expected_output": "Recommends spectral clustering (captures manifold/connectivity structure via graph Laplacian) or HDBSCAN (density-based, handles arbitrary shapes). Explains why k-means fails: it uses Euclidean centroid distances and assumes convex, spherical clusters, so it always cuts the space linearly. Notes that spectral requires specifying k but works well here; HDBSCAN might also work if the crescents are denser than the background. May mention that this is a canonical example of non-convex cluster geometry and that the silhouette score would mislead if applied to the k-means solution.",
+      "files": [],
+      "expectations": [
+        "Recommends spectral clustering and/or HDBSCAN as appropriate for non-convex crescent shapes",
+        "Explains that k-means assumes spherical/convex clusters and uses Euclidean centroid distance, causing it to fail on this geometry",
+        "Connects the failure to the shape assumption mismatch rather than treating it as a parameter-tuning problem",
+        "Notes that spectral clustering uses graph/connectivity structure (or similarly that HDBSCAN uses density connectivity) to handle non-convex shapes"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Write me Python code to cluster a customer dataset with mixed-type features: age and total_spend (numeric), and subscription_tier (low/medium/high) and acquisition_channel (organic/paid/referral) (categorical). I want cluster labels I can attach back to the original dataframe.",
+      "expected_output": "Produces working Python code that handles mixed-type data properly. Uses either: (a) Gower distance + KMedoids from sklearn_extra or similar, or (b) k-prototypes from the kmodes library. Standardizes/scales the numeric features. Does not use one-hot + k-means on this mixed data. Includes the key steps: import, scale numeric, fit, extract labels, assign back to dataframe. Code should be syntactically correct and runnable.",
+      "files": [],
+      "expectations": [
+        "Does not use one-hot encoding + k-means as the primary approach for mixed-type data",
+        "Uses a proper mixed-data method: Gower + KMedoids, or k-prototypes (kmodes library)",
+        "Scales/standardizes the numeric features (age, total_spend) as part of the pipeline",
+        "Produces code that extracts cluster labels and attaches them back to the original dataframe"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "You said I should scale my features before clustering. But I don't want to — the raw values are meaningful to me and I want revenue (in dollars) to have more influence on the clusters than a 1-5 satisfaction score. Is scaling actually required?",
+      "expected_output": "Acknowledges the valid underlying goal but reframes: the issue is not whether to scale, but whether implicit magnitude dominance is intentional. If revenue should have more influence, the right move is explicit feature weighting (multiply revenue by a chosen weight), not relying on raw magnitude — because the amount of implicit emphasis revenue gets is arbitrary, not a considered choice. Endorses skipping standard scaling *only if* the user has a deliberate weighting rationale and applies it explicitly. Distinguishes 'scaling is a modeling choice' from 'scaling is always required.'",
+      "files": [],
+      "expectations": [
+        "Does not simply capitulate and say 'yes, scaling is optional, raw values are fine'",
+        "Reframes the issue: raw magnitude dominance is implicit and arbitrary, not a principled weighting decision",
+        "Recommends explicit feature weighting if the user wants revenue to dominate, rather than relying on scale differences",
+        "Conveys that scaling is a modeling choice — the question is whether the implicit weighting matches the user's actual intent"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "I ran k-means five times on the same data and got completely different cluster assignments each time. The clusters look reasonable in each run but they disagree. Which result should I use?",
+      "expected_output": "Explains that k-means is sensitive to random initialization and can converge to different local optima. Recommends: (1) use k-means++ initialization (not random), which substantially reduces this variance; (2) run n_init=10 or more and select the run with lowest inertia (this is sklearn's default for a reason); (3) treat the variance across runs as a warning signal about the clustering's stability — if assignments differ substantially, the clusters may not be well-separated and k may be wrong. A stable clustering should be robust to reinitialization. If the results remain highly variable even with k-means++ and n_init=10+, reconsider k or the method.",
+      "files": [],
+      "expectations": [
+        "Explains that k-means is sensitive to random initialization and converges to local optima",
+        "Recommends using k-means++ initialization to reduce variance across runs",
+        "Recommends running n_init=10 or more and selecting the best run by inertia",
+        "Treats high variability across runs as a signal about cluster instability or wrong k, not just a parameter-tuning nuisance"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "I've been using k-means to segment my customers. My colleague says I should switch to a Gaussian Mixture Model instead. What's actually different between them and when is GMM worth the extra complexity?",
+      "expected_output": "Explains that k-means is a degenerate GMM — specifically, a GMM with spherical, equal-covariance components and hard (not soft) assignments. GMM adds three things k-means can't do: (1) soft/probabilistic membership — each customer has a probability of belonging to each segment, not a hard label; (2) flexible covariance structure — clusters can be elliptical, rotated, or different sizes, not just spherical blobs; (3) principled model selection via BIC. The catch: full-covariance GMM is parameter-heavy and overfits with many features — constrain the covariance type (diagonal, tied, spherical) in high dimensions. Worth the switch when you suspect non-spherical clusters, want uncertainty estimates, or want BIC-driven k selection.",
+      "files": [],
+      "expectations": [
+        "Explains that k-means is a special case of GMM (spherical, equal-variance, hard-assignment limit)",
+        "States that GMM provides soft/probabilistic assignments rather than hard cluster labels",
+        "Explains that GMM allows flexible (elliptical, variable-size) covariance structure, whereas k-means assumes spherical equal-size clusters",
+        "Notes that full-covariance GMM can overfit in high dimensions and recommends constraining the covariance type",
+        "Mentions BIC as a principled way to choose k with GMM"
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "I ran both k-means (k=4) and a GMM (k=4) on the same dataset. k-means found 4 roughly equal-sized, tight clusters. GMM found 2 large spread-out clusters and 2 small dense ones — completely different. Which result should I trust?",
+      "expected_output": "Neither is definitively correct — they encode different assumptions, and disagreement is informative rather than a tie to break arbitrarily. k-means assumes spherical, equal-size clusters (it minimizes within-cluster variance, which implicitly splits elongated or unequal structures). GMM allows elliptical shapes and unequal sizes, so it can represent more realistic cluster geometry. The GMM result (variable size and density) is worth investigating: if the data has genuinely unequal clusters, k-means is distorting them to look equal. Use BIC to compare GMM solutions with different covariance types, inspect cluster profiles, and visualize. If GMM BIC favors 4 components and the 2+2 structure is interpretable, it is likely more faithful to the data than k-means.",
+      "files": [],
+      "expectations": [
+        "Does not simply declare one result correct; treats the disagreement as informative about the cluster geometry",
+        "Explains that k-means imposes equal-size, spherical clusters while GMM allows unequal sizes and elliptical shapes",
+        "Notes that k-means may be artificially forcing unequal clusters into equal-size spherical partitions",
+        "Recommends using BIC (or visualization / profile inspection) to evaluate which solution better fits the data"
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "I have 500 observations and 80 features. I fit a full-covariance GMM with k=5 and got great BIC scores. Should I trust this model?",
+      "expected_output": "Cautions about overfitting. A full-covariance GMM with k=5 and d=80 features has 5 × (80×81/2) = 16,200 covariance parameters alone, plus means and mixing weights — wildly more parameters than the 500 observations can support. Even if BIC looks good on the training data, the covariance estimates are numerically unstable and the model is overfit. Recommends constraining the covariance: diagonal (features treated as independent within clusters), tied (all clusters share one covariance), or spherical (isotropic). In sklearn use `covariance_type='diag'` or `'tied'`; in mclust use a parsimonious model family (EEI, EII, VII, etc.). Also suggests dimensionality reduction before fitting if 80 features are genuinely needed.",
+      "files": [],
+      "expectations": [
+        "Flags that a full-covariance GMM with 80 features and 500 observations is heavily over-parameterized",
+        "Explains quantitatively or conceptually why: the number of covariance parameters vastly exceeds what 500 observations can support",
+        "Recommends constraining the covariance type (diagonal, tied, or spherical) to reduce parameters",
+        "Mentions specific covariance options in sklearn (covariance_type) or mclust model families"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "eval_id": 6,
+  "condition": "baseline",
+  "prompt": "I read that Affinity Propagation and Mean Shift are great because you don't have to choose the number of clusters. I have ~200k rows. Should I use one of them instead of k-means so I don't have to pick k?",
+  "response": "Short answer: no, both are impractical at 200k rows, and neither actually eliminates hyperparameter choice.\n\n**Affinity Propagation** has O(n\u00b2) memory and time complexity. At 200k rows it needs a 200k \u00d7 200k similarity matrix \u2014 ~300 GB. It will OOM or run for days. Realistic ceiling is ~5k rows.\n\n**Mean Shift** is also O(n\u00b2) per iteration, so 200k rows is extremely slow in practice (hours to days). It also requires a `bandwidth` parameter, which controls cluster granularity just as directly as k does \u2014 you just call it something else.\n\n**What to actually use at 200k rows:**\n\n| Algorithm | Scales to 200k? | \"Free\" k? | Notes |\n|---|---|---|---|\n| **HDBSCAN** | Yes (with `algorithm='boruvka_kdtree'`) | Yes | Best density-based choice; handles noise; `min_cluster_size` is intuitive |\n| **MiniBatch K-Means** | Yes, fast | No | Still need k, but elbow/silhouette is cheap at this scale |\n| **DBSCAN** | Borderline (needs tuned `eps`) | Sort of | `eps` is as hard to choose as k; use HDBSCAN instead |\n| **BisectingKMeans** (sklearn) | Yes | No | Often better than k-means quality-wise, same speed |\n\n**My recommendation:** Use HDBSCAN if you genuinely want to avoid picking k. Set `min_cluster_size` to something semantically meaningful (e.g., \"a cluster should have at least 500 rows\") \u2014 that's much more interpretable than k. If you want speed and interpretability, MiniBatch K-Means with a silhouette scan over 5\u201315 values of k takes minutes at your scale and gives you something explainable.\n\nThe \"no k\" promise is real for HDBSCAN; for AP and Mean Shift it's mostly marketing.",
+  "expectations": [
+    "States that Affinity Propagation and Mean Shift are O(n^2) / do not scale and are unsuitable for ~200k rows",
+    "Explains that these methods are not truly free of choosing cluster count \u2014 preference/bandwidth implicitly set it",
+    "Redirects to a scalable alternative (HDBSCAN for the no-preset-k goal, or MiniBatch k-means)",
+    "Conveys that no clustering method is genuinely parameter-free"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

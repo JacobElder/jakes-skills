@@ -1,0 +1,24 @@
+{
+  "eval_id": 3,
+  "condition": "baseline",
+  "prompt": "For my psych study I have ~600 participants and 9 continuous questionnaire subscales. A reviewer suggested latent profile analysis. But I also keep seeing people use Gaussian mixture models and latent class analysis for this kind of thing. Are these different methods? Which should I use and how do I decide the number of profiles?",
+  "response": "These three terms are closely related and the psychology literature uses them inconsistently, so the confusion is reasonable.\n\n## The distinctions\n\n**LCA** (latent class analysis) is technically for *categorical* indicators. When your subscales are continuous, calling it LCA is a misnomer \u2014 but Mplus uses the term regardless of indicator type, which is why you see it everywhere.\n\n**LPA** (latent profile analysis) is the correct term for continuous indicators. It assumes indicators are conditionally independent within profiles and uses constrained (typically equal, diagonal) covariance matrices.\n\n**GMM** (Gaussian mixture model) is the general family that encompasses LPA. The difference is covariance structure: LPA is a restricted GMM. A fully unconstrained GMM lets each profile have its own covariance matrix \u2014 more flexible but far more parameters and much harder to fit with n=600.\n\nFor 9 continuous subscales at n=600, **use LPA** \u2014 it's what your reviewer almost certainly meant, it's the norm in personality/clinical psychology, and the constrained covariance structure is defensible and tractable at your sample size.\n\n## Deciding number of profiles\n\nFit these criteria jointly \u2014 no single criterion is sufficient:\n\n| Criterion | What to look for |\n|---|---|\n| **BIC** | Lower is better; primary criterion |\n| **aBIC** (adjusted BIC) | More liberal than BIC; use as secondary |\n| **BLRT** (bootstrap LRT) | Significant = k profiles beats k\u22121; more accurate than LMR-LRT |\n| **Entropy** | \u2265 0.80 suggests clean classification |\n| **Profile size** | No profile < ~5% of sample (~30 participants) |\n| **Interpretability** | Profiles must be theoretically coherent |\n\nThe standard workflow: fit 1\u20136 (maybe 7) profiles, plot BIC against k (look for an elbow), confirm with BLRT, then select the most parsimonious solution that still makes theoretical sense. BIC often keeps improving slightly \u2014 you're looking for diminishing returns, not a global minimum.\n\n## In R\n\n`tidyLPA` is the standard tool and handles all of this cleanly:\n\n```r\nlibrary(tidyLPA)\n\ndat |>\n  select(sub1:sub9) |>\n  scale() |>                          # scale before fitting\n  estimate_profiles(1:6) |>           # fit 1 through 6 profiles\n  compare_solutions(statistics = c(\"AIC\", \"BIC\", \"Entropy\"))\n```\n\nIt defaults to equal variances and zero covariances (classic LPA). Scale your subscales first \u2014 LPA is sensitive to different variances across indicators.\n\n## One practical note\n\nWith 9 subscales and n=600, you can realistically support 3\u20135 profiles before profiles start becoming statistically fragile. If BIC keeps declining past 5, that's usually a sign of overfitting rather than genuine subgroups.",
+  "expectations": [
+    "States that LPA is (a) Gaussian mixture modeling, i.e., LPA and GMM are essentially the same model for continuous indicators",
+    "Explains LCA differs by using categorical/binary indicators rather than continuous ones",
+    "Recommends LPA (or equivalently a Gaussian mixture) as appropriate for 9 continuous subscales",
+    "Recommends BIC for choosing the number of profiles, and mentions at least one of ICL or BLRT",
+    "Mentions entropy / classification certainty or interpretability as part of the decision, not just one fit statistic"
+  ],
+  "assertion_results": [
+    false,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": true
+}

@@ -1,0 +1,786 @@
+"""
+Eval harness for the dimensionality-reduction skill.
+
+30 prompts across 6 runnable categories (A–F) plus 3 multi-turn scenarios (G).
+
+  A (6)  — method selection from natural language
+  B (8)  — pitfall detection (misinterpretation / wrong-tool traps)
+  C (4)  — code correctness / pipeline quality
+  D (4)  — communication and interpretation
+  E (4)  — adversarial and boundary cases (including anti-over-correction)
+  F (4)  — scope and trigger boundary (correct refusals / redirects)
+
+  G (3)  — multi-turn dialogues (analytical only; not automated here)
+
+Automated scoring uses keyword matching against rubrics derived from SKILL.md and the
+reference files.  The rubric is intentionally objective: assertions that are checkable by
+a keyword or substring test, not judgement calls.
+"""
+
+from __future__ import annotations
+from dataclasses import dataclass, field
+
+
+@dataclass
+class Eval:
+    id: str
+    prompt: str
+    category: str
+    rubric_keywords: list[str] = field(default_factory=list)
+    rubric_must_have_all: list[str] = field(default_factory=list)
+    rubric_must_not_have: list[str] = field(default_factory=list)
+    notes: str = ""
+
+
+EVALS: list[Eval] = [
+
+    # ── Category A: Method selection ─────────────────────────────────────────
+
+    Eval(
+        id="A1",
+        prompt=(
+            "I have a 32-item wellbeing questionnaire, n=400. I want to find the underlying "
+            "psychological constructs people are responding to. My plan: run PCA in SPSS, "
+            "keep components with eigenvalue greater than 1, varimax rotate, done. "
+            "That's factor analysis, right?"
+        ),
+        category="method",
+        rubric_must_have_all=["efa", "pca"],
+        rubric_keywords=["exploratory factor", "factor analysis", "common factor",
+                         "principal axis", "maximum likelihood", "ml extraction",
+                         "parallel analysis", "error term", "unique variance",
+                         "not the same", "different from", "distinct from"],
+        rubric_must_not_have=["pca is factor analysis", "pca is the same as efa",
+                               "they're equivalent", "that's correct"],
+        notes=(
+            "Must distinguish PCA from EFA/common-factor model. "
+            "Should recommend a genuine EFA extraction (ML/PAF). "
+            "Should push back on Kaiser rule and recommend parallel analysis. "
+            "Should raise oblique rotation for correlated psychological factors."
+        ),
+    ),
+
+    Eval(
+        id="A2",
+        prompt=(
+            "I've got unlabeled sensor data, 80 features, ~2000 rows, no class labels. "
+            "I want to use LDA to reduce it down to about 5 dimensions and then cluster it. "
+            "Can you give me the code?"
+        ),
+        category="method",
+        rubric_must_have_all=["supervised", "label"],
+        rubric_keywords=["supervised", "requires labels", "class labels", "linear discriminant",
+                         "k-1", "k−1", "(k-1)", "(k−1)", "cannot", "unlabeled",
+                         "pca", "umap", "unsupervised"],
+        rubric_must_not_have=["here is the lda code", "lda works fine without labels",
+                               "you can apply lda to unlabeled data"],
+        notes=(
+            "LDA is supervised and requires class labels. "
+            "Also capped at (k-1) components — 5 dims needs ≥6 classes. "
+            "Must redirect to PCA/UMAP or another unsupervised method."
+        ),
+    ),
+
+    Eval(
+        id="A3",
+        prompt=(
+            "I have 8 channels of EEG. Each channel is a mixture of underlying brain sources "
+            "plus eye-blink artifacts. I want to recover the separate underlying sources so I "
+            "can drop the blink component. I was going to use PCA for this. Right call?"
+        ),
+        category="method",
+        rubric_must_have_all=["ica"],
+        rubric_keywords=["ica", "independent component", "independence", "non-gaussian",
+                         "non-gaussianity", "source separation", "statistical independence",
+                         "whitening", "decorrelat"],
+        rubric_must_not_have=["pca is the right tool", "pca will work for source separation",
+                               "pca handles this well"],
+        notes=(
+            "Must recommend ICA over PCA. Explain: PCA decorrelates/max-variance; "
+            "ICA targets statistical independence/non-Gaussianity, needed for source separation. "
+            "May note PCA whitening as preprocessing step for ICA."
+        ),
+    ),
+
+    Eval(
+        id="A4",
+        prompt=(
+            "I have a survey dataset that's almost all categorical — region, job category, "
+            "education band, a few yes/no items, maybe 18 columns. I want to reduce it to "
+            "a couple of dimensions to see if respondents cluster. My plan is one-hot encode "
+            "everything and run PCA. Good?"
+        ),
+        category="method",
+        rubric_must_have_all=["mca"],
+        rubric_keywords=["mca", "multiple correspondence", "famd", "pcamix",
+                         "correspondence analysis", "prince", "factominer",
+                         "one-hot", "categorical", "distort", "geometry"],
+        rubric_must_not_have=["one-hot plus pca is fine", "that approach works",
+                               "pca on one-hot is appropriate"],
+        notes=(
+            "Must flag that PCA on one-hot-encoded categoricals distorts geometry. "
+            "Must recommend MCA (or FAMD/PCAmix for mixed data). "
+            "Bonus: name a tool (prince, FactoMineR)."
+        ),
+    ),
+
+    Eval(
+        id="A5",
+        prompt=(
+            "I need to fit a dimensionality reduction on my training set and then apply the "
+            "exact same transform to new incoming rows in production — the pipeline scores "
+            "tens of thousands of new rows every day. I was thinking of using t-SNE. "
+            "Will that work?"
+        ),
+        category="method",
+        rubric_must_have_all=["transform", "t-sne"],
+        rubric_keywords=["out-of-sample", "out of sample", "no transform", "cannot transform",
+                         "cannot apply", "refit", "no honest", "pca", "umap",
+                         "production", "new data", "parametric"],
+        rubric_must_not_have=["t-sne works fine for production", "you can apply t-sne to new rows",
+                               "t-sne has a transform method that works well"],
+        notes=(
+            "Vanilla t-SNE has no honest out-of-sample transform — must refit on combined data. "
+            "Must recommend PCA, UMAP, or a parametric encoder for production use. "
+            "openTSNE 'transform' is approximate and not suitable as the primary answer here."
+        ),
+    ),
+
+    Eval(
+        id="A6",
+        prompt=(
+            "I have nonnegative count data — a term-document matrix, 5000 documents by 8000 "
+            "terms. I want to reduce it to about 20 topics and have interpretable, "
+            "parts-based components. Should I use PCA or NMF?"
+        ),
+        category="method",
+        rubric_must_have_all=["nmf"],
+        rubric_keywords=["nmf", "nonnegative matrix", "non-negative matrix",
+                         "parts-based", "additive", "nonnegative", "interpretable",
+                         "pca allows negative", "negative loadings"],
+        rubric_must_not_have=["pca is better here", "use pca for this",
+                               "pca handles nonnegative data well"],
+        notes=(
+            "NMF is clearly better for nonnegative parts-based decomposition. "
+            "Must explain: NMF enforces nonnegativity → additive/parts-based components; "
+            "PCA allows negative loadings, which is less interpretable for count/text data."
+        ),
+    ),
+
+    # ── Category B: Pitfall detection ────────────────────────────────────────
+
+    Eval(
+        id="B1",
+        prompt=(
+            "I ran t-SNE on my customer behavior data (about 8k customers, 40 features). "
+            "In the plot, cluster A and cluster B are way far apart, and cluster C is sitting "
+            "right next to A. So I'm going to tell my PM that A and C are basically the same "
+            "customer type and B is a totally different segment. Also B's blob is huge so it "
+            "must be our most variable segment. Sound right?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["distance", "size"],
+        rubric_keywords=["inter-cluster distance", "distances between clusters",
+                         "distances are not", "sizes are not", "blob size", "area",
+                         "equalizes", "density", "meaningless", "not meaningful",
+                         "original space", "pca space", "perplexity", "seed"],
+        rubric_must_not_have=["sounds right", "your interpretation is correct",
+                               "a and c being similar is supported",
+                               "b is the most variable segment"],
+        notes=(
+            "Must correct BOTH errors: inter-cluster distances are not meaningful AND "
+            "cluster size/blob area is meaningless (t-SNE equalizes density). "
+            "Must recommend checking similarity/variability in original or PCA space."
+        ),
+    ),
+
+    Eval(
+        id="B2",
+        prompt=(
+            "I'm switching from t-SNE to UMAP because UMAP preserves global structure. "
+            "That means the distances between my clusters in the UMAP plot will actually "
+            "be accurate and I can report them as how different the groups are. Good plan?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["global"],
+        rubric_keywords=["overstated", "marginal", "not reliable", "not trustworthy",
+                         "inter-cluster distance", "distances between clusters",
+                         "pacmap", "trimap", "pca", "not safe to report",
+                         "not meaningfully accurate", "still not"],
+        rubric_must_not_have=["umap fully preserves global structure",
+                               "distances in umap are accurate",
+                               "go ahead and report them",
+                               "good plan", "that's correct"],
+        notes=(
+            "Must push back on UMAP global structure overclaim: benchmarks show only marginal "
+            "improvement over t-SNE; PaCMAP/TriMap do better. "
+            "Inter-cluster UMAP distances still not safe to report as group dissimilarity."
+        ),
+    ),
+
+    Eval(
+        id="B3",
+        prompt=(
+            "I ran EFA on 300 survey responses and a clean 3-factor structure came out. "
+            "Now I want to run CFA on those same 300 responses to confirm the 3-factor "
+            "model is solid before I publish. Can you set up the CFA?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["same"],
+        rubric_keywords=["same data", "same sample", "circular", "double-dip",
+                         "double dip", "not genuine confirmation", "exploratory",
+                         "confirmatory", "split", "independent sample",
+                         "separate sample", "cross-validation"],
+        rubric_must_not_have=["that's a solid approach", "running cfa on the same data is fine",
+                               "go ahead with the same sample"],
+        notes=(
+            "Must flag EFA→CFA on same data as circular/double-dipping. "
+            "Must recommend split-sample, independent replication, or cross-validation. "
+            "Can still describe CFA setup (lavaan/semopy, fit indices) for fresh data."
+        ),
+    ),
+
+    Eval(
+        id="B4",
+        prompt=(
+            "I tuned my UMAP parameters by trying n_neighbors = 5, 10, 20, 50 and "
+            "min_dist = 0.01, 0.1, 0.5 until I found the combination that showed the "
+            "most beautiful, cleanest cluster separation. I'm going to go with those "
+            "settings. What do you think?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["hyperparameter"],
+        rubric_keywords=["circular", "confirmation bias", "cherry-pick",
+                         "looks nice", "looks good", "how nice the plot",
+                         "quantitative", "trustworthiness", "continuity", "knn",
+                         "neighbour preservation", "neighbor preservation",
+                         "not a valid way", "not the right criterion"],
+        rubric_must_not_have=["those look like good settings", "nice cluster separation confirms",
+                               "visual inspection is sufficient", "that's a good approach"],
+        notes=(
+            "Must flag circular tuning by visual appearance. "
+            "Must recommend quantitative neighbour-preservation metrics "
+            "(trustworthiness/continuity/kNN) for tuning. "
+            "You will reliably find settings that show the structure you hoped for."
+        ),
+    ),
+
+    Eval(
+        id="B5",
+        prompt=(
+            "I want to validate my UMAP embedding by computing the silhouette score on the "
+            "2D embedding coordinates and also running k-means clustering on the embedding "
+            "and seeing if the cluster labels match my known groups. If those look good, "
+            "the embedding is trustworthy, right?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["circular"],
+        rubric_keywords=["circular", "tautological", "tautology",
+                         "embedding creates clusters", "manufactures",
+                         "original space", "knn overlap", "trustworthiness",
+                         "continuity", "shepard", "high-dimensional"],
+        rubric_must_not_have=["silhouette on the embedding is valid",
+                               "that's a solid validation approach",
+                               "clustering in the embedding confirms trustworthiness"],
+        notes=(
+            "Must flag circularity: UMAP creates cluster structure, so measuring cluster quality "
+            "IN the embedding doesn't validate the embedding. "
+            "Must recommend measuring neighbour preservation vs the original/PCA space "
+            "(trustworthiness, kNN overlap, Shepard correlation)."
+        ),
+    ),
+
+    Eval(
+        id="B6",
+        prompt=(
+            "I ran a single t-SNE run with perplexity=30 and my data clusters cleanly into "
+            "5 groups. I'm presenting these 5 clusters as a discovery. My colleague says I "
+            "should run it with multiple seeds and perplexity values but that seems "
+            "unnecessary — the pattern is clear. Is my colleague right?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["seed"],
+        rubric_keywords=["seed", "stochastic", "perplexity", "hyperparameter",
+                         "multiple runs", "vary", "artifact", "unstable",
+                         "not a result", "random data", "not sufficient"],
+        rubric_must_not_have=["one run is enough", "your colleague is wrong",
+                               "single run is sufficient", "the pattern is reliable"],
+        notes=(
+            "Colleague is right: t-SNE is stochastic and hyperparameter-sensitive. "
+            "A single run is not a result. Must recommend varying perplexity and seed. "
+            "Should note random data can look clustered at low perplexity."
+        ),
+    ),
+
+    Eval(
+        id="B7",
+        prompt=(
+            "I want to apply NMF to my dataset to get interpretable parts-based components. "
+            "The dataset has some features that can go negative — it's log-fold-change data "
+            "from a gene expression experiment, roughly centered around zero. Is NMF right?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["nonneg"],
+        rubric_keywords=["nonnegative", "non-negative", "cannot", "invalid",
+                         "requires nonneg", "negative values", "violates",
+                         "assumption", "not valid", "pca", "ica", "alternative"],
+        rubric_must_not_have=["nmf is fine with negative values",
+                               "nmf handles negative data well",
+                               "you can apply nmf here"],
+        notes=(
+            "NMF requires nonnegative data. Log-fold-change data is NOT nonnegative. "
+            "Must flag this and redirect (PCA, ICA, or shift+clip if the user insists on NMF)."
+        ),
+    ),
+
+    Eval(
+        id="B8",
+        prompt=(
+            "I want to use k-NN accuracy on my t-SNE embedding to show that my dimensionality "
+            "reduction worked — if kNN accuracy on the 2D embedding is much higher than in "
+            "the original space, that proves the embedding is really pulling out the class "
+            "structure. That's a good validation metric, right?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["red flag"],
+        rubric_keywords=["red flag", "higher accuracy", "manufactured", "separation",
+                         "artifact", "circular", "inflated", "original space",
+                         "not proof", "not evidence", "over-separation",
+                         "class structure", "creates"],
+        rubric_must_not_have=["higher accuracy confirms", "that's a good metric",
+                               "knn on the embedding is a valid validation",
+                               "that proves the embedding works"],
+        notes=(
+            "SKILL.md explicitly says: if kNN accuracy is much higher IN the embedding "
+            "than in the original space, treat it as a red flag for manufactured separation. "
+            "Must push back on this interpretation."
+        ),
+    ),
+
+    # ── Category C: Code correctness / pipeline quality ───────────────────────
+
+    Eval(
+        id="C1",
+        prompt=(
+            "Give me a complete Python pipeline that: loads a numeric dataset, standardizes "
+            "it, runs PCA, then runs UMAP for visualization, and quantitatively validates "
+            "whether the embedding is trustworthy. Include all the imports."
+        ),
+        category="code",
+        rubric_must_have_all=["standardscaler", "trustworthiness"],
+        rubric_keywords=["standardscaler", "standardize", "scale",
+                         "pca", "umap", "trustworthiness", "continuity",
+                         "knn", "shepard", "n_neighbors", "n_components",
+                         "import", "fit_transform"],
+        notes=(
+            "Must standardize before PCA/UMAP. Must include quantitative validation "
+            "(trustworthiness/continuity/kNN or Shepard). "
+            "Should run PCA first to ~30-50d before UMAP."
+        ),
+    ),
+
+    Eval(
+        id="C2",
+        prompt=(
+            "In Python, write a function that fits EFA on a DataFrame of survey items "
+            "and runs parallel analysis to determine the number of factors. Use the "
+            "factor_analyzer package."
+        ),
+        category="code",
+        rubric_must_have_all=["parallel analysis", "factor_analyzer"],
+        rubric_keywords=["factor_analyzer", "FactorAnalyzer", "parallel_analysis",
+                         "AnalysisFactor", "n_factors", "eigenvalue",
+                         "scree", "loadings", "rotation", "fit"],
+        notes=(
+            "Must use factor_analyzer. Must implement parallel analysis for factor count. "
+            "Rotation should be oblique (oblimin/promax) or at least acknowledge the choice."
+        ),
+    ),
+
+    Eval(
+        id="C3",
+        prompt=(
+            "Write Python code that demonstrates why you should PCA-reduce to ~50 dimensions "
+            "before running UMAP on high-dimensional data — show the speed difference on a "
+            "simulated dataset."
+        ),
+        category="code",
+        rubric_must_have_all=["pca", "umap"],
+        rubric_keywords=["pca", "umap", "50", "time", "timer", "denoise",
+                         "high-dimensional", "speed", "faster", "seconds",
+                         "fit_transform", "n_components"],
+        notes=(
+            "Must show PCA→50d before UMAP. Should show timing comparison. "
+            "Key message: PCA preprocessing denoises and speeds up UMAP by an order of magnitude."
+        ),
+    ),
+
+    Eval(
+        id="C4",
+        prompt=(
+            "In R, give me code to run EFA on the built-in `bfi` dataset from the `psych` "
+            "package, using parallel analysis to determine the number of factors, then "
+            "extract with ML and use an oblique rotation."
+        ),
+        category="code",
+        rubric_must_have_all=["fa(", "oblimin"],
+        rubric_keywords=["fa(", "psych", "bfi", "fa.parallel", "parallel",
+                         "oblimin", "promax", "oblique", "ml", "loadings",
+                         "library(psych)", "nfactors"],
+        notes=(
+            "Must use psych::fa.parallel for factor count. "
+            "Must use ML extraction and oblique rotation (oblimin or promax). "
+            "fa() from psych is the correct function, not factanal()."
+        ),
+    ),
+
+    # ── Category D: Communication and interpretation ──────────────────────────
+
+    Eval(
+        id="D1",
+        prompt=(
+            "Attached is a NumPy array of embeddings produced by someone else's UMAP run. "
+            "I want to cluster them with k-means and treat the cluster centroids as representing "
+            "'types' of items. The clusters look nice and tight. What should I watch out for?"
+        ),
+        category="comms",
+        rubric_must_have_all=["original"],
+        rubric_keywords=["original space", "high-dimensional space", "pca space",
+                         "distances not meaningful", "sizes meaningless",
+                         "umap creates", "artifact", "validate in",
+                         "trustworthiness", "knn", "caveats"],
+        notes=(
+            "Must warn: clustering in UMAP space inherits UMAP artifacts (cluster size/distance "
+            "not meaningful). Recommend validating cluster structure in original or PCA space. "
+            "Should name quantitative validation metrics."
+        ),
+    ),
+
+    Eval(
+        id="D2",
+        prompt=(
+            "I ran PCA on a 100-feature dataset and the first two components explain only "
+            "18% of variance. My colleague says the PCA plot is 'useless'. Am I wasting "
+            "my time with PCA?"
+        ),
+        category="comms",
+        rubric_must_have_all=["cumulative"],
+        rubric_keywords=["cumulative", "total variance", "scree", "18%", "all components",
+                         "not just two", "additional components", "useful for compression",
+                         "explained variance", "not useless"],
+        rubric_must_not_have=["pca is useless here", "your colleague is right",
+                               "18% means pca failed"],
+        notes=(
+            "2-PC variance being low doesn't mean PCA is useless. "
+            "Must explain cumulative explained variance across more components, "
+            "and that PCA for compression/preprocessing uses more than 2 PCs. "
+            "The 2D plot being weak doesn't invalidate PCA for compression."
+        ),
+    ),
+
+    Eval(
+        id="D3",
+        prompt=(
+            "My PCA results show that PC1 loads heavily on features X3, X7, and X12 (all "
+            "positive), and PC2 on X1, X5 (positive) vs X9 (negative). Can I say these "
+            "components represent underlying constructs that cause the variation in my data?"
+        ),
+        category="comms",
+        rubric_must_have_all=["efa"],
+        rubric_keywords=["efa", "factor analysis", "common factor", "causal",
+                         "does not imply", "linear combination", "repackage",
+                         "all variance", "no error term", "not latent factors",
+                         "not constructs", "exploratory factor"],
+        rubric_must_not_have=["yes these represent underlying constructs",
+                               "pc1 is the construct for", "you can interpret them as causes"],
+        notes=(
+            "PCA components are linear summaries, not causal latent constructs. "
+            "Must distinguish from EFA/common-factor model. "
+            "If the user wants causal/construct interpretation, they need EFA."
+        ),
+    ),
+
+    Eval(
+        id="D4",
+        prompt=(
+            "I have a UMAP embedding of 50k scRNA-seq cells. The Leiden clusters look "
+            "very separated in the UMAP. My colleague wants me to report the Euclidean "
+            "distances between cluster centroids in the UMAP as a quantitative measure "
+            "of transcriptional dissimilarity. Is that valid?"
+        ),
+        category="comms",
+        rubric_must_have_all=["not valid"],
+        rubric_keywords=["not valid", "not reliable", "not trustworthy",
+                         "distances between clusters", "not meaningful",
+                         "original space", "pca space", "shepard",
+                         "umap equalizes", "artifact"],
+        rubric_must_not_have=["euclidean distance in umap is valid",
+                               "your colleague is right",
+                               "you can report those distances"],
+        notes=(
+            "Reporting UMAP Euclidean distances as transcriptional dissimilarity is not valid. "
+            "Must say so clearly. Must redirect to original or PCA-reduced space for distance."
+        ),
+    ),
+
+    # ── Category E: Adversarial and boundary cases ────────────────────────────
+
+    Eval(
+        id="E1",
+        prompt=(
+            "I've got 12 numeric sensor readings, all on similar scales, mildly correlated, "
+            "n=5000. I just want to collapse them to 3 components to feed into a regression "
+            "model and explain a chunk of the variance. I was going to use plain PCA. "
+            "Is that fine or am I missing something fancier?"
+        ),
+        category="adversarial",
+        rubric_must_have_all=["pca"],
+        rubric_keywords=["pca is", "pca works", "appropriate", "correct choice",
+                         "good choice", "right choice", "fine", "straightforward",
+                         "sensible", "solid"],
+        rubric_must_not_have=["you should use umap", "you should use tsne",
+                               "switch to a nonlinear method",
+                               "pca is too simple for this",
+                               "cluster sizes are meaningless"],
+        notes=(
+            "Anti-over-correction eval: the agent should affirm PCA as the correct choice. "
+            "Must NOT push toward t-SNE/UMAP or over-lecture about embedding caveats "
+            "that don't apply to a compression task. PCA IS the right answer here."
+        ),
+    ),
+
+    Eval(
+        id="E2",
+        prompt=(
+            "I want to use LDA for classification, not dimensionality reduction — I have "
+            "labeled data and want to train a classifier. My features outnumber my training "
+            "samples (8000 features, 500 samples across 4 classes). Any issues?"
+        ),
+        category="adversarial",
+        rubric_must_have_all=["singular"],
+        rubric_keywords=["singular", "small-sample-size problem", "regularized",
+                         "regularization", "shrinkage", "pca-then-lda",
+                         "within-class scatter", "ill-conditioned",
+                         "more features than samples", "covariance", "ridge"],
+        notes=(
+            "Must identify the LDA small-sample-size problem: when features ≥ samples, "
+            "within-class scatter matrix is singular. "
+            "Must recommend regularized LDA, shrinkage, or PCA-then-LDA."
+        ),
+    ),
+
+    Eval(
+        id="E3",
+        prompt=(
+            "I want to build a dimensionality reduction model for a small tabular dataset, "
+            "600 rows and 20 features, no labels. I was going to train a deep autoencoder "
+            "with 4 hidden layers to get a 3-dimensional representation. Smart move?"
+        ),
+        category="adversarial",
+        rubric_must_have_all=["pca"],
+        rubric_keywords=["overkill", "pca", "umap", "overfit", "overcomplex",
+                         "harder to validate", "tabular", "small", "simple",
+                         "not recommended", "unnecessary", "try pca first"],
+        rubric_must_not_have=["deep autoencoder is the right choice here",
+                               "4 hidden layers is appropriate",
+                               "go with the autoencoder"],
+        notes=(
+            "Deep autoencoders are usually overkill for small tabular data. "
+            "A linear AE is just PCA. Must redirect to PCA (and UMAP if nonlinear needed). "
+            "Key concern: harder to validate, prone to overfitting on 600 rows."
+        ),
+    ),
+
+    Eval(
+        id="E4",
+        prompt=(
+            "Write me a CUDA kernel to speed up PCA on GPU. I need the eigendecomposition "
+            "of a covariance matrix to run in under 10ms."
+        ),
+        category="adversarial",
+        rubric_keywords=["cupy", "torch", "pytorch", "cuml", "rapids",
+                         "gpu", "svd", "eigendecomp",
+                         "numpy", "sklearn", "truncated svd",
+                         "cuda"],
+        rubric_must_not_have=[],
+        notes=(
+            "Out-of-scope redirect: writing a raw CUDA kernel for eigendecomposition is "
+            "highly specialized. Agent should redirect to high-level GPU libraries "
+            "(CuPy, cuML/RAPIDS, PyTorch SVD). "
+            "This tests whether the agent stays helpful without overcommitting to unsafe code."
+        ),
+    ),
+
+    # ── Category F: Scope and trigger boundary ────────────────────────────────
+
+    Eval(
+        id="F1",
+        prompt=(
+            "I want to standardize my features before running PCA. I have a mix of "
+            "nonnegative count columns (word frequencies) that I'm about to feed into NMF, "
+            "and continuous measurements that I'm feeding into PCA. Should I standardize all "
+            "of them the same way?"
+        ),
+        category="scope",
+        rubric_must_have_all=["nmf"],
+        rubric_keywords=["nmf", "nonneg", "non-neg", "do not standardize",
+                         "don't standardize", "pca", "standardize",
+                         "count", "negative values",
+                         "different treatment", "separately"],
+        rubric_must_not_have=["standardize all of them the same way",
+                               "standardize everything the same",
+                               "yes, standardize both the same way"],
+        notes=(
+            "Must give differentiated advice: standardize for PCA (continuous features); "
+            "do NOT blindly standardize counts/nonneg data headed into NMF "
+            "(standardization introduces negatives, violating NMF's assumption)."
+        ),
+    ),
+
+    Eval(
+        id="F2",
+        prompt=(
+            "My PCA scree plot has an elbow at component 4. But I also have a business "
+            "requirement to report exactly 2 dimensions so stakeholders can make a 2D plot. "
+            "Is it wrong to use 2 PCs?"
+        ),
+        category="scope",
+        rubric_must_have_all=["variance"],
+        rubric_keywords=["variance explained", "2 components", "2 pcs",
+                         "tradeoff", "trade-off", "limitation", "valid use case",
+                         "acknowledge", "cumulative", "not wrong", "reasonable"],
+        rubric_must_not_have=["absolutely wrong to use 2", "never use 2 components",
+                               "you must use 4 components"],
+        notes=(
+            "Using 2 PCs for a stakeholder visualization is a valid use case, "
+            "even if the scree says 4. The agent should give nuanced advice: "
+            "OK to use 2 for visualization if you acknowledge the variance explained; "
+            "use 4+ for downstream modeling."
+        ),
+    ),
+
+    Eval(
+        id="F3",
+        prompt=(
+            "What is Latent Dirichlet Allocation (LDA) and how do I use it for topic "
+            "modeling my news articles?"
+        ),
+        category="scope",
+        rubric_keywords=["topic model", "latent dirichlet", "document", "word",
+                         "gensim", "sklearn", "latentdirichletallocation",
+                         "not the same as", "different from", "linear discriminant",
+                         "disambiguation"],
+        notes=(
+            "LDA here is Latent Dirichlet Allocation (topic model), NOT Linear Discriminant "
+            "Analysis. The agent should answer the topic modeling question. "
+            "May note the disambiguation but should not refuse or redirect to DR. "
+            "This tests that the trigger doesn't over-fire into LDA=topic-model territory."
+        ),
+    ),
+
+    Eval(
+        id="F4",
+        prompt=(
+            "I want to reduce the file size of a 60 MB PDF. Can you help me compress it?"
+        ),
+        category="scope",
+        rubric_keywords=["pdf", "compress", "ghostscript", "file size",
+                         "adobe", "reduce size", "optimize"],
+        rubric_must_not_have=["pca", "umap", "dimensionality reduction",
+                               "feature extraction", "t-sne"],
+        notes=(
+            "This is file compression, not statistical dimensionality reduction. "
+            "The agent must answer the PDF question and NOT pivot into DR methods. "
+            "Tests that the skill doesn't hijack unrelated 'reduce' queries."
+        ),
+    ),
+
+    # ── Category G: Multi-turn (analytical only) ──────────────────────────────
+
+    Eval(
+        id="G1-T1",
+        prompt=(
+            "I want to visualize my scRNA-seq data in 2D to see if different cell types "
+            "cluster together."
+        ),
+        category="multi-turn",
+        rubric_keywords=["umap", "t-sne", "pca", "visualization", "cluster",
+                         "caveats", "distances", "perplexity"],
+        notes=(
+            "Turn 1 of scRNA visualization multi-turn. Agent should recommend UMAP/t-SNE "
+            "after PCA preprocessing and mention interpretation caveats."
+        ),
+    ),
+
+    Eval(
+        id="G2-T1",
+        prompt=(
+            "I want to find the latent dimensions underlying my personality questionnaire."
+        ),
+        category="multi-turn",
+        rubric_keywords=["efa", "factor analysis", "latent", "construct",
+                         "parallel analysis", "rotation"],
+        notes=(
+            "Turn 1 of EFA multi-turn. Agent should ask about job (measurement vs compression) "
+            "and steer toward EFA, not PCA."
+        ),
+    ),
+
+    Eval(
+        id="G3-T1",
+        prompt=(
+            "I want to reduce dimensions to help my k-means clustering work better."
+        ),
+        category="multi-turn",
+        rubric_keywords=["pca", "original space", "cluster", "k-means",
+                         "embedding", "umap", "caution"],
+        notes=(
+            "Turn 1 of clustering-with-DR multi-turn. Agent should recommend clustering in "
+            "original or PCA space, caution against clustering in UMAP space."
+        ),
+    ),
+]
+
+
+def score_response(eval_obj: Eval, response_text: str) -> dict:
+    """Apply rubric to a response.
+
+    Returns {'pass': bool, 'notes': list[str], 'eval_id': str, 'category': str}.
+    """
+    text_lower = response_text.lower()
+    notes = []
+    passing = True
+
+    if eval_obj.rubric_keywords:
+        hits = [kw for kw in eval_obj.rubric_keywords if kw.lower() in text_lower]
+        if not hits:
+            passing = False
+            notes.append(f"no rubric keywords matched (any of: {eval_obj.rubric_keywords})")
+        else:
+            notes.append(f"matched: {hits}")
+
+    if eval_obj.rubric_must_have_all:
+        missing = [k for k in eval_obj.rubric_must_have_all if k.lower() not in text_lower]
+        if missing:
+            passing = False
+            notes.append(f"missing required substrings: {missing}")
+
+    if eval_obj.rubric_must_not_have:
+        bad = [k for k in eval_obj.rubric_must_not_have if k.lower() in text_lower]
+        if bad:
+            passing = False
+            notes.append(f"contains forbidden substrings: {bad}")
+
+    return {"pass": passing, "notes": notes,
+            "eval_id": eval_obj.id, "category": eval_obj.category}
+
+
+if __name__ == "__main__":
+    from collections import Counter
+    by_cat = Counter(e.category for e in EVALS)
+    print(f"Total evals: {len(EVALS)}")
+    for cat, n in sorted(by_cat.items()):
+        print(f"  {cat}: {n}")
+    print()
+    auto = [e for e in EVALS if e.category != "multi-turn"]
+    print(f"Automated (non-multi-turn): {len(auto)}")

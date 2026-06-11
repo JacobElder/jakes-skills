@@ -1,0 +1,22 @@
+{
+  "eval_id": 4,
+  "condition": "with_skill",
+  "prompt": "My k-means clustering gives garbage results \u2014 the clusters don't make any sense and they're dominated by one or two variables. I have features like annual_revenue (millions), employee_count (hundreds to thousands), founding_year, and a satisfaction_score from 1-5. What's going wrong?",
+  "response": "Classic scaling problem. Your `annual_revenue` values are in the millions, so raw Euclidean distances are dominated entirely by that feature \u2014 `satisfaction_score` (range 4) contributes almost nothing compared to revenue differences of hundreds of millions.\n\n**What's happening geometrically:** k-means minimizes variance, and variance is proportional to the square of the numeric range. Revenue variance swamps everything else, so you're effectively clustering on revenue alone while the other features are spectators.\n\n**The fix:** standardize every feature to z-scores before clustering.\n\n```python\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.cluster import KMeans\n\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X[['annual_revenue', 'employee_count', 'founding_year', 'satisfaction_score']])\n\nkmeans = KMeans(n_clusters=k, init='kmeans++', n_init=20, random_state=42)\nlabels = kmeans.fit_predict(X_scaled)\n```\n\n**Two other things to fix while you're in there:**\n\n1. **`founding_year` is the wrong representation.** Convert it to `company_age = current_year - founding_year`. A raw year like 2018 clusters weirdly against 1995; age in years is what you actually want to measure.\n\n2. **`satisfaction_score` is ordinal (1\u20135), not continuous.** Z-scoring it is defensible and standard, but be aware you're imposing equal spacing between levels. If that bothers you, treat it as-is after scaling \u2014 the range is still small so it won't dominate.\n\n**After scaling, re-examine your results with this sanity check:**\n\n```python\nimport pandas as pd\n\n# profile the clusters on original (unscaled) values\ndf['cluster'] = labels\ndf.groupby('cluster')[['annual_revenue', 'employee_count', 'company_age', 'satisfaction_score']].mean()\n```\n\nThe cluster means should now reflect variation across *all* features, not just revenue. If clusters still look wrong after scaling, the next thing to check is whether `k` is right \u2014 but scaling is almost certainly the root cause here.",
+  "expectations": [
+    "Identifies that the features are on vastly different scales and that large-range features (revenue, employee_count) dominate the distance",
+    "Recommends scaling/standardizing the features before running k-means",
+    "Connects the symptom (clusters dominated by one or two variables) to the unscaled distance metric rather than to k-means itself being wrong",
+    "Mentions that preprocessing/distance choices drive clustering results (possibly suggesting log-transforming skewed monetary/count variables)"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

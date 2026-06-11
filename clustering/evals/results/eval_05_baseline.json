@@ -1,0 +1,22 @@
+{
+  "eval_id": 5,
+  "condition": "baseline",
+  "prompt": "I want to segment users for a marketing campaign. My data has both numeric fields (age, total_spend, sessions_per_week) and categorical fields (subscription_tier, acquisition_channel, country). I was going to one-hot encode the categoricals and run k-means on everything. Will that work?",
+  "response": "It will run, but it has two real problems that will hurt segment quality.\n\n**Problem 1: Distance distortion from OHE.** K-means uses Euclidean distance. A categorical with many levels (e.g., `country` with 50 values) produces 50 binary columns, dominating the distance calculation over your three numeric fields \u2014 effectively making country the primary segmentation axis whether you want that or not.\n\n**Problem 2: `subscription_tier` is ordinal.** OHE throws away the ordering. Bronze < Silver < Gold carries real meaning; treating them as three independent binary dimensions loses it.\n\n**Better options, in order of practicality:**\n\n| Approach | What it does | Best when |\n|---|---|---|\n| **K-prototypes** | Extends k-means natively to mixed types; separate distance for categorical | You want k-means semantics, fast, drop-in |\n| **Gower distance + PAM** | Per-variable normalized distance, appropriate metric per type | You want statistically clean mixed-type clustering |\n| **FAMD \u2192 k-means** | Factor Analysis of Mixed Data reduces to continuous components first | You want a scree plot and interpretable axes before clustering |\n\nFor your case I'd start with **k-prototypes** (`pip install kmodes`). It handles the mixed-type problem directly, keeps your existing k-means intuition, and is fast enough for marketing-scale data. Encode `subscription_tier` as an integer (0/1/2) and pass it as numeric rather than categorical so the ordinal structure is preserved.\n\nIf you want to validate segments, Gower + PAM via `scikit-learn-extra` or R's `cluster::pam` gives you a proper silhouette score on mixed data that k-means can't compute correctly here.\n\nWant me to sketch out the k-prototypes implementation against your schema?",
+  "expectations": [
+    "Flags that one-hot encoding categoricals + Euclidean k-means is a poor approach for mixed-type data",
+    "Recommends a mixed-data method: Gower distance with k-medoids/PAM, and/or k-prototypes",
+    "Notes the problem with high-cardinality categoricals (e.g., country) dominating or exploding the distance/dimensionality",
+    "Mentions scaling the numeric features as part of the pipeline"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    false
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

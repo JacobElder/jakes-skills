@@ -1,0 +1,26 @@
+{
+  "eval_id": 1,
+  "condition": "baseline",
+  "prompt": "I've got about 50k points of sensor readings (8 numeric features) and I want to find natural groupings. I don't know how many groups there are, the groups are probably weird shapes, some regions are way denser than others, and there's definitely junk/outlier readings I'd rather not force into a group. I was going to use k-means with the elbow method. Good plan?",
+  "response": "K-means is a poor fit for all four of your stated constraints \u2014 here's why, and what to use instead.\n\n**Why k-means fails here:**\n\n| Your constraint | K-means problem |\n|---|---|\n| Unknown number of groups | Elbow method is often ambiguous; you still have to pick k |\n| Weird shapes | Assumes spherical/convex clusters \u2014 will incorrectly split or merge non-convex ones |\n| Varying density | Dominated by large, dense regions; sparse clusters get absorbed |\n| Outliers | Forces every point into a group \u2014 outliers pull centroids off-center |\n\n**Recommendation: HDBSCAN**\n\nIt directly addresses all four issues: no k to specify, finds arbitrary shapes via density linkage, handles varying density naturally (unlike DBSCAN, which needs a global `eps`), and marks low-density points as noise rather than forcing them into a cluster.\n\n```python\nimport hdbscan  # or sklearn.cluster.HDBSCAN in sklearn >= 1.3\n\nclusterer = hdbscan.HDBSCAN(min_cluster_size=50, min_samples=10)\nlabels = clusterer.fit_predict(X)  # -1 = noise/outlier\n```\n\nThe main knob is `min_cluster_size` \u2014 roughly \"smallest group I'd call meaningful.\" At 50k points it's fast enough (a few seconds).\n\n**Main tradeoff vs k-means:** HDBSCAN gives you less control over the number of clusters (it's emergent, not specified), which is fine given you don't know k \u2014 but if a downstream system requires exactly N groups, you'd need a post-processing step.\n\nDBSCAN is the simpler sibling, but the varying-density detail is the deciding factor \u2014 HDBSCAN handles that, DBSCAN doesn't.",
+  "expectations": [
+    "Recommends HDBSCAN as the primary choice",
+    "Explains k-means assumes spherical/convex clusters and forces all points into clusters, which mismatches the stated data",
+    "Notes that varying density specifically breaks plain DBSCAN's single global eps, motivating HDBSCAN over DBSCAN",
+    "Mentions that the data should be scaled/standardized before clustering",
+    "Characterizes the elbow method as weak or advisory rather than endorsing it",
+    "Notes HDBSCAN labels noise/outliers rather than forcing them into clusters"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 6,
+  "pass_rate": 0.8333333333333334,
+  "eval_passes": true
+}

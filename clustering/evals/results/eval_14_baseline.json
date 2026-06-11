@@ -1,0 +1,22 @@
+{
+  "eval_id": 14,
+  "condition": "baseline",
+  "prompt": "I ran k-means five times on the same data and got completely different cluster assignments each time. The clusters look reasonable in each run but they disagree. Which result should I use?",
+  "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+  "expectations": [
+    "Explains that k-means is sensitive to random initialization and converges to local optima",
+    "Recommends using k-means++ initialization to reduce variance across runs",
+    "Recommends running n_init=10 or more and selecting the best run by inertia",
+    "Treats high variability across runs as a signal about cluster instability or wrong k, not just a parameter-tuning nuisance"
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    false
+  ],
+  "passed": 0,
+  "total": 4,
+  "pass_rate": 0.0,
+  "eval_passes": false
+}

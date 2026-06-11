@@ -1,0 +1,22 @@
+{
+  "eval_id": 4,
+  "condition": "baseline",
+  "prompt": "My k-means clustering gives garbage results \u2014 the clusters don't make any sense and they're dominated by one or two variables. I have features like annual_revenue (millions), employee_count (hundreds to thousands), founding_year, and a satisfaction_score from 1-5. What's going wrong?",
+  "response": "Your features are on wildly different scales, and k-means uses Euclidean distance \u2014 so `annual_revenue` (values in the hundreds of millions) completely drowns out `satisfaction_score` (values 1\u20135). The algorithm ignores the low-magnitude features almost entirely.\n\n**The fix: standardize before clustering.**\n\n```python\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.cluster import KMeans\n\nscaler = StandardScaler()\nX_scaled = scaler.fit_transform(X)  # zero mean, unit variance per feature\n\nkmeans = KMeans(n_clusters=k, random_state=42)\nkmeans.fit(X_scaled)\n```\n\n`StandardScaler` transforms each feature to mean=0, std=1, so a one-unit move in `satisfaction_score` counts the same as a one-unit move in `annual_revenue` (relative to their own spread).\n\n**Why your specific features are particularly bad for raw k-means:**\n\n| Feature | Typical magnitude | Raw contribution to distance |\n|---|---|---|\n| annual_revenue | 50\u2013500M | Huge \u2014 dominates |\n| employee_count | 100\u20135000 | Large |\n| founding_year | 1970\u20132024 | Medium (but semantically weird \u2014 1999 vs 2001 isn't \"far\") |\n| satisfaction_score | 1\u20135 | Essentially ignored |\n\n**One more thing on `founding_year`:** that variable is probably better expressed as `company_age = current_year - founding_year` before scaling. The raw year has an arbitrary origin that can create misleading distance calculations.\n\n**Choosing k:** if you haven't already, use the elbow method or silhouette scores on the *scaled* data:\n\n```python\nfrom sklearn.metrics import silhouette_score\n\nfor k in range(2, 10):\n    km = KMeans(n_clusters=k, random_state=42).fit(X_scaled)\n    print(k, silhouette_score(X_scaled, km.labels_))\n```\n\nAfter scaling, your clusters should reflect actual similarity across all four features rather than just revenue groupings.",
+  "expectations": [
+    "Identifies that the features are on vastly different scales and that large-range features (revenue, employee_count) dominate the distance",
+    "Recommends scaling/standardizing the features before running k-means",
+    "Connects the symptom (clusters dominated by one or two variables) to the unscaled distance metric rather than to k-means itself being wrong",
+    "Mentions that preprocessing/distance choices drive clustering results (possibly suggesting log-transforming skewed monetary/count variables)"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

@@ -1,0 +1,24 @@
+{
+  "eval_id": 2,
+  "condition": "baseline",
+  "prompt": "What's the right number of clusters for my customer dataset? I ran k-means and the silhouette score is highest at k=6, so I'm going with 6. Just want a sanity check.",
+  "response": "Silhouette score is a reasonable signal, but relying on it alone has a few pitfalls worth checking:\n\n**Silhouette has a globular bias.** It favors compact, similarly-sized clusters. If your customer segments vary in density or shape, silhouette may overstate k=6's quality. Complement it with the elbow method (inertia) and check whether the elbow and silhouette peak agree \u2014 if they're far apart, that's a flag.\n\n**Business interpretability matters more than the metric.** Can you meaningfully name and act on all 6 segments? A k=4 solution that maps cleanly to actionable personas often beats a k=6 that's statistically tighter but produces two indistinguishable clusters in practice.\n\n**Two quick sanity checks:**\n- Plot the silhouette diagram per-cluster (not just the average). If one or two clusters have many negative-silhouette points, they're poorly defined regardless of the mean.\n- Run the same data through k-means at k=5 and k=7 and see if the cluster centroids tell a coherent story. If k=6 introduces a split that feels arbitrary, that's a sign.\n\n**k=6 is a defensible starting point**, not a final answer. I'd treat it as a candidate and validate against domain knowledge \u2014 do these 6 groups correspond to anything meaningful in your business context (price sensitivity, product usage, lifecycle stage)?",
+  "expectations": [
+    "Does not simply confirm k=6; treats a single index as insufficient justification",
+    "Recommends using multiple validation criteria (e.g., gap statistic, Davies-Bouldin, silhouette together)",
+    "Recommends a stability check (bootstrap resampling and/or reinitialization)",
+    "Raises clusterability / whether real structure exists (e.g., null comparison, Hopkins, or visualization)",
+    "States there is no single purely data-driven 'correct' k and/or that interpretability matters"
+  ],
+  "assertion_results": [
+    true,
+    false,
+    false,
+    false,
+    true
+  ],
+  "passed": 2,
+  "total": 5,
+  "pass_rate": 0.4,
+  "eval_passes": false
+}

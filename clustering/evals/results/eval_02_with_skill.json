@@ -1,0 +1,24 @@
+{
+  "eval_id": 2,
+  "condition": "with_skill",
+  "prompt": "What's the right number of clusters for my customer dataset? I ran k-means and the silhouette score is highest at k=6, so I'm going with 6. Just want a sanity check.",
+  "response": "The silhouette peak at k=6 is *consistent with* 6 clusters, but it's not enough to go on. A few things to check before committing:\n\n**What you're missing**\n\n1. **Stability** \u2014 this is the most important step you skipped. Bootstrap the data (or resample 80% repeatedly), rerun k-means, and measure pairwise ARI across runs. If k=6 dissolves under resampling, it's an artifact. Stable clusters recur; k=5 or k=7 might be just as silhouette-good but more reproducible.\n\n2. **Multiple indices, not one.** Silhouette assumes convex, spherical clusters \u2014 it's biased toward whatever k-means prefers. Cross-check with Davies-Bouldin (lower = better) and the gap statistic (which bakes in a null comparison against structureless data). If they all agree on 6, your confidence should be much higher. If they disagree, that's information.\n\n3. **Null sanity check.** Shuffle your features or generate uniform noise over your data's bounding box, cluster it, and see what silhouette score *that* gets. k-means will confidently cluster noise; a high silhouette on real data is only meaningful if it substantially beats the null.\n\n4. **Do the clusters mean anything?** Profile each of the 6 clusters on your original features. If two clusters look nearly identical or one has 3% of your customers, that's a signal to reconsider.\n\n**Quick practical advice**\n\nRun `k=3` through `k=10`, plot silhouette + Davies-Bouldin together, and look for *convergence* rather than a single peak. Also run a GMM over the same range and compare BIC \u2014 if GMM also favors 6, that's independent corroboration with a different set of assumptions.\n\nThe honest answer: k=6 *might be right*, but right now you have one favorable number and no stability evidence. That's not a sanity check pass yet.",
+  "expectations": [
+    "Does not simply confirm k=6; treats a single index as insufficient justification",
+    "Recommends using multiple validation criteria (e.g., gap statistic, Davies-Bouldin, silhouette together)",
+    "Recommends a stability check (bootstrap resampling and/or reinitialization)",
+    "Raises clusterability / whether real structure exists (e.g., null comparison, Hopkins, or visualization)",
+    "States there is no single purely data-driven 'correct' k and/or that interpretability matters"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

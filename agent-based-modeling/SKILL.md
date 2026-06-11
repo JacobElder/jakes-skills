@@ -56,10 +56,12 @@ what the agent decision rule is, and quietly makes reproducibility, the black-bo
 problem, and validation worse, so it needs specific handling. When responding,
 always cover these explicitly: (1) **data leakage / training contamination** — the
 LLM may reproduce patterns from training data rather than generate them from
-interaction rules; (2) **reproducibility requirements** — pin the exact model name
-and version, decoding parameters (temperature, top-p), random seeds, and full
-prompts; (3) **believability is not validation** — agents seeming realistic is not
-evidence the model is valid; hold it to the same V-C-V standard as any ABM.
+interaction rules; (2) **reproducibility requires pinning** the exact model name and
+version, decoding parameters (temperature, top-p), random seeds, and full prompts —
+without these, the result cannot be replicated; (3) **believability is not
+validation** — agents seeming realistic or matching real-world patterns is not
+evidence the model is valid; the believability/pattern-match result is at best
+calibration, not validation; hold it to the same V-C-V standard as any ABM.
 
 `references/key-literature.md` is an annotated bibliography keyed to each phase;
 cite from it when the user is writing something up or wants to go deeper.
@@ -100,6 +102,10 @@ be agent-based is harder to parameterize, slower to run, and harder to defend.
   the ABM's extra cost buys nothing.
 - You lack the data to constrain agent-level rules. Agent rules with no empirical
   or theoretical grounding turn the model into an expensive opinion.
+- The model would require millions of agents but there is no evidence of meaningful
+  local interaction or heterogeneity effects that justify the scale. Large-scale ABMs
+  carry substantial computational cost; absent those interaction effects, a simpler
+  method produces equivalent output for a fraction of the cost.
 - You need analytical results (equilibria, closed-form sensitivities, provable
   bounds). ABMs give you distributions of simulated outcomes, not theorems.
 
@@ -169,7 +175,10 @@ ABM output is seductive and easy to over-read. Hold the line on these:
   single run tells you next to nothing. Report distributions over many runs with
   different random seeds, not one trajectory. How many runs is an empirical
   question — see the replication/convergence method in
-  `references/analysis-and-experiments.md`.
+  `references/analysis-and-experiments.md`. This applies equally to **comparisons
+  against empirical data**: at calibration and validation stages, compare the
+  *distribution* of model outputs across replications to the data pattern — not a
+  single trajectory. A model that "matches the data" on one run may fail on most.
 - **Distinguish statistical significance from numerical noise, and both from
   importance.** With enough runs you can make any tiny difference "significant";
   that says you ran the model a lot, not that the effect matters. Report effect
@@ -188,11 +197,15 @@ ABM output is seductive and easy to over-read. Hold the line on these:
   parameter ranges, scales, time horizons, and structural assumptions explored.
   Don't extrapolate past the swept region, and say where the edges are.
 - **Calibration fit is not validation.** Reproducing the data you tuned to is
-  circular. Validation needs independent patterns or out-of-sample data. Keep the
-  three activities — verification, calibration, validation — separate in your head
-  and in the writeup. And because the model is stochastic, every comparison to
-  data — calibration target or validation pattern — must compare *distributions*
-  from repeated runs, not a single trajectory.
+  circular. Validation needs independent patterns or out-of-sample data. Whenever
+  any of these activities is raised, name and define all three explicitly:
+  **verification** (is the code correct — does the implementation match the intended
+  design?), **calibration** (finding parameter values that reproduce the target data),
+  **validation** (does the model represent the real system, tested against independent
+  patterns or out-of-sample data the model was not tuned to?). Keep all three
+  separate in your head and in the writeup. And because the model is stochastic,
+  every comparison to data — calibration target or validation pattern — must compare
+  *distributions* from repeated runs, not a single trajectory.
 
 When interpreting results *for* a user, give them the honest version: what the
 model shows, what it merely assumes, and which knobs the conclusion depends on.
@@ -229,8 +242,10 @@ model shows, what it merely assumes, and which knobs the conclusion depends on.
   (Morris screening + Sobol indices), with stochastic-aware averaging over seeds.
   Importable; has a `--demo`. Needs `SALib` and `numpy`. When adapting it, define
   the SALib `problem` dict with `num_vars`, `names`, and `bounds`, then pass your
-  `model(params, seed)` callable to `morris_screen` and `sobol_analyze`. In a
-  code-execution context, write out the script content and import it rather than
+  `model(params, seed)` callable to `morris_screen` and `sobol_analyze`. **Always
+  show the problem dict explicitly in your response** — with the actual parameter
+  names and numeric bounds filled in — so the reader can reproduce the analysis.
+  In a code-execution context, write out the script content and import it rather than
   re-deriving the SA logic from scratch.
 - `assets/mesa_model_template.py` — a minimal, runnable Schelling model (Mesa 3.x)
   wired to the analysis scripts; copy and adapt it.

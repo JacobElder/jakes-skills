@@ -1,0 +1,580 @@
+{
+  "model": "haiku",
+  "evals": {
+    "A1": {
+      "category": "method",
+      "prompt": "I have a 32-item wellbeing questionnaire, n=400. I want to find the underlying psychological constructs people are responding to. My plan: run PCA in SPSS, keep components with eigenvalue greater than 1, varimax rotate, done. That's factor analysis, right?",
+      "base": {
+        "response": "Not quite \u2014 your plan is **PCA with rotation**, which is different from factor analysis. Here's why it matters for your goal:\n\n**PCA vs. Factor Analysis:**\n- **PCA** finds linear combinations that capture maximum variance in the data\n- **Factor Analysis (FA)** models the covariance structure and assumes latent psychological constructs generate your observed items\n- Since you want \"underlying psychological constructs,\" FA is the better fit conceptually\n\n**Issues with your plan:**\n1. **Eigenvalue > 1 (Kaiser criterion)** is outdated and often keeps too many or too few factors. For 32 items, n=400, better approaches:\n   - Parallel analysis (compare observed eigenvalues to random data)\n   - Scree plot + elbow inspection\n   - Theoretical consideration of how many constructs the wellbeing domain should have\n\n2. **Varimax rotation works with both**, but it's more standard with FA than PCA\n\n**What I'd suggest instead:**\n- Run **exploratory factor analysis (EFA)** instead of PCA, since you're modeling latent constructs\n- Use parallel analysis to determine number of factors\n- Apply varimax (or promax if factors might correlate)\n- Report factor loadings and cross-loadings to validate the structure\n\nYou can do this in SPSS: **Analyze \u2192 Dimension Reduction \u2192 Factor** \u2192 set extraction method to Principal Axis Factoring (or Maximum Likelihood if your data is roughly multivariate normal) \u2192 use Parallel Analysis add-on or compare scree plot to it.\n\nDo you want to refine this approach, or would you like help implementing it?",
+        "pass": true,
+        "notes": [
+          "matched: ['exploratory factor', 'factor analysis', 'principal axis', 'maximum likelihood', 'parallel analysis', 'different from']"
+        ]
+      },
+      "skill": {
+        "response": "No \u2014 that's a common and costly mistake. **PCA is not factor analysis**, and they give fundamentally different answers. This distinction matters because you're asking a latent-variable question (\"what underlying constructs generate responses?\"), and PCA doesn't answer it.\n\n## The critical difference\n\n**EFA (Exploratory Factor Analysis)** assumes:\n> observed item = (loading \u00d7 common factor) + unique factor\n\nIt splits variance into **shared** (explained by latent constructs) vs **unique** (item-specific + measurement error), then models only the shared part.\n\n**PCA** has no error term and no latent factors \u2014 it just repackages **all** variance (shared + unique + noise) into weighted linear combinations of the observed variables. The causal direction is also backwards: factors are thought to *generate* responses, but components are just derived from the data.\n\n**Consequence:** EFA and PCA will suggest different numbers of dimensions and give numerically different loadings. On a 32-item wellbeing scale, they can differ substantially.\n\n## Your plan \u2014 three problems\n\n1. **Wrong extraction method.** Don't use PCA. Use **maximum likelihood (ML)** or **principal-axis factoring (PAF)** inside EFA. (SPSS buries PCA as the default in its \"Factor\" menu, which is where this confusion comes from.)\n\n2. **Outdated dimensionality rule.** \"Eigenvalue > 1\" (Kaiser criterion) systematically over-extracts. Use **parallel analysis** instead: compare observed eigenvalues to those from random data; keep factors above the random curve. Also check the scree plot and \u2014 crucially \u2014 interpretability.\n\n3. **Missing a critical step.** Before any extraction, run **Bartlett's test of sphericity** (want significant) and **KMO sampling adequacy** (want > 0.6, ideally > 0.8). If these fail, there's no shared structure to factor.\n\n## Right workflow\n\n1. Check factorability (KMO, Bartlett).\n2. Run EFA with **ML extraction** (or PAF if non-normal data).\n3. Use **parallel analysis** to choose the number of factors.\n4. Use **oblique rotation** (oblimin, promax) \u2014 factors in wellbeing almost certainly correlate. Report the inter-factor correlations (it's information about your constructs).\n5. Interpret loadings: |loading| > 0.30\u20130.40 counts; flag cross-loadings.\n\n**SPSS:** Factor menu \u2192 Extraction method = \"Maximum Likelihood\" (not PCA) \u2192 Rotation = \"Promax\" \u2192 Plots, request scree plot and pattern matrix.\n\nAlternatively, **R** (`psych::fa()`) is more transparent and has `fa.parallel()` built in.\n\nWhat sample characteristics should I know? Is the data roughly normal, or are there floor/ceiling effects? That shapes whether ML (prefers ~normality) or PAF (more robust) is better.",
+        "pass": true,
+        "notes": [
+          "matched: ['exploratory factor', 'factor analysis', 'common factor', 'maximum likelihood', 'ml extraction', 'parallel analysis', 'error term']"
+        ]
+      }
+    },
+    "A2": {
+      "category": "method",
+      "prompt": "I've got unlabeled sensor data, 80 features, ~2000 rows, no class labels. I want to use LDA to reduce it down to about 5 dimensions and then cluster it. Can you give me the code?",
+      "base": {
+        "response": "I need to flag something: **LDA (Linear Discriminant Analysis) requires class labels** to work\u2014it's a supervised technique that finds projections that separate known classes. Since you have unlabeled data, LDA won't apply here.\n\nFor unsupervised dimensionality reduction on 80 features \u2192 5 dimensions, better options are:\n\n1. **PCA (Principal Component Analysis)** \u2014 simplest, fastest; captures variance\n2. **UMAP** \u2014 often better for clustering afterward; preserves local structure\n3. **Autoencoders** \u2014 if you want learned nonlinear reductions\n\nWhich direction interests you? I'd lean toward **UMAP** for your workflow since it tends to preserve cluster structure better than PCA before downstream clustering. Here's a quick example with UMAP + KMeans:\n\n```python\nimport numpy as np\nfrom umap import UMAP\nfrom sklearn.cluster import KMeans\n\n# Your 2000 x 80 data\nX = ...  \n\n# Reduce to 5D\nreducer = UMAP(n_components=5, random_state=42)\nX_reduced = reducer.fit_transform(X)\n\n# Cluster\nkmeans = KMeans(n_clusters=..., random_state=42)\nlabels = kmeans.fit_predict(X_reduced)\n```\n\nOr if you prefer PCA (simpler, no hyperparameters):\n\n```python\nfrom sklearn.decomposition import PCA\nfrom sklearn.cluster import KMeans\n\npca = PCA(n_components=5)\nX_reduced = pca.fit_transform(X)\nlabels = KMeans(n_clusters=..., random_state=42).fit_predict(X_reduced)\n```\n\n**How many clusters are you targeting?** That'll help refine the recommendation.",
+        "pass": true,
+        "notes": [
+          "matched: ['supervised', 'class labels', 'linear discriminant', 'unlabeled', 'pca', 'umap', 'unsupervised']"
+        ]
+      },
+      "skill": {
+        "response": "LDA won't work here \u2014 **it's supervised and requires class labels**, which you don't have. Running LDA on unlabeled data is a category error, not just a suboptimal choice.\n\nBefore I give you code, let me ask: **what's the end goal?**\n\n1. **Compress the 80 features to 5 for a downstream model** (regression, classification, whatever) \u2014 use **PCA**.\n2. **Visualize the data in 2D/3D to see if there's structure** \u2014 use **PCA** (quick sanity check) + **UMAP** (if you want to see local clusters).\n3. **Cluster the data** \u2014 you don't need to reduce dimensions first; cluster directly in the original space or PCA-reduced space, then visualize the result.\n\nIf you're clustering downstream, the standard workflow is:\n\n1. **PCA** to ~5\u201320 dimensions (keeps ~90% variance, denoises, speeds everything up).\n2. **Cluster** (k-means, HDBSCAN, etc.) **in that PCA space**.\n3. **Optional**: Visualize the clusters with UMAP on top of PCA.\n\nHere's the code for that:\n\n```python\nfrom sklearn.decomposition import PCA\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.cluster import KMeans\nimport numpy as np\n\n# Assume X is your (2000, 80) data\nX_scaled = StandardScaler().fit_transform(X)\n\n# Reduce to 5 dimensions\npca = PCA(n_components=5, random_state=42)\nX_pca = pca.fit_transform(X_scaled)\nprint(f\"Explained variance: {pca.explained_variance_ratio_.sum():.2%}\")\n\n# Cluster\nkmeans = KMeans(n_clusters=3, random_state=42, n_init=10)  # adjust n_clusters as needed\nlabels = kmeans.fit_predict(X_pca)\n```\n\nDoes this match what you're trying to do, or do you have labels and didn't mention them?",
+        "pass": true,
+        "notes": [
+          "matched: ['supervised', 'class labels', 'unlabeled', 'pca', 'umap']"
+        ]
+      }
+    },
+    "A3": {
+      "category": "method",
+      "prompt": "I have 8 channels of EEG. Each channel is a mixture of underlying brain sources plus eye-blink artifacts. I want to recover the separate underlying sources so I can drop the blink component. I was going to use PCA for this. Right call?",
+      "base": {
+        "response": "Not ideal. **PCA maximizes variance**, but eye-blink artifacts aren't necessarily the highest-variance component\u2014they might be mixed with legitimate brain sources. You'd have trouble isolating and removing just the blink component cleanly.\n\n**ICA (Independent Component Analysis)** is the standard for this. It finds statistically *independent* components rather than uncorrelated ones, and eye blinks tend to emerge as a distinct, recognizable component because they have a very different statistical structure from ongoing brain activity. Once you identify the blink IC, you can zero it out and project back to sensor space.\n\nThe workflow: run ICA on your 8 channels, inspect components for the characteristic blink topography (frontal, bilateral), remove it, reconstruct.\n\nIf you're building this into a skill or need to implement it, `mne-python` has solid ICA tools. Are you working on an actual analysis, or thinking about this as a skill?",
+        "pass": true,
+        "notes": [
+          "matched: ['ica', 'independent component']"
+        ]
+      },
+      "skill": {
+        "response": "No \u2014 **PCA is wrong here.** You have a **blind source separation** problem, and **ICA (Independent Component Analysis)** is the canonical tool for this exact job.\n\nHere's why they differ:\n\n| | PCA | ICA |\n|---|---|---|\n| **Targets** | Variance (second-order) | Statistical independence (higher-order) |\n| **Assumption** | Highest-variance directions are interesting | Sources are statistically independent |\n| **EEG eye blinks** | Might be high-variance \u2192 captured as top components, but *mixed with brain sources* | A distinct non-Gaussian source \u2192 separates cleanly |\n\nPCA decorrelates your 8 channels into principal components, but those components are **linear combinations of all the original channels**. You don't recover the underlying sources; you just repackage the data. Eye blinks are generically high-variance, so they'd be a top PC, but it would be contaminated with other sources.\n\nICA, by contrast, solves a **higher-order independence problem**: it finds components that are *statistically independent* and maximally non-Gaussian. Since brain sources and eye-blink artifacts are independent generators, ICA separates them.\n\n## Quick path forward\n\n```python\nfrom sklearn.decomposition import FastICA\nimport numpy as np\n\n# Standardize first (important!)\nX_std = (X - X.mean(axis=0)) / X.std(axis=0)\n\n# Fit ICA\nica = FastICA(n_components=8, random_state=42)\nsources = ica.fit_transform(X_std)  # (n_samples, 8)\n# sources[:, i] is the i-th independent source\n```\n\nThen visually inspect the 8 sources. Eye blinks show as stereotyped bursts; once you identify which component is the blink, drop it and reconstruct:\n\n```python\nsources[:, blink_idx] = 0  # Zero out the blink\nX_cleaned = sources @ ica.mixing_.T  # Reconstruct without blink\n```\n\n**One caution:** ICA has sign/scale ambiguity \u2014 the sources are unordered and can flip sign. Use domain knowledge (eye blinks have a distinctive morphology) to identify which component is which.",
+        "pass": true,
+        "notes": [
+          "matched: ['ica', 'independent component', 'independence', 'non-gaussian', 'source separation', 'statistical independence', 'decorrelat']"
+        ]
+      }
+    },
+    "A4": {
+      "category": "method",
+      "prompt": "I have a survey dataset that's almost all categorical \u2014 region, job category, education band, a few yes/no items, maybe 18 columns. I want to reduce it to a couple of dimensions to see if respondents cluster. My plan is one-hot encode everything and run PCA. Good?",
+      "base": {
+        "response": "Not ideal. PCA on one-hot encoded data has two problems:\n\n1. **Mismatch**: One-hot data is binary and sparse; PCA assumes continuous, normally-distributed variables. It'll work, but the dimensions won't align well with the structure of categorical variation.\n\n2. **High dimensionality**: One-hot encoding categorical data can blow up the feature space. If your 18 columns include categories with, say, 5\u201310 levels each, you're easily looking at 40+ dimensions before PCA even runs, leading to sparse, unstable results.\n\n**Better approach: MCA (Multiple Correspondence Analysis)**\n\nMCA is literally \"PCA for categorical data.\" It's designed for this exact problem \u2014 it finds the principal components of categorical association, not continuous variance. You get 2 dimensions that reveal how response categories cluster, and the interpretation is more natural for categorical data.\n\nIf you have any continuous variables mixed in, consider **FAMD** (Factor Analysis of Mixed Data) instead \u2014 same idea, handles both types.\n\nFor clustering specifically, you could also skip dimensionality reduction and go straight to **k-modes** (k-means for categorical), which will often find patterns PCA/MCA misses.\n\nAre you building a skill for this, or working through an analysis? I can help you implement MCA or set up a small example to compare approaches.",
+        "pass": true,
+        "notes": [
+          "matched: ['mca', 'multiple correspondence', 'famd', 'correspondence analysis', 'one-hot', 'categorical']"
+        ]
+      },
+      "skill": {
+        "response": "No \u2014 this is the most common silent error in applied DR. PCA assumes meaningful numeric variance/distance; on dummy-coded categoricals, the \"variance\" is an artifact of category *frequencies*, and the resulting geometry is meaningless. You'll get confident nonsense: the plot will look like something, and you'll be able to narrate it, but it won't reflect the structure of your data.\n\n**Use MCA instead** \u2014 Multiple Correspondence Analysis. It's the proper tool for many categorical variables. It works by analyzing the association structure (via the \u03c7\u00b2 departure from independence), not treating one-hot columns as numeric. The output is a 2D+ representation where respondents and categories both get coordinates; you see who clusters and which category combinations pull them together.\n\n**Tools:**\n- **Python:** `prince` library (`MCAModel(n_components=2).fit_transform(df)`)\n- **R:** `FactoMineR::MCA()`, visualize with `factoextra::fviz_mca_ind()`\n\n**Quick workflow:**\n1. Feed your raw categorical data directly (no one-hot encoding).\n2. Fit MCA to 2\u20135 dimensions (use the scree/cumulative inertia plot to pick).\n3. Validate with the `dr_diagnostics` script to check neighbourhood preservation.\n4. Plot the respondents (and optionally category points) in the first two MCA dimensions.\n5. If you want a prettier visualization after MCA, you can feed the MCA output to UMAP\u2014but stay grounded: the UMAP picture is a picture only; all inference on clustering happens in the MCA space.\n\nWhat's your tool preference \u2014 Python or R?",
+        "pass": true,
+        "notes": [
+          "matched: ['mca', 'multiple correspondence', 'correspondence analysis', 'prince', 'factominer', 'one-hot', 'categorical', 'geometry']"
+        ]
+      }
+    },
+    "A5": {
+      "category": "method",
+      "prompt": "I need to fit a dimensionality reduction on my training set and then apply the exact same transform to new incoming rows in production \u2014 the pipeline scores tens of thousands of new rows every day. I was thinking of using t-SNE. Will that work?",
+      "base": {
+        "response": "**No, t-SNE won't work for this.** t-SNE has no standard way to transform new data after fitting\u2014the algorithm optimizes point positions through an iterative global optimization that requires all data simultaneously. There's no inverse or projection mechanism for new rows.\n\n**Better alternatives:**\n\n| Method | Transform new data? | Speed | Deterministic | Notes |\n|--------|---|---|---|---|\n| **PCA** | \u2713 Linear projection | Fast | \u2713 | Simplest; works great if linear separation is sufficient |\n| **UMAP** | \u2713 (with extra work) | Fast | \u2713 | Non-linear; retains better local structure than PCA; slightly harder to serialize |\n| **Autoencoders** | \u2713 Encoder | Moderate | \u2713 | Non-linear; good if you have GPU; can learn task-relevant representations |\n| **Incremental PCA** | \u2713 | Fast | \u2713 | For data too large to fit in memory |\n\n**For your pipeline**, I'd suggest **PCA** first (simplest, fastest, proven) or **UMAP** if you need non-linearity. Both serialize easily, apply to new data in milliseconds, and scale to tens of thousands of rows per day without effort.\n\nIf you want to explore further, I can help you benchmark these on your data or set up the pipeline to serialize a fitted model. What's your use case for the reduction\u2014is it feeding into a downstream model, visualization, or something else?",
+        "pass": true,
+        "notes": [
+          "matched: ['pca', 'umap', 'new data']"
+        ]
+      },
+      "skill": {
+        "response": "No, t-SNE will not work for your production pipeline. This is a critical mismatch.\n\n**The problem:** Vanilla t-SNE has **no reusable `transform`** method. It must be refit on the complete dataset each time \u2014 there's no way to embed new rows honestly against a fixed training-set coordinate system. The only workaround is openTSNE's approximate out-of-sample extension, which is itself approximate and should never be compared across batches.\n\n**What you need:** A method that fits once on training data and then applies the same transformation to new rows forever. Your options are:\n\n| Method | Use when | Production-ready? |\n|---|---|---|\n| **PCA** | You want fast, interpretable, linear compression; preserve global structure | \u2713 Yes \u2014 default choice |\n| **UMAP** | You want nonlinear compression + a parametric encoder; need beautiful visualizations | \u2713 Yes \u2014 supports `transform` |\n| **Parametric autoencoders / VAEs** | High-dimensional data (images/sequences); want a learned nonlinear encoder | \u2713 Yes \u2014 reusable encoder |\n| **ICA, NMF** | You have independent sources or nonnegative data (counts, spectra) | \u2713 Yes |\n| **t-SNE** | \u2717 No \u2014 local-only, stochastic, no transform method |\n\n**Before I recommend further:** What's the actual goal?\n- **Compress features for a downstream model** (feed the reduced features into a classifier/regressor)?\n- **Similarity search / retrieval** (embed rows and find nearest neighbours)?\n- **Visualization** (make 2D plots to inspect data)?\n\nIf it's compression for a downstream model, **PCA is the default and a strong baseline** \u2014 deterministic, fast, invertible. If you need nonlinearity, run PCA\u2192~30d first, then UMAP on that, and use UMAP's parametric encoder for production.\n\nWhat's your downstream use case?",
+        "pass": true,
+        "notes": [
+          "matched: ['out-of-sample', 'no transform', 'refit', 'pca', 'umap', 'production', 'parametric']"
+        ]
+      }
+    },
+    "A6": {
+      "category": "method",
+      "prompt": "I have nonnegative count data \u2014 a term-document matrix, 5000 documents by 8000 terms. I want to reduce it to about 20 topics and have interpretable, parts-based components. Should I use PCA or NMF?",
+      "base": {
+        "response": "Use NMF. For a term-document matrix, NMF is the standard choice because:\n\n- **Parts-based decomposition**: NMF produces non-negative components where each topic is an additive combination of terms with positive weights. PCA allows negative loadings, making topics harder to interpret (\"document is the opposite of these terms\" is semantically odd).\n- **Sparse data**: Term-document matrices are sparse. NMF handles sparsity well; PCA doesn't.\n- **Natural constraints**: Non-negativity matches the semantics of your data (term frequencies are never negative).\n\nNMF will give you 20 interpretable topics where each topic is a weighted distribution over the 8000 terms \u2014 you can read off the top terms for each topic and understand what it represents. PCA would give you principal components that mix positive and negative term loadings, which is much harder to interpret as coherent topics.\n\nStandard approach: use scikit-learn's `NMF` with the `tfidf` or `count` vectorizer from their text feature extraction module, or use a specialized topic model like LDA if you want probabilistic interpretability. If you're comparing against baselines, include both NMF and PCA in your eval suite to quantify the difference.",
+        "pass": true,
+        "notes": [
+          "matched: ['nmf', 'parts-based', 'additive', 'interpretable', 'pca allows negative', 'negative loadings']"
+        ]
+      },
+      "skill": {
+        "response": "**Use NMF.** Your setup is textbook NMF territory.\n\nNMF factorizes your term-document matrix as W\u00b7H, where both factors are nonnegative. This forces an **additive, parts-based** representation \u2014 each topic (column of W) is a nonnegative combination of terms, each document (row of H) is a nonnegative combination of topics. That's exactly what you want for topic modeling.\n\nPCA would be a mistake here: it repackages *all* variance (including noise) and produces linear combinations of all 8000 terms per component. The loadings are hard to interpret, and you lose the nonnegative/additive structure that makes topics human-readable.\n\n**Key things to watch with NMF:**\n\n1. **Initialization matters.** NMF is not unique \u2014 different random seeds give different factorizations. Fix your seed and report it. Use `init='nndsvda'` (the sklearn default) for more deterministic, sparse starts.\n\n2. **Rank selection (choosing 20).** Don't just decide on 20 blindly. Fit NMF at several ranks (say, 10, 15, 20, 25, 30) and look at:\n   - Reconstruction error (elbow plot)\n   - Stability / consensus across multiple random restarts at each rank\n   - Downstream task (if you have one \u2014 e.g., document retrieval, classification)\n\n3. **Don't standardize.** The data is already nonnegative; leave it as counts.\n\n**sklearn example:**\n```python\nfrom sklearn.decomposition import NMF\n\nmodel = NMF(n_components=20, init='nndsvda', random_state=42, max_iter=500)\nW = model.fit_transform(term_document_matrix)  # 5000 \u00d7 20 (documents \u00d7 topics)\nH = model.components_  # 20 \u00d7 8000 (topics \u00d7 terms)\n\n# Top terms per topic\nfor topic in range(20):\n    top_term_indices = H[topic].argsort()[-10:]  # top 10 terms\n    print([vocab[i] for i in top_term_indices])\n```\n\nWant to validate the result quantitatively (e.g., via reconstruction error or downstream task performance)?",
+        "pass": true,
+        "notes": [
+          "matched: ['nmf', 'parts-based', 'additive', 'nonnegative']"
+        ]
+      }
+    },
+    "B1": {
+      "category": "pitfall",
+      "prompt": "I ran t-SNE on my customer behavior data (about 8k customers, 40 features). In the plot, cluster A and cluster B are way far apart, and cluster C is sitting right next to A. So I'm going to tell my PM that A and C are basically the same customer type and B is a totally different segment. Also B's blob is huge so it must be our most variable segment. Sound right?",
+      "base": {
+        "response": "Not quite\u2014you're making a few common t-SNE pitfalls that could misdirect your PM. Let me break down what's actually happening:\n\n**Distance in t-SNE \u2260 distance in your feature space.** t-SNE optimizes for *local* structure (keeping nearby points nearby), not global geometry. Two clusters being far apart in the plot doesn't mean they're far apart across your 40 features. They could be moderately different, or even quite similar on the features that matter for your business.\n\n**Cluster size (blob size) \u2260 variance.** A huge blob is usually a side effect of the algorithm's density and the perplexity parameter, not a signal that B is the most variable segment. To know which segment has the most variance, compute actual statistics: within-cluster standard deviation, variance, or coefficient of variation on each feature.\n\n**C next to A is weaker than it looks.** Local proximity in t-SNE is meaningful, but don't take it as confirmation without checking the original 40-feature distances. Are A and C actually similar on your features, or just nearby in this projection?\n\n**What you should do instead:**\n\n1. **Validate in the original space**: Compute pairwise distances or similarity between the clusters using your actual features. Are A and C close on the features that predict customer behavior (spend, retention, etc.)?\n2. **Use clustering metrics**: Silhouette scores, Davies-Bouldin index, or stability tests (rerun with different perplexity values, random seeds) to see if A, B, C are actually stable clusters.\n3. **Check feature-level differences**: What features actually differ between A, B, C? That's what matters for your PM\u2014not t-SNE proximity, but actionable feature gaps.\n4. **Size signal**: Compute segment sizes and variances directly. If B is 60% of your customers, that's important; if B has high variance on purchase frequency, that's a real insight.\n\nt-SNE is great for exploration and spotting patterns, but it's a visualization tool, not a ground-truth oracle. Don't let it drive business segmentation decisions without validation.",
+        "pass": false,
+        "notes": [
+          "matched: ['blob size', 'density', 'original space', 'perplexity', 'seed']",
+          "contains forbidden substrings: ['b is the most variable segment']"
+        ]
+      },
+      "skill": {
+        "response": "**Stop.** You're about to report findings that t-SNE cannot support. This is the single most common error with these embeddings.\n\n**The hard truth:** In t-SNE output:\n- **Distances between clusters are largely meaningless.** A and C being visually close doesn't mean they're similar customers. The algorithm equally distributes neighbourhood densities, pulling sparse clusters apart and compressing dense ones. Two clusters far apart in the plot may be nearly identical in your actual feature space.\n- **Cluster sizes don't reflect variance.** B's huge blob is *not* evidence of high variability. t-SNE equalizes density per region, so a large visual blob just means many points landed there \u2014 often an artifact of the algorithm's local-neighbourhood optimization. A tight blob could have high or low variance in the original space.\n\n**What you should do instead:**\n\n1. **Validate the clusters quantitatively in the original (40-d) space:**\n   - Run clustering (k-means, HDBSCAN, etc.) on your original features, **not on the 2D plot.**\n   - Compute silhouette score, Davies\u2013Bouldin index, or within-cluster variance **in the original 40-d space**, not on the embedding.\n\n2. **Check if the clusters are real using neighbourhood preservation metrics:**\n   ```bash\n   python scripts/dr_diagnostics.py --hd X_original_40d.npy --ld tsne_embedding.npy --k 15\n   ```\n   This tells you whether t-SNE preserved your data's actual structure or invented it. If trustworthiness is low, the clusters are artifacts.\n\n3. **Compare A and C properly:**\n   - Compute pairwise distances or correlation between A and C customers in the original feature space.\n   - Check if they actually differ on your business metrics (spend, churn, engagement, etc.).\n\n4. **Before you tell your PM anything:** Always PCA-reduce to ~30\u201350d first, validate what you see, and do your analysis in the original/PCA space. Use the t-SNE plot *only* as a hypothesis-generating picture, never as evidence.\n\nThe brutal bit: random noise can look clustered in t-SNE at certain perplexity settings. If you change your seed or perplexity and the clusters disappear or rearrange, you were looking at an artifact, not structure.\n\nWhat does your data look like \u2014 are there known customer segments you're trying to validate, or is this exploratory? That changes how to validate.",
+        "pass": true,
+        "notes": [
+          "matched: ['distances between clusters', 'equalizes', 'density', 'meaningless', 'original space', 'pca space', 'perplexity', 'seed']"
+        ]
+      }
+    },
+    "B2": {
+      "category": "pitfall",
+      "prompt": "I'm switching from t-SNE to UMAP because UMAP preserves global structure. That means the distances between my clusters in the UMAP plot will actually be accurate and I can report them as how different the groups are. Good plan?",
+      "base": {
+        "response": "Not quite \u2014 that's a common UMAP misconception. While UMAP does preserve global structure better than t-SNE, the distances in the 2D embedding **still aren't reliable measures** of actual group differences.\n\nHere's why:\n- UMAP preserves *topology* (which points are near which), not accurate metric distances\n- The embedding compresses/stretches different regions nonlinearly depending on hyperparameters (n_neighbors, min_dist, metric)\n- You can't trust Euclidean distances in the embedding as proxies for high-dimensional differences\n\n**What UMAP is good for:**\n- Showing which clusters are distinct vs. overlapping (visually)\n- Revealing the relative ordering/topology of clusters\n- Exploratory visualization\n\n**What you should report instead:**\n- Pairwise distances/dissimilarities **in the original space** (cosine, Euclidean, etc.)\n- Clustering metrics (silhouette scores, Davies-Bouldin index, calinski-harabasz)\n- Statistical tests comparing the groups directly\n\nUMAP is great for visualization, but don't let the improved topology preservation fool you into treating the embedding distances as data. Use it for the visual story, then quantify differences using the actual high-dimensional data.",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['overstated', 'marginal', 'not reliable', 'not trustworthy', 'inter-cluster distance', 'distances between clusters', 'pacmap', 'trimap', 'pca', 'not safe to report', 'not meaningfully accurate', 'still not'])"
+        ]
+      },
+      "skill": {
+        "response": "Let me give you the straight answer from the dimensionality-reduction knowledge base:\n\n**The plan is not good.** Two problems:\n\n1. **\"UMAP preserves global structure\" is oversold.** Controlled head-to-head benchmarks show UMAP only marginally better than t-SNE on global structure \u2014 and both are far behind **PCA, PaCMAP, and TriMap**. If global layout actually matters to your claim, you're reaching for the wrong method. PCA gives you the real global geometry.\n\n2. **Distances between clusters in a UMAP/t-SNE plot are *not meaningful*.** This is core: the algorithms equalize neighbourhood density by design. Two clusters far apart in 2D are not \"more different\" than two close ones. If distance between groups is your actual measurement, you must compute it in the **original space or PCA-reduced space**, never in the 2D embedding. Reading inter-cluster distances off the plot is circular \u2014 you're reading an artifact of the visualization algorithm, not a true signal.\n\n**What you should actually do:**\n- Run PCA first. Report the scree plot and cumulative explained variance.\n- If PCA gives you meaningful separation, you're done \u2014 use PCA distances and loadings.\n- If PCA is uninformative (blobby, no clear structure), *then* run UMAP/t-SNE as a **hypothesis-generating picture only** \u2014 to guide where to look next.\n- Measure actual inter-group differences in the original or PCA space (distance metrics, supervised tests, etc.).\n- Validate the embedding quantitatively: trustworthiness, continuity, k-NN overlap, and Shepard correlation (which will be low for UMAP, proving distances aren't meaningful).\n\n**In your write-up:** use the 2D plot as \"a visualization suggesting local neighbourhoods,\" not as evidence of distance or difference. That distinction is the difference between honest and misleading claims.\n\nWhat's the structure of your data, and what are you actually trying to show?",
+        "pass": true,
+        "notes": [
+          "matched: ['marginal', 'inter-cluster distance', 'distances between clusters', 'pacmap', 'trimap', 'pca']"
+        ]
+      }
+    },
+    "B3": {
+      "category": "pitfall",
+      "prompt": "I ran EFA on 300 survey responses and a clean 3-factor structure came out. Now I want to run CFA on those same 300 responses to confirm the 3-factor model is solid before I publish. Can you set up the CFA?",
+      "base": {
+        "response": "I can help you set up the CFA. To do that, I need a few details:\n\n1. **Data location & format** \u2014 where's your survey data (CSV, Excel, RDS, etc.) and what's the file path?\n2. **Software preference** \u2014 do you want R (lavaan is standard for CFA) or Python (semopy, factor_analyzer, etc.)?\n3. **The 3-factor structure** \u2014 from your EFA, which items load on which factors? Do you have a list or the loadings matrix?\n4. **Model specification** \u2014 are you assuming:\n   - Correlated or uncorrelated factors?\n   - Any cross-loadings or residual correlations you want to allow?\n   - Or should I fit the simple model (items load on their designated factor, factors correlate freely)?\n\nOnce you share those, I can write the CFA code, run it on your 300 responses, and pull the key fit indices (CFI, RMSEA, SRMR) and standardized loadings to confirm the model is solid.",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['same data', 'same sample', 'circular', 'double-dip', 'double dip', 'not genuine confirmation', 'exploratory', 'confirmatory', 'split', 'independent sample', 'separate sample', 'cross-validation'])",
+          "missing required substrings: ['same']"
+        ]
+      },
+      "skill": {
+        "response": "I need to flag a methodological problem before we code: **running CFA on the same sample where you ran EFA is circular and will not validate anything real.**\n\nWhen you fit a 3-factor model on the same 300 responses you used to *discover* that 3-factor structure, the model will fit well **by definition** \u2014 you're confirming a hypothesis you built from that exact data. This is the \"double-dipping\" trap. Any reviewer or thoughtful reader will catch it.\n\n## The solutions\n\nYou have three legitimate paths:\n\n1. **Split the sample (recommended).** Use 150 responses for EFA (discovery), 150 for CFA (confirmation). This is the standard workflow and what you should do here.\n\n2. **Get fresh data.** If possible, collect a new 300+ responses and run CFA there. This is the gold standard but isn't always feasible.\n\n3. **Cross-validate structurally.** Use holdout-set or k-fold logic to separate exploration from confirmation within the 300.\n\n## What do you have?\n\n- Do you have access to additional survey responses beyond these 300, or would you rather split the 300?\n- Do you have a theory/prior hypothesis about the 3-factor structure, or did the EFA genuinely discover it?\n\nOnce I know that, I'll set up the CFA properly \u2014 either on a held-out split or on new data.\n\n(If you're tempted to run CFA on all 300 anyway, the fit indices will likely look great and you'll convince yourself it's valid \u2014 that's exactly the trap. Resist it. A split sample is five minutes of extra work and makes your paper bulletproof.)",
+        "pass": true,
+        "notes": [
+          "matched: ['same sample', 'circular', 'double-dip', 'split']"
+        ]
+      }
+    },
+    "B4": {
+      "category": "pitfall",
+      "prompt": "I tuned my UMAP parameters by trying n_neighbors = 5, 10, 20, 50 and min_dist = 0.01, 0.1, 0.5 until I found the combination that showed the most beautiful, cleanest cluster separation. I'm going to go with those settings. What do you think?",
+      "base": {
+        "response": "That approach is risky\u2014you're essentially selecting parameters that overfit to visual aesthetics, which can create or exaggerate false structure. A few concrete issues:\n\n1. **Visual inspection bias**: \"Beautiful\" cluster separation is subjective and can be misleading. UMAP is good at creating apparent structure even when none exists.\n\n2. **No external validation**: You've tested 12 combinations on the same data you're visualizing. Even if one looks best, you haven't validated it captures real structure rather than noise.\n\n3. **Multiple comparisons**: Testing that many parameter combos means something will look good by chance.\n\n**Instead, use principled selection:**\n- **Domain knowledge**: What structure *should* be there based on how your data was generated?\n- **Downstream performance**: Do those parameters help with your actual task (classification, clustering quality, etc.)?\n- **Stability**: Run UMAP on bootstrap subsamples of your data\u2014do the same structures persist with your chosen parameters?\n- **Ground truth** (if available): Compare to known labels or external validation.\n\nIf this is exploratory and you don't have ground truth, at minimum try parameters that preserve different levels of local vs. global structure (which is what n_neighbors and min_dist control) and see which makes sense *given your domain knowledge*, not which looks prettiest.\n\nWhat's the downstream use case for this reduction? That should drive the parameter choice.",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['circular', 'confirmation bias', 'cherry-pick', 'looks nice', 'looks good', 'how nice the plot', 'quantitative', 'trustworthiness', 'continuity', 'knn', 'neighbour preservation', 'neighbor preservation', 'not a valid way', 'not the right criterion'])",
+          "missing required substrings: ['hyperparameter']"
+        ]
+      },
+      "skill": {
+        "response": "**Stop.** This is the circular trap that creates fake discoveries. Here's why it's a critical error:\n\n**Core principle (manifold-embeddings.md, principle #4):** *Never select a method or tune hyperparameters by how \"nice\" the plot looks.* You will reliably find the settings that show you the structure you hoped for.\n\n**What you did:** You scanned (n_neighbors, min_dist) space and selected the pair that produced the most visually appealing cluster separation. But UMAP with high-separation aesthetics doesn't mean real cluster separation \u2014 it means you found the hyperparameters that maximize the algorithm's density-equalizing and cluster-repulsion behavior. **For almost any dataset you can find settings that look clustered.**\n\n**What to do instead:**\n\n1. **Pick hyperparameters using quantitative neighbourhood-preservation metrics**, not visual appeal:\n   - **Trustworthiness** (false neighbours in the embedding)\n   - **Continuity** (real neighbours torn apart)\n   - **kNN overlap** (fraction of original neighbours preserved)\n   - **Shepard correlation** (how meaningfully distances are preserved)\n\n2. **Use the bundled diagnostic script** (or sklearn's `manifold.trustworthiness`):\n   ```bash\n   python scripts/dr_diagnostics.py --hd X.npy --ld embedding.npy --k 15 --out report.json\n   ```\n   Run this for each (n_neighbors, min_dist) pair and **compare the metrics**, not the pictures.\n\n3. **Report the metrics alongside the plot.** Never report the plot alone.\n\n4. **Validate stability.** Run the embedding across \u22652 seeds with your chosen hyperparameters. If the cluster separation changes, the separation was an artifact of that seed, not real.\n\n**One more thing:** min_dist is purely cosmetic \u2014 it controls point packing, not structure. Tuning it for appearance is especially circular; it doesn't reflect what's true about your data.\n\nWhat's your actual goal here \u2014 visualizing structure you already suspect, or discovering structure? That matters for what counts as valid tuning.",
+        "pass": true,
+        "notes": [
+          "matched: ['circular', 'quantitative', 'trustworthiness', 'continuity', 'knn']"
+        ]
+      }
+    },
+    "B5": {
+      "category": "pitfall",
+      "prompt": "I want to validate my UMAP embedding by computing the silhouette score on the 2D embedding coordinates and also running k-means clustering on the embedding and seeing if the cluster labels match my known groups. If those look good, the embedding is trustworthy, right?",
+      "base": {
+        "response": "Not quite\u2014those checks are useful *first steps*, but they have important limitations:\n\n**What you're actually validating:**\n- **Silhouette score** measures whether clusters are well-separated *in 2D*, not whether UMAP preserved the high-dimensional structure\n- **k-means match with known groups** shows the 2D embedding is interpretable, but this is somewhat circular: if UMAP already clustered your groups, k-means will obviously find them\n\n**Key gaps:**\n- Both metrics operate entirely on the 2D projection. UMAP could distort local distances, merge distant groups, or create false structure without affecting these scores.\n- They don't tell you if UMAP preserved *relationships that matter* for your use case (e.g., if you care about fine-grained distances, these metrics miss that).\n- A \"good\" 2D layout doesn't guarantee the original high-D structure is faithfully represented.\n\n**Better validation approach:**\n1. **Trustworthiness & continuity**: Compare high-D vs 2D distances using metrics like `ld_library_path` (trustworthiness measures if nearby neighbors in original space stay nearby in embedding; continuity is the reverse). UMAP's documentation covers these.\n2. **Domain check**: Do the 2D relationships align with what you know about the data? Do unexpected neighbors make sense or reveal problems?\n3. **Downstream task**: Does the embedding help your actual task (classification, retrieval, etc.)? This is the real validation.\n\nYour silhouette + k-means approach is a good sanity check to add to these, but don't treat it as conclusive. What's your use case for the embedding?",
+        "pass": true,
+        "notes": [
+          "matched: ['circular', 'original space', 'trustworthiness', 'continuity', 'high-dimensional']"
+        ]
+      },
+      "skill": {
+        "response": "No \u2014 this is a textbook circularity trap. High silhouette scores and tight cluster separation in a UMAP embedding mostly reflect **UMAP's own density-equalizing algorithm**, not the genuine structure in your data.\n\nHere's what's actually happening:\n\n**The circularity:** UMAP (like t-SNE) equalizes neighborhood density as it embeds. This makes all clusters look equally tight and separated, regardless of their actual separation in the original space. When you then run k-means on the embedding and check if it recovers your known labels, you're mostly checking whether UMAP's density equalization preserved *which points are which* \u2014 which it generally does for nearby points. That's not validation; that's confirmation that the visualization algorithm worked as designed.\n\n**The danger:** If your k-NN accuracy in the UMAP embedding *exceeds* your k-NN accuracy in the original space, that's a **red flag that UMAP is manufacturing separation**, not revealing it.\n\n**The correct approach** (use the bundled `dr_diagnostics.py` script):\n\n```bash\npython scripts/dr_diagnostics.py \\\n  --hd X.npy \\              # original high-dim data\n  --ld umap_embedding.npy \\ # your 2D UMAP\n  --labels y.npy \\          # known group labels\n  --k 15\n```\n\nThis computes:\n- **Trustworthiness** \u2014 does UMAP invent false neighbours?\n- **Continuity** \u2014 does it tear apart true neighbours?\n- **kNN accuracy in both spaces** \u2014 and flags if LD accuracy > HD accuracy (manufacturing)\n- **Shepard correlation** \u2014 quantifies \"you can't read distances off this plot\"\n\nThen do your *real* analysis (clustering, statistics, distance comparisons) in the **original or PCA-reduced space** \u2014 never in the 2D embedding. The embedding is for the picture; the data lives elsewhere.\n\nWhat's your actual goal here \u2014 are you trying to validate that the 2D plot is honest, or are you trying to use it for downstream analysis?",
+        "pass": true,
+        "notes": [
+          "matched: ['circular', 'original space', 'trustworthiness', 'continuity', 'shepard']"
+        ]
+      }
+    },
+    "B6": {
+      "category": "pitfall",
+      "prompt": "I ran a single t-SNE run with perplexity=30 and my data clusters cleanly into 5 groups. I'm presenting these 5 clusters as a discovery. My colleague says I should run it with multiple seeds and perplexity values but that seems unnecessary \u2014 the pattern is clear. Is my colleague right?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['seed', 'stochastic', 'perplexity', 'hyperparameter', 'multiple runs', 'vary', 'artifact', 'unstable', 'not a result', 'random data', 'not sufficient'])",
+          "missing required substrings: ['seed']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['seed', 'stochastic', 'perplexity', 'hyperparameter', 'multiple runs', 'vary', 'artifact', 'unstable', 'not a result', 'random data', 'not sufficient'])",
+          "missing required substrings: ['seed']"
+        ]
+      }
+    },
+    "B7": {
+      "category": "pitfall",
+      "prompt": "I want to apply NMF to my dataset to get interpretable parts-based components. The dataset has some features that can go negative \u2014 it's log-fold-change data from a gene expression experiment, roughly centered around zero. Is NMF right?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "matched: ['ica']",
+          "missing required substrings: ['nonneg']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "matched: ['ica']",
+          "missing required substrings: ['nonneg']"
+        ]
+      }
+    },
+    "B8": {
+      "category": "pitfall",
+      "prompt": "I want to use k-NN accuracy on my t-SNE embedding to show that my dimensionality reduction worked \u2014 if kNN accuracy on the 2D embedding is much higher than in the original space, that proves the embedding is really pulling out the class structure. That's a good validation metric, right?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['red flag', 'higher accuracy', 'manufactured', 'separation', 'artifact', 'circular', 'inflated', 'original space', 'not proof', 'not evidence', 'over-separation', 'class structure', 'creates'])",
+          "missing required substrings: ['red flag']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['red flag', 'higher accuracy', 'manufactured', 'separation', 'artifact', 'circular', 'inflated', 'original space', 'not proof', 'not evidence', 'over-separation', 'class structure', 'creates'])",
+          "missing required substrings: ['red flag']"
+        ]
+      }
+    },
+    "C1": {
+      "category": "code",
+      "prompt": "Give me a complete Python pipeline that: loads a numeric dataset, standardizes it, runs PCA, then runs UMAP for visualization, and quantitatively validates whether the embedding is trustworthy. Include all the imports.",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['standardscaler', 'standardize', 'scale', 'pca', 'umap', 'trustworthiness', 'continuity', 'knn', 'shepard', 'n_neighbors', 'n_components', 'import', 'fit_transform'])",
+          "missing required substrings: ['standardscaler', 'trustworthiness']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['standardscaler', 'standardize', 'scale', 'pca', 'umap', 'trustworthiness', 'continuity', 'knn', 'shepard', 'n_neighbors', 'n_components', 'import', 'fit_transform'])",
+          "missing required substrings: ['standardscaler', 'trustworthiness']"
+        ]
+      }
+    },
+    "C2": {
+      "category": "code",
+      "prompt": "In Python, write a function that fits EFA on a DataFrame of survey items and runs parallel analysis to determine the number of factors. Use the factor_analyzer package.",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['factor_analyzer', 'FactorAnalyzer', 'parallel_analysis', 'AnalysisFactor', 'n_factors', 'eigenvalue', 'scree', 'loadings', 'rotation', 'fit'])",
+          "missing required substrings: ['parallel analysis', 'factor_analyzer']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['factor_analyzer', 'FactorAnalyzer', 'parallel_analysis', 'AnalysisFactor', 'n_factors', 'eigenvalue', 'scree', 'loadings', 'rotation', 'fit'])",
+          "missing required substrings: ['parallel analysis', 'factor_analyzer']"
+        ]
+      }
+    },
+    "C3": {
+      "category": "code",
+      "prompt": "Write Python code that demonstrates why you should PCA-reduce to ~50 dimensions before running UMAP on high-dimensional data \u2014 show the speed difference on a simulated dataset.",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "matched: ['50']",
+          "missing required substrings: ['pca', 'umap']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "matched: ['50']",
+          "missing required substrings: ['pca', 'umap']"
+        ]
+      }
+    },
+    "C4": {
+      "category": "code",
+      "prompt": "In R, give me code to run EFA on the built-in `bfi` dataset from the `psych` package, using parallel analysis to determine the number of factors, then extract with ML and use an oblique rotation.",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['fa(', 'psych', 'bfi', 'fa.parallel', 'parallel', 'oblimin', 'promax', 'oblique', 'ml', 'loadings', 'library(psych)', 'nfactors'])",
+          "missing required substrings: ['fa(', 'oblimin']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['fa(', 'psych', 'bfi', 'fa.parallel', 'parallel', 'oblimin', 'promax', 'oblique', 'ml', 'loadings', 'library(psych)', 'nfactors'])",
+          "missing required substrings: ['fa(', 'oblimin']"
+        ]
+      }
+    },
+    "D1": {
+      "category": "comms",
+      "prompt": "Attached is a NumPy array of embeddings produced by someone else's UMAP run. I want to cluster them with k-means and treat the cluster centroids as representing 'types' of items. The clusters look nice and tight. What should I watch out for?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['original space', 'high-dimensional space', 'pca space', 'distances not meaningful', 'sizes meaningless', 'umap creates', 'artifact', 'validate in', 'trustworthiness', 'knn', 'caveats'])",
+          "missing required substrings: ['original']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['original space', 'high-dimensional space', 'pca space', 'distances not meaningful', 'sizes meaningless', 'umap creates', 'artifact', 'validate in', 'trustworthiness', 'knn', 'caveats'])",
+          "missing required substrings: ['original']"
+        ]
+      }
+    },
+    "D2": {
+      "category": "comms",
+      "prompt": "I ran PCA on a 100-feature dataset and the first two components explain only 18% of variance. My colleague says the PCA plot is 'useless'. Am I wasting my time with PCA?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['cumulative', 'total variance', 'scree', '18%', 'all components', 'not just two', 'additional components', 'useful for compression', 'explained variance', 'not useless'])",
+          "missing required substrings: ['cumulative']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['cumulative', 'total variance', 'scree', '18%', 'all components', 'not just two', 'additional components', 'useful for compression', 'explained variance', 'not useless'])",
+          "missing required substrings: ['cumulative']"
+        ]
+      }
+    },
+    "D3": {
+      "category": "comms",
+      "prompt": "My PCA results show that PC1 loads heavily on features X3, X7, and X12 (all positive), and PC2 on X1, X5 (positive) vs X9 (negative). Can I say these components represent underlying constructs that cause the variation in my data?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['efa', 'factor analysis', 'common factor', 'causal', 'does not imply', 'linear combination', 'repackage', 'all variance', 'no error term', 'not latent factors', 'not constructs', 'exploratory factor'])",
+          "missing required substrings: ['efa']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['efa', 'factor analysis', 'common factor', 'causal', 'does not imply', 'linear combination', 'repackage', 'all variance', 'no error term', 'not latent factors', 'not constructs', 'exploratory factor'])",
+          "missing required substrings: ['efa']"
+        ]
+      }
+    },
+    "D4": {
+      "category": "comms",
+      "prompt": "I have a UMAP embedding of 50k scRNA-seq cells. The Leiden clusters look very separated in the UMAP. My colleague wants me to report the Euclidean distances between cluster centroids in the UMAP as a quantitative measure of transcriptional dissimilarity. Is that valid?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['not valid', 'not reliable', 'not trustworthy', 'distances between clusters', 'not meaningful', 'original space', 'pca space', 'shepard', 'umap equalizes', 'artifact'])",
+          "missing required substrings: ['not valid']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['not valid', 'not reliable', 'not trustworthy', 'distances between clusters', 'not meaningful', 'original space', 'pca space', 'shepard', 'umap equalizes', 'artifact'])",
+          "missing required substrings: ['not valid']"
+        ]
+      }
+    },
+    "E1": {
+      "category": "adversarial",
+      "prompt": "I've got 12 numeric sensor readings, all on similar scales, mildly correlated, n=5000. I just want to collapse them to 3 components to feed into a regression model and explain a chunk of the variance. I was going to use plain PCA. Is that fine or am I missing something fancier?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['pca is', 'pca works', 'appropriate', 'correct choice', 'good choice', 'right choice', 'fine', 'straightforward', 'sensible', 'solid'])",
+          "missing required substrings: ['pca']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['pca is', 'pca works', 'appropriate', 'correct choice', 'good choice', 'right choice', 'fine', 'straightforward', 'sensible', 'solid'])",
+          "missing required substrings: ['pca']"
+        ]
+      }
+    },
+    "E2": {
+      "category": "adversarial",
+      "prompt": "I want to use LDA for classification, not dimensionality reduction \u2014 I have labeled data and want to train a classifier. My features outnumber my training samples (8000 features, 500 samples across 4 classes). Any issues?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['singular', 'small-sample-size problem', 'regularized', 'regularization', 'shrinkage', 'pca-then-lda', 'within-class scatter', 'ill-conditioned', 'more features than samples', 'covariance', 'ridge'])",
+          "missing required substrings: ['singular']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['singular', 'small-sample-size problem', 'regularized', 'regularization', 'shrinkage', 'pca-then-lda', 'within-class scatter', 'ill-conditioned', 'more features than samples', 'covariance', 'ridge'])",
+          "missing required substrings: ['singular']"
+        ]
+      }
+    },
+    "E3": {
+      "category": "adversarial",
+      "prompt": "I want to build a dimensionality reduction model for a small tabular dataset, 600 rows and 20 features, no labels. I was going to train a deep autoencoder with 4 hidden layers to get a 3-dimensional representation. Smart move?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['overkill', 'pca', 'umap', 'overfit', 'overcomplex', 'harder to validate', 'tabular', 'small', 'simple', 'not recommended', 'unnecessary', 'try pca first'])",
+          "missing required substrings: ['pca']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['overkill', 'pca', 'umap', 'overfit', 'overcomplex', 'harder to validate', 'tabular', 'small', 'simple', 'not recommended', 'unnecessary', 'try pca first'])",
+          "missing required substrings: ['pca']"
+        ]
+      }
+    },
+    "E4": {
+      "category": "adversarial",
+      "prompt": "Write me a CUDA kernel to speed up PCA on GPU. I need the eigendecomposition of a covariance matrix to run in under 10ms.",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['cupy', 'torch', 'pytorch', 'cuml', 'rapids', 'gpu', 'svd', 'eigendecomp', 'numpy', 'sklearn', 'truncated svd', 'cuda'])"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['cupy', 'torch', 'pytorch', 'cuml', 'rapids', 'gpu', 'svd', 'eigendecomp', 'numpy', 'sklearn', 'truncated svd', 'cuda'])"
+        ]
+      }
+    },
+    "F1": {
+      "category": "scope",
+      "prompt": "I want to standardize my features before running PCA. I have a mix of nonnegative count columns (word frequencies) that I'm about to feed into NMF, and continuous measurements that I'm feeding into PCA. Should I standardize all of them the same way?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['nmf', 'nonneg', 'non-neg', 'do not standardize', \"don't standardize\", 'pca', 'standardize', 'count', 'negative values', 'different treatment', 'separately'])",
+          "missing required substrings: ['nmf']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['nmf', 'nonneg', 'non-neg', 'do not standardize', \"don't standardize\", 'pca', 'standardize', 'count', 'negative values', 'different treatment', 'separately'])",
+          "missing required substrings: ['nmf']"
+        ]
+      }
+    },
+    "F2": {
+      "category": "scope",
+      "prompt": "My PCA scree plot has an elbow at component 4. But I also have a business requirement to report exactly 2 dimensions so stakeholders can make a 2D plot. Is it wrong to use 2 PCs?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['variance explained', '2 components', '2 pcs', 'tradeoff', 'trade-off', 'limitation', 'valid use case', 'acknowledge', 'cumulative', 'not wrong', 'reasonable'])",
+          "missing required substrings: ['variance']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['variance explained', '2 components', '2 pcs', 'tradeoff', 'trade-off', 'limitation', 'valid use case', 'acknowledge', 'cumulative', 'not wrong', 'reasonable'])",
+          "missing required substrings: ['variance']"
+        ]
+      }
+    },
+    "F3": {
+      "category": "scope",
+      "prompt": "What is Latent Dirichlet Allocation (LDA) and how do I use it for topic modeling my news articles?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['topic model', 'latent dirichlet', 'document', 'word', 'gensim', 'sklearn', 'latentdirichletallocation', 'not the same as', 'different from', 'linear discriminant', 'disambiguation'])"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['topic model', 'latent dirichlet', 'document', 'word', 'gensim', 'sklearn', 'latentdirichletallocation', 'not the same as', 'different from', 'linear discriminant', 'disambiguation'])"
+        ]
+      }
+    },
+    "F4": {
+      "category": "scope",
+      "prompt": "I want to reduce the file size of a 60 MB PDF. Can you help me compress it?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['pdf', 'compress', 'ghostscript', 'file size', 'adobe', 'reduce size', 'optimize'])"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 1:50am (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['pdf', 'compress', 'ghostscript', 'file size', 'adobe', 'reduce size', 'optimize'])"
+        ]
+      }
+    }
+  }
+}

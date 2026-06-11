@@ -1,7 +1,0 @@
-# Core dependencies for agent-based-modeling skill scripts and template
-# Install: pip install -r requirements.txt
-
-mesa==3.5.1          # ABM framework (mesa_model_template.py)
-SALib==1.5.2         # Sensitivity analysis (sensitivity_analysis.py)
-numpy>=1.26,<3       # SALib dependency; also used by sensitivity_analysis.py
-matplotlib>=3.8      # Optional: replication_convergence.py --plot

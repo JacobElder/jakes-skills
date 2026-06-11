@@ -1,0 +1,24 @@
+{
+  "eval_id": 10,
+  "condition": "with_skill",
+  "prompt": "I'm running LPA in mclust. BIC says 4 classes is best. But the entropy-based classification accuracy (AveCAPP) is only 0.66, which feels low. Do I just go with 4 classes because BIC says so?",
+  "response": "No \u2014 BIC alone isn't sufficient justification, and 0.66 AveCAPP is a meaningful red flag worth taking seriously.\n\n## What 0.66 AveCAPP actually means\n\nAveCAPP = average posterior probability of the most-likely-class assignment. At 0.66, the average person is being pushed into their best-fitting class with only 66% confidence. The classes exist in the model, but individuals straddle them substantially. A useful rule of thumb: AveCAPP > 0.80 is typically considered adequate classification certainty; below 0.70 is hard to defend in most applied contexts.\n\n## What to do before committing to 4 classes\n\n**1. Check ICL alongside BIC.** ICL = BIC + entropy penalty \u2014 it explicitly rewards well-separated classes. If ICL prefers k=3, that's a strong signal that 4 classes fit the density better but aren't practically distinguishable. In mclust:\n\n```r\nsummary(fit)$BIC   # already have this\n# ICL is reported in the mclust summary output or:\nmclustICL(yourdata)\n```\n\n**2. Look at the full AveCAPP matrix**, not just the diagonal average. `classError` and the confusion matrix from `mclust` will show you *which* classes are bleeding into each other. Two of your four classes may be nearly indistinguishable \u2014 that's a 4\u21923 split candidate.\n\n**3. Check class sizes.** A class with <5% of the sample is often noise or an artifact, not a theoretically meaningful profile. mclust will report mixing proportions.\n\n**4. Fit k=3 and compare.** Even if BIC(4) < BIC(3), ask: does k=3 give you AveCAPP > 0.80, interpretable profiles, and only a modest BIC penalty? If yes, k=3 is often the more defensible and communicable solution.\n\n## The decision rule\n\n| Situation | Call |\n|---|---|\n| BIC(4) clearly lower, AveCAPP \u2265 0.80, classes interpretable | 4 classes |\n| BIC(4) modestly lower, AveCAPP < 0.70, ICL prefers 3 | Strong case for 3 |\n| BIC(4) lower but one class is tiny (<5%) | Investigate \u2014 likely artifact |\n| Profiles for 4 classes don't map to distinct theory | Go with interpretable solution and say why |\n\nThe LPA literature (and this is standard Nylund et al. / Masyn guidance) is explicit: BIC narrows the field, but **entropy + interpretability + parsimony pick the solution**. Choosing k=3 when k=4 has marginally better BIC, with a clear rationale, is not a weakness \u2014 it's honest reporting.",
+  "expectations": [
+    "Does not simply defer to BIC; treats AveCAPP / entropy as a substantively important criterion",
+    "Explains that low entropy/AveCAPP (0.66) means substantial classification uncertainty and undermines profile interpretation",
+    "Recommends inspecting adjacent solutions (3 and 5 classes) rather than taking the BIC winner outright",
+    "Mentions ICL or notes that entropy and BIC can point in different directions and both carry meaning",
+    "Connects class interpretability and size to the decision, not just statistical fit"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": true
+}

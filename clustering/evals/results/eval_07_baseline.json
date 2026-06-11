@@ -1,0 +1,22 @@
+{
+  "eval_id": 7,
+  "condition": "baseline",
+  "prompt": "I have 800 patients each described by 250 genomic expression features. I want to find patient subtypes. I was going to run HDBSCAN directly on the raw 250-dimensional data. Any concerns?",
+  "response": "Three real concerns:\n\n**1. Curse of dimensionality kills density estimates.** HDBSCAN infers clusters from local density differences. In 250 dimensions, pairwise Euclidean distances concentrate \u2014 nearly all point pairs become nearly equidistant \u2014 so the mutual reachability distances that HDBSCAN relies on lose their structure. You'll get noisy, unstable cluster assignments.\n\n**2. Your n/p ratio is ~3.** 800 samples in 250 dimensions is quite thin. Reliable density estimation typically needs the neighborhood around each point to contain enough neighbors, which becomes geometrically improbable as dimensions grow.\n\n**3. Correlated features inflate effective distance.** Genomic expression features are heavily correlated (co-expressed gene modules, batch effects). Redundant dimensions artificially stretch distances in those directions, distorting the density landscape.\n\n**Recommended fix:** Reduce first, then cluster. The standard pipeline:\n\n1. **Standardize** features (zero mean, unit variance per feature, or use log-normalization if counts-based).\n2. **PCA** \u2014 project to ~20\u201350 PCs. Use a scree plot; stop where variance explained levels off. This is lossless for the signal you care about and is what Seurat/Scanpy do for single-cell data.\n3. **(Optional) UMAP** on the PCA-reduced data if you want further nonlinear compression or visualization, though clustering directly on PCA components is often more stable.\n4. **HDBSCAN** on the 20\u201350 dimensional PCA representation.\n\nThe main tradeoff: PCA reduction assumes linear structure in the manifold. If your subtypes are separated by nonlinear combinations of features, step 3 (UMAP) earns its keep \u2014 but UMAP embeddings can distort global distances, so if interpretability of cluster distances matters, stick with PCA.",
+  "expectations": [
+    "Flags that density-based methods like HDBSCAN fail in high dimensions due to the curse of dimensionality",
+    "Explains that pairwise distances concentrate or become less discriminative in high dimensions (distances between near and far points converge), undermining density estimation",
+    "Recommends dimensionality reduction (PCA or UMAP) before applying any clustering algorithm",
+    "Notes that the choice of dimensionality reduction affects the clustering outcome"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

@@ -1,0 +1,26 @@
+{
+  "eval_id": 1,
+  "condition": "with_skill",
+  "prompt": "I've got about 50k points of sensor readings (8 numeric features) and I want to find natural groupings. I don't know how many groups there are, the groups are probably weird shapes, some regions are way denser than others, and there's definitely junk/outlier readings I'd rather not force into a group. I was going to use k-means with the elbow method. Good plan?",
+  "response": "No \u2014 k-means + elbow is a poor match for every constraint you listed. Here's why and what to use instead.\n\n**Why k-means fails your requirements:**\n\n| Your requirement | K-means behavior |\n|---|---|\n| Don't know k | You must specify k; elbow is subjective and weak |\n| Weird shapes | Assumes spherical/convex clusters \u2014 will split or merge non-blobby structure |\n| Variable density | Single variance model; dense clusters get split, sparse ones get merged |\n| Exclude outliers | Assigns every point to a cluster \u2014 no noise label |\n\n**Use HDBSCAN.**\n\nIt's the right tool for all four of your constraints simultaneously: finds k from the data, handles arbitrary shapes, explicitly handles variable density (the key thing that rules out plain DBSCAN too), and labels sparse/isolated points as noise rather than forcing them in.\n\n```python\nimport hdbscan\n\n# Scale first \u2014 density methods still use distance\nfrom sklearn.preprocessing import StandardScaler\nX_scaled = StandardScaler().fit_transform(X)\n\nclusterer = hdbscan.HDBSCAN(\n    min_cluster_size=50,    # smallest group worth calling a cluster \u2014 tune this\n    min_samples=10,         # how conservative; lower \u2192 more noise labeled\n)\nlabels = clusterer.fit_predict(X_scaled)  # -1 = noise\n```\n\n**The two parameters you'll tune:**\n- `min_cluster_size` \u2014 set it to the smallest cluster that would be meaningful in your domain. Start at ~50\u2013100 for 50k points.\n- `min_samples` \u2014 leave it at the default (equals `min_cluster_size`) until you see results; lower it if too much is getting labeled noise.\n\n**50k points, 8 features** is fine for HDBSCAN \u2014 well within its practical range.\n\n**One thing to do first:** scale your features. HDBSCAN is distance-based, so an unscaled feature with a large range will dominate the density structure. `StandardScaler` is the default unless you have reason to think outliers should control the scale, in which case use `RobustScaler`.",
+  "expectations": [
+    "Recommends HDBSCAN as the primary choice",
+    "Explains k-means assumes spherical/convex clusters and forces all points into clusters, which mismatches the stated data",
+    "Notes that varying density specifically breaks plain DBSCAN's single global eps, motivating HDBSCAN over DBSCAN",
+    "Mentions that the data should be scaled/standardized before clustering",
+    "Characterizes the elbow method as weak or advisory rather than endorsing it",
+    "Notes HDBSCAN labels noise/outliers rather than forcing them into clusters"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 6,
+  "total": 6,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}
