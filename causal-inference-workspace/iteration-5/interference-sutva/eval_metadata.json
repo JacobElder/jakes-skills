@@ -1,6 +1,0 @@
-{
-  "eval_id": 13,
-  "eval_name": "interference-sutva",
-  "prompt": "We ran an A/B test on a new social feature: users in the treatment group could see when their friends were online. We randomized at the user level \u2014 50% treatment, 50% control. Treatment users showed +15% engagement. When we extrapolate to a full launch, we expect +15% engagement across all users. My colleague says we can't make that extrapolation because of 'interference.' Should I be worried?",
-  "assertions": []
-}

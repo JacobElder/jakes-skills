@@ -1,6 +1,0 @@
-{
-  "eval_id": 5,
-  "eval_name": "complexity-creep-three-fund",
-  "prompt": "I have a three-fund portfolio (VTI, VXUS, BND) but I've been reading a lot and want to improve it. I'm thinking of adding: a small-cap value fund (VIOV), a REIT fund (VNQ), a dividend growth fund (VIG), and international small-cap (VSS). My spreadsheet would have 7 funds. Is this more diversified and will it give better returns?",
-  "assertions": []
-}

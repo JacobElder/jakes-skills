@@ -1,6 +1,0 @@
-{
-  "eval_id": 5,
-  "eval_name": "did-parallel-trends-violation",
-  "prompt": "We're evaluating a new customer success program we rolled out to different regions at different times over 18 months \u2014 15 regions got it in Q1, 20 in Q3, and 10 in Q4. We ran a standard two-way fixed-effects (TWFE) regression with region and quarter fixed effects, and the coefficient on 'treated' is +6% on renewal rate. A reviewer says 'TWFE with staggered rollout can give biased estimates even when parallel trends holds \u2014 is that right, and should I be worried?",
-  "assertions": []
-}

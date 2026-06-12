@@ -1,6 +1,0 @@
-{
-  "eval_id": 8,
-  "eval_name": "advisor-backwards-tax-placement",
-  "prompt": "My financial advisor set up my accounts last year. She put bonds (BND) in my Roth IRA because she said 'safe assets belong in your retirement security account \u2014 you don't want to risk your retirement nest egg.' She put international stocks (VXUS) in my Traditional 401k because 'that's where you have the most money.' My taxable brokerage is all VTI. Does this sound right?",
-  "assertions": []
-}

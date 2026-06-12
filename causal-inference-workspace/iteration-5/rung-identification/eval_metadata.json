@@ -1,6 +1,0 @@
-{
-  "eval_id": 1,
-  "eval_name": "rung-identification",
-  "prompt": "Due to a backend bug, our A/B testing framework assigned users to 'new_checkout' vs 'old_checkout' based on the last digit of their user ID \u2014 digits 0\u20134 got the new checkout, 5\u20139 got the old one. Conversion rates show +4.2% for new_checkout users. A junior analyst says 'this is essentially random since user IDs are arbitrary, so the +4.2% is our causal estimate of the checkout effect.' A senior engineer says 'user IDs are assigned sequentially, so this just compares newer users to older users.' Who's right, and can we use this as a valid causal estimate?",
-  "assertions": []
-}

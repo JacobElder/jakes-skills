@@ -1,6 +1,0 @@
-{
-  "eval_id": 9,
-  "eval_name": "att-vs-ate-rollout",
-  "prompt": "We used an encouragement design \u2014 we randomly sent a push notification to 30% of users inviting them to try our new premium feature. 18% of the notified group adopted the feature vs. 3% in the non-notified control group. Using the notification as an instrument, we estimate the LATE (Local Average Treatment Effect) for compliers at +$32 average 6-month revenue per user. Our CEO wants to force-enable the premium feature for all users who haven't adopted it, expecting roughly $32 revenue uplift per user. Is that the right expectation?",
-  "assertions": []
-}

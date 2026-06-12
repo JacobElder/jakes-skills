@@ -1,9 +1,0 @@
-{
-  "task": "front-door-identification",
-  "iteration": 6,
-  "condition": "without_skill",
-  "date": "2026-05-12",
-  "model": "claude-sonnet-4-6",
-  "response_file": "outputs/response.md",
-  "prompt_summary": "User asked whether an unmeasured confounder (employee ambition) makes the causal effect of technical skills training on performance ratings unidentifiable, given an observed mediator (skills applied on the job)."
-}

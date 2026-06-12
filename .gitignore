@@ -4,3 +4,4 @@ DS_attributes
 .claude/
 __pycache__/
 *.pyc
+*-workspace/

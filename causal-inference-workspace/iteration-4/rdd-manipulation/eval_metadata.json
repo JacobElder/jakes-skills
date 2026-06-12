@@ -1,6 +1,0 @@
-{
-  "eval_id": 11,
-  "eval_name": "rdd-manipulation",
-  "prompt": "We're evaluating whether proactive customer support outreach causes better retention. Users with a health score below 40 get outreach; users at 40+ do not. We planned to use regression discontinuity, comparing users just below 40 (treated) to users just above 40 (untreated). Then I noticed something: there's a spike in the density of health scores right above 40 \u2014 more users cluster at 41-45 than we'd expect from a smooth distribution. My data science lead says this doesn't matter because the threshold was only communicated internally to the support team. Does the density spike matter?",
-  "assertions": []
-}

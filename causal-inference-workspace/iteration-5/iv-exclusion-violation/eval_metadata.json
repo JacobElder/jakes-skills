@@ -1,6 +1,0 @@
-{
-  "eval_id": 12,
-  "eval_name": "iv-exclusion-violation",
-  "prompt": "I want to estimate the causal effect of gym membership on health outcomes. To deal with the selection problem (healthier people self-select into gyms), I'm using distance to the nearest gym as an instrument. My reasoning: proximity causes membership (relevant), and distance only affects health through membership (exclusion restriction). My colleague says the exclusion restriction is almost certainly violated. Are they right?",
-  "assertions": []
-}
