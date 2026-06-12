@@ -1,0 +1,22 @@
+{
+  "eval_id": 16,
+  "condition": "baseline",
+  "prompt": "I ran both k-means (k=4) and a GMM (k=4) on the same dataset. k-means found 4 roughly equal-sized, tight clusters. GMM found 2 large spread-out clusters and 2 small dense ones \u2014 completely different. Which result should I trust?",
+  "response": "The disagreement is itself diagnostic \u2014 and it points toward a specific k-means failure mode.\n\n**k-means is almost certainly wrong here.** k-means implicitly assumes clusters are spherical and roughly equal in size (it minimizes pooled within-cluster variance, which treats all clusters as having the same covariance and equal mixing weight). When your true data has clusters of unequal density or size, k-means will *force* large clusters to split and small ones to merge to equalize sizes. The \"4 tight equal clusters\" result is the tell \u2014 that pattern is k-means imposing its assumptions, not discovering structure.\n\nGMM relaxes both constraints: it allows different mixing proportions (unequal sizes) and different covariances (unequal spread). \"2 large spread-out + 2 small dense\" is exactly the kind of structure GMM can recover that k-means cannot.\n\n**That said, don't just trust GMM blindly \u2014 validate it:**\n\n1. **BIC on the GMM fit** \u2014 lower is better; confirms the model isn't just overfitting the covariance structure.\n2. **Silhouette scores** \u2014 compare both solutions. If GMM silhouettes are higher, the 2+2 partition is more coherent.\n3. **Visualize** \u2014 project to 2D (PCA or UMAP) and overlay both clusterings. Does one look like it's splitting a natural group?\n4. **Check GMM covariance type** \u2014 if you used `covariance_type='spherical'`, GMM degenerates toward k-means behavior. Use `'full'` or `'tied'` to let it fit non-spherical shapes.\n5. **Stability** \u2014 subsample 80% of the data 10\u201320 times and refit both. The solution that reproduces consistently is the more trustworthy one.\n\n**Bottom line:** trust the GMM result as the working hypothesis, but confirm via BIC and silhouette. The equal-sized k-means output is almost always an artifact of the algorithm's constraint rather than real structure.",
+  "expectations": [
+    "Does not simply declare one result correct; treats the disagreement as informative about the cluster geometry",
+    "Explains that k-means imposes equal-size, spherical clusters while GMM allows unequal sizes and elliptical shapes",
+    "Notes that k-means may be artificially forcing unequal clusters into equal-size spherical partitions",
+    "Recommends using BIC (or visualization / profile inspection) to evaluate which solution better fits the data"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

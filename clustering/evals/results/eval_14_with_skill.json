@@ -2,7 +2,7 @@
   "eval_id": 14,
   "condition": "with_skill",
   "prompt": "I ran k-means five times on the same data and got completely different cluster assignments each time. The clusters look reasonable in each run but they disagree. Which result should I use?",
-  "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+  "response": "The disagreement is telling you something important \u2014 and the right answer isn't \"pick the best-looking one.\"\n\n## Why this happens\n\nk-means is coordinate descent on a non-convex objective. It converges to a *local* optimum, and different random initializations reach different valleys. Each run can look locally reasonable while representing a meaningfully different partition.\n\n## What to actually do\n\n**First: use k-means++ with multiple restarts and pick by inertia.** This is what you should always be running:\n\n```python\nfrom sklearn.cluster import KMeans\nkm = KMeans(n_clusters=k, init='k-means++', n_init=20, random_state=42)\nkm.fit(X)\n```\n\n`n_init=20` runs the whole algorithm 20 times and keeps the run with the lowest inertia. This is the standard fix. Sklearn \u22651.4 actually defaults `n_init='auto'` (10), but bump it to 20+ for reliability.\n\n**Second: measure how much your 5 runs actually disagree.** Don't just eyeball \u2014 compute pairwise ARI:\n\n```python\nfrom sklearn.metrics import adjusted_rand_score\n# compare every pair of your 5 label arrays\nari = adjusted_rand_score(labels_run1, labels_run2)\n```\n\n- ARI near 1.0 across all pairs \u2192 the instability was cosmetic (just label permutation, not structural disagreement). Pick any.\n- ARI varies widely (e.g., 0.3\u20130.8) \u2192 the data genuinely supports multiple configurations. This is a real finding.\n\n## If ARI is low across runs\n\nThat's a data signal, not just an algorithm problem. Common causes:\n\n1. **Wrong k** \u2014 clusters at this k are not stable. Try k\u00b11.\n2. **Two clusters of very different density/size** \u2014 k-means splits them arbitrarily.\n3. **Features not scaled** \u2014 one dominant feature is driving the geometry.\n4. **Genuinely ambiguous structure** \u2014 k-means' spherical assumption doesn't match the data. Try GMM (which will report overlap via posteriors) or check silhouette scores.\n\nThe worst thing you can do is pick the run that produces the most interpretable story \u2014 that's pattern-matching on noise. If the structure won't reproduce, it isn't real.",
   "expectations": [
     "Explains that k-means is sensitive to random initialization and converges to local optima",
     "Recommends using k-means++ initialization to reduce variance across runs",
@@ -10,13 +10,13 @@
     "Treats high variability across runs as a signal about cluster instability or wrong k, not just a parameter-tuning nuisance"
   ],
   "assertion_results": [
-    false,
-    false,
-    false,
-    false
+    true,
+    true,
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 4,
   "total": 4,
-  "pass_rate": 0.0,
-  "eval_passes": false
+  "pass_rate": 1.0,
+  "eval_passes": true
 }

@@ -1,0 +1,24 @@
+{
+  "eval_id": 15,
+  "condition": "baseline",
+  "prompt": "I've been using k-means to segment my customers. My colleague says I should switch to a Gaussian Mixture Model instead. What's actually different between them and when is GMM worth the extra complexity?",
+  "response": "**K-means vs. GMM: the real differences**\n\nK-means is a special case of GMM with two hard constraints baked in:\n\n1. **Hard assignments** \u2014 each point belongs to exactly one cluster (vs. GMM's soft probabilities)\n2. **Spherical, equal-variance clusters** \u2014 k-means minimizes within-cluster Euclidean distance, which implicitly assumes clusters are round and same-sized\n\nGMM relaxes both. Each cluster gets its own covariance matrix (shape, orientation, volume), and each point gets a probability of belonging to each cluster.\n\n**Concrete situations where GMM wins:**\n\n| Situation | Why GMM helps |\n|---|---|\n| Clusters differ in size or density | GMM can fit a tight dense cluster and a loose spread-out one simultaneously |\n| Clusters are elongated or correlated | Covariance captures elliptical shapes; k-means can't |\n| You need uncertainty estimates | Soft assignments let you flag ambiguous customers rather than force a label |\n| Cluster overlap is real | A customer genuinely between two segments gets partial membership, not an arbitrary hard cut |\n\n**When k-means is the right call:**\n\n- You have millions of rows \u2014 GMM's EM fitting is significantly slower\n- Clusters really are roughly spherical and similar in spread (check this with a quick PCA plot)\n- You need a simple, explainable output for stakeholders\n- You're using it as initialization (k-means \u2192 GMM is a common warm-start)\n\n**Practical recommendation:** Run both and compare with BIC (GMM outputs this natively). If BIC strongly favors GMM *and* the covariance matrices end up visibly non-spherical, the extra complexity is justified. If k-means and GMM produce similar segments, stay with k-means \u2014 it's faster and easier to defend.\n\nOne trap: GMM with full covariance matrices needs enough data per cluster to estimate the covariance reliably. With small clusters or high-dimensional features, use `covariance_type='diag'` or `'tied'` in scikit-learn, or regularize with `reg_covar`.",
+  "expectations": [
+    "Explains that k-means is a special case of GMM (spherical, equal-variance, hard-assignment limit)",
+    "States that GMM provides soft/probabilistic assignments rather than hard cluster labels",
+    "Explains that GMM allows flexible (elliptical, variable-size) covariance structure, whereas k-means assumes spherical equal-size clusters",
+    "Notes that full-covariance GMM can overfit in high dimensions and recommends constraining the covariance type",
+    "Mentions BIC as a principled way to choose k with GMM"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

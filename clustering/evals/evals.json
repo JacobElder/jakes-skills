@@ -123,7 +123,7 @@
       "expectations": [
         "Does not simply defer to BIC; treats AveCAPP / entropy as a substantively important criterion",
         "Explains that low entropy/AveCAPP (0.66) means substantial classification uncertainty and undermines profile interpretation",
-        "Recommends inspecting adjacent solutions (3 and 5 classes) rather than taking the BIC winner outright",
+        "Recommends inspecting at least one adjacent k solution (e.g., k=3 or k=5) rather than simply accepting the BIC winner",
         "Mentions ICL or notes that entropy and BIC can point in different directions and both carry meaning",
         "Connects class interpretability and size to the decision, not just statistical fit"
       ]

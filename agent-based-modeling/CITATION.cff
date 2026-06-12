@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this skill in your work, please cite it as below."
+type: software
+title: "agent-based-modeling: A Claude Code skill for ABM"
+abstract: >
+  A Claude Code skill that encodes the academic state of practice for
+  agent-based modeling: the ODD documentation standard, pattern-oriented
+  modeling, calibration/verification/validation discipline, sensitivity
+  analysis, and known failure modes. Includes runnable Mesa and SALib
+  templates, reference files, and an eval harness.
+authors:
+  - family-names: Elder
+    given-names: Jacob
+    alias: JacobElder
+repository-code: "https://github.com/JacobElder/jakes-skills"
+license: MIT
+version: "1.0.0"
+date-released: "2026-06-11"
+keywords:
+  - agent-based modeling
+  - ABM
+  - NetLogo
+  - Mesa
+  - ODD protocol
+  - simulation
+  - Claude
+  - AI skill

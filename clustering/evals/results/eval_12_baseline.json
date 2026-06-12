@@ -2,7 +2,7 @@
   "eval_id": 12,
   "condition": "baseline",
   "prompt": "Write me Python code to cluster a customer dataset with mixed-type features: age and total_spend (numeric), and subscription_tier (low/medium/high) and acquisition_channel (organic/paid/referral) (categorical). I want cluster labels I can attach back to the original dataframe.",
-  "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+  "response": "Key design decisions:\n\n**Why K-Prototypes over encode-then-K-Means:**\n- One-hot encoding inflates categorical columns to many dimensions, skewing distances toward them\n- Ordinal encoding (`low=0, medium=1, high=2`) imposes a false metric on nominal categories like `acquisition_channel`\n- K-Prototypes uses Euclidean distance for numerics and simple matching distance for categoricals, controlled by a `gamma` weighting parameter\n\n**Scaling numerics first** \u2014 K-Prototypes' `gamma` controls the numeric/categorical tradeoff, but if `total_spend` ranges in the thousands while `age` is in the tens, spend would dominate even the numeric side. StandardScaler normalizes that.\n\n**`init=\"Cao\"`** \u2014 Cao's density-based initialization is more stable than random on small-to-medium datasets; `n_init=10` adds restarts for robustness.\n\n**Dependencies:**\n```bash\npip install kmodes scikit-learn pandas numpy\n```\n\nTo tune `n_clusters`, you can sweep it and plot the cost (inertia equivalent) from `kproto.cost_`:\n\n```python\ncosts = []\nfor k in range(2, 8):\n    kp = KPrototypes(n_clusters=k, init=\"Cao\", n_init=10, random_state=42)\n    kp.fit_predict(X, categorical=cat_indices)\n    costs.append(kp.cost_)\n# plot costs vs k and look for the elbow\n```",
   "expectations": [
     "Does not use one-hot encoding + k-means as the primary approach for mixed-type data",
     "Uses a proper mixed-data method: Gower + KMedoids, or k-prototypes (kmodes library)",
@@ -10,13 +10,13 @@
     "Produces code that extracts cluster labels and attaches them back to the original dataframe"
   ],
   "assertion_results": [
-    false,
-    false,
+    true,
+    true,
     false,
     false
   ],
-  "passed": 0,
+  "passed": 2,
   "total": 4,
-  "pass_rate": 0.0,
+  "pass_rate": 0.5,
   "eval_passes": false
 }

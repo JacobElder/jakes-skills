@@ -1,0 +1,24 @@
+{
+  "eval_id": 15,
+  "condition": "with_skill",
+  "prompt": "I've been using k-means to segment my customers. My colleague says I should switch to a Gaussian Mixture Model instead. What's actually different between them and when is GMM worth the extra complexity?",
+  "response": "The short answer: GMM is k-means with two restrictions lifted \u2014 it allows **elliptical clusters** (not just spherical) and returns **soft membership probabilities** (not hard assignments). Whether that's worth it depends on your data.\n\n## What's actually different\n\n**K-means** minimizes within-cluster sum of squares. Every cluster is implicitly assumed to be a sphere of roughly equal radius. Points get a single hard label. The decision boundary between any two clusters is always a straight line.\n\n**GMM** fits a mixture of Gaussians via EM. Each component gets its own mean *and* covariance matrix, so clusters can be stretched, rotated ellipses of different sizes. Each point gets a posterior probability of belonging to each cluster \u2014 soft assignment. The hard label (argmax of the posterior) is just one read of the result.\n\nA useful framing: k-means is a degenerate GMM where every component has identical spherical covariance and assignments are hardened. So GMM strictly generalizes it.\n\n## When GMM is worth it\n\n**Use GMM when:**\n\n- Your customer segments are visibly elongated or of noticeably different spread in a PCA/UMAP plot \u2014 k-means will split one real segment into two or merge two into one\n- You want uncertainty information \u2014 knowing that a customer is 60%/40% between two segments is actionable (different campaign, watchlist for churn), whereas a hard label discards that signal\n- You want principled model selection \u2014 you can compare 2 vs 3 vs 4 segments using BIC rather than eyeballing an elbow plot\n- Segments differ substantially in size \u2014 k-means implicitly pulls segments toward equal size; GMM handles imbalanced mixing weights honestly\n\n**Stick with k-means when:**\n\n- Segments are roughly blobby and similar-sized (k-means is faster, simpler, and just as good)\n- n is very large \u2014 GMM's EM iterations are slower\n- You need to explain the method to non-technical stakeholders and \"distance to nearest center\" is already a stretch\n\n## The practical catch with GMM\n\nWith full covariance, parameters grow as O(k\u00b7d\u00b2). With many features, a component can collapse onto a small group and send its likelihood to infinity (singular covariance). Mitigations: use `covariance_type='diag'` or `'tied'` as a starting constraint, regularize with `reg_covar`, or reduce dimensions first. Letting BIC choose among covariance types and k jointly is cleaner than tuning by hand.\n\n## For customer segmentation specifically\n\nIf your goal is actionable segments for campaigns, the soft membership is often the most useful thing GMM gives you \u2014 not the elliptical shape. A customer sitting between two segments is a real, useful category. If you're going to ignore the probabilities and just take the hard label anyway, the practical gain over k-means is smaller and you should verify it's actually worth the added complexity on your data.\n\nMy suggestion: run both, compare the BIC curve from GMM against the silhouette sweep from k-means, and look at whether the cluster shapes in a 2D projection are actually elongated. If they are, your colleague is right. If they're blobby blobs, k-means is fine.",
+  "expectations": [
+    "Explains that k-means is a special case of GMM (spherical, equal-variance, hard-assignment limit)",
+    "States that GMM provides soft/probabilistic assignments rather than hard cluster labels",
+    "Explains that GMM allows flexible (elliptical, variable-size) covariance structure, whereas k-means assumes spherical equal-size clusters",
+    "Notes that full-covariance GMM can overfit in high dimensions and recommends constraining the covariance type",
+    "Mentions BIC as a principled way to choose k with GMM"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

@@ -6,7 +6,8 @@ description: >-
   multi-agent simulations. Use this skill whenever the user works with bottom-up
   simulations of interacting autonomous agents — in ecology, epidemiology,
   economics, social science, traffic, or organizational modeling — and
-  whenever they mention NetLogo, Mesa, Repast, Agents.jl, the ODD protocol,
+  whenever they are building, debugging, or analyzing a simulation in NetLogo,
+  Mesa, Repast, or Agents.jl, or whenever they mention the ODD protocol,
   emergence, pattern-oriented modeling, sensitivity analysis of a simulation,
   calibrating a simulation to data, or LLM/generative agents simulating a
   population. Also
@@ -231,7 +232,14 @@ model shows, what it merely assumes, and which knobs the conclusion depends on.
   from incidental choices like topology, update order, or boundary handling).
   Recommend **independent reimplementation** as the strongest available check:
   a second implementation that reproduces the same results rules out both bugs
-  and implementation-specific artefacts in a single test.
+  and implementation-specific artefacts in a single test. When two independent
+  implementations *diverge*, treat the divergence as a productive finding — it
+  reveals either a bug or an ODD specification ambiguity; resolving it (bringing
+  both implementations to agreement on the canonical design) IS the verification
+  step. Divergent results are not evidence the conceptual model is wrong. Start
+  debugging by running both implementations with **identical parameter values and
+  seeds** to isolate stochastic noise from systematic differences, then trace the
+  step at which outputs first diverge.
 
 ## Bundled scripts and assets
 

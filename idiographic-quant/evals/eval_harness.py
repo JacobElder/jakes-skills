@@ -223,10 +223,10 @@ EVALS: list[Eval] = [
             "Can you check this for me and tell me what the data says?"
         ),
         category="script",
-        rubric_must_have_all=["nonergodic", "sign reversal"],
+        rubric_must_have_all=["ergodic", "sign disagree"],
         rubric_keywords=[
             "check_ergodicity", "check_ergodicity.py",
-            "non-ergodic", "nonergodic", "not ergodic",
+            "non-ergodic", "nonergodic", "not ergodic", "ergodicity",
             "opposite sign", "sign reversal", "sign disagreement",
             "simpson", "reversal",
             "positive", "negative",
@@ -241,6 +241,149 @@ EVALS: list[Eval] = [
             "Must recommend person-specific / pooled person-specific modeling."
         ),
         files=["sample_esm_nonergodic.csv"],
+    ),
+
+    # ── 8: stationarity ≠ normality trap ─────────────────────────────────────
+    Eval(
+        id="E8",
+        prompt=(
+            "I have 6 months of daily mood ratings for one person. I checked the "
+            "histogram of mood and it's roughly bell-shaped, so my data is stationary "
+            "and I can fit graphicalVAR without any preprocessing. That's right, isn't it?"
+        ),
+        category="pushback",
+        rubric_must_have_all=["stationarity"],
+        rubric_keywords=[
+            "stationarity", "stationary",
+            "normality", "distribution", "different", "not the same",
+            "trend", "drift", "regime", "adf", "kpss", "augmented dickey",
+            "detrend", "visual inspection", "time plot",
+            "autocorrelat", "means change", "variance change",
+        ],
+        rubric_must_not_have=[
+            "you're correct", "that's right", "normality is sufficient",
+            "histogram check is enough", "you can proceed",
+        ],
+        notes=(
+            "Must distinguish stationarity from normality — a normal histogram "
+            "is not evidence of stationarity. Must explain what stationarity actually "
+            "requires (no trend, stable mean/variance/autocovariance). Must recommend "
+            "checking (time plot, ADF/KPSS, detrending if needed)."
+        ),
+    ),
+
+    # ── 9: unequal spacing / continuous-time trap ─────────────────────────────
+    Eval(
+        id="E9",
+        prompt=(
+            "I have 60 days of ESM data on one person, 5 beeps per day sent at "
+            "random times within each waking window. Consecutive beeps are anywhere "
+            "from 30 minutes to 5 hours apart. I'm going to fit a lag-1 VAR model "
+            "treating each consecutive pair as 'lag-1'. Any concerns?"
+        ),
+        category="pushback",
+        rubric_must_have_all=["lag"],
+        rubric_keywords=[
+            "unequal", "spacing", "unequally spaced",
+            "ctsem", "continuous-time", "continuous time",
+            "biased", "bias", "different lag", "interval",
+            "tinterval", "dsem",
+            "beepvar", "dayvar", "day boundaries",
+        ],
+        rubric_must_not_have=[
+            "looks fine", "that's standard", "that approach is fine",
+            "treating consecutive pairs is correct",
+        ],
+        notes=(
+            "Must flag that unequally spaced observations make discrete lag-1 VAR "
+            "estimates interval-dependent and biased. Must recommend either "
+            "continuous-time models (ctsem) or DSEM TINTERVAL, or at minimum "
+            "controlling for beep intervals and respecting day boundaries."
+        ),
+    ),
+
+    # ── 10: between-person reliability doesn't transfer ───────────────────────
+    Eval(
+        id="E10",
+        prompt=(
+            "My 5-item anxiety scale has Cronbach's alpha = 0.85 across participants "
+            "in my EMA study. So the scale is reliable enough to use in within-person "
+            "VAR modeling for each individual, right?"
+        ),
+        category="pushback",
+        rubric_must_have_all=["within-person"],
+        rubric_keywords=[
+            "within-person reliability", "within-person alpha",
+            "between-person", "does not transfer", "not the same",
+            "lüdtke", "ludtke", "nickell",
+            "intraclass", "icc", "person-mean centering",
+            "relaibility at the within", "omega",
+        ],
+        rubric_must_not_have=[
+            "alpha of 0.85 is sufficient", "reliable enough for within-person",
+            "yes, 0.85 is fine", "that's reliable enough",
+        ],
+        notes=(
+            "Must explain that Cronbach's alpha across persons is a between-person "
+            "reliability estimate and does not transfer to within-person reliability. "
+            "Must note that within-person reliability needs separate estimation "
+            "(e.g., within-person alpha / ICC). Bonus: Lüdtke/Nickell bias when "
+            "using unreliable person-mean-centered scores in VAR."
+        ),
+    ),
+
+    # ── 11: N-of-1 trial design ───────────────────────────────────────────────
+    Eval(
+        id="E11",
+        prompt=(
+            "I want to test whether melatonin actually improves MY sleep quality. "
+            "I sleep poorly and have tried it a few times, but I want to do this "
+            "rigorously — a real N-of-1 trial. What's involved in setting that up "
+            "and analyzing it properly?"
+        ),
+        category="causal",
+        rubric_must_have_all=["washout"],
+        rubric_keywords=[
+            "n-of-1", "n of 1", "crossover", "randomized crossover",
+            "washout", "carryover",
+            "blinding", "placebo", "allocation",
+            "randomization test", "mixed model", "repeated",
+            "cent", "reporting",
+        ],
+        notes=(
+            "Must recognize this as an N-of-1 trial question. "
+            "Must address: randomized crossover design, washout periods to handle "
+            "carryover effects, blinding if possible, and appropriate analysis "
+            "(randomization tests or mixed models). Mention of CENT reporting is a bonus."
+        ),
+    ),
+
+    # ── 12: ESM protocol design before data collection ────────────────────────
+    Eval(
+        id="E12",
+        prompt=(
+            "I'm designing an ESM study to track one patient's anxiety, avoidance, "
+            "and sleep over 4 weeks. I'm thinking 3 beeps a day, fixed times "
+            "(9am/1pm/8pm). Before I launch, what are the most important design "
+            "decisions I need to get right to end up with data I can actually analyze?"
+        ),
+        category="method",
+        rubric_must_have_all=["compliance"],
+        rubric_keywords=[
+            "beeps per day", "sampling", "timescale", "process",
+            "fixed", "random", "semi-random",
+            "personalized", "common item",
+            "reactivity", "burden", "fatigue",
+            "compliance", "missingness",
+            "stationarity", "baseline",
+        ],
+        notes=(
+            "Must engage with protocol design decisions, not just analysis. "
+            "Must flag at least: (a) 3 beeps/day may miss fast-turning dynamics, "
+            "(b) fixed vs random timing tradeoffs (reactivity vs unequal spacing), "
+            "(c) common vs personalized items, (d) compliance/burden. "
+            "Should note these are baked in before data exists."
+        ),
     ),
 
     # ── 7: centrality-as-treatment-target trap ────────────────────────────────

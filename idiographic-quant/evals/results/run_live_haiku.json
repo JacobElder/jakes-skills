@@ -119,19 +119,18 @@
       "category": "script",
       "prompt": "I've attached intensive longitudinal data (sample_esm_nonergodic.csv) \u2014 35 people, 55 daily observations each, with 'activity' and 'mood'. A reviewer is demanding evidence about whether it's even defensible to fit one pooled model to everyone, or whether I need person-specific models. Can you check this for me and tell me what the data says?",
       "base": {
-        "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+        "response": "## The answer: **Pooling is indefensible. Your reviewer is correct.**\n\nYour data demonstrates **Simpson's Paradox** \u2014 the classic example of why you cannot pool intensive longitudinal data.\n\n### The Evidence\n\n| Metric | Finding |\n|--------|---------|\n| **Within-person correlations** | All 35 people: r \u2248 \u22120.956 (SD=0.010)<br/>Range: \u22120.974 to \u22120.935<br/>**100% negative** |\n| **Pooled correlation** | r = +0.205 **POSITIVE** |\n| **Direction flip** | Your activity-mood relationship reverses sign when you pool |\n\n### Why This Matters\n\n**The effect is not just heterogeneous\u2014it's directionally contradictory.** Every single person shows that higher activity is associated with *lower* mood. A pooled model claims the opposite. This isn't a matter of averaging over noisy differences; this is fundamentally wrong inference.\n\n### Additional Red Flags\n\n1. **ICC(1) = 0.628**: 62.8% of mood variance is between-person, not within. Your design effect is **34.92\u00d7**, meaning your 1,925 observations are statistically equivalent to ~55 independent data points.\n\n2. **Slope variation**: While slopes are tightly clustered (SD = 0.032), they range meaningfully (\u22120.892 to \u22120.752). The random-slope model's LRT is p = 0.17, suggesting slope variance is borderline but real.\n\n3. **Person-level differences dominate**: The high ICC means person baseline mood is driving the pooled correlation, not the activity-mood relationship.\n\n### What to Tell Your Reviewer\n\n> The data exhibits Simpson's Paradox: every individual shows a strong negative activity-mood relationship (r \u2248 \u22120.96), but the pooled correlation is positive (r = +0.21). ICC(1) = 0.63, indicating strong person-nesting. A multilevel model with random intercepts is necessary; the fixed effect of activity (\u03b2 = \u22120.81) captures the true within-person dynamics that pooling completely obscures.\n\n**Use a random-intercept multilevel model at minimum.** If you want to test heterogeneity in slopes formally, the random-slope extension is marginal (p = 0.17), but given the non-ergodicity, person-specific models are more defensible than assuming homogeneous slopes.",
         "pass": false,
         "notes": [
-          "no rubric keywords matched (any of: ['check_ergodicity', 'check_ergodicity.py', 'non-ergodic', 'nonergodic', 'not ergodic', 'opposite sign', 'sign reversal', 'sign disagreement', 'simpson', 'reversal', 'positive', 'negative', 'person-specific', 'idiographic', 'pooled person', 'descriptive', 'screen', 'not a formal test'])",
-          "missing required substrings: ['nonergodic', 'sign reversal']"
+          "matched keywords: ['non-ergodic', 'ergodicity', 'simpson', 'positive', 'negative', 'person-specific']",
+          "missing required substrings: ['sign disagree']"
         ]
       },
       "skill": {
-        "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
-        "pass": false,
+        "response": "This is a textbook example of **Simpson's paradox** \u2014 and evidence that pooling is **indefensible** for your data. The reviewer is right to push back.\n\n## The finding\n\nYour between-person correlation (activity \u2194 mood): **r = 0.938** (very strong positive)\n- Across people: higher activity goes with higher mood.\n\nYour within-person correlations (for each person alone): **mean r = -0.956** (very strong negative)\n- Within each person: when *that person's* activity is high, *that person's* mood is low.\n- **100% of your 35 people show the opposite sign of correlation within themselves.**\n\nThis is the opposite of ergodicity. The pooled model doesn't describe any real person \u2014 it describes the opposite of what happens inside each individual.\n\n## Why this happened\n\nLook at the data structure: people differ in both their baseline activity and mood levels. Person 31 is consistently high on both; Person 5 is consistently low. When you correlate across people (between-person), you're mostly picking up these person-level mean differences. But when you compute each person's within-person correlation, you're looking at deviations from that person's own baseline \u2014 and activity and mood move in opposite directions *for each person*.\n\n## What to tell your reviewer\n\n**The answer is: you cannot use a pooled model.** Report this diagnostic:\n- State the finding plainly: activity and mood are positively correlated *between people* (r = 0.938) but negatively correlated *within each person* (mean r = -0.96).\n- Show the variance partition and the 100% sign disagreement.\n- Conclude: \"Pooled estimation would produce parameters that describe none of the individuals in the sample.\"\n\n## What to do instead\n\nThree defensible paths forward (pick based on your question):\n\n1. **Fit person-specific models** (graphicalVAR, one model per person, then report the distribution of person-specific coefficients). Report the mean within-person r and its spread.\n\n2. **Use a pooled person-specific method** (GIMME, mlVAR, or DSEM) \u2014 these estimate each person's own dynamics while borrowing strength across people. Most practical for 35 people with 55 occasions each.\n\n3. **Report per-person results separately** \u2014 don't pool. Let the heterogeneity speak.\n\nThe key move: shift the unit of analysis from the group to the individual, and report honestly that the group trend doesn't generalize.",
+        "pass": true,
         "notes": [
-          "no rubric keywords matched (any of: ['check_ergodicity', 'check_ergodicity.py', 'non-ergodic', 'nonergodic', 'not ergodic', 'opposite sign', 'sign reversal', 'sign disagreement', 'simpson', 'reversal', 'positive', 'negative', 'person-specific', 'idiographic', 'pooled person', 'descriptive', 'screen', 'not a formal test'])",
-          "missing required substrings: ['nonergodic', 'sign reversal']"
+          "matched keywords: ['ergodicity', 'opposite sign', 'sign disagreement', 'simpson', 'positive', 'negative', 'person-specific', 'pooled person']"
         ]
       }
     },
@@ -150,6 +149,100 @@
         "pass": true,
         "notes": [
           "matched keywords: ['unstable', 'bringmann', 'cross-sectional', 'single timepoint', 'between-person', 'ergodic', 'individual', 'causal', 'hypothesis', 'experimental']"
+        ]
+      }
+    },
+    "E8": {
+      "category": "pushback",
+      "prompt": "I have 6 months of daily mood ratings for one person. I checked the histogram of mood and it's roughly bell-shaped, so my data is stationary and I can fit graphicalVAR without any preprocessing. That's right, isn't it?",
+      "base": {
+        "response": "Not quite. You're conflating two different properties:\n\n**Bell-shaped histogram \u2192 Normal marginal distribution** (roughly)  \n**Stationarity \u2192 Constant mean, variance, and autocovariance structure over time**\n\nThese are independent. A time series can look perfectly normal in a histogram but still be non-stationary \u2014 for example, if mood is slowly drifting upward or if variance is changing across the 6 months. Conversely, a stationary series can have a non-normal distribution.\n\n**What you should actually check for graphicalVAR:**\n\n1. **Plot the time series itself** \u2014 not a histogram. Look for trends, drift, or changes in variance across the 6 months.\n2. **Run a stationarity test** \u2014 augmented Dickey-Fuller (ADF) test is standard. If p > 0.05, you likely have a unit root (non-stationary).\n3. **Inspect autocorrelation** \u2014 if the ACF decays slowly, that's a red flag for non-stationarity.\n\n**Even if stationary**, most graphicalVAR workflows standardize the data first (z-score) to improve convergence and interpretability. So some minimal preprocessing is typical.\n\nFor single-person daily data over 6 months, watch especially for:\n- Weekly cycles (Mon\u2013Fri patterns differ from weekends)\n- Gradual mood drift\n- Heteroscedasticity (mood more variable in some weeks than others)\n\nWould you like help checking stationarity on your data, or do you want me to point you toward relevant evals in this repo?",
+        "pass": true,
+        "notes": [
+          "matched keywords: ['stationarity', 'stationary', 'distribution', 'different', 'trend', 'drift', 'adf', 'augmented dickey', 'autocorrelat']"
+        ]
+      },
+      "skill": {
+        "response": "Not quite \u2014 and this is a critical distinction that trips up a lot of people.\n\n**A bell-shaped histogram tells you about the marginal distribution of mood** \u2014 its overall shape across all 180 days. **Stationarity is about whether the dynamics stay constant over time** \u2014 whether the temporal dependencies, trends, level shifts, and variance are stable across the observation window. These are two completely different properties, and one says almost nothing about the other.\n\nYou could have a perfectly normal-looking histogram while the time series drifts upward the whole 6 months, or shifts regime halfway through, or shows increasing volatility \u2014 all violations of stationarity that a histogram won't catch.\n\n**What you actually need to check:**\n\n1. **Plot the time series.** Does mood drift upward/downward over the 6 months? Does the mean shift abruptly? Does the variance change? These are the stationarity failures that matter for VAR-type models.\n\n2. **Check for trends.** Look at the first 3 months vs. the last 3 months \u2014 are the means and spreads different? You can also fit a linear trend to the full series; if it's significant, that's nonstationarity and you should detrend before fitting.\n\n3. **Look at ACF/PACF.** Autocorrelation that decays slowly suggests a trend (nonstationarity). A relatively clean ACF/PACF pattern suggests you're working with a stationary residual.\n\n4. **Consider your theory.** Mood for one person often *isn't* stationary \u2014 it might drift with life events, develop over the study period, or show depressive/manic episodes. The skill points out explicitly: \"dynamic-systems theories of the very constructs being studied (mood, personality) predict that they *do* drift.\" Check whether that's true for your data, and if stationarity fails, either detrend the data before fitting graphicalVAR, or use a method that allows time-varying parameters.\n\n**The practical move:** Plot mood over time, check for obvious trends/shifts, and then decide. If the series is clean, fit graphicalVAR. If it's not, preprocess or use a different model.",
+        "pass": true,
+        "notes": [
+          "matched keywords: ['stationarity', 'stationary', 'distribution', 'different', 'trend', 'drift', 'regime', 'detrend', 'autocorrelat', 'variance change']"
+        ]
+      }
+    },
+    "E9": {
+      "category": "pushback",
+      "prompt": "I have 60 days of ESM data on one person, 5 beeps per day sent at random times within each waking window. Consecutive beeps are anywhere from 30 minutes to 5 hours apart. I'm going to fit a lag-1 VAR model treating each consecutive pair as 'lag-1'. Any concerns?",
+      "base": {
+        "response": "Yes, one major concern: **irregular spacing violates VAR's constant-interval assumption**, biasing your lag-1 coefficients and standard errors.\n\nTreating a 30-minute lag and a 5-hour lag identically as \"lag-1\" conflates two different time dynamics. The apparent autocorrelation depends heavily on elapsed time\u2014observations 30 minutes apart will be more correlated than those 5 hours apart. Your lag-1 coefficient becomes a weighted average across these different lags, losing interpretability.\n\n**What this breaks:**\n- **Coefficient interpretation** \u2014 it's unclear what \"lag-1 effect\" even means when lags vary 10\u00d7\n- **Standard errors** \u2014 assumed equal spacing; will likely be too small\n- **Inference** \u2014 significance tests will be anticonservative\n\n**Better approaches:**\n1. **Include elapsed time as a covariate** \u2014 regress on both previous value *and* the actual time gap (or log-time)\n2. **Continuous-time models** \u2014 state-space or differential-equation models that don't assume equal intervals\n3. **Weight by time gap** \u2014 use WLS or robust SEs that account for the irregular spacing\n4. **Discrete to regular grid** \u2014 interpolate to (say) 2-hour bins, then fit VAR, though this introduces its own artifacts\n\nFor single-subject n=1 ESM data, a state-space approach or time-aware mixed model is often cleaner than forcing it into VAR. Are you trying to estimate cross-lagged effects between variables, or something else? That shapes whether any of these workarounds are worth the friction.",
+        "pass": true,
+        "notes": [
+          "matched keywords: ['spacing', 'continuous-time', 'bias', 'different lag', 'interval']"
+        ]
+      },
+      "skill": {
+        "response": "Yes, significant concern. You have a real problem with unequal spacing, and treating consecutive beeps as a uniform \"lag-1\" will bias your estimates.\n\n**The issue:** a discrete-time lag-1 VAR assumes the lag interval is constant. Your spacing varies 30 min to 5 hours \u2014 that's roughly a 10-fold range. When you pool these together, a \"lag-1 autoregressive effect\" doesn't mean anything coherent. You're averaging carryover effects over very different timescales: an autoregressive coefficient is now some weighted mixture of \"how much mood persists over 30 minutes\" and \"how much it persists over 5 hours\" \u2014 opposite constructs, both real, both uninterpretable together.\n\n**Two fixes, in order of rigor:**\n\n1. **Continuous-time modeling (ctsem in R).** Model the underlying process as a stochastic differential equation, which naturally handles unequal spacing. You estimate the continuous dynamic and then *derive* lag-1 effects for any interval you specify \u2014 say, the median gap in your data. This is the principled solution and lets you even ask \"how does the effect differ at 30 min vs. 5 hours?\" \n   - Steeper learning curve, but for irregular ESM data this is the standard move.\n\n2. **Grid approximation (simpler fallback).** If you were using DSEM/Mplus, you could use `TINTERVAL` to snap observations onto an approximate grid, handling the inserted gaps as missing data. Cheaper computationally; adequate if spacing is only *mildly* irregular. With a 10-fold range, I'd lean toward ctsem instead.\n\n**Before you choose:** what's the actual spacing distribution? Median, min, max? If most beeps are clumped at, say, 2\u20133 hours apart with only occasional outliers at 30 min or 5 hours, grid approximation might suffice. If it's truly scattered across the whole range, ctsem is the move.\n\nWhat software are you planning to use for the VAR?",
+        "pass": true,
+        "notes": [
+          "matched keywords: ['unequal', 'spacing', 'ctsem', 'continuous-time', 'bias', 'interval', 'tinterval', 'dsem']"
+        ]
+      }
+    },
+    "E10": {
+      "category": "pushback",
+      "prompt": "My 5-item anxiety scale has Cronbach's alpha = 0.85 across participants in my EMA study. So the scale is reliable enough to use in within-person VAR modeling for each individual, right?",
+      "base": {
+        "response": "**No\u2014that's a common critical mistake in EMA research.** Cronbach's alpha measures *between-person* reliability (consistency across your 5 items when aggregating across participants). It says almost nothing about *within-person* reliability, which is what determines whether your VAR estimates will be trustworthy.\n\n### The core distinction\n\n- **Between-person \u03b1 = 0.85**: The 5 items covary consistently *across participants* at any given timepoint. This is good for confirming the scale measures one construct, but doesn't validate within-person use.\n- **Within-person reliability**: For a *given individual* at times t, t+1, t+2, \u2026, do the 5 items measure anxiety consistently, or is there substantial measurement noise?\n\nIn VAR, measurement noise at the within-person level bleeds directly into your autoregressive coefficients. If half the day-to-day fluctuation in someone's anxiety score is just scale noise rather than true change, your estimate of how yesterday's anxiety predicts today's anxiety will be attenuated and unstable.\n\n### What you should actually check\n\nFor each person (or in aggregate), compute:\n\n1. **Within-person ICC(3,k) or ICC(2,k)**: This is the within-person reliability\u2014often computed as `cor(scale_at_time_t, scale_at_time_t+1)` within individuals, or via a measurement model separating true anxiety from error.\n\n2. **Intra-individual autocorrelations**: Plot the autocorrelation function of your scale scores *within* each person. If lag-1 autocorrelation is low (< 0.3\u20130.4), you have a lot of noise.\n\n3. **Between/within variance ratio**: The raw scale score variance decomposes as:\n   - \u03c3\u00b2_between (stable differences across people)  \n   - \u03c3\u00b2_within (day-to-day fluctuation within people)  \n   - \u03c3\u00b2_error (measurement noise)\n   \n   You want \u03c3\u00b2_within and \u03c3\u00b2_between to dominate \u03c3\u00b2_error. If measurement error is large relative to meaningful within-person change, VAR will struggle.\n\n4. **Temporal consistency**: Fit a latent factor model at the within-person level (e.g., a single-factor model per person, or a growth curve) and see if the factor loadings are stable across time. If they drift, the scale isn't measuring the same construct consistently for that person.\n\n### Practical next steps\n\n- If you have multiple observations per person (which you do in EMA), fit a linear mixed model `anxiety_composite ~ 1 + (1 | person) + (1 | observation_within_person)` or a measurement model and extract the level-1 variance components.\n- Report the **ICC(1,1)** (between-person) and look for a complement on within-person stability (e.g., mean lag-1 autocorrelation across individuals).\n- Consider whether 5 items are enough to reliably estimate a composite within a person given day-to-day noise. You may need to aggregate observations or use latent scores from a dynamic factor model.\n\nA between-person \u03b1 of 0.85 is decent, but don't assume it covers you for within-person use. Check the within-person evidence before you fit the VAR model.",
+        "pass": true,
+        "notes": [
+          "matched keywords: ['within-person reliability', 'between-person', 'icc']"
+        ]
+      },
+      "skill": {
+        "response": "No \u2014 this is a critical but common mistake. **Cronbach's alpha = 0.85 measures between-person reliability (internal consistency across your participants), not within-person reliability (how well the scale tracks fluctuations for any single individual over time).** These are not the same thing, and the between-person figure tells you almost nothing about whether the scale is usable for idiographic VAR.\n\n## The gap\n\nA scale can be reliable for distinguishing people from each other while being unreliable for capturing state changes within a person. For example:\n\n- If your anxiety items mostly index a stable trait (people who are generally high-anxiety stay high-anxiety), they'll show high between-person consistency but may have low within-person variance and poor test-retest correlation within a single person's time series.\n- If the scale has items with low item-total correlations, those weak items introduce noise that gets averaged out across people (the large-n denominator of alpha) but persists as measurement error when you center on one person's mean.\n\n## The consequence: L\u00fcdtke and Nickell biases\n\nWhen you person-mean-center a 5-item scale to estimate within-person dynamics, noisy estimates of that person's mean induce two biases:\n\n1. **Nickell bias** \u2014 autoregressive effects (how anxiety predicts tomorrow's anxiety) are biased *downward*.\n2. **L\u00fcdtke bias** \u2014 cross-variable effects are also biased (direction depends on which variable is the predictor).\n\nThese biases grow as the scale becomes less reliable within the person.\n\n## What to do\n\n- **Assess within-person reliability directly.** Refit the scale's internal consistency separately for each person (person-specific Cronbach's alpha), or compute test-retest reliability across waves within each person. This is the number you actually need.\n- **Use latent person-mean centering (DSEM in Mplus).** This models the person mean as a latent variable estimated with measurement error, avoiding the bias that observed-mean centering induces.\n- **Consider a longer scale.** Five items is modest; if you have room in your protocol, more items per construct reduce measurement noise and improve within-person reliability.\n\nWhat's your within-person variance distribution across the five items? And are you planning to use DSEM, graphicalVAR, or another VAR framework?",
+        "pass": true,
+        "notes": [
+          "matched keywords: ['within-person reliability', 'between-person', 'not the same', 'l\u00fcdtke', 'nickell', 'person-mean centering']"
+        ]
+      }
+    },
+    "E11": {
+      "category": "causal",
+      "prompt": "I want to test whether melatonin actually improves MY sleep quality. I sleep poorly and have tried it a few times, but I want to do this rigorously \u2014 a real N-of-1 trial. What's involved in setting that up and analyzing it properly?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 4:40pm (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['n-of-1', 'n of 1', 'crossover', 'randomized crossover', 'washout', 'carryover', 'blinding', 'placebo', 'allocation', 'randomization test', 'mixed model', 'repeated', 'cent', 'reporting'])",
+          "missing required substrings: ['washout']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 4:40pm (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['n-of-1', 'n of 1', 'crossover', 'randomized crossover', 'washout', 'carryover', 'blinding', 'placebo', 'allocation', 'randomization test', 'mixed model', 'repeated', 'cent', 'reporting'])",
+          "missing required substrings: ['washout']"
+        ]
+      }
+    },
+    "E12": {
+      "category": "method",
+      "prompt": "I'm designing an ESM study to track one patient's anxiety, avoidance, and sleep over 4 weeks. I'm thinking 3 beeps a day, fixed times (9am/1pm/8pm). Before I launch, what are the most important design decisions I need to get right to end up with data I can actually analyze?",
+      "base": {
+        "response": "You've hit your session limit \u00b7 resets 4:40pm (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['beeps per day', 'sampling', 'timescale', 'process', 'fixed', 'random', 'semi-random', 'personalized', 'common item', 'reactivity', 'burden', 'fatigue', 'compliance', 'missingness', 'stationarity', 'baseline'])",
+          "missing required substrings: ['compliance']"
+        ]
+      },
+      "skill": {
+        "response": "You've hit your session limit \u00b7 resets 4:40pm (America/New_York)",
+        "pass": false,
+        "notes": [
+          "no rubric keywords matched (any of: ['beeps per day', 'sampling', 'timescale', 'process', 'fixed', 'random', 'semi-random', 'personalized', 'common item', 'reactivity', 'burden', 'fatigue', 'compliance', 'missingness', 'stationarity', 'baseline'])",
+          "missing required substrings: ['compliance']"
         ]
       }
     }

@@ -2,7 +2,7 @@
   "eval_id": 11,
   "condition": "baseline",
   "prompt": "I have 500 data points that clearly form two crescent/half-moon shapes when I plot them. k-means with k=2 cuts right through the middle instead of following the shapes. What clustering method handles this?",
-  "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+  "response": "**DBSCAN** is the go-to here. It finds clusters by density, not by distance to a centroid, so it naturally follows curved and crescent shapes.\n\n```python\nfrom sklearn.cluster import DBSCAN\nimport numpy as np\n\ndb = DBSCAN(eps=0.3, min_samples=5)\nlabels = db.fit_predict(X)\n```\n\nThe two parameters to tune:\n- `eps` \u2014 neighborhood radius. Too large merges the crescents; too small fragments them. Plot a k-distance graph (`sklearn.neighbors.NearestNeighbors`) to find the elbow.\n- `min_samples` \u2014 minimum points to form a dense region. Rule of thumb: `ln(n)` \u2248 6 for 500 points.\n\n**Spectral clustering** is the other strong option:\n\n```python\nfrom sklearn.cluster import SpectralClustering\n\nsc = SpectralClustering(n_clusters=2, affinity='nearest_neighbors', n_neighbors=10)\nlabels = sc.fit_predict(X)\n```\n\nIt constructs a graph of nearby points and clusters by graph connectivity, which also handles non-convex shapes well. More expensive than DBSCAN (O(n\u00b2) or O(n\u00b3)) but you only have 500 points so it's fine.\n\n**Which to pick:** If you know there are exactly 2 clusters, spectral clustering is more reliable since you give it `n_clusters=2` directly. DBSCAN requires careful `eps` tuning and may label some points as noise (-1). For the classic moons dataset, both work well.",
   "expectations": [
     "Recommends spectral clustering and/or HDBSCAN as appropriate for non-convex crescent shapes",
     "Explains that k-means assumes spherical/convex clusters and uses Euclidean centroid distance, causing it to fail on this geometry",
@@ -10,13 +10,13 @@
     "Notes that spectral clustering uses graph/connectivity structure (or similarly that HDBSCAN uses density connectivity) to handle non-convex shapes"
   ],
   "assertion_results": [
+    true,
     false,
     false,
-    false,
-    false
+    true
   ],
-  "passed": 0,
+  "passed": 2,
   "total": 4,
-  "pass_rate": 0.0,
+  "pass_rate": 0.5,
   "eval_passes": false
 }

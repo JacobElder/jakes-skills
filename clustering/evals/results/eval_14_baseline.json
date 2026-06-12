@@ -2,7 +2,7 @@
   "eval_id": 14,
   "condition": "baseline",
   "prompt": "I ran k-means five times on the same data and got completely different cluster assignments each time. The clusters look reasonable in each run but they disagree. Which result should I use?",
-  "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+  "response": "K-means is non-deterministic because it depends on random centroid initialization \u2014 each run can converge to a different local minimum. This is expected behavior, not a bug.\n\n**The right answer: pick the run with the lowest inertia** (within-cluster sum of squares, WCSS). That's the objective k-means actually optimizes, so the run that minimized it found the best solution among your trials.\n\n```python\nfrom sklearn.cluster import KMeans\n\nbest = None\nfor _ in range(50):\n    km = KMeans(n_clusters=k, init='random', n_init=1)\n    km.fit(X)\n    if best is None or km.inertia_ < best.inertia_:\n        best = km\n```\n\n**But the better fix is `n_init`** \u2014 sklearn already does this loop internally:\n\n```python\nkm = KMeans(n_clusters=k, n_init=50)  # runs 50 times, returns best\nkm.fit(X)\n```\n\n**Also consider `init='k-means++'`** (sklearn's default). It seeds centroids by spreading them out, which dramatically reduces variance across runs and usually finds better solutions in fewer restarts.\n\nIf you're still seeing wild disagreement even with k-means++ and `n_init=50`, that's a signal the data doesn't have clearly separated clusters at this `k`, or `k` is too high \u2014 the algorithm is fitting noise. Worth checking your silhouette scores or elbow plot to validate that `k` is actually a good choice.",
   "expectations": [
     "Explains that k-means is sensitive to random initialization and converges to local optima",
     "Recommends using k-means++ initialization to reduce variance across runs",
@@ -10,13 +10,13 @@
     "Treats high variability across runs as a signal about cluster instability or wrong k, not just a parameter-tuning nuisance"
   ],
   "assertion_results": [
-    false,
-    false,
-    false,
-    false
+    true,
+    true,
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 4,
   "total": 4,
-  "pass_rate": 0.0,
-  "eval_passes": false
+  "pass_rate": 1.0,
+  "eval_passes": true
 }

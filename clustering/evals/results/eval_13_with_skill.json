@@ -2,7 +2,7 @@
   "eval_id": 13,
   "condition": "with_skill",
   "prompt": "You said I should scale my features before clustering. But I don't want to \u2014 the raw values are meaningful to me and I want revenue (in dollars) to have more influence on the clusters than a 1-5 satisfaction score. Is scaling actually required?",
-  "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+  "response": "No, scaling is not required \u2014 it's a modeling choice. But what you're describing probably doesn't work the way you expect.\n\n**The problem with \"I want revenue to have more influence\"**\n\nNot scaling doesn't give revenue *controlled* extra influence. It gives it influence that's an accident of units. Revenue at $0\u2013$500K has a standard deviation maybe 50,000\u00d7 larger than a 1\u20135 satisfaction score. In practice, that means the clustering is **entirely driven by revenue** and satisfaction is essentially ignored \u2014 not weighted more, just gone.\n\nThat's almost certainly not your intent. You probably want revenue to matter *more*, not to be the only thing that matters.\n\n**What to do instead**\n\nIf you have a genuine belief that revenue should, say, count twice as much as satisfaction:\n\n1. Scale both features (z-score or min-max)\n2. Multiply the scaled revenue column by your weight (e.g., 2\u00d7)\n3. Cluster on the weighted, scaled features\n\nThis lets you be explicit and adjustable. \"Don't scale\" buries that weight in the units and makes it impossible to reason about or tune.\n\n**When not scaling is genuinely correct**\n\nThe real case for skipping scaling is when features are already on a comparable scale and their magnitudes carry meaning \u2014 e.g., lat/lon coordinates, or all features measured in the same unit. That's not what you have here.\n\n**The one-sentence rule from the skill:** scale unless you have a *defensible reason* not to \u2014 but \"I want revenue to have more influence\" is a reason to *weight*, not a reason to skip scaling.",
   "expectations": [
     "Does not simply capitulate and say 'yes, scaling is optional, raw values are fine'",
     "Reframes the issue: raw magnitude dominance is implicit and arbitrary, not a principled weighting decision",
@@ -10,13 +10,13 @@
     "Conveys that scaling is a modeling choice \u2014 the question is whether the implicit weighting matches the user's actual intent"
   ],
   "assertion_results": [
-    false,
-    false,
-    false,
-    false
+    true,
+    true,
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 4,
   "total": 4,
-  "pass_rate": 0.0,
-  "eval_passes": false
+  "pass_rate": 1.0,
+  "eval_passes": true
 }

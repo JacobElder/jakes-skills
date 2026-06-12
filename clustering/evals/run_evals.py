@@ -61,7 +61,7 @@ def call_claude(prompt: str, system_extra: str | None = None,
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         out = result.stdout.strip()
 
-        if "hit your limit" in out.lower() or "rate limit" in out.lower():
+        if any(p in out.lower() for p in ("hit your limit", "hit your session limit", "rate limit", "session limit")):
             if attempt < retries:
                 print(f"\n  [rate-limited, waiting {retry_delay}s before retry {attempt+1}/{retries}]",
                       end=" ", flush=True)

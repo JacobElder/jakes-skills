@@ -150,7 +150,8 @@ def run_capability_evals(eval_ids: list[int] | None, conditions: list[str],
 
 def run_trigger_evals(delay: float = 2.0) -> None:
     trigger_data = json.loads((REPO / "evals" / "trigger_eval.json").read_text())
-    desc_text = (REPO / "SKILL.md").read_text().split("---")[0]  # frontmatter + desc
+    _parts = (REPO / "SKILL.md").read_text().split("---", 2)
+    desc_text = _parts[1] if len(_parts) >= 2 else _parts[0]  # YAML frontmatter (name + description)
 
     TRIGGER_SYSTEM = (
         "You are a skill router. Given the skill description below and a user query, "

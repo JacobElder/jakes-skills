@@ -2,7 +2,7 @@
   "eval_id": 11,
   "condition": "with_skill",
   "prompt": "I have 500 data points that clearly form two crescent/half-moon shapes when I plot them. k-means with k=2 cuts right through the middle instead of following the shapes. What clustering method handles this?",
-  "response": "You've hit your session limit \u00b7 resets 11:30am (America/New_York)",
+  "response": "Two good options, with different tradeoffs:\n\n**Spectral clustering** \u2014 the canonical answer for this exact shape. It builds an affinity graph between nearby points and clusters by graph connectivity, so it follows the crescent boundaries rather than drawing straight lines through space.\n\n```python\nfrom sklearn.cluster import SpectralClustering\nsc = SpectralClustering(n_clusters=2, affinity='nearest_neighbors', n_neighbors=10)\nlabels = sc.fit_predict(X)\n```\n\nTune `n_neighbors` (5\u201315 is typical for 500 points). With only 500 points the O(n\u00b3) cost isn't a concern.\n\n**HDBSCAN** \u2014 also handles arbitrary shapes, and additionally labels noise rather than forcing every point into a cluster. Worth trying if the crescents have any ragged edges or outliers.\n\n```python\nimport hdbscan\nlabels = hdbscan.HDBSCAN(min_cluster_size=20).fit_predict(X)\n```\n\n**Why k-means fails here** (from the skill): k-means minimizes within-cluster variance, which carves space into a Voronoi tessellation \u2014 boundaries are always straight lines. It cannot represent a crescent without splitting it, no matter what k you choose.\n\n**Recommendation**: start with spectral clustering since you already know k=2 and the shapes are clean crescents. If the data has noise or the boundaries are fuzzy, try HDBSCAN and check whether the -1 noise count looks reasonable.",
   "expectations": [
     "Recommends spectral clustering and/or HDBSCAN as appropriate for non-convex crescent shapes",
     "Explains that k-means assumes spherical/convex clusters and uses Euclidean centroid distance, causing it to fail on this geometry",
@@ -10,13 +10,13 @@
     "Notes that spectral clustering uses graph/connectivity structure (or similarly that HDBSCAN uses density connectivity) to handle non-convex shapes"
   ],
   "assertion_results": [
-    false,
-    false,
-    false,
-    false
+    true,
+    true,
+    true,
+    true
   ],
-  "passed": 0,
+  "passed": 4,
   "total": 4,
-  "pass_rate": 0.0,
-  "eval_passes": false
+  "pass_rate": 1.0,
+  "eval_passes": true
 }
