@@ -20,6 +20,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +15.4pp across 8 scenarios (intersection skill) |
 | [survey-design](#survey-design) | Survey & questionnaire design | +52pp across 6 evals (100% vs. 48.5%) |
 | [dimensionality-reduction](#dimensionality-reduction) | PCA, EFA, t-SNE, UMAP, ICA, NMF and embedding validation | +14pp (43/43 with skill, 37/43 base); +33pp on pitfall traps |
+| [idiographic-quant](#idiographic-quant) | Person-specific / N-of-1 quantitative methods (ESM/EMA, VAR networks, single-case experiments) | +65pp (17/17 with skill, 6/17 base) |
 
 ---
 
@@ -164,6 +165,18 @@ Choose, apply, validate, and interpret dimensionality reduction correctly — PC
 **Gap:** +14pp overall — 43/43 with skill (100%) vs. 37/43 base (86%) on haiku, across 6 automated categories. Pitfall category: +33pp (15/15 with skill vs. 10/15 base). Key differentiators: t-SNE distance+size misread, UMAP global structure overclaim, EFA→CFA double-dip, visual hyperparameter cherry-picking, circular embedding validation, kNN accuracy red flag.
 
 → [dimensionality-reduction/](dimensionality-reduction/)
+
+---
+
+## idiographic-quant
+
+Apply person-specific quantitative methods to questions about variation within a single unit over time. Covers ESM/EMA data analysis, graphicalVAR and mlVAR person-specific networks, GIMME, P-technique factor analysis, DSEM, single-case experimental designs (ABAB, N-of-1), and the ergodicity argument for why group-level findings don't describe individuals.
+
+**Why it matters:** The base model knows idiographic methods but defaults to complying with requests that can't work on the available data, applying group-level frameworks to individual-level questions, and recommending standard regression/MLM when person-specific temporal network methods are the right answer. The skill catches the underpowered-network request before any code is written, names the ergodicity trap when group coefficients are about to be applied to one client, and routes pooled-person-specific questions (mlVAR, GIMME) rather than defaulting to a random-slope mixed model that collapses the temporal structure. It also guards the other direction: when the question is genuinely about a population (A/B tests, group RCTs), the skill identifies it as nomothetic and says so.
+
+**Gap:** +65pp — 17/17 with skill (100%) vs. 6/17 baseline (35%) on haiku. Differentiating on 11/17 evals: underpowered network pushback, ergodicity trap, single-case causal design, nomothetic guard, pooled person-specific routing, P-technique, ergodicity script use, N-of-1 trial design, DSEM for multi-item latent constructs, DFA vs. P-technique when autocorrelation is present, and continuous-time models for unequally-spaced ESM. The 6 evals the base model already passes (centrality trap, stationarity/theory tension, cross-night lag, Nickell bias, ESM protocol design, multiple baseline) serve as regression checks.
+
+→ [idiographic-quant/](idiographic-quant/)
 
 ---
 

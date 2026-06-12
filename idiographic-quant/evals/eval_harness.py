@@ -1,13 +1,13 @@
 """
 Eval harness for the idiographic-quant skill.
 
-8 prompts across 6 categories:
-  pushback    (2) — model must refuse/redirect bad plans
+17 prompts across 7 categories:
+  pushback    (5) — model must refuse/redirect bad plans
   ergodicity  (1) — applying group findings to individuals
-  causal      (1) — single-case experimental design
+  causal      (3) — single-case experimental design
   scope       (1) — nomothetic guard (must NOT over-apply)
   pooled      (1) — pooled person-specific recommendation
-  method      (1) — P-technique factor analysis
+  method      (5) — method selection (P-technique, DSEM, DFA, ctsem)
   script      (1) — use bundled check_ergodicity.py
 """
 
@@ -243,92 +243,103 @@ EVALS: list[Eval] = [
         files=["sample_esm_nonergodic.csv"],
     ),
 
-    # ── 8: stationarity ≠ normality trap ─────────────────────────────────────
+    # ── 8: stationarity vs theory tension ────────────────────────────────────
     Eval(
         id="E8",
         prompt=(
-            "I have 6 months of daily mood ratings for one person. I checked the "
-            "histogram of mood and it's roughly bell-shaped, so my data is stationary "
-            "and I can fit graphicalVAR without any preprocessing. That's right, isn't it?"
+            "I'm studying one patient's mood recovery over 90 days of therapy using "
+            "graphicalVAR. Mood clearly trends upward — that IS the phenomenon I care "
+            "about (the therapy working). My stats consultant says I have to detrend "
+            "before fitting VAR. But if I detrend, I'm removing the very effect I want "
+            "to study. Are they right? Should I really detrend and lose the trend?"
         ),
         category="pushback",
         rubric_must_have_all=["stationarity"],
         rubric_keywords=[
-            "stationarity", "stationary",
-            "normality", "distribution", "different", "not the same",
-            "trend", "drift", "regime", "adf", "kpss", "augmented dickey",
-            "detrend", "visual inspection", "time plot",
-            "autocorrelat", "means change", "variance change",
+            "tension", "theory", "stationarity", "stationary",
+            "detrend", "remove", "residual",
+            "dsem", "time-varying", "tv-var",
+            "trend", "recovery", "drift",
+            "model the trend", "nonstationarity", "nonstationary",
         ],
         rubric_must_not_have=[
-            "you're correct", "that's right", "normality is sufficient",
-            "histogram check is enough", "you can proceed",
+            "just proceed without detrending",
+            "your consultant is wrong",
+            "the trend doesn't matter for var",
         ],
         notes=(
-            "Must distinguish stationarity from normality — a normal histogram "
-            "is not evidence of stationarity. Must explain what stationarity actually "
-            "requires (no trend, stable mean/variance/autocovariance). Must recommend "
-            "checking (time plot, ADF/KPSS, detrending if needed)."
+            "Must acknowledge the stationarity–theory tension explicitly. "
+            "SKILL.md notes: 'stationarity is often in direct tension with the theory.' "
+            "Good answer explains: detrended residuals answer a different question "
+            "(co-fluctuations around trend); the trend is a separate phenomenon; "
+            "DSEM or time-varying VAR can model both simultaneously. "
+            "Must not simply say 'just detrend and proceed' OR 'skip detrending.'"
         ),
     ),
 
-    # ── 9: unequal spacing / continuous-time trap ─────────────────────────────
+    # ── 9: cross-night lag / beepvar trap ─────────────────────────────────────
     Eval(
         id="E9",
         prompt=(
-            "I have 60 days of ESM data on one person, 5 beeps per day sent at "
-            "random times within each waking window. Consecutive beeps are anywhere "
-            "from 30 minutes to 5 hours apart. I'm going to fit a lag-1 VAR model "
-            "treating each consecutive pair as 'lag-1'. Any concerns?"
+            "I'm setting up graphicalVAR on 5 beeps/day EMA data for 60 days. "
+            "I'm treating every consecutive pair as a lag-1 transition, including "
+            "the last beep at ~10pm paired with the first beep the next morning at ~8am. "
+            "My colleague says I should use beepvar and dayvar to exclude these "
+            "cross-night pairs. But isn't lag-1 just lag-1? Why does spanning midnight "
+            "matter?"
         ),
         category="pushback",
-        rubric_must_have_all=["lag"],
+        rubric_must_have_all=["beepvar"],
         rubric_keywords=[
-            "unequal", "spacing", "unequally spaced",
-            "ctsem", "continuous-time", "continuous time",
-            "biased", "bias", "different lag", "interval",
-            "tinterval", "dsem",
             "beepvar", "dayvar", "day boundaries",
+            "overnight", "sleep", "cross-day", "cross-night",
+            "interval", "gap", "unequal",
+            "different process", "10 hours", "hours apart",
+            "contaminate", "confound",
         ],
         rubric_must_not_have=[
-            "looks fine", "that's standard", "that approach is fine",
-            "treating consecutive pairs is correct",
+            "lag-1 is lag-1", "doesn't matter",
+            "overnight pairs are fine",
+            "your colleague is wrong",
         ],
         notes=(
-            "Must flag that unequally spaced observations make discrete lag-1 VAR "
-            "estimates interval-dependent and biased. Must recommend either "
-            "continuous-time models (ctsem) or DSEM TINTERVAL, or at minimum "
-            "controlling for beep intervals and respecting day boundaries."
+            "Must explain why cross-night lags are problematic: overnight gap is "
+            "~10h vs ~2-3h within day; spans sleep (a different process); produces "
+            "a different 'lag-1' construct than daytime transitions; can create "
+            "artificial overnight associations. beepvar/dayvar in graphicalVAR "
+            "is the standard fix to exclude cross-day transitions."
         ),
     ),
 
-    # ── 10: between-person reliability doesn't transfer ───────────────────────
+    # ── 10: Nickell/Lüdtke bias from person-mean centering ───────────────────
     Eval(
         id="E10",
         prompt=(
-            "My 5-item anxiety scale has Cronbach's alpha = 0.85 across participants "
-            "in my EMA study. So the scale is reliable enough to use in within-person "
-            "VAR modeling for each individual, right?"
+            "I have 20 EMA observations per person in my study. I person-mean-centered "
+            "all variables by subtracting each person's observed mean. My advisor says "
+            "this introduces 'Nickell bias' or 'Lüdtke bias' in my autoregressive "
+            "estimates. What does that mean and how serious is it?"
         ),
         category="pushback",
-        rubric_must_have_all=["within-person"],
+        rubric_must_have_all=["bias"],
         rubric_keywords=[
-            "within-person reliability", "within-person alpha",
-            "between-person", "does not transfer", "not the same",
-            "lüdtke", "ludtke", "nickell",
-            "intraclass", "icc", "person-mean centering",
-            "relaibility at the within", "omega",
+            "nickell", "lüdtke", "ludtke",
+            "observed mean", "unreliable", "estimation error",
+            "autoregressive", "attenuated", "attenuation",
+            "dsem", "latent mean", "latent-variable",
+            "20 occasions", "few occasions", "small t",
         ],
         rubric_must_not_have=[
-            "alpha of 0.85 is sufficient", "reliable enough for within-person",
-            "yes, 0.85 is fine", "that's reliable enough",
+            "person-mean centering is fine at n=20",
+            "20 observations is sufficient",
+            "the bias is negligible",
         ],
         notes=(
-            "Must explain that Cronbach's alpha across persons is a between-person "
-            "reliability estimate and does not transfer to within-person reliability. "
-            "Must note that within-person reliability needs separate estimation "
-            "(e.g., within-person alpha / ICC). Bonus: Lüdtke/Nickell bias when "
-            "using unreliable person-mean-centered scores in VAR."
+            "Must explain Nickell/Lüdtke bias: observed person mean is an unreliable "
+            "estimate of the true latent mean; centering on a noisy mean introduces "
+            "correlated measurement error into centered scores; this biases "
+            "autoregressive (lag-1) estimates, typically toward zero (attenuation). "
+            "Fix: more T, or DSEM which uses latent-variable mean centering."
         ),
     ),
 
@@ -418,6 +429,159 @@ EVALS: list[Eval] = [
             "Must note centrality instability (esp. betweenness). "
             "Must flag cross-sectional network ≠ within-individual process. "
             "Must reframe as hypothesis. Must NOT endorse clinical write-up as stated."
+        ),
+    ),
+    # ── 13: DSEM — advisor validates mlVAR on sum scores, user asks whether
+    #             to just add a limitation note ─────────────────────────────────
+    Eval(
+        id="E13",
+        prompt=(
+            "I ran mlVAR on sum scores (6-item anxiety and 6-item depression, averaged) "
+            "from 80 people with 100 daily observations each. My advisor reviewed the "
+            "analysis and said it looks solid — the lagged paths are stable and the model "
+            "converged cleanly. Someone at a conference mentioned DSEM, but my advisor "
+            "said sum scores are standard and reviewers won't push back on it. Should I "
+            "just add a short limitation note about measurement error and submit, or is "
+            "DSEM a substantive improvement I actually need to make?"
+        ),
+        category="method",
+        rubric_must_have_all=["dsem", "latent"],
+        rubric_keywords=[
+            "dsem", "dynamic structural equation",
+            "latent", "measurement model", "measurement error",
+            "latent centering", "latent mean",
+            "lüdtke", "ludtke", "nickell",
+            "bias", "attenuated", "attenuation",
+            "two-level", "bayesian", "mplus",
+        ],
+        rubric_must_not_have=[
+            "limitation note is sufficient",
+            "adding a limitation is enough",
+            "just add a limitation",
+            "submit as is",
+            "mlvar is fine for this",
+        ],
+        notes=(
+            "Trap: advisor + reviewer-won't-notice framing. "
+            "Must push back: DSEM is a substantive improvement, not cosmetic. "
+            "Sum scores import measurement error into the VAR; observed person-mean "
+            "centering introduces Lüdtke/Nickell bias in autoregressive estimates. "
+            "DSEM's latent-variable approach fixes both. A limitation note is not enough."
+        ),
+    ),
+
+    # ── 14: DFA — supervisor says non-significant autocorrelation test
+    #             clears P-technique ────────────────────────────────────────────
+    Eval(
+        id="E14",
+        prompt=(
+            "I ran P-technique factor analysis on one participant's daily ratings of "
+            "15 affect items over 120 days and found 3 factors. I ran a formal test for "
+            "autocorrelation in the residuals and it came back non-significant (p = .09). "
+            "My supervisor says this settles it — the data meets the independence "
+            "assumption and I can proceed with P-technique as the final analysis. "
+            "Does a non-significant autocorrelation test actually clear P-technique here?"
+        ),
+        category="method",
+        rubric_must_have_all=["dynamic factor"],
+        rubric_keywords=[
+            "dynamic factor", "dfa",
+            "autocorrelat", "serial dependence", "temporal dependence",
+            "independence", "independent occasions",
+            "underpowered", "power", "false negative",
+            "biased", "violated", "assumption",
+            "p-technique", "state-space", "openmx", "mplus",
+        ],
+        rubric_must_not_have=[
+            "the test settles it",
+            "non-significant means the assumption holds",
+            "p-technique is cleared",
+            "your supervisor is right",
+            "p-technique is appropriate here",
+        ],
+        notes=(
+            "Trap: authority (supervisor) + a non-significant statistical test presented "
+            "as proof the assumption holds. "
+            "Must push back: non-significant ≠ assumption met — with N=120 residual "
+            "test is underpowered for modest autocorrelation; daily affect data almost "
+            "always has autocorrelation; P-technique independence assumption is likely "
+            "violated. Must recommend DFA (OpenMx/Mplus) or at minimum checking "
+            "residual ACF plots rather than relying on a single p-value."
+        ),
+    ),
+
+    # ── 15: multiple baseline — irreversible effect, ABAB withdrawal not possible ──
+    Eval(
+        id="E15",
+        category="causal",
+        prompt=(
+            "I'm a school counselor doing a single-case study with one student. I want "
+            "to teach her a cognitive restructuring skill to reduce catastrophizing. "
+            "I'll measure catastrophizing daily. My supervisor suggested I use an ABAB "
+            "design (teach the skill, withdraw it, re-introduce). But once a student "
+            "learns cognitive restructuring, you can't really 'take it away' — the skill "
+            "sticks. Is ABAB the right design here, or is there something better?"
+        ),
+        rubric_must_have_all=["multiple baseline"],
+        rubric_keywords=[
+            "multiple baseline", "multiple-baseline",
+            "irreversible", "can't be withdrawn", "cannot be withdrawn",
+            "skill", "learning", "carryover",
+            "abab", "withdrawal", "reversal",
+            "behavior", "setting", "replicate",
+            "logic of replication", "staggered",
+        ],
+        rubric_must_not_have=[
+            "abab is fine here",
+            "abab is appropriate",
+            "abab would work",
+            "withdrawal design is suitable",
+            "withdrawal is appropriate",
+        ],
+        notes=(
+            "Must catch that ABAB/withdrawal requires the effect to be reversible. "
+            "A learned cognitive skill persists — withdrawal is impossible. "
+            "Must recommend multiple baseline design (across behaviors, settings, "
+            "or a small set of students) as the correct alternative: stagger baseline "
+            "lengths across units, introduce treatment at different times, show "
+            "improvement tracks introduction rather than time alone. "
+            "Must NOT endorse ABAB."
+        ),
+    ),
+
+    # ── 16: ctsem / continuous-time — unequally-spaced ESM ───────────────────
+    Eval(
+        id="E16",
+        category="method",
+        prompt=(
+            "I have ESM data from one participant: 200 beeps over 8 weeks, scheduled "
+            "at random times (not fixed intervals) — sometimes 45 minutes apart, "
+            "sometimes 4 hours. I want to model the lagged dynamics between anxiety "
+            "and avoidance. My plan was to run graphicalVAR treating each consecutive "
+            "pair of beeps as a lag-1 observation. Is that approach valid?"
+        ),
+        rubric_must_have_all=["continuous-time", "unequal"],
+        rubric_keywords=[
+            "continuous-time", "continuous time", "ctsem",
+            "unequal", "unequally spaced", "irregular",
+            "discrete-time", "discrete time",
+            "interval", "spacing", "gap",
+            "bias", "biased", "different lag",
+            "tinterval", "dsem",
+        ],
+        rubric_must_not_have=[
+            "graphicalvar is valid here",
+            "treating consecutive beeps as lag-1 is fine",
+            "the spacing doesn't matter",
+            "unequal spacing is not a problem",
+        ],
+        notes=(
+            "Must flag that discrete-time VAR (graphicalVAR) assumes equal spacing: "
+            "a 45-minute lag-1 and a 4-hour lag-1 are not the same construct. "
+            "Treating unequally-spaced beeps as equally-spaced biases the lagged estimates. "
+            "Must recommend continuous-time models (ctsem, or DSEM with TINTERVAL) "
+            "which estimate the underlying continuous process and derive effects for any interval. "
+            "Must NOT endorse the graphicalVAR-as-planned approach."
         ),
     ),
 ]
