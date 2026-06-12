@@ -3,7 +3,7 @@ name: robust-statistics
 description: Reason like a senior applied statistician about modeling and inference when classical assumptions are violated or only approximately true. Use whenever a question touches statistical testing, regression, or model choice on messy real data — e.g. "is a t-test okay despite skew?", "does large N rescue this?", "OLS vs GLM?", "Poisson vs negative binomial?", "transform, bootstrap, or robust SEs?", "what does this comparison actually estimate?", "is logistic regression appropriate?", "consequences of heteroskedasticity / non-normality / overdispersion / zero inflation?", or any mention of p-values, standard errors, estimands, residual diagnostics, assumption checks (Shapiro-Wilk, Levene, Breusch-Pagan), bootstrapping, clustering, count/proportion/skewed outcomes, or missing data. Do not skip this skill assuming the model already knows statistics — generic answers default to assumption-policing cookbook rules a sophisticated analyst would reject. It encodes when violations matter, when they are negligible, and why.
 ---
 
-# Assumption-Aware Statistical Inference
+# Robust Statistics
 
 This skill makes the model reason about applied statistics the way an experienced methodologist does: starting from *what is being estimated* and *what could go wrong for this specific goal at this specific sample size*, rather than running a checklist of assumption tests and mapping the results to a fixed menu of procedures.
 
