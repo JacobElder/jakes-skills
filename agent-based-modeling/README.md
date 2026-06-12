@@ -32,7 +32,7 @@ scripts/
   replication_convergence.py      — how many runs? (CV convergence method)
   sensitivity_analysis.py         — Morris screening + Sobol indices via SALib
 evals/
-  evals.json                      — 9 capability evals across the ABM lifecycle
+  evals.json                      — 11 capability evals across the ABM lifecycle
   trigger_eval.json               — 22 should/should-not-trigger queries
   run_evals.py                    — eval harness (requires claude CLI)
 ```
@@ -93,6 +93,25 @@ python evals/run_evals.py --skip-existing
 ```
 
 Results are written to `evals/results/`.
+
+## Benchmark results
+
+Evaluated on 11 capability evals spanning the full ABM lifecycle, graded by
+`claude-haiku-4-5` against explicit assertions (executor: `claude-sonnet-4-6`).
+
+| Condition | Score | Pass rate |
+|-----------|-------|-----------|
+| Base model (no skill) | 40 / 57 | 70.2% |
+| With skill | 57 / 57 | **100%** |
+| **Delta** | | **+29.8 pp** |
+
+Trigger routing (22 queries): **100%** accuracy — the skill fires on ABM tasks
+and skips unrelated queries (ML training, CFD, Monte Carlo finance, etc.).
+
+The largest gains come from tasks that require the bundled scaffolding: running
+global sensitivity analysis with Morris + Sobol (+5 on eval 7), properly
+reporting stochastic output (+3 on eval 10), and applying the full
+verification → calibration → validation distinction (+2 on eval 2).
 
 ## Design philosophy
 
