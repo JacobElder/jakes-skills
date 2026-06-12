@@ -320,7 +320,7 @@ EVALS: list[Eval] = [
             "from a gene expression experiment, roughly centered around zero. Is NMF right?"
         ),
         category="pitfall",
-        rubric_must_have_all=["nonneg"],
+        rubric_must_have_all=["non-negative"],
         rubric_keywords=["nonnegative", "non-negative", "cannot", "invalid",
                          "requires nonneg", "negative values", "violates",
                          "assumption", "not valid", "pca", "ica", "alternative"],
@@ -383,17 +383,18 @@ EVALS: list[Eval] = [
         id="C2",
         prompt=(
             "In Python, write a function that fits EFA on a DataFrame of survey items "
-            "and runs parallel analysis to determine the number of factors. Use the "
-            "factor_analyzer package."
+            "and uses parallel analysis to determine the number of factors. Show the "
+            "factor loadings and explain the rotation choice."
         ),
         category="code",
-        rubric_must_have_all=["parallel analysis", "factor_analyzer"],
-        rubric_keywords=["factor_analyzer", "FactorAnalyzer", "parallel_analysis",
-                         "AnalysisFactor", "n_factors", "eigenvalue",
-                         "scree", "loadings", "rotation", "fit"],
+        rubric_must_have_all=["parallel analysis"],
+        rubric_keywords=["factor_analyzer", "FactorAnalyzer", "n_factors", "eigenvalue",
+                         "loadings", "rotation", "oblimin", "promax", "oblique",
+                         "parallel", "communalit", "fit"],
         notes=(
-            "Must use factor_analyzer. Must implement parallel analysis for factor count. "
-            "Rotation should be oblique (oblimin/promax) or at least acknowledge the choice."
+            "Must implement parallel analysis for factor count. "
+            "Rotation should be oblique (oblimin/promax) — the skill specifies this for "
+            "correlated psychological factors. Should show loadings."
         ),
     ),
 
@@ -692,6 +693,180 @@ EVALS: list[Eval] = [
             "This is file compression, not statistical dimensionality reduction. "
             "The agent must answer the PDF question and NOT pivot into DR methods. "
             "Tests that the skill doesn't hijack unrelated 'reduce' queries."
+        ),
+    ),
+
+    # ── Category H: Harder traps (iter-2 additions) ──────────────────────────
+
+    Eval(
+        id="H1",
+        prompt=(
+            "I ran UMAP on my gene expression data and the embedding explains 87% of the "
+            "variance in my high-dimensional data. That's a great UMAP — better than the "
+            "PCA run that only explained 62%. Right?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["variance"],
+        rubric_keywords=["doesn't have", "does not have", "doesn't explain",
+                         "does not explain", "no explained variance",
+                         "not applicable", "umap doesn't", "umap does not",
+                         "neighborhood", "neighbourhood", "local structure",
+                         "not trying to", "optimizes for", "not variance",
+                         "different objective", "trustworthiness"],
+        rubric_must_not_have=["87% is a great umap", "umap explains 87%",
+                               "that's a meaningful comparison",
+                               "umap's 87% is better"],
+        notes=(
+            "UMAP has no 'explained variance' metric — it has no PCA-style objective. "
+            "87% is a confabulated or misattributed number. "
+            "Must push back on comparing UMAP and PCA on explained-variance grounds."
+        ),
+    ),
+
+    Eval(
+        id="H2",
+        prompt=(
+            "I ran t-SNE twice on my data with different random seeds — seed=0 gave "
+            "4 clusters, seed=42 gave 6 clusters. My advisor says I should report "
+            "the run with 4 clusters because it matches our hypothesis. Is that OK?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["seed"],
+        rubric_keywords=["cherry-pick", "p-hack", "artifact", "stochastic",
+                         "both seeds", "report both", "seed-dependent",
+                         "hypothesis", "confirmation bias",
+                         "not ok", "not acceptable", "not appropriate"],
+        rubric_must_not_have=["report the 4-cluster run", "that's acceptable",
+                               "4 clusters is fine to report",
+                               "advisor is right"],
+        notes=(
+            "Must push back on cherry-picking the seed that matches the hypothesis. "
+            "Both runs should be reported or the analysis should be validated "
+            "quantitatively. Confirmation bias trap."
+        ),
+    ),
+
+    Eval(
+        id="H3",
+        prompt=(
+            "I ran t-SNE on my training data and got a nice 2D embedding. Now I want to "
+            "add 500 new test points to the same plot — I'll just rerun t-SNE on all "
+            "the training + test data together. But the coordinates will be totally "
+            "different from the first run, so I can't overlay them. What do I do?"
+        ),
+        category="method",
+        rubric_must_have_all=["transform"],
+        rubric_keywords=["no transform", "cannot transform", "umap", "pca",
+                         "parametric", "opentsne", "coordinate system",
+                         "refit", "not comparable", "cannot overlay",
+                         "out-of-sample"],
+        rubric_must_not_have=["just rerun t-sne on all data",
+                               "rerunning on combined data is fine",
+                               "the coordinates will be consistent"],
+        notes=(
+            "Vanilla t-SNE has no transform; rerunning on combined data gives incomparable "
+            "coordinates. Must explain the out-of-sample problem and recommend UMAP "
+            "(has transform), parametric t-SNE / openTSNE (approximate), or PCA."
+        ),
+    ),
+
+    Eval(
+        id="H4",
+        prompt=(
+            "I ran EFA and got factor scores for each respondent. I want to plug those "
+            "factor scores into a linear regression as predictors. My colleague says "
+            "this is problematic because of 'factor score indeterminacy.' Is that a "
+            "real concern?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["indeterminacy"],
+        rubric_keywords=["indeterminacy", "factor score indeterminacy",
+                         "not unique", "infinite number", "multiple solutions",
+                         "regression on latent", "sem", "structural equation",
+                         "bartlett", "regression method", "acknowledge"],
+        rubric_must_not_have=["your colleague is wrong", "factor scores are fine",
+                               "indeterminacy is not a real concern",
+                               "no issue with using factor scores"],
+        notes=(
+            "Factor score indeterminacy is a real issue in EFA: scores are not uniquely "
+            "determined. Colleague is right. Options: use SEM to model paths directly, "
+            "or use a specific scoring method (Bartlett, regression) and acknowledge limits."
+        ),
+    ),
+
+    Eval(
+        id="H5",
+        prompt=(
+            "I want to compare the UMAP embeddings from my 2021 dataset and my 2024 "
+            "dataset to see if the structure has changed over time. I'll run UMAP on "
+            "each dataset separately and overlay the two 2D plots. What should I watch "
+            "out for?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["coordinate"],
+        rubric_keywords=["coordinate", "not comparable", "different coordinate",
+                         "arbitrary rotation", "reflection", "not aligned",
+                         "cannot overlay", "joint embedding", "combined",
+                         "procrustes", "align"],
+        rubric_must_not_have=["you can overlay them directly",
+                               "the comparison is valid",
+                               "just overlay the plots"],
+        notes=(
+            "UMAP runs on separate datasets produce incomparable coordinate systems "
+            "(arbitrary rotation/reflection/scale). Overlaying is invalid. "
+            "Must recommend: joint embedding on combined data, Procrustes alignment, "
+            "or a method with a reusable transform (fit on 2021, transform 2024)."
+        ),
+    ),
+
+    Eval(
+        id="H6",
+        prompt=(
+            "I built an autoencoder and I'm using the reconstruction error on new samples "
+            "as an anomaly score — high reconstruction error means the sample is an outlier. "
+            "This is a common pattern, right? Any caveats?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["reconstruct"],
+        rubric_keywords=["manifold", "low-dimensional manifold",
+                         "latent space", "unusual but reconstructable",
+                         "not always reliable", "false negative", "missed anomaly",
+                         "calibration", "threshold", "validate",
+                         "isolation forest", "one-class"],
+        rubric_must_not_have=["this is perfectly reliable",
+                               "reconstruction error is a foolproof anomaly score",
+                               "no caveats needed"],
+        notes=(
+            "Reconstruction error for anomaly detection has a key failure mode: "
+            "anomalies that lie on the learned manifold get low reconstruction error "
+            "and are missed. Must flag this. Should note threshold calibration and "
+            "validation requirements, or suggest alternatives (Isolation Forest, one-class SVM)."
+        ),
+    ),
+
+    Eval(
+        id="H7",
+        prompt=(
+            "I've done PCA and the biplot shows my variables as arrows, with similar "
+            "arrows meaning similar variables. My collaborator wants to interpret the "
+            "arrow lengths and directions as if this were a factor loading plot — "
+            "reading off which 'factor' each variable belongs to. Is that valid?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["loading"],
+        rubric_keywords=["not a factor loading", "not the same as", "efa",
+                         "loading plot", "biplot", "principal component",
+                         "not latent factors", "linear combination",
+                         "common factor", "no error term",
+                         "exploratory factor"],
+        rubric_must_not_have=["your collaborator is right",
+                               "pca biplot is equivalent to a factor loading plot",
+                               "that interpretation is valid"],
+        notes=(
+            "PCA biplots show loadings of observed variables onto principal components, "
+            "not onto latent factors. This conflates PCA and EFA. "
+            "Must clarify the distinction; if factor interpretation is the goal, "
+            "use EFA with proper rotation."
         ),
     ),
 
