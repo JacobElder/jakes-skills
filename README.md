@@ -19,7 +19,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [network-analysis](#network-analysis) | Network science & social network analysis | +32.5pp across 8 trap-based evals |
 | [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +15.4pp across 8 scenarios (intersection skill) |
 | [survey-design](#survey-design) | Survey & questionnaire design | +52pp across 6 evals (100% vs. 48.5%) |
-| [dimensionality-reduction](#dimensionality-reduction) | PCA, EFA, t-SNE, UMAP, ICA, NMF and embedding validation | +16pp (37/37 with skill, 31/37 base); +36pp on pitfall traps |
+| [dimensionality-reduction](#dimensionality-reduction) | PCA, EFA, t-SNE, UMAP, ICA, NMF and embedding validation | +14pp (43/43 with skill, 37/43 base); +33pp on pitfall traps |
 
 ---
 
@@ -161,7 +161,7 @@ Choose, apply, validate, and interpret dimensionality reduction correctly — PC
 
 **Why it matters:** The base model knows DR methods but validates the user's plan without catching structural errors. It reads t-SNE inter-cluster distances and blob sizes as findings (both are artifacts), agrees that "UMAP preserves global structure" means inter-cluster distances are reportable (they're not), runs CFA on the same data used for EFA and calls it confirmation (it isn't), and validates UMAP silhouette scores as evidence the embedding works (circular). The skill stops these before they become published findings, redirects PCA-as-EFA confusion, enforces quantitative validation over visual tuning, and ships a tested diagnostics script.
 
-**Gap:** +16pp overall — 37/37 with skill (100%) vs. 31/37 base (84%) on haiku, across 6 automated categories. Pitfall category: +36pp (14/14 with skill vs. 9/14 base). Key differentiators: t-SNE distance+size misread, UMAP global structure overclaim, EFA→CFA double-dip, visual hyperparameter cherry-picking, circular embedding validation, kNN accuracy red flag.
+**Gap:** +14pp overall — 43/43 with skill (100%) vs. 37/43 base (86%) on haiku, across 6 automated categories. Pitfall category: +33pp (15/15 with skill vs. 10/15 base). Key differentiators: t-SNE distance+size misread, UMAP global structure overclaim, EFA→CFA double-dip, visual hyperparameter cherry-picking, circular embedding validation, kNN accuracy red flag.
 
 → [dimensionality-reduction/](dimensionality-reduction/)
 

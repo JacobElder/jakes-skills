@@ -200,8 +200,14 @@ The base model knows dimensionality reduction methods. The skill gives the agent
 | H5 | Pitfall | Separate UMAP runs produce incomparable coordinate systems; use joint embedding or Procrustes |
 | H6 | Pitfall | Autoencoder reconstruction error for anomaly detection: anomalies on the manifold are missed |
 | H7 | Pitfall | PCA biplot ≠ factor loading plot; arrow directions are not latent factor assignments |
+| I1 | Method | UMAP metric='cosine' for sentence-transformer embeddings, not Euclidean default |
+| I2 | Method | PHATE for continuous developmental trajectories, not generic UMAP/t-SNE |
+| I3 | Pitfall | Don't cluster on the 2D UMAP embedding; run k-means in original/PCA space |
+| I4 | Method | Non-metric MDS for perceptual dissimilarity ratings, not PCA or UMAP |
+| I5 | Method | Polychoric FA for Likert/ordinal items, not standard EFA on Pearson covariance |
+| I6 | Method | t-SNE init='pca' over random; improves global layout and reproducibility |
 
-**Automated benchmark result (haiku, iter-2):** 37/37 with skill (100%), 31/37 baseline (84%), **+16pp delta**. Pitfall category: 14/14 with skill (100%), 9/14 baseline (64%), **+36pp delta**. Evals run via `dimensionality-reduction/evals/run_evals.py`.
+**Automated benchmark result (haiku, iter-3):** 43/43 with skill (100%), 37/43 baseline (86%), **+14pp delta**. Pitfall category: 15/15 with skill (100%), 10/15 baseline (67%), **+33pp delta**. Evals run via `dimensionality-reduction/evals/run_evals.py`.
 
 ---
 

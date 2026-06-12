@@ -61,6 +61,27 @@ and why. Don't silently pick.
 Detailed treatment of each lives in the reference files (see end). Read the relevant one
 before giving method-specific advice — don't wing the math.
 
+### UMAP metric choice matters — don't default to Euclidean on non-Euclidean data
+
+UMAP's `metric=` parameter defaults to `'euclidean'`. That default is wrong for several common input
+types:
+
+- **Text / sentence embeddings (e.g. sentence-transformers, word2vec, GloVe):** use `metric='cosine'`.
+  These vectors live on or near a sphere; cosine captures angular similarity, which is what the
+  embedding space was trained to preserve. Euclidean distance on unit-normed vectors is a monotone
+  function of cosine distance, so for *normalised* vectors it matters less, but for unnormalised
+  vectors (e.g. averaged word2vec without L2-normalising) cosine is the correct choice.
+- **Sparse count data already reduced to TF-IDF or similar:** `metric='cosine'` or `'hellinger'`
+  (for probability distributions).
+- **Data after PCA whitening / standardization:** Euclidean is appropriate — PCA output is already
+  in a space where Euclidean distances are meaningful.
+- **Binary data (presence/absence flags):** `metric='jaccard'` or `'dice'`.
+
+Ask about the upstream representation before running UMAP. A cosine-metric UMAP on text embeddings
+will typically cluster more coherently and show less spurious global dispersion than the Euclidean default.
+
+---
+
 ### Can it embed new points? (out-of-sample transform)
 
 A decision axis people forget until it bites them in production. Ask early whether the user needs
@@ -85,7 +106,11 @@ situation genuinely warrants it.
    sizes are meaningless, distances between clusters are largely meaningless, and apparent
    density is an artifact* of the algorithm equalizing neighbourhoods. Do clustering, neighbour
    analysis, and distance comparisons in the *original* (or PCA-reduced) space — never on the
-   2D embedding. The 2D plot is for the eyes, not for inference.
+   2D embedding. The 2D plot is for the eyes, not for inference. Note that "measure in the
+   original space" is not a perfect fix either: high-dimensional Euclidean distances degrade
+   under the curse of dimensionality (distances become nearly equal as dimensions grow). Prefer
+   PCA-reduced-space distances or neighbour-structure metrics (kNN, trustworthiness) over raw
+   HD Euclidean comparisons when the dimensionality is high.
 
 2. **"UMAP preserves global structure" is oversold.** Head-to-head benchmarks put UMAP only
    marginally ahead of t-SNE on global structure; PaCMAP and TriMap do better; PCA remains the
@@ -168,11 +193,16 @@ When asked to "reduce dimensions" or "embed/visualize this data" without further
 
 1. Clarify the job (compression vs visualization vs latent measurement). State your assumption
    if the user is silent.
-2. Inspect & preprocess: handle missing values; standardize (or not, per principle 11).
+2. Inspect & preprocess: **handle missing values first** — impute (median/mean for PCA; matrix
+   completion for better results), drop, or use an imputation-aware method. PCA with `sklearn`
+   will error on NaN; UMAP will silently mishandle them. Also check the data type: if features
+   are categorical or mixed, PCA/UMAP are wrong — use MCA/FAMD (see method table).
+   Standardize (or not, per principle 11); check the `metric=` choice (see above) if using UMAP.
 3. **Always run PCA first** — as the answer (compression), as preprocessing (→30–50d before
    nonlinear methods), and as a sanity check. Report the scree / cumulative explained variance.
-4. If visualizing and PCA looks uninformative, run a nonlinear method — and run it across
-   ≥2 seeds and ≥2 perplexity/n_neighbors values.
+4. If visualizing and PCA looks uninformative, run a nonlinear method — with `init='pca'` for
+   t-SNE (improves global layout and reproducibility over random init) — and run it across ≥2
+   seeds and ≥2 perplexity/n_neighbors values.
 5. **Validate** with `dr_diagnostics.py`. Report the numbers, not just the picture.
 6. Interpret with the caveats above stated explicitly. Do downstream clustering/stats in the
    original or PCA space.

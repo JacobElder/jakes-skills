@@ -870,6 +870,147 @@ EVALS: list[Eval] = [
         ),
     ),
 
+    # ── Category I: Coverage-gap evals (iter-3 additions) ────────────────────
+
+    Eval(
+        id="I1",
+        prompt=(
+            "I have 50k sentence embeddings from a sentence-transformer model (384 dimensions). "
+            "I want to run UMAP on them to visualize the semantic clusters. I'll just use "
+            "the default UMAP settings. Anything I should change?"
+        ),
+        category="method",
+        rubric_must_have_all=["cosine"],
+        rubric_keywords=["cosine", "metric", "euclidean", "metric='cosine'",
+                         "metric=\"cosine\"", "angular", "sentence", "text",
+                         "default", "not euclidean", "wrong metric"],
+        rubric_must_not_have=["euclidean is fine for sentence embeddings",
+                               "the default metric works well here",
+                               "euclidean is correct"],
+        notes=(
+            "Must recommend metric='cosine' for sentence-transformer embeddings. "
+            "Euclidean on high-dimensional text vectors is the wrong choice. "
+            "The skill explicitly covers UMAP metric choice for text inputs."
+        ),
+    ),
+
+    Eval(
+        id="I2",
+        prompt=(
+            "I have single-cell RNA-seq data from a developmental time course — cells "
+            "progressing through a differentiation trajectory. I want to visualize the "
+            "progression. Should I use UMAP or t-SNE?"
+        ),
+        category="method",
+        rubric_must_have_all=["trajector"],
+        rubric_keywords=["phate", "trajectory", "trajectories", "diffusion",
+                         "developmental", "continuum", "branching",
+                         "pseudotime", "paga", "not umap", "not t-sne",
+                         "continuous", "progression"],
+        rubric_must_not_have=["umap is the best choice here",
+                               "t-sne is optimal for this",
+                               "standard umap will work perfectly"],
+        notes=(
+            "PHATE is designed for continuous trajectories and developmental progressions. "
+            "Must recommend PHATE (and/or trajectory-aware methods like PAGA/pseudotime) "
+            "over generic UMAP/t-SNE for a developmental time course."
+        ),
+    ),
+
+    Eval(
+        id="I3",
+        prompt=(
+            "I ran UMAP on my dataset and got a nice 2D plot with clear visual clusters. "
+            "Now I want to run k-means on the 2D UMAP coordinates to automatically assign "
+            "cluster labels. That's the standard workflow, right?"
+        ),
+        category="pitfall",
+        rubric_must_have_all=["original"],
+        rubric_keywords=["original space", "pca space", "high-dimensional",
+                         "artifacts", "not the standard", "not recommended",
+                         "circular", "cluster in the original", "do not cluster",
+                         "run clustering in"],
+        rubric_must_not_have=["that's the standard workflow", "clustering on umap is fine",
+                               "k-means on umap coordinates is appropriate",
+                               "good approach"],
+        notes=(
+            "Clustering on the UMAP embedding inherits all UMAP artifacts. "
+            "The skill explicitly says: 'Don't cluster on the 2D embedding. "
+            "Run clustering in the original or PCA-reduced space.' "
+            "Must push back and redirect to original/PCA space clustering."
+        ),
+    ),
+
+    Eval(
+        id="I4",
+        prompt=(
+            "I have a dissimilarity matrix from a user-study — participants rated how "
+            "similar pairs of product designs were on a 1–9 scale. I want to embed these "
+            "in 2D to see the perceptual space. Should I use PCA or UMAP?"
+        ),
+        category="method",
+        rubric_must_have_all=["mds"],
+        rubric_keywords=["mds", "multidimensional scaling", "non-metric mds",
+                         "dissimilarity", "precomputed", "stress", "ordinal",
+                         "rank", "non-euclidean", "perceptual",
+                         "pca cannot", "umap cannot", "dissimilarity matrix"],
+        rubric_must_not_have=["pca is the right tool here",
+                               "umap is the standard approach for this",
+                               "just use pca on the ratings"],
+        notes=(
+            "This is a classic MDS use case: non-Euclidean perceptual dissimilarity "
+            "ratings. Non-metric MDS is the appropriate tool. PCA requires a feature "
+            "matrix, not a precomputed dissimilarity matrix. UMAP can take precomputed "
+            "distances but MDS is more standard for perceptual scaling data."
+        ),
+    ),
+
+    Eval(
+        id="I5",
+        prompt=(
+            "I have a 20-item Likert scale (1–5 response options). I want to run factor "
+            "analysis to find the latent dimensions. I was going to treat the items as "
+            "continuous and run standard EFA on the covariance matrix. Is that right?"
+        ),
+        category="method",
+        rubric_must_have_all=["polychoric"],
+        rubric_keywords=["polychoric", "ordinal", "likert", "categorical",
+                         "correlation matrix", "5 categories", "5-point",
+                         "lavaan", "factor_analyzer", "tetrachoric",
+                         "ordinal factor", "not truly continuous"],
+        rubric_must_not_have=["treating likert as continuous is fine",
+                               "covariance matrix is appropriate for likert",
+                               "standard efa is correct here"],
+        notes=(
+            "For Likert/ordinal items, the principled approach is factor analysis on a "
+            "polychoric correlation matrix, not a Pearson covariance matrix. "
+            "With 5+ categories and normal-ish distributions it's often defensible, "
+            "but must flag the assumption and recommend polychoric FA as the better path."
+        ),
+    ),
+
+    Eval(
+        id="I6",
+        prompt=(
+            "I'm running t-SNE in scikit-learn with the default settings. A colleague "
+            "says I should change the init parameter. Why would that matter?"
+        ),
+        category="method",
+        rubric_must_have_all=["pca"],
+        rubric_keywords=["init='pca'", "init=\"pca\"", "pca initialization",
+                         "pca init", "random initialization", "random init",
+                         "global layout", "reproducibility", "deterministic",
+                         "not random", "default", "better"],
+        rubric_must_not_have=["random init is fine", "init doesn't matter",
+                               "default is good enough"],
+        notes=(
+            "Must recommend init='pca' over random. "
+            "PCA init improves global layout consistency and reproducibility — "
+            "the skill and manifold ref explicitly state this. "
+            "sklearn's default was random in older versions; PCA init is standard practice."
+        ),
+    ),
+
     # ── Category G: Multi-turn (analytical only) ──────────────────────────────
 
     Eval(
