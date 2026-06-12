@@ -1,0 +1,22 @@
+{
+  "eval_id": 19,
+  "condition": "baseline",
+  "prompt": "I want to cluster 2,000 patients into subtypes, but I also want to understand how the groups nest \u2014 are there broad groups with meaningful subgroups inside? I was going to use k-means. Is that the right tool?",
+  "response": "K-means is the wrong tool for this goal for two reasons: it produces a flat partition (no nesting), and patient data is almost always mixed types (labs, binary flags, categorical diagnoses) where Euclidean distance is misleading.\n\n**Better fit: agglomerative hierarchical clustering** with Ward linkage (all-continuous) or Gower distance (mixed types). You get a dendrogram you can cut at two heights \u2014 one for broad subtypes, one for subgroups within them \u2014 which directly answers the nesting question.\n\nThe main tradeoff: agglomerative clustering is O(n\u00b2) in memory, so at n=2,000 it's fine, but it doesn't scale past ~10k. If you later need to scale or assign new patients, you'd want to fit a flat model (e.g., k-medoids or LCA) on the cluster assignments from the dendrogram.\n\nOne alternative worth knowing: **HDBSCAN** gives a density-based hierarchy and handles non-convex patient subgroups better, but the hierarchy is harder to interpret than a clean dendrogram cut.\n\nWant to go with agglomerative? If so, knowing whether your features are all-continuous or mixed type determines the distance metric choice.",
+  "expectations": [
+    "Recommends agglomerative clustering (with Ward or another named linkage) over k-means for the hierarchical/nested structure goal",
+    "Explains that k-means produces only a flat partition \u2014 no tree, no nesting",
+    "Names Ward linkage as the default or recommended linkage for Euclidean data (or mentions it produces compact clusters similar to k-means)",
+    "Notes that n=2,000 is comfortably within agglomerative's memory limits (O(n\u00b2) is fine at this scale)"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

@@ -1,0 +1,22 @@
+{
+  "eval_id": 19,
+  "condition": "with_skill",
+  "prompt": "I want to cluster 2,000 patients into subtypes, but I also want to understand how the groups nest \u2014 are there broad groups with meaningful subgroups inside? I was going to use k-means. Is that the right tool?",
+  "response": "K-means is the wrong tool for two reasons: it gives you a flat partition with no hierarchical structure, and it assumes spherical, roughly equal-size clusters \u2014 a strong assumption for patient subtypes that may not hold.\n\n**For nested structure, use Ward agglomerative clustering.** It produces a dendrogram you can cut at two levels: once for broad groups (e.g., k=3) and again within each group for subgroups. At n=2,000 it's entirely tractable (~32 MB for the distance matrix). The dendrogram height at each merge tells you how distinct the split is \u2014 a long branch before a merge means a real gap; a short one means the subgroups are barely distinguishable.\n\n**Cross-check with a mixture model (GMM or LPA).** Ward is greedy (early merges are irreversible), so use BIC over a range of k in a GMM to independently validate the cluster counts at each level, and to get per-patient uncertainty (posterior probabilities) rather than hard assignments. A patient sitting at 51%/49% between two subtypes is meaningfully different from one at 95%/5%.\n\n**Concretely:**\n1. Scale your features, then fit Ward agglomerative\n2. Inspect the dendrogram \u2014 look for long branches (genuine gaps)\n3. Cut at two heights: broad k, then within-group k\n4. Fit GMM at each k and compare BIC; check entropy (classification certainty)\n5. Validate stability with bootstrap ARI \u2014 real subtypes survive resampling\n\nK-means can serve as a sanity-check baseline, but it shouldn't be your main method here. If your patient features are mixed continuous/categorical, swap Euclidean + Ward for Gower distance + PAM before the agglomerative step.",
+  "expectations": [
+    "Recommends agglomerative clustering (with Ward or another named linkage) over k-means for the hierarchical/nested structure goal",
+    "Explains that k-means produces only a flat partition \u2014 no tree, no nesting",
+    "Names Ward linkage as the default or recommended linkage for Euclidean data (or mentions it produces compact clusters similar to k-means)",
+    "Notes that n=2,000 is comfortably within agglomerative's memory limits (O(n\u00b2) is fine at this scale)"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

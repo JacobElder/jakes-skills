@@ -1,0 +1,22 @@
+{
+  "eval_id": 16,
+  "condition": "with_skill",
+  "prompt": "I ran both k-means (k=4) and a GMM (k=4) on the same dataset. k-means found 4 roughly equal-sized, tight clusters. GMM found 2 large spread-out clusters and 2 small dense ones \u2014 completely different. Which result should I trust?",
+  "response": "The disagreement is itself the most informative thing here \u2014 it's telling you something real about the data's geometry. Here's how to read it.\n\n## Why they disagree\n\n**k-means imposes equal-size, spherical clusters by construction.** It minimizes within-cluster variance, which partitions space into a Voronoi tessellation with straight boundaries. If the real structure has clusters of different density or spread, k-means splits the large/diffuse ones to \"balance\" the variance \u2014 producing artificial subdivisions.\n\n**GMM relaxes those assumptions.** It models elliptical clusters with independently estimated covariance, so clusters of different sizes, shapes, and densities can coexist in the same solution.\n\nWhen they disagree like this \u2014 k-means finding equal blobs, GMM finding 2 large + 2 small \u2014 the most common explanation is that k-means is *artificially splitting* one or both of GMM's large clusters to equalize sizes. The GMM solution is the more faithful representation of the density structure, *if* its assumptions hold.\n\n## Which to trust\n\nLean toward the GMM solution as your working hypothesis, but don't declare it right yet. Verify:\n\n1. **Visualize first.** Project to 2D (PCA if the structure is linear, UMAP if not). Can you see 2 dense blobs and 2 spread-out ones? Do the k-means boundaries look like they're cutting through a single continuous region? This usually settles it.\n\n2. **Check BIC across k for the GMM.** If the 4-component solution has good BIC and the 2-component solution is much worse, that's evidence the small dense clusters are real. If BIC prefers 2, the small clusters may be fitting noise.\n\n3. **Inspect the k-means boundaries relative to the GMM clusters.** Specifically: do the k-means k=4 clusters correspond to *subdivisions within* the GMM's 2 large clusters? If yes, k-means is pattern-matching on internal density variation within a single true group \u2014 a known failure mode.\n\n4. **Run stability.** Bootstrap both solutions (resample with replacement, refit, measure ARI). The solution that reproduces more consistently is more real. k-means splits noise confidently; unstable bootstrap ARI exposes that.\n\n## The bottom line\n\nThe equal-size result from k-means is a red flag, not a reassurance. k-means *always* trends toward equal-size clusters because that's what minimizing pooled variance does \u2014 it's a geometric artifact, not a finding. GMM's ability to fit heterogeneous cluster sizes is a feature, and a result with 2 large + 2 small clusters is entirely plausible in real data.\n\nThe verification path is: visualize \u2192 BIC \u2192 check whether k-means boundaries cut through GMM's large clusters \u2192 stability. If those checks support the GMM solution, trust it. If BIC prefers 2 components and the small clusters evaporate under bootstrapping, you may be looking at k-means splitting 2 real clusters into 4 and GMM partially recovering the truth but still over-splitting.",
+  "expectations": [
+    "Does not simply declare one result correct; treats the disagreement as informative about the cluster geometry",
+    "Explains that k-means imposes equal-size, spherical clusters while GMM allows unequal sizes and elliptical shapes",
+    "Notes that k-means may be artificially forcing unequal clusters into equal-size spherical partitions",
+    "Recommends using BIC (or visualization / profile inspection) to evaluate which solution better fits the data"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

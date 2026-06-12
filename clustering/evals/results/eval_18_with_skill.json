@@ -1,0 +1,22 @@
+{
+  "eval_id": 18,
+  "condition": "with_skill",
+  "prompt": "I used HDBSCAN to cluster my training data and got great results. Now I have 500 new customers arriving every week and I need to assign each of them to one of the existing clusters. How do I do that?",
+  "response": "HDBSCAN is transductive \u2014 it has no native `predict()`. You have two options, with a clear recommendation depending on your situation.\n\n## Option 1: `approximate_predict()` \u2014 easiest, use first\n\nThe `hdbscan` package (not scikit-learn's) exposes this:\n\n```python\nimport hdbscan\n\n# Original fit \u2014 keep this object, don't refit it\nclusterer = hdbscan.HDBSCAN(min_cluster_size=50, prediction_data=True)\nclusterer.fit(X_train)\n\n# Each week, for new arrivals:\nlabels, strengths = hdbscan.approximate_predict(clusterer, X_new)\n# labels: cluster assignment (-1 = noise/uncertain)\n# strengths: confidence [0, 1]\n```\n\nFlag any assignments with `strengths < 0.5` as uncertain \u2014 they're on the boundary. `-1` labels mean the new point doesn't fit any existing cluster.\n\n**Caveat:** \"approximate\" is real. This method finds the nearest cluster in the condensed tree, which works well if new customers resemble the training distribution. If your customer base drifts significantly over time, the approximation degrades.\n\n## Option 2: Train a classifier on the labels \u2014 more robust for production\n\nIf you need reliable weekly throughput and want to catch distribution shift:\n\n```python\nfrom sklearn.ensemble import RandomForestClassifier\n\n# After fitting HDBSCAN on training data:\ntrain_labels = clusterer.labels_\nmask = train_labels != -1  # drop noise points\n\nclf = RandomForestClassifier(n_estimators=200)\nclf.fit(X_train[mask], train_labels[mask])\n\n# Each week:\nlabels = clf.predict(X_new)\nprobas = clf.predict_proba(X_new)  # check max proba for confidence\n```\n\nThis is fully inductive, fast, and lets you monitor confidence scores to detect when new customers stop fitting your existing cluster structure.\n\n## What NOT to do\n\n**Do not refit HDBSCAN on your combined old + new data each week.** Every refit changes the cluster assignments for the entire historical set \u2014 your \"Cluster 2\" from last week may not be the same \"Cluster 2\" this week, which makes trend tracking and campaign targeting meaningless.\n\n## Which to choose\n\n| Situation | Recommendation |\n|---|---|\n| New customers are similar to training data | `approximate_predict()` \u2014 simple, no extra training |\n| High volume, need speed, or data may drift | Classifier on top of labels |\n| You're seeing many `-1` labels from `approximate_predict` | Switch to the classifier; your new customers may not match the original density structure |\n\nIf you're seeing a high `-1` rate with `approximate_predict`, that's also a signal worth investigating \u2014 it may mean your customer base is genuinely evolving and the original clusters need a periodic full refit (quarterly or when drift is detected), not weekly.",
+  "expectations": [
+    "Explains that HDBSCAN cannot natively assign labels to new, unseen points (lacks a native predict() method, whether or not the word 'transductive' is used)",
+    "Recommends approximate_predict() from the hdbscan package as a direct solution for assigning new points",
+    "Names the alternative approach: training an inductive classifier (e.g., k-NN, random forest) on the cluster labels",
+    "Warns against refitting HDBSCAN on combined old+new data, because it changes assignments for the full historical dataset"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

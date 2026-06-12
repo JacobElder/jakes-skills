@@ -1,0 +1,22 @@
+{
+  "eval_id": 20,
+  "condition": "baseline",
+  "prompt": "I have a new dataset and I'm about to start clustering it. What should I do first before picking an algorithm?",
+  "response": "Before picking an algorithm, work through these in order:\n\n**1. Audit your variable types**\nAre they continuous, categorical, binary, or mixed? This immediately constrains your algorithm options \u2014 most distance-based methods (k-means, DBSCAN) assume continuous numeric features.\n\n**2. Examine distributions and scale**\nPlot histograms and check for heavy skew or vastly different ranges. Most algorithms use Euclidean distance, so unscaled features will dominate. Decide whether to standardize (z-score), normalize (0\u20131), or transform (log, Box-Cox) before anything else.\n\n**3. Find and handle outliers**\nOutliers can create their own spurious clusters or distort centroid-based methods badly. Visualize with box plots or pairplots; decide whether to remove, cap, or use a noise-tolerant algorithm (DBSCAN, HDBSCAN).\n\n**4. Check dimensionality**\nHigh-dimensional data degrades distance metrics (the curse of dimensionality). If you have many features, run PCA or UMAP first to see whether the data has low-dimensional structure \u2014 and use that 2D/3D projection to eyeball whether clusters seem to exist at all.\n\n**5. Form a domain hypothesis**\nHow many clusters do you expect? Are they likely compact and spherical (favors k-means) or irregular/non-convex (favors DBSCAN/spectral)? Do you expect noise points that don't belong to any cluster?\n\n**6. Assess cluster tendency**\nBefore fitting anything, run the Hopkins statistic or just look at your PCA/UMAP projection. If the data is uniformly distributed with no visible grouping, clustering will find artifacts regardless of algorithm.\n\nThe most common mistake is skipping steps 2\u20133 and going straight to k-means \u2014 you end up selecting *k* to fit scaling artifacts or outlier singletons.",
+  "expectations": [
+    "Leads with clusterability assessment as the first step before any algorithm selection",
+    "Explains that clustering algorithms return clusters even on structureless noise, so assessing structure first prevents false discovery",
+    "Mentions at least one concrete clusterability check: Hopkins statistic, VAT plot, or visual inspection via 2D projection (PCA/UMAP)",
+    "States or implies that clustering structureless data produces meaningless results, or notes that 'no clusters found' is a valid and reportable outcome"
+  ],
+  "assertion_results": [
+    false,
+    true,
+    true,
+    false
+  ],
+  "passed": 2,
+  "total": 4,
+  "pass_rate": 0.5,
+  "eval_passes": false
+}

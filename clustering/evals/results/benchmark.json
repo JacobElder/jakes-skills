@@ -2,63 +2,37 @@
   "skill_name": "cluster-analysis",
   "results": [
     {
-      "eval_id": 15,
+      "eval_id": 22,
       "condition": "baseline",
-      "prompt": "I've been using k-means to segment my customers. My colleague says I should switch to a Gaussian Mixture Model instead. What's actually different between them and when is GMM worth the extra complexity?",
-      "response": "**K-means vs. GMM: the real differences**\n\nK-means is a special case of GMM with two hard constraints baked in:\n\n1. **Hard assignments** \u2014 each point belongs to exactly one cluster (vs. GMM's soft probabilities)\n2. **Spherical, equal-variance clusters** \u2014 k-means minimizes within-cluster Euclidean distance, which implicitly assumes clusters are round and same-sized\n\nGMM relaxes both. Each cluster gets its own covariance matrix (shape, orientation, volume), and each point gets a probability of belonging to each cluster.\n\n**Concrete situations where GMM wins:**\n\n| Situation | Why GMM helps |\n|---|---|\n| Clusters differ in size or density | GMM can fit a tight dense cluster and a loose spread-out one simultaneously |\n| Clusters are elongated or correlated | Covariance captures elliptical shapes; k-means can't |\n| You need uncertainty estimates | Soft assignments let you flag ambiguous customers rather than force a label |\n| Cluster overlap is real | A customer genuinely between two segments gets partial membership, not an arbitrary hard cut |\n\n**When k-means is the right call:**\n\n- You have millions of rows \u2014 GMM's EM fitting is significantly slower\n- Clusters really are roughly spherical and similar in spread (check this with a quick PCA plot)\n- You need a simple, explainable output for stakeholders\n- You're using it as initialization (k-means \u2192 GMM is a common warm-start)\n\n**Practical recommendation:** Run both and compare with BIC (GMM outputs this natively). If BIC strongly favors GMM *and* the covariance matrices end up visibly non-spherical, the extra complexity is justified. If k-means and GMM produce similar segments, stay with k-means \u2014 it's faster and easier to defend.\n\nOne trap: GMM with full covariance matrices needs enough data per cluster to estimate the covariance reliably. With small clusters or high-dimensional features, use `covariance_type='diag'` or `'tied'` in scikit-learn, or regularize with `reg_covar`.",
+      "prompt": "I need to cluster my 8 million row customer dataset. Regular k-means keeps running out of memory. Should I use BIRCH?",
+      "response": "Try `MiniBatchKMeans` first \u2014 it's a drop-in replacement for `KMeans` in sklearn, uses mini-batches instead of loading all data at once, and gives nearly identical results with a fraction of the memory:\n\n```python\nfrom sklearn.cluster import MiniBatchKMeans\n\nkmeans = MiniBatchKMeans(n_clusters=k, batch_size=10_000, n_init=3)\nkmeans.fit(X)\n```\n\n**BIRCH is a solid second choice** if MiniBatchKMeans still struggles or you want a two-phase approach (BIRCH to reduce to subclusters, then k-means on those). It's O(n) memory because it builds a summary tree rather than holding all points. The tradeoff: it only handles convex/spherical clusters well, and quality degrades if you set `threshold` too aggressively.\n\n**Decision guide:**\n\n| Situation | Recommendation |\n|---|---|\n| Just need k-means to not OOM | `MiniBatchKMeans` |\n| Very high dimensionality (>100 dims) | `MiniBatchKMeans` + PCA first |\n| Want a two-stage pipeline | BIRCH \u2192 k-means on leaf centroids |\n| Non-spherical clusters expected | HDBSCAN with chunked/approximate mode |\n| Can use distributed compute | Dask-ML or PySpark MLlib k-means |\n\nThe most common cause of OOM with regular k-means on 8M rows is sklearn allocating the full `n_samples \u00d7 n_clusters` distance matrix. `MiniBatchKMeans` avoids this entirely.",
       "expectations": [
-        "Explains that k-means is a special case of GMM (spherical, equal-variance, hard-assignment limit)",
-        "States that GMM provides soft/probabilistic assignments rather than hard cluster labels",
-        "Explains that GMM allows flexible (elliptical, variable-size) covariance structure, whereas k-means assumes spherical equal-size clusters",
-        "Notes that full-covariance GMM can overfit in high dimensions and recommends constraining the covariance type",
-        "Mentions BIC as a principled way to choose k with GMM"
+        "Explains that BIRCH's value is the CF-tree as a compression step, used to reduce n before a final clustering algorithm \u2014 not as a standalone clusterer",
+        "Describes the correct two-phase workflow: BIRCH to compress, then k-means or agglomerative on the summaries",
+        "Notes at least one practical caveat of BIRCH (e.g., threshold tuning, order-sensitivity, assumes spherical sub-clusters, degrades in high dimensions, or that its native clustering is mediocre and a second-stage method is needed)",
+        "Mentions MiniBatch k-means as the simpler first alternative for pure scale without needing BIRCH's compression step"
       ],
       "assertion_results": [
-        true,
-        true,
+        false,
         true,
         true,
         true
       ],
-      "passed": 5,
-      "total": 5,
-      "pass_rate": 1.0,
-      "eval_passes": true
+      "passed": 3,
+      "total": 4,
+      "pass_rate": 0.75,
+      "eval_passes": false
     },
     {
-      "eval_id": 15,
+      "eval_id": 22,
       "condition": "with_skill",
-      "prompt": "I've been using k-means to segment my customers. My colleague says I should switch to a Gaussian Mixture Model instead. What's actually different between them and when is GMM worth the extra complexity?",
-      "response": "The short answer: GMM is k-means with two restrictions lifted \u2014 it allows **elliptical clusters** (not just spherical) and returns **soft membership probabilities** (not hard assignments). Whether that's worth it depends on your data.\n\n## What's actually different\n\n**K-means** minimizes within-cluster sum of squares. Every cluster is implicitly assumed to be a sphere of roughly equal radius. Points get a single hard label. The decision boundary between any two clusters is always a straight line.\n\n**GMM** fits a mixture of Gaussians via EM. Each component gets its own mean *and* covariance matrix, so clusters can be stretched, rotated ellipses of different sizes. Each point gets a posterior probability of belonging to each cluster \u2014 soft assignment. The hard label (argmax of the posterior) is just one read of the result.\n\nA useful framing: k-means is a degenerate GMM where every component has identical spherical covariance and assignments are hardened. So GMM strictly generalizes it.\n\n## When GMM is worth it\n\n**Use GMM when:**\n\n- Your customer segments are visibly elongated or of noticeably different spread in a PCA/UMAP plot \u2014 k-means will split one real segment into two or merge two into one\n- You want uncertainty information \u2014 knowing that a customer is 60%/40% between two segments is actionable (different campaign, watchlist for churn), whereas a hard label discards that signal\n- You want principled model selection \u2014 you can compare 2 vs 3 vs 4 segments using BIC rather than eyeballing an elbow plot\n- Segments differ substantially in size \u2014 k-means implicitly pulls segments toward equal size; GMM handles imbalanced mixing weights honestly\n\n**Stick with k-means when:**\n\n- Segments are roughly blobby and similar-sized (k-means is faster, simpler, and just as good)\n- n is very large \u2014 GMM's EM iterations are slower\n- You need to explain the method to non-technical stakeholders and \"distance to nearest center\" is already a stretch\n\n## The practical catch with GMM\n\nWith full covariance, parameters grow as O(k\u00b7d\u00b2). With many features, a component can collapse onto a small group and send its likelihood to infinity (singular covariance). Mitigations: use `covariance_type='diag'` or `'tied'` as a starting constraint, regularize with `reg_covar`, or reduce dimensions first. Letting BIC choose among covariance types and k jointly is cleaner than tuning by hand.\n\n## For customer segmentation specifically\n\nIf your goal is actionable segments for campaigns, the soft membership is often the most useful thing GMM gives you \u2014 not the elliptical shape. A customer sitting between two segments is a real, useful category. If you're going to ignore the probabilities and just take the hard label anyway, the practical gain over k-means is smaller and you should verify it's actually worth the added complexity on your data.\n\nMy suggestion: run both, compare the BIC curve from GMM against the silhouette sweep from k-means, and look at whether the cluster shapes in a 2D projection are actually elongated. If they are, your colleague is right. If they're blobby blobs, k-means is fine.",
+      "prompt": "I need to cluster my 8 million row customer dataset. Regular k-means keeps running out of memory. Should I use BIRCH?",
+      "response": "MiniBatch k-means is actually the better first move here. It's purpose-built for exactly this problem: processes random batches, bounded memory, and is in scikit-learn with the same API as regular k-means. The quality hit versus full k-means is small.\n\n```python\nfrom sklearn.cluster import MiniBatchKMeans\n\nmbk = MiniBatchKMeans(n_clusters=k, batch_size=10_000, n_init=10, random_state=42)\nmbk.fit(X_scaled)\n```\n\n**When to prefer BIRCH instead:**\n- You're reading from a stream or can't hold the data in RAM at all (BIRCH makes one pass and never materializes the full dataset)\n- You want BIRCH as a *compression step*: build the CF-tree to summarize 8M rows into ~10k sub-cluster summaries, then run GMM or Ward agglomerative on those summaries for higher quality results\n\n```python\nfrom sklearn.cluster import Birch\n\n# Stage 1: compress\nbirch = Birch(threshold=0.5, n_clusters=None)  # n_clusters=None \u2192 return sub-clusters\nbirch.fit(X_scaled)\nsubclusters = birch.subcluster_centers_\n\n# Stage 2: cluster the summaries with a better method\nfrom sklearn.cluster import AgglomerativeClustering\nfinal = AgglomerativeClustering(n_clusters=k).fit(subclusters)\n```\n\n**BIRCH caveats to know before committing:**\n- Results are order-sensitive (same data, different row order \u2192 different tree)\n- Assumes spherical sub-clusters, so the `threshold` parameter implicitly imposes that geometry\n- Numeric features only\n\n**My recommendation:** Start with MiniBatch k-means \u2014 it'll likely solve your problem in 10 lines. Only reach for BIRCH if you're genuinely streaming data or want a two-stage pipeline where the second stage needs a non-k-means method.\n\nAlso make sure you're scaling before either approach \u2014 an unscaled high-range feature will silently dominate everything at 8M rows just as badly as at 80k.",
       "expectations": [
-        "Explains that k-means is a special case of GMM (spherical, equal-variance, hard-assignment limit)",
-        "States that GMM provides soft/probabilistic assignments rather than hard cluster labels",
-        "Explains that GMM allows flexible (elliptical, variable-size) covariance structure, whereas k-means assumes spherical equal-size clusters",
-        "Notes that full-covariance GMM can overfit in high dimensions and recommends constraining the covariance type",
-        "Mentions BIC as a principled way to choose k with GMM"
-      ],
-      "assertion_results": [
-        true,
-        true,
-        true,
-        true,
-        true
-      ],
-      "passed": 5,
-      "total": 5,
-      "pass_rate": 1.0,
-      "eval_passes": true
-    },
-    {
-      "eval_id": 16,
-      "condition": "baseline",
-      "prompt": "I ran both k-means (k=4) and a GMM (k=4) on the same dataset. k-means found 4 roughly equal-sized, tight clusters. GMM found 2 large spread-out clusters and 2 small dense ones \u2014 completely different. Which result should I trust?",
-      "response": "The disagreement is itself diagnostic \u2014 and it points toward a specific k-means failure mode.\n\n**k-means is almost certainly wrong here.** k-means implicitly assumes clusters are spherical and roughly equal in size (it minimizes pooled within-cluster variance, which treats all clusters as having the same covariance and equal mixing weight). When your true data has clusters of unequal density or size, k-means will *force* large clusters to split and small ones to merge to equalize sizes. The \"4 tight equal clusters\" result is the tell \u2014 that pattern is k-means imposing its assumptions, not discovering structure.\n\nGMM relaxes both constraints: it allows different mixing proportions (unequal sizes) and different covariances (unequal spread). \"2 large spread-out + 2 small dense\" is exactly the kind of structure GMM can recover that k-means cannot.\n\n**That said, don't just trust GMM blindly \u2014 validate it:**\n\n1. **BIC on the GMM fit** \u2014 lower is better; confirms the model isn't just overfitting the covariance structure.\n2. **Silhouette scores** \u2014 compare both solutions. If GMM silhouettes are higher, the 2+2 partition is more coherent.\n3. **Visualize** \u2014 project to 2D (PCA or UMAP) and overlay both clusterings. Does one look like it's splitting a natural group?\n4. **Check GMM covariance type** \u2014 if you used `covariance_type='spherical'`, GMM degenerates toward k-means behavior. Use `'full'` or `'tied'` to let it fit non-spherical shapes.\n5. **Stability** \u2014 subsample 80% of the data 10\u201320 times and refit both. The solution that reproduces consistently is the more trustworthy one.\n\n**Bottom line:** trust the GMM result as the working hypothesis, but confirm via BIC and silhouette. The equal-sized k-means output is almost always an artifact of the algorithm's constraint rather than real structure.",
-      "expectations": [
-        "Does not simply declare one result correct; treats the disagreement as informative about the cluster geometry",
-        "Explains that k-means imposes equal-size, spherical clusters while GMM allows unequal sizes and elliptical shapes",
-        "Notes that k-means may be artificially forcing unequal clusters into equal-size spherical partitions",
-        "Recommends using BIC (or visualization / profile inspection) to evaluate which solution better fits the data"
+        "Explains that BIRCH's value is the CF-tree as a compression step, used to reduce n before a final clustering algorithm \u2014 not as a standalone clusterer",
+        "Describes the correct two-phase workflow: BIRCH to compress, then k-means or agglomerative on the summaries",
+        "Notes at least one practical caveat of BIRCH (e.g., threshold tuning, order-sensitivity, assumes spherical sub-clusters, degrades in high dimensions, or that its native clustering is mediocre and a second-stage method is needed)",
+        "Mentions MiniBatch k-means as the simpler first alternative for pure scale without needing BIRCH's compression step"
       ],
       "assertion_results": [
         true,
@@ -74,12 +48,12 @@
   ],
   "summary": {
     "baseline": {
-      "passed": 9,
-      "total": 9
+      "passed": 3,
+      "total": 4
     },
     "with_skill": {
-      "passed": 5,
-      "total": 5
+      "passed": 4,
+      "total": 4
     }
   }
 }

@@ -1,0 +1,22 @@
+{
+  "eval_id": 21,
+  "condition": "with_skill",
+  "prompt": "What is OPTICS and how does it differ from DBSCAN? When would I actually use OPTICS instead of DBSCAN or HDBSCAN?",
+  "response": "## OPTICS\n\nOPTICS (\"Ordering Points To Identify the Clustering Structure\") is a density-based method that generalizes DBSCAN by relaxing the single global `eps` requirement. Instead of directly assigning clusters, it:\n\n1. Orders all points and assigns each a **reachability distance** \u2014 roughly, how far a point is from the dense region it sits near\n2. Produces a **reachability plot**: a 1D landscape where valleys are clusters and valley depth reflects local density\n3. You then *extract* a flat clustering from that plot, either by cutting at a specific `eps` (recovering DBSCAN behavior) or via the **xi method**, which detects steep valley boundaries and can pull out clusters of varying density\n\nThe key output is the reachability plot itself, not just cluster labels.\n\n## How it differs from DBSCAN\n\n| | DBSCAN | OPTICS |\n|---|---|---|\n| `eps` | Single global value \u2014 one density scale | A range; density scale emerges from the data |\n| Variable density | **No** \u2014 the fatal flaw | **Yes** \u2014 valley depth varies per cluster |\n| Output | Cluster labels directly | Ordered points + reachability distances |\n| Speed (single run) | Faster | Slower (but one OPTICS fit \u2248 many DBSCAN runs) |\n\n## How it differs from HDBSCAN\n\nHDBSCAN does most of what OPTICS does, but more elegantly. HDBSCAN uses mutual reachability distance + a condensed hierarchy to extract the most *stable* clusters automatically. OPTICS requires you to choose an extraction method and threshold from the reachability plot.\n\nIn practice, **HDBSCAN usually subsumes OPTICS**: it handles variable density, produces a hierarchy, gives membership probabilities, and needs less manual extraction. The scikit-learn ecosystem supports both.\n\n## When to actually use OPTICS\n\nOPTICS has a narrow but real niche:\n\n**1. The reachability plot is itself the deliverable.** If you need to *understand* density structure across multiple scales \u2014 e.g., \"are there nested clusters at different densities?\" \u2014 the reachability plot is uniquely informative. You can visually inspect it and identify cluster granularity at different depths that a single fit won't show.\n\n**2. Extracting clusterings at several density levels from one fit.** If you're exploring what the \"right\" density threshold is and want to try many without refitting, one OPTICS run is cheaper than running DBSCAN a dozen times with different `eps` values.\n\n**3. You're already in a DBSCAN workflow** and need to diagnose why results are poor \u2014 the reachability plot shows you exactly where the density breaks down.\n\n## The honest summary\n\nFor production use, HDBSCAN is usually the better choice: it handles variable density without requiring manual extraction, and its output (labels + probabilities + condensed tree) is more immediately useful. OPTICS is most valuable as a **diagnostic and visualization tool**, or when you need to understand density structure at multiple scales in one pass. If you're trying to decide between OPTICS and HDBSCAN for an actual clustering task, pick HDBSCAN and use OPTICS only if you specifically want the reachability plot's interpretive value.",
+  "expectations": [
+    "Explains that OPTICS produces a reachability plot / ordering across all density scales without requiring a fixed eps",
+    "Notes that OPTICS handles variable density better than DBSCAN by encoding the full density hierarchy rather than using one global threshold",
+    "Recommends HDBSCAN over OPTICS for most practical tasks because HDBSCAN extracts stable clusters automatically",
+    "States OPTICS is most useful for exploratory density analysis when you want to examine structure across multiple scales interactively"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

@@ -1,0 +1,22 @@
+{
+  "eval_id": 17,
+  "condition": "with_skill",
+  "prompt": "I have 500 observations and 80 features. I fit a full-covariance GMM with k=5 and got great BIC scores. Should I trust this model?",
+  "response": "No \u2014 this setup has a severe parameter-to-observation problem that makes the \"great BIC\" deeply suspicious.\n\n## The math\n\nA full-covariance GMM component in *d* dimensions needs d(d+1)/2 covariance parameters + *d* means. At d=80:\n\n- **Per component:** 3,240 + 80 = **3,320 parameters**\n- **5 components total:** ~16,604 parameters\n- **Your budget:** 500 observations \u2192 ~100 per component to estimate 3,320 parameters each\n\nYou're fitting a model with 33\u00d7 more parameters than data points per component.\n\n## Why BIC doesn't save you here\n\nThe skill notes this explicitly: with full covariance in high dimensions, a component can **collapse onto a few points and send its likelihood to infinity** (singular covariance). BIC's penalty is `p \u00d7 log(n)` \u2014 it penalizes parameter count, but it cannot correct for the inflated likelihood that comes from near-singular covariances. A great BIC score under these conditions is a red flag, not reassurance.\n\n## What to do instead\n\n**Option 1 \u2014 Reduce dimensions first.** PCA down to ~20-30 components (retaining ~80-90% variance), then refit the GMM. This is the standard approach: see `preprocessing.md` \u00a7Dimensionality.\n\n**Option 2 \u2014 Constrain the covariance.** Fit diagonal, tied, or spherical covariance structures and let BIC choose among them (mclust in R does this automatically over all covariance families). Diagonal covariance needs only *d* parameters per component instead of d(d+1)/2 \u2014 a 40\u00d7 reduction.\n\n**Option 3 \u2014 Regularize.** Add a small value to the diagonal of each component's covariance (`reg_covar` in sklearn's `GaussianMixture`, default 1e-6 \u2014 you'll likely need it much larger).\n\n## Quick rule of thumb\n\nFull covariance is only credible when n >> k \u00d7 d\u00b2/2. Here that would require n >> 160,000. With n=500 you need constrained covariance regardless.\n\nThe instinct to check BIC was right \u2014 it's just that in this regime BIC's preconditions (well-specified likelihood, non-degenerate covariances) aren't met.",
+  "expectations": [
+    "Flags that a full-covariance GMM with 80 features and 500 observations is heavily over-parameterized",
+    "Explains quantitatively or conceptually why: the number of covariance parameters vastly exceeds what 500 observations can support",
+    "Recommends constraining the covariance type (diagonal, tied, or spherical) to reduce parameters",
+    "Names at least one specific constrained covariance option in code or by name (e.g., diagonal, tied, spherical, mclust model families, or sklearn covariance_type parameter)"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

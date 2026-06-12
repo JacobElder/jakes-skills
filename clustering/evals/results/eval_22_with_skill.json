@@ -1,0 +1,22 @@
+{
+  "eval_id": 22,
+  "condition": "with_skill",
+  "prompt": "I need to cluster my 8 million row customer dataset. Regular k-means keeps running out of memory. Should I use BIRCH?",
+  "response": "MiniBatch k-means is actually the better first move here. It's purpose-built for exactly this problem: processes random batches, bounded memory, and is in scikit-learn with the same API as regular k-means. The quality hit versus full k-means is small.\n\n```python\nfrom sklearn.cluster import MiniBatchKMeans\n\nmbk = MiniBatchKMeans(n_clusters=k, batch_size=10_000, n_init=10, random_state=42)\nmbk.fit(X_scaled)\n```\n\n**When to prefer BIRCH instead:**\n- You're reading from a stream or can't hold the data in RAM at all (BIRCH makes one pass and never materializes the full dataset)\n- You want BIRCH as a *compression step*: build the CF-tree to summarize 8M rows into ~10k sub-cluster summaries, then run GMM or Ward agglomerative on those summaries for higher quality results\n\n```python\nfrom sklearn.cluster import Birch\n\n# Stage 1: compress\nbirch = Birch(threshold=0.5, n_clusters=None)  # n_clusters=None \u2192 return sub-clusters\nbirch.fit(X_scaled)\nsubclusters = birch.subcluster_centers_\n\n# Stage 2: cluster the summaries with a better method\nfrom sklearn.cluster import AgglomerativeClustering\nfinal = AgglomerativeClustering(n_clusters=k).fit(subclusters)\n```\n\n**BIRCH caveats to know before committing:**\n- Results are order-sensitive (same data, different row order \u2192 different tree)\n- Assumes spherical sub-clusters, so the `threshold` parameter implicitly imposes that geometry\n- Numeric features only\n\n**My recommendation:** Start with MiniBatch k-means \u2014 it'll likely solve your problem in 10 lines. Only reach for BIRCH if you're genuinely streaming data or want a two-stage pipeline where the second stage needs a non-k-means method.\n\nAlso make sure you're scaling before either approach \u2014 an unscaled high-range feature will silently dominate everything at 8M rows just as badly as at 80k.",
+  "expectations": [
+    "Explains that BIRCH's value is the CF-tree as a compression step, used to reduce n before a final clustering algorithm \u2014 not as a standalone clusterer",
+    "Describes the correct two-phase workflow: BIRCH to compress, then k-means or agglomerative on the summaries",
+    "Notes at least one practical caveat of BIRCH (e.g., threshold tuning, order-sensitivity, assumes spherical sub-clusters, degrades in high dimensions, or that its native clustering is mediocre and a second-stage method is needed)",
+    "Mentions MiniBatch k-means as the simpler first alternative for pure scale without needing BIRCH's compression step"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

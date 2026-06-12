@@ -1,0 +1,22 @@
+{
+  "eval_id": 21,
+  "condition": "baseline",
+  "prompt": "What is OPTICS and how does it differ from DBSCAN? When would I actually use OPTICS instead of DBSCAN or HDBSCAN?",
+  "response": "## OPTICS vs DBSCAN vs HDBSCAN\n\n**OPTICS** (Ordering Points To Identify the Clustering Structure) is a density-based algorithm that produces a *reachability plot* \u2014 an ordered traversal of points where the y-axis shows each point's reachability distance. Clusters appear as valleys in this plot; noise appears as peaks.\n\n### Core difference from DBSCAN\n\nDBSCAN requires two global parameters (`eps` and `min_samples`) and produces a single flat clustering. This breaks when clusters have **varying densities** \u2014 a tight cluster and a sparse cluster can't both be captured by one `eps`.\n\nOPTICS solves this by computing a full reachability ordering across a range of `eps` values simultaneously. You get a structure you can slice at different density thresholds rather than committing to one upfront.\n\n### How it differs from HDBSCAN\n\nHDBSCAN is the more modern solution to the same problem. It converts the reachability concept into a proper hierarchy and uses **cluster stability** to automatically extract a flat partition \u2014 no manual threshold needed. HDBSCAN is generally faster, easier to use, and produces better results in practice.\n\n| | DBSCAN | OPTICS | HDBSCAN |\n|---|---|---|---|\n| Handles varying density | No | Yes (manual extraction) | Yes (automatic) |\n| Parameters needed | `eps`, `min_samples` | `min_samples` (+ optional `xi`) | `min_cluster_size` |\n| Output | Flat clusters | Reachability plot + optional flat | Flat + hierarchy |\n| Speed | Fast | Slow (O(n log n) to O(n\u00b2)) | Fast |\n| Ease of use | Medium | Hard | Easy |\n\n### When to actually use OPTICS\n\nOPTICS has a narrow but real use case: **when you want to visually inspect the density structure of your data before committing to any clustering**.\n\nThe reachability plot is genuinely informative \u2014 it shows you how many natural density levels exist, whether clusters are nested, and where the \"natural\" thresholds are. Use it when:\n\n1. **Exploratory analysis where you distrust automation** \u2014 you want a human to look at the reachability plot and decide where to cut, rather than trusting HDBSCAN's stability heuristic.\n2. **Nested/hierarchical structure matters** \u2014 you want to see multiple scales of clustering at once and pick the scale appropriate to your domain question.\n3. **You're debugging why DBSCAN is failing** \u2014 the reachability plot directly shows why no single `eps` works for your data.\n\nIn production or for most applied work, HDBSCAN dominates OPTICS. OPTICS is most valuable as a **diagnostic and exploratory tool**, not as a final clustering method.",
+  "expectations": [
+    "Explains that OPTICS produces a reachability plot / ordering across all density scales without requiring a fixed eps",
+    "Notes that OPTICS handles variable density better than DBSCAN by encoding the full density hierarchy rather than using one global threshold",
+    "Recommends HDBSCAN over OPTICS for most practical tasks because HDBSCAN extracts stable clusters automatically",
+    "States OPTICS is most useful for exploratory density analysis when you want to examine structure across multiple scales interactively"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

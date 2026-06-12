@@ -238,6 +238,17 @@ more memory-hungry than DBSCAN on very large data. If almost everything comes ba
 noise, your data may be one diffuse blob with a few tight outliers — that's information,
 not a bug; lower `min_samples` or reconsider whether clusters exist.
 
+**Transductive — no native predict for new points.** Like DBSCAN and spectral clustering,
+HDBSCAN is transductive: it labels the training set but has no `predict()` for unseen
+observations. Two options: (1) `hdbscan.approximate_predict()` assigns new points to the
+nearest cluster in the fitted condensed tree — flag those labels as "assigned" rather than
+"confidently clustered"; (2) train an inductive classifier (k-NN, random forest, logistic
+regression) on the cluster labels and use it for future assignment. **Do not refit HDBSCAN
+on the combined old + new data** each time new points arrive — that changes cluster
+assignments for the entire historical set and makes comparisons across time meaningless.
+If you will need to assign new points routinely, prefer k-means or GMM (which have clean
+`predict()` methods) or plan the approximate-predict / classifier wrapper from the start.
+
 **On high noise fractions.** A large -1 count (e.g., 30–40% noise) is a finding, not a
 failure. Do not retune parameters just to force noise points into clusters and reduce the
 -1 count — that defeats the purpose of using a density method and manufactures artificial

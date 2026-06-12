@@ -1,0 +1,22 @@
+{
+  "eval_id": 22,
+  "condition": "baseline",
+  "prompt": "I need to cluster my 8 million row customer dataset. Regular k-means keeps running out of memory. Should I use BIRCH?",
+  "response": "Try `MiniBatchKMeans` first \u2014 it's a drop-in replacement for `KMeans` in sklearn, uses mini-batches instead of loading all data at once, and gives nearly identical results with a fraction of the memory:\n\n```python\nfrom sklearn.cluster import MiniBatchKMeans\n\nkmeans = MiniBatchKMeans(n_clusters=k, batch_size=10_000, n_init=3)\nkmeans.fit(X)\n```\n\n**BIRCH is a solid second choice** if MiniBatchKMeans still struggles or you want a two-phase approach (BIRCH to reduce to subclusters, then k-means on those). It's O(n) memory because it builds a summary tree rather than holding all points. The tradeoff: it only handles convex/spherical clusters well, and quality degrades if you set `threshold` too aggressively.\n\n**Decision guide:**\n\n| Situation | Recommendation |\n|---|---|\n| Just need k-means to not OOM | `MiniBatchKMeans` |\n| Very high dimensionality (>100 dims) | `MiniBatchKMeans` + PCA first |\n| Want a two-stage pipeline | BIRCH \u2192 k-means on leaf centroids |\n| Non-spherical clusters expected | HDBSCAN with chunked/approximate mode |\n| Can use distributed compute | Dask-ML or PySpark MLlib k-means |\n\nThe most common cause of OOM with regular k-means on 8M rows is sklearn allocating the full `n_samples \u00d7 n_clusters` distance matrix. `MiniBatchKMeans` avoids this entirely.",
+  "expectations": [
+    "Explains that BIRCH's value is the CF-tree as a compression step, used to reduce n before a final clustering algorithm \u2014 not as a standalone clusterer",
+    "Describes the correct two-phase workflow: BIRCH to compress, then k-means or agglomerative on the summaries",
+    "Notes at least one practical caveat of BIRCH (e.g., threshold tuning, order-sensitivity, assumes spherical sub-clusters, degrades in high dimensions, or that its native clustering is mediocre and a second-stage method is needed)",
+    "Mentions MiniBatch k-means as the simpler first alternative for pure scale without needing BIRCH's compression step"
+  ],
+  "assertion_results": [
+    false,
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

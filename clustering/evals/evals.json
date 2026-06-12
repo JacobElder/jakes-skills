@@ -210,7 +210,67 @@
         "Flags that a full-covariance GMM with 80 features and 500 observations is heavily over-parameterized",
         "Explains quantitatively or conceptually why: the number of covariance parameters vastly exceeds what 500 observations can support",
         "Recommends constraining the covariance type (diagonal, tied, or spherical) to reduce parameters",
-        "Mentions specific covariance options in sklearn (covariance_type) or mclust model families"
+        "Names at least one specific constrained covariance option in code or by name (e.g., diagonal, tied, spherical, mclust model families, or sklearn covariance_type parameter)"
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "I used HDBSCAN to cluster my training data and got great results. Now I have 500 new customers arriving every week and I need to assign each of them to one of the existing clusters. How do I do that?",
+      "expected_output": "Explains the transductive limitation: HDBSCAN (like DBSCAN, spectral clustering, and affinity propagation) is transductive — it labels the training set but has no native predict() method for unseen points. The two practical solutions are: (1) use hdbscan.approximate_predict() from the hdbscan package to assign new points to the nearest cluster in the fitted model's condensed tree, noting these are 'assigned' not 'confidently clustered'; (2) train an inductive classifier (k-NN, random forest, or logistic regression) on the cluster labels and use it for ongoing assignment. Warns against refitting HDBSCAN on combined old+new data each week — that changes assignments for the entire historical set, making comparisons across time invalid.",
+      "files": [],
+      "expectations": [
+        "Explains that HDBSCAN cannot natively assign labels to new, unseen points (lacks a native predict() method, whether or not the word 'transductive' is used)",
+        "Recommends approximate_predict() from the hdbscan package as a direct solution for assigning new points",
+        "Names the alternative approach: training an inductive classifier (e.g., k-NN, random forest) on the cluster labels",
+        "Warns against refitting HDBSCAN on combined old+new data, because it changes assignments for the full historical dataset"
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "I want to cluster 2,000 patients into subtypes, but I also want to understand how the groups nest — are there broad groups with meaningful subgroups inside? I was going to use k-means. Is that the right tool?",
+      "expected_output": "Recommends agglomerative clustering (Ward linkage) instead. k-means produces a single flat partition at a fixed k — it has no tree, no hierarchy, no way to zoom in or out. Agglomerative clustering builds a dendrogram: you can cut it at different heights to get 3 broad groups, or cut lower to get 8 fine subgroups, and the nesting relationship is explicit. Ward linkage is the default for Euclidean data — it minimizes total within-cluster variance at each merge and produces compact, roughly spherical clusters similar to k-means, but with the full tree. Notes that n=2,000 is well within agglomerative's practical range (O(n²) memory is fine here). If the user also wants the dendrogram to reveal arbitrary-shape hierarchy, HDBSCAN's condensed tree is an alternative.",
+      "files": [],
+      "expectations": [
+        "Recommends agglomerative clustering (with Ward or another named linkage) over k-means for the hierarchical/nested structure goal",
+        "Explains that k-means produces only a flat partition — no tree, no nesting",
+        "Names Ward linkage as the default or recommended linkage for Euclidean data (or mentions it produces compact clusters similar to k-means)",
+        "Notes that n=2,000 is comfortably within agglomerative's memory limits (O(n²) is fine at this scale)"
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "I have a new dataset and I'm about to start clustering it. What should I do first before picking an algorithm?",
+      "expected_output": "The first step is clusterability — checking whether genuine structure exists before choosing any algorithm. Clustering methods always return clusters, even on uniform noise, so running an algorithm first and then asking 'are these real?' is backwards. Concrete steps: (1) visualize a 2D projection (PCA for linear structure, UMAP/t-SNE for non-linear — with the caveat that these can manufacture visual clusters); (2) compute the Hopkins statistic (≈0.5 → indistinguishable from uniform noise; →1 → strong clustering tendency); (3) inspect a VAT (Visual Assessment of Tendency) plot. If the data shows no structure, the correct answer is 'no robust clusters were found' — that is a real, reportable result. Only proceed to algorithm selection if there is evidence of actual structure.",
+      "files": [],
+      "expectations": [
+        "Leads with clusterability assessment as the first step before any algorithm selection",
+        "Explains that clustering algorithms return clusters even on structureless noise, so assessing structure first prevents false discovery",
+        "Mentions at least one concrete clusterability check: Hopkins statistic, VAT plot, or visual inspection via 2D projection (PCA/UMAP)",
+        "States or implies that clustering structureless data produces meaningless results, or notes that 'no clusters found' is a valid and reportable outcome"
+      ]
+    },
+    {
+      "id": 21,
+      "prompt": "What is OPTICS and how does it differ from DBSCAN? When would I actually use OPTICS instead of DBSCAN or HDBSCAN?",
+      "expected_output": "OPTICS (Ordering Points To Identify the Clustering Structure) is a density-based method that sweeps across all density scales simultaneously and produces a reachability plot — a visual encoding of the full density hierarchy — rather than committing to a single eps. DBSCAN needs one global eps and breaks when clusters have variable density. OPTICS solves this by outputting an ordering you can inspect at multiple thresholds, making it useful for exploratory density analysis when you want to see how structure changes across scales. However, OPTICS does not automatically extract clusters — it produces an ordering that a human (or a follow-up extraction step) must interpret. HDBSCAN is almost always the better practical choice: it does the same variable-density density analysis automatically, extracts stable clusters without manual inspection, and returns clean labels. Use OPTICS when you specifically want to explore the density landscape interactively or at multiple scales; otherwise use HDBSCAN.",
+      "files": [],
+      "expectations": [
+        "Explains that OPTICS produces a reachability plot / ordering across all density scales without requiring a fixed eps",
+        "Notes that OPTICS handles variable density better than DBSCAN by encoding the full density hierarchy rather than using one global threshold",
+        "Recommends HDBSCAN over OPTICS for most practical tasks because HDBSCAN extracts stable clusters automatically",
+        "States OPTICS is most useful for exploratory density analysis when you want to examine structure across multiple scales interactively"
+      ]
+    },
+    {
+      "id": 22,
+      "prompt": "I need to cluster my 8 million row customer dataset. Regular k-means keeps running out of memory. Should I use BIRCH?",
+      "expected_output": "Yes, but understand what BIRCH actually is: it builds a Compact Feature (CF) tree that compresses the data into a set of subclusters in one pass, then runs a final clustering algorithm (k-means or agglomerative) on those summaries — not on the raw data. BIRCH's value is the CF-tree as a compression step, not its native flat clustering (which is mediocre). Workflow: (1) fit BIRCH to compress 8M rows into ~few thousand CF subclusters; (2) run k-means or agglomerative on the compressed representation. The threshold parameter controls compression granularity and must be tuned — too large and structure is lost, too small and the tree is still huge. The even simpler first option is MiniBatch k-means, which processes random mini-batches and never loads the whole dataset — lower overhead, no threshold to tune, and often sufficient. If there's no requirement to commit to a fixed k, HDBSCAN on a random subsample + approximate_predict for the rest is another route.",
+      "files": [],
+      "expectations": [
+        "Explains that BIRCH's value is the CF-tree as a compression step, used to reduce n before a final clustering algorithm — not as a standalone clusterer",
+        "Describes the correct two-phase workflow: BIRCH to compress, then k-means or agglomerative on the summaries",
+        "Notes at least one practical caveat of BIRCH (e.g., threshold tuning, order-sensitivity, assumes spherical sub-clusters, degrades in high dimensions, or that its native clustering is mediocre and a second-stage method is needed)",
+        "Mentions MiniBatch k-means as the simpler first alternative for pure scale without needing BIRCH's compression step"
       ]
     }
   ]

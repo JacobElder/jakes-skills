@@ -1,0 +1,22 @@
+{
+  "eval_id": 20,
+  "condition": "with_skill",
+  "prompt": "I have a new dataset and I'm about to start clustering it. What should I do first before picking an algorithm?",
+  "response": "Before picking an algorithm, work through these in order \u2014 they matter more than the algorithm choice itself:\n\n**1. Check for structure first**\nVisualize a 2D projection (PCA for linear, UMAP for non-linear) and ask whether clusters are visually apparent. If the data looks like a uniform cloud, the correct answer is \"no robust clusters found\" \u2014 not k clusters anyway. A cheap Hopkins statistic check helps too.\n\n**2. Understand your data types**\n- All continuous \u2192 most methods work\n- Categorical \u2192 k-modes or LCA\n- Mixed \u2192 Gower distance + PAM, or k-prototypes\n\n**3. Scale deliberately**\nAlmost always required. Unscaled features with large ranges silently dominate Euclidean distance \u2014 you end up clustering on one variable and ignoring the rest. Z-score is the default; robust scaling if outliers are present. Consciously decide *not* to scale rather than defaulting to it.\n\n**4. Assess dimensionality**\nHigh-d data kills density methods (distances concentrate, density becomes meaningless). If d is large, reduce with PCA before clustering \u2014 especially before DBSCAN/HDBSCAN.\n\n**5. Decide what to do with outliers**\nDo you want them excluded (\u2192 density method), absorbed (\u2192 centroid/model-based), or are they potentially the interesting cluster? This shapes your method choice.\n\n**6. Clarify the goal**\n\"Customer segments for a campaign\" vs. \"are there disease subtypes\" demand different rigor, different methods, and different interpretability standards. Know which you're doing before you pick.\n\nOnly after those are settled does algorithm choice follow naturally from the answers. What does your dataset look like \u2014 continuous, mixed, high-dimensional?",
+  "expectations": [
+    "Leads with clusterability assessment as the first step before any algorithm selection",
+    "Explains that clustering algorithms return clusters even on structureless noise, so assessing structure first prevents false discovery",
+    "Mentions at least one concrete clusterability check: Hopkins statistic, VAT plot, or visual inspection via 2D projection (PCA/UMAP)",
+    "States or implies that clustering structureless data produces meaningless results, or notes that 'no clusters found' is a valid and reportable outcome"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

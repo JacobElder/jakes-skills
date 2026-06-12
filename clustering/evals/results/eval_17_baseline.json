@@ -1,0 +1,22 @@
+{
+  "eval_id": 17,
+  "condition": "baseline",
+  "prompt": "I have 500 observations and 80 features. I fit a full-covariance GMM with k=5 and got great BIC scores. Should I trust this model?",
+  "response": "No \u2014 the BIC score is almost certainly misleading you here. There are two compounding problems:\n\n**Severe overparameterization.** A full-covariance GMM in 80 dimensions needs p(p+1)/2 = 3,240 covariance parameters *per component*, so 5 components = ~16,200 covariance params + 400 mean params. You have 500 observations. That's roughly **33 observations per parameter** \u2014 you need at minimum ~5\u201310\u00d7 the dimensionality *per component* just for stable covariance estimation, meaning you'd want ~2,000\u20134,000 obs minimum for this setup.\n\n**BIC underpenalizes GMMs at this scale.** BIC's penalty term (k \u00b7 log n = 16,604 \u00b7 log 500 \u2248 103k) looks big, but if any component has a near-singular covariance matrix, the log-likelihood can blow up arbitrarily \u2014 BIC can't save you from degenerate solutions.\n\n**Concrete failure modes to check:**\n- Tiny or zero eigenvalues in fitted covariance matrices (degenerate collapse)\n- One component claiming <5 observations (\"phantom\" component)\n- Any component with condition number > 1e6\n\n**What to do instead:**\n\n1. **Reduce dimensionality first** \u2014 PCA to ~20\u201330 components (capturing 95% variance) before fitting GMM\n2. **Use a constrained covariance type** \u2014 diagonal or tied covariance; scikit-learn's `covariance_type='diag'` cuts params from 3,240 to 80 per component\n3. **Add regularization** \u2014 `reg_covar=1e-3` or higher in sklearn's `GaussianMixture`\n4. **Cross-validate** \u2014 hold out 20% and compare held-out log-likelihood, not just BIC on training data\n\nThe rule of thumb: full covariance GMM is only trustworthy when n >> p\u00b2 / k. You're at n \u2248 p/k, which is the opposite regime.",
+  "expectations": [
+    "Flags that a full-covariance GMM with 80 features and 500 observations is heavily over-parameterized",
+    "Explains quantitatively or conceptually why: the number of covariance parameters vastly exceeds what 500 observations can support",
+    "Recommends constraining the covariance type (diagonal, tied, or spherical) to reduce parameters",
+    "Mentions specific covariance options in sklearn (covariance_type) or mclust model families"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

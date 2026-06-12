@@ -1,0 +1,22 @@
+{
+  "eval_id": 18,
+  "condition": "baseline",
+  "prompt": "I used HDBSCAN to cluster my training data and got great results. Now I have 500 new customers arriving every week and I need to assign each of them to one of the existing clusters. How do I do that?",
+  "response": "HDBSCAN has a built-in mechanism for this via `hdbscan.approximate_predict()`, but there are a few important caveats.\n\n## The built-in approach\n\n```python\nimport hdbscan\n\n# When you first fit, enable soft clustering\nclusterer = hdbscan.HDBSCAN(min_cluster_size=50, prediction_data=True)\nclusterer.fit(training_data)\n\n# For new points each week\nlabels, strengths = hdbscan.approximate_predict(clusterer, new_customers)\n```\n\n`labels` gives the cluster assignment (-1 for noise), and `strengths` gives a confidence score (0\u20131) for each assignment.\n\n**Requirement:** you must have set `prediction_data=True` before the original fit. If you didn't, refit with it enabled \u2014 there's no way to add it after the fact.\n\n## What \"approximate\" means\n\nThe function finds the nearest point in the training set and inherits its cluster membership. It does **not** re-run the clustering algorithm. This means:\n\n- New points will never form a new cluster or expand existing ones\n- A point that would naturally be noise might still get assigned to a cluster (check `strengths` \u2014 low values indicate weak assignments)\n- It degrades if your new data drifts significantly from the training distribution\n\n## Handling noise assignments\n\n```python\n# Treat low-confidence assignments as unassigned\nthreshold = 0.05\nlabels[strengths < threshold] = -1\n```\n\n## When to refit\n\nIf noise assignments are piling up week over week, or cluster strengths are trending down, that's a signal your incoming distribution has drifted and it's time to refit on the full dataset. A good rule of thumb: refit when >15\u201320% of weekly arrivals are landing as noise.\n\n## Alternative: KNN fallback\n\nIf you need every point assigned (no noise allowed), fit a `KNeighborsClassifier` on your training data using the HDBSCAN labels, then use that for inference instead:\n\n```python\nfrom sklearn.neighbors import KNeighborsClassifier\n\nknn = KNeighborsClassifier(n_neighbors=5)\nknn.fit(training_data, clusterer.labels_)\nweekly_labels = knn.predict(new_customers)\n```\n\nThis is less principled but guarantees no -1 labels.",
+  "expectations": [
+    "Explains that HDBSCAN cannot natively assign labels to new, unseen points (lacks a native predict() method, whether or not the word 'transductive' is used)",
+    "Recommends approximate_predict() from the hdbscan package as a direct solution for assigning new points",
+    "Names the alternative approach: training an inductive classifier (e.g., k-NN, random forest) on the cluster labels",
+    "Warns against refitting HDBSCAN on combined old+new data, because it changes assignments for the full historical dataset"
+  ],
+  "assertion_results": [
+    false,
+    true,
+    true,
+    false
+  ],
+  "passed": 2,
+  "total": 4,
+  "pass_rate": 0.5,
+  "eval_passes": false
+}
