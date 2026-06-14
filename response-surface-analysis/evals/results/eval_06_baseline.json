@@ -1,0 +1,24 @@
+{
+  "eval_id": 6,
+  "condition": "baseline",
+  "prompt": "I'm planning a study testing whether congruence between leader and follower values predicts team performance. Values are measured on the same 1-7 instrument for both. How many participants do I need?",
+  "response": "Let me give you the full picture across the key scenarios.\n\n---\n\n## RSA Power Analysis: Leader-Follower Congruence \u2192 Team Performance\n\nThe polynomial regression model is:\n\n`Performance = b0 + b1(Leader) + b2(Follower) + b3(Leader\u00b2) + b4(Leader\u00d7Follower) + b5(Follower\u00b2) + \u03b5`\n\nThe congruence hypothesis lives in the three polynomial terms (b3, b4, b5). Power analysis targets the **R\u00b2 increment** from adding those 3 terms on top of the two linear terms.\n\n---\n\n### If teams are the unit of analysis (most common setup)\n\nUse G*Power: F-test, linear multiple regression, R\u00b2 increase, numerator df = 3.\n\n| Expected f\u00b2 | What it means | N for 80% power | N for 90% power |\n|---|---|---|---|\n| 0.02 (small) | ~2% R\u00b2 from polynomial terms | ~395 teams | ~530 teams |\n| 0.05 (realistic) | ~5% R\u00b2 increment | ~155 teams | ~205 teams |\n| 0.10 (optimistic) | ~10% R\u00b2 increment | ~80 teams | ~107 teams |\n| 0.15 (strong) | ~15% R\u00b2 increment | ~55 teams | ~73 teams |\n\n**Field reality:** Congruence effects in organizations are typically f\u00b2 = 0.02\u20130.06. Plan for **150\u2013400 teams** unless you have strong theoretical or pilot evidence of a larger effect.\n\n---\n\n### If followers are nested in teams (multilevel RSA)\n\nThis is substantially harder. You need:\n- Enough **teams** to estimate team-level variance (minimum ~30, ideally 50+)\n- Enough **followers per team** to reliably aggregate (\u22655 recommended)\n- The multilevel `RSA` package in R handles this via `lmer` + surface tests\n\nFor multilevel RSA with ICC \u2248 0.15 and team size \u2248 5:\n- Design effect \u2248 1 + (5\u22121)\u00d70.15 \u2248 1.6\n- Multiply your individual-level N by ~1.6 to get effective required N\n\n---\n\n### Key practical notes\n\n1. **Don't just test the polynomial R\u00b2 increment.** The RSA literature (Edwards & Parry, 1993) cares about surface tests: the slopes along the congruence line (a1) and along the incongruence line (a3), plus their curvatures (a2, a4). Power for a4 (the curvature that actually captures congruence vs. incongruence) is lower than for the omnibus F-test above.\n\n2. **Range restriction kills RSA.** If leaders and followers are all highly similar in values (restricted range), your polynomial terms lose power sharply. Check your pilot data for variance in the difference score.\n\n3. **The `RSA` package in R** (Sch\u00f6nbrodt, 2016) can run simulations to give you power for specific surface coefficients \u2014 more precise than the omnibus G*Power approach above.\n\n---\n\n**Bottom line:** For a team-level study expecting realistic congruence effects (f\u00b2 \u2248 0.05), target **~150\u2013200 teams**. If you're working with nested data or uncertain effect size, share more design details and I can help you run a simulation-based power analysis.",
+  "expectations": [
+    "States that RSA requires more N than a linear model (roughly 2-3x) because the curvature/product terms carry the signal",
+    "Recommends simulation-based power analysis for the specific hypothesized surface rather than a fixed rule of thumb",
+    "Mentions that the predictor correlation matters (high r between predictors lowers power by reducing variance along X - Y)",
+    "Mentions measurement reliability of the predictors as relevant to power",
+    "Offers to run or references a power simulation (e.g. rsa_power_sim.py) with effect-size and correlation inputs"
+  ],
+  "assertion_results": [
+    false,
+    true,
+    false,
+    false,
+    false
+  ],
+  "passed": 1,
+  "total": 5,
+  "pass_rate": 0.2,
+  "eval_passes": false
+}

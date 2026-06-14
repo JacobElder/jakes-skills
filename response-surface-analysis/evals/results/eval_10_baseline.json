@@ -1,0 +1,28 @@
+{
+  "eval_id": 10,
+  "condition": "baseline",
+  "prompt": "Here are my RSA results (both predictors on same 1-5 scale, centered on midpoint = 3, N = 420). Block test: \u0394R\u00b2 = 0.29, F(3,414) = 56.2, p < .001. Parameters: a1 = +0.31 [+0.19, +0.43]; a2 = \u22120.02 [\u22120.08, +0.04]; a3 = \u22120.03 [\u22120.15, +0.09]; a4 = \u22120.68 [\u22120.82, \u22120.54]; p10 = +0.04 [\u22120.11, +0.19]; p11 = +0.97 [+0.89, +1.06]. Can I claim a strict congruence effect?",
+  "response": "Looking at your RSA parameters, here's the assessment:\n\n**The congruence criteria \u2014 met:**\n\n| Criterion | Requirement | Your value | Status |\n|---|---|---|---|\n| Congruence beats incongruence | a4 < 0, significant | \u22120.68 [\u22120.82, \u22120.54] | \u2713 |\n| No asymmetry (X>Y vs Y>X symmetric) | a3 \u2248 0 | \u22120.03 [\u22120.15, +0.09] | \u2713 |\n| Ridge runs along LOC | p11 \u2248 1 | 0.97 [+0.89, +1.06] | \u2713 |\n| Ridge centered at midpoint | p10 \u2248 0 | +0.04 [\u22120.11, +0.19] | \u2713 |\n| No curvature along LOC | a2 \u2248 0 | \u22120.02 [\u22120.08, +0.04] | \u2713 |\n\nAll five criteria pass. You can claim a congruence effect.\n\n**The nuance you must report:**\n\na1 = +0.31 is significant. This means outcomes rise monotonically as both predictors increase together along the line of congruence. Your surface is a **rising congruence ridge**, not a dome \u2014 congruence benefits are present at all levels, but the optimal region is high-high congruence, not the midpoint.\n\nThis doesn't disqualify the claim, but \"strict\" in the Humberg et al. (2019) sense refers to the ridge being *along* X=Y (which it is), not to the absence of a slope along it. So the phrasing matters:\n\n- **Correct**: \"Results supported a congruence effect: outcomes were highest at congruence and decreased symmetrically with incongruence (a4 = \u22120.68), with no directional asymmetry (a3 \u2248 0). The principal axis ran along the line of congruence (p11 = 0.97, p10 = 0.04). A significant positive slope along the congruence line (a1 = +0.31) indicates outcomes increased as both predictors rose together.\"\n- **Avoid**: claiming the congruence *point* is uniquely optimal without acknowledging the level effect.\n\n**Bottom line**: Claim congruence, qualify that it rides a positive level gradient.",
+  "expectations": [
+    "Correctly evaluates C1 (a4 < 0, CI excludes 0) \u2014 PASS",
+    "Correctly evaluates C2 (a3 CI includes 0) \u2014 PASS",
+    "Correctly evaluates C3 (p10 CI includes 0) \u2014 PASS",
+    "Correctly evaluates C4 (p11 CI includes 1) \u2014 PASS",
+    "States BROAD congruence is supported (all four conditions met)",
+    "States STRICT congruence is NOT supported because a1 CI [+0.19, +0.43] excludes 0 (C5 fails) \u2014 a significant level effect is present",
+    "Does not claim strict congruence, and explains what a1 \u2260 0 means substantively (level matters: high-high match is better than low-low match)"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 6,
+  "total": 7,
+  "pass_rate": 0.8571428571428571,
+  "eval_passes": true
+}

@@ -1,0 +1,26 @@
+{
+  "eval_id": 7,
+  "condition": "with_skill",
+  "prompt": "I ran RSA on actual vs. ideal body-weight perception data (both on a 0-100 scale, centered on the scale midpoint = 50). Block test: \u0394R\u00b2 = 0.38, F(3,274) = 58.2, p < .001. Surface parameters with 95% bootstrap CIs: a4 = \u22120.095 [\u22120.121, \u22120.079]; a3 = +0.174 [\u22120.108, +0.455]; p10 = \u22122.58 [\u22126.07, +0.87]; p11 = +1.27 [+0.99, +1.56]. Two questions: (1) Does mismatch in EITHER direction lower satisfaction? (2) Is overestimating (actual > ideal) worse than underestimating (ideal > actual)?",
+  "response": "Working through each question against the checklist:\n\n---\n\n**Gate:** F(3,274) = 58.2, p < .001, \u0394R\u00b2 = .38 \u2014 passes cleanly. Surface interpretation is justified.\n\n---\n\n## Question 1: Does mismatch in either direction lower satisfaction?\n\nYes, and the evidence is strong. The relevant conditions are C1 and C2 from the broad congruence checklist:\n\n| Condition | Parameter | Result |\n|-----------|-----------|--------|\n| C1: inverted-U over the LOIC | a4 = \u22120.095 [\u22120.121, \u22120.079] | **PASS** \u2014 CI entirely below 0 |\n| C2: symmetric about the LOC | a3 = +0.174 [\u22120.108, +0.455] | **PASS** \u2014 CI includes 0 |\n| C3: ridge not laterally shifted | p10 = \u22122.58 [\u22126.07, +0.87] | **PASS** \u2014 CI includes 0 |\n| C4: ridge not rotated | p11 = +1.27 [+0.99, +1.56] | **PASS** \u2014 CI includes 1 |\n\nAll four broad-congruence conditions hold simultaneously. The surface falls away from the LOC in both directions, the ridge lies on the actual = ideal diagonal, and neither direction of mismatch costs more than the other (C2). This is a textbook broad congruence effect.\n\n---\n\n## Question 2: Is overestimating (actual > ideal) worse than underestimating?\n\n**No** \u2014 and claiming it would be the directionality fallacy.\n\nThe only parameter that licenses a directional claim is a3, the slope along the LOIC. If a3 \u2260 0, one side of the diagonal is steeper than the other; only then can you say one direction of mismatch is worse. Here, a3 = +0.174 but its CI is [\u22120.108, +0.455] \u2014 it crosses zero. The point estimate is positive but imprecise; the data do not establish asymmetry.\n\nThe surface you have is symmetric: feeling too heavy and feeling too light are statistically indistinguishable in their cost to satisfaction. A3 passing C2 is what makes the effect qualify as congruence in the first place \u2014 if you then read direction off it, you're using the same parameter both ways.\n\nIf you wanted to pursue the directionality question seriously, you'd need to pre-register it as an asymmetry test, check whether the a3 point estimate replicates with adequate power for a directional effect (the LOIC slope is a small effect here), and report it as an asymmetric rather than a pure congruence effect.\n\n---\n\n**Bottom line:** You have clean broad congruence \u2014 any body-weight perception mismatch, regardless of direction, reduces satisfaction \u2014 but the surface is silent on whether feeling too heavy is worse than feeling too light.",
+  "expectations": [
+    "Correctly maps 'mismatch in either direction' to a4 < 0 and confirms it holds (a4 CI entirely below 0)",
+    "Maps the 'overestimating vs underestimating' question to the asymmetry parameter a3",
+    "States the a3 CI explicitly \u2014 [\u22120.108, +0.455] or equivalent \u2014 noting it includes 0",
+    "Concludes that because a3 CI includes 0 the surface is symmetric and the data CANNOT determine which direction of mismatch is worse",
+    "Names the error of claiming direction from a symmetric surface \u2014 'directionality fallacy' or clear equivalent description",
+    "Does not endorse or manufacture a directional story ('overestimation is worse') from these results"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 6,
+  "total": 6,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

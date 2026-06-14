@@ -1,0 +1,22 @@
+{
+  "eval_id": 3,
+  "condition": "baseline",
+  "prompt": "We ran RSA and a4 was -0.21, p = .004. So we have a congruence effect, right? Writing it up now.",
+  "response": "Not quite \u2014 a4 is the wrong coefficient for claiming a congruence effect, and writing this up now would be a mistake worth catching first.\n\nIn Edwards & Parry RSA:\n\n| Coefficient | What it tests |\n|---|---|\n| **a2** | Curvature along the **line of congruence** (X = Y) \u2014 this is your congruence effect |\n| **a4** | Curvature along the **line of incongruence** (X = \u2212Y) |\n\nA congruence effect requires **a2 < 0 and significant**: the surface curves downward as you move away from the X=Y ridge, meaning outcomes are best when the two predictors match.\n\nA significant **a4** tells you something different: whether the surface is asymmetrically curved along the incongruence axis \u2014 e.g., whether high-X/low-Y mismatch differs from low-X/high-Y mismatch at extremes vs. center. It's a supplementary piece of the surface story, not the congruence test itself.\n\nWhat you need to check:\n1. Is **a2 negative and significant**? That's the congruence claim.\n2. Is the **response surface ridge** actually located at X = Y (not shifted)? Check the ridge location: `\u2212(a1)/(2*a2)` should be near zero.\n3. Plot the surface \u2014 the story only holds if the visual matches the claim.\n\nWhat does your a2 look like?",
+  "expectations": [
+    "States explicitly that a4 < 0 by itself is insufficient to claim a congruence effect",
+    "Names the additional conditions required: a3 not different from 0, p10 not different from 0, p11 not different from 1",
+    "Frames the congruence verdict as a conjunction of conditions (broad congruence), referencing the checklist logic",
+    "Does not simply agree that the congruence effect is established"
+  ],
+  "assertion_results": [
+    true,
+    false,
+    false,
+    true
+  ],
+  "passed": 2,
+  "total": 4,
+  "pass_rate": 0.5,
+  "eval_passes": false
+}

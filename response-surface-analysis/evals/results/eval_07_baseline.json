@@ -1,0 +1,26 @@
+{
+  "eval_id": 7,
+  "condition": "baseline",
+  "prompt": "I ran RSA on actual vs. ideal body-weight perception data (both on a 0-100 scale, centered on the scale midpoint = 50). Block test: \u0394R\u00b2 = 0.38, F(3,274) = 58.2, p < .001. Surface parameters with 95% bootstrap CIs: a4 = \u22120.095 [\u22120.121, \u22120.079]; a3 = +0.174 [\u22120.108, +0.455]; p10 = \u22122.58 [\u22126.07, +0.87]; p11 = +1.27 [+0.99, +1.56]. Two questions: (1) Does mismatch in EITHER direction lower satisfaction? (2) Is overestimating (actual > ideal) worse than underestimating (ideal > actual)?",
+  "response": "Two clean answers, one parameter each.\n\n---\n\n## Q1: Does mismatch in either direction lower satisfaction?\n\n**Yes \u2014 unambiguously.** The relevant parameter is **a4** (curvature along the line of incongruence, LOI):\n\n> a4 = \u22120.095 [\u22120.121, \u22120.079]\n\nThe CI is entirely negative. Negative curvature along the LOI means the surface is concave (inverted-U) in the mismatch direction: satisfaction peaks at congruence (actual = ideal) and falls off whether the person overestimates *or* underestimates. Neither direction of discrepancy is harmless.\n\n---\n\n## Q2: Is overestimating (actual > ideal) worse than underestimating (ideal > actual)?\n\n**No \u2014 the asymmetry is not statistically significant.** The relevant parameter is **a3** (slope/tilt along the LOI):\n\n> a3 = +0.174 [\u22120.108, +0.455]\n\nThe CI crosses zero, so you cannot conclude a directional difference. Notably, the sign of a3 is *positive*, meaning the nominal trend runs **opposite** to \"overestimating is worse\" \u2014 if anything, the unsupported trend is that overestimating (actual > ideal) is associated with *slightly higher* satisfaction than underestimating. Don't over-read this; the point is that asymmetry is not the story here.\n\n---\n\n## What p10 and p11 add\n\nThese are the stationary-point coordinates (where the surface crests):\n\n- **p10 = \u22122.58 [\u22126.07, +0.87]**: X-coordinate (actual), CI crosses zero \u2014 the peak is not significantly displaced from scale center.\n- **p11 = +1.27 [+0.99, +1.56]**: Y-coordinate (ideal), CI is entirely positive \u2014 the peak sits slightly above center on the ideal axis.\n\nThis is consistent with a4's story: the surface peaks very close to the origin (congruence near the midpoint), and the significant positive p11 suggests maximum satisfaction occurs when the *ideal* is held slightly above the scale midpoint, with actual matching it.\n\n---\n\n**Bottom line for write-up:** Discrepancy itself is the problem (a4 significant, negative); the *direction* of discrepancy is not (a3 non-significant). That's a clean mismatch-effect story with no evidence for the directional hypothesis.",
+  "expectations": [
+    "Correctly maps 'mismatch in either direction' to a4 < 0 and confirms it holds (a4 CI entirely below 0)",
+    "Maps the 'overestimating vs underestimating' question to the asymmetry parameter a3",
+    "States the a3 CI explicitly \u2014 [\u22120.108, +0.455] or equivalent \u2014 noting it includes 0",
+    "Concludes that because a3 CI includes 0 the surface is symmetric and the data CANNOT determine which direction of mismatch is worse",
+    "Names the error of claiming direction from a symmetric surface \u2014 'directionality fallacy' or clear equivalent description",
+    "Does not endorse or manufacture a directional story ('overestimation is worse') from these results"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 5,
+  "total": 6,
+  "pass_rate": 0.8333333333333334,
+  "eval_passes": true
+}

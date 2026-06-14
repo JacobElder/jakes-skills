@@ -1,0 +1,22 @@
+{
+  "eval_id": 4,
+  "condition": "with_skill",
+  "prompt": "I want to use response surface methodology to find the temperature and pressure settings that maximize yield in our chemical reactor. We can run about 20 experimental runs. How should I design this?",
+  "response": "This is the **design-of-experiments flavor of response surface methodology** (Box\u2013Wilson optimization) \u2014 distinct from the congruence/fit RSA this skill covers. I'll answer directly from DoE principles.\n\n## Design recommendation: Central Composite Design (CCD)\n\nWith 2 factors and ~20 runs, a **face-centered CCD** is your best option. It fits the full second-order model:\n\n```\nYield = \u03b2\u2080 + \u03b2\u2081T + \u03b2\u2082P + \u03b2\u2081\u2081T\u00b2 + \u03b2\u2082\u2082P\u00b2 + \u03b2\u2081\u2082TP + \u03b5\n```\n\n### Run allocation for 20 runs\n\n| Block | Points | Count |\n|---|---|---|\n| Factorial (corners: \u00b11 on both) | (\u22121,\u22121), (+1,\u22121), (\u22121,+1), (+1,+1) | 4 |\n| Axial (face-centered: \u03b1 = 1) | (\u00b11, 0), (0, \u00b11) | 4 |\n| Center points (0, 0) | replicates | **12** |\n\nThat's 4 + 4 + 12 = 20. The 12 center replicates give you a solid pure-error estimate and good detection of lack of fit.\n\n**Why face-centered (\u03b1 = 1) over rotatable (\u03b1 \u2248 1.41)?** All design points stay within your factor range \u2014 no extrapolation required for the axial runs. With only 2 factors this is the practical choice.\n\n### Define your factor ranges first\n\nSet \u00b11 levels as the extremes of what's physically safe/feasible:\n\n```\nTemperature: low = T_min, center = T_mid, high = T_max  \nPressure:    low = P_min, center = P_mid, high = P_max\n```\n\nRun the center point replicates spread across the experiment (not all at the end) to detect time-trend or equipment drift.\n\n### What you'll get\n\nAfter fitting the quadratic model:\n1. **Ridge/saddle/peak identification** \u2014 locate the optimum in T\u2013P space\n2. **Contour plots** \u2014 visualize the yield surface\n3. **Lack-of-fit test** \u2014 validate the quadratic model vs. pure error\n4. **95% confidence region** for the optimum (not just the point estimate)\n\n### Practical steps\n\n1. Randomize run order (or block if you can't run all 20 in one session)\n2. Fit in R (`rsm` package) or Python (`pyDOE2` + `statsmodels`/`scikit-learn`)\n3. Check residuals before interpreting the surface\n4. If the optimum lands near a boundary, augment with a few steepest-ascent runs\n\n```r\nlibrary(rsm)\ndesign <- ccd(2, n0 = 12, alpha = \"face\", randomize = TRUE)\n# fit after collecting data:\nmodel <- rsm(yield ~ SO(temp, pressure), data = design)\ncontour(model, ~ temp + pressure)\n```\n\nIf you have a third factor worth exploring, a Box-Behnken design fits neatly in 15\u201320 runs for k=3 and avoids corner point combinations that may be hard to run safely.",
+  "expectations": [
+    "Identifies that this is design-of-experiments / process-optimization RSM (Box-Wilson tradition), a different method from congruence RSA",
+    "Does NOT apply the congruence framework (no line of congruence / incongruence, no a1-a4 congruence checklist)",
+    "Points toward appropriate DoE tooling: central composite or Box-Behnken designs and/or desirability functions",
+    "Cleanly distinguishes the two senses of 'response surface'"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

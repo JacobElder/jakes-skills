@@ -1,0 +1,499 @@
+{
+  "skill_name": "response-surface-analysis",
+  "results": [
+    {
+      "eval_id": 1,
+      "condition": "baseline",
+      "prompt": "I've got self-rated and informant-rated competence (both on the same 1-7 scale) plus a wellbeing score for 350 people. The file is self_informant_wellbeing.csv. I want to test whether agreement between self and informant views predicts wellbeing. Can you run the analysis and tell me what you find?",
+      "response": "Here are the findings:\n\n---\n\n## Response Surface Analysis: Self-Informant Agreement \u2192 Wellbeing\n\n### Model fit\n\nThe full polynomial regression (self, self\u00b2, informant, self\u00d7informant, informant\u00b2) explains **R\u00b2 = 0.639** of wellbeing variance \u2014 a massive improvement over a naive linear model that uses only self and informant ratings (R\u00b2 = 0.097). The quadratic terms add **\u0394R\u00b2 = 0.542, F(3,344) = 171.94, p < .001**, meaning the nonlinear structure is doing nearly all the work.\n\n### The key surface parameter: a4\n\n| Parameter | Estimate | 95% Bootstrap CI | Interpretation |\n|-----------|----------|------------------|----------------|\n| a1 = b1+b3 | +0.268 | [-0.035, +0.556] | Level effect along agreement line (marginal) |\n| a2 = b2+b4+b5 | 0.000 | [-0.036, +0.037] | Curvature along agreement line (flat) |\n| a3 = b1\u2212b3 | \u22120.146 | [-0.609, +0.311] | Self-inflation vs. self-deprecation asymmetry (ns) |\n| **a4 = b2\u2212b4+b5** | **\u22121.432** | **[\u22121.539, \u22121.318]** | **Curvature along incongruence axis** |\n\n**a4 = \u22121.43** is the headline. A strongly negative a4 means the response surface forms a ridge along the line of agreement (self = informant): wellbeing peaks when the two views match and drops sharply as they diverge \u2014 in either direction.\n\n### What this means substantively\n\n- **Agreement matters, direction doesn't.** Persons where self and informant ratings agree have mean wellbeing of **4.46**, while self-inflated (S > I) and self-deflated (S < I) groups average **3.82** and **3.69** respectively. The difference between those two discrepancy directions is non-significant (t = 0.84, p = .40), consistent with a3 being near zero \u2014 over-estimating and under-estimating one's competence are equally costly.\n- **Curvature along the agreement line is flat (a2 \u2248 0).** Being competent *and* accurately perceived doesn't amplify wellbeing beyond the simple congruence benefit \u2014 agreement at any level helps equally.\n- **The interaction term (S\u00d7I) drives everything.** b4 = 0.72 (p < .001) captures the core pattern: when self and informant both rate competence highly (or both rate it modestly), their product is large and wellbeing is high. A mismatch between high and low depresses wellbeing regardless of who is the more generous rater.\n\n### Bottom line\n\nSelf-informant agreement in competence perception is a robust predictor of wellbeing (\u0394R\u00b2 = .54 beyond level effects). The surface is a ridge along Y = X with steep negative curvature off that line \u2014 the classic congruence signature. Neither the direction of discrepancy nor overall competence level drives this; pure agreement does.",
+      "expectations": [
+        "Centers BOTH predictors on a single common constant (the scale midpoint 4, not separate means) \u2014 evidenced either by explicitly stating the centering constant, OR by producing results consistent with centering on 4 (e.g. a4 \u2248 -1.43, block test \u0394R\u00b2 \u2248 0.54)",
+        "Runs and reports the block test / incremental F for the higher-order terms as a gate before interpreting the surface",
+        "Reports a4 with a bootstrap (or otherwise simulation-based) confidence interval that lies entirely below 0 (e.g. CI around -1.4, upper bound < 0)",
+        "Evaluates the full congruence checklist (a4<0, a3=0, p10=0, p11=1), not a4 alone",
+        "Concludes a BROAD congruence effect",
+        "Reports the bootstrap CI for a1 explicitly, and that CI excludes 0 (a1 significantly positive \u2014 e.g. lower bound > 0.2), using this to conclude the effect is NOT strict congruence because a level effect coexists",
+        "Does not claim a direction-of-mismatch result (overestimation vs underestimation) from this symmetric surface"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true
+      ],
+      "passed": 5,
+      "total": 7,
+      "pass_rate": 0.7142857142857143,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 2,
+      "condition": "baseline",
+      "prompt": "My colleague computed a discrepancy score as (perceived_support - desired_support) and regressed job satisfaction on it and its square. Reviewer 2 is unhappy. What's the issue and what should we do instead?",
+      "response": "This is the classic **difference score problem** that Edwards & Parry (1993) dismantled. Two layered issues:\n\n## What's wrong\n\n**1. Algebraic constraints the data never asked for.**\nRegressing Y on (P\u2212D) and (P\u2212D)\u00b2 is algebraically identical to running:\n\n```\nY ~ b\u2081P + b\u2082D + b\u2083P\u00b2 + b\u2084PD + b\u2085D\u00b2\n```\n...but with hard constraints baked in: `b\u2081 = \u2212b\u2082` and `b\u2083 = b\u2085 = \u2212b\u2084/2`. The data never get to test whether those constraints are true. If they're wrong, your coefficients are biased and your conclusions about \"discrepancy\" can be backwards.\n\n**2. Information collapse.**\n(P\u2212D) = 0 could mean P=2,D=2 or P=7,D=7. Those are substantively different \u2014 one is low support all around, the other is high. The difference score erases the *level* of support entirely.\n\n## What to do instead\n\nRun the **unconstrained second-order polynomial** with response surface analysis (Edwards & Parry, 1993):\n\n```\nY ~ P + D + P\u00b2 + P\u00d7D + D\u00b2 + controls\n```\n\nThen compute four surface coefficients from the five *b*s:\n\n| Coefficient | Formula | Interpretation |\n|---|---|---|\n| a\u2081 | b\u2081 + b\u2082 | Slope along congruence line (P=D) |\n| a\u2082 | b\u2083 + b\u2084 + b\u2085 | Curvature along congruence line |\n| a\u2083 | b\u2081 \u2212 b\u2082 | Slope along *in*congruence line |\n| a\u2084 | b\u2083 \u2212 b\u2084 + b\u2085 | Curvature along incongruence line |\n\na\u2081/a\u2082 tell you whether *level* of support matters when P=D; a\u2083/a\u2084 tell you whether the *gap* matters and in which direction.\n\nYou can also **test the difference score constraints** directly \u2014 fit both models and use an LR/F test. If the constraints hold, your colleague's model is fine and you have evidence for it. If they don't, RSA gives the right answer.\n\nThe R package `RSA` (Sch\u00f6nbrodt & Humberg) handles all of this, including the 3D surface plot Reviewer 2 probably also wants to see.\n\n**Key citation:** Edwards, J. R., & Parry, M. E. (1993). On the use of polynomial regression equations as an alternative to difference scores in organizational research. *Academy of Management Journal, 36*(6), 1577\u20131613.",
+      "expectations": [
+        "Identifies that the difference score imposes untested constraints (equal and opposite component coefficients; XY = -2*square coefficient) and discards the level of the pair",
+        "Mentions the reliability problem of difference scores",
+        "Recommends replacing it with polynomial regression / RSA on the two components entered separately",
+        "Specifies centering both components on a common value before fitting",
+        "Does not endorse keeping the difference-score analysis as-is"
+      ],
+      "assertion_results": [
+        true,
+        false,
+        true,
+        false,
+        true
+      ],
+      "passed": 3,
+      "total": 5,
+      "pass_rate": 0.6,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 3,
+      "condition": "baseline",
+      "prompt": "We ran RSA and a4 was -0.21, p = .004. So we have a congruence effect, right? Writing it up now.",
+      "response": "Not quite \u2014 a4 is the wrong coefficient for claiming a congruence effect, and writing this up now would be a mistake worth catching first.\n\nIn Edwards & Parry RSA:\n\n| Coefficient | What it tests |\n|---|---|\n| **a2** | Curvature along the **line of congruence** (X = Y) \u2014 this is your congruence effect |\n| **a4** | Curvature along the **line of incongruence** (X = \u2212Y) |\n\nA congruence effect requires **a2 < 0 and significant**: the surface curves downward as you move away from the X=Y ridge, meaning outcomes are best when the two predictors match.\n\nA significant **a4** tells you something different: whether the surface is asymmetrically curved along the incongruence axis \u2014 e.g., whether high-X/low-Y mismatch differs from low-X/high-Y mismatch at extremes vs. center. It's a supplementary piece of the surface story, not the congruence test itself.\n\nWhat you need to check:\n1. Is **a2 negative and significant**? That's the congruence claim.\n2. Is the **response surface ridge** actually located at X = Y (not shifted)? Check the ridge location: `\u2212(a1)/(2*a2)` should be near zero.\n3. Plot the surface \u2014 the story only holds if the visual matches the claim.\n\nWhat does your a2 look like?",
+      "expectations": [
+        "States explicitly that a4 < 0 by itself is insufficient to claim a congruence effect",
+        "Names the additional conditions required: a3 not different from 0, p10 not different from 0, p11 not different from 1",
+        "Frames the congruence verdict as a conjunction of conditions (broad congruence), referencing the checklist logic",
+        "Does not simply agree that the congruence effect is established"
+      ],
+      "assertion_results": [
+        true,
+        false,
+        false,
+        true
+      ],
+      "passed": 2,
+      "total": 4,
+      "pass_rate": 0.5,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 4,
+      "condition": "baseline",
+      "prompt": "I want to use response surface methodology to find the temperature and pressure settings that maximize yield in our chemical reactor. We can run about 20 experimental runs. How should I design this?",
+      "response": "This directory is a psychological RSA (Response Surface Analysis) skill \u2014 a different technique. Your question is about RSM (Response Surface Methodology) for process optimization, which I can answer directly.\n\n---\n\n## RSM Design for 2-Factor Optimization (~20 runs)\n\n**Recommended design: Central Composite Design (CCD)** \u2014 specifically a **rotatable CCC** (circumscribed).\n\n### Structure\n\nFor 2 factors (temperature, pressure), a CCD consists of:\n\n| Point type | Count | Coded values |\n|---|---|---|\n| Factorial | 4 | (\u00b11, \u00b11) |\n| Axial/star | 4 | (\u00b1\u03b1, 0), (0, \u00b1\u03b1) |\n| Center | 5\u20136 | (0, 0) |\n\nFor rotatability with k=2: **\u03b1 = \u221a2 \u2248 1.414**\n\nThat's 13\u201314 runs. With your budget of 20, use the remaining 6\u20137 as **replicated center points** \u2014 they give you pure-error estimation and power for lack-of-fit testing, which tells you if the quadratic model is actually adequate.\n\n### Model you'll fit\n\n```\nyield = \u03b2\u2080 + \u03b2\u2081T + \u03b2\u2082P + \u03b2\u2081\u2081T\u00b2 + \u03b2\u2082\u2082P\u00b2 + \u03b2\u2081\u2082TP + \u03b5\n```\n\n6 parameters, 20 runs \u2192 good overdetermination (effective df for error ~14).\n\n### Practical steps\n\n1. **Set factor ranges** \u2014 typically \u00b120\u201330% around your current operating point. The \u00b11 levels are your factorial range; the \u00b1\u03b1 levels extend slightly beyond (CCC) or sit at the boundary (face-centered CCF if you can't exceed the range).\n\n2. **Choose CCF vs CCC**: If temperature or pressure has hard physical limits (e.g., can't exceed 300\u00b0C), use **face-centered** (\u03b1 = 1) so axial points don't exceed your factorial bounds. You lose strict rotatability but stay within safe operating limits.\n\n3. **Randomize run order** to protect against time trends in the reactor.\n\n4. **Fit and optimize** \u2014 find the stationary point via canonical analysis. In R:\n   ```r\n   library(rsm)\n   model <- rsm(yield ~ SO(temp, pressure), data = runs)\n   summary(model)  # gives stationary point, eigenvalues (saddle/max/min)\n   ```\n   In Python, use `pyDOE2` to generate the design and `statsmodels` to fit, then gradient ascent to find the optimum.\n\n5. **Run 2\u20133 confirmation runs** at the predicted optimum before locking in settings.\n\n### One tradeoff to flag\n\nIf your current operating point is far from the optimum, the CCD's quadratic model may not capture the whole surface \u2014 consider running a steepest-ascent phase first (a simple 2\u00b2 factorial) to get close, then the CCD. With 20 runs, you could allocate 4 for steepest ascent + 16 for a CCD and still have a sound design.\n\nWhat ranges are you considering for temperature and pressure? That'll determine whether face-centered or circumscribed is the safer call.",
+      "expectations": [
+        "Identifies that this is design-of-experiments / process-optimization RSM (Box-Wilson tradition), a different method from congruence RSA",
+        "Does NOT apply the congruence framework (no line of congruence / incongruence, no a1-a4 congruence checklist)",
+        "Points toward appropriate DoE tooling: central composite or Box-Behnken designs and/or desirability functions",
+        "Cleanly distinguishes the two senses of 'response surface'"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 5,
+      "condition": "baseline",
+      "prompt": "Here's data where I have employees' salary in dollars and their job-satisfaction Likert score (1-5), and I want to do a response surface analysis to see if the fit between pay and satisfaction predicts turnover intention.",
+      "response": "It looks like the data didn't come through \u2014 I don't see it attached yet. Share the data (CSV paste, file path, or a sample) and let me know your preferred software (R or Python) and I'll help you set up the analysis.\n\nOne methodological flag before you share: RSA requires **commensurable measures** \u2014 X and Z need to be on the same scale so \"fit\" (the line X = Z) is interpretable. Salary in dollars and satisfaction on a 1\u20135 Likert are not commensurate. The standard fix is to **z-score both variables** before the polynomial regression, which puts them on the same SD-unit scale. This changes the interpretation slightly (fit = \"same relative standing on each variable\") but is defensible and common in the literature when raw scales differ.\n\nThe full model you'd run after standardizing:\n\n```\nTI = b0 + b1\u00b7Pay_z + b2\u00b7Sat_z + b3\u00b7Pay_z\u00b2 + b4\u00b7Pay_z\u00d7Sat_z + b5\u00b7Sat_z\u00b2\n```\n\nThen you'd derive the response surface parameters (a1\u2013a5) and inspect the ridge line and slope along the congruence diagonal.\n\nIn R, the `RSA` package (Sch\u00f6nbrodt & Tisak) handles all of this cleanly, including surface tests and 3D plots. In Python you'd do it manually via `statsmodels` \u2014 workable but more verbose.\n\nOnce you share the data and software preference I can write the full analysis code.",
+      "expectations": [
+        "Identifies that the two predictors are not on the same metric (non-commensurable), so 'fit/congruence' between them is undefined",
+        "Explains that the line-of-congruence machinery requires commensurable predictors",
+        "Does not proceed to run a standard congruence RSA treating salary-satisfaction match as meaningful",
+        "Suggests a more appropriate framing (e.g. moderated/interaction regression, or commensurable predictors)"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 6,
+      "condition": "baseline",
+      "prompt": "I'm planning a study testing whether congruence between leader and follower values predicts team performance. Values are measured on the same 1-7 instrument for both. How many participants do I need?",
+      "response": "Let me give you the full picture across the key scenarios.\n\n---\n\n## RSA Power Analysis: Leader-Follower Congruence \u2192 Team Performance\n\nThe polynomial regression model is:\n\n`Performance = b0 + b1(Leader) + b2(Follower) + b3(Leader\u00b2) + b4(Leader\u00d7Follower) + b5(Follower\u00b2) + \u03b5`\n\nThe congruence hypothesis lives in the three polynomial terms (b3, b4, b5). Power analysis targets the **R\u00b2 increment** from adding those 3 terms on top of the two linear terms.\n\n---\n\n### If teams are the unit of analysis (most common setup)\n\nUse G*Power: F-test, linear multiple regression, R\u00b2 increase, numerator df = 3.\n\n| Expected f\u00b2 | What it means | N for 80% power | N for 90% power |\n|---|---|---|---|\n| 0.02 (small) | ~2% R\u00b2 from polynomial terms | ~395 teams | ~530 teams |\n| 0.05 (realistic) | ~5% R\u00b2 increment | ~155 teams | ~205 teams |\n| 0.10 (optimistic) | ~10% R\u00b2 increment | ~80 teams | ~107 teams |\n| 0.15 (strong) | ~15% R\u00b2 increment | ~55 teams | ~73 teams |\n\n**Field reality:** Congruence effects in organizations are typically f\u00b2 = 0.02\u20130.06. Plan for **150\u2013400 teams** unless you have strong theoretical or pilot evidence of a larger effect.\n\n---\n\n### If followers are nested in teams (multilevel RSA)\n\nThis is substantially harder. You need:\n- Enough **teams** to estimate team-level variance (minimum ~30, ideally 50+)\n- Enough **followers per team** to reliably aggregate (\u22655 recommended)\n- The multilevel `RSA` package in R handles this via `lmer` + surface tests\n\nFor multilevel RSA with ICC \u2248 0.15 and team size \u2248 5:\n- Design effect \u2248 1 + (5\u22121)\u00d70.15 \u2248 1.6\n- Multiply your individual-level N by ~1.6 to get effective required N\n\n---\n\n### Key practical notes\n\n1. **Don't just test the polynomial R\u00b2 increment.** The RSA literature (Edwards & Parry, 1993) cares about surface tests: the slopes along the congruence line (a1) and along the incongruence line (a3), plus their curvatures (a2, a4). Power for a4 (the curvature that actually captures congruence vs. incongruence) is lower than for the omnibus F-test above.\n\n2. **Range restriction kills RSA.** If leaders and followers are all highly similar in values (restricted range), your polynomial terms lose power sharply. Check your pilot data for variance in the difference score.\n\n3. **The `RSA` package in R** (Sch\u00f6nbrodt, 2016) can run simulations to give you power for specific surface coefficients \u2014 more precise than the omnibus G*Power approach above.\n\n---\n\n**Bottom line:** For a team-level study expecting realistic congruence effects (f\u00b2 \u2248 0.05), target **~150\u2013200 teams**. If you're working with nested data or uncertain effect size, share more design details and I can help you run a simulation-based power analysis.",
+      "expectations": [
+        "States that RSA requires more N than a linear model (roughly 2-3x) because the curvature/product terms carry the signal",
+        "Recommends simulation-based power analysis for the specific hypothesized surface rather than a fixed rule of thumb",
+        "Mentions that the predictor correlation matters (high r between predictors lowers power by reducing variance along X - Y)",
+        "Mentions measurement reliability of the predictors as relevant to power",
+        "Offers to run or references a power simulation (e.g. rsa_power_sim.py) with effect-size and correlation inputs"
+      ],
+      "assertion_results": [
+        false,
+        true,
+        false,
+        false,
+        false
+      ],
+      "passed": 1,
+      "total": 5,
+      "pass_rate": 0.2,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 7,
+      "condition": "baseline",
+      "prompt": "I ran RSA on actual vs. ideal body-weight perception data (both on a 0-100 scale, centered on the scale midpoint = 50). Block test: \u0394R\u00b2 = 0.38, F(3,274) = 58.2, p < .001. Surface parameters with 95% bootstrap CIs: a4 = \u22120.095 [\u22120.121, \u22120.079]; a3 = +0.174 [\u22120.108, +0.455]; p10 = \u22122.58 [\u22126.07, +0.87]; p11 = +1.27 [+0.99, +1.56]. Two questions: (1) Does mismatch in EITHER direction lower satisfaction? (2) Is overestimating (actual > ideal) worse than underestimating (ideal > actual)?",
+      "response": "Two clean answers, one parameter each.\n\n---\n\n## Q1: Does mismatch in either direction lower satisfaction?\n\n**Yes \u2014 unambiguously.** The relevant parameter is **a4** (curvature along the line of incongruence, LOI):\n\n> a4 = \u22120.095 [\u22120.121, \u22120.079]\n\nThe CI is entirely negative. Negative curvature along the LOI means the surface is concave (inverted-U) in the mismatch direction: satisfaction peaks at congruence (actual = ideal) and falls off whether the person overestimates *or* underestimates. Neither direction of discrepancy is harmless.\n\n---\n\n## Q2: Is overestimating (actual > ideal) worse than underestimating (ideal > actual)?\n\n**No \u2014 the asymmetry is not statistically significant.** The relevant parameter is **a3** (slope/tilt along the LOI):\n\n> a3 = +0.174 [\u22120.108, +0.455]\n\nThe CI crosses zero, so you cannot conclude a directional difference. Notably, the sign of a3 is *positive*, meaning the nominal trend runs **opposite** to \"overestimating is worse\" \u2014 if anything, the unsupported trend is that overestimating (actual > ideal) is associated with *slightly higher* satisfaction than underestimating. Don't over-read this; the point is that asymmetry is not the story here.\n\n---\n\n## What p10 and p11 add\n\nThese are the stationary-point coordinates (where the surface crests):\n\n- **p10 = \u22122.58 [\u22126.07, +0.87]**: X-coordinate (actual), CI crosses zero \u2014 the peak is not significantly displaced from scale center.\n- **p11 = +1.27 [+0.99, +1.56]**: Y-coordinate (ideal), CI is entirely positive \u2014 the peak sits slightly above center on the ideal axis.\n\nThis is consistent with a4's story: the surface peaks very close to the origin (congruence near the midpoint), and the significant positive p11 suggests maximum satisfaction occurs when the *ideal* is held slightly above the scale midpoint, with actual matching it.\n\n---\n\n**Bottom line for write-up:** Discrepancy itself is the problem (a4 significant, negative); the *direction* of discrepancy is not (a3 non-significant). That's a clean mismatch-effect story with no evidence for the directional hypothesis.",
+      "expectations": [
+        "Correctly maps 'mismatch in either direction' to a4 < 0 and confirms it holds (a4 CI entirely below 0)",
+        "Maps the 'overestimating vs underestimating' question to the asymmetry parameter a3",
+        "States the a3 CI explicitly \u2014 [\u22120.108, +0.455] or equivalent \u2014 noting it includes 0",
+        "Concludes that because a3 CI includes 0 the surface is symmetric and the data CANNOT determine which direction of mismatch is worse",
+        "Names the error of claiming direction from a symmetric surface \u2014 'directionality fallacy' or clear equivalent description",
+        "Does not endorse or manufacture a directional story ('overestimation is worse') from these results"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "passed": 5,
+      "total": 6,
+      "pass_rate": 0.8333333333333334,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 8,
+      "condition": "baseline",
+      "prompt": "Our RSA block test came back non-significant - the X^2, XY, and Y^2 terms together only added about 0.4% to R^2 (p = .62). But a4 is negative. Can we still report the congruence surface?",
+      "response": "A non-significant block test with \u0394R\u00b2 = 0.4% at p = .62 is pretty decisive \u2014 that's not a borderline case where you could argue power was the issue. Here's how to think through the reporting question:\n\n## Can you still report the surface?\n\n**Yes, report it \u2014 but don't interpret a4 as meaningful.**\n\nThe surface exists regardless of significance; transparency requires presenting it. What you *cannot* do is treat the negative a4 as evidence of an incongruence effect (the classic \"divergence is better than match\" pattern). The block test is the gate for surface interpretation.\n\n## What a4 < 0 means here\n\nA negative a4 suggests the surface curves *downward* along the line of incongruence (X = \u2212Y) \u2014 geometrically, a saddle or concave shape. But with the polynomial terms explaining essentially nothing (\u0394R\u00b2 \u2248 0.4%), that curvature is indistinguishable from sampling noise. Interpreting it would be p-hacking by surface parameter.\n\n## How to write it up\n\nA reasonable framing:\n\n> \"The second-order terms did not significantly improve model fit over first-order terms (\u0394R\u00b2 = .004, p = .62), providing no evidence of a curved response surface. Although the incongruence curvature parameter was negative (a4 = [value]), this pattern is uninterpretable absent a significant polynomial block. We therefore conclude there is no support for a congruence effect in these data.\"\n\n## If reviewers push back\n\nThe Humberg et al. (2019, *Journal of Applied Psychology*) critique and the Edwards & Parry (1993) foundational piece both treat the polynomial significance test as a prerequisite for surface interpretation. You have solid methodological cover for not over-interpreting a4.\n\nOne thing worth checking: do you have adequate power for RSA? Polynomial surfaces typically need N \u2265 200\u2013300 to reliably detect moderate curvature. If your N is smaller, you can note this as a limitation without backpedaling on the non-significant result.",
+      "expectations": [
+        "States that with a non-significant block test the surface is not justified and should not be interpreted",
+        "Recommends reporting the linear model instead",
+        "Explains that a4 (or any surface parameter) should not be interpreted when the higher-order terms do not jointly improve fit",
+        "Does not greenlight reporting the congruence surface"
+      ],
+      "assertion_results": [
+        false,
+        false,
+        true,
+        false
+      ],
+      "passed": 1,
+      "total": 4,
+      "pass_rate": 0.25,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 9,
+      "condition": "baseline",
+      "prompt": "I ran RSA in R on self-rated and supervisor-rated performance (both 1-7 scales). I used scale() to center each predictor on its own mean before fitting the polynomial. The results look great \u2014 a4 is significant and negative. Do I have a congruence effect?",
+      "response": "Two issues to address before you can claim a congruence effect.\n\n## 1. The centering is wrong\n\n`scale()` centers each variable on *its own mean* independently. RSA requires both predictors to share a **common reference point**, because the congruence line (X = Y) has to correspond to actual rater agreement in the original metric.\n\nWhen you center self-ratings on their mean and supervisor ratings on their mean separately, the \"X = Y\" line in the scaled space no longer means \"self = supervisor\" \u2014 it means \"self is at its own average AND supervisor is at their own average,\" which are different people and different standards. Any mean difference between raters (leniency bias, halo effects) gets silently absorbed.\n\n**What to do instead.** Both are 1\u20137 scales, so center both on the scale midpoint or the grand mean of both variables combined:\n\n```r\nmid <- 4  # scale midpoint for 1\u20137\ndf$X_c <- df$self    - mid\ndf$Y_c <- df$supervisor - mid\n```\n\nOr using the joint grand mean:\n\n```r\ngrand <- mean(c(df$self, df$supervisor))\ndf$X_c <- df$self        - grand\ndf$Y_c <- df$supervisor  - grand\n```\n\nDo not divide by SD \u2014 both scales share the same range, so the metric is already comparable.\n\n## 2. A negative a4 alone is not a congruence effect\n\na4 (= b3 \u2212 b4 + b5) captures curvature along the *incongruence* line (X = \u2212Y). Negative a4 means the surface dips as discrepancy increases \u2014 that's *consistent* with congruence mattering, but it's not sufficient on its own. You also need:\n\n| Check | What to look for |\n|---|---|\n| **a2** (= b3 + b4 + b5) | Should be negative for a concave ridge along X = Y |\n| **Stationary point location** | Should fall within the data range, on or near X = Y |\n| **Nature of the stationary point** | Ridge (one principal curvature \u2248 0, other negative) vs. a saddle point (a4 and a2 have opposite signs) |\n\nA saddle point gives significant a4 and a2 but with opposite signs \u2014 that's not a congruence effect, it's a more complex asymmetric surface.\n\n## Practical fix\n\nRe-center using a common reference, refit the polynomial, and use the `RSA` package to check all four surface coefficients and the stationary point:\n\n```r\nlibrary(RSA)\nm <- RSA(outcome ~ X_c * Y_c, data = df)\nsummary(m)\nplot(m)\n```\n\nThe `RSA()` output will give you a1\u2013a4, the stationary point coordinates, and pattern tests (Ridge, SRSQ, etc.) that let you make the congruence claim with appropriate support.",
+      "expectations": [
+        "Identifies that centering each predictor on its own mean (separate-mean centering, e.g. via scale()) is an error for congruence RSA",
+        "Explains why: separate-mean centering moves the line of congruence off X = Y, corrupting the geometric interpretation of a1\u2013a5 and p10/p11",
+        "Specifies the correct fix: center BOTH predictors on ONE common constant (the scale midpoint, e.g. 4 on a 1-7 scale)",
+        "Does not endorse the results as valid without re-running with correct centering",
+        "Reminds that even after correct centering, a4 alone is insufficient \u2014 the full checklist must be evaluated"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 10,
+      "condition": "baseline",
+      "prompt": "Here are my RSA results (both predictors on same 1-5 scale, centered on midpoint = 3, N = 420). Block test: \u0394R\u00b2 = 0.29, F(3,414) = 56.2, p < .001. Parameters: a1 = +0.31 [+0.19, +0.43]; a2 = \u22120.02 [\u22120.08, +0.04]; a3 = \u22120.03 [\u22120.15, +0.09]; a4 = \u22120.68 [\u22120.82, \u22120.54]; p10 = +0.04 [\u22120.11, +0.19]; p11 = +0.97 [+0.89, +1.06]. Can I claim a strict congruence effect?",
+      "response": "Looking at your RSA parameters, here's the assessment:\n\n**The congruence criteria \u2014 met:**\n\n| Criterion | Requirement | Your value | Status |\n|---|---|---|---|\n| Congruence beats incongruence | a4 < 0, significant | \u22120.68 [\u22120.82, \u22120.54] | \u2713 |\n| No asymmetry (X>Y vs Y>X symmetric) | a3 \u2248 0 | \u22120.03 [\u22120.15, +0.09] | \u2713 |\n| Ridge runs along LOC | p11 \u2248 1 | 0.97 [+0.89, +1.06] | \u2713 |\n| Ridge centered at midpoint | p10 \u2248 0 | +0.04 [\u22120.11, +0.19] | \u2713 |\n| No curvature along LOC | a2 \u2248 0 | \u22120.02 [\u22120.08, +0.04] | \u2713 |\n\nAll five criteria pass. You can claim a congruence effect.\n\n**The nuance you must report:**\n\na1 = +0.31 is significant. This means outcomes rise monotonically as both predictors increase together along the line of congruence. Your surface is a **rising congruence ridge**, not a dome \u2014 congruence benefits are present at all levels, but the optimal region is high-high congruence, not the midpoint.\n\nThis doesn't disqualify the claim, but \"strict\" in the Humberg et al. (2019) sense refers to the ridge being *along* X=Y (which it is), not to the absence of a slope along it. So the phrasing matters:\n\n- **Correct**: \"Results supported a congruence effect: outcomes were highest at congruence and decreased symmetrically with incongruence (a4 = \u22120.68), with no directional asymmetry (a3 \u2248 0). The principal axis ran along the line of congruence (p11 = 0.97, p10 = 0.04). A significant positive slope along the congruence line (a1 = +0.31) indicates outcomes increased as both predictors rose together.\"\n- **Avoid**: claiming the congruence *point* is uniquely optimal without acknowledging the level effect.\n\n**Bottom line**: Claim congruence, qualify that it rides a positive level gradient.",
+      "expectations": [
+        "Correctly evaluates C1 (a4 < 0, CI excludes 0) \u2014 PASS",
+        "Correctly evaluates C2 (a3 CI includes 0) \u2014 PASS",
+        "Correctly evaluates C3 (p10 CI includes 0) \u2014 PASS",
+        "Correctly evaluates C4 (p11 CI includes 1) \u2014 PASS",
+        "States BROAD congruence is supported (all four conditions met)",
+        "States STRICT congruence is NOT supported because a1 CI [+0.19, +0.43] excludes 0 (C5 fails) \u2014 a significant level effect is present",
+        "Does not claim strict congruence, and explains what a1 \u2260 0 means substantively (level matters: high-high match is better than low-low match)"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        true
+      ],
+      "passed": 6,
+      "total": 7,
+      "pass_rate": 0.8571428571428571,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 1,
+      "condition": "with_skill",
+      "prompt": "I've got self-rated and informant-rated competence (both on the same 1-7 scale) plus a wellbeing score for 350 people. The file is self_informant_wellbeing.csv. I want to test whether agreement between self and informant views predicts wellbeing. Can you run the analysis and tell me what you find?",
+      "response": "The results are clear. Here's what the analysis found:\n\n---\n\n## RSA Results: Self\u2013Informant Agreement \u2192 Wellbeing\n\n**N = 350, scale midpoint = 4 used for centering.**\n\n### Block test (gate) \u2014 passed strongly\nHigher-order terms (X\u00b2, XY, Y\u00b2) jointly added **\u0394R\u00b2 = .54** above the linear model, F(3, 344) = 171.94, p = 4.3\u00d710\u207b\u2076\u2078. A curved surface is clearly warranted.\n\n### Surface parameters (with 95% bootstrap CIs)\n\n| Parameter | Estimate | 95% CI | Verdict |\n|---|---|---|---|\n| a1 \u2014 LOC slope | +0.268 | [+0.211, +0.324] | **sig. positive** |\n| a2 \u2014 LOC curvature | \u2248 0.000 | [\u22120.036, +0.038] | n.s. |\n| a3 \u2014 LOIC slope | \u22120.004 | [\u22120.116, +0.106] | n.s. |\n| a4 \u2014 LOIC curvature | \u22121.432 | [\u22121.540, \u22121.317] | **sig. negative** |\n| p10 \u2014 ridge intercept | +0.005 | [\u22120.068, +0.083] | n.s. (= 0 \u2713) |\n| p11 \u2014 ridge slope | +0.976 | [+0.895, +1.053] | n.s. (= 1 \u2713) |\n\n### Congruence verdict: **Broad congruence \u2014 all four conditions met**\n\n- **C1 \u2713** a4 < 0: The surface curves down along the LOIC \u2014 mismatch in either direction lowers wellbeing.\n- **C2 \u2713** a3 = 0: The drop is symmetric; the LOIC inverted-U peaks right at the congruence diagonal.\n- **C3 \u2713** p10 = 0: The ridge isn't shifted sideways off the LOC.\n- **C4 \u2713** p11 = 1: The ridge isn't rotated away from the diagonal.\n\n**Not strict congruence:** a1 = +0.268 (CI excludes 0), meaning the level of agreement matters \u2014 pairs where both rate competence *high* have better wellbeing than pairs where both rate it *low*. The outcome rises along the LOC.\n\n### What this means substantively\n\n1. **Agreement itself matters:** when self and informant views of competence align, wellbeing is higher \u2014 and the effect is symmetric (overestimation and underestimation hurt equally, a3 \u2248 0). Don't read a directional story into this surface.\n2. **Level also matters:** not all matched pairs are equal. A (6, 6) match predicts meaningfully better wellbeing than a (2, 2) match. This is the broad congruence pattern \u2014 congruence plus a positive LOC slope.\n3. **The ridge is right on the diagonal:** p10 \u2248 0, p11 \u2248 1 confirms the \"peak zone\" of the surface really does run along X = Y. There's no quirk where some other combination of self and informant ratings maximizes wellbeing.\n4. **The effect is large:** the full model R\u00b2 = .64, versus .10 for the linear model alone \u2014 the curvature terms carry almost all the explanatory variance. This is an unusually strong congruence signal.\n\nThe surface plot is at `/tmp/rsa_surface.png` if you want to look at it. The takeaway for reporting: self\u2013informant competence agreement shows a **broad congruence effect** on wellbeing \u2014 state the conjunction of all four conditions, note that level moderates the match effect (a1 > 0), and explicitly flag that the data cannot distinguish which direction of mismatch is worse.",
+      "expectations": [
+        "Centers BOTH predictors on a single common constant (the scale midpoint 4, not separate means) \u2014 evidenced either by explicitly stating the centering constant, OR by producing results consistent with centering on 4 (e.g. a4 \u2248 -1.43, block test \u0394R\u00b2 \u2248 0.54)",
+        "Runs and reports the block test / incremental F for the higher-order terms as a gate before interpreting the surface",
+        "Reports a4 with a bootstrap (or otherwise simulation-based) confidence interval that lies entirely below 0 (e.g. CI around -1.4, upper bound < 0)",
+        "Evaluates the full congruence checklist (a4<0, a3=0, p10=0, p11=1), not a4 alone",
+        "Concludes a BROAD congruence effect",
+        "Reports the bootstrap CI for a1 explicitly, and that CI excludes 0 (a1 significantly positive \u2014 e.g. lower bound > 0.2), using this to conclude the effect is NOT strict congruence because a level effect coexists",
+        "Does not claim a direction-of-mismatch result (overestimation vs underestimation) from this symmetric surface"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 7,
+      "total": 7,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 2,
+      "condition": "with_skill",
+      "prompt": "My colleague computed a discrepancy score as (perceived_support - desired_support) and regressed job satisfaction on it and its square. Reviewer 2 is unhappy. What's the issue and what should we do instead?",
+      "response": "Reviewer 2 is right. This is the canonical difference-score trap, and it has several compounding problems:\n\n## What's wrong with the discrepancy-score approach\n\n**1. Untested constraints imposed silently.**\n`(P \u2212 D)` as a single predictor forces `b_perceived = \u2212b_desired` \u2014 equal magnitude, opposite sign \u2014 without testing it. The squared term `(P \u2212 D)\u00b2` expands to `P\u00b2 \u2212 2PD + D\u00b2`, which forces the P\u00b2 and D\u00b2 coefficients to be equal and the PD coefficient to be exactly \u22122\u00d7 that value. These are four parameter constraints your data never got to vote on.\n\n**2. Level information is discarded.**\nA (6,6) pair and a (2,2) pair both produce a discrepancy of 0, so both predict the same satisfaction. But high support at high desire may be very different from low support at low desire. The discrepancy score conflates them.\n\n**3. Compounded unreliability.**\nThe reliability of `P \u2212 D` is generally lower than either component alone, and especially low when P and D correlate \u2014 which they usually do. Your standard errors are inflated by variance you threw away.\n\n**4. Commensurability assumed but not shown.**\n\"Perceived\" and \"desired\" support need to be on the same metric and anchors for a difference to be meaningful. If they're not, the discrepancy is undefined.\n\n## What to do instead: second-order polynomial RSA\n\nReplace the discrepancy score with the full unconstrained polynomial:\n\n```\nSatisfaction = b0 + b1\u00b7P + b2\u00b7D + b3\u00b7P\u00b2 + b4\u00b7PD + b5\u00b7D\u00b2 + e\n```\n\nCenter both P and D on the **same constant** (e.g. the scale midpoint \u2014 not their separate means).\n\nThis lets you *test* the constraints the difference score assumed rather than imposing them. The surface parameters you then compute are:\n\n| Param | Formula | What it tells you |\n|---|---|---|\n| a1 | b1 + b2 | Does satisfaction rise as both rise together? |\n| a3 | b1 \u2212 b2 | Is one direction of mismatch worse? (only if \u2260 0) |\n| a4 | b3 \u2212 b4 + b5 | Does mismatch in either direction lower satisfaction? |\n| p10, p11 | from Hessian | Is the \"best outcome\" ridge actually on `P = D`? |\n\n**Then gate before you interpret:** run an incremental F-test \u2014 does adding P\u00b2, PD, D\u00b2 jointly improve R\u00b2 over the linear model? If not, you don't have a surface.\n\n**Congruence requires a conjunction, not just a4.** To claim fit predicts satisfaction, you need all four of these simultaneously (Humberg, Nestler & Back, 2019):\n- a4 < 0 (inverted-U off the agreement diagonal)\n- a3 \u2248 0 (symmetric \u2014 no directional tilt)\n- p10 \u2248 0 (ridge not shifted laterally)\n- p11 \u2248 1 (ridge not rotated off `P = D`)\n\nUse bootstrap CIs for all of these, not delta-method SEs.\n\n## For Reviewer 2's response\n\nThe rebuttal writes itself: the original analysis imposes four constraints on the data (equal and opposite linear effects, constrained quadratic ratio) that RSA would test. Re-run as RSA, report the block test, all five surface parameters with bootstrap CIs, and evaluate the four-condition checklist. If the reviewer is sophisticated, offer the model-comparison version: compare the constrained squared-difference model against the full polynomial via AIC/BIC + LR test.\n\nThe R `RSA` package (Sch\u00f6nbrodt) does all of this in a few lines \u2014 see `scripts/rsa_template.R` for a runnable template, or run `scripts/rsa_python.py` if the project is Python-native.",
+      "expectations": [
+        "Identifies that the difference score imposes untested constraints (equal and opposite component coefficients; XY = -2*square coefficient) and discards the level of the pair",
+        "Mentions the reliability problem of difference scores",
+        "Recommends replacing it with polynomial regression / RSA on the two components entered separately",
+        "Specifies centering both components on a common value before fitting",
+        "Does not endorse keeping the difference-score analysis as-is"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 3,
+      "condition": "with_skill",
+      "prompt": "We ran RSA and a4 was -0.21, p = .004. So we have a congruence effect, right? Writing it up now.",
+      "response": "No \u2014 and this is the most common error in the RSA literature. A significant negative a4 is necessary but not sufficient for a congruence effect.\n\n**What a4 < 0 tells you:** the surface curves downward along the line of incongruence (LOIC). That's it. The ridge could be rotated off the diagonal, shifted sideways, or peaked somewhere other than the congruent point \u2014 any of which means the effect is *not* congruence.\n\nBefore you write anything up, you need to check all four conditions jointly (C1\u2013C4 from the Humberg, Nestler & Back 2019 checklist):\n\n| Condition | What it requires | How to check |\n|---|---|---|\n| **C1** | a4 < 0 | Bootstrap CI entirely below 0 \u2713 (you have this) |\n| **C2** | a3 = 0 | Bootstrap CI for a3 includes 0 |\n| **C3** | p10 = 0 | Bootstrap CI for p10 includes 0 |\n| **C4** | p11 = 1 | Bootstrap CI for p11 includes 1 |\n\nAll four must hold simultaneously. If any fails, you don't have broad congruence \u2014 you have a different surface shape that needs a different description.\n\n**What you need to do right now:**\n\n1. Pull your bootstrap CIs for a3, p10, and p11 (your RSA package output or the Python script's summary should have them).\n2. Check each CI against its reference value.\n3. Report the verdict as a conjunction, not from a4 alone.\n\nAlso check: did you have a stationary point or p10/p11 values that look wild (very large numbers)? That would be a sign the surface is nearly flat and the gate test should have stopped you.\n\nWhat does your output look like for those other parameters?",
+      "expectations": [
+        "States explicitly that a4 < 0 by itself is insufficient to claim a congruence effect",
+        "Names the additional conditions required: a3 not different from 0, p10 not different from 0, p11 not different from 1",
+        "Frames the congruence verdict as a conjunction of conditions (broad congruence), referencing the checklist logic",
+        "Does not simply agree that the congruence effect is established"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 4,
+      "condition": "with_skill",
+      "prompt": "I want to use response surface methodology to find the temperature and pressure settings that maximize yield in our chemical reactor. We can run about 20 experimental runs. How should I design this?",
+      "response": "This is the **design-of-experiments flavor of response surface methodology** (Box\u2013Wilson optimization) \u2014 distinct from the congruence/fit RSA this skill covers. I'll answer directly from DoE principles.\n\n## Design recommendation: Central Composite Design (CCD)\n\nWith 2 factors and ~20 runs, a **face-centered CCD** is your best option. It fits the full second-order model:\n\n```\nYield = \u03b2\u2080 + \u03b2\u2081T + \u03b2\u2082P + \u03b2\u2081\u2081T\u00b2 + \u03b2\u2082\u2082P\u00b2 + \u03b2\u2081\u2082TP + \u03b5\n```\n\n### Run allocation for 20 runs\n\n| Block | Points | Count |\n|---|---|---|\n| Factorial (corners: \u00b11 on both) | (\u22121,\u22121), (+1,\u22121), (\u22121,+1), (+1,+1) | 4 |\n| Axial (face-centered: \u03b1 = 1) | (\u00b11, 0), (0, \u00b11) | 4 |\n| Center points (0, 0) | replicates | **12** |\n\nThat's 4 + 4 + 12 = 20. The 12 center replicates give you a solid pure-error estimate and good detection of lack of fit.\n\n**Why face-centered (\u03b1 = 1) over rotatable (\u03b1 \u2248 1.41)?** All design points stay within your factor range \u2014 no extrapolation required for the axial runs. With only 2 factors this is the practical choice.\n\n### Define your factor ranges first\n\nSet \u00b11 levels as the extremes of what's physically safe/feasible:\n\n```\nTemperature: low = T_min, center = T_mid, high = T_max  \nPressure:    low = P_min, center = P_mid, high = P_max\n```\n\nRun the center point replicates spread across the experiment (not all at the end) to detect time-trend or equipment drift.\n\n### What you'll get\n\nAfter fitting the quadratic model:\n1. **Ridge/saddle/peak identification** \u2014 locate the optimum in T\u2013P space\n2. **Contour plots** \u2014 visualize the yield surface\n3. **Lack-of-fit test** \u2014 validate the quadratic model vs. pure error\n4. **95% confidence region** for the optimum (not just the point estimate)\n\n### Practical steps\n\n1. Randomize run order (or block if you can't run all 20 in one session)\n2. Fit in R (`rsm` package) or Python (`pyDOE2` + `statsmodels`/`scikit-learn`)\n3. Check residuals before interpreting the surface\n4. If the optimum lands near a boundary, augment with a few steepest-ascent runs\n\n```r\nlibrary(rsm)\ndesign <- ccd(2, n0 = 12, alpha = \"face\", randomize = TRUE)\n# fit after collecting data:\nmodel <- rsm(yield ~ SO(temp, pressure), data = design)\ncontour(model, ~ temp + pressure)\n```\n\nIf you have a third factor worth exploring, a Box-Behnken design fits neatly in 15\u201320 runs for k=3 and avoids corner point combinations that may be hard to run safely.",
+      "expectations": [
+        "Identifies that this is design-of-experiments / process-optimization RSM (Box-Wilson tradition), a different method from congruence RSA",
+        "Does NOT apply the congruence framework (no line of congruence / incongruence, no a1-a4 congruence checklist)",
+        "Points toward appropriate DoE tooling: central composite or Box-Behnken designs and/or desirability functions",
+        "Cleanly distinguishes the two senses of 'response surface'"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 5,
+      "condition": "with_skill",
+      "prompt": "Here's data where I have employees' salary in dollars and their job-satisfaction Likert score (1-5), and I want to do a response surface analysis to see if the fit between pay and satisfaction predicts turnover intention.",
+      "response": "This is actually the clearest case where the RSA skill says to **stop before running anything**: the commensurability gate fails.\n\n## The problem\n\nSalary (continuous, in dollars) and job satisfaction (Likert 1\u20135) are on completely different metrics with different units and different anchors. The RSA machinery \u2014 the line of congruence, a1\u2013a5, p10/p11 \u2014 is only defined when X and Y are on the *same scale*, so that `X = Y` has a substantive meaning like \"person and environment agree.\" \n\nA salary of $60,000 \"equaling\" a satisfaction score of 5 is meaningless. The math will run, but every parameter it produces will be uninterpretable. This isn't a fixable centering issue \u2014 the variables are fundamentally incommensurable.\n\n## What you probably actually want\n\nDepends on your theoretical question:\n\n| Question | Right tool |\n|---|---|\n| Does pay \u00d7 satisfaction *interact* to predict turnover? | Moderated regression: `turnover ~ salary + satisfaction + salary\u00d7satisfaction` |\n| Does whether someone feels **paid fairly** predict turnover? | Single predictor: perceived pay equity Likert item \u2192 plain regression |\n| Does congruence between **desired pay** and **actual pay** predict turnover? | RSA is right \u2014 both in dollars, commensurable |\n| Does congruence between **pay satisfaction** and **overall job satisfaction** predict turnover? | RSA is right \u2014 both Likert, commensurable |\n\nThe moderated regression option is almost certainly the honest model for what you're describing. It asks \"does the effect of salary on turnover depend on satisfaction level?\" without pretending the two variables are on the same scale.\n\nWhat's the underlying theory you're trying to test? That'll clarify which of these fits.",
+      "expectations": [
+        "Identifies that the two predictors are not on the same metric (non-commensurable), so 'fit/congruence' between them is undefined",
+        "Explains that the line-of-congruence machinery requires commensurable predictors",
+        "Does not proceed to run a standard congruence RSA treating salary-satisfaction match as meaningful",
+        "Suggests a more appropriate framing (e.g. moderated/interaction regression, or commensurable predictors)"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 6,
+      "condition": "with_skill",
+      "prompt": "I'm planning a study testing whether congruence between leader and follower values predicts team performance. Values are measured on the same 1-7 instrument for both. How many participants do I need?",
+      "response": "Four things determine the answer, and one of them is a design question you need to settle first.\n\n## The unit of analysis is teams, not people\n\nYour outcome is team performance, so **N = number of teams** \u2014 not followers. If you have 40 teams of 10 people each, N = 40 for the RSA. This is the most common source of overconfidence in studies like this. Be sure you're planning team N, not headcount.\n\n## What drives power in RSA\n\nRSA is hungrier than linear regression because the congruence signal lives in the quadratic and product terms (X\u00b2, XY, Y\u00b2), which are exactly what small samples and measurement error attenuate. Three factors dominate:\n\n| Factor | Rule of thumb | Why it matters |\n|--------|---------------|----------------|\n| **N** | 2\u20133\u00d7 your linear-model N | five-term polynomial, nonlinear parameter estimates |\n| **r(X, Y)** \u2014 leader\u2013follower value correlation | every 0.1 increase roughly halves variance along X \u2212 Y | the congruence dimension *is* X \u2212 Y; no variance there, no power |\n| **Effect size k** \u2014 LOIC curvature | often 0.2\u20130.4 in PE-fit literature | small effects need large N |\n\n## Rough targets before simulation\n\nIf you assume modest congruence (k \u2248 0.3), leader\u2013follower correlation around r = 0.3\u20130.4 (plausible for shared-context values), and reasonably reliable measures (\u03b1 \u2248 .80):\n\n- **~100 teams** \u2014 marginal; expect wide CIs on a4, p10, p11; risky\n- **~150\u2013200 teams** \u2014 reasonable for detecting a moderate effect on the broad-congruence verdict (all four conditions jointly)\n- **~250\u2013300 teams** \u2014 comfortable; also lets you detect the checklist pattern rather than just a4 alone\n\n## Run the simulation for your specific assumptions\n\nThe skill ships a power sim that targets the *full checklist* (all four broad-congruence conditions simultaneously) \u2014 a stricter and more honest target than \"is a4 significant?\":\n\n```bash\npython scripts/rsa_power_sim.py \\\n  --n 100 150 200 250 300 \\\n  --k 0.3 \\\n  --rxy 0.35 \\\n  --reps 1000\n```\n\nSweep `--k` (0.2 to 0.4) and `--rxy` (0.2 to 0.5) to bracket your uncertainty.\n\n## Questions that sharpen the estimate\n\n1. **How is \"follower values\" operationalized?** Single focal follower per team, or aggregate across all followers? Aggregating reduces measurement error but requires justifying rwg / ICC before the RSA.\n2. **What's your expected r(leader values, follower values)?** High correlation (> 0.5) is a serious power killer \u2014 it collapses variance on the X \u2212 Y dimension.\n3. **What effect size does the PE-fit / values-congruence literature in your domain suggest?** Person\u2013organization fit effects on performance are often modest (d \u2248 0.2\u20130.3).\n4. **Are teams nested in organizations?** If yes, you may need multilevel RSA and a larger N still.\n\nGive me those numbers and I can run the sim or work through a more precise estimate.",
+      "expectations": [
+        "States that RSA requires more N than a linear model (roughly 2-3x) because the curvature/product terms carry the signal",
+        "Recommends simulation-based power analysis for the specific hypothesized surface rather than a fixed rule of thumb",
+        "Mentions that the predictor correlation matters (high r between predictors lowers power by reducing variance along X - Y)",
+        "Mentions measurement reliability of the predictors as relevant to power",
+        "Offers to run or references a power simulation (e.g. rsa_power_sim.py) with effect-size and correlation inputs"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 7,
+      "condition": "with_skill",
+      "prompt": "I ran RSA on actual vs. ideal body-weight perception data (both on a 0-100 scale, centered on the scale midpoint = 50). Block test: \u0394R\u00b2 = 0.38, F(3,274) = 58.2, p < .001. Surface parameters with 95% bootstrap CIs: a4 = \u22120.095 [\u22120.121, \u22120.079]; a3 = +0.174 [\u22120.108, +0.455]; p10 = \u22122.58 [\u22126.07, +0.87]; p11 = +1.27 [+0.99, +1.56]. Two questions: (1) Does mismatch in EITHER direction lower satisfaction? (2) Is overestimating (actual > ideal) worse than underestimating (ideal > actual)?",
+      "response": "Working through each question against the checklist:\n\n---\n\n**Gate:** F(3,274) = 58.2, p < .001, \u0394R\u00b2 = .38 \u2014 passes cleanly. Surface interpretation is justified.\n\n---\n\n## Question 1: Does mismatch in either direction lower satisfaction?\n\nYes, and the evidence is strong. The relevant conditions are C1 and C2 from the broad congruence checklist:\n\n| Condition | Parameter | Result |\n|-----------|-----------|--------|\n| C1: inverted-U over the LOIC | a4 = \u22120.095 [\u22120.121, \u22120.079] | **PASS** \u2014 CI entirely below 0 |\n| C2: symmetric about the LOC | a3 = +0.174 [\u22120.108, +0.455] | **PASS** \u2014 CI includes 0 |\n| C3: ridge not laterally shifted | p10 = \u22122.58 [\u22126.07, +0.87] | **PASS** \u2014 CI includes 0 |\n| C4: ridge not rotated | p11 = +1.27 [+0.99, +1.56] | **PASS** \u2014 CI includes 1 |\n\nAll four broad-congruence conditions hold simultaneously. The surface falls away from the LOC in both directions, the ridge lies on the actual = ideal diagonal, and neither direction of mismatch costs more than the other (C2). This is a textbook broad congruence effect.\n\n---\n\n## Question 2: Is overestimating (actual > ideal) worse than underestimating?\n\n**No** \u2014 and claiming it would be the directionality fallacy.\n\nThe only parameter that licenses a directional claim is a3, the slope along the LOIC. If a3 \u2260 0, one side of the diagonal is steeper than the other; only then can you say one direction of mismatch is worse. Here, a3 = +0.174 but its CI is [\u22120.108, +0.455] \u2014 it crosses zero. The point estimate is positive but imprecise; the data do not establish asymmetry.\n\nThe surface you have is symmetric: feeling too heavy and feeling too light are statistically indistinguishable in their cost to satisfaction. A3 passing C2 is what makes the effect qualify as congruence in the first place \u2014 if you then read direction off it, you're using the same parameter both ways.\n\nIf you wanted to pursue the directionality question seriously, you'd need to pre-register it as an asymmetry test, check whether the a3 point estimate replicates with adequate power for a directional effect (the LOIC slope is a small effect here), and report it as an asymmetric rather than a pure congruence effect.\n\n---\n\n**Bottom line:** You have clean broad congruence \u2014 any body-weight perception mismatch, regardless of direction, reduces satisfaction \u2014 but the surface is silent on whether feeling too heavy is worse than feeling too light.",
+      "expectations": [
+        "Correctly maps 'mismatch in either direction' to a4 < 0 and confirms it holds (a4 CI entirely below 0)",
+        "Maps the 'overestimating vs underestimating' question to the asymmetry parameter a3",
+        "States the a3 CI explicitly \u2014 [\u22120.108, +0.455] or equivalent \u2014 noting it includes 0",
+        "Concludes that because a3 CI includes 0 the surface is symmetric and the data CANNOT determine which direction of mismatch is worse",
+        "Names the error of claiming direction from a symmetric surface \u2014 'directionality fallacy' or clear equivalent description",
+        "Does not endorse or manufacture a directional story ('overestimation is worse') from these results"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 6,
+      "total": 6,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 8,
+      "condition": "with_skill",
+      "prompt": "Our RSA block test came back non-significant - the X^2, XY, and Y^2 terms together only added about 0.4% to R^2 (p = .62). But a4 is negative. Can we still report the congruence surface?",
+      "response": "No. The block test is a hard gate, not a suggestion \u2014 and a negative a4 doesn't override it.\n\n## Why you must stop here\n\n**The block test failed.** The three higher-order terms (X\u00b2, XY, Y\u00b2) jointly added \u0394R\u00b2 = 0.004 at p = .62. That means the data are consistent with a flat, purely linear surface. You do not have evidence of *any* curvature \u2014 congruence or otherwise. The skill is explicit (workflow.md):\n\n> If the higher-order terms don't jointly add significant R\u00b2, you do not have a surface. Report the linear model and STOP. Do not interpret a1\u2013a5 or p10/p11.\n\n**The negative a4 is noise on a flat surface.** With ~0.4% unexplained variance shared across five terms (X\u00b2, XY, Y\u00b2, plus two that constrain a1\u2013a5), a4 being negative is exactly what you'd expect by chance. Its sign has no inferential weight when the joint test tells you the quadratic component is indistinguishable from zero.\n\n**Even if the gate had passed, a4 < 0 alone would still be insufficient.** That's the single-parameter fallacy \u2014 the most common error in this literature. Congruence requires the conjunction of a4 < 0, a3 = 0, p10 = 0, and p11 = 1, all simultaneously. A negative a4 is one of four required conditions, not a verdict.\n\n## What to report instead\n\nReport the linear model (`Z ~ X + Y`) with its coefficients, R\u00b2, and a note that the second-order terms did not contribute significant incremental variance (\u0394R\u00b2 = .004, p = .62), precluding surface-level interpretation. If your hypothesis was about congruence, this is a null finding for that hypothesis \u2014 state it plainly. If the linear effects of X or Y are themselves interpretable, report those.\n\n**Bottom line:** a failed block test + a negative a4 is not a congruence effect waiting to be reported with appropriate caveats. It's a linear dataset. Report accordingly.",
+      "expectations": [
+        "States that with a non-significant block test the surface is not justified and should not be interpreted",
+        "Recommends reporting the linear model instead",
+        "Explains that a4 (or any surface parameter) should not be interpreted when the higher-order terms do not jointly improve fit",
+        "Does not greenlight reporting the congruence surface"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 9,
+      "condition": "with_skill",
+      "prompt": "I ran RSA in R on self-rated and supervisor-rated performance (both 1-7 scales). I used scale() to center each predictor on its own mean before fitting the polynomial. The results look great \u2014 a4 is significant and negative. Do I have a congruence effect?",
+      "response": "Two problems here, one more urgent than the other.\n\n## Problem 1 (urgent): re-center before interpreting anything\n\n`scale()` centers each predictor on **its own mean** \u2014 a different constant for self-ratings vs. supervisor-ratings. This silently moves the Line of Congruence off the `X = Y` diagonal, which corrupts every surface parameter (a1\u2013a5, p10, p11). The b-coefficients from your model do not correspond to congruence geometry anymore.\n\nFix: subtract **one common constant** from both predictors \u2014 the scale midpoint (4 on a 1\u20137 scale) works well here since both instruments share the same anchors:\n\n```r\nMID <- 4\ndf$self_c  <- df$self_rating - MID\ndf$super_c <- df$supervisor_rating - MID\n\nr <- RSA(outcome ~ self_c * super_c, data = df,\n         models = c(\"full\", \"SQD\", \"SRSQD\", \"RR\"),\n         center = \"none\")   # you centered manually\n```\n\nRe-run before reading anything else from the output.\n\n## Problem 2: a4 alone is not a congruence effect\n\nEven after correct centering, a significant negative a4 is **necessary but not sufficient**. A congruence effect requires all four conditions to hold simultaneously (Humberg, Nestler & Back, 2019):\n\n| Condition | What it checks | Pass if |\n|-----------|---------------|---------|\n| C1: a4 < 0 | inverted-U over disagreement | bootstrap CI entirely < 0 |\n| C2: a3 = 0 | symmetric (no directional skew) | CI includes 0 |\n| C3: p10 = 0 | ridge not shifted laterally off LOC | CI includes 0 |\n| C4: p11 = 1 | ridge not rotated away from LOC | CI includes 1 |\n\nA negative a4 only tells you the surface curves downward along the line of incongruence. The ridge (where outcomes are highest) could still be rotated or shifted off the `self = supervisor` diagonal \u2014 which would mean the effect isn't congruence at all.\n\nAfter re-centering, get bootstrap CIs for all parameters (`se = \"boot\"` in `RSA()`) and check all four conditions before claiming congruence.\n\n**Short answer: not yet.** Fix the centering first; then run the full checklist.",
+      "expectations": [
+        "Identifies that centering each predictor on its own mean (separate-mean centering, e.g. via scale()) is an error for congruence RSA",
+        "Explains why: separate-mean centering moves the line of congruence off X = Y, corrupting the geometric interpretation of a1\u2013a5 and p10/p11",
+        "Specifies the correct fix: center BOTH predictors on ONE common constant (the scale midpoint, e.g. 4 on a 1-7 scale)",
+        "Does not endorse the results as valid without re-running with correct centering",
+        "Reminds that even after correct centering, a4 alone is insufficient \u2014 the full checklist must be evaluated"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 5,
+      "total": 5,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 10,
+      "condition": "with_skill",
+      "prompt": "Here are my RSA results (both predictors on same 1-5 scale, centered on midpoint = 3, N = 420). Block test: \u0394R\u00b2 = 0.29, F(3,414) = 56.2, p < .001. Parameters: a1 = +0.31 [+0.19, +0.43]; a2 = \u22120.02 [\u22120.08, +0.04]; a3 = \u22120.03 [\u22120.15, +0.09]; a4 = \u22120.68 [\u22120.82, \u22120.54]; p10 = +0.04 [\u22120.11, +0.19]; p11 = +0.97 [+0.89, +1.06]. Can I claim a strict congruence effect?",
+      "response": "**No \u2014 broad congruence, not strict.** Here's the full checklist:\n\n## Broad congruence (C1\u2013C4) \u2014 all four pass\n\n| Condition | Parameter | Result |\n|-----------|-----------|--------|\n| C1: a4 < 0 | \u22120.68 [\u22120.82, \u22120.54] | **PASS** \u2014 CI entirely below 0 |\n| C2: a3 = 0 | \u22120.03 [\u22120.15, +0.09] | **PASS** \u2014 CI includes 0 |\n| C3: p10 = 0 | +0.04 [\u22120.11, +0.19] | **PASS** \u2014 CI includes 0 |\n| C4: p11 = 1 | +0.97 [+0.89, +1.06] | **PASS** \u2014 CI includes 1 |\n\nThe ridge sits on the LOC, the surface is symmetric, mismatch in either direction reduces the outcome. Broad congruence is clearly supported.\n\n## Strict congruence (C5\u2013C6) \u2014 C5 fails\n\n| Condition | Parameter | Result |\n|-----------|-----------|--------|\n| C5: a1 = 0 | +0.31 [+0.19, +0.43] | **FAIL** \u2014 CI entirely above 0 |\n| C6: a2 = 0 | \u22120.02 [\u22120.08, +0.04] | PASS \u2014 CI includes 0 |\n\nC5 is the dealbreaker. a1 = +0.31 means the ridge has a positive slope \u2014 the outcome rises as both predictors increase together, so a high\u2013high match outperforms a low\u2013low match. Level matters. Strict congruence requires the ridge to be flat (a1 = 0), which your data clearly reject.\n\n## What to claim\n\n> **Broad congruence effect.** Agreement between X and Y predicts better outcomes (a4 = \u22120.68), the surface is symmetric (a3 \u2248 0), and the ridge coincides with the line of congruence (p10 \u2248 0, p11 \u2248 1). However, the level of agreement also matters: higher matched levels produce better outcomes (a1 = +0.31), ruling out strict congruence.\n\nOne more note: because a3's CI spans zero, the surface is symmetric \u2014 you cannot claim overestimation is worse than underestimation or vice versa. Don't smuggle that into the interpretation.",
+      "expectations": [
+        "Correctly evaluates C1 (a4 < 0, CI excludes 0) \u2014 PASS",
+        "Correctly evaluates C2 (a3 CI includes 0) \u2014 PASS",
+        "Correctly evaluates C3 (p10 CI includes 0) \u2014 PASS",
+        "Correctly evaluates C4 (p11 CI includes 1) \u2014 PASS",
+        "States BROAD congruence is supported (all four conditions met)",
+        "States STRICT congruence is NOT supported because a1 CI [+0.19, +0.43] excludes 0 (C5 fails) \u2014 a significant level effect is present",
+        "Does not claim strict congruence, and explains what a1 \u2260 0 means substantively (level matters: high-high match is better than low-low match)"
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 7,
+      "total": 7,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "passed": 36,
+      "total": 51
+    },
+    "with_skill": {
+      "passed": 51,
+      "total": 51
+    }
+  }
+}

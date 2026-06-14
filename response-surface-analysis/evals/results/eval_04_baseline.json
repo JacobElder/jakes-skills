@@ -1,0 +1,22 @@
+{
+  "eval_id": 4,
+  "condition": "baseline",
+  "prompt": "I want to use response surface methodology to find the temperature and pressure settings that maximize yield in our chemical reactor. We can run about 20 experimental runs. How should I design this?",
+  "response": "This directory is a psychological RSA (Response Surface Analysis) skill \u2014 a different technique. Your question is about RSM (Response Surface Methodology) for process optimization, which I can answer directly.\n\n---\n\n## RSM Design for 2-Factor Optimization (~20 runs)\n\n**Recommended design: Central Composite Design (CCD)** \u2014 specifically a **rotatable CCC** (circumscribed).\n\n### Structure\n\nFor 2 factors (temperature, pressure), a CCD consists of:\n\n| Point type | Count | Coded values |\n|---|---|---|\n| Factorial | 4 | (\u00b11, \u00b11) |\n| Axial/star | 4 | (\u00b1\u03b1, 0), (0, \u00b1\u03b1) |\n| Center | 5\u20136 | (0, 0) |\n\nFor rotatability with k=2: **\u03b1 = \u221a2 \u2248 1.414**\n\nThat's 13\u201314 runs. With your budget of 20, use the remaining 6\u20137 as **replicated center points** \u2014 they give you pure-error estimation and power for lack-of-fit testing, which tells you if the quadratic model is actually adequate.\n\n### Model you'll fit\n\n```\nyield = \u03b2\u2080 + \u03b2\u2081T + \u03b2\u2082P + \u03b2\u2081\u2081T\u00b2 + \u03b2\u2082\u2082P\u00b2 + \u03b2\u2081\u2082TP + \u03b5\n```\n\n6 parameters, 20 runs \u2192 good overdetermination (effective df for error ~14).\n\n### Practical steps\n\n1. **Set factor ranges** \u2014 typically \u00b120\u201330% around your current operating point. The \u00b11 levels are your factorial range; the \u00b1\u03b1 levels extend slightly beyond (CCC) or sit at the boundary (face-centered CCF if you can't exceed the range).\n\n2. **Choose CCF vs CCC**: If temperature or pressure has hard physical limits (e.g., can't exceed 300\u00b0C), use **face-centered** (\u03b1 = 1) so axial points don't exceed your factorial bounds. You lose strict rotatability but stay within safe operating limits.\n\n3. **Randomize run order** to protect against time trends in the reactor.\n\n4. **Fit and optimize** \u2014 find the stationary point via canonical analysis. In R:\n   ```r\n   library(rsm)\n   model <- rsm(yield ~ SO(temp, pressure), data = runs)\n   summary(model)  # gives stationary point, eigenvalues (saddle/max/min)\n   ```\n   In Python, use `pyDOE2` to generate the design and `statsmodels` to fit, then gradient ascent to find the optimum.\n\n5. **Run 2\u20133 confirmation runs** at the predicted optimum before locking in settings.\n\n### One tradeoff to flag\n\nIf your current operating point is far from the optimum, the CCD's quadratic model may not capture the whole surface \u2014 consider running a steepest-ascent phase first (a simple 2\u00b2 factorial) to get close, then the CCD. With 20 runs, you could allocate 4 for steepest ascent + 16 for a CCD and still have a sound design.\n\nWhat ranges are you considering for temperature and pressure? That'll determine whether face-centered or circumscribed is the safer call.",
+  "expectations": [
+    "Identifies that this is design-of-experiments / process-optimization RSM (Box-Wilson tradition), a different method from congruence RSA",
+    "Does NOT apply the congruence framework (no line of congruence / incongruence, no a1-a4 congruence checklist)",
+    "Points toward appropriate DoE tooling: central composite or Box-Behnken designs and/or desirability functions",
+    "Cleanly distinguishes the two senses of 'response surface'"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

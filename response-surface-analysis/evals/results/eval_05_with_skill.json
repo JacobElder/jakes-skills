@@ -1,0 +1,22 @@
+{
+  "eval_id": 5,
+  "condition": "with_skill",
+  "prompt": "Here's data where I have employees' salary in dollars and their job-satisfaction Likert score (1-5), and I want to do a response surface analysis to see if the fit between pay and satisfaction predicts turnover intention.",
+  "response": "This is actually the clearest case where the RSA skill says to **stop before running anything**: the commensurability gate fails.\n\n## The problem\n\nSalary (continuous, in dollars) and job satisfaction (Likert 1\u20135) are on completely different metrics with different units and different anchors. The RSA machinery \u2014 the line of congruence, a1\u2013a5, p10/p11 \u2014 is only defined when X and Y are on the *same scale*, so that `X = Y` has a substantive meaning like \"person and environment agree.\" \n\nA salary of $60,000 \"equaling\" a satisfaction score of 5 is meaningless. The math will run, but every parameter it produces will be uninterpretable. This isn't a fixable centering issue \u2014 the variables are fundamentally incommensurable.\n\n## What you probably actually want\n\nDepends on your theoretical question:\n\n| Question | Right tool |\n|---|---|\n| Does pay \u00d7 satisfaction *interact* to predict turnover? | Moderated regression: `turnover ~ salary + satisfaction + salary\u00d7satisfaction` |\n| Does whether someone feels **paid fairly** predict turnover? | Single predictor: perceived pay equity Likert item \u2192 plain regression |\n| Does congruence between **desired pay** and **actual pay** predict turnover? | RSA is right \u2014 both in dollars, commensurable |\n| Does congruence between **pay satisfaction** and **overall job satisfaction** predict turnover? | RSA is right \u2014 both Likert, commensurable |\n\nThe moderated regression option is almost certainly the honest model for what you're describing. It asks \"does the effect of salary on turnover depend on satisfaction level?\" without pretending the two variables are on the same scale.\n\nWhat's the underlying theory you're trying to test? That'll clarify which of these fits.",
+  "expectations": [
+    "Identifies that the two predictors are not on the same metric (non-commensurable), so 'fit/congruence' between them is undefined",
+    "Explains that the line-of-congruence machinery requires commensurable predictors",
+    "Does not proceed to run a standard congruence RSA treating salary-satisfaction match as meaningful",
+    "Suggests a more appropriate framing (e.g. moderated/interaction regression, or commensurable predictors)"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

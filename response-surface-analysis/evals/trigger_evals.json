@@ -1,0 +1,22 @@
+[
+  {"query": "I have self-rated competence and manager-rated competence on the same 1-7 scale plus a job-satisfaction outcome. I want to test whether the agreement between self and manager views predicts satisfaction.", "should_trigger": true},
+  {"query": "should I use a difference score or polynomial regression to test person-environment fit?", "should_trigger": true},
+  {"query": "my reviewer says difference scores for self-other agreement are problematic, what should I use instead?", "should_trigger": true},
+  {"query": "I want to test whether actual-ideal self-discrepancy on the same 1-7 measure predicts depression", "should_trigger": true},
+  {"query": "run RSA to test whether leader-follower value congruence predicts team performance", "should_trigger": true},
+  {"query": "what is the line of congruence and line of incongruence in polynomial regression for fit?", "should_trigger": true},
+  {"query": "I have two same-scale ratings and want to know if their match or mismatch predicts an outcome", "should_trigger": true},
+  {"query": "my colleague used a discrepancy score for person-org fit — reviewer two is asking about Edwards and Parry 1993", "should_trigger": true},
+  {"query": "how do I interpret a4 in a response surface analysis for self-other congruence?", "should_trigger": true},
+  {"query": "should I use the Shanock primer method to test supplies-values fit?", "should_trigger": true},
+  {"query": "I have pre-test and post-test scores for 80 patients in a therapy trial. Should I compute a difference score (post minus pre) to measure change?", "should_trigger": false},
+  {"query": "how do I compute Jacobson-Truax reliable change index for my intervention study?", "should_trigger": false},
+  {"query": "I want to use gain scores in my regression to predict outcomes — my reviewer says residualized gain scores are better, who is right?", "should_trigger": false},
+  {"query": "my participants answered a 20-item scale at time 1 and time 2. I want to look at the change scores across the two time points.", "should_trigger": false},
+  {"query": "how do I find the temperature and pressure settings that maximize yield using a Box-Behnken response surface design?", "should_trigger": false},
+  {"query": "I need to optimize reaction conditions with a central composite design and desirability function", "should_trigger": false},
+  {"query": "do a random forest regression to predict customer churn from demographic features", "should_trigger": false},
+  {"query": "we have a pre-post design and want to know if the treatment improved scores. Which test should I use?", "should_trigger": false},
+  {"query": "run a multilevel model on these longitudinal data — we have 4 time points per person", "should_trigger": false},
+  {"query": "calculate the effect size for the change from baseline to follow-up on the depression scale", "should_trigger": false}
+]

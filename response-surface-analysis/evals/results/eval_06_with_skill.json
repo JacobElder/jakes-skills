@@ -1,0 +1,24 @@
+{
+  "eval_id": 6,
+  "condition": "with_skill",
+  "prompt": "I'm planning a study testing whether congruence between leader and follower values predicts team performance. Values are measured on the same 1-7 instrument for both. How many participants do I need?",
+  "response": "Four things determine the answer, and one of them is a design question you need to settle first.\n\n## The unit of analysis is teams, not people\n\nYour outcome is team performance, so **N = number of teams** \u2014 not followers. If you have 40 teams of 10 people each, N = 40 for the RSA. This is the most common source of overconfidence in studies like this. Be sure you're planning team N, not headcount.\n\n## What drives power in RSA\n\nRSA is hungrier than linear regression because the congruence signal lives in the quadratic and product terms (X\u00b2, XY, Y\u00b2), which are exactly what small samples and measurement error attenuate. Three factors dominate:\n\n| Factor | Rule of thumb | Why it matters |\n|--------|---------------|----------------|\n| **N** | 2\u20133\u00d7 your linear-model N | five-term polynomial, nonlinear parameter estimates |\n| **r(X, Y)** \u2014 leader\u2013follower value correlation | every 0.1 increase roughly halves variance along X \u2212 Y | the congruence dimension *is* X \u2212 Y; no variance there, no power |\n| **Effect size k** \u2014 LOIC curvature | often 0.2\u20130.4 in PE-fit literature | small effects need large N |\n\n## Rough targets before simulation\n\nIf you assume modest congruence (k \u2248 0.3), leader\u2013follower correlation around r = 0.3\u20130.4 (plausible for shared-context values), and reasonably reliable measures (\u03b1 \u2248 .80):\n\n- **~100 teams** \u2014 marginal; expect wide CIs on a4, p10, p11; risky\n- **~150\u2013200 teams** \u2014 reasonable for detecting a moderate effect on the broad-congruence verdict (all four conditions jointly)\n- **~250\u2013300 teams** \u2014 comfortable; also lets you detect the checklist pattern rather than just a4 alone\n\n## Run the simulation for your specific assumptions\n\nThe skill ships a power sim that targets the *full checklist* (all four broad-congruence conditions simultaneously) \u2014 a stricter and more honest target than \"is a4 significant?\":\n\n```bash\npython scripts/rsa_power_sim.py \\\n  --n 100 150 200 250 300 \\\n  --k 0.3 \\\n  --rxy 0.35 \\\n  --reps 1000\n```\n\nSweep `--k` (0.2 to 0.4) and `--rxy` (0.2 to 0.5) to bracket your uncertainty.\n\n## Questions that sharpen the estimate\n\n1. **How is \"follower values\" operationalized?** Single focal follower per team, or aggregate across all followers? Aggregating reduces measurement error but requires justifying rwg / ICC before the RSA.\n2. **What's your expected r(leader values, follower values)?** High correlation (> 0.5) is a serious power killer \u2014 it collapses variance on the X \u2212 Y dimension.\n3. **What effect size does the PE-fit / values-congruence literature in your domain suggest?** Person\u2013organization fit effects on performance are often modest (d \u2248 0.2\u20130.3).\n4. **Are teams nested in organizations?** If yes, you may need multilevel RSA and a larger N still.\n\nGive me those numbers and I can run the sim or work through a more precise estimate.",
+  "expectations": [
+    "States that RSA requires more N than a linear model (roughly 2-3x) because the curvature/product terms carry the signal",
+    "Recommends simulation-based power analysis for the specific hypothesized surface rather than a fixed rule of thumb",
+    "Mentions that the predictor correlation matters (high r between predictors lowers power by reducing variance along X - Y)",
+    "Mentions measurement reliability of the predictors as relevant to power",
+    "Offers to run or references a power simulation (e.g. rsa_power_sim.py) with effect-size and correlation inputs"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

@@ -1,0 +1,28 @@
+{
+  "eval_id": 10,
+  "condition": "with_skill",
+  "prompt": "Here are my RSA results (both predictors on same 1-5 scale, centered on midpoint = 3, N = 420). Block test: \u0394R\u00b2 = 0.29, F(3,414) = 56.2, p < .001. Parameters: a1 = +0.31 [+0.19, +0.43]; a2 = \u22120.02 [\u22120.08, +0.04]; a3 = \u22120.03 [\u22120.15, +0.09]; a4 = \u22120.68 [\u22120.82, \u22120.54]; p10 = +0.04 [\u22120.11, +0.19]; p11 = +0.97 [+0.89, +1.06]. Can I claim a strict congruence effect?",
+  "response": "**No \u2014 broad congruence, not strict.** Here's the full checklist:\n\n## Broad congruence (C1\u2013C4) \u2014 all four pass\n\n| Condition | Parameter | Result |\n|-----------|-----------|--------|\n| C1: a4 < 0 | \u22120.68 [\u22120.82, \u22120.54] | **PASS** \u2014 CI entirely below 0 |\n| C2: a3 = 0 | \u22120.03 [\u22120.15, +0.09] | **PASS** \u2014 CI includes 0 |\n| C3: p10 = 0 | +0.04 [\u22120.11, +0.19] | **PASS** \u2014 CI includes 0 |\n| C4: p11 = 1 | +0.97 [+0.89, +1.06] | **PASS** \u2014 CI includes 1 |\n\nThe ridge sits on the LOC, the surface is symmetric, mismatch in either direction reduces the outcome. Broad congruence is clearly supported.\n\n## Strict congruence (C5\u2013C6) \u2014 C5 fails\n\n| Condition | Parameter | Result |\n|-----------|-----------|--------|\n| C5: a1 = 0 | +0.31 [+0.19, +0.43] | **FAIL** \u2014 CI entirely above 0 |\n| C6: a2 = 0 | \u22120.02 [\u22120.08, +0.04] | PASS \u2014 CI includes 0 |\n\nC5 is the dealbreaker. a1 = +0.31 means the ridge has a positive slope \u2014 the outcome rises as both predictors increase together, so a high\u2013high match outperforms a low\u2013low match. Level matters. Strict congruence requires the ridge to be flat (a1 = 0), which your data clearly reject.\n\n## What to claim\n\n> **Broad congruence effect.** Agreement between X and Y predicts better outcomes (a4 = \u22120.68), the surface is symmetric (a3 \u2248 0), and the ridge coincides with the line of congruence (p10 \u2248 0, p11 \u2248 1). However, the level of agreement also matters: higher matched levels produce better outcomes (a1 = +0.31), ruling out strict congruence.\n\nOne more note: because a3's CI spans zero, the surface is symmetric \u2014 you cannot claim overestimation is worse than underestimation or vice versa. Don't smuggle that into the interpretation.",
+  "expectations": [
+    "Correctly evaluates C1 (a4 < 0, CI excludes 0) \u2014 PASS",
+    "Correctly evaluates C2 (a3 CI includes 0) \u2014 PASS",
+    "Correctly evaluates C3 (p10 CI includes 0) \u2014 PASS",
+    "Correctly evaluates C4 (p11 CI includes 1) \u2014 PASS",
+    "States BROAD congruence is supported (all four conditions met)",
+    "States STRICT congruence is NOT supported because a1 CI [+0.19, +0.43] excludes 0 (C5 fails) \u2014 a significant level effect is present",
+    "Does not claim strict congruence, and explains what a1 \u2260 0 means substantively (level matters: high-high match is better than low-low match)"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 7,
+  "total": 7,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

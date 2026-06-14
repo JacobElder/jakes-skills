@@ -1,0 +1,137 @@
+{
+  "skill_name": "response-surface-analysis",
+  "notes": "Evals test correctness of method and interpretation, not mere presence of RSA vocabulary. They include negative guards (cases where RSA should NOT be claimed or NOT be used) and over-application guards (difference-score redirection, DoE/RSM disambiguation, directionality fallacy). Ground-truth verdicts for the data-bearing evals were confirmed by running scripts/rsa_python.py.",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I've got self-rated and informant-rated competence (both on the same 1-7 scale) plus a wellbeing score for 350 people. The file is self_informant_wellbeing.csv. I want to test whether agreement between self and informant views predicts wellbeing. Can you run the analysis and tell me what you find?",
+      "files": ["evals/files/self_informant_wellbeing.csv"],
+      "expected_output": "A full congruence RSA: centers both predictors on the common scale midpoint (4), runs the block test (passes, large delta-R^2), reports a1-a5/p10/p11 with bootstrap CIs, and concludes a BROAD congruence effect that is NOT strict (a1 > 0 indicates a level effect). Should produce or describe a surface plot.",
+      "expectations": [
+        "Centers BOTH predictors on a single common constant (the scale midpoint 4, not separate means) — evidenced either by explicitly stating the centering constant, OR by producing results consistent with centering on 4 (e.g. a4 ≈ -1.43, block test ΔR² ≈ 0.54)",
+        "Runs and reports the block test / incremental F for the higher-order terms as a gate before interpreting the surface",
+        "Reports a4 with a bootstrap (or otherwise simulation-based) confidence interval that lies entirely below 0 (e.g. CI around -1.4, upper bound < 0)",
+        "Evaluates the full congruence checklist (a4<0, a3=0, p10=0, p11=1), not a4 alone",
+        "Concludes a BROAD congruence effect",
+        "Reports the bootstrap CI for a1 explicitly, and that CI excludes 0 (a1 significantly positive — e.g. lower bound > 0.2), using this to conclude the effect is NOT strict congruence because a level effect coexists",
+        "Does not claim a direction-of-mismatch result (overestimation vs underestimation) from this symmetric surface"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "My colleague computed a discrepancy score as (perceived_support - desired_support) and regressed job satisfaction on it and its square. Reviewer 2 is unhappy. What's the issue and what should we do instead?",
+      "files": [],
+      "expected_output": "Explains why difference/discrepancy scores are problematic (impose untested equal-and-opposite constraints, discard level, confound components, compound unreliability) and redirects to RSA: fit the full second-order polynomial in both components, center on a common constant, evaluate surface parameters / checklist. Should NOT defend the difference-score approach.",
+      "expectations": [
+        "Identifies that the difference score imposes untested constraints (equal and opposite component coefficients; XY = -2*square coefficient) and discards the level of the pair",
+        "Mentions the reliability problem of difference scores",
+        "Recommends replacing it with polynomial regression / RSA on the two components entered separately",
+        "Specifies centering both components on a common value before fitting",
+        "Does not endorse keeping the difference-score analysis as-is"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We ran RSA and a4 was -0.21, p = .004. So we have a congruence effect, right? Writing it up now.",
+      "files": [],
+      "expected_output": "Pushes back: a significant negative a4 alone does NOT establish congruence (single-parameter fallacy). Lists the additional required conditions (a3 = 0, p10 = 0, p11 = 1 for broad congruence) and asks for / explains how to check them before claiming congruence.",
+      "expectations": [
+        "States explicitly that a4 < 0 by itself is insufficient to claim a congruence effect",
+        "Names the additional conditions required: a3 not different from 0, p10 not different from 0, p11 not different from 1",
+        "Frames the congruence verdict as a conjunction of conditions (broad congruence), referencing the checklist logic",
+        "Does not simply agree that the congruence effect is established"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "I want to use response surface methodology to find the temperature and pressure settings that maximize yield in our chemical reactor. We can run about 20 experimental runs. How should I design this?",
+      "files": [],
+      "expected_output": "Recognizes this is Box-Wilson / design-of-experiments RSM (process optimization), NOT congruence RSA. Should disambiguate clearly and point toward DoE designs (central composite / Box-Behnken, desirability functions) rather than the congruence/LOC-LOIC machinery. Should not fit a congruence surface or talk about lines of congruence.",
+      "expectations": [
+        "Identifies that this is design-of-experiments / process-optimization RSM (Box-Wilson tradition), a different method from congruence RSA",
+        "Does NOT apply the congruence framework (no line of congruence / incongruence, no a1-a4 congruence checklist)",
+        "Points toward appropriate DoE tooling: central composite or Box-Behnken designs and/or desirability functions",
+        "Cleanly distinguishes the two senses of 'response surface'"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Here's data where I have employees' salary in dollars and their job-satisfaction Likert score (1-5), and I want to do a response surface analysis to see if the fit between pay and satisfaction predicts turnover intention.",
+      "files": [],
+      "expected_output": "Flags that salary (dollars) and satisfaction (1-5 Likert) are NOT commensurable, so a congruence/fit interpretation is undefined. Should decline to run a congruence RSA on these as 'fit' predictors and suggest what would actually answer the question (e.g. moderated regression, or finding genuinely commensurable predictors).",
+      "expectations": [
+        "Identifies that the two predictors are not on the same metric (non-commensurable), so 'fit/congruence' between them is undefined",
+        "Explains that the line-of-congruence machinery requires commensurable predictors",
+        "Does not proceed to run a standard congruence RSA treating salary-satisfaction match as meaningful",
+        "Suggests a more appropriate framing (e.g. moderated/interaction regression, or commensurable predictors)"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "I'm planning a study testing whether congruence between leader and follower values predicts team performance. Values are measured on the same 1-7 instrument for both. How many participants do I need?",
+      "files": [],
+      "expected_output": "Explains that RSA needs substantially more N than a linear model (~2-3x) because power depends on quadratic/product terms, predictor correlation, and reliability; recommends simulation-based power for the hypothesized surface and points to scripts/rsa_power_sim.py. Should mention that high predictor correlation reduces power by shrinking X-Y variance.",
+      "expectations": [
+        "States that RSA requires more N than a linear model (roughly 2-3x) because the curvature/product terms carry the signal",
+        "Recommends simulation-based power analysis for the specific hypothesized surface rather than a fixed rule of thumb",
+        "Mentions that the predictor correlation matters (high r between predictors lowers power by reducing variance along X - Y)",
+        "Mentions measurement reliability of the predictors as relevant to power",
+        "Offers to run or references a power simulation (e.g. rsa_power_sim.py) with effect-size and correlation inputs"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "I ran RSA on actual vs. ideal body-weight perception data (both on a 0-100 scale, centered on the scale midpoint = 50). Block test: ΔR² = 0.38, F(3,274) = 58.2, p < .001. Surface parameters with 95% bootstrap CIs: a4 = −0.095 [−0.121, −0.079]; a3 = +0.174 [−0.108, +0.455]; p10 = −2.58 [−6.07, +0.87]; p11 = +1.27 [+0.99, +1.56]. Two questions: (1) Does mismatch in EITHER direction lower satisfaction? (2) Is overestimating (actual > ideal) worse than underestimating (ideal > actual)?",
+      "files": [],
+      "expected_output": "Answers (1) Yes — a4 < 0 and CI entirely below 0, so mismatch in either direction reduces satisfaction. Answers (2) Cannot conclude — a3 CI [-0.108, +0.455] includes 0 (symmetric surface); claiming overestimation is worse than underestimation would be the directionality fallacy. Notes that only a3 ≠ 0 (CI excluding 0) licenses a directional claim.",
+      "expectations": [
+        "Correctly maps 'mismatch in either direction' to a4 < 0 and confirms it holds (a4 CI entirely below 0)",
+        "Maps the 'overestimating vs underestimating' question to the asymmetry parameter a3",
+        "States the a3 CI explicitly — [−0.108, +0.455] or equivalent — noting it includes 0",
+        "Concludes that because a3 CI includes 0 the surface is symmetric and the data CANNOT determine which direction of mismatch is worse",
+        "Names the error of claiming direction from a symmetric surface — 'directionality fallacy' or clear equivalent description",
+        "Does not endorse or manufacture a directional story ('overestimation is worse') from these results"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Our RSA block test came back non-significant - the X^2, XY, and Y^2 terms together only added about 0.4% to R^2 (p = .62). But a4 is negative. Can we still report the congruence surface?",
+      "files": [],
+      "expected_output": "No. Explains that a non-significant block test means the surface is not justified; you should report the linear model and not interpret a1-a5 (including a4). Reinforces the gate logic and that interpreting parameters past a failed gate is an error.",
+      "expectations": [
+        "States that with a non-significant block test the surface is not justified and should not be interpreted",
+        "Recommends reporting the linear model instead",
+        "Explains that a4 (or any surface parameter) should not be interpreted when the higher-order terms do not jointly improve fit",
+        "Does not greenlight reporting the congruence surface"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "I ran RSA in R on self-rated and supervisor-rated performance (both 1-7 scales). I used scale() to center each predictor on its own mean before fitting the polynomial. The results look great — a4 is significant and negative. Do I have a congruence effect?",
+      "files": [],
+      "expected_output": "Flags the separate-mean centering error immediately. Scale() centers each predictor on its own mean — that moves the line of congruence off X=Y (it's now X_c = Y_c, which is (X - mean_X) = (Y - mean_Y), i.e. X - Y = mean_X - mean_Y ≠ 0 in general). This corrupts all surface parameters: the LOC and LOIC no longer represent what you think they do. The fix is to center BOTH predictors on ONE common constant (scale midpoint = 4). Should also note that even after re-centering, a4 alone is not sufficient for congruence.",
+      "expectations": [
+        "Identifies that centering each predictor on its own mean (separate-mean centering, e.g. via scale()) is an error for congruence RSA",
+        "Explains why: separate-mean centering moves the line of congruence off X = Y, corrupting the geometric interpretation of a1–a5 and p10/p11",
+        "Specifies the correct fix: center BOTH predictors on ONE common constant (the scale midpoint, e.g. 4 on a 1-7 scale)",
+        "Does not endorse the results as valid without re-running with correct centering",
+        "Reminds that even after correct centering, a4 alone is insufficient — the full checklist must be evaluated"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Here are my RSA results (both predictors on same 1-5 scale, centered on midpoint = 3, N = 420). Block test: ΔR² = 0.29, F(3,414) = 56.2, p < .001. Parameters: a1 = +0.31 [+0.19, +0.43]; a2 = −0.02 [−0.08, +0.04]; a3 = −0.03 [−0.15, +0.09]; a4 = −0.68 [−0.82, −0.54]; p10 = +0.04 [−0.11, +0.19]; p11 = +0.97 [+0.89, +1.06]. Can I claim a strict congruence effect?",
+      "files": [],
+      "expected_output": "No — the effect meets BROAD congruence (C1-C4 all pass) but NOT strict. Strict congruence additionally requires a1 = 0 (C5) and a2 = 0 (C6). Here a1 = +0.31 with CI [+0.19, +0.43] which excludes 0, meaning the LOC has a significant positive slope — outcomes are higher when both predictors are high than when both are low (a level effect). C5 fails. Should state the distinction clearly: broad congruence is met, strict is not.",
+      "expectations": [
+        "Correctly evaluates C1 (a4 < 0, CI excludes 0) — PASS",
+        "Correctly evaluates C2 (a3 CI includes 0) — PASS",
+        "Correctly evaluates C3 (p10 CI includes 0) — PASS",
+        "Correctly evaluates C4 (p11 CI includes 1) — PASS",
+        "States BROAD congruence is supported (all four conditions met)",
+        "States STRICT congruence is NOT supported because a1 CI [+0.19, +0.43] excludes 0 (C5 fails) — a significant level effect is present",
+        "Does not claim strict congruence, and explains what a1 ≠ 0 means substantively (level matters: high-high match is better than low-low match)"
+      ]
+    }
+  ]
+}

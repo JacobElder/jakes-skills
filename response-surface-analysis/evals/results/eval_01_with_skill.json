@@ -1,0 +1,28 @@
+{
+  "eval_id": 1,
+  "condition": "with_skill",
+  "prompt": "I've got self-rated and informant-rated competence (both on the same 1-7 scale) plus a wellbeing score for 350 people. The file is self_informant_wellbeing.csv. I want to test whether agreement between self and informant views predicts wellbeing. Can you run the analysis and tell me what you find?",
+  "response": "The results are clear. Here's what the analysis found:\n\n---\n\n## RSA Results: Self\u2013Informant Agreement \u2192 Wellbeing\n\n**N = 350, scale midpoint = 4 used for centering.**\n\n### Block test (gate) \u2014 passed strongly\nHigher-order terms (X\u00b2, XY, Y\u00b2) jointly added **\u0394R\u00b2 = .54** above the linear model, F(3, 344) = 171.94, p = 4.3\u00d710\u207b\u2076\u2078. A curved surface is clearly warranted.\n\n### Surface parameters (with 95% bootstrap CIs)\n\n| Parameter | Estimate | 95% CI | Verdict |\n|---|---|---|---|\n| a1 \u2014 LOC slope | +0.268 | [+0.211, +0.324] | **sig. positive** |\n| a2 \u2014 LOC curvature | \u2248 0.000 | [\u22120.036, +0.038] | n.s. |\n| a3 \u2014 LOIC slope | \u22120.004 | [\u22120.116, +0.106] | n.s. |\n| a4 \u2014 LOIC curvature | \u22121.432 | [\u22121.540, \u22121.317] | **sig. negative** |\n| p10 \u2014 ridge intercept | +0.005 | [\u22120.068, +0.083] | n.s. (= 0 \u2713) |\n| p11 \u2014 ridge slope | +0.976 | [+0.895, +1.053] | n.s. (= 1 \u2713) |\n\n### Congruence verdict: **Broad congruence \u2014 all four conditions met**\n\n- **C1 \u2713** a4 < 0: The surface curves down along the LOIC \u2014 mismatch in either direction lowers wellbeing.\n- **C2 \u2713** a3 = 0: The drop is symmetric; the LOIC inverted-U peaks right at the congruence diagonal.\n- **C3 \u2713** p10 = 0: The ridge isn't shifted sideways off the LOC.\n- **C4 \u2713** p11 = 1: The ridge isn't rotated away from the diagonal.\n\n**Not strict congruence:** a1 = +0.268 (CI excludes 0), meaning the level of agreement matters \u2014 pairs where both rate competence *high* have better wellbeing than pairs where both rate it *low*. The outcome rises along the LOC.\n\n### What this means substantively\n\n1. **Agreement itself matters:** when self and informant views of competence align, wellbeing is higher \u2014 and the effect is symmetric (overestimation and underestimation hurt equally, a3 \u2248 0). Don't read a directional story into this surface.\n2. **Level also matters:** not all matched pairs are equal. A (6, 6) match predicts meaningfully better wellbeing than a (2, 2) match. This is the broad congruence pattern \u2014 congruence plus a positive LOC slope.\n3. **The ridge is right on the diagonal:** p10 \u2248 0, p11 \u2248 1 confirms the \"peak zone\" of the surface really does run along X = Y. There's no quirk where some other combination of self and informant ratings maximizes wellbeing.\n4. **The effect is large:** the full model R\u00b2 = .64, versus .10 for the linear model alone \u2014 the curvature terms carry almost all the explanatory variance. This is an unusually strong congruence signal.\n\nThe surface plot is at `/tmp/rsa_surface.png` if you want to look at it. The takeaway for reporting: self\u2013informant competence agreement shows a **broad congruence effect** on wellbeing \u2014 state the conjunction of all four conditions, note that level moderates the match effect (a1 > 0), and explicitly flag that the data cannot distinguish which direction of mismatch is worse.",
+  "expectations": [
+    "Centers BOTH predictors on a single common constant (the scale midpoint 4, not separate means) \u2014 evidenced either by explicitly stating the centering constant, OR by producing results consistent with centering on 4 (e.g. a4 \u2248 -1.43, block test \u0394R\u00b2 \u2248 0.54)",
+    "Runs and reports the block test / incremental F for the higher-order terms as a gate before interpreting the surface",
+    "Reports a4 with a bootstrap (or otherwise simulation-based) confidence interval that lies entirely below 0 (e.g. CI around -1.4, upper bound < 0)",
+    "Evaluates the full congruence checklist (a4<0, a3=0, p10=0, p11=1), not a4 alone",
+    "Concludes a BROAD congruence effect",
+    "Reports the bootstrap CI for a1 explicitly, and that CI excludes 0 (a1 significantly positive \u2014 e.g. lower bound > 0.2), using this to conclude the effect is NOT strict congruence because a level effect coexists",
+    "Does not claim a direction-of-mismatch result (overestimation vs underestimation) from this symmetric surface"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 7,
+  "total": 7,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

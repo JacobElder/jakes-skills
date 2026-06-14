@@ -1,0 +1,24 @@
+{
+  "eval_id": 2,
+  "condition": "with_skill",
+  "prompt": "My colleague computed a discrepancy score as (perceived_support - desired_support) and regressed job satisfaction on it and its square. Reviewer 2 is unhappy. What's the issue and what should we do instead?",
+  "response": "Reviewer 2 is right. This is the canonical difference-score trap, and it has several compounding problems:\n\n## What's wrong with the discrepancy-score approach\n\n**1. Untested constraints imposed silently.**\n`(P \u2212 D)` as a single predictor forces `b_perceived = \u2212b_desired` \u2014 equal magnitude, opposite sign \u2014 without testing it. The squared term `(P \u2212 D)\u00b2` expands to `P\u00b2 \u2212 2PD + D\u00b2`, which forces the P\u00b2 and D\u00b2 coefficients to be equal and the PD coefficient to be exactly \u22122\u00d7 that value. These are four parameter constraints your data never got to vote on.\n\n**2. Level information is discarded.**\nA (6,6) pair and a (2,2) pair both produce a discrepancy of 0, so both predict the same satisfaction. But high support at high desire may be very different from low support at low desire. The discrepancy score conflates them.\n\n**3. Compounded unreliability.**\nThe reliability of `P \u2212 D` is generally lower than either component alone, and especially low when P and D correlate \u2014 which they usually do. Your standard errors are inflated by variance you threw away.\n\n**4. Commensurability assumed but not shown.**\n\"Perceived\" and \"desired\" support need to be on the same metric and anchors for a difference to be meaningful. If they're not, the discrepancy is undefined.\n\n## What to do instead: second-order polynomial RSA\n\nReplace the discrepancy score with the full unconstrained polynomial:\n\n```\nSatisfaction = b0 + b1\u00b7P + b2\u00b7D + b3\u00b7P\u00b2 + b4\u00b7PD + b5\u00b7D\u00b2 + e\n```\n\nCenter both P and D on the **same constant** (e.g. the scale midpoint \u2014 not their separate means).\n\nThis lets you *test* the constraints the difference score assumed rather than imposing them. The surface parameters you then compute are:\n\n| Param | Formula | What it tells you |\n|---|---|---|\n| a1 | b1 + b2 | Does satisfaction rise as both rise together? |\n| a3 | b1 \u2212 b2 | Is one direction of mismatch worse? (only if \u2260 0) |\n| a4 | b3 \u2212 b4 + b5 | Does mismatch in either direction lower satisfaction? |\n| p10, p11 | from Hessian | Is the \"best outcome\" ridge actually on `P = D`? |\n\n**Then gate before you interpret:** run an incremental F-test \u2014 does adding P\u00b2, PD, D\u00b2 jointly improve R\u00b2 over the linear model? If not, you don't have a surface.\n\n**Congruence requires a conjunction, not just a4.** To claim fit predicts satisfaction, you need all four of these simultaneously (Humberg, Nestler & Back, 2019):\n- a4 < 0 (inverted-U off the agreement diagonal)\n- a3 \u2248 0 (symmetric \u2014 no directional tilt)\n- p10 \u2248 0 (ridge not shifted laterally)\n- p11 \u2248 1 (ridge not rotated off `P = D`)\n\nUse bootstrap CIs for all of these, not delta-method SEs.\n\n## For Reviewer 2's response\n\nThe rebuttal writes itself: the original analysis imposes four constraints on the data (equal and opposite linear effects, constrained quadratic ratio) that RSA would test. Re-run as RSA, report the block test, all five surface parameters with bootstrap CIs, and evaluate the four-condition checklist. If the reviewer is sophisticated, offer the model-comparison version: compare the constrained squared-difference model against the full polynomial via AIC/BIC + LR test.\n\nThe R `RSA` package (Sch\u00f6nbrodt) does all of this in a few lines \u2014 see `scripts/rsa_template.R` for a runnable template, or run `scripts/rsa_python.py` if the project is Python-native.",
+  "expectations": [
+    "Identifies that the difference score imposes untested constraints (equal and opposite component coefficients; XY = -2*square coefficient) and discards the level of the pair",
+    "Mentions the reliability problem of difference scores",
+    "Recommends replacing it with polynomial regression / RSA on the two components entered separately",
+    "Specifies centering both components on a common value before fitting",
+    "Does not endorse keeping the difference-score analysis as-is"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

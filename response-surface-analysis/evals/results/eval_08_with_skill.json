@@ -1,0 +1,22 @@
+{
+  "eval_id": 8,
+  "condition": "with_skill",
+  "prompt": "Our RSA block test came back non-significant - the X^2, XY, and Y^2 terms together only added about 0.4% to R^2 (p = .62). But a4 is negative. Can we still report the congruence surface?",
+  "response": "No. The block test is a hard gate, not a suggestion \u2014 and a negative a4 doesn't override it.\n\n## Why you must stop here\n\n**The block test failed.** The three higher-order terms (X\u00b2, XY, Y\u00b2) jointly added \u0394R\u00b2 = 0.004 at p = .62. That means the data are consistent with a flat, purely linear surface. You do not have evidence of *any* curvature \u2014 congruence or otherwise. The skill is explicit (workflow.md):\n\n> If the higher-order terms don't jointly add significant R\u00b2, you do not have a surface. Report the linear model and STOP. Do not interpret a1\u2013a5 or p10/p11.\n\n**The negative a4 is noise on a flat surface.** With ~0.4% unexplained variance shared across five terms (X\u00b2, XY, Y\u00b2, plus two that constrain a1\u2013a5), a4 being negative is exactly what you'd expect by chance. Its sign has no inferential weight when the joint test tells you the quadratic component is indistinguishable from zero.\n\n**Even if the gate had passed, a4 < 0 alone would still be insufficient.** That's the single-parameter fallacy \u2014 the most common error in this literature. Congruence requires the conjunction of a4 < 0, a3 = 0, p10 = 0, and p11 = 1, all simultaneously. A negative a4 is one of four required conditions, not a verdict.\n\n## What to report instead\n\nReport the linear model (`Z ~ X + Y`) with its coefficients, R\u00b2, and a note that the second-order terms did not contribute significant incremental variance (\u0394R\u00b2 = .004, p = .62), precluding surface-level interpretation. If your hypothesis was about congruence, this is a null finding for that hypothesis \u2014 state it plainly. If the linear effects of X or Y are themselves interpretable, report those.\n\n**Bottom line:** a failed block test + a negative a4 is not a congruence effect waiting to be reported with appropriate caveats. It's a linear dataset. Report accordingly.",
+  "expectations": [
+    "States that with a non-significant block test the surface is not justified and should not be interpreted",
+    "Recommends reporting the linear model instead",
+    "Explains that a4 (or any surface parameter) should not be interpreted when the higher-order terms do not jointly improve fit",
+    "Does not greenlight reporting the congruence surface"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

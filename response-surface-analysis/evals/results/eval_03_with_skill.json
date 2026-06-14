@@ -1,0 +1,22 @@
+{
+  "eval_id": 3,
+  "condition": "with_skill",
+  "prompt": "We ran RSA and a4 was -0.21, p = .004. So we have a congruence effect, right? Writing it up now.",
+  "response": "No \u2014 and this is the most common error in the RSA literature. A significant negative a4 is necessary but not sufficient for a congruence effect.\n\n**What a4 < 0 tells you:** the surface curves downward along the line of incongruence (LOIC). That's it. The ridge could be rotated off the diagonal, shifted sideways, or peaked somewhere other than the congruent point \u2014 any of which means the effect is *not* congruence.\n\nBefore you write anything up, you need to check all four conditions jointly (C1\u2013C4 from the Humberg, Nestler & Back 2019 checklist):\n\n| Condition | What it requires | How to check |\n|---|---|---|\n| **C1** | a4 < 0 | Bootstrap CI entirely below 0 \u2713 (you have this) |\n| **C2** | a3 = 0 | Bootstrap CI for a3 includes 0 |\n| **C3** | p10 = 0 | Bootstrap CI for p10 includes 0 |\n| **C4** | p11 = 1 | Bootstrap CI for p11 includes 1 |\n\nAll four must hold simultaneously. If any fails, you don't have broad congruence \u2014 you have a different surface shape that needs a different description.\n\n**What you need to do right now:**\n\n1. Pull your bootstrap CIs for a3, p10, and p11 (your RSA package output or the Python script's summary should have them).\n2. Check each CI against its reference value.\n3. Report the verdict as a conjunction, not from a4 alone.\n\nAlso check: did you have a stationary point or p10/p11 values that look wild (very large numbers)? That would be a sign the surface is nearly flat and the gate test should have stopped you.\n\nWhat does your output look like for those other parameters?",
+  "expectations": [
+    "States explicitly that a4 < 0 by itself is insufficient to claim a congruence effect",
+    "Names the additional conditions required: a3 not different from 0, p10 not different from 0, p11 not different from 1",
+    "Frames the congruence verdict as a conjunction of conditions (broad congruence), referencing the checklist logic",
+    "Does not simply agree that the congruence effect is established"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

@@ -1,0 +1,24 @@
+{
+  "eval_id": 2,
+  "condition": "baseline",
+  "prompt": "My colleague computed a discrepancy score as (perceived_support - desired_support) and regressed job satisfaction on it and its square. Reviewer 2 is unhappy. What's the issue and what should we do instead?",
+  "response": "This is the classic **difference score problem** that Edwards & Parry (1993) dismantled. Two layered issues:\n\n## What's wrong\n\n**1. Algebraic constraints the data never asked for.**\nRegressing Y on (P\u2212D) and (P\u2212D)\u00b2 is algebraically identical to running:\n\n```\nY ~ b\u2081P + b\u2082D + b\u2083P\u00b2 + b\u2084PD + b\u2085D\u00b2\n```\n...but with hard constraints baked in: `b\u2081 = \u2212b\u2082` and `b\u2083 = b\u2085 = \u2212b\u2084/2`. The data never get to test whether those constraints are true. If they're wrong, your coefficients are biased and your conclusions about \"discrepancy\" can be backwards.\n\n**2. Information collapse.**\n(P\u2212D) = 0 could mean P=2,D=2 or P=7,D=7. Those are substantively different \u2014 one is low support all around, the other is high. The difference score erases the *level* of support entirely.\n\n## What to do instead\n\nRun the **unconstrained second-order polynomial** with response surface analysis (Edwards & Parry, 1993):\n\n```\nY ~ P + D + P\u00b2 + P\u00d7D + D\u00b2 + controls\n```\n\nThen compute four surface coefficients from the five *b*s:\n\n| Coefficient | Formula | Interpretation |\n|---|---|---|\n| a\u2081 | b\u2081 + b\u2082 | Slope along congruence line (P=D) |\n| a\u2082 | b\u2083 + b\u2084 + b\u2085 | Curvature along congruence line |\n| a\u2083 | b\u2081 \u2212 b\u2082 | Slope along *in*congruence line |\n| a\u2084 | b\u2083 \u2212 b\u2084 + b\u2085 | Curvature along incongruence line |\n\na\u2081/a\u2082 tell you whether *level* of support matters when P=D; a\u2083/a\u2084 tell you whether the *gap* matters and in which direction.\n\nYou can also **test the difference score constraints** directly \u2014 fit both models and use an LR/F test. If the constraints hold, your colleague's model is fine and you have evidence for it. If they don't, RSA gives the right answer.\n\nThe R package `RSA` (Sch\u00f6nbrodt & Humberg) handles all of this, including the 3D surface plot Reviewer 2 probably also wants to see.\n\n**Key citation:** Edwards, J. R., & Parry, M. E. (1993). On the use of polynomial regression equations as an alternative to difference scores in organizational research. *Academy of Management Journal, 36*(6), 1577\u20131613.",
+  "expectations": [
+    "Identifies that the difference score imposes untested constraints (equal and opposite component coefficients; XY = -2*square coefficient) and discards the level of the pair",
+    "Mentions the reliability problem of difference scores",
+    "Recommends replacing it with polynomial regression / RSA on the two components entered separately",
+    "Specifies centering both components on a common value before fitting",
+    "Does not endorse keeping the difference-score analysis as-is"
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    false,
+    true
+  ],
+  "passed": 3,
+  "total": 5,
+  "pass_rate": 0.6,
+  "eval_passes": false
+}

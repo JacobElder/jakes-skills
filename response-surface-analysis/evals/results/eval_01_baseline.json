@@ -1,0 +1,28 @@
+{
+  "eval_id": 1,
+  "condition": "baseline",
+  "prompt": "I've got self-rated and informant-rated competence (both on the same 1-7 scale) plus a wellbeing score for 350 people. The file is self_informant_wellbeing.csv. I want to test whether agreement between self and informant views predicts wellbeing. Can you run the analysis and tell me what you find?",
+  "response": "Here are the findings:\n\n---\n\n## Response Surface Analysis: Self-Informant Agreement \u2192 Wellbeing\n\n### Model fit\n\nThe full polynomial regression (self, self\u00b2, informant, self\u00d7informant, informant\u00b2) explains **R\u00b2 = 0.639** of wellbeing variance \u2014 a massive improvement over a naive linear model that uses only self and informant ratings (R\u00b2 = 0.097). The quadratic terms add **\u0394R\u00b2 = 0.542, F(3,344) = 171.94, p < .001**, meaning the nonlinear structure is doing nearly all the work.\n\n### The key surface parameter: a4\n\n| Parameter | Estimate | 95% Bootstrap CI | Interpretation |\n|-----------|----------|------------------|----------------|\n| a1 = b1+b3 | +0.268 | [-0.035, +0.556] | Level effect along agreement line (marginal) |\n| a2 = b2+b4+b5 | 0.000 | [-0.036, +0.037] | Curvature along agreement line (flat) |\n| a3 = b1\u2212b3 | \u22120.146 | [-0.609, +0.311] | Self-inflation vs. self-deprecation asymmetry (ns) |\n| **a4 = b2\u2212b4+b5** | **\u22121.432** | **[\u22121.539, \u22121.318]** | **Curvature along incongruence axis** |\n\n**a4 = \u22121.43** is the headline. A strongly negative a4 means the response surface forms a ridge along the line of agreement (self = informant): wellbeing peaks when the two views match and drops sharply as they diverge \u2014 in either direction.\n\n### What this means substantively\n\n- **Agreement matters, direction doesn't.** Persons where self and informant ratings agree have mean wellbeing of **4.46**, while self-inflated (S > I) and self-deflated (S < I) groups average **3.82** and **3.69** respectively. The difference between those two discrepancy directions is non-significant (t = 0.84, p = .40), consistent with a3 being near zero \u2014 over-estimating and under-estimating one's competence are equally costly.\n- **Curvature along the agreement line is flat (a2 \u2248 0).** Being competent *and* accurately perceived doesn't amplify wellbeing beyond the simple congruence benefit \u2014 agreement at any level helps equally.\n- **The interaction term (S\u00d7I) drives everything.** b4 = 0.72 (p < .001) captures the core pattern: when self and informant both rate competence highly (or both rate it modestly), their product is large and wellbeing is high. A mismatch between high and low depresses wellbeing regardless of who is the more generous rater.\n\n### Bottom line\n\nSelf-informant agreement in competence perception is a robust predictor of wellbeing (\u0394R\u00b2 = .54 beyond level effects). The surface is a ridge along Y = X with steep negative curvature off that line \u2014 the classic congruence signature. Neither the direction of discrepancy nor overall competence level drives this; pure agreement does.",
+  "expectations": [
+    "Centers BOTH predictors on a single common constant (the scale midpoint 4, not separate means) \u2014 evidenced either by explicitly stating the centering constant, OR by producing results consistent with centering on 4 (e.g. a4 \u2248 -1.43, block test \u0394R\u00b2 \u2248 0.54)",
+    "Runs and reports the block test / incremental F for the higher-order terms as a gate before interpreting the surface",
+    "Reports a4 with a bootstrap (or otherwise simulation-based) confidence interval that lies entirely below 0 (e.g. CI around -1.4, upper bound < 0)",
+    "Evaluates the full congruence checklist (a4<0, a3=0, p10=0, p11=1), not a4 alone",
+    "Concludes a BROAD congruence effect",
+    "Reports the bootstrap CI for a1 explicitly, and that CI excludes 0 (a1 significantly positive \u2014 e.g. lower bound > 0.2), using this to conclude the effect is NOT strict congruence because a level effect coexists",
+    "Does not claim a direction-of-mismatch result (overestimation vs underestimation) from this symmetric surface"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    false,
+    true,
+    false,
+    true
+  ],
+  "passed": 5,
+  "total": 7,
+  "pass_rate": 0.7142857142857143,
+  "eval_passes": false
+}

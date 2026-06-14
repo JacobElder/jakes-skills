@@ -1,0 +1,24 @@
+{
+  "eval_id": 9,
+  "condition": "with_skill",
+  "prompt": "I ran RSA in R on self-rated and supervisor-rated performance (both 1-7 scales). I used scale() to center each predictor on its own mean before fitting the polynomial. The results look great \u2014 a4 is significant and negative. Do I have a congruence effect?",
+  "response": "Two problems here, one more urgent than the other.\n\n## Problem 1 (urgent): re-center before interpreting anything\n\n`scale()` centers each predictor on **its own mean** \u2014 a different constant for self-ratings vs. supervisor-ratings. This silently moves the Line of Congruence off the `X = Y` diagonal, which corrupts every surface parameter (a1\u2013a5, p10, p11). The b-coefficients from your model do not correspond to congruence geometry anymore.\n\nFix: subtract **one common constant** from both predictors \u2014 the scale midpoint (4 on a 1\u20137 scale) works well here since both instruments share the same anchors:\n\n```r\nMID <- 4\ndf$self_c  <- df$self_rating - MID\ndf$super_c <- df$supervisor_rating - MID\n\nr <- RSA(outcome ~ self_c * super_c, data = df,\n         models = c(\"full\", \"SQD\", \"SRSQD\", \"RR\"),\n         center = \"none\")   # you centered manually\n```\n\nRe-run before reading anything else from the output.\n\n## Problem 2: a4 alone is not a congruence effect\n\nEven after correct centering, a significant negative a4 is **necessary but not sufficient**. A congruence effect requires all four conditions to hold simultaneously (Humberg, Nestler & Back, 2019):\n\n| Condition | What it checks | Pass if |\n|-----------|---------------|---------|\n| C1: a4 < 0 | inverted-U over disagreement | bootstrap CI entirely < 0 |\n| C2: a3 = 0 | symmetric (no directional skew) | CI includes 0 |\n| C3: p10 = 0 | ridge not shifted laterally off LOC | CI includes 0 |\n| C4: p11 = 1 | ridge not rotated away from LOC | CI includes 1 |\n\nA negative a4 only tells you the surface curves downward along the line of incongruence. The ridge (where outcomes are highest) could still be rotated or shifted off the `self = supervisor` diagonal \u2014 which would mean the effect isn't congruence at all.\n\nAfter re-centering, get bootstrap CIs for all parameters (`se = \"boot\"` in `RSA()`) and check all four conditions before claiming congruence.\n\n**Short answer: not yet.** Fix the centering first; then run the full checklist.",
+  "expectations": [
+    "Identifies that centering each predictor on its own mean (separate-mean centering, e.g. via scale()) is an error for congruence RSA",
+    "Explains why: separate-mean centering moves the line of congruence off X = Y, corrupting the geometric interpretation of a1\u2013a5 and p10/p11",
+    "Specifies the correct fix: center BOTH predictors on ONE common constant (the scale midpoint, e.g. 4 on a 1-7 scale)",
+    "Does not endorse the results as valid without re-running with correct centering",
+    "Reminds that even after correct centering, a4 alone is insufficient \u2014 the full checklist must be evaluated"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

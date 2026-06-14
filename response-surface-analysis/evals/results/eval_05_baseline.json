@@ -1,0 +1,22 @@
+{
+  "eval_id": 5,
+  "condition": "baseline",
+  "prompt": "Here's data where I have employees' salary in dollars and their job-satisfaction Likert score (1-5), and I want to do a response surface analysis to see if the fit between pay and satisfaction predicts turnover intention.",
+  "response": "It looks like the data didn't come through \u2014 I don't see it attached yet. Share the data (CSV paste, file path, or a sample) and let me know your preferred software (R or Python) and I'll help you set up the analysis.\n\nOne methodological flag before you share: RSA requires **commensurable measures** \u2014 X and Z need to be on the same scale so \"fit\" (the line X = Z) is interpretable. Salary in dollars and satisfaction on a 1\u20135 Likert are not commensurate. The standard fix is to **z-score both variables** before the polynomial regression, which puts them on the same SD-unit scale. This changes the interpretation slightly (fit = \"same relative standing on each variable\") but is defensible and common in the literature when raw scales differ.\n\nThe full model you'd run after standardizing:\n\n```\nTI = b0 + b1\u00b7Pay_z + b2\u00b7Sat_z + b3\u00b7Pay_z\u00b2 + b4\u00b7Pay_z\u00d7Sat_z + b5\u00b7Sat_z\u00b2\n```\n\nThen you'd derive the response surface parameters (a1\u2013a5) and inspect the ridge line and slope along the congruence diagonal.\n\nIn R, the `RSA` package (Sch\u00f6nbrodt & Tisak) handles all of this cleanly, including surface tests and 3D plots. In Python you'd do it manually via `statsmodels` \u2014 workable but more verbose.\n\nOnce you share the data and software preference I can write the full analysis code.",
+  "expectations": [
+    "Identifies that the two predictors are not on the same metric (non-commensurable), so 'fit/congruence' between them is undefined",
+    "Explains that the line-of-congruence machinery requires commensurable predictors",
+    "Does not proceed to run a standard congruence RSA treating salary-satisfaction match as meaningful",
+    "Suggests a more appropriate framing (e.g. moderated/interaction regression, or commensurable predictors)"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

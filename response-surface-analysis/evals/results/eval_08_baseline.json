@@ -1,0 +1,22 @@
+{
+  "eval_id": 8,
+  "condition": "baseline",
+  "prompt": "Our RSA block test came back non-significant - the X^2, XY, and Y^2 terms together only added about 0.4% to R^2 (p = .62). But a4 is negative. Can we still report the congruence surface?",
+  "response": "A non-significant block test with \u0394R\u00b2 = 0.4% at p = .62 is pretty decisive \u2014 that's not a borderline case where you could argue power was the issue. Here's how to think through the reporting question:\n\n## Can you still report the surface?\n\n**Yes, report it \u2014 but don't interpret a4 as meaningful.**\n\nThe surface exists regardless of significance; transparency requires presenting it. What you *cannot* do is treat the negative a4 as evidence of an incongruence effect (the classic \"divergence is better than match\" pattern). The block test is the gate for surface interpretation.\n\n## What a4 < 0 means here\n\nA negative a4 suggests the surface curves *downward* along the line of incongruence (X = \u2212Y) \u2014 geometrically, a saddle or concave shape. But with the polynomial terms explaining essentially nothing (\u0394R\u00b2 \u2248 0.4%), that curvature is indistinguishable from sampling noise. Interpreting it would be p-hacking by surface parameter.\n\n## How to write it up\n\nA reasonable framing:\n\n> \"The second-order terms did not significantly improve model fit over first-order terms (\u0394R\u00b2 = .004, p = .62), providing no evidence of a curved response surface. Although the incongruence curvature parameter was negative (a4 = [value]), this pattern is uninterpretable absent a significant polynomial block. We therefore conclude there is no support for a congruence effect in these data.\"\n\n## If reviewers push back\n\nThe Humberg et al. (2019, *Journal of Applied Psychology*) critique and the Edwards & Parry (1993) foundational piece both treat the polynomial significance test as a prerequisite for surface interpretation. You have solid methodological cover for not over-interpreting a4.\n\nOne thing worth checking: do you have adequate power for RSA? Polynomial surfaces typically need N \u2265 200\u2013300 to reliably detect moderate curvature. If your N is smaller, you can note this as a limitation without backpedaling on the non-significant result.",
+  "expectations": [
+    "States that with a non-significant block test the surface is not justified and should not be interpreted",
+    "Recommends reporting the linear model instead",
+    "Explains that a4 (or any surface parameter) should not be interpreted when the higher-order terms do not jointly improve fit",
+    "Does not greenlight reporting the congruence surface"
+  ],
+  "assertion_results": [
+    false,
+    false,
+    true,
+    false
+  ],
+  "passed": 1,
+  "total": 4,
+  "pass_rate": 0.25,
+  "eval_passes": false
+}
