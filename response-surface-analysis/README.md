@@ -78,14 +78,14 @@ python scripts/rsa_power_sim.py --n 200 300 400 --k 0.3 --rxy 0.4 --reps 500
 
 ## Benchmark: skill vs. base model
 
-Evaluated on 10 scenarios covering the full analysis pipeline, fallacy pushback, scope guards, power planning, and separate-mean centering traps. Graded by `claude-haiku-4-5` against explicit assertions (executor: `claude-sonnet-4-6`).
+Evaluated on 13 scenarios covering the full analysis pipeline, fallacy pushback, scope guards, power planning, centering traps, coefficient-fishing, and measurement error. Graded by `claude-haiku-4-5` against explicit assertions (executor: `claude-sonnet-4-6`).
 
 ```
 Condition       Score       Pass rate
 ──────────────────────────────────────
-Base model      36 / 51     70.6%
-With skill      51 / 51     100.0%
-Delta                       +29.4 pp
+Base model      45 / 66     68.2%
+With skill      65 / 66     98.5%
+Delta                       +30.3 pp
 ```
 
 The largest gains come from scenarios where the skill's methodological positions are load-bearing:
@@ -94,16 +94,19 @@ The largest gains come from scenarios where the skill's methodological positions
 |------|-------|:----:|:-----:|:---:|
 | 6 | Power planning: simulation over rules of thumb | 20% | 100% | **+80pp** |
 | 8 | Failed-gate refusal: block test p=.62, still no surface | 25% | 100% | **+75pp** |
+| 11 | Coefficient-fishing: a2 significant post-hoc is not a finding | 20% | 80% | **+60pp** |
 | 3 | Single-parameter fallacy: a4 < 0 alone is not congruence | 50% | 100% | **+50pp** |
 | 2 | Difference-score redirect: why and what instead | 60% | 100% | **+40pp** |
 | 1 | Full RSA on real data: block test, checklist, a1 CI | 71% | 100% | **+29pp** |
 | 7 | Directionality fallacy: a3 CI includes 0 → no direction claim | 83% | 100% | **+17pp** |
 | 10 | Strict vs. broad: a1 ≠ 0 disqualifies strict congruence | 86% | 100% | **+14pp** |
+| 12 | Measurement error: quadratic/product terms differentially attenuated | 80% | 100% | **+20pp** |
+| 13 | RSA vs. moderation: same scale ≠ commensurable constructs | 80% | 100% | **+20pp** |
 | 4 | DoE/RSM disambiguation: route chemical-optimization to DoE | 100% | 100% | **+0pp** |
 | 5 | Non-commensurable refusal: salary ≠ Likert congruence | 100% | 100% | **+0pp** |
 | 9 | Separate-mean centering trap detection | 100% | 100% | **+0pp** |
 
-The base model already handles: DoE/RSM disambiguation, non-commensurable refusal, and separate-mean centering detection (all are category errors obvious when stated). The skill's value concentrates on the *conjunction* requirements (C1–C4 checklist vs. a4-alone shortcut), power planning specifics (simulation + predictor correlation), the directionality fallacy (symmetric surface ≠ directional evidence), and the block-test gate (must stop if it fails, regardless of parameter values).
+The base model already handles: DoE/RSM disambiguation, non-commensurable refusal, and separate-mean centering detection (all are category errors obvious when stated). The skill's value concentrates on the *conjunction* requirements (C1–C4 checklist vs. a4-alone shortcut), power planning specifics (simulation + predictor correlation), the directionality fallacy (symmetric surface ≠ directional evidence), the block-test gate (must stop if it fails), and confirmatory model comparison over post-hoc coefficient-fishing (stance 7).
 
 ## Reference map
 
@@ -119,7 +122,7 @@ The base model already handles: DoE/RSM disambiguation, non-commensurable refusa
 
 ## Eval suite
 
-10 scenarios graded against explicit assertions. See [`evals/`](evals/) for definitions and `evals/results/` for benchmark data.
+13 scenarios graded against explicit assertions. See [`evals/`](evals/) for definitions and `evals/results/` for benchmark data.
 
 | # | Scenario | Category |
 |---|----------|----------|
@@ -133,3 +136,6 @@ The base model already handles: DoE/RSM disambiguation, non-commensurable refusa
 | 8 | Refuse to interpret surface that failed the block-test gate | Gate guard |
 | 9 | Detect separate-mean centering error (scale() in R) | Centering trap |
 | 10 | Distinguish strict vs. broad from given parameter CIs | Broad/strict |
+| 11 | Coefficient-fishing: flag post-hoc a2 finding and redirect to constrained models | Confirmatory |
+| 12 | Measurement error: α ≈ .62 differentially attenuates quadratic/product terms | Reliability |
+| 13 | RSA vs. moderation: trait × behavior on same scale is not congruence | Scope guard |

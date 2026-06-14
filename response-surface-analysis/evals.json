@@ -161,15 +161,15 @@
     },
     {
       "id": 13,
-      "prompt": "I'm studying whether person-environment fit moderates the burnout effect of job demands. Specifically, I hypothesize that when demands match the person's skill level, burnout is lower — but when there's a mismatch (either direction), burnout is higher. Someone suggested I use RSA. Should I?",
+      "prompt": "I have openness-to-feedback scores (1-7) and feedback-frequency-from-supervisor scores (1-7) for 400 employees. My hypothesis is that the interaction between how open employees are and how much feedback they receive predicts performance improvement — open employees benefit more from frequent feedback. Someone suggested RSA since both measures are on a 1-7 scale. Is RSA the right method here?",
       "files": [],
-      "expected_output": "RSA could be appropriate here IF the congruence hypothesis is genuine — i.e. the theoretical claim is specifically that the match/mismatch between demands and skills (both on the same commensurable scale) is what drives burnout, above and beyond the separate effects of demands and skills. The key gate is commensurability: if 'job demands' and 'skill level' are measured on the same metric (e.g. both rated on the same O*NET-style instrument), RSA is the right tool. If they're on different scales, RSA is undefined. The user should also clarify whether the hypothesis is about the 'fit' surface (RSA) or simply a demands × skills interaction (moderated regression). If it's the former — i.e. demands equal to skills is specifically the optimum — RSA is appropriate. If it's the latter — skills buffer the demands effect without a commensurability requirement — moderated regression is cleaner. Should NOT just run RSA without checking commensurability and whether the theory really is a congruence theory.",
+      "expected_output": "No — RSA is the wrong tool here. The hypothesis is about a moderation effect (openness × frequency → performance), not a congruence effect. Congruence RSA answers whether the MATCH between two measures of the SAME underlying construct predicts an outcome. 'Openness to feedback' (a trait) and 'feedback frequency' (a supervisor behavior) are conceptually different things — the line of congruence (openness = frequency) has no meaningful interpretation as an optimum. The fact that both are on 1-7 scales does not make them commensurable in the RSA sense. The correct method is moderated regression with openness × frequency as the key interaction term. Should also clarify what a genuine congruence question would look like (e.g., both the employee and supervisor rate the same construct from their own perspective, and the question is whether their ratings agree).",
       "expectations": [
-        "Identifies the commensurability requirement: demands and skill level must be on the same metric for RSA to be appropriate",
-        "Distinguishes the congruence hypothesis (RSA is appropriate) from a generic demands × skills interaction hypothesis (moderated regression is appropriate) — these are different theoretical claims",
-        "Does not simply recommend RSA without checking these preconditions",
-        "Explains what a genuine congruence / person-environment fit hypothesis looks like in this context (demands = skills is the theorized optimum; mismatch in either direction increases burnout symmetrically)",
-        "Notes that if the predictors are not commensurable or the theory is really about moderation, a different method is needed"
+        "Identifies this as a moderation/interaction hypothesis (openness amplifies the effect of feedback frequency), not a congruence hypothesis",
+        "Explains that congruence RSA requires both predictors to be measures of the SAME underlying construct from two perspectives — openness (trait) and frequency (supervisor behavior) do not meet this requirement",
+        "Recommends moderated regression with the openness × frequency interaction term as the appropriate method",
+        "Does not recommend or run RSA on these predictors as a congruence analysis",
+        "Notes that sharing a 1-7 scale does not make two conceptually different variables commensurable in the RSA sense"
       ]
     }
   ]

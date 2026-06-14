@@ -1,0 +1,24 @@
+{
+  "eval_id": 13,
+  "condition": "with_skill",
+  "prompt": "I have openness-to-feedback scores (1-7) and feedback-frequency-from-supervisor scores (1-7) for 400 employees. My hypothesis is that the interaction between how open employees are and how much feedback they receive predicts performance improvement \u2014 open employees benefit more from frequent feedback. Someone suggested RSA since both measures are on a 1-7 scale. Is RSA the right method here?",
+  "response": "RSA is the wrong tool here. The suggestion to use it because both measures share a 1-7 scale is a common but mistaken reason.\n\n## Why RSA doesn't apply\n\nRSA asks: *does the match/agreement between X and Y predict an outcome?* The canonical question is something like \"does person-environment fit predict well-being?\" \u2014 where `X = Y` (e.g., person values = job demands) has a coherent, theoretically meaningful interpretation.\n\nYour question is structurally different: you're not asking whether openness *equals* feedback frequency. The phrase \"employees with score 4 on openness and score 4 on feedback frequency are in a matched, congruent state\" is conceptually empty. These are different constructs measured on different things \u2014 one is a dispositional trait, the other is a situational frequency. They don't become commensurable just by sharing a scale.\n\n## What your hypothesis actually is\n\n\"Open employees benefit more from frequent feedback\" is a **moderation hypothesis**: feedback frequency (X) \u2192 performance improvement (Z), and that relationship is stronger when openness (W) is high. That's a plain interaction:\n\n```\nZ = b0 + b1\u00b7X + b2\u00b7W + b3\u00b7X\u00d7W + e\n```\n\n`b3` is your hypothesis. If it's positive and significant, high-openness employees show a steeper feedback-frequency\u2192performance slope. Run this, inspect the simple slopes at low/mean/high openness, and you're done.\n\n## The one case where you might want to revisit\n\nIf your theory were instead \"employees perform best when the *level* of feedback they receive matches their *appetite* for it (openness)\" \u2014 i.e., too much feedback for a closed employee is as bad as too little for an open one \u2014 *then* you'd have a congruence question and RSA would apply. But that's a different hypothesis from the one you described, and it implies a symmetric inverted-U over the mismatch dimension.\n\n**Bottom line:** use moderated regression. RSA is reserved for cases where `X = Y` has a substantive interpretation \u2014 same construct, different sources or perspectives.",
+  "expectations": [
+    "Identifies this as a moderation/interaction hypothesis (openness amplifies the effect of feedback frequency), not a congruence hypothesis",
+    "Explains that congruence RSA requires both predictors to be measures of the SAME underlying construct from two perspectives \u2014 openness (trait) and frequency (supervisor behavior) do not meet this requirement",
+    "Recommends moderated regression with the openness \u00d7 frequency interaction term as the appropriate method",
+    "Does not recommend or run RSA on these predictors as a congruence analysis",
+    "Notes that sharing a 1-7 scale does not make two conceptually different variables commensurable in the RSA sense"
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

@@ -1,0 +1,24 @@
+{
+  "eval_id": 13,
+  "condition": "baseline",
+  "prompt": "I have openness-to-feedback scores (1-7) and feedback-frequency-from-supervisor scores (1-7) for 400 employees. My hypothesis is that the interaction between how open employees are and how much feedback they receive predicts performance improvement \u2014 open employees benefit more from frequent feedback. Someone suggested RSA since both measures are on a 1-7 scale. Is RSA the right method here?",
+  "response": "RSA is the wrong tool here. The shared 1-7 scale is a necessary condition for RSA, not a sufficient one \u2014 the method is for **congruence hypotheses**, not interaction hypotheses.\n\n**What RSA actually tests:** Whether the *similarity or discrepancy* between two commensurable predictors (X and Y) relates to an outcome. The canonical use case is person-environment fit: \"does performance peak when openness matches feedback frequency, and drop when they diverge?\" RSA uses polynomial regression (X, Y, X\u00b2, XY, Y\u00b2) and surface plots to map that congruence landscape.\n\n**What your hypothesis actually is:** A moderation/interaction hypothesis \u2014 \"the effect of feedback frequency on performance is stronger for employees high in openness.\" That's directional and asymmetric. RSA would distort it because it implicitly treats high-openness + low-feedback the same way as low-openness + high-feedback (both are \"incongruent\"), which isn't what you're claiming.\n\n**The right method:** Moderated regression (OLS):\n\n```\nperformance_improvement ~ openness + feedback_freq + openness \u00d7 feedback_freq\n```\n\nThe interaction coefficient directly tests your hypothesis. If it's positive and significant, open employees do gain more from frequent feedback. You can probe it with a simple slopes plot (feedback_freq effect at low/mean/high openness).\n\n**When RSA would fit:** If your hypothesis were reframed as \"performance peaks when an employee's openness level matches the amount of feedback they receive,\" then RSA is warranted. That's a different theoretical claim \u2014 congruence rather than moderation.\n\nThe suggestion to use RSA likely came from the scale-matching heuristic, which is understandable but misses that the *theoretical structure of the hypothesis* is what drives method choice, not the scale format.",
+  "expectations": [
+    "Identifies this as a moderation/interaction hypothesis (openness amplifies the effect of feedback frequency), not a congruence hypothesis",
+    "Explains that congruence RSA requires both predictors to be measures of the SAME underlying construct from two perspectives \u2014 openness (trait) and frequency (supervisor behavior) do not meet this requirement",
+    "Recommends moderated regression with the openness \u00d7 frequency interaction term as the appropriate method",
+    "Does not recommend or run RSA on these predictors as a congruence analysis",
+    "Notes that sharing a 1-7 scale does not make two conceptually different variables commensurable in the RSA sense"
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": true
+}
