@@ -1,0 +1,24 @@
+{
+  "eval_id": 11,
+  "condition": "baseline",
+  "prompt": "I ran the full RSA and looked at all five surface parameters. a4 is negative but only marginal (p = .07). However, a2 is significant and negative (p = .01), which means the outcome decreases as both predictors move away from the midpoint in the same direction. That's a really interesting finding \u2014 can I interpret a2 as showing that high-high matches are actually worse?",
+  "response": "Not quite \u2014 a2 is the curvature along the **line of congruence** (where X = Y), and a negative a2 describes an inverted-U shape along that ridge. That means outcomes are best when X and Y are matched *at the midpoint* and decline as both move together toward either extreme \u2014 high-high and low-low matches are both worse than moderate-moderate matches.\n\nSaying \"high-high is worse\" singles out only one tail of the congruence line. That interpretation would require a1 (the linear slope along congruence) to also be significant: a negative a1 would indicate outcomes are lower at the high-high end specifically, while a positive a1 would mean low-low is the worse tail. If a1 is non-significant, the drop-off is symmetric and both extremes suffer equally.\n\nSo the accurate read of your a2 finding is: **matched dyads at the extremes (in either direction) show worse outcomes than matched dyads near the midpoint** \u2014 not a directional claim about which end is worse. If you want to make the high-high claim specifically, you need a significant and negative a1 to support it.",
+  "expectations": [
+    "Identifies that selecting a2 as the key finding after seeing all parameters constitutes post-hoc fishing / inflated Type I error",
+    "Recommends a confirmatory approach: pre-register the hypothesized surface and compare a constrained model (SQD / SRSQD / RR) against the full polynomial using likelihood-ratio tests or AIC/BIC",
+    "Correctly explains what a2 means geometrically (curvature along the line of congruence \u2014 diminishing or inverted-U returns as both predictors increase together), distinguishing it from a claim about the level of high-high vs. low-low pairs",
+    "Does not simply endorse interpreting a2 as the headline finding without addressing the fishing problem",
+    "Notes that a4 marginal (p = .07) means the congruence signature itself is not clearly established \u2014 the interesting-looking a2 exists alongside an uncertain curvature along the LOIC"
+  ],
+  "assertion_results": [
+    false,
+    false,
+    true,
+    false,
+    false
+  ],
+  "passed": 1,
+  "total": 5,
+  "pass_rate": 0.2,
+  "eval_passes": false
+}

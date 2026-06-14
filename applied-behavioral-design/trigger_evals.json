@@ -1,0 +1,23 @@
+[
+  {"query": "only about a quarter of people who install our habit-tracker app ever log a single habit. i don't want to just throw more onboarding screens at it, i want to actually figure out why they drop and what would move it", "should_trigger": true},
+  {"query": "leadership wants to add streaks and badges to boost activation on our dev tool. before i build that can you help me think through whether gamification is even the right move and what's actually stopping people from running it the first time", "should_trigger": true},
+  {"query": "we're a clinic and a third of patients no-show for follow-up appts. need to design something to reduce no-shows. reminders? a small deposit? not sure where to even start", "should_trigger": true},
+  {"query": "eligible employees keep not enrolling in the 401k match even though it's free money. how do we get enrollment up", "should_trigger": true},
+  {"query": "people abandon our checkout at the address step. why would they bail there and how do we fix that friction", "should_trigger": true},
+  {"query": "i'm a UX researcher at a gov benefits agency. families qualify for the program but most never finish the application. want to diagnose where and why they fall off before we redesign anything", "should_trigger": true},
+  {"query": "how do i design a nudge to get more of our users to turn on two-factor auth without it feeling naggy", "should_trigger": true},
+  {"query": "our recycling pilot in the office isn't working, people just throw everything in the trash. what behavioral interventions could change that and how would i test them", "should_trigger": true},
+  {"query": "low uptake on the new expense-reporting portal. the old way was email. employees just keep emailing receipts instead of using the portal. help me figure out the behavior change plan", "should_trigger": true},
+  {"query": "we want citizens to switch to paperless billing. is this even a behavior problem or are we missing something structural, and if it is behavioral how would you approach it end to end", "should_trigger": true},
+
+  {"query": "i'm comparing the simplified signup form against the old one. how many users do i need per arm for 80% power to detect a 3 point lift in completion, and can i peek early with a sequential test", "should_trigger": false},
+  {"query": "fit a cox proportional hazards model to our subscription churn data at /data/subs.csv and check the proportional hazards assumption with schoenfeld residuals", "should_trigger": false},
+  {"query": "run an exploratory factor analysis on my 24-item engagement survey and tell me how many factors to retain, parallel analysis preferred", "should_trigger": false},
+  {"query": "we rolled out a new feature to some regions and not others, no randomization. can you estimate the causal effect on retention with a difference-in-differences setup", "should_trigger": false},
+  {"query": "write me three onboarding welcome emails for new users of our budgeting app, warm but concise, with a clear CTA to link their bank", "should_trigger": false},
+  {"query": "quick question, what's the difference between the endowment effect and loss aversion? just need a clean definition for a slide", "should_trigger": false},
+  {"query": "cluster our 50k users into behavioral segments based on their feature-usage vectors so we can see what natural groups exist. HDBSCAN or k-means?", "should_trigger": false},
+  {"query": "help me word a survey question measuring how much users trust the app with their financial data, worried about social desirability bias in the responses", "should_trigger": false},
+  {"query": "build me a dashboard that tracks weekly active users, activation rate, and 30-day retention by cohort", "should_trigger": false},
+  {"query": "our competitor just dropped their price 20%. should we match on price or hold and compete on features? need a pricing strategy recommendation", "should_trigger": false}
+]

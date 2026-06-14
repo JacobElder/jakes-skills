@@ -1,0 +1,24 @@
+{
+  "eval_id": 12,
+  "condition": "baseline",
+  "prompt": "I'm measuring self-rated and supervisor-rated job performance (both on a 1-7 scale) and want to run RSA to test whether self-supervisor agreement predicts promotability. Cronbach's alpha for the self-rating scale is .63 and for the supervisor scale is .61. Is that a problem?",
+  "response": "Yes, this is a meaningful problem \u2014 but the specific pattern here (similar alphas on both scales) shapes which issues matter most.\n\n## What low alpha does to RSA\n\nRSA is built on polynomial regression with squared terms (X\u00b2, Y\u00b2) and a cross-product (XY). Measurement error gets **amplified** in those higher-order terms, so the surface parameters (a1\u2013a4) will be attenuated toward zero more than a simple correlation would be.\n\n## Why similar alphas partially protect you\n\nThe more dangerous scenario is **differential reliability** \u2014 if self-ratings were .90 and supervisor ratings .61, the two scales would have very different error variances. That creates spurious asymmetry along the line of incongruence (the a4 parameter), potentially making over-raters look systematically different from under-raters for purely psychometric reasons, not substantive ones.\n\nYour alphas (.63 vs .61) are low but closely matched, so the differential attenuation problem is modest. The primary consequence is across-the-board **power loss and effect-size shrinkage**, not a distorted surface shape.\n\n## Practical implications\n\n- **a1 and a2** (slope and curvature along the agreement line) will be attenuated but interpretable\n- **a3 and a4** (slope and curvature along the disagreement line) are noisier but not systematically biased given matched reliability\n- Any significant RSA effects you find are likely **underestimates** of the true effects \u2014 which is conservative, not liberal\n\n## What to do\n\n1. **Report \u03c9 (omega)** rather than \u03b1 \u2014 omega is a better reliability estimate and may be slightly more favorable if your inter-item correlations are heterogeneous.\n2. **Consider latent-variable RSA** (LV-RSA via lavaan/SEM) if you have the individual items \u2014 this partials out measurement error and gives unattenuated surface estimates. This is the gold standard for your situation.\n3. **If you stick with observed-score RSA**, acknowledge in the limitations that parameters are likely attenuated and that tests of the a4 asymmetry parameter should be interpreted cautiously.\n4. **Power**: Run a sensitivity analysis (the `RSA` package in R has `powerRSA()`) to understand what effect sizes you're powered to detect given the added noise.\n\nThe bottom line: .63/.61 is a real limitation you must disclose, but it won't distort the *shape* of your surface the way mismatched reliabilities would. If LV-RSA is feasible, it's worth the effort.",
+  "expectations": [
+    "Identifies that measurement error has a disproportionately severe effect on quadratic and product terms (X\u00b2, XY, Y\u00b2) compared with linear terms",
+    "States the implication: observed-variable RSA is biased toward null curvature \u2014 the congruence signal in a4 and the block test will be specifically attenuated, not just noisier",
+    "Does not frame this as only a generic power problem; correctly names the differential attenuation of higher-order terms as the mechanism",
+    "Recommends at least one of: improving reliability (longer scales, better items), latent-variable RSA (SEM approach with quadratic/product indicators), or treating curvature estimates as lower bounds",
+    "Advises reporting the reliabilities in the write-up regardless of what the user decides"
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": true
+}

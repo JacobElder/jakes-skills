@@ -1,0 +1,24 @@
+{
+  "eval_id": 11,
+  "condition": "with_skill",
+  "prompt": "I ran the full RSA and looked at all five surface parameters. a4 is negative but only marginal (p = .07). However, a2 is significant and negative (p = .01), which means the outcome decreases as both predictors move away from the midpoint in the same direction. That's a really interesting finding \u2014 can I interpret a2 as showing that high-high matches are actually worse?",
+  "response": "Two things are wrong here, and they're worth separating clearly.\n\n**a2 is not a congruence parameter.** a2 = b3 + b4 + b5 measures curvature *along the Line of Congruence* \u2014 i.e., what happens to the outcome as both X and Y move together in the same direction. It is a level/main-effect parameter, not a congruence parameter. It says nothing about whether agreement *vs. disagreement* between X and Y matters. A surface with a2 < 0 and no congruence effect whatsoever is entirely possible \u2014 you just have a curvilinear main effect where mid-level matched pairs outperform extreme ones.\n\nWhat a2 < 0 actually licenses: the outcome is an inverted-U *along the diagonal* \u2014 peak somewhere near the midpoint of matched values, declining toward high-high and low-low extremes. To know whether \"high-high matches are worse\" (rather than just \"extremes of any kind are worse\"), you also need a1: if a1 \u2248 0 the peak is symmetric; if a1 > 0 the peak shifts toward the high end. From a2 alone you can't say high-high is specifically the problem.\n\n**The real congruence signal (a4) is marginal, and you're fishing.** The parameter that answers \"does *mismatch* in either direction reduce the outcome?\" is a4, and yours is p = .07. The parameter that turned out cleanest is a2, which happens not to be the congruence test. Looking at all five parameters and asking about the significant one is exactly the pattern the checklist warns against \u2014 it inflates Type I error and produces a story the surface may not actually tell.\n\n**What this result more honestly says:**\n- There may be a curvilinear level effect: mid-level matched pairs perform better than extreme ones (a2 < 0). That's substantively interesting and worth reporting \u2014 just frame it as a level effect, not congruence.\n- The congruence hypothesis (does *agreement* between X and Y matter, controlling for level?) is not supported: a4 is marginal, and you haven't yet checked a3, p10, p11.\n- Before claiming anything, confirm the block test passed \u2014 if the three quadratic terms didn't jointly add R\u00b2, none of these parameters should be interpreted at all.\n\nThe clean route forward: report the block test, report all parameters with bootstrap CIs, and frame a2 as a level/curvilinearity finding rather than a congruence finding. If a4 < 0 with a CI that excludes zero isn't there, you don't have a congruence claim.",
+  "expectations": [
+    "Identifies that selecting a2 as the key finding after seeing all parameters constitutes post-hoc fishing / inflated Type I error",
+    "Recommends a confirmatory approach: pre-register the hypothesized surface and compare a constrained model (SQD / SRSQD / RR) against the full polynomial using likelihood-ratio tests or AIC/BIC",
+    "Correctly explains what a2 means geometrically (curvature along the line of congruence \u2014 diminishing or inverted-U returns as both predictors increase together), distinguishing it from a claim about the level of high-high vs. low-low pairs",
+    "Does not simply endorse interpreting a2 as the headline finding without addressing the fishing problem",
+    "Notes that a4 marginal (p = .07) means the congruence signature itself is not clearly established \u2014 the interesting-looking a2 exists alongside an uncertain curvature along the LOIC"
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": true
+}

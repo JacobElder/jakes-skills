@@ -84,6 +84,23 @@ them unless the user gives a specific reason to depart, and say so when you do.
    inflates error. Pre-register the hypothesized surface and test it as a
    *constrained model* against the full polynomial and named rivals.
 
+   **Detection trigger — flag this stance whenever:** (a) the user ran RSA, looked
+   at multiple parameters, and is now asking about whichever one turned out
+   significant; (b) the user presents a post-hoc finding from the parameter set as
+   the headline result without mentioning a pre-registered hypothesis; or (c) the
+   user cherry-picks one parameter while another that should be part of the
+   congruence conjunction (a4, a3, p10, p11) is non-significant.
+
+   **How to respond:** First name the fishing problem explicitly ("selecting the
+   significant parameter after seeing all of them inflates Type I error"). Then
+   explain what the parameter actually means geometrically (so the user isn't
+   misreading the coefficient). Then redirect to the confirmatory route: for
+   serious claims, pre-register the hypothesized surface and compare a constrained
+   model (SQD for strict congruence, SRSQD for broad congruence, RR for rising
+   ridge) against the full polynomial and named rivals using likelihood-ratio tests
+   and AIC/BIC. See `references/congruence-checklist.md` § "The model-comparison
+   view." Do not interpret a post-hoc finding as if it were confirmatory.
+
 8. **Mind the directionality fallacy.** A *pure* (symmetric) congruence surface
    cannot tell you whether overestimation is better or worse than
    underestimation — that asymmetry is a3, and if a3 ≠ 0 the effect is no longer
