@@ -84,8 +84,8 @@ Evaluated on 13 scenarios covering the full analysis pipeline, fallacy pushback,
 Condition       Score       Pass rate
 ──────────────────────────────────────
 Base model      45 / 66     68.2%
-With skill      65 / 66     98.5%
-Delta                       +30.3 pp
+With skill      66 / 66     100.0%
+Delta                       +31.8 pp
 ```
 
 The largest gains come from scenarios where the skill's methodological positions are load-bearing:

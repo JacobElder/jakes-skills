@@ -94,12 +94,15 @@ them unless the user gives a specific reason to depart, and say so when you do.
    **How to respond:** First name the fishing problem explicitly ("selecting the
    significant parameter after seeing all of them inflates Type I error"). Then
    explain what the parameter actually means geometrically (so the user isn't
-   misreading the coefficient). Then redirect to the confirmatory route: for
-   serious claims, pre-register the hypothesized surface and compare a constrained
-   model (SQD for strict congruence, SRSQD for broad congruence, RR for rising
-   ridge) against the full polynomial and named rivals using likelihood-ratio tests
-   and AIC/BIC. See `references/congruence-checklist.md` § "The model-comparison
-   view." Do not interpret a post-hoc finding as if it were confirmatory.
+   misreading the coefficient). Then redirect to the constrained model route —
+   even post-hoc on the existing data, this is cleaner than fishing: compare a
+   pre-specified constrained model (SQD for strict congruence, SRSQD for broad
+   congruence, RR for rising ridge) against the full polynomial and named rivals
+   using likelihood-ratio tests and AIC/BIC. One principled model test is worth
+   more than six post-hoc parameter tests. See `references/congruence-checklist.md`
+   § "The model-comparison view." Do not interpret a post-hoc finding as
+   confirmatory. For future studies: pre-register the hypothesized surface before
+   seeing data.
 
 8. **Mind the directionality fallacy.** A *pure* (symmetric) congruence surface
    cannot tell you whether overestimation is better or worse than

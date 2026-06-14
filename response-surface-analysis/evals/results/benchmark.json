@@ -2,62 +2,38 @@
   "skill_name": "response-surface-analysis",
   "results": [
     {
-      "eval_id": 13,
-      "condition": "baseline",
-      "prompt": "I have openness-to-feedback scores (1-7) and feedback-frequency-from-supervisor scores (1-7) for 400 employees. My hypothesis is that the interaction between how open employees are and how much feedback they receive predicts performance improvement \u2014 open employees benefit more from frequent feedback. Someone suggested RSA since both measures are on a 1-7 scale. Is RSA the right method here?",
-      "response": "RSA is the wrong tool here. The shared 1-7 scale is a necessary condition for RSA, not a sufficient one \u2014 the method is for **congruence hypotheses**, not interaction hypotheses.\n\n**What RSA actually tests:** Whether the *similarity or discrepancy* between two commensurable predictors (X and Y) relates to an outcome. The canonical use case is person-environment fit: \"does performance peak when openness matches feedback frequency, and drop when they diverge?\" RSA uses polynomial regression (X, Y, X\u00b2, XY, Y\u00b2) and surface plots to map that congruence landscape.\n\n**What your hypothesis actually is:** A moderation/interaction hypothesis \u2014 \"the effect of feedback frequency on performance is stronger for employees high in openness.\" That's directional and asymmetric. RSA would distort it because it implicitly treats high-openness + low-feedback the same way as low-openness + high-feedback (both are \"incongruent\"), which isn't what you're claiming.\n\n**The right method:** Moderated regression (OLS):\n\n```\nperformance_improvement ~ openness + feedback_freq + openness \u00d7 feedback_freq\n```\n\nThe interaction coefficient directly tests your hypothesis. If it's positive and significant, open employees do gain more from frequent feedback. You can probe it with a simple slopes plot (feedback_freq effect at low/mean/high openness).\n\n**When RSA would fit:** If your hypothesis were reframed as \"performance peaks when an employee's openness level matches the amount of feedback they receive,\" then RSA is warranted. That's a different theoretical claim \u2014 congruence rather than moderation.\n\nThe suggestion to use RSA likely came from the scale-matching heuristic, which is understandable but misses that the *theoretical structure of the hypothesis* is what drives method choice, not the scale format.",
-      "expectations": [
-        "Identifies this as a moderation/interaction hypothesis (openness amplifies the effect of feedback frequency), not a congruence hypothesis",
-        "Explains that congruence RSA requires both predictors to be measures of the SAME underlying construct from two perspectives \u2014 openness (trait) and frequency (supervisor behavior) do not meet this requirement",
-        "Recommends moderated regression with the openness \u00d7 frequency interaction term as the appropriate method",
-        "Does not recommend or run RSA on these predictors as a congruence analysis",
-        "Notes that sharing a 1-7 scale does not make two conceptually different variables commensurable in the RSA sense"
-      ],
-      "assertion_results": [
-        true,
-        false,
-        true,
-        true,
-        true
-      ],
-      "passed": 4,
-      "total": 5,
-      "pass_rate": 0.8,
-      "eval_passes": true
-    },
-    {
-      "eval_id": 13,
+      "eval_id": 1,
       "condition": "with_skill",
-      "prompt": "I have openness-to-feedback scores (1-7) and feedback-frequency-from-supervisor scores (1-7) for 400 employees. My hypothesis is that the interaction between how open employees are and how much feedback they receive predicts performance improvement \u2014 open employees benefit more from frequent feedback. Someone suggested RSA since both measures are on a 1-7 scale. Is RSA the right method here?",
-      "response": "RSA is the wrong tool here. The suggestion to use it because both measures share a 1-7 scale is a common but mistaken reason.\n\n## Why RSA doesn't apply\n\nRSA asks: *does the match/agreement between X and Y predict an outcome?* The canonical question is something like \"does person-environment fit predict well-being?\" \u2014 where `X = Y` (e.g., person values = job demands) has a coherent, theoretically meaningful interpretation.\n\nYour question is structurally different: you're not asking whether openness *equals* feedback frequency. The phrase \"employees with score 4 on openness and score 4 on feedback frequency are in a matched, congruent state\" is conceptually empty. These are different constructs measured on different things \u2014 one is a dispositional trait, the other is a situational frequency. They don't become commensurable just by sharing a scale.\n\n## What your hypothesis actually is\n\n\"Open employees benefit more from frequent feedback\" is a **moderation hypothesis**: feedback frequency (X) \u2192 performance improvement (Z), and that relationship is stronger when openness (W) is high. That's a plain interaction:\n\n```\nZ = b0 + b1\u00b7X + b2\u00b7W + b3\u00b7X\u00d7W + e\n```\n\n`b3` is your hypothesis. If it's positive and significant, high-openness employees show a steeper feedback-frequency\u2192performance slope. Run this, inspect the simple slopes at low/mean/high openness, and you're done.\n\n## The one case where you might want to revisit\n\nIf your theory were instead \"employees perform best when the *level* of feedback they receive matches their *appetite* for it (openness)\" \u2014 i.e., too much feedback for a closed employee is as bad as too little for an open one \u2014 *then* you'd have a congruence question and RSA would apply. But that's a different hypothesis from the one you described, and it implies a symmetric inverted-U over the mismatch dimension.\n\n**Bottom line:** use moderated regression. RSA is reserved for cases where `X = Y` has a substantive interpretation \u2014 same construct, different sources or perspectives.",
+      "prompt": "I've got self-rated and informant-rated competence (both on the same 1-7 scale) plus a wellbeing score for 350 people. The file is self_informant_wellbeing.csv. I want to test whether agreement between self and informant views predicts wellbeing. Can you run the analysis and tell me what you find?",
+      "response": "Here's what the RSA found:\n\n---\n\n## Results: Broad congruence effect confirmed\n\n**Gate passed.** The three higher-order terms jointly added \u0394R\u00b2 = 0.54 to the linear model (F(3, 344) = 171.9, p < 10\u207b\u2076\u2077). There is clearly a surface here \u2014 not just linear effects of self- and informant-ratings separately.\n\n**All four broad-congruence conditions hold** (Humberg, Nestler & Back, 2019 checklist):\n\n| Condition | Value | 95% Bootstrap CI | Verdict |\n|---|---|---|---|\n| C1: a4 < 0 (inverted-U over disagreement) | \u22121.43 | [\u22121.54, \u22121.32] | **PASS** |\n| C2: a3 = 0 (symmetric around agreement) | \u22120.004 | [\u22120.116, +0.106] | **PASS** |\n| C3: p10 = 0 (ridge not laterally shifted) | +0.005 | [\u22120.068, +0.083] | **PASS** |\n| C4: p11 = 1 (ridge not rotated off LOC) | +0.976 | [+0.895, +1.053] | **PASS** |\n\n**Bottom line: self\u2013informant agreement on competence predicts higher wellbeing.** When the two views diverge \u2014 in either direction \u2014 wellbeing is lower. The ridge of the surface runs along the line of congruence (X = Y) with no meaningful shift or rotation.\n\n**It's broad, not strict congruence.** a1 = +0.27 [+0.21, +0.32] is significant and positive \u2014 people who agree at *high* levels of competence have higher wellbeing than people who agree at *low* levels. The level of the matched pair matters, not just the matching itself. (Strict congruence, which would require a flat ridge, is rejected.)\n\n**No directional story is licensed.** a3 \u2248 0 \u2014 the surface is symmetric about the agreement line. You cannot conclude that self-overestimation is worse than underestimation or vice versa; the data are agnostic on that. Any directional claim would be the directionality fallacy.\n\n**The large stationary point** (\u2212790, \u2212771) is not a red flag here \u2014 it reflects that the LOC curvature (a2 \u2248 0) is essentially flat, so the \"peak\" of the ridge is pushed to infinity. But p10 and p11 themselves have tight bootstrap CIs, so the ridge *direction* is well-estimated. This is the cylindrical-ridge case, not a degenerate surface.\n\nThe plot above shows the characteristic tent/saddle shape: high wellbeing along the agreement diagonal (white line), dropping steeply as you step off it in either direction toward the red incongruence line.",
       "expectations": [
-        "Identifies this as a moderation/interaction hypothesis (openness amplifies the effect of feedback frequency), not a congruence hypothesis",
-        "Explains that congruence RSA requires both predictors to be measures of the SAME underlying construct from two perspectives \u2014 openness (trait) and frequency (supervisor behavior) do not meet this requirement",
-        "Recommends moderated regression with the openness \u00d7 frequency interaction term as the appropriate method",
-        "Does not recommend or run RSA on these predictors as a congruence analysis",
-        "Notes that sharing a 1-7 scale does not make two conceptually different variables commensurable in the RSA sense"
+        "Centers BOTH predictors on a single common constant (the scale midpoint 4, not separate means) \u2014 evidenced either by explicitly stating the centering constant, OR by producing results consistent with centering on 4 (e.g. a4 \u2248 -1.43, block test \u0394R\u00b2 \u2248 0.54)",
+        "Runs and reports the block test / incremental F for the higher-order terms as a gate before interpreting the surface",
+        "Reports a4 with a bootstrap (or otherwise simulation-based) confidence interval that lies entirely below 0 (e.g. CI around -1.4, upper bound < 0)",
+        "Evaluates the full congruence checklist (a4<0, a3=0, p10=0, p11=1), not a4 alone",
+        "Concludes a BROAD congruence effect",
+        "Reports the bootstrap CI for a1 explicitly, and that CI excludes 0 (a1 significantly positive \u2014 e.g. lower bound > 0.2), using this to conclude the effect is NOT strict congruence because a level effect coexists",
+        "Does not claim a direction-of-mismatch result (overestimation vs underestimation) from this symmetric surface"
       ],
       "assertion_results": [
         true,
         true,
         true,
         true,
+        true,
+        true,
         true
       ],
-      "passed": 5,
-      "total": 5,
+      "passed": 7,
+      "total": 7,
       "pass_rate": 1.0,
       "eval_passes": true
     }
   ],
   "summary": {
-    "baseline": {
-      "passed": 4,
-      "total": 5
-    },
     "with_skill": {
-      "passed": 5,
-      "total": 5
+      "passed": 7,
+      "total": 7
     }
   }
 }
