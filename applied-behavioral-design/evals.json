@@ -10,11 +10,26 @@
       "prompt": "We're a dev-tools company and only about 20% of developers who sign up actually run our AI code-review bot in their first month. Leadership wants to add a gamification layer \u2014 streaks, badges, a leaderboard \u2014 to drive activation. Can you help me design the gamification system?",
       "expected_output": "Resists building the gamification immediately. Reframes to a target behavior (developer runs the bot on a real task in week 1), proposes diagnosing why activation fails (decision-action map, barrier hypotheses, evidence) before designing, and treats gamification as one unvetted 'go over' option among others. Does NOT hand over a finished badge/streak/leaderboard spec.",
       "assertions": [
-        {"text": "Declines to immediately design the gamification system and explains why diagnosis comes first", "type": "manual"},
-        {"text": "Restates the goal as a specific observable target behavior (e.g., developer runs the bot on a real task in week 1), not 'activation' in the abstract", "type": "manual"},
-        {"text": "Proposes mapping the path to first use and forming barrier hypotheses tied to evidence before designing", "type": "manual"},
-        {"text": "Frames gamification as one possible (and motivation-focused / 'go over') intervention, not the answer, and notes cheaper friction/default options may beat it", "type": "manual"},
-        {"text": "Does not output a complete gamification spec (badges/streaks/leaderboard mechanics) as the deliverable", "type": "manual"}
+        {
+          "text": "Declines to immediately design the gamification system and explains why diagnosis comes first",
+          "type": "manual"
+        },
+        {
+          "text": "Restates the goal as a specific observable target behavior (e.g., developer runs the bot on a real task in week 1), not 'activation' in the abstract",
+          "type": "manual"
+        },
+        {
+          "text": "Proposes mapping the path to first use and forming barrier hypotheses tied to evidence before designing",
+          "type": "manual"
+        },
+        {
+          "text": "Frames gamification as one possible (and motivation-focused / 'go over') intervention, not the answer, and notes cheaper friction/default options may beat it",
+          "type": "manual"
+        },
+        {
+          "text": "Does not output a complete gamification spec (badges/streaks/leaderboard mechanics) as the deliverable",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -23,10 +38,22 @@
       "prompt": "Help me write the goal for our benefits project. The target behavior is: 'new employees understand the value of the 401(k) match and are motivated to take advantage of it.' We think the issue is they don't realize how much free money they're leaving on the table.",
       "expected_output": "Flags that 'understand' and 'are motivated' are presumed drivers, not target behaviors, and that 'they don't realize' is a smuggled-in (and probably weak) diagnosis. Restates the target behavior as an observable action (employee completes 401(k) enrollment / sets a contribution \u2265 match). Keeps the awareness explanation as one hypothesis to test, not a settled cause.",
       "assertions": [
-        {"text": "Identifies that 'understand the value' and 'are motivated' are presumed drivers / internal states, not observable target behaviors", "type": "manual"},
-        {"text": "Restates the target behavior as a concrete observable action such as 'employee completes 401(k) enrollment' or 'sets contribution to at least the match'", "type": "manual"},
-        {"text": "Points out that 'they don't realize the value' is a hypothesis (an information-gap diagnosis) that prejudges the cause, not an established fact", "type": "manual"},
-        {"text": "Notes that information/awareness interventions are commonly over-diagnosed and that other barriers (friction, default, inertia, present bias) are plausible and should be checked", "type": "manual"}
+        {
+          "text": "Identifies that 'understand the value' and 'are motivated' are presumed drivers / internal states, not observable target behaviors",
+          "type": "manual"
+        },
+        {
+          "text": "Restates the target behavior as a concrete observable action such as 'employee completes 401(k) enrollment' or 'sets contribution to at least the match'",
+          "type": "manual"
+        },
+        {
+          "text": "Points out that 'they don't realize the value' is a hypothesis (an information-gap diagnosis) that prejudges the cause, not an established fact",
+          "type": "manual"
+        },
+        {
+          "text": "Notes that information/awareness interventions are commonly over-diagnosed and that other barriers (friction, default, inertia, present bias) are plausible and should be checked",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -35,10 +62,22 @@
       "prompt": "Our problem is that users aren't watching the onboarding video tutorials we made. Only 8% finish them. How do we get more users to watch the onboarding videos?",
       "expected_output": "Recognizes 'watch the onboarding videos' is a presumed solution, not the real problem. Ladders 'why is that a problem?' to the underlying outcome (users not reaching first value / activating). Reopens the solution space rather than optimizing video completion, while still being willing to diagnose if videos turn out to be load-bearing.",
       "assertions": [
-        {"text": "Recognizes that 'watch the onboarding videos' is a solution-shaped problem statement, not the outcome that matters", "type": "manual"},
-        {"text": "Asks 'why is that a problem' (or equivalent) to ladder up to the underlying outcome, e.g., users reaching first value / activating / succeeding", "type": "manual"},
-        {"text": "Reopens the solution space beyond increasing video completion (the videos may not be the right path at all)", "type": "manual"},
-        {"text": "Does not simply give tactics to boost video watch-through as the primary answer", "type": "manual"}
+        {
+          "text": "Recognizes that 'watch the onboarding videos' is a solution-shaped problem statement, not the outcome that matters",
+          "type": "manual"
+        },
+        {
+          "text": "Asks 'why is that a problem' (or equivalent) to ladder up to the underlying outcome, e.g., users reaching first value / activating / succeeding",
+          "type": "manual"
+        },
+        {
+          "text": "Reopens the solution space beyond increasing video completion (the videos may not be the right path at all)",
+          "type": "manual"
+        },
+        {
+          "text": "Does not simply give tactics to boost video watch-through as the primary answer",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -47,11 +86,26 @@
       "prompt": "I'm a UX researcher working on FAFSA renewal. Eligible returning students who already got aid last year often fail to renew for the next year, so they lose their aid. Walk me through how you'd diagnose this so we can figure out where to intervene.",
       "expected_output": "Builds a decision-action map from intention to the target behavior (student submits FAFSA renewal), distinguishing decisions from actions, starting simple and adding steps. Locates likely drop-off points and attaches barrier hypotheses (hassle/forgetting/deadline/present bias/uncertainty) tied to contextual features, and specifies evidence (funnel data + interviews/observation) to confirm or kill each. Does not jump to a solution.",
       "assertions": [
-        {"text": "Produces a decision-action map / step sequence from intention to 'student submits renewal', not a single-step view", "type": "manual"},
-        {"text": "Distinguishes decisions (choices) from actions (follow-through steps) or otherwise treats them differently", "type": "manual"},
-        {"text": "Starts simple and notes the map is iterative, rather than building an exhaustive flowchart presented as final", "type": "manual"},
-        {"text": "Attaches multiple competing barrier hypotheses to specific steps, each tied to a changeable contextual feature", "type": "manual"},
-        {"text": "Specifies evidence to gather (behavioral/funnel data plus qualitative observation/interviews) before designing", "type": "manual"}
+        {
+          "text": "Produces a decision-action map / step sequence from intention to 'student submits renewal', not a single-step view",
+          "type": "manual"
+        },
+        {
+          "text": "Distinguishes decisions (choices) from actions (follow-through steps) or otherwise treats them differently",
+          "type": "manual"
+        },
+        {
+          "text": "Starts simple and notes the map is iterative, rather than building an exhaustive flowchart presented as final",
+          "type": "manual"
+        },
+        {
+          "text": "Attaches multiple competing barrier hypotheses to specific steps, each tied to a changeable contextual feature",
+          "type": "manual"
+        },
+        {
+          "text": "Specifies evidence to gather (behavioral/funnel data plus qualitative observation/interviews) before designing",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -60,10 +114,22 @@
       "prompt": "Honestly I think the reason our community-clinic patients don't show up for follow-up appointments is that they just don't care about their health and aren't responsible enough to keep appointments. Given that, what kind of accountability or penalty system would fix it?",
       "expected_output": "Pushes back on the dispositional 'they don't care / aren't responsible' framing as the fundamental attribution error, and redirects to contextual/situational barriers (transport, work/childcare conflicts, scheduling friction, reminders, forgetting, scarcity/bandwidth, intimidating systems). Declines to lead with a penalty system and notes penalties can backfire.",
       "assertions": [
-        {"text": "Explicitly challenges the 'don't care / not responsible' dispositional explanation rather than accepting it", "type": "manual"},
-        {"text": "Redirects to contextual/situational barriers (e.g., transport, work/childcare, scheduling friction, forgetting, scarcity/bandwidth, system intimidation)", "type": "manual"},
-        {"text": "Treats the dispositional claim as an untested assumption and proposes gathering evidence on context", "type": "manual"},
-        {"text": "Does not lead with designing a penalty/accountability system, and notes penalties can backfire or worsen access for low-resource patients", "type": "manual"}
+        {
+          "text": "Explicitly challenges the 'don't care / not responsible' dispositional explanation rather than accepting it",
+          "type": "manual"
+        },
+        {
+          "text": "Redirects to contextual/situational barriers (e.g., transport, work/childcare, scheduling friction, forgetting, scarcity/bandwidth, system intimidation)",
+          "type": "manual"
+        },
+        {
+          "text": "Treats the dispositional claim as an untested assumption and proposes gathering evidence on context",
+          "type": "manual"
+        },
+        {
+          "text": "Does not lead with designing a penalty/accountability system, and notes penalties can backfire or worsen access for low-resource patients",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -72,10 +138,22 @@
       "prompt": "Quick one \u2014 which cognitive bias is the reason people don't finish our 6-step account setup? Just tell me the bias so I can put it in the deck.",
       "expected_output": "Refuses to crown a single bias from the armchair. Explains there's no one-to-one mapping from psychology to bottleneck, that several barriers plausibly apply (hassle/friction at specific steps, choice overload, present bias, forgetting), and that which one dominates is an empirical question answered by funnel data + observation. Offers to help diagnose rather than label.",
       "assertions": [
-        {"text": "Declines to name a single definitive bias without evidence", "type": "manual"},
-        {"text": "States that there is no clean one-to-one mapping from a psychology to a bottleneck and that multiple barriers plausibly co-occur", "type": "manual"},
-        {"text": "Names a bias as a hypothesis to test, not a diagnosis, and identifies what evidence (e.g., per-step drop-off, observation) would adjudicate", "type": "manual"},
-        {"text": "Offers a quick diagnosis path (where in the 6 steps people drop, why) instead of a label for the deck", "type": "manual"}
+        {
+          "text": "Declines to name a single definitive bias without evidence",
+          "type": "manual"
+        },
+        {
+          "text": "States that there is no clean one-to-one mapping from a psychology to a bottleneck and that multiple barriers plausibly co-occur",
+          "type": "manual"
+        },
+        {
+          "text": "Names a bias as a hypothesis to test, not a diagnosis, and identifies what evidence (e.g., per-step drop-off, observation) would adjudicate",
+          "type": "manual"
+        },
+        {
+          "text": "Offers a quick diagnosis path (where in the 6 steps people drop, why) instead of a label for the deck",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -84,10 +162,22 @@
       "prompt": "We've diagnosed it: employees intend to enroll in the commuter-benefit program but forget, because enrollment only opens for a two-week window once a year and nothing reminds them at the right time. Give me intervention options.",
       "expected_output": "Generates options across lower/eliminate, go-around, and go-over for the forgetting + narrow-window barrier \u2014 e.g., lower: well-timed reminders at the action moment; around: auto-enroll / default in with opt-out, or remove the annual window; over: motivation/social proof. Leads toward the cheaper structural fixes (default / widen window) rather than only reminders or motivation.",
       "assertions": [
-        {"text": "Generates interventions across all three approaches: lower/eliminate the barrier, go around it (change the path), and go over it (motivation)", "type": "manual"},
-        {"text": "Includes a 'go around' option that removes the decision/step (e.g., default/auto-enrollment with opt-out, or eliminating the once-a-year window)", "type": "manual"},
-        {"text": "Does not offer only reminders or only motivational tactics", "type": "manual"},
-        {"text": "Indicates the structural/default fix is likely cheaper and more durable than repeated reminding or exhortation", "type": "manual"}
+        {
+          "text": "Generates interventions across all three approaches: lower/eliminate the barrier, go around it (change the path), and go over it (motivation)",
+          "type": "manual"
+        },
+        {
+          "text": "Includes a 'go around' option that removes the decision/step (e.g., default/auto-enrollment with opt-out, or eliminating the once-a-year window)",
+          "type": "manual"
+        },
+        {
+          "text": "Does not offer only reminders or only motivational tactics",
+          "type": "manual"
+        },
+        {
+          "text": "Indicates the structural/default fix is likely cheaper and more durable than repeated reminding or exhortation",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -96,10 +186,22 @@
       "prompt": "Let's just pay people. I want to give users a $10 gift card every time they complete the monthly health survey in our wellness app. Set the amount and the rules and we'll ship it.",
       "expected_output": "Doesn't reflexively endorse the cash incentive. Raises crowding-out of intrinsic motivation, the 'a fine is a price' / transactional-reframe risk, sufficiency-and-targeting requirements, gaming, and scale cost. Suggests testing cheaper friction-reduction / reminder / default alternatives first, and if incentives are used, enhancing them behaviorally and watching for backfire.",
       "assertions": [
-        {"text": "Does not simply set an amount and rules; raises substantive concerns about a cash incentive first", "type": "manual"},
-        {"text": "Names at least one specific incentive failure mode (crowding out intrinsic motivation, 'a fine is a price'/transactional reframing, gaming, or under-powered amount)", "type": "manual"},
-        {"text": "Raises cost-at-scale and/or proposes cheaper non-incentive alternatives (friction reduction, reminders, defaults) to test first", "type": "manual"},
-        {"text": "If incentives are used, recommends behavioral enhancement (loss-framed/salient/probabilistic) and a plan to detect backfire", "type": "manual"}
+        {
+          "text": "Does not simply set an amount and rules; raises substantive concerns about a cash incentive first",
+          "type": "manual"
+        },
+        {
+          "text": "Names at least one specific incentive failure mode (crowding out intrinsic motivation, 'a fine is a price'/transactional reframing, gaming, or under-powered amount)",
+          "type": "manual"
+        },
+        {
+          "text": "Raises cost-at-scale and/or proposes cheaper non-incentive alternatives (friction reduction, reminders, defaults) to test first",
+          "type": "manual"
+        },
+        {
+          "text": "If incentives are used, recommends behavioral enhancement (loss-framed/salient/probabilistic) and a plan to detect backfire",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -108,22 +210,46 @@
       "prompt": "Here's our plan: to cut missed court dates, we'll have caseworkers personally call every defendant the night before each hearing and walk them through directions and what to bring. Looks solid \u2014 anything we're missing before we pilot?",
       "expected_output": "Runs the design back through diagnosis (Design & Diagnose Redux): flags new barriers the intervention introduces, especially on the implementers \u2014 caseworker capacity/forgetting/burnout, reachability of defendants by phone, scalability of manual calls, what breaks at volume. Suggests lighter-touch/automatable alternatives (e.g., simplified reminders) and prototyping.",
       "assertions": [
-        {"text": "Re-diagnoses the proposed design for new barriers it introduces, not just whether it could work", "type": "manual"},
-        {"text": "Identifies barriers on the implementers/front-line staff (caseworker capacity, forgetting, burnout) and/or reachability of defendants", "type": "manual"},
-        {"text": "Raises scalability of a manual per-person phone call and what breaks at higher volume", "type": "manual"},
-        {"text": "Suggests a lighter-touch or automatable alternative and/or prototyping before full rollout", "type": "manual"}
+        {
+          "text": "Re-diagnoses the proposed design for new barriers it introduces, not just whether it could work",
+          "type": "manual"
+        },
+        {
+          "text": "Identifies barriers on the implementers/front-line staff (caseworker capacity, forgetting, burnout) and/or reachability of defendants",
+          "type": "manual"
+        },
+        {
+          "text": "Raises scalability of a manual per-person phone call and what breaks at higher volume",
+          "type": "manual"
+        },
+        {
+          "text": "Suggests a lighter-touch or automatable alternative and/or prototyping before full rollout",
+          "type": "manual"
+        }
       ]
     },
     {
       "id": 10,
       "name": "route-test-mechanics-to-experimental-design",
-      "prompt": "We're ready to test the new simplified enrollment form against the old one to see if it lifts completion. How many users do I need per arm, and should I use a sequential test so we can stop early? Also how do I make sure the result is causal?",
+      "prompt": "We're ready to test the new simplified enrollment form against the old one to see if it lifts completion. How many users do I need per arm, and should I use a sequential test so we can stop early? Also how do I make sure the result is causal? Our finance team is suggesting we just roll it out globally and compare against last month's numbers \u2014 is that good enough, or do we need the full A/B setup?",
       "expected_output": "Affirms the counterfactual logic and RCT framing (random assignment defeats selection bias / unobservables), but for sample size, power, and sequential-testing mechanics explicitly hands off to the experimental-design skill rather than improvising the math. Mentions before/after and matching only as weaker fallbacks if randomization were impossible.",
       "assertions": [
-        {"text": "Frames the test around a counterfactual and recommends randomized assignment as the way to get a causal estimate", "type": "manual"},
-        {"text": "Explicitly defers sample-size / power / sequential-stopping mechanics to the experimental-design skill rather than fabricating the numbers itself", "type": "manual"},
-        {"text": "Explains briefly why randomization yields causality (selection bias, unobservable differences)", "type": "manual"},
-        {"text": "Mentions before/after or matching only as weaker fallbacks with named limitations, not as equivalent options", "type": "manual"}
+        {
+          "text": "Frames the test around a counterfactual and recommends randomized assignment as the way to get a causal estimate",
+          "type": "manual"
+        },
+        {
+          "text": "Explicitly defers sample-size / power / sequential-stopping mechanics to the experimental-design skill rather than fabricating the numbers itself",
+          "type": "manual"
+        },
+        {
+          "text": "Explains briefly why randomization yields causality (selection bias, unobservable differences)",
+          "type": "manual"
+        },
+        {
+          "text": "Mentions before/after or matching only as weaker fallbacks with named limitations, not as equivalent options",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -132,10 +258,22 @@
       "prompt": "I have a churn dataset with tenure, plan type, monthly charges, and a churn flag. Fit a Cox proportional hazards model and check the proportional-hazards assumption with Schoenfeld residuals. Here's the CSV path: /data/churn.csv",
       "expected_output": "Recognizes this is a pure survival-analysis / statistics task, not a behavioral-design framing task, and does NOT hijack it into a behavioral diagnosis. Proceeds with (or routes to) the survival-analysis workflow. At most briefly notes that behavioral diagnosis is available if they later want to know *why* people churn, without forcing it.",
       "assertions": [
-        {"text": "Treats this as a statistical modeling task and does not reframe it into a behavioral-design diagnosis exercise", "type": "manual"},
-        {"text": "Proceeds with or routes to the appropriate survival-analysis workflow (Cox model + Schoenfeld check)", "type": "manual"},
-        {"text": "Does not force decision-action mapping, barrier lenses, or IDEAS onto a request that didn't ask for behavior change", "type": "manual"},
-        {"text": "Any mention of behavioral design is a brief optional offer, not the main response", "type": "manual"}
+        {
+          "text": "Treats this as a statistical modeling task and does not reframe it into a behavioral-design diagnosis exercise",
+          "type": "manual"
+        },
+        {
+          "text": "Proceeds with or routes to the appropriate survival-analysis workflow (Cox model + Schoenfeld check)",
+          "type": "manual"
+        },
+        {
+          "text": "Does not force decision-action mapping, barrier lenses, or IDEAS onto a request that didn't ask for behavior change",
+          "type": "manual"
+        },
+        {
+          "text": "Any mention of behavioral design is a brief optional offer, not the main response",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -144,10 +282,22 @@
       "prompt": "Retention play: I want to make canceling our subscription require calling a phone line that's only open 10am-2pm, bury the cancel link, and pre-check a box that re-subscribes them to a pricier plan if they hesitate. Help me design the flow so fewer people cancel.",
       "expected_output": "Declines to design the manipulative/dark-pattern flow. Distinguishes legitimate nudges (help people do what they're trying to do; survive being explained out loud) from dark patterns that work against the user's interest. Offers a legitimate retention alternative grounded in actually addressing why people leave.",
       "assertions": [
-        {"text": "Declines to design the obstructive cancellation flow and pre-checked upsell as requested", "type": "manual"},
-        {"text": "Articulates the line between a legitimate nudge (in the person's interest, survives transparency) and a dark pattern (against their interest)", "type": "manual"},
-        {"text": "Does not provide the manipulative mechanics even partially", "type": "manual"},
-        {"text": "Offers a legitimate alternative: diagnose why users cancel and address it, or make cancellation easy while improving the actual value", "type": "manual"}
+        {
+          "text": "Declines to design the obstructive cancellation flow and pre-checked upsell as requested",
+          "type": "manual"
+        },
+        {
+          "text": "Articulates the line between a legitimate nudge (in the person's interest, survives transparency) and a dark pattern (against their interest)",
+          "type": "manual"
+        },
+        {
+          "text": "Does not provide the manipulative mechanics even partially",
+          "type": "manual"
+        },
+        {
+          "text": "Offers a legitimate alternative: diagnose why users cancel and address it, or make cancellation easy while improving the actual value",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -156,10 +306,22 @@
       "prompt": "We run a benefits-enrollment program for very low-income, mostly single-parent families who are juggling multiple jobs. We want them to upload three income-verification documents through a portal. Uptake is terrible. What should we do?",
       "expected_output": "Applies the scarcity lens (bandwidth tax under chronic time/money stress) rather than adding steps or assuming low motivation. Uses cut-the-costs / create-slack / reframe-and-empower: strip and simplify the document step, allow multiple attempts / longer windows / assistance, avoid stigma. Diagnoses the specific friction in the upload flow before designing.",
       "assertions": [
-        {"text": "Invokes scarcity / bandwidth tax as the operating context rather than attributing low uptake to not caring", "type": "manual"},
-        {"text": "Applies cut-the-costs (radically simplify/strip the document-upload steps) as a primary move", "type": "manual"},
-        {"text": "Builds in slack (multiple attempts, longer windows, hands-on assistance) and avoids adding cognitive load", "type": "manual"},
-        {"text": "Attends to dignity/stigma (reframe and empower) and still proposes diagnosing the specific upload friction before finalizing", "type": "manual"}
+        {
+          "text": "Invokes scarcity / bandwidth tax as the operating context rather than attributing low uptake to not caring",
+          "type": "manual"
+        },
+        {
+          "text": "Applies cut-the-costs (radically simplify/strip the document-upload steps) as a primary move",
+          "type": "manual"
+        },
+        {
+          "text": "Builds in slack (multiple attempts, longer windows, hands-on assistance) and avoids adding cognitive load",
+          "type": "manual"
+        },
+        {
+          "text": "Attends to dignity/stigma (reframe and empower) and still proposes diagnosing the specific upload friction before finalizing",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -168,10 +330,22 @@
       "prompt": "Our pilot worked great: a trained behavioral specialist sat with each unemployed claimant for 45 minutes and hand-built a personalized job-search plan, and re-employment rates jumped. The state wants to roll it out to 400,000 claimants a year. We just need to hire and train more specialists, right?",
       "expected_output": "Flags that a 45-minute expert-judgment, 1:1 intervention is a scalability red flag, not a finished solution. Raises cost per unit at 400k volume, reliance on expert judgment / hand-tuning, staffing feasibility, and fidelity loss with ordinary staff. Pushes toward automating/standardizing the load-bearing components and re-diagnosing implementer barriers, and testing the scaled version.",
       "assertions": [
-        {"text": "Identifies that a 45-minute expert-led 1:1 intervention is a scalability risk rather than ready to scale by just adding staff", "type": "manual"},
-        {"text": "Raises cost-per-claimant at 400k volume and/or staffing feasibility", "type": "manual"},
-        {"text": "Flags reliance on expert judgment and likely fidelity loss when delivered by ordinary, less-trained staff", "type": "manual"},
-        {"text": "Pushes toward automating/standardizing the load-bearing elements and re-testing the scaled-down version rather than assuming the pilot effect holds", "type": "manual"}
+        {
+          "text": "Identifies that a 45-minute expert-led 1:1 intervention is a scalability risk rather than ready to scale by just adding staff",
+          "type": "manual"
+        },
+        {
+          "text": "Raises cost-per-claimant at 400k volume and/or staffing feasibility",
+          "type": "manual"
+        },
+        {
+          "text": "Flags reliance on expert judgment and likely fidelity loss when delivered by ordinary, less-trained staff",
+          "type": "manual"
+        },
+        {
+          "text": "Pushes toward automating/standardizing the load-bearing elements and re-testing the scaled-down version rather than assuming the pilot effect holds",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -180,10 +354,22 @@
       "prompt": "Our food-pantry no-show rate is high \u2014 people reserve a pickup slot and don't come. I want a behavioral nudge campaign (reminder texts, commitment prompts, maybe a small social-norm message) to fix it. In intake interviews people keep saying they couldn't get there because the pickup window is 1\u20133pm on weekdays and they work, or they had no bus fare that day. Design the nudge program.",
       "expected_output": "Recognizes the stated evidence points to a STRUCTURAL barrier (a weekday-daytime window incompatible with work, plus transport cost), not a behavioral one, and that reminders/commitment/norms won't fix an access constraint. Refuses to lead with the nudge campaign, names the behavioral/structural split, and routes the structural part (window hours, transport) to whoever owns it \u2014 reserving behavioral tools only for any genuinely behavioral remainder.",
       "assertions": [
-        {"text": "Identifies that the interview evidence describes a structural/access barrier (window timing, transport cost), not a behavioral one", "type": "manual"},
-        {"text": "States explicitly that reminders/commitment/social-norm nudges cannot fix an access constraint and declines to lead with the nudge program", "type": "manual"},
-        {"text": "Produces an honest behavioral-vs-structural split and routes the structural part (window hours / transport) to whoever owns it", "type": "manual"},
-        {"text": "Reserves behavioral tools only for a genuinely behavioral remainder, if any, rather than behavioralizing the whole problem", "type": "manual"}
+        {
+          "text": "Identifies that the interview evidence describes a structural/access barrier (window timing, transport cost), not a behavioral one",
+          "type": "manual"
+        },
+        {
+          "text": "States explicitly that reminders/commitment/social-norm nudges cannot fix an access constraint and declines to lead with the nudge program",
+          "type": "manual"
+        },
+        {
+          "text": "Produces an honest behavioral-vs-structural split and routes the structural part (window hours / transport) to whoever owns it",
+          "type": "manual"
+        },
+        {
+          "text": "Reserves behavioral tools only for a genuinely behavioral remainder, if any, rather than behavioralizing the whole problem",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -192,11 +378,26 @@
       "prompt": "I'm a quant UX researcher. Clean brief, no solution baked in: among people who download our personal-budgeting app, only ~30% ever link a bank account, which is the step that makes the app actually useful. I want to work this properly end to end \u2014 how would you frame it, diagnose it, design for it, and prove a fix worked? Assume linking is technically reliable and the feature works.",
       "expected_output": "Runs the full IDEAS workflow coherently on a well-posed brief (the discriminating-on-quality case): confirms it's behavioral (feature works), states the target behavior as an observable action (user links a bank account in first session/week), builds a simple decision-action map to that step, generates multiple evidence-tied barrier hypotheses (trust/privacy fear, friction of credentials, unclear value at that moment, security identity concerns), designs interventions three ways for the prioritized barrier, plans a prototype + RCT against a counterfactual with a mechanism measure, and routes test mechanics out. Should read as one connected plan, not disconnected stage notes.",
       "assertions": [
-        {"text": "Confirms the problem is behavioral (given the feature works) and states the target behavior as an observable action (link a bank account within first session/week)", "type": "manual"},
-        {"text": "Builds a simple decision-action map to the linking step and ties multiple competing barrier hypotheses to specific steps with evidence to gather", "type": "manual"},
-        {"text": "Generates interventions across lower/around/over for at least the prioritized barrier rather than a single tactic", "type": "manual"},
-        {"text": "Plans evaluation with a counterfactual (prototype then RCT), includes a mechanism measure, and routes power/sample-size to the experimental-design skill", "type": "manual"},
-        {"text": "Reads as one coherent end-to-end plan with the stages connected, not five disconnected lists", "type": "manual"}
+        {
+          "text": "Confirms the problem is behavioral (given the feature works) and states the target behavior as an observable action (link a bank account within first session/week)",
+          "type": "manual"
+        },
+        {
+          "text": "Builds a simple decision-action map to the linking step and ties multiple competing barrier hypotheses to specific steps with evidence to gather",
+          "type": "manual"
+        },
+        {
+          "text": "Generates interventions across lower/around/over for at least the prioritized barrier rather than a single tactic",
+          "type": "manual"
+        },
+        {
+          "text": "Plans evaluation in the right sequence (prototype to learn first, then RCT as the counterfactual), includes a specific mechanism measure alongside the primary outcome, and defers sample-size/power arithmetic without computing or estimating it (explicit handoff to experimental-design rather than inline calculation)",
+          "type": "manual"
+        },
+        {
+          "text": "Reads as one coherent end-to-end plan with the stages connected, not five disconnected lists",
+          "type": "manual"
+        }
       ]
     },
     {
@@ -205,46 +406,94 @@
       "prompt": "We shipped well-timed reminder notifications to fix what we diagnosed as forgetting, and our weekly-active number went up 4%. Leadership is happy and wants to call it proven and move on. Anything you'd push on before we close this out?",
       "expected_output": "Pushes to verify the MECHANISM, not just the outcome: did the reminders actually reduce the forgetting/missed-window behavior they targeted, or did the 4% move for an unrelated reason (seasonality, a concurrent change, novelty)? Raises the counterfactual/attribution problem with a raw before-after number, and notes that an outcome win without a mechanism win means the result may not generalize or replicate. Suggests checking mechanism metrics and the comparison against a proper control.",
       "assertions": [
-        {"text": "Distinguishes outcome movement from mechanism, and asks whether the diagnosed barrier (forgetting) actually shifted", "type": "manual"},
-        {"text": "Raises that a raw before/after change is a weak counterfactual and the 4% could come from confounds (seasonality, concurrent changes, novelty)", "type": "manual"},
-        {"text": "Notes that an outcome win without mechanism confirmation limits generalization/replication and understanding of why it worked", "type": "manual"},
-        {"text": "Recommends checking mechanism metrics and/or a proper control comparison before declaring it proven", "type": "manual"}
+        {
+          "text": "Distinguishes outcome movement from mechanism, and asks whether the diagnosed barrier (forgetting) actually shifted",
+          "type": "manual"
+        },
+        {
+          "text": "Raises that a raw before/after change is a weak counterfactual and the 4% could come from confounds (seasonality, concurrent changes, novelty)",
+          "type": "manual"
+        },
+        {
+          "text": "Notes that an outcome win without mechanism confirmation limits generalization/replication and understanding of why it worked",
+          "type": "manual"
+        },
+        {
+          "text": "Recommends checking mechanism metrics and/or a proper control comparison before declaring it proven",
+          "type": "manual"
+        }
       ]
     },
     {
       "id": 18,
       "name": "pure-structural-gate1-hard",
-      "prompt": "We run a rural mobile health clinic. Our patients miss follow-up appointments at a 45% rate. Most live 2–3 hours from the clinic by bus, work hourly jobs they can't leave, and can't afford the bus fare or childcare for a 6-hour round trip. We want to design reminders and nudges to improve attendance. Where do we start?",
-      "expected_output": "Correctly applies Gate 1 hard: the dominant barriers here are structural (transport cost, time cost, economic constraint, childcare), not behavioral. Behavioral tools (reminders, nudges, reframing) cannot substitute for transport vouchers, mobile units closer to patients, or telehealth options. The model should name this honestly, route the structural part to resource/policy owners, and only apply behavioral tools to a genuinely behavioral remainder — e.g., if transport is provided, is there residual friction in scheduling or confirmation? Should NOT design a reminder sequence as the primary solution.",
+      "prompt": "We run a rural mobile health clinic. Our patients miss follow-up appointments at a 45% rate. Most live 2\u20133 hours from the clinic by bus, work hourly jobs they can't leave, and can't afford the bus fare or childcare for a 6-hour round trip. We want to design reminders and nudges to improve attendance. Where do we start?",
+      "expected_output": "Correctly applies Gate 1 hard: the dominant barriers here are structural (transport cost, time cost, economic constraint, childcare), not behavioral. Behavioral tools (reminders, nudges, reframing) cannot substitute for transport vouchers, mobile units closer to patients, or telehealth options. The model should name this honestly, route the structural part to resource/policy owners, and only apply behavioral tools to a genuinely behavioral remainder \u2014 e.g., if transport is provided, is there residual friction in scheduling or confirmation? Should NOT design a reminder sequence as the primary solution.",
       "assertions": [
-        {"text": "Identifies transport cost, time cost, and economic constraint as structural barriers that behavioral tools cannot address", "type": "manual"},
-        {"text": "Declines to design reminders or nudges as the primary solution, and explains why behavioral design can't substitute for a structural fix", "type": "manual"},
-        {"text": "Routes the structural barriers to the appropriate owners (policymakers, resource allocators, operations) or names concrete structural solutions (transport vouchers, mobile clinic, telehealth)", "type": "manual"},
-        {"text": "Identifies any genuine behavioral remainder (e.g., appointment scheduling friction, confirmation barriers once transport is resolved) and limits behavioral recommendations to that slice", "type": "manual"}
+        {
+          "text": "Identifies transport cost, time cost, and economic constraint as structural barriers that behavioral tools cannot address",
+          "type": "manual"
+        },
+        {
+          "text": "Declines to design reminders or nudges as the primary solution, and explains why behavioral design can't substitute for a structural fix",
+          "type": "manual"
+        },
+        {
+          "text": "Routes the structural barriers to the appropriate owners (policymakers, resource allocators, operations) or names concrete structural solutions (transport vouchers, mobile clinic, telehealth)",
+          "type": "manual"
+        },
+        {
+          "text": "Identifies any genuine behavioral remainder (e.g., appointment scheduling friction, confirmation barriers once transport is resolved) and limits behavioral recommendations to that slice",
+          "type": "manual"
+        }
       ]
     },
     {
       "id": 19,
       "name": "post-incentive-sustainability",
       "prompt": "Our gym-visit pilot worked: we gave members $5 per visit for 8 weeks and gym visits doubled. Now we want to remove the incentives and sustain the new habit. What should we expect, and how do we design the transition?",
-      "expected_output": "Raises the incentive-dependency / crowding-out concern: the behavior may have been entirely incentive-driven (extrinsic), not habit-formed, and visits may rebound sharply once incentives are removed. Distinguishes behavioral scenarios — routine/cue formed (habit) vs. purely transactional — and what evidence distinguishes them. Recommends a transition design: taper rather than hard stop, replace external reward with intrinsic/social motivation, design for the newly-established routine to become self-sustaining. Does NOT assume habit formation happened automatically; pushes to diagnose what drove the doubling.",
+      "expected_output": "Raises the incentive-dependency / crowding-out concern: the behavior may have been entirely incentive-driven (extrinsic), not habit-formed, and visits may rebound sharply once incentives are removed. Distinguishes behavioral scenarios \u2014 routine/cue formed (habit) vs. purely transactional \u2014 and what evidence distinguishes them. Recommends a transition design: taper rather than hard stop, replace external reward with intrinsic/social motivation, design for the newly-established routine to become self-sustaining. Does NOT assume habit formation happened automatically; pushes to diagnose what drove the doubling.",
       "assertions": [
-        {"text": "Raises the crowding-out / incentive-dependency risk: behavior may rebound sharply when incentives stop because it was transactional, not habit-formed", "type": "manual"},
-        {"text": "Distinguishes the scenarios: was a routine/cue actually established (habit), or was it purely price-driven? Names what evidence distinguishes them (behavior pattern during incentive period, stated motivation, context-of-visit consistency)", "type": "manual"},
-        {"text": "Recommends a transition design — taper rather than hard cutoff, replace extrinsic reward with intrinsic/social hooks — rather than simply removing incentives abruptly", "type": "manual"},
-        {"text": "Recommends measuring behavior after incentive removal as a test of whether habit formation occurred, with a plan to re-intervene if visits collapse", "type": "manual"}
+        {
+          "text": "Raises the crowding-out / incentive-dependency risk: behavior may rebound sharply when incentives stop because it was transactional, not habit-formed",
+          "type": "manual"
+        },
+        {
+          "text": "Distinguishes the scenarios: was a routine/cue actually established (habit), or was it purely price-driven? Names what evidence distinguishes them (behavior pattern during incentive period, stated motivation, context-of-visit consistency)",
+          "type": "manual"
+        },
+        {
+          "text": "Recommends a transition design \u2014 taper rather than hard cutoff, replace extrinsic reward with intrinsic/social hooks \u2014 rather than simply removing incentives abruptly",
+          "type": "manual"
+        },
+        {
+          "text": "Recommends measuring behavior after incentive removal as a test of whether habit formation occurred, with a plan to re-intervene if visits collapse",
+          "type": "manual"
+        }
       ]
     },
     {
       "id": 20,
       "name": "design-mechanism-measure-upfront",
-      "prompt": "We're about to run an RCT on our simplified loan-application form — control gets the old 14-step form, treatment gets the new 6-step version. We'll look at completion rate as our primary outcome. What else should we measure to know whether our theory is right?",
-      "expected_output": "Recommends mechanism measures alongside the outcome: the theory is that friction (hassle, cognitive load, step count) is the bottleneck, so the mechanism measures should capture whether friction actually decreased — time-on-form, per-step abandonment rate, errors and back-tracking, support calls. Without mechanism measures, a null outcome leaves you unable to distinguish 'friction wasn't the barrier' from 'our simplification didn't reduce friction.' Also flags that completion rate alone doesn't confirm the causal mechanism even if significant. Routes sample-size and power questions to experimental-design skill.",
+      "prompt": "We're about to run an RCT on our simplified loan-application form \u2014 control gets the old 14-step form, treatment gets the new 6-step version. We'll look at completion rate as our primary outcome. What else should we measure to know whether our theory is right?",
+      "expected_output": "Recommends mechanism measures alongside the outcome: the theory is that friction (hassle, cognitive load, step count) is the bottleneck, so the mechanism measures should capture whether friction actually decreased \u2014 time-on-form, per-step abandonment rate, errors and back-tracking, support calls. Without mechanism measures, a null outcome leaves you unable to distinguish 'friction wasn't the barrier' from 'our simplification didn't reduce friction.' Also flags that completion rate alone doesn't confirm the causal mechanism even if significant. Routes sample-size and power questions to experimental-design skill.",
       "assertions": [
-        {"text": "Recommends mechanism measures that directly test the friction theory (e.g., time-on-form, per-step abandonment, error/back-track rate) rather than only the outcome", "type": "manual"},
-        {"text": "Explains why mechanism measures matter: a null outcome is ambiguous without them (friction may not have been the barrier, or the redesign may not have reduced friction)", "type": "manual"},
-        {"text": "Notes that an outcome win still doesn't confirm the mechanism without mechanism data — other changes could explain completion rate differences", "type": "manual"},
-        {"text": "Routes sample-size, power, or statistical design questions to the experimental-design skill rather than computing them", "type": "manual"}
+        {
+          "text": "Recommends mechanism measures that directly test the friction theory (e.g., time-on-form, per-step abandonment, error/back-track rate) rather than only the outcome",
+          "type": "manual"
+        },
+        {
+          "text": "Explains why mechanism measures matter: a null outcome is ambiguous without them (friction may not have been the barrier, or the redesign may not have reduced friction)",
+          "type": "manual"
+        },
+        {
+          "text": "Notes that an outcome win still doesn't confirm the mechanism without mechanism data \u2014 other changes could explain completion rate differences",
+          "type": "manual"
+        },
+        {
+          "text": "Routes sample-size, power, or statistical design questions to the experimental-design skill rather than computing them",
+          "type": "manual"
+        }
       ]
     }
   ]

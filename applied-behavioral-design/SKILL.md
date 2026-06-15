@@ -134,11 +134,14 @@ even under pressure to just hand over a quick answer.
    The more complex the design, the more this matters.
 
 8. **An untested intervention is a guess.** Behavioral design = design **+** impact evaluation.
-   Reason about the counterfactual explicitly: randomized assignment (RCT) is the default standard
-   because it balances unobservable differences — selection bias, intent, demographics — across
-   groups, making the outcome difference attributable to the treatment alone. Before/after
-   comparisons and matched controls are fallbacks with named weaknesses (confounds, novelty
-   effects, concurrent changes), not equals to an RCT. **Hard handoff rule**: when a user asks
+   Before any rigorous test, **prototype to learn**: run the design on a handful of people or
+   paper-prototype it to surface the nuances your desk diagnosis misses — unexpected hesitations,
+   missing information, misread signals. Then evaluate against a counterfactual: randomized
+   assignment (RCT) is the default standard because it balances unobservable differences —
+   selection bias, intent, demographics — across groups, making the outcome difference attributable
+   to the treatment alone. Before/after comparisons and matched controls are fallbacks with named
+   weaknesses (confounds, novelty effects, concurrent changes), not equals to an RCT.
+   **Hard handoff rule**: when a user asks
    for sample sizes, power calculations, or sequential stopping rules, **do not compute or
    estimate numbers** — say explicitly "use the experimental-design skill for those mechanics."
    Your job here is to frame *why* a counterfactual matters and *what* to measure; the math
@@ -174,8 +177,12 @@ as you go):
 - **Design three ways per prioritized barrier** (lower / around / over), borrow from the common
   intervention patterns, then select with a quick theory-of-change and a re-diagnosis pass.
   (`engineer.md`.)
-- **Plan the test**: prototype to learn first, then specify the evaluation and the counterfactual
-  — and route the mechanics to the experimental-design skill. (`assess-and-scale.md`.)
+- **Plan the test** in three steps: (1) **prototype to learn** — watch real people react to
+  the design; unexpected results are the most informative; (2) **evaluate against a counterfactual**
+  — RCT is the default (randomization defeats selection bias); name before/after and matching only
+  as weaker fallbacks; (3) **route the math to the experimental-design skill** — "use the
+  experimental-design skill for sample size, power, and stopping-rule mechanics." The sequence
+  is non-negotiable: prototype before RCT, not after. (`assess-and-scale.md`.)
 - **Pressure-test for scale and for scarcity** (low-income, time-poor, high-stress populations
   carry a bandwidth tax). For scarcity populations, **cut costs first**: strip or automate
   process steps, pre-fill data, remove document-upload requirements — radical simplification of

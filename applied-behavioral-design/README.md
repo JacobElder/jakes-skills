@@ -73,12 +73,12 @@ Evaluated on 20 scenarios covering Gate 1/2 enforcement, target-behavior precisi
 ```
 Condition       Score        Pass rate
 ───────────────────────────────────────
-Base model      TBD / 83     TBD%
-With skill      TBD / 83     TBD%
-Delta                        TBD pp
+Base model      56 / 83      67.5%
+With skill      83 / 83      100.0%
+Delta                        +32.5pp
 ```
 
-*(Numbers will be updated once the full iter-2 benchmark completes.)*
+20 evals, 83 assertions. The skill achieves 100% with-skill pass rate; the base model passes 10/20 evals (50%) and 56/83 assertions (67.5%).
 
 The largest gains come from cases where the base model is "helpfully compliant":
 
@@ -87,8 +87,8 @@ The largest gains come from cases where the base model is "helpfully compliant":
 | premature-solutioning | refuses gamification, backs up to diagnosis | 0% | 100% | **+100pp** |
 | incentive-skepticism | raises crowding-out + completes with enhancement | 0% | 100% | **+100pp** |
 | single-bias-guard | generates competing hypotheses with evidence | 0% | 100% | **+100pp** |
-| decision-action-map | builds map + ties hypotheses to specific steps | 40% | 80% | **+40pp** |
-| happy-path quality | coherent end-to-end IDEAS plan | 40% | 80%+ | **+40pp** |
+| happy-path end-to-end | full IDEAS plan (prototype → RCT, mechanism, handoff) | 40% | 100% | **+60pp** |
+| handoff to exp-design | routes AB test mechanics rather than computing them | 50% | 100% | **+50pp** |
 
 The base model already handles: contextual (not dispositional) attribution, problem-as-outcome framing, re-diagnosing a proposed design for new barriers, scope-guarding pure statistics, ethics (declining dark patterns), and scale constraints. The skill's value concentrates on the diagnosis-before-design discipline, bias-as-hypothesis rigor, three-way intervention generation, and test-mechanics handoff.
 
