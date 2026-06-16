@@ -1,0 +1,34 @@
+{
+  "eval_id": 15,
+  "name": "rating-data-zroc-fitting",
+  "condition": "with_skill",
+  "prompt": "I have rating-scale recognition-memory data. Participants rated confidence on a 4-point scale (4=sure old, 1=sure new). Out of 80 signal trials: 43 rated 4, 16 rated 3, 10 rated 2, 11 rated 1. Out of 80 noise trials: 5 rated 4, 11 rated 3, 16 rated 2, 48 rated 1. I computed a single d' from the most liberal criterion (rating >=4: HR=0.5375, FAR=0.0625) and got d' = 1.59. Is that a complete and correct analysis?",
+  "baseline_failure_hypothesis": "Agent treats the single-point d'=1.59 as valid and complete, missing that: (a) a single point discards the full rating ROC, (b) the correct analysis is to fit the z-ROC to get slope and report d_a / A_z, (c) single-point d' is criterion-dependent and biased under unequal variance.",
+  "response": "Not complete \u2014 the single-point d' is a reasonable starting point but has two concrete problems. Here's the full picture.\n\n## What's correct\n\nThe formula itself is fine. Using the log-linear correction on the collapsed 2\u00d72 gives d' \u2248 1.59, which checks out numerically.\n\n## What's wrong\n\n**1. You discarded two of your three ROC operating points.**\n\nYou have a 4-point rating scale, which yields three cumulative operating points. Using only rating \u2265 4 ignores all the information in ratings 3 and 2.\n\n**2. Single-point d' assumes equal variance \u2014 and your own data falsify that assumption.**\n\nCompute the equal-variance d' at each criterion and watch what happens:\n\n| Criterion | HR | FAR | z(HR) | z(FAR) | Implied d' |\n|---|---|---|---|---|---|\n| \u2265 4 | 0.530 | 0.067 | 0.076 | \u22121.498 | **1.57** |\n| \u2265 3 | 0.732 | 0.207 | 0.619 | \u22120.815 | **1.43** |\n| \u2265 2 | 0.860 | 0.409 | 1.080 | \u22120.232 | **1.31** |\n\n*(Log-linear correction applied uniformly: +0.5 to all bin counts; N_signal = N_noise = 82.)*\n\nIf variance were equal, these three d' values would be approximately constant. They decline by 0.26 units \u2014 that is the unequal-variance fingerprint, not noise. It is also the expected pattern for recognition memory, where z-ROC slopes \u2248 0.8 (target/old evidence is more variable than lure/new evidence) are the norm, not an exception.\n\n## The correct analysis: fit the z-ROC\n\nPlot the three points in z-space \u2014 (z(FAR), z(HR)) \u2014 and fit a line:\n\n```\nz-ROC points:\n  (\u22121.498, 0.076)\n  (\u22120.815, 0.619)\n  (\u22120.232, 1.080)\n\nOLS fit:  z(HR) = 1.26 + 0.79 \u00b7 z(FAR)\n  slope s  = 0.79   \u2190 \u03c3_noise / \u03c3_signal  (< 1, target distribution is wider)\n  intercept a = 1.26\n```\n\nThe slope of 0.79 is squarely in the canonical recognition memory range.\n\nFrom there, the unequal-variance measures:\n\n```\nd_a = a \u00b7 \u221a(2 / (1 + s\u00b2))  =  1.26 \u00d7 \u221a(2 / 1.624)  =  1.26 \u00d7 1.109  \u2248  1.40\n\nA_z = \u03a6(d_a / \u221a2)  =  \u03a6(0.990)  \u2248  0.84\n\nEmpirical AUC (trapezoidal)  \u2248  0.82\n```\n\n## What this changes\n\nYour single-point d' of 1.59 **overestimates discriminability by ~0.19 units** (relative to d_a = 1.40). This happens mechanically when slope < 1: the most liberal criterion sits where the signal distribution's extra variance inflates the apparent separation, so any single-point d' from that criterion is upward-biased. Criterion-dependence of d' is not a quirk here \u2014 it is the direct consequence of the unequal-variance structure your data demonstrate.\n\n## Correct reporting template\n\n```\nTask: yes/no with 4-point confidence rating (recognition memory)\nN_signal = 80, N_noise = 80 (log-linear correction applied uniformly)\nz-ROC slope = 0.79 (< 1; consistent with wider target than lure distribution)\nd_a = 1.40  (unequal-variance sensitivity)\nA_z = 0.84  (parametric AUC); empirical AUC = 0.82\nBias at criterion \u2265 4: c \u2248 +0.71 (conservative)\nEqual-variance assumption: rejected (slope \u2260 1; d' criterion-dependent)\n```\n\nDo not report the equal-variance d' = 1.59 as the summary sensitivity measure; report d_a and A_z with the z-ROC slope.",
+  "assertions": [
+    {
+      "text": "States that the single-point d' = 1.59 is incomplete and criterion-dependent \u2014 it only uses the most extreme rating pair and discards the richer information in the full rating ROC",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Explains that recognition-memory z-ROC slopes are typically < 1 (unequal variance), so the correct analysis is to fit the z-ROC and report d_a and A_z rather than a single d'",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Either demonstrates fitting the z-ROC (reports a slope near 0.78-0.80 and d_a near 1.40-1.44) OR directs the user to fit_zroc() or fit_zroc_mle() from the bundled sdt.py script (or an equivalent R implementation)",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 3,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

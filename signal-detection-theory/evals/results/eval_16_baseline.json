@@ -1,0 +1,34 @@
+{
+  "eval_id": 16,
+  "name": "pooling-aggregation-artifact",
+  "condition": "baseline",
+  "prompt": "I have two participants. Subject A (liberal responder): 45 hits out of 50 signal trials, 30 false alarms out of 50 noise trials. Subject B (conservative responder): 20 hits out of 50, 3 false alarms out of 50. To get a group d', my colleague pooled all the responses: 65 hits out of 100 signal trials and 33 false alarms out of 100 noise trials, then computed one d'. Is that valid?",
+  "baseline_failure_hypothesis": "Agent validates the pooling approach or treats the pooled d' as equivalent to average per-subject d', missing that pooling subjects with heterogeneous criteria produces a biased (underestimated) d' due to the SDT version of Simpson's paradox.",
+  "response": "No, it is not valid \u2014 this is a well-known aggregation bias in SDT sometimes called the **pooling fallacy**.\n\n## Why it fails\n\nThe two subjects have very different criteria, not just different sensitivities:\n\n| Subject | HR | FAR | d' | criterion c |\n|---|---|---|---|---|\n| A (liberal) | 0.90 | 0.60 | \u2248 1.03 | \u2248 \u22120.77 |\n| B (conservative) | 0.40 | 0.06 | \u2248 1.30 | \u2248 +0.90 |\n| **Pooled** | 0.65 | 0.33 | **\u2248 0.83** | \u2248 +0.08 |\n\nThe pooled d' (~0.83) is **lower than either individual's d'**, even though both subjects have roughly equal sensitivity. That's the signature of the bias.\n\n## The geometric explanation\n\nIn ROC space, the pooled point (FAR = 0.33, HR = 0.65) is the arithmetic midpoint of the two individual points. Because the ROC curve is **concave** under equal-variance Gaussian SDT, any point on the chord connecting two ROC points lies **below** the curve \u2014 i.e., at a lower apparent d'. The more the two subjects differ in criterion, the farther the pooled point falls below the true isosensitivity curve.\n\n## The mathematical reason\n\nd' = z(HR) \u2212 z(FAR), where z is the normal quantile (a nonlinear function). By Jensen's inequality:\n\n```\nz(mean(HR)) \u2260 mean(z(HR))\n```\n\nSo computing d' from averaged rates \u2260 averaging individual d' values. The nonlinearity of the probit transform is what causes the downward bias.\n\n## What to do instead\n\n**Minimum fix:** compute d' per participant, then average (or test with a t-test across participants). This gives \u2248 1.17 here vs. the pooled 0.83.\n\n**Better:** use a hierarchical / mixed-effects SDT model (e.g., `lme4` in R with participants as random effects on both criterion and d') so you get proper partial pooling and uncertainty estimates.\n\n**Never** pool raw counts before computing rates when participants systematically differ in criterion \u2014 which they almost always do.",
+  "assertions": [
+    {
+      "text": "States that pooling hits and false alarms across subjects with heterogeneous criteria is NOT valid \u2014 it produces a biased d' that does not equal the average of individual d's",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Explains the mechanism: when subjects have different criteria (one liberal, one conservative), pooling compresses the z-scores and underestimates the true group d' (the pooled d' \u2248 0.82 is lower than the mean per-subject d' \u2248 1.11)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends computing per-subject d's and averaging (or fitting a probit GLMM), NOT pooling raw counts across heterogeneous observers",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 3,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

@@ -1,0 +1,34 @@
+{
+  "eval_id": 15,
+  "name": "rating-data-zroc-fitting",
+  "condition": "baseline",
+  "prompt": "I have rating-scale recognition-memory data. Participants rated confidence on a 4-point scale (4=sure old, 1=sure new). Out of 80 signal trials: 43 rated 4, 16 rated 3, 10 rated 2, 11 rated 1. Out of 80 noise trials: 5 rated 4, 11 rated 3, 16 rated 2, 48 rated 1. I computed a single d' from the most liberal criterion (rating >=4: HR=0.5375, FAR=0.0625) and got d' = 1.59. Is that a complete and correct analysis?",
+  "baseline_failure_hypothesis": "Agent treats the single-point d'=1.59 as valid and complete, missing that: (a) a single point discards the full rating ROC, (b) the correct analysis is to fit the z-ROC to get slope and report d_a / A_z, (c) single-point d' is criterion-dependent and biased under unequal variance.",
+  "response": "Two issues: the terminology is inverted, and more importantly, the analysis is incomplete.\n\n**Terminology error**\n\nRating \u2265 4 (\"sure old\") is the **most conservative** criterion \u2014 only the most confident \"old\" responses count as hits. The most liberal criterion would be rating \u2265 2 (calling almost everything old). This doesn't affect the arithmetic, but it matters for communicating what you're doing.\n\n**The real problem: you have three operating points, not one**\n\nWith a 4-point scale you get three cumulative thresholds. Each gives its own (HR, FAR) pair:\n\n| Threshold | HR | FAR | d' |\n|---|---|---|---|\n| \u2265 4 | 43/80 = .538 | 5/80 = .063 | \u2248 1.63 |\n| \u2265 3 | 59/80 = .738 | 16/80 = .200 | \u2248 1.48 |\n| \u2265 2 | 69/80 = .863 | 32/80 = .400 | \u2248 1.34 |\n\nUnder equal-variance Gaussian SDT these three d' estimates should be identical. They're not here (range 1.34\u20131.63), which is a real finding \u2014 it suggests either sampling noise or that the equal-variance assumption doesn't quite hold.\n\n**What a complete analysis looks like**\n\n1. **MLE fit across all three criteria simultaneously.** Treat the full rating distribution as multinomial and maximize likelihood over d' and 3 criterion parameters jointly. This is more statistically efficient than picking one threshold and gives a single pooled d' estimate (likely ~1.45\u20131.50 here).\n\n2. **Check the equal-variance assumption.** Plot the three points in z-ROC space (z(HR) vs. z(FAR)). If the slope \u2260 1, an unequal-variance model fits better, and you'd want d_a or A_z instead of d'.\n\n3. **Report all criteria.** The 3-point spread here is worth noting; it's not just a detail.\n\nIn R, `psyphy::dprime.mle()` or the SDT functions in `psycho` handle this. In Python, `pymc-sdt` or hand-coding the multinomial log-likelihood works well.\n\nYour single-threshold d' \u2248 1.59\u20131.63 (the exact value depends on z-table precision) is the right *method* for a yes/no design \u2014 but for rating-scale data it throws away the information in the other two thresholds and leaves the equal-variance assumption untested.",
+  "assertions": [
+    {
+      "text": "States that the single-point d' = 1.59 is incomplete and criterion-dependent \u2014 it only uses the most extreme rating pair and discards the richer information in the full rating ROC",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Explains that recognition-memory z-ROC slopes are typically < 1 (unequal variance), so the correct analysis is to fit the z-ROC and report d_a and A_z rather than a single d'",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Either demonstrates fitting the z-ROC (reports a slope near 0.78-0.80 and d_a near 1.40-1.44) OR directs the user to fit_zroc() or fit_zroc_mle() from the bundled sdt.py script (or an equivalent R implementation)",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    false
+  ],
+  "passed": 1,
+  "total": 3,
+  "pass_rate": 0.3333333333333333,
+  "eval_passes": false
+}

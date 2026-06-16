@@ -2,25 +2,59 @@
   "skill_name": "signal-detection-theory",
   "results": [
     {
-      "eval_id": 14,
-      "name": "task-structure-same-different",
-      "condition": "with_skill",
-      "prompt": "I ran a same-different discrimination task: on each trial participants saw two stimuli and judged whether they were the same or different. Overall they were 70% correct (35/50). Can I get d' by plugging 0.70 into the 2AFC formula d' = sqrt(2)*z(Pc)?",
-      "baseline_failure_hypothesis": "Agent applies the 2AFC sqrt(2)*z(Pc) formula to same-different data, producing a wrong-scale d' (~0.74).",
-      "response": "No \u2014 the 2AFC formula does not apply to same-different tasks, and using it here would give you a wrong d'.\n\n## Why the formula is wrong\n\nThe 2AFC formula (`d' = \u221a2\u00b7z(Pc)`) applies when an observer sees one signal interval and one noise interval side-by-side and picks the louder/stronger one. The decision variable is the **difference of two independent draws** (variance = 1 + 1 = 2, hence the \u221a2).\n\nSame-different has a fundamentally different structure. Two problems arise:\n\n**1. The d'\u2194Pc mapping depends on the decision rule \u2014 and it's not the 2AFC one.**\n- *Independent-observation rule:* observer has two separate observations and integrates them jointly.\n- *Differencing rule:* observer computes |obs\u2081 \u2212 obs\u2082| and compares to a criterion.\n\nThese two rules yield *different* d' from the same proportion correct. The 2AFC formula matches neither.\n\n**2. Same-different is much less efficient than 2AFC.** A given d' yields substantially lower Pc in same-different than in 2AFC. Plugging 70% correct into the 2AFC formula severely overestimates the underlying sensitivity.\n\n## What you actually need\n\nDon't use overall Pc at all. Same-different SDT needs the **breakdown by trial type**:\n\n| | Judged \"same\" | Judged \"different\" |\n|---|---|---|\n| **Same pairs** | Correct rejections | False alarms |\n| **Different pairs** | Misses | Hits |\n\nWith those four counts, use `sensR::samediff()` in R:\n\n```r\nlibrary(sensR)\nsamediff(\n  nsamesame  = <same-pair trials judged \"same\">,\n  ndiffsame  = <diff-pair trials judged \"same\">,\n  nsamediff  = <same-pair trials judged \"different\">,\n  ndiffdiff  = <diff-pair trials judged \"different\">\n)\n```\n\nThis returns d' under both decision rules (with a standard error and CI), so you can report which model you're assuming. If you report just overall 70% correct, the SDT decomposition is lost \u2014 you'd need to go back to the raw trial-type breakdown.",
+      "eval_id": 15,
+      "name": "rating-data-zroc-fitting",
+      "condition": "baseline",
+      "prompt": "I have rating-scale recognition-memory data. Participants rated confidence on a 4-point scale (4=sure old, 1=sure new). Out of 80 signal trials: 43 rated 4, 16 rated 3, 10 rated 2, 11 rated 1. Out of 80 noise trials: 5 rated 4, 11 rated 3, 16 rated 2, 48 rated 1. I computed a single d' from the most liberal criterion (rating >=4: HR=0.5375, FAR=0.0625) and got d' = 1.59. Is that a complete and correct analysis?",
+      "baseline_failure_hypothesis": "Agent treats the single-point d'=1.59 as valid and complete, missing that: (a) a single point discards the full rating ROC, (b) the correct analysis is to fit the z-ROC to get slope and report d_a / A_z, (c) single-point d' is criterion-dependent and biased under unequal variance.",
+      "response": "Two issues: the terminology is inverted, and more importantly, the analysis is incomplete.\n\n**Terminology error**\n\nRating \u2265 4 (\"sure old\") is the **most conservative** criterion \u2014 only the most confident \"old\" responses count as hits. The most liberal criterion would be rating \u2265 2 (calling almost everything old). This doesn't affect the arithmetic, but it matters for communicating what you're doing.\n\n**The real problem: you have three operating points, not one**\n\nWith a 4-point scale you get three cumulative thresholds. Each gives its own (HR, FAR) pair:\n\n| Threshold | HR | FAR | d' |\n|---|---|---|---|\n| \u2265 4 | 43/80 = .538 | 5/80 = .063 | \u2248 1.63 |\n| \u2265 3 | 59/80 = .738 | 16/80 = .200 | \u2248 1.48 |\n| \u2265 2 | 69/80 = .863 | 32/80 = .400 | \u2248 1.34 |\n\nUnder equal-variance Gaussian SDT these three d' estimates should be identical. They're not here (range 1.34\u20131.63), which is a real finding \u2014 it suggests either sampling noise or that the equal-variance assumption doesn't quite hold.\n\n**What a complete analysis looks like**\n\n1. **MLE fit across all three criteria simultaneously.** Treat the full rating distribution as multinomial and maximize likelihood over d' and 3 criterion parameters jointly. This is more statistically efficient than picking one threshold and gives a single pooled d' estimate (likely ~1.45\u20131.50 here).\n\n2. **Check the equal-variance assumption.** Plot the three points in z-ROC space (z(HR) vs. z(FAR)). If the slope \u2260 1, an unequal-variance model fits better, and you'd want d_a or A_z instead of d'.\n\n3. **Report all criteria.** The 3-point spread here is worth noting; it's not just a detail.\n\nIn R, `psyphy::dprime.mle()` or the SDT functions in `psycho` handle this. In Python, `pymc-sdt` or hand-coding the multinomial log-likelihood works well.\n\nYour single-threshold d' \u2248 1.59\u20131.63 (the exact value depends on z-table precision) is the right *method* for a yes/no design \u2014 but for rating-scale data it throws away the information in the other two thresholds and leaves the equal-variance assumption untested.",
       "assertions": [
         {
-          "text": "States that the 2AFC formula does NOT apply to a same-different task \u2014 the task structure is different and same-different is much less efficient than 2AFC",
+          "text": "States that the single-point d' = 1.59 is incomplete and criterion-dependent \u2014 it only uses the most extreme rating pair and discards the richer information in the full rating ROC",
           "passed": null,
           "evidence": ""
         },
         {
-          "text": "Notes that same-different d' depends on the assumed decision rule (independent-observation vs differencing), so a single plug-in formula is insufficient",
+          "text": "Explains that recognition-memory z-ROC slopes are typically < 1 (unequal variance), so the correct analysis is to fit the z-ROC and report d_a and A_z rather than a single d'",
           "passed": null,
           "evidence": ""
         },
         {
-          "text": "Routes to the correct tool: sensR's same-different / discrim() machinery (or the protocol-specific psychometric function from Macmillan & Creelman ch. 9), rather than the 2AFC formula",
+          "text": "Either demonstrates fitting the z-ROC (reports a slope near 0.78-0.80 and d_a near 1.40-1.44) OR directs the user to fit_zroc() or fit_zroc_mle() from the bundled sdt.py script (or an equivalent R implementation)",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        false,
+        false
+      ],
+      "passed": 1,
+      "total": 3,
+      "pass_rate": 0.3333333333333333,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 15,
+      "name": "rating-data-zroc-fitting",
+      "condition": "with_skill",
+      "prompt": "I have rating-scale recognition-memory data. Participants rated confidence on a 4-point scale (4=sure old, 1=sure new). Out of 80 signal trials: 43 rated 4, 16 rated 3, 10 rated 2, 11 rated 1. Out of 80 noise trials: 5 rated 4, 11 rated 3, 16 rated 2, 48 rated 1. I computed a single d' from the most liberal criterion (rating >=4: HR=0.5375, FAR=0.0625) and got d' = 1.59. Is that a complete and correct analysis?",
+      "baseline_failure_hypothesis": "Agent treats the single-point d'=1.59 as valid and complete, missing that: (a) a single point discards the full rating ROC, (b) the correct analysis is to fit the z-ROC to get slope and report d_a / A_z, (c) single-point d' is criterion-dependent and biased under unequal variance.",
+      "response": "Not complete \u2014 the single-point d' is a reasonable starting point but has two concrete problems. Here's the full picture.\n\n## What's correct\n\nThe formula itself is fine. Using the log-linear correction on the collapsed 2\u00d72 gives d' \u2248 1.59, which checks out numerically.\n\n## What's wrong\n\n**1. You discarded two of your three ROC operating points.**\n\nYou have a 4-point rating scale, which yields three cumulative operating points. Using only rating \u2265 4 ignores all the information in ratings 3 and 2.\n\n**2. Single-point d' assumes equal variance \u2014 and your own data falsify that assumption.**\n\nCompute the equal-variance d' at each criterion and watch what happens:\n\n| Criterion | HR | FAR | z(HR) | z(FAR) | Implied d' |\n|---|---|---|---|---|---|\n| \u2265 4 | 0.530 | 0.067 | 0.076 | \u22121.498 | **1.57** |\n| \u2265 3 | 0.732 | 0.207 | 0.619 | \u22120.815 | **1.43** |\n| \u2265 2 | 0.860 | 0.409 | 1.080 | \u22120.232 | **1.31** |\n\n*(Log-linear correction applied uniformly: +0.5 to all bin counts; N_signal = N_noise = 82.)*\n\nIf variance were equal, these three d' values would be approximately constant. They decline by 0.26 units \u2014 that is the unequal-variance fingerprint, not noise. It is also the expected pattern for recognition memory, where z-ROC slopes \u2248 0.8 (target/old evidence is more variable than lure/new evidence) are the norm, not an exception.\n\n## The correct analysis: fit the z-ROC\n\nPlot the three points in z-space \u2014 (z(FAR), z(HR)) \u2014 and fit a line:\n\n```\nz-ROC points:\n  (\u22121.498, 0.076)\n  (\u22120.815, 0.619)\n  (\u22120.232, 1.080)\n\nOLS fit:  z(HR) = 1.26 + 0.79 \u00b7 z(FAR)\n  slope s  = 0.79   \u2190 \u03c3_noise / \u03c3_signal  (< 1, target distribution is wider)\n  intercept a = 1.26\n```\n\nThe slope of 0.79 is squarely in the canonical recognition memory range.\n\nFrom there, the unequal-variance measures:\n\n```\nd_a = a \u00b7 \u221a(2 / (1 + s\u00b2))  =  1.26 \u00d7 \u221a(2 / 1.624)  =  1.26 \u00d7 1.109  \u2248  1.40\n\nA_z = \u03a6(d_a / \u221a2)  =  \u03a6(0.990)  \u2248  0.84\n\nEmpirical AUC (trapezoidal)  \u2248  0.82\n```\n\n## What this changes\n\nYour single-point d' of 1.59 **overestimates discriminability by ~0.19 units** (relative to d_a = 1.40). This happens mechanically when slope < 1: the most liberal criterion sits where the signal distribution's extra variance inflates the apparent separation, so any single-point d' from that criterion is upward-biased. Criterion-dependence of d' is not a quirk here \u2014 it is the direct consequence of the unequal-variance structure your data demonstrate.\n\n## Correct reporting template\n\n```\nTask: yes/no with 4-point confidence rating (recognition memory)\nN_signal = 80, N_noise = 80 (log-linear correction applied uniformly)\nz-ROC slope = 0.79 (< 1; consistent with wider target than lure distribution)\nd_a = 1.40  (unequal-variance sensitivity)\nA_z = 0.84  (parametric AUC); empirical AUC = 0.82\nBias at criterion \u2265 4: c \u2248 +0.71 (conservative)\nEqual-variance assumption: rejected (slope \u2260 1; d' criterion-dependent)\n```\n\nDo not report the equal-variance d' = 1.59 as the summary sensitivity measure; report d_a and A_z with the z-ROC slope.",
+      "assertions": [
+        {
+          "text": "States that the single-point d' = 1.59 is incomplete and criterion-dependent \u2014 it only uses the most extreme rating pair and discards the richer information in the full rating ROC",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Explains that recognition-memory z-ROC slopes are typically < 1 (unequal variance), so the correct analysis is to fit the z-ROC and report d_a and A_z rather than a single d'",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Either demonstrates fitting the z-ROC (reports a slope near 0.78-0.80 and d_a near 1.40-1.44) OR directs the user to fit_zroc() or fit_zroc_mle() from the bundled sdt.py script (or an equivalent R implementation)",
           "passed": null,
           "evidence": ""
         }
@@ -34,12 +68,84 @@
       "total": 3,
       "pass_rate": 1.0,
       "eval_passes": true
+    },
+    {
+      "eval_id": 16,
+      "name": "pooling-aggregation-artifact",
+      "condition": "baseline",
+      "prompt": "I have two participants. Subject A (liberal responder): 45 hits out of 50 signal trials, 30 false alarms out of 50 noise trials. Subject B (conservative responder): 20 hits out of 50, 3 false alarms out of 50. To get a group d', my colleague pooled all the responses: 65 hits out of 100 signal trials and 33 false alarms out of 100 noise trials, then computed one d'. Is that valid?",
+      "baseline_failure_hypothesis": "Agent validates the pooling approach or treats the pooled d' as equivalent to average per-subject d', missing that pooling subjects with heterogeneous criteria produces a biased (underestimated) d' due to the SDT version of Simpson's paradox.",
+      "response": "No, it is not valid \u2014 this is a well-known aggregation bias in SDT sometimes called the **pooling fallacy**.\n\n## Why it fails\n\nThe two subjects have very different criteria, not just different sensitivities:\n\n| Subject | HR | FAR | d' | criterion c |\n|---|---|---|---|---|\n| A (liberal) | 0.90 | 0.60 | \u2248 1.03 | \u2248 \u22120.77 |\n| B (conservative) | 0.40 | 0.06 | \u2248 1.30 | \u2248 +0.90 |\n| **Pooled** | 0.65 | 0.33 | **\u2248 0.83** | \u2248 +0.08 |\n\nThe pooled d' (~0.83) is **lower than either individual's d'**, even though both subjects have roughly equal sensitivity. That's the signature of the bias.\n\n## The geometric explanation\n\nIn ROC space, the pooled point (FAR = 0.33, HR = 0.65) is the arithmetic midpoint of the two individual points. Because the ROC curve is **concave** under equal-variance Gaussian SDT, any point on the chord connecting two ROC points lies **below** the curve \u2014 i.e., at a lower apparent d'. The more the two subjects differ in criterion, the farther the pooled point falls below the true isosensitivity curve.\n\n## The mathematical reason\n\nd' = z(HR) \u2212 z(FAR), where z is the normal quantile (a nonlinear function). By Jensen's inequality:\n\n```\nz(mean(HR)) \u2260 mean(z(HR))\n```\n\nSo computing d' from averaged rates \u2260 averaging individual d' values. The nonlinearity of the probit transform is what causes the downward bias.\n\n## What to do instead\n\n**Minimum fix:** compute d' per participant, then average (or test with a t-test across participants). This gives \u2248 1.17 here vs. the pooled 0.83.\n\n**Better:** use a hierarchical / mixed-effects SDT model (e.g., `lme4` in R with participants as random effects on both criterion and d') so you get proper partial pooling and uncertainty estimates.\n\n**Never** pool raw counts before computing rates when participants systematically differ in criterion \u2014 which they almost always do.",
+      "assertions": [
+        {
+          "text": "States that pooling hits and false alarms across subjects with heterogeneous criteria is NOT valid \u2014 it produces a biased d' that does not equal the average of individual d's",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Explains the mechanism: when subjects have different criteria (one liberal, one conservative), pooling compresses the z-scores and underestimates the true group d' (the pooled d' \u2248 0.82 is lower than the mean per-subject d' \u2248 1.11)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends computing per-subject d's and averaging (or fitting a probit GLMM), NOT pooling raw counts across heterogeneous observers",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true
+      ],
+      "passed": 3,
+      "total": 3,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 16,
+      "name": "pooling-aggregation-artifact",
+      "condition": "with_skill",
+      "prompt": "I have two participants. Subject A (liberal responder): 45 hits out of 50 signal trials, 30 false alarms out of 50 noise trials. Subject B (conservative responder): 20 hits out of 50, 3 false alarms out of 50. To get a group d', my colleague pooled all the responses: 65 hits out of 100 signal trials and 33 false alarms out of 100 noise trials, then computed one d'. Is that valid?",
+      "baseline_failure_hypothesis": "Agent validates the pooling approach or treats the pooled d' as equivalent to average per-subject d', missing that pooling subjects with heterogeneous criteria produces a biased (underestimated) d' due to the SDT version of Simpson's paradox.",
+      "response": "No, it's not valid \u2014 this is a classic aggregation artifact (pitfall #13 in the skill). Let me show you exactly what goes wrong with these numbers.\n\n## Per-subject computation (correct)\n\n**Subject A (liberal):** HR = 45/50 = 0.90, FAR = 30/50 = 0.60\n- d'_A = z(0.90) \u2212 z(0.60) = 1.282 \u2212 0.253 = **1.28**\n- c_A = \u22120.5(1.282 + 0.253) = **\u22120.77** (liberal, as expected)\n\n**Subject B (conservative):** HR = 20/50 = 0.40, FAR = 3/50 = 0.06\n- d'_B = z(0.40) \u2212 z(0.06) = \u22120.253 \u2212 (\u22121.555) = **1.30**\n- c_B = \u22120.5(\u22120.253 \u2212 1.555) = **+0.90** (conservative, as expected)\n\nMean d' across subjects \u2248 **1.29**. Crucially, A and B have *nearly identical sensitivity* \u2014 they just sit at radically different operating points on the same ROC.\n\n## What pooling produces (wrong)\n\nPooled HR = 65/100 = 0.65, FAR = 33/100 = 0.33\n- d'_pooled = z(0.65) \u2212 z(0.33) = 0.385 \u2212 (\u22120.440) = **0.83**\n\nThat's a **~36% underestimate** of the true group sensitivity \u2014 and it's not noise, it's a systematic artifact.\n\n## Why this happens\n\nSubject A sits at a high-HR/high-FAR operating point; Subject B sits at a low-HR/low-FAR point. Pooling their cells averages those two operating points in *probability space*, but then z-transforms the average. Because z() is nonlinear (steep near 0 and 1, flat in the middle), the averaged operating point (0.65, 0.33) maps to a z-difference that's much smaller than the average of the individual z-differences. The pooled point lands *closer to the chance diagonal* than either subject actually is.\n\nThis is the SDT version of Simpson's paradox: the aggregate misrepresents every individual in it.\n\n## The fix\n\nTwo options:\n\n1. **Compute per-subject d' and c, then summarize** \u2014 mean(d'_A, d'_B) = 1.29, with the distribution of c values also reported.\n2. **Fit a probit GLMM** on trial-level data with a random effect for subject \u2014 this is the principled modern approach that handles trial-count weighting and estimation uncertainty simultaneously. The `signal` fixed-effect coefficient is the group-average d'.\n\nWhat your colleague's approach also hides: A and B appear to have the same sensitivity but very different criteria, which is itself a finding worth reporting. The pooled d' erases both the sensitivity estimate *and* the between-subject criterion variation.",
+      "assertions": [
+        {
+          "text": "States that pooling hits and false alarms across subjects with heterogeneous criteria is NOT valid \u2014 it produces a biased d' that does not equal the average of individual d's",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Explains the mechanism: when subjects have different criteria (one liberal, one conservative), pooling compresses the z-scores and underestimates the true group d' (the pooled d' \u2248 0.82 is lower than the mean per-subject d' \u2248 1.11)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends computing per-subject d's and averaging (or fitting a probit GLMM), NOT pooling raw counts across heterogeneous observers",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        false,
+        true
+      ],
+      "passed": 2,
+      "total": 3,
+      "pass_rate": 0.6666666666666666,
+      "eval_passes": false
     }
   ],
   "summary": {
+    "baseline": {
+      "passed": 4,
+      "total": 6
+    },
     "with_skill": {
-      "passed": 3,
-      "total": 3
+      "passed": 5,
+      "total": 6
     }
   }
 }

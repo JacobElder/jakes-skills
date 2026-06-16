@@ -173,6 +173,28 @@
         {"text": "Notes that same-different d' depends on the assumed decision rule (independent-observation vs differencing), so a single plug-in formula is insufficient", "passed": null, "evidence": ""},
         {"text": "Routes to the correct tool: sensR's same-different / discrim() machinery (or the protocol-specific psychometric function from Macmillan & Creelman ch. 9), rather than the 2AFC formula", "passed": null, "evidence": ""}
       ]
+    },
+    {
+      "id": 15,
+      "name": "rating-data-zroc-fitting",
+      "prompt": "I have rating-scale recognition-memory data. Participants rated confidence on a 4-point scale (4=sure old, 1=sure new). Out of 80 signal trials: 43 rated 4, 16 rated 3, 10 rated 2, 11 rated 1. Out of 80 noise trials: 5 rated 4, 11 rated 3, 16 rated 2, 48 rated 1. I computed a single d' from the most liberal criterion (rating >=4: HR=0.5375, FAR=0.0625) and got d' = 1.59. Is that a complete and correct analysis?",
+      "baseline_failure_hypothesis": "Agent treats the single-point d'=1.59 as valid and complete, missing that: (a) a single point discards the full rating ROC, (b) the correct analysis is to fit the z-ROC to get slope and report d_a / A_z, (c) single-point d' is criterion-dependent and biased under unequal variance.",
+      "assertions": [
+        {"text": "States that the single-point d' = 1.59 is incomplete and criterion-dependent — it only uses the most extreme rating pair and discards the richer information in the full rating ROC", "passed": null, "evidence": ""},
+        {"text": "Explains that recognition-memory z-ROC slopes are typically < 1 (unequal variance), so the correct analysis is to fit the z-ROC and report d_a and A_z rather than a single d'", "passed": null, "evidence": ""},
+        {"text": "Either demonstrates fitting the z-ROC (reports a slope near 0.78-0.80 and d_a near 1.40-1.44) OR directs the user to fit_zroc() or fit_zroc_mle() from the bundled sdt.py script (or an equivalent R implementation)", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 16,
+      "name": "pooling-aggregation-artifact",
+      "prompt": "I have two participants. Subject A (liberal responder): 45 hits out of 50 signal trials, 30 false alarms out of 50 noise trials. Subject B (conservative responder): 20 hits out of 50, 3 false alarms out of 50. To get a group d', my colleague pooled all the responses: 65 hits out of 100 signal trials and 33 false alarms out of 100 noise trials, then computed one d'. Is that valid?",
+      "baseline_failure_hypothesis": "Agent validates the pooling approach or treats the pooled d' as equivalent to average per-subject d', missing that pooling subjects with heterogeneous criteria produces a biased (underestimated) d' due to the SDT version of Simpson's paradox.",
+      "assertions": [
+        {"text": "States that pooling hits and false alarms across subjects with heterogeneous criteria is NOT valid — it produces a biased d' that does not equal the average of individual d's", "passed": null, "evidence": ""},
+        {"text": "Explains the mechanism: when subjects have different criteria (one liberal, one conservative), pooling compresses the z-scores and underestimates the true group d' (the pooled d' ≈ 0.82 is lower than the mean per-subject d' ≈ 1.11)", "passed": null, "evidence": ""},
+        {"text": "Recommends computing per-subject d's and averaging (or fitting a probit GLMM), NOT pooling raw counts across heterogeneous observers", "passed": null, "evidence": ""}
+      ]
     }
   ]
 }
