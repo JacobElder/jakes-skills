@@ -1,0 +1,34 @@
+{
+  "eval_id": 14,
+  "name": "task-structure-same-different",
+  "condition": "with_skill",
+  "prompt": "I ran a same-different discrimination task: on each trial participants saw two stimuli and judged whether they were the same or different. Overall they were 70% correct (35/50). Can I get d' by plugging 0.70 into the 2AFC formula d' = sqrt(2)*z(Pc)?",
+  "baseline_failure_hypothesis": "Agent applies the 2AFC sqrt(2)*z(Pc) formula to same-different data, producing a wrong-scale d' (~0.74).",
+  "response": "No \u2014 the 2AFC formula does not apply to same-different tasks, and using it here would give you a wrong d'.\n\n## Why the formula is wrong\n\nThe 2AFC formula (`d' = \u221a2\u00b7z(Pc)`) applies when an observer sees one signal interval and one noise interval side-by-side and picks the louder/stronger one. The decision variable is the **difference of two independent draws** (variance = 1 + 1 = 2, hence the \u221a2).\n\nSame-different has a fundamentally different structure. Two problems arise:\n\n**1. The d'\u2194Pc mapping depends on the decision rule \u2014 and it's not the 2AFC one.**\n- *Independent-observation rule:* observer has two separate observations and integrates them jointly.\n- *Differencing rule:* observer computes |obs\u2081 \u2212 obs\u2082| and compares to a criterion.\n\nThese two rules yield *different* d' from the same proportion correct. The 2AFC formula matches neither.\n\n**2. Same-different is much less efficient than 2AFC.** A given d' yields substantially lower Pc in same-different than in 2AFC. Plugging 70% correct into the 2AFC formula severely overestimates the underlying sensitivity.\n\n## What you actually need\n\nDon't use overall Pc at all. Same-different SDT needs the **breakdown by trial type**:\n\n| | Judged \"same\" | Judged \"different\" |\n|---|---|---|\n| **Same pairs** | Correct rejections | False alarms |\n| **Different pairs** | Misses | Hits |\n\nWith those four counts, use `sensR::samediff()` in R:\n\n```r\nlibrary(sensR)\nsamediff(\n  nsamesame  = <same-pair trials judged \"same\">,\n  ndiffsame  = <diff-pair trials judged \"same\">,\n  nsamediff  = <same-pair trials judged \"different\">,\n  ndiffdiff  = <diff-pair trials judged \"different\">\n)\n```\n\nThis returns d' under both decision rules (with a standard error and CI), so you can report which model you're assuming. If you report just overall 70% correct, the SDT decomposition is lost \u2014 you'd need to go back to the raw trial-type breakdown.",
+  "assertions": [
+    {
+      "text": "States that the 2AFC formula does NOT apply to a same-different task \u2014 the task structure is different and same-different is much less efficient than 2AFC",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Notes that same-different d' depends on the assumed decision rule (independent-observation vs differencing), so a single plug-in formula is insufficient",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Routes to the correct tool: sensR's same-different / discrim() machinery (or the protocol-specific psychometric function from Macmillan & Creelman ch. 9), rather than the 2AFC formula",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 3,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

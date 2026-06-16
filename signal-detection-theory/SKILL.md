@@ -48,6 +48,8 @@ Surface the spectrum; don't manufacture a single right answer.
    - **Yes/No (single-interval):** one stimulus per trial, "signal present?" → d', c. The bias problem is live here.
    - **Rating / confidence:** yes/no plus a confidence scale → a full ROC. Fit the z-ROC, get slope s, d_a, A_z. *Strongly preferred* whenever feasible because it tests the equal-variance assumption instead of assuming it.
    - **m-AFC (2AFC, etc.):** signal vs. noise presented together, pick the interval. Largely removes the bias problem; d' relates to percent correct (2AFC: `d' = √2 · z(Pc)`). You **cannot** compare a 2AFC d' to a yes/no d' without this conversion.
+   - **Same-different:** two stimuli per trial, judge "same" or "different." **The 2AFC formula does NOT apply here** — the task structure is fundamentally different and same-different is **much less efficient than 2AFC** (a given d' yields substantially lower Pc). Additionally, the Pc↔d' mapping depends on the decision rule (independent-observation vs. differencing). Always break down performance by stimulus type (same-pair vs. different-pair), not just overall Pc. Route to `sensR::samediff()` — see `references/tasks.md`.
+   - **Triangle / tetrad / ABX:** sensory discrimination protocols with 3–4 stimuli; highly inefficient. Always use `sensR::discrim(..., method=)` — never apply 2AFC formulas here either.
 2. **Recover the 2×2 (or rating) table.** If given only summary rates, reconstruct counts where possible (you need N to apply corrections and to weight a model).
 3. **Apply the log-linear correction** if any cell is 0/1 (or, by default, uniformly).
 4. **Compute sensitivity AND bias.** Use the bundled script — do not re-derive formulas by hand; the convention traps (below) are real.
