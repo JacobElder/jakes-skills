@@ -1,0 +1,34 @@
+{
+  "eval_id": 12,
+  "name": "optimal-criterion-rare-signals",
+  "condition": "with_skill",
+  "prompt": "In my task signals only occur on 10% of trials (90% are noise), payoffs are symmetric, and my observer has a d' of about 1.5. Their criterion c came out to about +0.40, which is positive, so I want to write that they showed a conservative response bias. Is that the right interpretation?",
+  "baseline_failure_hypothesis": "Agent interprets c > 0 as 'biased/conservative' in the abstract without referencing the optimal criterion for a 10% base rate, missing that the observer is actually LESS conservative than optimal.",
+  "response": "Yes and no \u2014 and the \"no\" part matters here.\n\n**c = +0.40 is conservative in the absolute sense** (c > 0 means the criterion sits above the midpoint, biased toward \"no\"), so that phrasing is not wrong. But with a 10% signal base rate and symmetric payoffs, **the neutral criterion (c = 0) is not the right benchmark**.\n\nThe expected-value-maximizing criterion under unequal base rates is:\n\n```\n\u03b2_opt = P(noise)/P(signal) = 0.90/0.10 = 9\nc_opt = ln(\u03b2_opt) / d' = ln(9) / 1.5 = 2.197 / 1.5 \u2248 +1.46\n```\n\nYour observer's criterion is c = +0.40, and c_opt \u2248 +1.46. **Relative to what's rational for these base rates, the observer is liberal** \u2014 they're saying \"yes\" far more readily than a payoff-maximizing observer should, and they'll accumulate far more false alarms than an ideal observer would tolerate given how rare signals are.\n\nSo the accurate write-up is something like:\n\n> The observer showed a conservative absolute criterion (c = +0.40, \u03b2 \u2248 1.82), but was substantially liberal relative to the base-rate-optimal criterion (c_opt \u2248 +1.46, \u03b2_opt = 9). Given 10% signal prevalence, the rational observer should accept very few false alarms; this observer was not sufficiently cautious.\n\nCalling it \"conservative bias\" without noting c_opt would suggest the observer is being overly cautious \u2014 which is the opposite of the truth here. This is exactly pitfall #12 in the skill: **rare signals make conservatism rational, so interpret c relative to c_opt, not relative to 0.**",
+  "assertions": [
+    {
+      "text": "Notes that the optimal criterion depends on base rate (and payoffs), and computes the optimal value for 10% signals (beta_opt = 9, c_opt ~ +1.46)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Concludes the observer at c = +0.40 is actually LESS conservative than optimal (under-cautious relative to the rational criterion), not simply 'biased' \u2014 interpreting c relative to c_opt rather than relative to 0",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Explains that with rare signals a conservative criterion is rational/expected, so a positive c alone does not imply a maladaptive bias",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 3,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

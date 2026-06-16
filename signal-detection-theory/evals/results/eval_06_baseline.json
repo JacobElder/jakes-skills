@@ -1,0 +1,34 @@
+{
+  "eval_id": 6,
+  "name": "2afc-vs-yesno-scale-conversion",
+  "condition": "baseline",
+  "prompt": "Observer X did a 2-interval forced-choice version of my discrimination task and got 80% correct. Observer Y did the yes/no version and I computed a d' of 1.5. Can I just say Observer Y (d'=1.5) is more sensitive than Observer X, or is 80% correct already 'better' than that? How do I compare them?",
+  "baseline_failure_hypothesis": "Agent compares 80% and d'=1.5 directly without converting, or assumes 80% maps to a higher d'.",
+  "response": "## Comparing 2IFC and Yes/No Sensitivity\n\nYou cannot compare 80% correct directly to d' = 1.5 \u2014 they're on different scales. You need to convert the 2IFC percent correct into a d' first.\n\n### The 2IFC \u2192 d' conversion\n\nIn a 2IFC task, the decision variable is the *difference* between two noisy samples, so its variance is 2\u03c3\u00b2. That inflates the denominator, giving:\n\n$$d'_{2IFC} = \\sqrt{2} \\cdot z(PC)$$\n\nFor Observer X at 80% correct:\n\n$$d' = \\sqrt{2} \\cdot z(0.80) = 1.414 \\times 0.842 \\approx 1.19$$\n\n### The comparison\n\n| Observer | Task | Raw performance | d' |\n|---|---|---|---|\n| X | 2IFC | 80% correct | **\u2248 1.19** |\n| Y | Yes/No | \u2014 | **1.50** |\n\n**Observer Y is more sensitive** \u2014 but not by as much as it might seem intuitively. 80% correct in a 2IFC is already respectable (d' \u2248 1.19), not dramatically below 1.5.\n\n### Why you can't skip the conversion\n\n80% correct in 2IFC *feels* high, but 2IFC is an inherently easier task for the observer \u2014 they always have a comparison stimulus, so they don't need to maintain a criterion. The \u221a2 factor corrects for this: it deflates the apparent advantage 2IFC gives. Once corrected, both d' values estimate the same underlying perceptual sensitivity parameter.\n\n### One caveat\n\nThis assumes the standard equal-variance Gaussian model. If your signals have unequal variance, or if your yes/no d' wasn't estimated from both H and FA rates (e.g., you only have one sensitivity estimate), things get more complicated. But under the standard model, the two d' values are directly comparable after conversion.",
+  "assertions": [
+    {
+      "text": "States that 2AFC proportion correct and yes/no d' are on different scales and must be converted before comparison",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Applies d' = sqrt(2) * z(Pc) and computes the 2AFC d' as approximately 1.19",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Concludes Observer Y (d' = 1.5) is actually MORE sensitive than Observer X (converted d' ~ 1.19), correcting the intuition that 80% sounds high",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 3,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

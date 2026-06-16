@@ -1,0 +1,40 @@
+{
+  "eval_id": 0,
+  "name": "vigilance-decrement-criterion-vs-sensitivity",
+  "condition": "baseline",
+  "prompt": "I ran a 40-minute sustained-attention task. In the first 10-minute block: 100 signal trials, 100 noise trials, 90 hits, 30 false alarms. In the last 10-minute block: 100 signal, 100 noise, 75 hits, 12 false alarms. My PI says performance 'declined over time' because hits dropped from 90 to 75. Is that the right read? Walk me through what actually happened.",
+  "baseline_failure_hypothesis": "Agent agrees performance/sensitivity declined because hits fell, treating hit rate as accuracy. Misses the criterion shift.",
+  "response": "Your PI is reading hits in isolation \u2014 that's the core mistake. You need to look at hits *and* false alarms together through d' and criterion.\n\n## The numbers\n\n**Block 1:**\n| | Value |\n|---|---|\n| Hit rate | 90/100 = .90 |\n| FA rate | 30/100 = .30 |\n| z(HR) | +1.28 |\n| z(FAR) | \u22120.52 |\n| **d'** | **1.80** |\n| **c** | **\u22120.38** |\n\n**Block 4:**\n| | Value |\n|---|---|\n| Hit rate | 75/100 = .75 |\n| FA rate | 12/100 = .12 |\n| z(HR) | +0.67 |\n| z(FAR) | \u22121.18 |\n| **d'** | **1.85** |\n| **c** | **+0.25** |\n\n## What actually happened\n\n**Sensitivity (d') was stable:** 1.80 \u2192 1.85. Your ability to discriminate signal from noise did not decline \u2014 it was essentially identical across the session.\n\n**Criterion (c) shifted from liberal to conservative:** \u22120.38 \u2192 +0.25. In Block 1 you were biased toward saying \"yes\" \u2014 you caught most signals but generated a lot of false alarms. By Block 4 you were biased toward \"no\" \u2014 you withheld responses more, which mechanically reduced both hits *and* false alarms together.\n\n## Why your PI's read is wrong\n\nHits fell from 90 to 75, but false alarms also fell from 30 to 12. Those two changes are the signature of a **criterion shift**, not a sensitivity loss. If you had truly gotten worse at detecting signals, d' would have dropped. It didn't.\n\nThis is actually a well-known finding in the sustained attention literature. The \"vigilance decrement\" \u2014 the phenomenon your PI is probably invoking \u2014 was long assumed to reflect deteriorating discriminability. Parasuraman and colleagues showed that in many paradigms it's actually a criterion shift: participants become increasingly conservative over time, likely because they're trying to avoid committing errors or because the cost-benefit calculus shifts as arousal drops. The perceptual system stays intact; the decision threshold moves.\n\n**The defensible conclusion:** Your response criterion became more conservative over 40 minutes (a classic vigilance effect), but your perceptual sensitivity was unchanged. Framing this as \"performance declined\" is misleading without that distinction.",
+  "assertions": [
+    {
+      "text": "Computes d' for both blocks and reports they are essentially unchanged (early d' ~1.78, late d' ~1.82)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Computes criterion c for both blocks and identifies a shift from liberal (early c ~ -0.37) to conservative (late c ~ +0.24)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Concludes sensitivity did NOT decline; the change is a criterion/bias shift (observer became more conservative), not a loss of discriminability",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Correctly uses the convention c > 0 = conservative, c < 0 = liberal",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

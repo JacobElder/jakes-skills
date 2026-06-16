@@ -1,0 +1,40 @@
+{
+  "eval_id": 10,
+  "name": "from-scratch-analysis-with-inference",
+  "condition": "baseline",
+  "prompt": "Here's the raw data for one participant in my detection study: out of 50 signal trials they got 30 hits and 20 misses, and out of 50 noise trials they made 8 false alarms and 42 correct rejections. Analyze this for me \u2014 I want to know how well they detected the signal and whether that's reliably above chance.",
+  "baseline_failure_hypothesis": "Agent reports d' (and maybe c) but gives no standard error / CI / significance test, so it cannot actually answer 'reliably above chance'. May also report accuracy.",
+  "response": "Here's the full SDT breakdown.\n\n## Raw rates\n\n| | Signal (n=50) | Noise (n=50) |\n|---|---|---|\n| \"Yes\" | 30 hits | 8 false alarms |\n| \"No\" | 20 misses | 42 correct rejections |\n\n**Hit rate (H):** 30/50 = 0.60  \n**False alarm rate (FA):** 8/50 = 0.16\n\n---\n\n## Sensitivity\n\n**z(H)** = z(0.60) = +0.253  \n**z(FA)** = z(0.16) = \u22120.994\n\n**d' = z(H) \u2212 z(FA) = 1.25**\n\nThis is moderate-to-good sensitivity. Rule of thumb: d' \u2248 1 is detectable, \u2248 2 is strong.\n\nNon-parametric check \u2014 **A' = 0.81** (using the Pollack & Norman formula), consistent with d'.\n\n---\n\n## Response bias\n\n**c = \u22120.5 \u00d7 (z(H) + z(FA)) = +0.37**\n\nPositive c means a **conservative** criterion \u2014 the participant was requiring more evidence before saying \"yes,\" resulting in relatively few false alarms but also missing some signals.\n\n---\n\n## Is it reliably above chance?\n\n**Via z-test on d':**  \nSE(d') \u2248 \u221a[H(1\u2212H)/(n\u00b7\u03c6(z(H))\u00b2) + FA(1\u2212FA)/(n\u00b7\u03c6(z(FA))\u00b2)] \u2248 0.28  \nz = 1.25 / 0.28 = **4.47, p < .001**\n\n**Cross-check via \u03c7\u00b2(1) on the 2\u00d72 table = 27.4, p < .001**\n\nBoth confirm performance is **highly reliably above chance**.\n\n---\n\n## Summary\n\n| Measure | Value | Interpretation |\n|---|---|---|\n| d' | 1.25 | Moderate sensitivity |\n| A' | 0.81 | Consistent non-parametric estimate |\n| c | +0.37 | Conservative bias |\n| z(d' = 0) | 4.47 | p < .001 \u2014 well above chance |\n\nThe participant detected the signal reliably, though they adopted a conservative decision strategy that cost them some hits while keeping false alarms low.",
+  "assertions": [
+    {
+      "text": "Computes d' ~1.22 and criterion c ~+0.36 (conservative), applying a 0/1 correction convention (e.g., log-linear), and reports BOTH sensitivity and bias",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Computes a standard error and/or confidence interval for d' (delta method; SE ~0.28, 95% CI roughly [0.67, 1.76])",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Performs a significance test that d' > 0 (z ~4.4, p < 0.001) and concludes detection is reliably above chance",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Does not reduce the answer to a single accuracy/percent-correct number",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

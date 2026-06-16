@@ -1,0 +1,187 @@
+{
+  "skill_name": "signal-detection-theory",
+  "results": [
+    {
+      "eval_id": 9,
+      "name": "aprime-nonparametric-claim",
+      "condition": "with_skill",
+      "prompt": "A reviewer asked us to report a 'nonparametric, assumption-free' sensitivity measure instead of d', and suggested A'. We'll switch to A' since it makes no distributional assumptions. Anything we should know before doing that?",
+      "baseline_failure_hypothesis": "Agent endorses A' as genuinely assumption-free and switches without caveats.",
+      "response": "The reviewer's premise is wrong, and the SDT literature is unambiguous about this. A few things to know before switching:\n\n**A' is not assumption-free.** This is the core issue. Smith (1995) and Pastore, Crawley, Berens & Skelly (2003) demonstrated that A' is *not* distribution-free \u2014 it does make implicit distributional assumptions, and it is not a consistent estimator of the area under any single ROC. The \"nonparametric\" label attached to it in older textbooks is simply incorrect.\n\n**A' has documented anomalies.** It behaves poorly near ceiling, and its relationship to true discriminability is non-monotonic in some regions of the HR/FAR space. It can give paradoxical results that d' would not.\n\n**Multiple incompatible formulas share the name \"A'\".** Pollack & Norman (1964), Grier (1971), and subsequent derivations disagree on the formula. Two papers both reporting \"A'\" may not be computing the same quantity, which undermines cross-study comparison.\n\n**There is a genuinely nonparametric option the reviewer may actually want.** If the concern is truly about distributional assumptions, the right answer is the **empirical trapezoidal AUC** from a confidence-rating ROC \u2014 that makes no Gaussian assumption and is a proper area estimate. `fit_zroc()` in the bundled script returns it.\n\n**Recommended response to the reviewer:** Push back, citing Smith (1995) and Pastore et al. (2003). Explain that A' is not distribution-free, has known anomalies near ceiling, and that multiple incompatible formulas circulate under the same name. If the reviewer still insists, you can report A' alongside d', but include explicit caveats in the text \u2014 do not report it silently as if the reviewer's premise were correct.\n\nThe one scenario where capitulating completely makes sense is if you're matching a specific legacy analysis in that literature that used A'. Even then, state the caveat.",
+      "assertions": [
+        {
+          "text": "States that A' is NOT actually distribution-free / assumption-free and has documented anomalies (and that multiple incompatible formulas circulate under the name)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends, as the principled nonparametric option, the empirical (trapezoidal) AUC from a rating/confidence ROC instead of A'",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Suggests d' / d_a as the parametric option and advises stating caveats if A' must be reported to satisfy the reviewer",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true
+      ],
+      "passed": 3,
+      "total": 3,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 10,
+      "name": "from-scratch-analysis-with-inference",
+      "condition": "with_skill",
+      "prompt": "Here's the raw data for one participant in my detection study: out of 50 signal trials they got 30 hits and 20 misses, and out of 50 noise trials they made 8 false alarms and 42 correct rejections. Analyze this for me \u2014 I want to know how well they detected the signal and whether that's reliably above chance.",
+      "baseline_failure_hypothesis": "Agent reports d' (and maybe c) but gives no standard error / CI / significance test, so it cannot actually answer 'reliably above chance'. May also report accuracy.",
+      "response": "Applying the log-linear correction and the delta-method SE formula from the skill.\n\n**Data recovered**\n\n| | \"Yes\" | \"No\" |\n|---|---|---|\n| **Signal** | 30 (hits) | 20 (misses) |\n| **Noise** | 8 (FA) | 42 (CR) |\n\n---\n\n**Correction \u2014 log-linear (add 0.5 to all cells, uniform)**\n\n- HR = 30.5 / 51 = 0.598 \u2192 z(HR) = **+0.248**\n- FAR = 8.5 / 51 = 0.167 \u2192 z(FAR) = **\u22120.967**\n\n---\n\n**Sensitivity and bias**\n\n- **d' = z(HR) \u2212 z(FAR) = 0.248 \u2212 (\u22120.967) = 1.22** \u2014 moderate discriminability\n- **c = \u22120.5 \u00d7 (0.248 \u2212 0.967) = +0.36** \u2014 **conservative** (leans toward \"no\"; tolerates more misses than false alarms)\n- c' = c / d' = **0.30** (criterion sits 30% of the way toward the signal mean)\n- \u03b2 = exp(c \u00d7 d') = exp(0.44) = **1.55** (\u03b2 > 1 confirms conservative \u2014 consistent with c > 0 \u2713)\n\n---\n\n**Inference on d' (delta method)**\n\nVar(d') = HR(1\u2212HR)/[N_s \u00b7 \u03c6(z_H)\u00b2] + FAR(1\u2212FAR)/[N_n \u00b7 \u03c6(z_F)\u00b2]\n\n- \u03c6(0.248) = 0.387, \u03c6(\u22120.967) = 0.250\n- Var(d') = (0.598 \u00d7 0.402)/(50 \u00d7 0.150) + (0.167 \u00d7 0.833)/(50 \u00d7 0.0625)\n- Var(d') = 0.0321 + 0.0444 = **0.0765**\n- **SE(d') = 0.277**\n\n95% CI: 1.22 \u00b1 1.96 \u00d7 0.277 = **[0.68, 1.76]**\n\nz = 1.22 / 0.277 = **4.41, p < .0001**\n\n---\n\n**Summary**\n\n```\nTask type:    yes/no, single-interval\nN:            50 signal, 50 noise\nHR = 0.598,   FAR = 0.167   (log-linear correction applied uniformly)\nd' = 1.22     SE = 0.28     95% CI [0.68, 1.76]\nc  = +0.36    (conservative)    c' = 0.30    \u03b2 = 1.55\nEqual-variance assumption: assumed, untested (no confidence ratings)\n```\n\n**Interpretation:** Discriminability is moderate (d' = 1.22) and reliably above chance \u2014 the CI is entirely positive and the z-test is highly significant (p < .0001). The observer is also noticeably conservative (c = +0.36): they're setting a stringent threshold before saying \"signal present,\" which is why they hit on only 60% of signal trials while keeping false alarms low at 16%. These are two separate findings \u2014 the performance number alone would have obscured that the cautious criterion is what's driving the miss rate, not limited sensitivity.\n\nOne flag: d' here assumes equal variance between signal and noise distributions. If you have confidence ratings from this participant, fitting the full z-ROC would let you test that assumption and report d_a / A_z instead.",
+      "assertions": [
+        {
+          "text": "Computes d' ~1.22 and criterion c ~+0.36 (conservative), applying a 0/1 correction convention (e.g., log-linear), and reports BOTH sensitivity and bias",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Computes a standard error and/or confidence interval for d' (delta method; SE ~0.28, 95% CI roughly [0.67, 1.76])",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Performs a significance test that d' > 0 (z ~4.4, p < 0.001) and concludes detection is reliably above chance",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Does not reduce the answer to a single accuracy/percent-correct number",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 11,
+      "name": "routing-decline-to-sibling-skill",
+      "condition": "with_skill",
+      "prompt": "I have trial-by-trial reaction times from a two-choice perceptual task and I want to model the full RT distributions for correct and error responses to understand how evidence accumulates over time and what's driving the speed-accuracy tradeoff. How should I set up that model?",
+      "baseline_failure_hypothesis": "Agent forces an SDT/d' framing onto what is really an evidence-accumulation (DDM) problem, or fails to recognize the boundary.",
+      "response": "The SDT skill flags this as a routing case: RT distributions + evidence accumulation = **drift-diffusion / sequential sampling territory**, not static SDT. SDT captures the *endpoint* (hit/FA rates, sensitivity, bias) but throws away the time course. Here's how to set up the right model.\n\n---\n\n## The right model: Drift-Diffusion Model (DDM)\n\nThe DDM (Ratcliff 1978) is the standard for two-choice RT tasks. It models a noisy evidence process that drifts toward one of two absorbing boundaries, jointly generating the full RT \u00d7 response distribution \u2014 correct RTs, error RTs, and accuracy \u2014 from four parameters:\n\n| Parameter | Symbol | What it captures |\n|---|---|---|\n| Drift rate | `v` | Quality/strength of evidence; higher = faster + more accurate |\n| Boundary separation | `a` | How much evidence required before committing; **this is the SAT dial** |\n| Non-decision time | `t0` (or `Ter`) | Sensory encoding + motor execution; shifts the whole RT distribution |\n| Starting point | `z` (as fraction of `a`) | A priori bias toward one response; `z = 0.5a` is unbiased |\n\nThe SAT you care about is almost entirely in `a`: wide boundaries \u2192 slow but accurate, narrow \u2192 fast but error-prone. Drift rate changes performance without the tradeoff.\n\n---\n\n## Why the correct + error RT distributions are the key constraint\n\nFitting accuracy alone is like reporting a hit rate \u2014 it collapses the model. The joint RT distributions are what make the DDM falsifiable:\n\n- **High drift, no bias:** errors are *slower* than correct responses (the process has to wander all the way to the wrong boundary against the drift)\n- **Low drift or biased starting point:** errors can be *faster* (the process starts close to or drifts toward the wrong boundary)\n\nIf you only fit mean RT or proportion correct, you can't distinguish those cases. Fit the full distribution.\n\n---\n\n## Practical setup\n\n**Step 1 \u2014 EZ-diffusion for quick estimates.** Ratcliff & Tuerlinckx's EZ-diffusion gives closed-form estimates of `v`, `a`, `t0` from just mean RT, RT variance, and accuracy. Good for a sanity check but assumes no across-trial variability.\n\n**Step 2 \u2014 Full DDM with trial-level variability.** The full Ratcliff model adds:\n- `sv` \u2014 trial-to-trial variability in drift rate (accounts for fast errors)\n- `sz` \u2014 trial-to-trial variability in starting point (accounts for fast errors too, different mechanism)\n- `st0` \u2014 variability in non-decision time\n\nThese matter for fitting the tails and for separating the two error-RT mechanisms. Start parsimonious (`sv` first; add `sz`/`st0` only if fit demands it).\n\n**Step 3 \u2014 Identify which parameters vary across conditions.** The typical design logic:\n- Stimulus difficulty \u2192 `v` varies\n- Speed vs. accuracy instructions \u2192 `a` varies\n- Prior probability manipulation \u2192 `z` varies\n- Response modality change \u2192 `t0` varies\n\nFix everything else across conditions by default; free only what your manipulation targets.\n\n---\n\n## Tooling\n\n**Python (recommended starting point):**\n```python\n# HDDM \u2014 Bayesian hierarchical DDM, handles multi-subject naturally\nimport hddm\nm = hddm.HDDM(data, depends_on={'v': 'condition'})\nm.find_starting_values()\nm.sample(2000, burn=500)\nm.print_stats()\n```\nHDDM uses PyMC under the hood, gives posteriors over all parameters, handles between-subject and within-subject designs via partial pooling. The clear first choice for multi-participant data.\n\n**PyDDM** \u2014 more flexible, allows custom drift functions and time-varying evidence:\n```python\nfrom pyddm import Model, Drift, Noise, Bound, Overlay\n# build a model with condition-specific drift\n```\n\n**Fast-dm / DMAT** \u2014 frequentist, fast, good for single-subject or large-N designs where Bayesian sampling is slow.\n\n**For amortized inference at scale:** BayesFlow / JANA trains a neural posterior estimator once, then fits new datasets in milliseconds \u2014 useful if you have many participants.\n\n---\n\n## Minimum reporting for a DDM analysis\n\n```\n- Model: Ratcliff DDM [full / EZ / variant]\n- Parameters free vs. fixed per condition\n- Estimation method: [Bayesian MCMC / MLE / amortized]\n- Posterior summaries or MLEs for v, a, t0, z [and sv/sz/st0 if included]\n- Posterior predictive check: overlay simulated RT distributions on observed\n  correct + error distributions (separate panels per condition)\n- Model comparison if variants tested: WAIC / LOO-CV / BIC\n```\n\nThe posterior predictive check is non-negotiable \u2014 it shows whether the model actually reproduces the shape of your error RT distributions, which is the hardest constraint.\n\n---\n\n## The SDT connection (for context)\n\nSDT and DDM are complementary, not redundant. Under equal-variance DDM, `d' \u2248 v \u00b7 \u221a(2/a)` and the criterion maps to `z`. So a DDM analysis subsumes and extends an SDT analysis \u2014 you get the static sensitivity/bias decomposition *plus* the time-course parameters that explain *why* the observer is at that operating point. If you eventually want to report to an SDT-fluent audience, you can recover d' and c from the DDM fit rather than computing them separately from the confusion matrix.",
+      "assertions": [
+        {
+          "text": "Recognizes this is an evidence-accumulation / sequential-sampling problem (drift-diffusion model or similar: LBA, race models) about the TIME COURSE of the decision, not a static SDT/d' analysis",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Does NOT try to answer it with a plain d'/criterion analysis as if SDT were the right tool",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Correctly explains the relationship: SDT is the static/threshold model of the same kind of decision, while DDM models the RT distributions and speed-accuracy tradeoff; routes the user toward the evidence-accumulation framework (and names DDM tooling such as HDDM/PyDDM/brms-wiener or the cognitive-modeling approach)",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true
+      ],
+      "passed": 3,
+      "total": 3,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 12,
+      "name": "optimal-criterion-rare-signals",
+      "condition": "with_skill",
+      "prompt": "In my task signals only occur on 10% of trials (90% are noise), payoffs are symmetric, and my observer has a d' of about 1.5. Their criterion c came out to about +0.40, which is positive, so I want to write that they showed a conservative response bias. Is that the right interpretation?",
+      "baseline_failure_hypothesis": "Agent interprets c > 0 as 'biased/conservative' in the abstract without referencing the optimal criterion for a 10% base rate, missing that the observer is actually LESS conservative than optimal.",
+      "response": "Yes and no \u2014 and the \"no\" part matters here.\n\n**c = +0.40 is conservative in the absolute sense** (c > 0 means the criterion sits above the midpoint, biased toward \"no\"), so that phrasing is not wrong. But with a 10% signal base rate and symmetric payoffs, **the neutral criterion (c = 0) is not the right benchmark**.\n\nThe expected-value-maximizing criterion under unequal base rates is:\n\n```\n\u03b2_opt = P(noise)/P(signal) = 0.90/0.10 = 9\nc_opt = ln(\u03b2_opt) / d' = ln(9) / 1.5 = 2.197 / 1.5 \u2248 +1.46\n```\n\nYour observer's criterion is c = +0.40, and c_opt \u2248 +1.46. **Relative to what's rational for these base rates, the observer is liberal** \u2014 they're saying \"yes\" far more readily than a payoff-maximizing observer should, and they'll accumulate far more false alarms than an ideal observer would tolerate given how rare signals are.\n\nSo the accurate write-up is something like:\n\n> The observer showed a conservative absolute criterion (c = +0.40, \u03b2 \u2248 1.82), but was substantially liberal relative to the base-rate-optimal criterion (c_opt \u2248 +1.46, \u03b2_opt = 9). Given 10% signal prevalence, the rational observer should accept very few false alarms; this observer was not sufficiently cautious.\n\nCalling it \"conservative bias\" without noting c_opt would suggest the observer is being overly cautious \u2014 which is the opposite of the truth here. This is exactly pitfall #12 in the skill: **rare signals make conservatism rational, so interpret c relative to c_opt, not relative to 0.**",
+      "assertions": [
+        {
+          "text": "Notes that the optimal criterion depends on base rate (and payoffs), and computes the optimal value for 10% signals (beta_opt = 9, c_opt ~ +1.46)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Concludes the observer at c = +0.40 is actually LESS conservative than optimal (under-cautious relative to the rational criterion), not simply 'biased' \u2014 interpreting c relative to c_opt rather than relative to 0",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Explains that with rare signals a conservative criterion is rational/expected, so a positive c alone does not imply a maladaptive bias",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true
+      ],
+      "passed": 3,
+      "total": 3,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 13,
+      "name": "auc-to-dprime-equal-variance-trap",
+      "condition": "with_skill",
+      "prompt": "My recognition-memory model gives an ROC AUC of 0.80. I want to report sensitivity as d', so I'll just convert with d' = sqrt(2) * qnorm(0.80) = 1.19 and report that. Is that conversion valid here?",
+      "baseline_failure_hypothesis": "Agent accepts the AUC->d' conversion as a fixed identity without flagging the equal-variance assumption, which is exactly wrong for recognition memory.",
+      "response": "No \u2014 that conversion is invalid for recognition memory, and this is one of the documented pitfalls.\n\n## The problem\n\nThe formula `d' = \u221a2 \u00b7 z(AUC)` is the **2AFC conversion**. The underlying identity is `AUC = \u03a6(d'/\u221a2)`, which holds only when the signal and noise evidence distributions have **equal variance**. In recognition memory, that assumption is reliably violated.\n\nRecognition memory z-ROCs have a slope \u2248 0.8 (target/old evidence is more variable than lure/new evidence \u2014 this is the standard finding, not an exception). When the slope < 1, a single AUC value no longer maps to a unique d': two observers with different criteria can have the same AUC but different \"d'\" values under your formula, which makes no sense as a sensitivity measure.\n\n## What to report instead\n\nIf you collected confidence ratings (which any ROC requires), you already have what you need. Fit the z-ROC to get slope `s` and intercept `a`, then:\n\n- **d_a** = `a \u00b7 \u221a(2 / (1 + s\u00b2))` \u2014 sensitivity on the equal-variance scale\n- **A_z** = `\u03a6(d_a / \u221a2)` \u2014 the model-based AUC (your 0.80 is the empirical version of this)\n\n```bash\npython scripts/sdt.py --hits <h> --misses <m> --fa <fa> --cr <cr> --slope 0.8\n# or with your rating counts to fit the slope:\n# fit_zroc() returns slope, intercept, d_a, A_z, and empirical AUC\n```\n\nThe distinction matters: at s = 0.8, the equal-variance d' formula applied to a given AUC **overestimates** sensitivity (because you're attributing to discriminability what's partly a variance asymmetry).\n\n## The correct statement\n\nYour AUC of 0.80 corresponds to **A_z \u2248 0.80** (already a proper sensitivity summary), with a model-based d_a derivable once you have the z-ROC slope. Report A_z alongside the slope, or report d_a. Do not report the \u221a2 \u00b7 z(AUC) number as d' for recognition memory \u2014 the equal-variance assumption it requires is known to be false in this task.",
+      "assertions": [
+        {
+          "text": "States that AUC = Phi(d'/sqrt(2)) holds ONLY under the equal-variance assumption (z-ROC slope = 1)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Notes that recognition-memory ROCs are typically unequal-variance (z-ROC slope ~0.8), so the AUC corresponds to A_z and the right sensitivity index is d_a, not a single d' from this conversion",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends fitting the z-ROC to get the slope and reporting d_a / A_z (or at least checking the slope before doing any AUC->d' conversion)",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true
+      ],
+      "passed": 3,
+      "total": 3,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    }
+  ],
+  "summary": {
+    "with_skill": {
+      "passed": 16,
+      "total": 16
+    }
+  }
+}

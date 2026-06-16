@@ -1,0 +1,529 @@
+{
+  "skill_name": "signal-detection-theory",
+  "results": [
+    {
+      "eval_id": 0,
+      "name": "vigilance-decrement-criterion-vs-sensitivity",
+      "condition": "baseline",
+      "prompt": "I ran a 40-minute sustained-attention task. In the first 10-minute block: 100 signal trials, 100 noise trials, 90 hits, 30 false alarms. In the last 10-minute block: 100 signal, 100 noise, 75 hits, 12 false alarms. My PI says performance 'declined over time' because hits dropped from 90 to 75. Is that the right read? Walk me through what actually happened.",
+      "baseline_failure_hypothesis": "Agent agrees performance/sensitivity declined because hits fell, treating hit rate as accuracy. Misses the criterion shift.",
+      "response": "Your PI is reading hits in isolation \u2014 that's the core mistake. You need to look at hits *and* false alarms together through d' and criterion.\n\n## The numbers\n\n**Block 1:**\n| | Value |\n|---|---|\n| Hit rate | 90/100 = .90 |\n| FA rate | 30/100 = .30 |\n| z(HR) | +1.28 |\n| z(FAR) | \u22120.52 |\n| **d'** | **1.80** |\n| **c** | **\u22120.38** |\n\n**Block 4:**\n| | Value |\n|---|---|\n| Hit rate | 75/100 = .75 |\n| FA rate | 12/100 = .12 |\n| z(HR) | +0.67 |\n| z(FAR) | \u22121.18 |\n| **d'** | **1.85** |\n| **c** | **+0.25** |\n\n## What actually happened\n\n**Sensitivity (d') was stable:** 1.80 \u2192 1.85. Your ability to discriminate signal from noise did not decline \u2014 it was essentially identical across the session.\n\n**Criterion (c) shifted from liberal to conservative:** \u22120.38 \u2192 +0.25. In Block 1 you were biased toward saying \"yes\" \u2014 you caught most signals but generated a lot of false alarms. By Block 4 you were biased toward \"no\" \u2014 you withheld responses more, which mechanically reduced both hits *and* false alarms together.\n\n## Why your PI's read is wrong\n\nHits fell from 90 to 75, but false alarms also fell from 30 to 12. Those two changes are the signature of a **criterion shift**, not a sensitivity loss. If you had truly gotten worse at detecting signals, d' would have dropped. It didn't.\n\nThis is actually a well-known finding in the sustained attention literature. The \"vigilance decrement\" \u2014 the phenomenon your PI is probably invoking \u2014 was long assumed to reflect deteriorating discriminability. Parasuraman and colleagues showed that in many paradigms it's actually a criterion shift: participants become increasingly conservative over time, likely because they're trying to avoid committing errors or because the cost-benefit calculus shifts as arousal drops. The perceptual system stays intact; the decision threshold moves.\n\n**The defensible conclusion:** Your response criterion became more conservative over 40 minutes (a classic vigilance effect), but your perceptual sensitivity was unchanged. Framing this as \"performance declined\" is misleading without that distinction.",
+      "assertions": [
+        {
+          "text": "Computes d' for both blocks and reports they are essentially unchanged (early d' ~1.78, late d' ~1.82)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Computes criterion c for both blocks and identifies a shift from liberal (early c ~ -0.37) to conservative (late c ~ +0.24)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Concludes sensitivity did NOT decline; the change is a criterion/bias shift (observer became more conservative), not a loss of discriminability",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Correctly uses the convention c > 0 = conservative, c < 0 = liberal",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 0,
+      "name": "vigilance-decrement-criterion-vs-sensitivity",
+      "condition": "with_skill",
+      "prompt": "I ran a 40-minute sustained-attention task. In the first 10-minute block: 100 signal trials, 100 noise trials, 90 hits, 30 false alarms. In the last 10-minute block: 100 signal, 100 noise, 75 hits, 12 false alarms. My PI says performance 'declined over time' because hits dropped from 90 to 75. Is that the right read? Walk me through what actually happened.",
+      "baseline_failure_hypothesis": "Agent agrees performance/sensitivity declined because hits fell, treating hit rate as accuracy. Misses the criterion shift.",
+      "response": "Your PI's read is wrong \u2014 and it's the exact mistake SDT exists to catch. Let me show you.\n\n## Step 1: Recover both measures from both blocks\n\nYou have full 2\u00d72 tables, so apply the log-linear correction (add 0.5 to all four cells) uniformly.\n\n**Block 1 (minutes 0\u201310):**\n- HR = 90.5/101 = 0.896 \u2192 z(HR) = +1.26\n- FAR = 30.5/101 = 0.302 \u2192 z(FAR) = \u22120.52\n\n| Measure | Value |\n|---|---|\n| d' | 1.26 \u2212 (\u22120.52) = **1.78** |\n| c | \u22120.5 \u00d7 (1.26 \u2212 0.52) = **\u22120.37** (liberal) |\n\n**Block 2 (minutes 30\u201340):**\n- HR = 75.5/101 = 0.748 \u2192 z(HR) = +0.67\n- FAR = 12.5/101 = 0.124 \u2192 z(FAR) = \u22121.16\n\n| Measure | Value |\n|---|---|\n| d' | 0.67 \u2212 (\u22121.16) = **1.83** |\n| c | \u22120.5 \u00d7 (0.67 \u2212 1.16) = **+0.24** (conservative) |\n\n## Step 2: What actually changed\n\n**Sensitivity (d'): 1.78 \u2192 1.83 \u2014 essentially no change.**\n\nUsing the delta-method SE for d' (Gourevitch & Galanter 1967):\n- SE(d'\u2081) \u2248 0.216, SE(d'\u2082) \u2248 0.213\n- \u0394d' = 0.05, SE(\u0394d') \u2248 0.30\n- z = 0.16, p \u2248 .87\n\nDiscriminability is flat. Your ability to tell signal from noise did not decline.\n\n**Criterion (c): \u22120.37 \u2192 +0.24 \u2014 a large, highly significant shift of +0.61 SD units.**\n\nSE(\u0394c) \u2248 0.15, z \u2248 4.1, p < .001. You went from **liberal** (saying \"yes\" readily, collecting hits at the cost of false alarms) to **conservative** (saying \"yes\" cautiously, shedding false alarms at the cost of hits). That's the whole story.\n\n## Step 3: What your PI's analysis missed\n\nYour PI looked at one number \u2014 hit rate \u2014 which fell from 0.90 to 0.75. That's a \u221215pp drop. But false alarms also fell from 0.30 to 0.12 \u2014 a \u221218pp drop. **Both rates moved together, in the direction of conservative responding.** That pattern is a criterion shift, not a capability change.\n\nThe diagnostic logic: if you *lose discriminability*, you'd expect both hits and false alarms to converge toward the base rate (both rise or both fall toward 0.50, or the ROC point moves toward the diagonal). Instead, both fell \u2014 the operating point moved northwest along roughly the same ROC curve, which is a criterion shift.\n\n## The vigilance literature's take\n\nThis is the canonical \"vigilance decrement\" finding (Mackworth 1948 and decades of follow-up). Sustained-attention researchers showed in the 1980s via SDT that the classic hit-rate drop over time is predominantly a **criterion drift toward conservatism**, not a sensitivity loss \u2014 observers become more reluctant to report a signal, not less able to detect it. Your data are a clean example.\n\nThe practical difference matters: if this were a real screening task (airport baggage, QC inspection), telling your operator \"you got worse at detection\" leads to retraining; telling them \"you got more conservative\" leads to adjusting the decision threshold or the incentive structure. Wrong diagnosis, wrong intervention.\n\n**Bottom line:** d' was stable at ~1.8; criterion shifted +0.6 SD units from liberal to conservative. Your PI should report both numbers, not just the hit rate.",
+      "assertions": [
+        {
+          "text": "Computes d' for both blocks and reports they are essentially unchanged (early d' ~1.78, late d' ~1.82)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Computes criterion c for both blocks and identifies a shift from liberal (early c ~ -0.37) to conservative (late c ~ +0.24)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Concludes sensitivity did NOT decline; the change is a criterion/bias shift (observer became more conservative), not a loss of discriminability",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Correctly uses the convention c > 0 = conservative, c < 0 = liberal",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 1,
+      "name": "diagnosticity-ratio-confound-eyewitness",
+      "condition": "baseline",
+      "prompt": "We're comparing two police lineup procedures. Procedure A: correct-ID rate 0.60, false-ID rate 0.20 (diagnosticity 3.0). Procedure B: correct-ID rate 0.45, false-ID rate 0.10 (diagnosticity 4.5). A colleague wants to recommend Procedure B because its diagnosticity ratio is higher. Is the diagnosticity ratio a sound basis for saying B produces more accurate witnesses?",
+      "baseline_failure_hypothesis": "Agent accepts the diagnosticity ratio as a measure of accuracy and recommends B, missing that the ratio confounds discriminability with response bias.",
+      "response": "No \u2014 the diagnosticity ratio is not a sound basis for that conclusion. It conflates discriminability with response bias.\n\n## What SDT reveals\n\nCompute d' = z(H) \u2212 z(FA) for each:\n\n| Procedure | H | FA | z(H) | z(FA) | d' | c |\n|---|---|---|---|---|---|---|\n| A | .60 | .20 | +0.25 | \u22120.84 | **1.09** | +0.29 |\n| B | .45 | .10 | \u22120.13 | \u22121.28 | **1.16** | +0.70 |\n\nThe d' values are nearly identical (~1.1 for both). The large difference in diagnosticity ratios (3.0 vs 4.5) is almost entirely a difference in **criterion placement**, not discriminability. Witnesses in Procedure B are simply more conservative \u2014 they're less willing to make any identification.\n\n## Why diagnosticity is criterion-contaminated\n\nThe diagnosticity ratio H/FA is a likelihood ratio evaluated at one operating point on the ROC curve. Moving the criterion in a more conservative direction always inflates H/FA when there is any sensitivity at all, because the false-alarm rate shrinks faster than the hit rate as you move leftward on the ROC. An extreme illustration: if witnesses almost never make any ID, FA \u2192 0 and the ratio \u2192 \u221e \u2014 while actual discriminability is unchanged or could even be zero.\n\n## The practical implication\n\nProcedure B doesn't produce *more accurate* witnesses; it produces *more cautious* ones. A conservative criterion has real tradeoffs \u2014 fewer wrongful identifications but also more guilty suspects who go unidentified. Whether that's desirable is a policy decision about the relative costs of false alarms vs. misses, not a statement about perceptual accuracy.\n\nThe right basis for \"Procedure B produces more accurate witnesses\" would be a meaningfully larger d', ideally confirmed across the full ROC (e.g., the area under the ROC curve). On the evidence given, neither procedure has a detectably superior sensitivity.",
+      "assertions": [
+        {
+          "text": "States that the diagnosticity ratio (HR/FAR) confounds discriminability with response bias and is not a sound accuracy measure",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Explains that a more conservative procedure can raise the ratio without improving true discriminability",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends ROC/AUC analysis (using confidence ratings) or a sensitivity index to compare discriminability independent of bias",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Does NOT simply recommend Procedure B on the basis of the higher ratio",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "passed": 3,
+      "total": 4,
+      "pass_rate": 0.75,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 1,
+      "name": "diagnosticity-ratio-confound-eyewitness",
+      "condition": "with_skill",
+      "prompt": "We're comparing two police lineup procedures. Procedure A: correct-ID rate 0.60, false-ID rate 0.20 (diagnosticity 3.0). Procedure B: correct-ID rate 0.45, false-ID rate 0.10 (diagnosticity 4.5). A colleague wants to recommend Procedure B because its diagnosticity ratio is higher. Is the diagnosticity ratio a sound basis for saying B produces more accurate witnesses?",
+      "baseline_failure_hypothesis": "Agent accepts the diagnosticity ratio as a measure of accuracy and recommends B, missing that the ratio confounds discriminability with response bias.",
+      "response": "No \u2014 the diagnosticity ratio is a biased basis for this comparison, and this example illustrates exactly why.\n\n## What the SDT decomposition reveals\n\nConverting each operating point to sensitivity (d') and bias (c):\n\n**Procedure A** (HR = 0.60, FAR = 0.20):\n- d' = z(0.60) \u2212 z(0.20) = 0.253 \u2212 (\u22120.842) = **1.09**\n- c = \u22120.5\u00b7(0.253 \u2212 0.842) = **+0.29** (mildly conservative)\n\n**Procedure B** (HR = 0.45, FAR = 0.10):\n- d' = z(0.45) \u2212 z(0.10) = \u22120.126 \u2212 (\u22121.282) = **1.16**\n- c = \u22120.5\u00b7(\u22120.126 \u2212 1.282) = **+0.70** (substantially more conservative)\n\nThe two procedures have **essentially identical discriminability** (d' \u2248 1.1). The entire difference in diagnosticity ratios (3.0 vs. 4.5) is explained by Procedure B placing witnesses at a more conservative criterion \u2014 they're simply more reluctant to identify anyone. That reluctance suppresses both the correct-ID rate *and* the false-ID rate, but suppresses the false-ID rate more, mechanically inflating the ratio.\n\n## Why diagnosticity fails here\n\nThe diagnosticity ratio (HR/FAR) is not a sensitivity measure. It is criterion-sensitive by construction: you can raise it without changing a witness's actual ability to discriminate guilty from innocent suspects, just by making witnesses more cautious. That is exactly what appears to be happening across procedures A and B.\n\nThis is the core of the Wixted & Mickes (2012, 2014) critique: ranking lineup procedures by diagnosticity confounds the procedure's effect on discriminability with its effect on how willing witnesses are to commit to an identification.\n\n## The right recommendation\n\nYour colleague should **not** recommend Procedure B on diagnosticity grounds. The proper approach:\n\n1. Collect confidence ratings and build a full **ROC** for each procedure \u2014 sweep the criterion across confidence levels to trace out the hit-rate/false-ID-rate tradeoff.\n2. Compare **AUC** (area under the ROC), which summarizes discriminability across all possible operating points and is not confounded with where the criterion happens to sit.\n3. From the single operating points available here, d' \u2248 1.1 for both \u2014 no meaningful difference in witness accuracy. If anything, Procedure B's conservatism (c = 0.70) raises a separate policy question: are you comfortable with witnesses who miss more guilty suspects to achieve fewer false IDs? That's a values question about the cost tradeoff, not a question about accuracy, and it shouldn't be hidden inside a diagnostic ratio.\n\n**Bottom line:** Procedure B witnesses are not more accurate \u2014 they are more conservative. Those are different things, and diagnosticity ratios cannot tell them apart.",
+      "assertions": [
+        {
+          "text": "States that the diagnosticity ratio (HR/FAR) confounds discriminability with response bias and is not a sound accuracy measure",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Explains that a more conservative procedure can raise the ratio without improving true discriminability",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends ROC/AUC analysis (using confidence ratings) or a sensitivity index to compare discriminability independent of bias",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Does NOT simply recommend Procedure B on the basis of the higher ratio",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 2,
+      "name": "unequal-variance-single-point-dprime",
+      "condition": "baseline",
+      "prompt": "Old/new recognition memory experiment. Aggregating across subjects I get hit rate 0.85 and false-alarm rate 0.30. I also fit the confidence z-ROC and the slope is 0.75. I was going to just report d' = z(.85) - z(.30). Is that fine, and if not what should I report?",
+      "baseline_failure_hypothesis": "Agent computes single-point d' (~1.56) and reports it without recognizing that slope 0.75 means unequal variance, making single-point d' biased.",
+      "response": "No, plain d' is not fine here, and the z-ROC slope is exactly why.\n\n## The problem: unequal variance\n\nStandard d' = z(HR) \u2212 z(FAR) assumes an **equal-variance** Gaussian model, which predicts a z-ROC slope of 1.0. Your slope of 0.75 rejects that assumption \u2014 the signal distribution has higher variance than noise (\u03c3_signal = 1/0.75 \u2248 1.33). This is typical in recognition memory. Under unequal variance, equal-variance d' is a biased sensitivity estimate.\n\n## What to report instead: d_a\n\nSince you've already fit the z-ROC, report **d_a** (pronounced \"d-sub-a\"), the unequal-variance sensitivity index:\n\n**d_a = a \u00d7 \u221a(2 / (1 + b\u00b2))**\n\nwhere *a* is the z-ROC intercept and *b* is the slope.\n\n**Step 1 \u2014 recover the intercept** from your aggregate operating point:\n\n```\nz(0.85) =  1.036\nz(0.30) = \u22120.524\n\nz(HR) = a + b\u00b7z(FAR)\n1.036 = a + 0.75 \u00d7 (\u22120.524)\na = 1.036 + 0.393 = 1.429\n```\n\n**Step 2 \u2014 compute d_a:**\n\n```\nd_a = 1.429 \u00d7 \u221a(2 / (1 + 0.75\u00b2))\n    = 1.429 \u00d7 \u221a(2 / 1.5625)\n    = 1.429 \u00d7 1.131\n    \u2248 1.62\n```\n\nFor comparison, equal-variance d' = 1.036 \u2212 (\u22120.524) = **1.56**. The gap matters more at extreme HR/FAR values.\n\nYou should also report the slope *b* = 0.75 alongside d_a \u2014 it's theoretically meaningful and lets readers reconstruct the full z-ROC.\n\n## Optional: Az\n\nIf you want a single summary that's easier for non-SDT readers:\n\n**A_z = \u03a6(d_a / \u221a2) = \u03a6(1.62 / 1.414) = \u03a6(1.15) \u2248 .875**\n\nThis is the area under the fitted ROC and sidesteps the variance question entirely.\n\n---\n\n**One additional concern:** aggregating hit and false-alarm rates across subjects before computing anything conflates individual differences in sensitivity *and* bias into a single operating point. The standard approach is to compute d_a (or d') per subject and then average those. If this is for a manuscript, reviewers may flag the aggregation; individual-level estimates with a mean \u00b1 SE is safer.",
+      "assertions": [
+        {
+          "text": "Recognizes that z-ROC slope 0.75 (\u2260 1) indicates unequal variance, so single-point d' is biased/criterion-dependent",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends reporting d_a (and/or A_z) instead of single-point d'",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Computes d_a correctly as approximately 1.62 (using s = z-ROC slope = sigma_noise/sigma_signal convention), not the reciprocal-convention value ~1.47",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Notes that wider target/old than lure/new variance (slope < 1, ~0.8) is the normal recognition-memory pattern",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 2,
+      "name": "unequal-variance-single-point-dprime",
+      "condition": "with_skill",
+      "prompt": "Old/new recognition memory experiment. Aggregating across subjects I get hit rate 0.85 and false-alarm rate 0.30. I also fit the confidence z-ROC and the slope is 0.75. I was going to just report d' = z(.85) - z(.30). Is that fine, and if not what should I report?",
+      "baseline_failure_hypothesis": "Agent computes single-point d' (~1.56) and reports it without recognizing that slope 0.75 means unequal variance, making single-point d' biased.",
+      "response": "Two separate problems here, and you've actually caught the less serious one while missing the more serious one.\n\n## Problem 1 (what you noticed): slope \u2260 1, so single-point d' is biased\n\nYou already have the slope from the z-ROC fit, which tells you the equal-variance assumption is violated. With s = 0.75, you need **d_a** and **A_z**:\n\n```\nz(0.85) =  1.036\nz(0.30) = \u22120.524\n\nd_a = \u221a(2/(1+s\u00b2)) \u00b7 (z(HR) \u2212 s\u00b7z(FAR))\n    = \u221a(2/(1+0.5625)) \u00b7 (1.036 \u2212 0.75\u00b7(\u22120.524))\n    = \u221a1.28 \u00b7 1.429\n    = 1.62\n\nA_z = \u03a6(d_a/\u221a2) = \u03a6(1.14) \u2248 0.87\n```\n\nSingle-point d' = z(.85) \u2212 z(.30) = **1.56** \u2014 it's biased downward here and (crucially) depends on where the criterion happened to sit, which is exactly why you fit the ROC.\n\n## Problem 2 (the one you didn't mention): you aggregated rates across subjects\n\nPooling everyone's hits and false alarms into a single table before computing d' is pitfall #13 \u2014 the SDT version of Simpson's paradox. It fails for two reasons:\n\n- **z() is nonlinear**, so z(mean HR) \u2260 mean z(HR); you're computing the wrong thing.\n- **Subjects at different operating points** (different criteria) get mixed together; the aggregate (HR, FAR) doesn't correspond to any real observer and can be biased in either direction.\n\n**What to do instead:**\n\n1. Compute d_a per subject from each subject's z-ROC fit (or a per-subject slope if you have enough trials), then summarize the distribution of those.\n2. Better: fit a single **probit GLMM** to trial-level data with subject (and item) random effects \u2014 the stimulus coefficient gives you the group-average sensitivity estimate with proper uncertainty, and you can test condition differences directly. With unequal variance, the heteroscedastic probit extension handles the z-ROC slope.\n\nSo: no, reporting d' = z(.85) \u2212 z(.30) has two problems. The right headline numbers are **d_a = 1.62** and **A_z = 0.87**, derived from fitting the z-ROC \u2014 and those should come from per-subject fits rather than from aggregate rates.",
+      "assertions": [
+        {
+          "text": "Recognizes that z-ROC slope 0.75 (\u2260 1) indicates unequal variance, so single-point d' is biased/criterion-dependent",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends reporting d_a (and/or A_z) instead of single-point d'",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Computes d_a correctly as approximately 1.62 (using s = z-ROC slope = sigma_noise/sigma_signal convention), not the reciprocal-convention value ~1.47",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Notes that wider target/old than lure/new variance (slope < 1, ~0.8) is the normal recognition-memory pattern",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "passed": 3,
+      "total": 4,
+      "pass_rate": 0.75,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 3,
+      "name": "extreme-cell-correction",
+      "condition": "baseline",
+      "prompt": "One participant got every signal trial right: 50 hits, 0 misses, 8 false alarms, 42 correct rejections. When I compute d' I get infinity because the hit rate is 1.0. A labmate said to just change the hit rate to 0.99. Across my 30 participants only this one has an extreme cell. What's the correct way to handle this?",
+      "baseline_failure_hypothesis": "Agent endorses ad-hoc substitution (set 1.0 -> 0.99) and/or applies a correction only to this one participant, biasing comparisons.",
+      "response": "The labmate's suggestion is close to one legitimate method but is being applied incorrectly. Here's what's actually going on and what to do.\n\n## The Problem\n\nA hit rate of 1.0 maps to z = +\u221e, so d' = \u221e. This is a real methodological problem with no perfect solution \u2014 you're trying to estimate a latent parameter from data that saturated the scale.\n\n## Two Principled Approaches\n\n**1. Loglinear correction (Hautus, 1995) \u2014 recommended**\n\nAdd 0.5 to hits and false alarms, add 1 to the number of signal and noise trials, for **all participants**:\n\n```\nHR_adj  = (hits + 0.5) / (n_signal + 1)\nFAR_adj = (FA   + 0.5) / (n_noise  + 1)\n```\n\nFor your participant (50 signal, 50 noise trials):\n- HR_adj  = 50.5 / 51 \u2248 .990\n- FAR_adj = 8.5  / 51 \u2248 .167\n- d' \u2248 z(.990) \u2212 z(.167) \u2248 2.33 \u2212 (\u22120.97) = **3.30**\n\n**2. 1/(2N) replacement \u2014 acceptable but less preferred**\n\nReplace extreme proportions only when they hit 0 or 1:\n- If HR = 1.0 \u2192 replace with 1 \u2212 1/(2N) = 1 \u2212 1/100 = **0.99**\n- If FA = 0.0 \u2192 replace with 1/(2N)\n\nThis is why your labmate said 0.99 \u2014 they're right numerically for your N, but the key distinction is *why and how*.\n\n## Why the Labmate's Version Is Problematic\n\nYour labmate said \"change the hit rate to 0.99\" \u2014 but that's only correct if they mean \"apply the 1/(2N) rule because N=50.\" If they're just picking 0.99 arbitrarily, it's unprincipled. The deeper problems with applying it only to one participant:\n\n- **Inconsistency**: If any other participant had an extreme FA rate of 0, what would you do? You need a uniform rule.\n- **Bias**: The 1/(2N) replacement only corrects the extreme cell; loglinear correction shrinks all estimates slightly and symmetrically, making it less biased overall.\n\n## What You Should Do\n\n**Apply the loglinear correction to all 30 participants uniformly.** This is the current consensus recommendation (Macmillan & Creelman, 2005; Stanislaw & Todorov, 1999). It changes every participant's d' by a tiny amount (since \u22480.01 changes in proportions near .5 barely move d'), but gives you a principled, defensible, uniform procedure \u2014 and it handles any future extreme cells automatically.\n\nIn R:\n```r\nd_prime <- function(hits, misses, fas, crs) {\n  n_sig   <- hits + misses\n  n_noise <- fas  + crs\n  hr  <- (hits + 0.5) / (n_sig   + 1)\n  far <- (fas  + 0.5) / (n_noise + 1)\n  qnorm(hr) - qnorm(far)\n}\n```\n\nThe loglinear and 1/(2N) corrections will give you nearly identical d' values for this participant (both \u2248 3.3), but loglinear is the right choice because it's uniform and theoretically sounder.",
+      "assertions": [
+        {
+          "text": "Rejects the arbitrary 0.99 substitution as biasing d' unpredictably",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends the log-linear correction (add 0.5 to all four cells, Hautus 1995) and computes d' ~ 3.30 for this participant",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "States the correction must be applied UNIFORMLY to all participants, not only the one with the extreme cell",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Mentions that a model-based estimator (e.g., probit GLMM / Bayesian) handles zero cells natively as an alternative",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "passed": 3,
+      "total": 4,
+      "pass_rate": 0.75,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 3,
+      "name": "extreme-cell-correction",
+      "condition": "with_skill",
+      "prompt": "One participant got every signal trial right: 50 hits, 0 misses, 8 false alarms, 42 correct rejections. When I compute d' I get infinity because the hit rate is 1.0. A labmate said to just change the hit rate to 0.99. Across my 30 participants only this one has an extreme cell. What's the correct way to handle this?",
+      "baseline_failure_hypothesis": "Agent endorses ad-hoc substitution (set 1.0 -> 0.99) and/or applies a correction only to this one participant, biasing comparisons.",
+      "response": "Your labmate's suggestion \u2014 substituting 0.99 for the hit rate on only this one participant \u2014 has two distinct problems. Here's what to do instead.\n\n## What's wrong with the ad-hoc fix\n\n1. **Arbitrary substitution biases d' unpredictably.** There's no principled reason 0.99 is the right value rather than 0.995 or 0.98. The correction should be grounded in trial count (N = 50 here), not a round number.\n\n2. **Correcting only the one extreme participant creates a systematic artifact.** After correction, that participant's d' is computed differently from all 29 others \u2014 you've introduced a non-sampling difference between them. Any group analysis is now slightly contaminated.\n\n## The right approach: log-linear correction, applied uniformly\n\nAdd 0.5 to **all four cells** for **every participant** (Hautus 1995). Do this whether or not their cells are extreme:\n\n```\nHR_corrected  = (Hits + 0.5) / (N_signal + 1)\nFAR_corrected = (FA   + 0.5) / (N_noise  + 1)\n```\n\nFor your extreme participant specifically:\n\n| Cell | Raw | Corrected |\n|---|---|---|\n| Hits | 50 | 50.5 |\n| Misses | 0 | 0.5 |\n| FA | 8 | 8.5 |\n| CR | 42 | 42.5 |\n\n```\nHR  = 50.5 / 51 = 0.9902   \u2192   z(HR)  =  2.330\nFAR =  8.5 / 51 = 0.1667   \u2192   z(FAR) = \u22120.967\n\nd' = 2.330 \u2212 (\u22120.967) = 3.30   (strong sensitivity)\nc  = \u22120.5 \u00b7 (2.330 \u2212 0.967) = \u22120.68   (mildly liberal)\n```\n\nThe d' is finite and interpretable. The participant was genuinely an excellent detector; the correction just pulls the point estimate back from the infinite edge.\n\nFor your other 29 participants, the log-linear correction changes their estimates very slightly (since their rates are away from 0/1), but it's applied the same way \u2014 so everyone is on a comparable footing.\n\n## Verify with the bundled script\n\n```bash\npython scripts/sdt.py --hits 50 --misses 0 --fa 8 --cr 42\n```\n\n## Even better: skip the correction entirely\n\nIf you have trial-level data, fit a **probit GLMM** to all trials across all participants. The likelihood handles zero cells natively \u2014 no correction needed, and you get proper uncertainty estimates with subject and item random effects. The log-linear approach is the right plug-in fix; the GLMM is the principled alternative that makes the issue disappear entirely.",
+      "assertions": [
+        {
+          "text": "Rejects the arbitrary 0.99 substitution as biasing d' unpredictably",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends the log-linear correction (add 0.5 to all four cells, Hautus 1995) and computes d' ~ 3.30 for this participant",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "States the correction must be applied UNIFORMLY to all participants, not only the one with the extreme cell",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Mentions that a model-based estimator (e.g., probit GLMM / Bayesian) handles zero cells natively as an alternative",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 4,
+      "name": "two-step-vs-glmm-multisubject",
+      "condition": "baseline",
+      "prompt": "I have 60 participants doing a perceptual yes/no detection task, with a within-subjects manipulation (easy vs hard condition) and trial counts that vary quite a bit between people (some did 80 trials, some did 400). I was going to compute one d' per person per condition and run a paired t-test on the d' values. Is that the best approach for testing whether sensitivity differs by condition?",
+      "baseline_failure_hypothesis": "Agent endorses the two-step per-subject-d'-then-t-test workflow without noting its statistical costs or recommending a GLMM.",
+      "response": "The compute-d'-then-t-test approach has two real problems here that the trial-count variation makes hard to ignore:\n\n**Problem 1 \u2014 heterogeneous reliability.** A d' from 80 trials has far larger sampling variance than one from 400. The t-test weights each person equally regardless, which is inefficient and can bias the standard error estimate.\n\n**Problem 2 \u2014 extreme rates.** With low trial counts, participants are more likely to hit floor/ceiling on hits or false alarms, producing undefined or infinite d' that requires ad hoc corrections (half-trial, log-linear, etc.).\n\n**Better approach: probit GLMM on trial-level responses.**\n\nModel each binary response directly:\n\n```\nresponse ~ signal_present * condition + (signal_present * condition | participant)\n```\n\nwith a probit link. Under the equal-variance Gaussian SDT model:\n- The `signal_present` coefficient estimates d' (population average)\n- The `signal_present:condition` interaction directly tests whether sensitivity differs by condition\n- The `(Intercept)` terms map to criterion\n\nWhy this is better for your data:\n- Participants with 400 trials naturally get more influence than 80-trial participants \u2014 no manual weighting needed\n- No undefined-d' problem; the model handles sparse cells gracefully\n- Random slopes on `signal_present` let sensitivity vary across participants (which it will)\n\nIn R with lme4/lmerTest this is straightforward; brms gives you the Bayesian version with full posterior uncertainty over d' and criterion if you want it.\n\nThe paired t-test on d' is defensible if trial counts were roughly equal and you had clean hit/FA rates, but with an 80\u2013400 range it's really underselling what the data can tell you.",
+      "assertions": [
+        {
+          "text": "Identifies the proposed approach as a 'two-step' plug-in and notes its weaknesses (ignores varying trial counts / estimation uncertainty, weak power)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends a one-step probit GLMM (binomial/Bernoulli with probit link) fit to trial-level data",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Notes that the stimulus \u00d7 condition interaction yields the condition difference in d' with proper uncertainty, and that random effects over subjects (and ideally items) should be included",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Mentions concrete tooling (e.g., brms/lme4 in R, or bambi/PyMC/statsmodels in Python)",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 4,
+      "name": "two-step-vs-glmm-multisubject",
+      "condition": "with_skill",
+      "prompt": "I have 60 participants doing a perceptual yes/no detection task, with a within-subjects manipulation (easy vs hard condition) and trial counts that vary quite a bit between people (some did 80 trials, some did 400). I was going to compute one d' per person per condition and run a paired t-test on the d' values. Is that the best approach for testing whether sensitivity differs by condition?",
+      "baseline_failure_hypothesis": "Agent endorses the two-step per-subject-d'-then-t-test workflow without noting its statistical costs or recommending a GLMM.",
+      "response": "The two-step plug-in approach has a meaningful problem for your design: a d' estimated from 80 trials carries ~2.2\u00d7 more uncertainty than one from 400 trials (SE scales with 1/\u221aN), yet the paired t-test treats every subject's difference score as equally precise. With a 5\u00d7 range in trial counts across 60 subjects, that's a substantial efficiency loss and some distortion in the test.\n\n**The right tool is a probit GLMM on trial-level data.** Equal-variance yes/no SDT is identical to a binomial probit regression, so you can fit one model that handles everything:\n\n```r\nlibrary(lme4)\n\nm <- glmer(\n  response ~ signal * condition + (signal * condition | subject),\n  family = binomial(link = \"probit\"),\n  data = df  # one row per trial\n)\nsummary(m)\n```\n\nHow the coefficients map to SDT quantities:\n\n| Term | SDT meaning |\n|---|---|\n| `signal` | d' in the reference condition |\n| `condition` | bias shift between conditions |\n| `signal:condition` | **d' difference between conditions** \u2014 this is your test |\n| Random intercepts | individual bias differences |\n| Random slopes for `signal` | individual sensitivity differences |\n\nThe `signal:condition` interaction fixed effect is the d' change from easy \u2192 hard, with a proper Wald z (or likelihood-ratio test via `anova(m, m_null)`) that correctly weights subjects by how many trials they contributed.\n\n**Three specific things this fixes vs. your plan:**\n\n1. **Unequal trial counts handled naturally** \u2014 subjects with 400 trials pull the estimates more than those with 80, because each trial is a data point rather than a pre-aggregated d'.\n2. **No edge-correction decisions** \u2014 zero or perfect cells at the trial level don't exist; the correction problem dissolves.\n3. **Within-subject correlation modeled properly** \u2014 the random effects capture correlated sensitivity and bias across conditions per subject, which is what \"within-subjects\" means statistically.\n\n**Practical note on random effects:** `(signal * condition | subject)` is the maximal justified structure for a within-subjects manipulation. If it fails to converge, simplify stepwise: first try `(signal + condition | subject)` (zero-correlating the interaction slope), then `(signal | subject)`.\n\nThe paired t-test isn't wildly wrong \u2014 it will often give a similar answer when trial counts aren't too extreme \u2014 but with your 80\u2013400 range it's leaving real power on the table and producing a test with miscalibrated standard errors. The GLMM is the right tool.",
+      "assertions": [
+        {
+          "text": "Identifies the proposed approach as a 'two-step' plug-in and notes its weaknesses (ignores varying trial counts / estimation uncertainty, weak power)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends a one-step probit GLMM (binomial/Bernoulli with probit link) fit to trial-level data",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Notes that the stimulus \u00d7 condition interaction yields the condition difference in d' with proper uncertainty, and that random effects over subjects (and ideally items) should be included",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Mentions concrete tooling (e.g., brms/lme4 in R, or bambi/PyMC/statsmodels in Python)",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "passed": 3,
+      "total": 4,
+      "pass_rate": 0.75,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 5,
+      "name": "metacognition-not-correlation",
+      "condition": "baseline",
+      "prompt": "I want to measure how well people 'know when they're right' \u2014 their metacognition. I collected a yes/no task with confidence ratings (1-4) per trial. My plan was to correlate confidence with accuracy (Goodman-Kruskal gamma) and compare that correlation between my two groups. Is gamma a good metacognition measure here?",
+      "baseline_failure_hypothesis": "Agent accepts confidence-accuracy correlation (gamma) as a metacognition measure, missing that it is confounded by type-1 d' and bias.",
+      "response": "Gamma is a reasonable intuition but has a well-known confound that makes group comparisons tricky: it is **not independent of Type 1 performance (d')**. Groups or individuals who are simply better at the task tend to produce higher gamma even with identical metacognitive efficiency. So if your two groups differ in accuracy, a difference in gamma is ambiguous \u2014 you can't tell if it's a metacognition difference or a performance difference.\n\n**The field standard for your exact design is meta-d' (Maniscalco & Lau, 2012).**\n\nYour setup \u2014 yes/no task + 4-point confidence scale \u2014 is exactly the input meta-d' requires. Here's the logic:\n\n- **d'** quantifies Type 1 sensitivity (how well the person discriminates signal vs. noise at the object level).\n- **meta-d'** quantifies how much signal the *metacognitive* system has access to, estimated from the Type 2 ROC (how well confidence separates correct from incorrect trials within each response type).\n- **Mratio = meta-d' / d'** gives *metacognitive efficiency* \u2014 the fraction of Type 1 signal that the metacognitive system actually uses. Mratio = 1 is ideal; < 1 means information is lost between perception and confidence.\n\nFor your group comparison, compare **Mratio** rather than raw meta-d', because Mratio is normed by d' and is interpretable even when groups differ in performance.\n\n**Practical tools:**\n\n| Language | Package | Notes |\n|---|---|---|\n| R | `metaSDT` | `fit_meta_d_MLE()` per subject |\n| Python | `metadPy` | `metad()` with standard SDT inputs |\n| Either | HMeta-d (Fleming 2017) | Hierarchical Bayesian \u2014 better for small N per subject |\n\nThe hierarchical Bayesian version (HMeta-d) is worth considering if you have fewer than ~100 trials per subject, since MLE meta-d' is unstable with sparse Type 2 data.\n\n**Bottom line:** gamma captures something real but conflates sensitivity with metacognition. Switch to meta-d'/Mratio \u2014 your data already supports it, and the group comparison will be interpretable.",
+      "assertions": [
+        {
+          "text": "Explains that confidence-accuracy correlation (gamma) is confounded by type-1 sensitivity and response/confidence bias, so group differences can be type-1 artifacts",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends meta-d' and M-ratio (meta-d'/d') as the appropriate metacognitive-efficiency measures",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends hierarchical Bayesian estimation (HMeta-d) especially if data per subject are limited, and/or names tooling (hmetad in R, metadpy in Python)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Correctly distinguishes type-1 (signal vs noise) from type-2 (correct vs incorrect) sensitivity",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        false,
+        true
+      ],
+      "passed": 3,
+      "total": 4,
+      "pass_rate": 0.75,
+      "eval_passes": false
+    },
+    {
+      "eval_id": 5,
+      "name": "metacognition-not-correlation",
+      "condition": "with_skill",
+      "prompt": "I want to measure how well people 'know when they're right' \u2014 their metacognition. I collected a yes/no task with confidence ratings (1-4) per trial. My plan was to correlate confidence with accuracy (Goodman-Kruskal gamma) and compare that correlation between my two groups. Is gamma a good metacognition measure here?",
+      "baseline_failure_hypothesis": "Agent accepts confidence-accuracy correlation (gamma) as a metacognition measure, missing that it is confounded by type-1 d' and bias.",
+      "response": "Gamma is the wrong tool here \u2014 it will mislead you in exactly the way that matters for a group comparison.\n\n## The problem with gamma\n\nA confidence\u2013accuracy correlation is **confounded by type-1 sensitivity (d') and by response bias**. If your two groups differ in discriminability (which they probably do, or you'd know), their gamma values will differ even if their metacognitive ability is *identical*. You can't tell whether a group difference in gamma means \"Group B has better metacognition\" or \"Group B just has higher d' and gamma rides along.\"\n\nThis isn't a minor concern \u2014 it's the central reason the field moved away from gamma. Your comparison would be uninterpretable.\n\n## What to use instead: meta-d' and M-ratio\n\nWith a yes/no task + confidence ratings (1\u20134 per trial), you have exactly the data structure needed for **meta-d'** (Maniscalco & Lau 2012).\n\n- **meta-d'** is defined as the type-1 d' that an *ideally metacognitive* observer would need to produce the confidence pattern you observed. It's expressed in the same units as d'.\n- **M-ratio = meta-d' / d'** is metacognitive *efficiency* \u2014 it controls for type-1 sensitivity by construction. M-ratio = 1 means confidence tracks accuracy as well as the evidence allows; M-ratio < 1 means metacognition is imperfect; M-ratio > 1 usually signals a model violation.\n\nYour group comparison then becomes: **do the two groups differ in M-ratio?** That's a clean metacognitive question, independent of how well each group discriminates.\n\n## Practical recommendation\n\nFor a group comparison, use **hierarchical Bayesian HMeta-d** rather than per-subject MLE meta-d':\n\n- More robust when per-subject trial counts are modest\n- Returns full posteriors over group-level M-ratio with proper uncertainty\n- Avoids the edge-correction confounds that can distort MLE estimates\n\n**Tooling:**\n- **R:** `hmetad` package (Fleming 2017) \u2014 the current field standard\n- **Python:** `metadpy` (`metadpy.bayesian.hmetad` via PyMC/Numpyro)\n\n## What to report\n\n```\n- Type-1: d', c per group (with uncertainty)\n- Type-2: meta-d', M-ratio per group (with credible intervals from HMeta-d)\n- Group comparison: posterior over M-ratio difference\n```\n\nInterpret them separately: e.g., \"Group A had higher sensitivity (d' = 1.8 vs. 1.2) but similar metacognitive efficiency (M-ratio \u2248 0.7 in both groups).\" That's a conclusion gamma couldn't support.",
+      "assertions": [
+        {
+          "text": "Explains that confidence-accuracy correlation (gamma) is confounded by type-1 sensitivity and response/confidence bias, so group differences can be type-1 artifacts",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends meta-d' and M-ratio (meta-d'/d') as the appropriate metacognitive-efficiency measures",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends hierarchical Bayesian estimation (HMeta-d) especially if data per subject are limited, and/or names tooling (hmetad in R, metadpy in Python)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Correctly distinguishes type-1 (signal vs noise) from type-2 (correct vs incorrect) sensitivity",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    },
+    {
+      "eval_id": 6,
+      "name": "2afc-vs-yesno-scale-conversion",
+      "condition": "baseline",
+      "prompt": "Observer X did a 2-interval forced-choice version of my discrimination task and got 80% correct. Observer Y did the yes/no version and I computed a d' of 1.5. Can I just say Observer Y (d'=1.5) is more sensitive than Observer X, or is 80% correct already 'better' than that? How do I compare them?",
+      "baseline_failure_hypothesis": "Agent compares 80% and d'=1.5 directly without converting, or assumes 80% maps to a higher d'.",
+      "response": "You cannot compare them directly \u2014 you need to put both on the same scale first.\n\n## The core issue\n\nA percent correct from 2IFC and a d' from yes/no are not the same unit. In 2IFC, the observer compares two noisy observations, so the decision variable has *variance 2* (sum of variances from each interval), which deflates percent correct relative to an equal d' in yes/no.\n\n## The conversion formula\n\nFor 2IFC, assuming the standard equal-variance Gaussian model:\n\n```\nP(correct) = \u03a6(d\u2032 / \u221a2)\n```\n\nInverting to get d\u2032 from 2IFC performance:\n\n```\nd\u2032 = \u221a2 \u00b7 \u03a6\u207b\u00b9(P_correct)\n```\n\n## Applying it to your data\n\n**Observer X** (2IFC, 80% correct):\n```\nd\u2032 = \u221a2 \u00b7 \u03a6\u207b\u00b9(0.80)\n   = 1.414 \u00b7 0.842\n   \u2248 1.19\n```\n\n**Observer Y** (yes/no, d\u2032 = 1.5) \u2014 already in the right units.\n\n## The answer\n\nObserver Y (d\u2032 = 1.5) **is** more sensitive than Observer X (d\u2032 \u2248 1.19). Your intuition that \"80% correct sounds better\" was misleading \u2014 80% in 2IFC is equivalent to only d\u2032 \u2248 1.19, not 1.5.\n\nFor reference, Observer Y's d\u2032 = 1.5 would correspond to about **85.6% correct** in 2IFC:\n```\n\u03a6(1.5 / \u221a2) = \u03a6(1.06) \u2248 0.856\n```\n\n## Practical note\n\nOne reason 2IFC is popular is that it's criterion-free by design (there's no \"yes/no\" bias to worry about), so Observer X's d\u2032 \u2248 1.19 is a clean sensitivity estimate. Observer Y's d\u2032 = 1.5 from yes/no is also clean *if* it was computed from hit rate and false alarm rate via d\u2032 = z(H) \u2212 z(FA) \u2014 that already removes bias. Both d\u2032 values are comparable on the same scale, just not the raw percent correct vs. d\u2032.",
+      "assertions": [
+        {
+          "text": "States that 2AFC proportion correct and yes/no d' are on different scales and must be converted before comparison",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Applies d' = sqrt(2) * z(Pc) and computes the 2AFC d' as approximately 1.19",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Concludes Observer Y (d' = 1.5) is actually MORE sensitive than Observer X (converted d' ~ 1.19), correcting the intuition that 80% sounds high",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true
+      ],
+      "passed": 3,
+      "total": 3,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    }
+  ],
+  "summary": {
+    "baseline": {
+      "passed": 24,
+      "total": 27
+    },
+    "with_skill": {
+      "passed": 22,
+      "total": 24
+    }
+  }
+}

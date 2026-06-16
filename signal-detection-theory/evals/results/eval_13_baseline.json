@@ -1,0 +1,34 @@
+{
+  "eval_id": 13,
+  "name": "auc-to-dprime-equal-variance-trap",
+  "condition": "baseline",
+  "prompt": "My recognition-memory model gives an ROC AUC of 0.80. I want to report sensitivity as d', so I'll just convert with d' = sqrt(2) * qnorm(0.80) = 1.19 and report that. Is that conversion valid here?",
+  "baseline_failure_hypothesis": "Agent accepts the AUC->d' conversion as a fixed identity without flagging the equal-variance assumption, which is exactly wrong for recognition memory.",
+  "response": "The conversion is mathematically valid only under the **equal-variance Gaussian SDT model** \u2014 and that assumption is precisely what recognition memory research repeatedly finds violated.\n\n## What the formula assumes\n\n`d' = \u221a2 \u00b7 \u03a6\u207b\u00b9(AUC)` is derived by inverting `AUC = \u03a6(d'/\u221a2)`, which holds only when:\n- Noise ~ N(0, 1), Signal ~ N(d', 1)\n- **Equal variances** (\u03c3_signal = \u03c3_noise = 1)\n- The ROC is a specific symmetric shape\n\n## Why recognition memory breaks this\n\nThe empirical regularity in recognition memory is **unequal variances**: signal variance > noise variance (z-ROC slopes typically ~0.7\u20130.8, not 1.0). This means the ROC curve is asymmetric \u2014 the same AUC of 0.80 can come from wildly different underlying d' values depending on the variance ratio.\n\nA concrete consequence: two ROC curves with identical AUC = 0.80 but different z-ROC slopes represent categorically different sensitivity estimates. The formula can't distinguish them because AUC throws away shape information.\n\n## What to do instead\n\n**If you have ratings data (multiple confidence levels):** Fit the full ROC and estimate d' and the variance ratio (\u03c3) jointly via maximum likelihood. The unequal-variance model gives you `d'_a` (the sensitivity measure along the major diagonal), which is the appropriate summary.\n\n**If you only have AUC:** Report AUC directly. It's a valid nonparametric sensitivity measure that doesn't smuggle in the equal-variance assumption. Translating it to d' via the formula implies equal variance when you haven't verified that.\n\n**If you have a single HR/FAR pair:** Use `d' = \u03a6\u207b\u00b9(HR) \u2212 \u03a6\u207b\u00b9(FAR)` at that criterion \u2014 still equal-variance, but at least you're not averaging over ROC shape.\n\n## Bottom line\n\nThe arithmetic is right (0.842 \u00d7 \u221a2 \u2248 1.19), but reporting it as d' implicitly claims equal-variance Gaussian distributions \u2014 a claim recognition memory data routinely refutes. Either fit the SDT model properly or report AUC and be explicit that you're not assuming a distributional form.",
+  "assertions": [
+    {
+      "text": "States that AUC = Phi(d'/sqrt(2)) holds ONLY under the equal-variance assumption (z-ROC slope = 1)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Notes that recognition-memory ROCs are typically unequal-variance (z-ROC slope ~0.8), so the AUC corresponds to A_z and the right sensitivity index is d_a, not a single d' from this conversion",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends fitting the z-ROC to get the slope and reporting d_a / A_z (or at least checking the slope before doing any AUC->d' conversion)",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    false,
+    true,
+    false
+  ],
+  "passed": 1,
+  "total": 3,
+  "pass_rate": 0.3333333333333333,
+  "eval_passes": false
+}

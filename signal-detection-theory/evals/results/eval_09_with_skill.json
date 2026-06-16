@@ -1,0 +1,34 @@
+{
+  "eval_id": 9,
+  "name": "aprime-nonparametric-claim",
+  "condition": "with_skill",
+  "prompt": "A reviewer asked us to report a 'nonparametric, assumption-free' sensitivity measure instead of d', and suggested A'. We'll switch to A' since it makes no distributional assumptions. Anything we should know before doing that?",
+  "baseline_failure_hypothesis": "Agent endorses A' as genuinely assumption-free and switches without caveats.",
+  "response": "The reviewer's premise is wrong, and the SDT literature is unambiguous about this. A few things to know before switching:\n\n**A' is not assumption-free.** This is the core issue. Smith (1995) and Pastore, Crawley, Berens & Skelly (2003) demonstrated that A' is *not* distribution-free \u2014 it does make implicit distributional assumptions, and it is not a consistent estimator of the area under any single ROC. The \"nonparametric\" label attached to it in older textbooks is simply incorrect.\n\n**A' has documented anomalies.** It behaves poorly near ceiling, and its relationship to true discriminability is non-monotonic in some regions of the HR/FAR space. It can give paradoxical results that d' would not.\n\n**Multiple incompatible formulas share the name \"A'\".** Pollack & Norman (1964), Grier (1971), and subsequent derivations disagree on the formula. Two papers both reporting \"A'\" may not be computing the same quantity, which undermines cross-study comparison.\n\n**There is a genuinely nonparametric option the reviewer may actually want.** If the concern is truly about distributional assumptions, the right answer is the **empirical trapezoidal AUC** from a confidence-rating ROC \u2014 that makes no Gaussian assumption and is a proper area estimate. `fit_zroc()` in the bundled script returns it.\n\n**Recommended response to the reviewer:** Push back, citing Smith (1995) and Pastore et al. (2003). Explain that A' is not distribution-free, has known anomalies near ceiling, and that multiple incompatible formulas circulate under the same name. If the reviewer still insists, you can report A' alongside d', but include explicit caveats in the text \u2014 do not report it silently as if the reviewer's premise were correct.\n\nThe one scenario where capitulating completely makes sense is if you're matching a specific legacy analysis in that literature that used A'. Even then, state the caveat.",
+  "assertions": [
+    {
+      "text": "States that A' is NOT actually distribution-free / assumption-free and has documented anomalies (and that multiple incompatible formulas circulate under the name)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends, as the principled nonparametric option, the empirical (trapezoidal) AUC from a rating/confidence ROC instead of A'",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Suggests d' / d_a as the parametric option and advises stating caveats if A' must be reported to satisfy the reviewer",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 3,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

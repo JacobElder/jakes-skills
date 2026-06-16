@@ -1,0 +1,40 @@
+{
+  "eval_id": 4,
+  "name": "two-step-vs-glmm-multisubject",
+  "condition": "with_skill",
+  "prompt": "I have 60 participants doing a perceptual yes/no detection task, with a within-subjects manipulation (easy vs hard condition) and trial counts that vary quite a bit between people (some did 80 trials, some did 400). I was going to compute one d' per person per condition and run a paired t-test on the d' values. Is that the best approach for testing whether sensitivity differs by condition?",
+  "baseline_failure_hypothesis": "Agent endorses the two-step per-subject-d'-then-t-test workflow without noting its statistical costs or recommending a GLMM.",
+  "response": "The two-step plug-in approach has a meaningful problem for your design: a d' estimated from 80 trials carries ~2.2\u00d7 more uncertainty than one from 400 trials (SE scales with 1/\u221aN), yet the paired t-test treats every subject's difference score as equally precise. With a 5\u00d7 range in trial counts across 60 subjects, that's a substantial efficiency loss and some distortion in the test.\n\n**The right tool is a probit GLMM on trial-level data.** Equal-variance yes/no SDT is identical to a binomial probit regression, so you can fit one model that handles everything:\n\n```r\nlibrary(lme4)\n\nm <- glmer(\n  response ~ signal * condition + (signal * condition | subject),\n  family = binomial(link = \"probit\"),\n  data = df  # one row per trial\n)\nsummary(m)\n```\n\nHow the coefficients map to SDT quantities:\n\n| Term | SDT meaning |\n|---|---|\n| `signal` | d' in the reference condition |\n| `condition` | bias shift between conditions |\n| `signal:condition` | **d' difference between conditions** \u2014 this is your test |\n| Random intercepts | individual bias differences |\n| Random slopes for `signal` | individual sensitivity differences |\n\nThe `signal:condition` interaction fixed effect is the d' change from easy \u2192 hard, with a proper Wald z (or likelihood-ratio test via `anova(m, m_null)`) that correctly weights subjects by how many trials they contributed.\n\n**Three specific things this fixes vs. your plan:**\n\n1. **Unequal trial counts handled naturally** \u2014 subjects with 400 trials pull the estimates more than those with 80, because each trial is a data point rather than a pre-aggregated d'.\n2. **No edge-correction decisions** \u2014 zero or perfect cells at the trial level don't exist; the correction problem dissolves.\n3. **Within-subject correlation modeled properly** \u2014 the random effects capture correlated sensitivity and bias across conditions per subject, which is what \"within-subjects\" means statistically.\n\n**Practical note on random effects:** `(signal * condition | subject)` is the maximal justified structure for a within-subjects manipulation. If it fails to converge, simplify stepwise: first try `(signal + condition | subject)` (zero-correlating the interaction slope), then `(signal | subject)`.\n\nThe paired t-test isn't wildly wrong \u2014 it will often give a similar answer when trial counts aren't too extreme \u2014 but with your 80\u2013400 range it's leaving real power on the table and producing a test with miscalibrated standard errors. The GLMM is the right tool.",
+  "assertions": [
+    {
+      "text": "Identifies the proposed approach as a 'two-step' plug-in and notes its weaknesses (ignores varying trial counts / estimation uncertainty, weak power)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends a one-step probit GLMM (binomial/Bernoulli with probit link) fit to trial-level data",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Notes that the stimulus \u00d7 condition interaction yields the condition difference in d' with proper uncertainty, and that random effects over subjects (and ideally items) should be included",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Mentions concrete tooling (e.g., brms/lme4 in R, or bambi/PyMC/statsmodels in Python)",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

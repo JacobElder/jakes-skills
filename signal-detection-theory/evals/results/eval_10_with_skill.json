@@ -1,0 +1,40 @@
+{
+  "eval_id": 10,
+  "name": "from-scratch-analysis-with-inference",
+  "condition": "with_skill",
+  "prompt": "Here's the raw data for one participant in my detection study: out of 50 signal trials they got 30 hits and 20 misses, and out of 50 noise trials they made 8 false alarms and 42 correct rejections. Analyze this for me \u2014 I want to know how well they detected the signal and whether that's reliably above chance.",
+  "baseline_failure_hypothesis": "Agent reports d' (and maybe c) but gives no standard error / CI / significance test, so it cannot actually answer 'reliably above chance'. May also report accuracy.",
+  "response": "Applying the log-linear correction and the delta-method SE formula from the skill.\n\n**Data recovered**\n\n| | \"Yes\" | \"No\" |\n|---|---|---|\n| **Signal** | 30 (hits) | 20 (misses) |\n| **Noise** | 8 (FA) | 42 (CR) |\n\n---\n\n**Correction \u2014 log-linear (add 0.5 to all cells, uniform)**\n\n- HR = 30.5 / 51 = 0.598 \u2192 z(HR) = **+0.248**\n- FAR = 8.5 / 51 = 0.167 \u2192 z(FAR) = **\u22120.967**\n\n---\n\n**Sensitivity and bias**\n\n- **d' = z(HR) \u2212 z(FAR) = 0.248 \u2212 (\u22120.967) = 1.22** \u2014 moderate discriminability\n- **c = \u22120.5 \u00d7 (0.248 \u2212 0.967) = +0.36** \u2014 **conservative** (leans toward \"no\"; tolerates more misses than false alarms)\n- c' = c / d' = **0.30** (criterion sits 30% of the way toward the signal mean)\n- \u03b2 = exp(c \u00d7 d') = exp(0.44) = **1.55** (\u03b2 > 1 confirms conservative \u2014 consistent with c > 0 \u2713)\n\n---\n\n**Inference on d' (delta method)**\n\nVar(d') = HR(1\u2212HR)/[N_s \u00b7 \u03c6(z_H)\u00b2] + FAR(1\u2212FAR)/[N_n \u00b7 \u03c6(z_F)\u00b2]\n\n- \u03c6(0.248) = 0.387, \u03c6(\u22120.967) = 0.250\n- Var(d') = (0.598 \u00d7 0.402)/(50 \u00d7 0.150) + (0.167 \u00d7 0.833)/(50 \u00d7 0.0625)\n- Var(d') = 0.0321 + 0.0444 = **0.0765**\n- **SE(d') = 0.277**\n\n95% CI: 1.22 \u00b1 1.96 \u00d7 0.277 = **[0.68, 1.76]**\n\nz = 1.22 / 0.277 = **4.41, p < .0001**\n\n---\n\n**Summary**\n\n```\nTask type:    yes/no, single-interval\nN:            50 signal, 50 noise\nHR = 0.598,   FAR = 0.167   (log-linear correction applied uniformly)\nd' = 1.22     SE = 0.28     95% CI [0.68, 1.76]\nc  = +0.36    (conservative)    c' = 0.30    \u03b2 = 1.55\nEqual-variance assumption: assumed, untested (no confidence ratings)\n```\n\n**Interpretation:** Discriminability is moderate (d' = 1.22) and reliably above chance \u2014 the CI is entirely positive and the z-test is highly significant (p < .0001). The observer is also noticeably conservative (c = +0.36): they're setting a stringent threshold before saying \"signal present,\" which is why they hit on only 60% of signal trials while keeping false alarms low at 16%. These are two separate findings \u2014 the performance number alone would have obscured that the cautious criterion is what's driving the miss rate, not limited sensitivity.\n\nOne flag: d' here assumes equal variance between signal and noise distributions. If you have confidence ratings from this participant, fitting the full z-ROC would let you test that assumption and report d_a / A_z instead.",
+  "assertions": [
+    {
+      "text": "Computes d' ~1.22 and criterion c ~+0.36 (conservative), applying a 0/1 correction convention (e.g., log-linear), and reports BOTH sensitivity and bias",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Computes a standard error and/or confidence interval for d' (delta method; SE ~0.28, 95% CI roughly [0.67, 1.76])",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Performs a significance test that d' > 0 (z ~4.4, p < 0.001) and concludes detection is reliably above chance",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Does not reduce the answer to a single accuracy/percent-correct number",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

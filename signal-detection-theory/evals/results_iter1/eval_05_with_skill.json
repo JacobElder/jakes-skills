@@ -1,0 +1,40 @@
+{
+  "eval_id": 5,
+  "name": "metacognition-not-correlation",
+  "condition": "with_skill",
+  "prompt": "I want to measure how well people 'know when they're right' \u2014 their metacognition. I collected a yes/no task with confidence ratings (1-4) per trial. My plan was to correlate confidence with accuracy (Goodman-Kruskal gamma) and compare that correlation between my two groups. Is gamma a good metacognition measure here?",
+  "baseline_failure_hypothesis": "Agent accepts confidence-accuracy correlation (gamma) as a metacognition measure, missing that it is confounded by type-1 d' and bias.",
+  "response": "Gamma is the wrong tool here \u2014 it will mislead you in exactly the way that matters for a group comparison.\n\n## The problem with gamma\n\nA confidence\u2013accuracy correlation is **confounded by type-1 sensitivity (d') and by response bias**. If your two groups differ in discriminability (which they probably do, or you'd know), their gamma values will differ even if their metacognitive ability is *identical*. You can't tell whether a group difference in gamma means \"Group B has better metacognition\" or \"Group B just has higher d' and gamma rides along.\"\n\nThis isn't a minor concern \u2014 it's the central reason the field moved away from gamma. Your comparison would be uninterpretable.\n\n## What to use instead: meta-d' and M-ratio\n\nWith a yes/no task + confidence ratings (1\u20134 per trial), you have exactly the data structure needed for **meta-d'** (Maniscalco & Lau 2012).\n\n- **meta-d'** is defined as the type-1 d' that an *ideally metacognitive* observer would need to produce the confidence pattern you observed. It's expressed in the same units as d'.\n- **M-ratio = meta-d' / d'** is metacognitive *efficiency* \u2014 it controls for type-1 sensitivity by construction. M-ratio = 1 means confidence tracks accuracy as well as the evidence allows; M-ratio < 1 means metacognition is imperfect; M-ratio > 1 usually signals a model violation.\n\nYour group comparison then becomes: **do the two groups differ in M-ratio?** That's a clean metacognitive question, independent of how well each group discriminates.\n\n## Practical recommendation\n\nFor a group comparison, use **hierarchical Bayesian HMeta-d** rather than per-subject MLE meta-d':\n\n- More robust when per-subject trial counts are modest\n- Returns full posteriors over group-level M-ratio with proper uncertainty\n- Avoids the edge-correction confounds that can distort MLE estimates\n\n**Tooling:**\n- **R:** `hmetad` package (Fleming 2017) \u2014 the current field standard\n- **Python:** `metadpy` (`metadpy.bayesian.hmetad` via PyMC/Numpyro)\n\n## What to report\n\n```\n- Type-1: d', c per group (with uncertainty)\n- Type-2: meta-d', M-ratio per group (with credible intervals from HMeta-d)\n- Group comparison: posterior over M-ratio difference\n```\n\nInterpret them separately: e.g., \"Group A had higher sensitivity (d' = 1.8 vs. 1.2) but similar metacognitive efficiency (M-ratio \u2248 0.7 in both groups).\" That's a conclusion gamma couldn't support.",
+  "assertions": [
+    {
+      "text": "Explains that confidence-accuracy correlation (gamma) is confounded by type-1 sensitivity and response/confidence bias, so group differences can be type-1 artifacts",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends meta-d' and M-ratio (meta-d'/d') as the appropriate metacognitive-efficiency measures",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends hierarchical Bayesian estimation (HMeta-d) especially if data per subject are limited, and/or names tooling (hmetad in R, metadpy in Python)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Correctly distinguishes type-1 (signal vs noise) from type-2 (correct vs incorrect) sensitivity",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

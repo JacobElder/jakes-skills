@@ -1,0 +1,40 @@
+{
+  "eval_id": 3,
+  "name": "extreme-cell-correction",
+  "condition": "baseline",
+  "prompt": "One participant got every signal trial right: 50 hits, 0 misses, 8 false alarms, 42 correct rejections. When I compute d' I get infinity because the hit rate is 1.0. A labmate said to just change the hit rate to 0.99. Across my 30 participants only this one has an extreme cell. What's the correct way to handle this?",
+  "baseline_failure_hypothesis": "Agent endorses ad-hoc substitution (set 1.0 -> 0.99) and/or applies a correction only to this one participant, biasing comparisons.",
+  "response": "The labmate's suggestion is close to one legitimate method but is being applied incorrectly. Here's what's actually going on and what to do.\n\n## The Problem\n\nA hit rate of 1.0 maps to z = +\u221e, so d' = \u221e. This is a real methodological problem with no perfect solution \u2014 you're trying to estimate a latent parameter from data that saturated the scale.\n\n## Two Principled Approaches\n\n**1. Loglinear correction (Hautus, 1995) \u2014 recommended**\n\nAdd 0.5 to hits and false alarms, add 1 to the number of signal and noise trials, for **all participants**:\n\n```\nHR_adj  = (hits + 0.5) / (n_signal + 1)\nFAR_adj = (FA   + 0.5) / (n_noise  + 1)\n```\n\nFor your participant (50 signal, 50 noise trials):\n- HR_adj  = 50.5 / 51 \u2248 .990\n- FAR_adj = 8.5  / 51 \u2248 .167\n- d' \u2248 z(.990) \u2212 z(.167) \u2248 2.33 \u2212 (\u22120.97) = **3.30**\n\n**2. 1/(2N) replacement \u2014 acceptable but less preferred**\n\nReplace extreme proportions only when they hit 0 or 1:\n- If HR = 1.0 \u2192 replace with 1 \u2212 1/(2N) = 1 \u2212 1/100 = **0.99**\n- If FA = 0.0 \u2192 replace with 1/(2N)\n\nThis is why your labmate said 0.99 \u2014 they're right numerically for your N, but the key distinction is *why and how*.\n\n## Why the Labmate's Version Is Problematic\n\nYour labmate said \"change the hit rate to 0.99\" \u2014 but that's only correct if they mean \"apply the 1/(2N) rule because N=50.\" If they're just picking 0.99 arbitrarily, it's unprincipled. The deeper problems with applying it only to one participant:\n\n- **Inconsistency**: If any other participant had an extreme FA rate of 0, what would you do? You need a uniform rule.\n- **Bias**: The 1/(2N) replacement only corrects the extreme cell; loglinear correction shrinks all estimates slightly and symmetrically, making it less biased overall.\n\n## What You Should Do\n\n**Apply the loglinear correction to all 30 participants uniformly.** This is the current consensus recommendation (Macmillan & Creelman, 2005; Stanislaw & Todorov, 1999). It changes every participant's d' by a tiny amount (since \u22480.01 changes in proportions near .5 barely move d'), but gives you a principled, defensible, uniform procedure \u2014 and it handles any future extreme cells automatically.\n\nIn R:\n```r\nd_prime <- function(hits, misses, fas, crs) {\n  n_sig   <- hits + misses\n  n_noise <- fas  + crs\n  hr  <- (hits + 0.5) / (n_sig   + 1)\n  far <- (fas  + 0.5) / (n_noise + 1)\n  qnorm(hr) - qnorm(far)\n}\n```\n\nThe loglinear and 1/(2N) corrections will give you nearly identical d' values for this participant (both \u2248 3.3), but loglinear is the right choice because it's uniform and theoretically sounder.",
+  "assertions": [
+    {
+      "text": "Rejects the arbitrary 0.99 substitution as biasing d' unpredictably",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends the log-linear correction (add 0.5 to all four cells, Hautus 1995) and computes d' ~ 3.30 for this participant",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "States the correction must be applied UNIFORMLY to all participants, not only the one with the extreme cell",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Mentions that a model-based estimator (e.g., probit GLMM / Bayesian) handles zero cells natively as an alternative",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    false
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

@@ -1,0 +1,40 @@
+{
+  "eval_id": 4,
+  "name": "two-step-vs-glmm-multisubject",
+  "condition": "with_skill",
+  "prompt": "I have 60 participants doing a perceptual yes/no detection task, with a within-subjects manipulation (easy vs hard condition) and trial counts that vary quite a bit between people (some did 80 trials, some did 400). I was going to compute one d' per person per condition and run a paired t-test on the d' values. Is that the best approach for testing whether sensitivity differs by condition?",
+  "baseline_failure_hypothesis": "Agent endorses the two-step per-subject-d'-then-t-test workflow without noting its statistical costs or recommending a GLMM.",
+  "response": "The two-step plug-in approach (d' per person, then t-test) has three concrete problems here, and your variable trial counts make them worse than usual:\n\n**Problem 1: Ignores trial-count differences.** A d' from 80 trials is roughly \u221a5 \u2248 2\u00d7 less precise than one from 400 trials. A paired t-test treats both as equally reliable \u2014 the 80-trial estimates dominate the variance and erode power.\n\n**Problem 2: Throws away estimation uncertainty.** Each d' is an estimate, not a known quantity. Feeding point estimates into a t-test conditions on them as if they were exact, which understates uncertainty and can inflate false positives.\n\n**Problem 3: Forces ad-hoc edge corrections per subject.** If anyone has extreme cells in one condition but not the other, your correction strategy creates a systematic asymmetry between subjects (see `estimation.md` \u00a71).\n\n---\n\n**The right tool is a probit GLMM fit to trial-level data.** SDT is a probit GLM (DeCarlo 1998) \u2014 the stimulus coefficient is d', the intercept encodes bias \u2014 so a mixed-effects version handles everything in one shot:\n\n```r\nlibrary(lme4)\n\n# Trial-level data: response (0/1), signal (0/1), condition (easy/hard)\n# effect-code condition: easy = -0.5, hard = +0.5\n\nm <- glmer(response ~ signal * condition + (signal * condition | subject),\n           data = df,\n           family = binomial(\"probit\"))\n```\n\n- `signal` coefficient = d' at the reference condition (easy)  \n- `signal:condition` interaction = **the condition difference in d'**, with proper uncertainty  \n- Random slopes for `signal * condition` by subject = individual differences in both sensitivity and the easy/hard gap  \n- Trial counts weight naturally through the likelihood \u2014 400-trial subjects pull harder than 80-trial subjects, as they should\n\nIf your stimuli vary in difficulty (they almost always do), also add `(signal | item)` as a random effect; omitting it inflates Type-I error via the language-as-fixed-effect problem.\n\n**Practical note on random effects:** `(signal * condition | subject)` is the maximal structure for this design (by-subject slopes for signal, condition, and their interaction). If it doesn't converge, step down to `(signal + condition | subject)` and then `(signal | subject)`, checking whether the convergence failure reflects the data or just optimizer noise (`allFit(m)` in `lme4`).\n\n---\n\nThe paired t-test on plug-in d's isn't catastrophically wrong with 60 subjects and moderate trial counts, but with trial counts ranging 5\u00d7 across people, the efficiency loss is meaningful and the weighting is incorrect. The GLMM recovers the right answer with proper uncertainty for essentially no extra cost once the data are in trial-level format.",
+  "assertions": [
+    {
+      "text": "Identifies the proposed approach as a 'two-step' plug-in and notes its weaknesses (ignores varying trial counts / estimation uncertainty, weak power)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends a one-step probit GLMM (binomial/Bernoulli with probit link) fit to trial-level data",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Notes that the stimulus \u00d7 condition interaction yields the condition difference in d' with proper uncertainty, and that random effects over subjects (and ideally items) should be included",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Mentions concrete tooling (e.g., brms/lme4 in R, or bambi/PyMC/statsmodels in Python)",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

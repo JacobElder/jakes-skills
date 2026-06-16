@@ -1,0 +1,40 @@
+{
+  "eval_id": 0,
+  "name": "vigilance-decrement-criterion-vs-sensitivity",
+  "condition": "with_skill",
+  "prompt": "I ran a 40-minute sustained-attention task. In the first 10-minute block: 100 signal trials, 100 noise trials, 90 hits, 30 false alarms. In the last 10-minute block: 100 signal, 100 noise, 75 hits, 12 false alarms. My PI says performance 'declined over time' because hits dropped from 90 to 75. Is that the right read? Walk me through what actually happened.",
+  "baseline_failure_hypothesis": "Agent agrees performance/sensitivity declined because hits fell, treating hit rate as accuracy. Misses the criterion shift.",
+  "response": "Your PI's read is wrong \u2014 and it's the exact mistake SDT exists to catch. Let me show you.\n\n## Step 1: Recover both measures from both blocks\n\nYou have full 2\u00d72 tables, so apply the log-linear correction (add 0.5 to all four cells) uniformly.\n\n**Block 1 (minutes 0\u201310):**\n- HR = 90.5/101 = 0.896 \u2192 z(HR) = +1.26\n- FAR = 30.5/101 = 0.302 \u2192 z(FAR) = \u22120.52\n\n| Measure | Value |\n|---|---|\n| d' | 1.26 \u2212 (\u22120.52) = **1.78** |\n| c | \u22120.5 \u00d7 (1.26 \u2212 0.52) = **\u22120.37** (liberal) |\n\n**Block 2 (minutes 30\u201340):**\n- HR = 75.5/101 = 0.748 \u2192 z(HR) = +0.67\n- FAR = 12.5/101 = 0.124 \u2192 z(FAR) = \u22121.16\n\n| Measure | Value |\n|---|---|\n| d' | 0.67 \u2212 (\u22121.16) = **1.83** |\n| c | \u22120.5 \u00d7 (0.67 \u2212 1.16) = **+0.24** (conservative) |\n\n## Step 2: What actually changed\n\n**Sensitivity (d'): 1.78 \u2192 1.83 \u2014 essentially no change.**\n\nUsing the delta-method SE for d' (Gourevitch & Galanter 1967):\n- SE(d'\u2081) \u2248 0.216, SE(d'\u2082) \u2248 0.213\n- \u0394d' = 0.05, SE(\u0394d') \u2248 0.30\n- z = 0.16, p \u2248 .87\n\nDiscriminability is flat. Your ability to tell signal from noise did not decline.\n\n**Criterion (c): \u22120.37 \u2192 +0.24 \u2014 a large, highly significant shift of +0.61 SD units.**\n\nSE(\u0394c) \u2248 0.15, z \u2248 4.1, p < .001. You went from **liberal** (saying \"yes\" readily, collecting hits at the cost of false alarms) to **conservative** (saying \"yes\" cautiously, shedding false alarms at the cost of hits). That's the whole story.\n\n## Step 3: What your PI's analysis missed\n\nYour PI looked at one number \u2014 hit rate \u2014 which fell from 0.90 to 0.75. That's a \u221215pp drop. But false alarms also fell from 0.30 to 0.12 \u2014 a \u221218pp drop. **Both rates moved together, in the direction of conservative responding.** That pattern is a criterion shift, not a capability change.\n\nThe diagnostic logic: if you *lose discriminability*, you'd expect both hits and false alarms to converge toward the base rate (both rise or both fall toward 0.50, or the ROC point moves toward the diagonal). Instead, both fell \u2014 the operating point moved northwest along roughly the same ROC curve, which is a criterion shift.\n\n## The vigilance literature's take\n\nThis is the canonical \"vigilance decrement\" finding (Mackworth 1948 and decades of follow-up). Sustained-attention researchers showed in the 1980s via SDT that the classic hit-rate drop over time is predominantly a **criterion drift toward conservatism**, not a sensitivity loss \u2014 observers become more reluctant to report a signal, not less able to detect it. Your data are a clean example.\n\nThe practical difference matters: if this were a real screening task (airport baggage, QC inspection), telling your operator \"you got worse at detection\" leads to retraining; telling them \"you got more conservative\" leads to adjusting the decision threshold or the incentive structure. Wrong diagnosis, wrong intervention.\n\n**Bottom line:** d' was stable at ~1.8; criterion shifted +0.6 SD units from liberal to conservative. Your PI should report both numbers, not just the hit rate.",
+  "assertions": [
+    {
+      "text": "Computes d' for both blocks and reports they are essentially unchanged (early d' ~1.78, late d' ~1.82)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Computes criterion c for both blocks and identifies a shift from liberal (early c ~ -0.37) to conservative (late c ~ +0.24)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Concludes sensitivity did NOT decline; the change is a criterion/bias shift (observer became more conservative), not a loss of discriminability",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Correctly uses the convention c > 0 = conservative, c < 0 = liberal",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

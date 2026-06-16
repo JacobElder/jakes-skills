@@ -1,0 +1,40 @@
+{
+  "eval_id": 2,
+  "name": "unequal-variance-single-point-dprime",
+  "condition": "with_skill",
+  "prompt": "Old/new recognition memory experiment. Aggregating across subjects I get hit rate 0.85 and false-alarm rate 0.30. I also fit the confidence z-ROC and the slope is 0.75. I was going to just report d' = z(.85) - z(.30). Is that fine, and if not what should I report?",
+  "baseline_failure_hypothesis": "Agent computes single-point d' (~1.56) and reports it without recognizing that slope 0.75 means unequal variance, making single-point d' biased.",
+  "response": "Two separate problems here, and both matter.\n\n## Problem 1: Slope 0.75 \u2260 1 \u2014 use d_a and A_z, not d'\n\nSingle-point d' assumes the signal and noise evidence distributions have **equal variance** (z-ROC slope = 1). Your slope is 0.75, which is actually the *expected* finding in recognition memory (target distributions are reliably wider than lure distributions; the literature average is \u2248 0.8). So you've confirmed the standard unequal-variance pattern \u2014 which means d' from a single (HR, FAR) pair is **criterion-dependent and biased**. You should report **d_a** and **A_z** instead.\n\nWith s = 0.75, z(HR) = z(0.85) \u2248 1.036, z(FAR) = z(0.30) \u2248 \u22120.524:\n\n```\nd_a = \u221a(2/(1 + s\u00b2)) \u00b7 (z(HR) \u2212 s\u00b7z(FAR))\n    = \u221a(2/1.5625) \u00b7 (1.036 \u2212 0.75\u00b7(\u22120.524))\n    = 1.131 \u00b7 1.429\n    \u2248 1.62\n\nA_z = \u03a6(d_a/\u221a2) = \u03a6(1.145) \u2248 0.874\n```\n\nFor comparison, the (incorrect) equal-variance d' would be 1.036 + 0.524 = 1.56 \u2014 not wildly different here, but the difference grows as the operating point moves away from the z-ROC midpoint, and using d' obscures that you tested the assumption.\n\n## Problem 2: Aggregating across subjects first \u2014 don't\n\nYou mentioned aggregating HR and FAR across subjects. This is pitfall #13: pooling counts (or averaging rates) across observers at different operating points is an aggregation artifact \u2014 the SDT version of Simpson's paradox. The group HR and FAR reflect a mix of people with different sensitivities *and* different criteria; the d_a you compute from them is a biased, uninterpretable mashup of both.\n\n**What to do instead:**\n- Fit the z-ROC **per subject** (from their individual confidence-rating ROC), get per-subject d_a and A_z, then summarize that distribution (mean, SD, 95% CI across subjects).\n- Or \u2014 the principled modern approach \u2014 fit a probit ordinal mixed model (GLMM) to the trial-level data with random effects for subjects and items. The stimulus coefficient gives you a group-level d' (or d_a with a heteroscedastic extension) with proper uncertainty.\n\n## The short answer\n\nNo, reporting d' = z(0.85) \u2212 z(0.30) is not fine \u2014 it's wrong on both counts: it assumes equal variance (your z-ROC rules that out) and it's computed from aggregated rates (which confounds sensitivity and criterion across heterogeneous observers). Report per-subject d_a / A_z with their distribution, or fit a mixed model.",
+  "assertions": [
+    {
+      "text": "Recognizes that z-ROC slope 0.75 (\u2260 1) indicates unequal variance, so single-point d' is biased/criterion-dependent",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends reporting d_a (and/or A_z) instead of single-point d'",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Computes d_a correctly as approximately 1.62 (using s = z-ROC slope = sigma_noise/sigma_signal convention), not the reciprocal-convention value ~1.47",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Notes that wider target/old than lure/new variance (slope < 1, ~0.8) is the normal recognition-memory pattern",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

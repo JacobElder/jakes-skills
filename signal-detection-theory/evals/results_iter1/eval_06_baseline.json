@@ -1,0 +1,34 @@
+{
+  "eval_id": 6,
+  "name": "2afc-vs-yesno-scale-conversion",
+  "condition": "baseline",
+  "prompt": "Observer X did a 2-interval forced-choice version of my discrimination task and got 80% correct. Observer Y did the yes/no version and I computed a d' of 1.5. Can I just say Observer Y (d'=1.5) is more sensitive than Observer X, or is 80% correct already 'better' than that? How do I compare them?",
+  "baseline_failure_hypothesis": "Agent compares 80% and d'=1.5 directly without converting, or assumes 80% maps to a higher d'.",
+  "response": "You cannot compare them directly \u2014 you need to put both on the same scale first.\n\n## The core issue\n\nA percent correct from 2IFC and a d' from yes/no are not the same unit. In 2IFC, the observer compares two noisy observations, so the decision variable has *variance 2* (sum of variances from each interval), which deflates percent correct relative to an equal d' in yes/no.\n\n## The conversion formula\n\nFor 2IFC, assuming the standard equal-variance Gaussian model:\n\n```\nP(correct) = \u03a6(d\u2032 / \u221a2)\n```\n\nInverting to get d\u2032 from 2IFC performance:\n\n```\nd\u2032 = \u221a2 \u00b7 \u03a6\u207b\u00b9(P_correct)\n```\n\n## Applying it to your data\n\n**Observer X** (2IFC, 80% correct):\n```\nd\u2032 = \u221a2 \u00b7 \u03a6\u207b\u00b9(0.80)\n   = 1.414 \u00b7 0.842\n   \u2248 1.19\n```\n\n**Observer Y** (yes/no, d\u2032 = 1.5) \u2014 already in the right units.\n\n## The answer\n\nObserver Y (d\u2032 = 1.5) **is** more sensitive than Observer X (d\u2032 \u2248 1.19). Your intuition that \"80% correct sounds better\" was misleading \u2014 80% in 2IFC is equivalent to only d\u2032 \u2248 1.19, not 1.5.\n\nFor reference, Observer Y's d\u2032 = 1.5 would correspond to about **85.6% correct** in 2IFC:\n```\n\u03a6(1.5 / \u221a2) = \u03a6(1.06) \u2248 0.856\n```\n\n## Practical note\n\nOne reason 2IFC is popular is that it's criterion-free by design (there's no \"yes/no\" bias to worry about), so Observer X's d\u2032 \u2248 1.19 is a clean sensitivity estimate. Observer Y's d\u2032 = 1.5 from yes/no is also clean *if* it was computed from hit rate and false alarm rate via d\u2032 = z(H) \u2212 z(FA) \u2014 that already removes bias. Both d\u2032 values are comparable on the same scale, just not the raw percent correct vs. d\u2032.",
+  "assertions": [
+    {
+      "text": "States that 2AFC proportion correct and yes/no d' are on different scales and must be converted before comparison",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Applies d' = sqrt(2) * z(Pc) and computes the 2AFC d' as approximately 1.19",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Concludes Observer Y (d' = 1.5) is actually MORE sensitive than Observer X (converted d' ~ 1.19), correcting the intuition that 80% sounds high",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 3,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

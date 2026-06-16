@@ -1,0 +1,34 @@
+{
+  "eval_id": 13,
+  "name": "auc-to-dprime-equal-variance-trap",
+  "condition": "with_skill",
+  "prompt": "My recognition-memory model gives an ROC AUC of 0.80. I want to report sensitivity as d', so I'll just convert with d' = sqrt(2) * qnorm(0.80) = 1.19 and report that. Is that conversion valid here?",
+  "baseline_failure_hypothesis": "Agent accepts the AUC->d' conversion as a fixed identity without flagging the equal-variance assumption, which is exactly wrong for recognition memory.",
+  "response": "No \u2014 that conversion is invalid for recognition memory, and this is one of the documented pitfalls.\n\n## The problem\n\nThe formula `d' = \u221a2 \u00b7 z(AUC)` is the **2AFC conversion**. The underlying identity is `AUC = \u03a6(d'/\u221a2)`, which holds only when the signal and noise evidence distributions have **equal variance**. In recognition memory, that assumption is reliably violated.\n\nRecognition memory z-ROCs have a slope \u2248 0.8 (target/old evidence is more variable than lure/new evidence \u2014 this is the standard finding, not an exception). When the slope < 1, a single AUC value no longer maps to a unique d': two observers with different criteria can have the same AUC but different \"d'\" values under your formula, which makes no sense as a sensitivity measure.\n\n## What to report instead\n\nIf you collected confidence ratings (which any ROC requires), you already have what you need. Fit the z-ROC to get slope `s` and intercept `a`, then:\n\n- **d_a** = `a \u00b7 \u221a(2 / (1 + s\u00b2))` \u2014 sensitivity on the equal-variance scale\n- **A_z** = `\u03a6(d_a / \u221a2)` \u2014 the model-based AUC (your 0.80 is the empirical version of this)\n\n```bash\npython scripts/sdt.py --hits <h> --misses <m> --fa <fa> --cr <cr> --slope 0.8\n# or with your rating counts to fit the slope:\n# fit_zroc() returns slope, intercept, d_a, A_z, and empirical AUC\n```\n\nThe distinction matters: at s = 0.8, the equal-variance d' formula applied to a given AUC **overestimates** sensitivity (because you're attributing to discriminability what's partly a variance asymmetry).\n\n## The correct statement\n\nYour AUC of 0.80 corresponds to **A_z \u2248 0.80** (already a proper sensitivity summary), with a model-based d_a derivable once you have the z-ROC slope. Report A_z alongside the slope, or report d_a. Do not report the \u221a2 \u00b7 z(AUC) number as d' for recognition memory \u2014 the equal-variance assumption it requires is known to be false in this task.",
+  "assertions": [
+    {
+      "text": "States that AUC = Phi(d'/sqrt(2)) holds ONLY under the equal-variance assumption (z-ROC slope = 1)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Notes that recognition-memory ROCs are typically unequal-variance (z-ROC slope ~0.8), so the AUC corresponds to A_z and the right sensitivity index is d_a, not a single d' from this conversion",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends fitting the z-ROC to get the slope and reporting d_a / A_z (or at least checking the slope before doing any AUC->d' conversion)",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 3,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

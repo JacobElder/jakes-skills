@@ -1,0 +1,34 @@
+{
+  "eval_id": 9,
+  "name": "aprime-nonparametric-claim",
+  "condition": "baseline",
+  "prompt": "A reviewer asked us to report a 'nonparametric, assumption-free' sensitivity measure instead of d', and suggested A'. We'll switch to A' since it makes no distributional assumptions. Anything we should know before doing that?",
+  "baseline_failure_hypothesis": "Agent endorses A' as genuinely assumption-free and switches without caveats.",
+  "response": "Before switching, there's a critical issue: **A' is not actually nonparametric or assumption-free.** The reviewer's framing is a well-documented misconception in the SDT literature.\n\n## What A' actually is\n\nA' is derived from the trapezoidal approximation to the ROC area using a single (H, F) point. That approximation only equals the true AUC under specific geometric assumptions about the ROC curve's shape \u2014 it simply substitutes different assumptions for d's equal-variance Gaussian ones, rather than eliminating them.\n\n## Known problems with A'\n\n- **Conflates sensitivity and bias.** A' is not monotonically related to d' across bias levels \u2014 two observers with identical sensitivity but different response criteria will produce different A' values, defeating the purpose of a sensitivity measure.\n- **Paradoxical results at extreme bias.** When H and F are both very high or very low, A' can indicate above-chance performance for a chance-level observer.\n- **Asymmetric formula.** The standard Pollack & Norman formula applies when H > F; the region below the chance diagonal requires a different formula, and mixing them is a common error.\n\n## The canonical reference to cite back\n\nPastore, R. E., Crawley, E. J., Berens, M. S., & Skelly, M. A. (2003). \"Nonparametric\" A' and other modern misconceptions about signal detection theory. *Psychonomic Bulletin & Review, 10*(3), 556\u2013569.\n\nThe title directly addresses the reviewer's suggestion. Macmillan & Creelman's *Detection Theory: A User's Guide* (2005) also cautions against A' for the same reasons.\n\n## If you genuinely need a nonparametric sensitivity measure\n\nThe real nonparametric option is the **empirical AUC** estimated from a full ROC curve using confidence ratings (not a single yes/no point). If your paradigm only yields binary responses, there is no truly assumption-free sensitivity measure \u2014 you're always conditioning on some model of the underlying distributions.\n\n**My recommendation:** Push back on the reviewer, cite Pastore et al. (2003), and either keep d' (with a stated equal-variance Gaussian assumption) or, if you have rating data, compute the empirical AUC instead of A'.",
+  "assertions": [
+    {
+      "text": "States that A' is NOT actually distribution-free / assumption-free and has documented anomalies (and that multiple incompatible formulas circulate under the name)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends, as the principled nonparametric option, the empirical (trapezoidal) AUC from a rating/confidence ROC instead of A'",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Suggests d' / d_a as the parametric option and advises stating caveats if A' must be reported to satisfy the reviewer",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false
+  ],
+  "passed": 2,
+  "total": 3,
+  "pass_rate": 0.6666666666666666,
+  "eval_passes": false
+}

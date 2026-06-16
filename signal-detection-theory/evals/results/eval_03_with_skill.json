@@ -1,0 +1,40 @@
+{
+  "eval_id": 3,
+  "name": "extreme-cell-correction",
+  "condition": "with_skill",
+  "prompt": "One participant got every signal trial right: 50 hits, 0 misses, 8 false alarms, 42 correct rejections. When I compute d' I get infinity because the hit rate is 1.0. A labmate said to just change the hit rate to 0.99. Across my 30 participants only this one has an extreme cell. What's the correct way to handle this?",
+  "baseline_failure_hypothesis": "Agent endorses ad-hoc substitution (set 1.0 -> 0.99) and/or applies a correction only to this one participant, biasing comparisons.",
+  "response": "Your labmate's suggestion \u2014 substituting 0.99 for the hit rate on only this one participant \u2014 has two distinct problems. Here's what to do instead.\n\n## What's wrong with the ad-hoc fix\n\n1. **Arbitrary substitution biases d' unpredictably.** There's no principled reason 0.99 is the right value rather than 0.995 or 0.98. The correction should be grounded in trial count (N = 50 here), not a round number.\n\n2. **Correcting only the one extreme participant creates a systematic artifact.** After correction, that participant's d' is computed differently from all 29 others \u2014 you've introduced a non-sampling difference between them. Any group analysis is now slightly contaminated.\n\n## The right approach: log-linear correction, applied uniformly\n\nAdd 0.5 to **all four cells** for **every participant** (Hautus 1995). Do this whether or not their cells are extreme:\n\n```\nHR_corrected  = (Hits + 0.5) / (N_signal + 1)\nFAR_corrected = (FA   + 0.5) / (N_noise  + 1)\n```\n\nFor your extreme participant specifically:\n\n| Cell | Raw | Corrected |\n|---|---|---|\n| Hits | 50 | 50.5 |\n| Misses | 0 | 0.5 |\n| FA | 8 | 8.5 |\n| CR | 42 | 42.5 |\n\n```\nHR  = 50.5 / 51 = 0.9902   \u2192   z(HR)  =  2.330\nFAR =  8.5 / 51 = 0.1667   \u2192   z(FAR) = \u22120.967\n\nd' = 2.330 \u2212 (\u22120.967) = 3.30   (strong sensitivity)\nc  = \u22120.5 \u00b7 (2.330 \u2212 0.967) = \u22120.68   (mildly liberal)\n```\n\nThe d' is finite and interpretable. The participant was genuinely an excellent detector; the correction just pulls the point estimate back from the infinite edge.\n\nFor your other 29 participants, the log-linear correction changes their estimates very slightly (since their rates are away from 0/1), but it's applied the same way \u2014 so everyone is on a comparable footing.\n\n## Verify with the bundled script\n\n```bash\npython scripts/sdt.py --hits 50 --misses 0 --fa 8 --cr 42\n```\n\n## Even better: skip the correction entirely\n\nIf you have trial-level data, fit a **probit GLMM** to all trials across all participants. The likelihood handles zero cells natively \u2014 no correction needed, and you get proper uncertainty estimates with subject and item random effects. The log-linear approach is the right plug-in fix; the GLMM is the principled alternative that makes the issue disappear entirely.",
+  "assertions": [
+    {
+      "text": "Rejects the arbitrary 0.99 substitution as biasing d' unpredictably",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends the log-linear correction (add 0.5 to all four cells, Hautus 1995) and computes d' ~ 3.30 for this participant",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "States the correction must be applied UNIFORMLY to all participants, not only the one with the extreme cell",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Mentions that a model-based estimator (e.g., probit GLMM / Bayesian) handles zero cells natively as an alternative",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

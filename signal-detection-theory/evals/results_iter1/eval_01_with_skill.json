@@ -1,0 +1,40 @@
+{
+  "eval_id": 1,
+  "name": "diagnosticity-ratio-confound-eyewitness",
+  "condition": "with_skill",
+  "prompt": "We're comparing two police lineup procedures. Procedure A: correct-ID rate 0.60, false-ID rate 0.20 (diagnosticity 3.0). Procedure B: correct-ID rate 0.45, false-ID rate 0.10 (diagnosticity 4.5). A colleague wants to recommend Procedure B because its diagnosticity ratio is higher. Is the diagnosticity ratio a sound basis for saying B produces more accurate witnesses?",
+  "baseline_failure_hypothesis": "Agent accepts the diagnosticity ratio as a measure of accuracy and recommends B, missing that the ratio confounds discriminability with response bias.",
+  "response": "No \u2014 the diagnosticity ratio is a biased basis for this comparison, and this example illustrates exactly why.\n\n## What the SDT decomposition reveals\n\nConverting each operating point to sensitivity (d') and bias (c):\n\n**Procedure A** (HR = 0.60, FAR = 0.20):\n- d' = z(0.60) \u2212 z(0.20) = 0.253 \u2212 (\u22120.842) = **1.09**\n- c = \u22120.5\u00b7(0.253 \u2212 0.842) = **+0.29** (mildly conservative)\n\n**Procedure B** (HR = 0.45, FAR = 0.10):\n- d' = z(0.45) \u2212 z(0.10) = \u22120.126 \u2212 (\u22121.282) = **1.16**\n- c = \u22120.5\u00b7(\u22120.126 \u2212 1.282) = **+0.70** (substantially more conservative)\n\nThe two procedures have **essentially identical discriminability** (d' \u2248 1.1). The entire difference in diagnosticity ratios (3.0 vs. 4.5) is explained by Procedure B placing witnesses at a more conservative criterion \u2014 they're simply more reluctant to identify anyone. That reluctance suppresses both the correct-ID rate *and* the false-ID rate, but suppresses the false-ID rate more, mechanically inflating the ratio.\n\n## Why diagnosticity fails here\n\nThe diagnosticity ratio (HR/FAR) is not a sensitivity measure. It is criterion-sensitive by construction: you can raise it without changing a witness's actual ability to discriminate guilty from innocent suspects, just by making witnesses more cautious. That is exactly what appears to be happening across procedures A and B.\n\nThis is the core of the Wixted & Mickes (2012, 2014) critique: ranking lineup procedures by diagnosticity confounds the procedure's effect on discriminability with its effect on how willing witnesses are to commit to an identification.\n\n## The right recommendation\n\nYour colleague should **not** recommend Procedure B on diagnosticity grounds. The proper approach:\n\n1. Collect confidence ratings and build a full **ROC** for each procedure \u2014 sweep the criterion across confidence levels to trace out the hit-rate/false-ID-rate tradeoff.\n2. Compare **AUC** (area under the ROC), which summarizes discriminability across all possible operating points and is not confounded with where the criterion happens to sit.\n3. From the single operating points available here, d' \u2248 1.1 for both \u2014 no meaningful difference in witness accuracy. If anything, Procedure B's conservatism (c = 0.70) raises a separate policy question: are you comfortable with witnesses who miss more guilty suspects to achieve fewer false IDs? That's a values question about the cost tradeoff, not a question about accuracy, and it shouldn't be hidden inside a diagnostic ratio.\n\n**Bottom line:** Procedure B witnesses are not more accurate \u2014 they are more conservative. Those are different things, and diagnosticity ratios cannot tell them apart.",
+  "assertions": [
+    {
+      "text": "States that the diagnosticity ratio (HR/FAR) confounds discriminability with response bias and is not a sound accuracy measure",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Explains that a more conservative procedure can raise the ratio without improving true discriminability",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends ROC/AUC analysis (using confidence ratings) or a sensitivity index to compare discriminability independent of bias",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Does NOT simply recommend Procedure B on the basis of the higher ratio",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

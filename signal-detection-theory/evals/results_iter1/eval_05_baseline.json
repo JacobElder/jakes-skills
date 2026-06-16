@@ -1,0 +1,40 @@
+{
+  "eval_id": 5,
+  "name": "metacognition-not-correlation",
+  "condition": "baseline",
+  "prompt": "I want to measure how well people 'know when they're right' \u2014 their metacognition. I collected a yes/no task with confidence ratings (1-4) per trial. My plan was to correlate confidence with accuracy (Goodman-Kruskal gamma) and compare that correlation between my two groups. Is gamma a good metacognition measure here?",
+  "baseline_failure_hypothesis": "Agent accepts confidence-accuracy correlation (gamma) as a metacognition measure, missing that it is confounded by type-1 d' and bias.",
+  "response": "Gamma is a reasonable intuition but has a well-known confound that makes group comparisons tricky: it is **not independent of Type 1 performance (d')**. Groups or individuals who are simply better at the task tend to produce higher gamma even with identical metacognitive efficiency. So if your two groups differ in accuracy, a difference in gamma is ambiguous \u2014 you can't tell if it's a metacognition difference or a performance difference.\n\n**The field standard for your exact design is meta-d' (Maniscalco & Lau, 2012).**\n\nYour setup \u2014 yes/no task + 4-point confidence scale \u2014 is exactly the input meta-d' requires. Here's the logic:\n\n- **d'** quantifies Type 1 sensitivity (how well the person discriminates signal vs. noise at the object level).\n- **meta-d'** quantifies how much signal the *metacognitive* system has access to, estimated from the Type 2 ROC (how well confidence separates correct from incorrect trials within each response type).\n- **Mratio = meta-d' / d'** gives *metacognitive efficiency* \u2014 the fraction of Type 1 signal that the metacognitive system actually uses. Mratio = 1 is ideal; < 1 means information is lost between perception and confidence.\n\nFor your group comparison, compare **Mratio** rather than raw meta-d', because Mratio is normed by d' and is interpretable even when groups differ in performance.\n\n**Practical tools:**\n\n| Language | Package | Notes |\n|---|---|---|\n| R | `metaSDT` | `fit_meta_d_MLE()` per subject |\n| Python | `metadPy` | `metad()` with standard SDT inputs |\n| Either | HMeta-d (Fleming 2017) | Hierarchical Bayesian \u2014 better for small N per subject |\n\nThe hierarchical Bayesian version (HMeta-d) is worth considering if you have fewer than ~100 trials per subject, since MLE meta-d' is unstable with sparse Type 2 data.\n\n**Bottom line:** gamma captures something real but conflates sensitivity with metacognition. Switch to meta-d'/Mratio \u2014 your data already supports it, and the group comparison will be interpretable.",
+  "assertions": [
+    {
+      "text": "Explains that confidence-accuracy correlation (gamma) is confounded by type-1 sensitivity and response/confidence bias, so group differences can be type-1 artifacts",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends meta-d' and M-ratio (meta-d'/d') as the appropriate metacognitive-efficiency measures",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends hierarchical Bayesian estimation (HMeta-d) especially if data per subject are limited, and/or names tooling (hmetad in R, metadpy in Python)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Correctly distinguishes type-1 (signal vs noise) from type-2 (correct vs incorrect) sensitivity",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

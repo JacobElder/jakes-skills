@@ -1,0 +1,178 @@
+{
+  "skill_name": "signal-detection-theory",
+  "notes": "Each eval targets a documented SDT failure mode. 'baseline_failure_hypothesis' is what a no-skill agent is expected to get wrong; assertions are objectively gradable. Quantitative ground truth was verified with scripts/sdt.py. Run with-skill vs no-skill (baseline) and grade with a subagent against the assertions.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "vigilance-decrement-criterion-vs-sensitivity",
+      "prompt": "I ran a 40-minute sustained-attention task. In the first 10-minute block: 100 signal trials, 100 noise trials, 90 hits, 30 false alarms. In the last 10-minute block: 100 signal, 100 noise, 75 hits, 12 false alarms. My PI says performance 'declined over time' because hits dropped from 90 to 75. Is that the right read? Walk me through what actually happened.",
+      "baseline_failure_hypothesis": "Agent agrees performance/sensitivity declined because hits fell, treating hit rate as accuracy. Misses the criterion shift.",
+      "assertions": [
+        {"text": "Computes d' for both blocks and reports they are essentially unchanged (early d' ~1.78, late d' ~1.82)", "passed": null, "evidence": ""},
+        {"text": "Computes criterion c for both blocks and identifies a shift from liberal (early c ~ -0.37) to conservative (late c ~ +0.24)", "passed": null, "evidence": ""},
+        {"text": "Concludes sensitivity did NOT decline; the change is a criterion/bias shift (observer became more conservative), not a loss of discriminability", "passed": null, "evidence": ""},
+        {"text": "Correctly uses the convention c > 0 = conservative, c < 0 = liberal", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 1,
+      "name": "diagnosticity-ratio-confound-eyewitness",
+      "prompt": "We're comparing two police lineup procedures. Procedure A: correct-ID rate 0.60, false-ID rate 0.20 (diagnosticity 3.0). Procedure B: correct-ID rate 0.45, false-ID rate 0.10 (diagnosticity 4.5). A colleague wants to recommend Procedure B because its diagnosticity ratio is higher. Is the diagnosticity ratio a sound basis for saying B produces more accurate witnesses?",
+      "baseline_failure_hypothesis": "Agent accepts the diagnosticity ratio as a measure of accuracy and recommends B, missing that the ratio confounds discriminability with response bias.",
+      "assertions": [
+        {"text": "States that the diagnosticity ratio (HR/FAR) confounds discriminability with response bias and is not a sound accuracy measure", "passed": null, "evidence": ""},
+        {"text": "Explains that a more conservative procedure can raise the ratio without improving true discriminability", "passed": null, "evidence": ""},
+        {"text": "Recommends ROC/AUC analysis (using confidence ratings) or a sensitivity index to compare discriminability independent of bias", "passed": null, "evidence": ""},
+        {"text": "Does NOT simply recommend Procedure B on the basis of the higher ratio", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "unequal-variance-single-point-dprime",
+      "prompt": "Old/new recognition memory experiment. Aggregating across subjects I get hit rate 0.85 and false-alarm rate 0.30. I also fit the confidence z-ROC and the slope is 0.75. I was going to just report d' = z(.85) - z(.30). Is that fine, and if not what should I report?",
+      "baseline_failure_hypothesis": "Agent computes single-point d' (~1.56) and reports it without recognizing that slope 0.75 means unequal variance, making single-point d' biased.",
+      "assertions": [
+        {"text": "Recognizes that z-ROC slope 0.75 (≠ 1) indicates unequal variance, so single-point d' is biased/criterion-dependent", "passed": null, "evidence": ""},
+        {"text": "Recommends reporting d_a (and/or A_z) instead of single-point d'", "passed": null, "evidence": ""},
+        {"text": "Computes d_a correctly as approximately 1.62 (using s = z-ROC slope = sigma_noise/sigma_signal convention), not the reciprocal-convention value ~1.47", "passed": null, "evidence": ""},
+        {"text": "Notes that wider target/old than lure/new variance (slope < 1, ~0.8) is the normal recognition-memory pattern", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "extreme-cell-correction",
+      "prompt": "One participant got every signal trial right: 50 hits, 0 misses, 8 false alarms, 42 correct rejections. When I compute d' I get infinity because the hit rate is 1.0. A labmate said to just change the hit rate to 0.99. Across my 30 participants only this one has an extreme cell. What's the correct way to handle this?",
+      "baseline_failure_hypothesis": "Agent endorses ad-hoc substitution (set 1.0 -> 0.99) and/or applies a correction only to this one participant, biasing comparisons.",
+      "assertions": [
+        {"text": "Rejects the arbitrary 0.99 substitution as biasing d' unpredictably", "passed": null, "evidence": ""},
+        {"text": "Recommends the log-linear correction (add 0.5 to all four cells, Hautus 1995) and computes d' ~ 3.30 for this participant", "passed": null, "evidence": ""},
+        {"text": "States the correction must be applied UNIFORMLY to all participants, not only the one with the extreme cell", "passed": null, "evidence": ""},
+        {"text": "Mentions that a model-based estimator (e.g., probit GLMM / Bayesian) handles zero cells natively as an alternative", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "two-step-vs-glmm-multisubject",
+      "prompt": "I have 60 participants doing a perceptual yes/no detection task, with a within-subjects manipulation (easy vs hard condition) and trial counts that vary quite a bit between people (some did 80 trials, some did 400). I was going to compute one d' per person per condition and run a paired t-test on the d' values. Is that the best approach for testing whether sensitivity differs by condition?",
+      "baseline_failure_hypothesis": "Agent endorses the two-step per-subject-d'-then-t-test workflow without noting its statistical costs or recommending a GLMM.",
+      "assertions": [
+        {"text": "Identifies the proposed approach as a 'two-step' plug-in and notes its weaknesses (ignores varying trial counts / estimation uncertainty, weak power)", "passed": null, "evidence": ""},
+        {"text": "Recommends a one-step probit GLMM (binomial/Bernoulli with probit link) fit to trial-level data", "passed": null, "evidence": ""},
+        {"text": "Notes that the stimulus × condition interaction yields the condition difference in d' with proper uncertainty, and that random effects over subjects (and ideally items) should be included", "passed": null, "evidence": ""},
+        {"text": "Mentions concrete tooling (e.g., brms/lme4 in R, or bambi/PyMC/statsmodels in Python)", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "metacognition-not-correlation",
+      "prompt": "I want to measure how well people 'know when they're right' — their metacognition. I collected a yes/no task with confidence ratings (1-4) per trial. My plan was to correlate confidence with accuracy (Goodman-Kruskal gamma) and compare that correlation between my two groups. Is gamma a good metacognition measure here?",
+      "baseline_failure_hypothesis": "Agent accepts confidence-accuracy correlation (gamma) as a metacognition measure, missing that it is confounded by type-1 d' and bias.",
+      "assertions": [
+        {"text": "Explains that confidence-accuracy correlation (gamma) is confounded by type-1 sensitivity and response/confidence bias, so group differences can be type-1 artifacts", "passed": null, "evidence": ""},
+        {"text": "Recommends meta-d' and M-ratio (meta-d'/d') as the appropriate metacognitive-efficiency measures", "passed": null, "evidence": ""},
+        {"text": "Recommends hierarchical Bayesian estimation (HMeta-d) especially if data per subject are limited, and/or names tooling (hmetad in R, metadpy in Python)", "passed": null, "evidence": ""},
+        {"text": "Correctly distinguishes type-1 (signal vs noise) from type-2 (correct vs incorrect) sensitivity", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 6,
+      "name": "2afc-vs-yesno-scale-conversion",
+      "prompt": "Observer X did a 2-interval forced-choice version of my discrimination task and got 80% correct. Observer Y did the yes/no version and I computed a d' of 1.5. Can I just say Observer Y (d'=1.5) is more sensitive than Observer X, or is 80% correct already 'better' than that? How do I compare them?",
+      "baseline_failure_hypothesis": "Agent compares 80% and d'=1.5 directly without converting, or assumes 80% maps to a higher d'.",
+      "assertions": [
+        {"text": "States that 2AFC proportion correct and yes/no d' are on different scales and must be converted before comparison", "passed": null, "evidence": ""},
+        {"text": "Applies d' = sqrt(2) * z(Pc) and computes the 2AFC d' as approximately 1.19", "passed": null, "evidence": ""},
+        {"text": "Concludes Observer Y (d' = 1.5) is actually MORE sensitive than Observer X (converted d' ~ 1.19), correcting the intuition that 80% sounds high", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 7,
+      "name": "llm-classifier-criterion-vs-capability",
+      "prompt": "I'm evaluating an LLM content-moderation classifier on a balanced benchmark (500 violating, 500 benign). Prompt A flags 420/500 violations and 150/500 benign items as violations. Prompt B flags 350/500 violations and 40/500 benign as violations. The PM wants to ship Prompt A because it 'catches more violations.' How should I think about which prompt is the better classifier?",
+      "baseline_failure_hypothesis": "Agent reads Prompt A's higher catch rate as higher capability, treating a criterion shift as a discriminability difference; reports only recall/positive-rate.",
+      "assertions": [
+        {"text": "Frames the comparison in SDT terms: treats violation-flagging as hits/false-alarms and separates discriminability from criterion (yes-bias)", "passed": null, "evidence": ""},
+        {"text": "Computes sensitivity for both prompts (A: HR=0.84 FAR=0.30, d' ~1.51, liberal c~-0.23; B: HR=0.70 FAR=0.08, d' ~1.92, conservative c~+0.44) and shows Prompt B is actually the BETTER discriminator; Prompt A's higher catch rate is driven by a more liberal criterion, not better discrimination", "passed": null, "evidence": ""},
+        {"text": "Warns against shipping Prompt A purely on catch rate; recommends comparing d' (or AUC) plus an explicitly chosen operating point reflecting the cost of false positives vs misses", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 8,
+      "name": "c-sign-interpretation",
+      "prompt": "Quick sanity check on my analysis: I have an observer with hit rate 0.40 and false-alarm rate 0.05. I computed criterion c and got about +0.95. Does a positive c mean this person is biased toward saying 'yes' (liberal) or 'no' (conservative)? And is c the same thing as beta?",
+      "baseline_failure_hypothesis": "Agent gets the sign backwards (calls c > 0 liberal) or conflates c with beta.",
+      "assertions": [
+        {"text": "States that c > 0 means CONSERVATIVE (biased toward 'no'), consistent with the low hit and false-alarm rates", "passed": null, "evidence": ""},
+        {"text": "Explains that c and beta are different parameterizations of bias (c additive/centered at 0; beta multiplicative/centered at 1) and are not the same number, though they agree in direction", "passed": null, "evidence": ""},
+        {"text": "Confirms the value is plausible given the data (someone rarely saying 'yes' is conservative)", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 9,
+      "name": "aprime-nonparametric-claim",
+      "prompt": "A reviewer asked us to report a 'nonparametric, assumption-free' sensitivity measure instead of d', and suggested A'. We'll switch to A' since it makes no distributional assumptions. Anything we should know before doing that?",
+      "baseline_failure_hypothesis": "Agent endorses A' as genuinely assumption-free and switches without caveats.",
+      "assertions": [
+        {"text": "States that A' is NOT actually distribution-free / assumption-free and has documented anomalies (and that multiple incompatible formulas circulate under the name)", "passed": null, "evidence": ""},
+        {"text": "Recommends, as the principled nonparametric option, the empirical (trapezoidal) AUC from a rating/confidence ROC instead of A'", "passed": null, "evidence": ""},
+        {"text": "Suggests d' / d_a as the parametric option and advises stating caveats if A' must be reported to satisfy the reviewer", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 10,
+      "name": "from-scratch-analysis-with-inference",
+      "prompt": "Here's the raw data for one participant in my detection study: out of 50 signal trials they got 30 hits and 20 misses, and out of 50 noise trials they made 8 false alarms and 42 correct rejections. Analyze this for me — I want to know how well they detected the signal and whether that's reliably above chance.",
+      "baseline_failure_hypothesis": "Agent reports d' (and maybe c) but gives no standard error / CI / significance test, so it cannot actually answer 'reliably above chance'. May also report accuracy.",
+      "assertions": [
+        {"text": "Computes d' ~1.22 and criterion c ~+0.36 (conservative), applying a 0/1 correction convention (e.g., log-linear), and reports BOTH sensitivity and bias", "passed": null, "evidence": ""},
+        {"text": "Computes a standard error and/or confidence interval for d' (delta method; SE ~0.28, 95% CI roughly [0.67, 1.76])", "passed": null, "evidence": ""},
+        {"text": "Performs a significance test that d' > 0 (z ~4.4, p < 0.001) and concludes detection is reliably above chance", "passed": null, "evidence": ""},
+        {"text": "Does not reduce the answer to a single accuracy/percent-correct number", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 11,
+      "name": "routing-decline-to-sibling-skill",
+      "prompt": "I have trial-by-trial reaction times from a two-choice perceptual task and I want to model the full RT distributions for correct and error responses to understand how evidence accumulates over time and what's driving the speed-accuracy tradeoff. How should I set up that model?",
+      "baseline_failure_hypothesis": "Agent forces an SDT/d' framing onto what is really an evidence-accumulation (DDM) problem, or fails to recognize the boundary.",
+      "assertions": [
+        {"text": "Recognizes this is an evidence-accumulation / sequential-sampling problem (drift-diffusion model or similar: LBA, race models) about the TIME COURSE of the decision, not a static SDT/d' analysis", "passed": null, "evidence": ""},
+        {"text": "Does NOT try to answer it with a plain d'/criterion analysis as if SDT were the right tool", "passed": null, "evidence": ""},
+        {"text": "Correctly explains the relationship: SDT is the static/threshold model of the same kind of decision, while DDM models the RT distributions and speed-accuracy tradeoff; routes the user toward the evidence-accumulation framework (and names DDM tooling such as HDDM/PyDDM/brms-wiener or the cognitive-modeling approach)", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 12,
+      "name": "optimal-criterion-rare-signals",
+      "prompt": "In my task signals only occur on 10% of trials (90% are noise), payoffs are symmetric, and my observer has a d' of about 1.5. Their criterion c came out to about +0.40, which is positive, so I want to write that they showed a conservative response bias. Is that the right interpretation?",
+      "baseline_failure_hypothesis": "Agent interprets c > 0 as 'biased/conservative' in the abstract without referencing the optimal criterion for a 10% base rate, missing that the observer is actually LESS conservative than optimal.",
+      "assertions": [
+        {"text": "Notes that the optimal criterion depends on base rate (and payoffs), and computes the optimal value for 10% signals (beta_opt = 9, c_opt ~ +1.46)", "passed": null, "evidence": ""},
+        {"text": "Concludes the observer at c = +0.40 is actually LESS conservative than optimal (under-cautious relative to the rational criterion), not simply 'biased' — interpreting c relative to c_opt rather than relative to 0", "passed": null, "evidence": ""},
+        {"text": "Explains that with rare signals a conservative criterion is rational/expected, so a positive c alone does not imply a maladaptive bias", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 13,
+      "name": "auc-to-dprime-equal-variance-trap",
+      "prompt": "My recognition-memory model gives an ROC AUC of 0.80. I want to report sensitivity as d', so I'll just convert with d' = sqrt(2) * qnorm(0.80) = 1.19 and report that. Is that conversion valid here?",
+      "baseline_failure_hypothesis": "Agent accepts the AUC->d' conversion as a fixed identity without flagging the equal-variance assumption, which is exactly wrong for recognition memory.",
+      "assertions": [
+        {"text": "States that AUC = Phi(d'/sqrt(2)) holds ONLY under the equal-variance assumption (z-ROC slope = 1)", "passed": null, "evidence": ""},
+        {"text": "Notes that recognition-memory ROCs are typically unequal-variance (z-ROC slope ~0.8), so the AUC corresponds to A_z and the right sensitivity index is d_a, not a single d' from this conversion", "passed": null, "evidence": ""},
+        {"text": "Recommends fitting the z-ROC to get the slope and reporting d_a / A_z (or at least checking the slope before doing any AUC->d' conversion)", "passed": null, "evidence": ""}
+      ]
+    },
+    {
+      "id": 14,
+      "name": "task-structure-same-different",
+      "prompt": "I ran a same-different discrimination task: on each trial participants saw two stimuli and judged whether they were the same or different. Overall they were 70% correct (35/50). Can I get d' by plugging 0.70 into the 2AFC formula d' = sqrt(2)*z(Pc)?",
+      "baseline_failure_hypothesis": "Agent applies the 2AFC sqrt(2)*z(Pc) formula to same-different data, producing a wrong-scale d' (~0.74).",
+      "assertions": [
+        {"text": "States that the 2AFC formula does NOT apply to a same-different task — the task structure is different and same-different is much less efficient than 2AFC", "passed": null, "evidence": ""},
+        {"text": "Notes that same-different d' depends on the assumed decision rule (independent-observation vs differencing), so a single plug-in formula is insufficient", "passed": null, "evidence": ""},
+        {"text": "Routes to the correct tool: sensR's same-different / discrim() machinery (or the protocol-specific psychometric function from Macmillan & Creelman ch. 9), rather than the 2AFC formula", "passed": null, "evidence": ""}
+      ]
+    }
+  ]
+}

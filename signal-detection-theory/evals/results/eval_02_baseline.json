@@ -1,0 +1,40 @@
+{
+  "eval_id": 2,
+  "name": "unequal-variance-single-point-dprime",
+  "condition": "baseline",
+  "prompt": "Old/new recognition memory experiment. Aggregating across subjects I get hit rate 0.85 and false-alarm rate 0.30. I also fit the confidence z-ROC and the slope is 0.75. I was going to just report d' = z(.85) - z(.30). Is that fine, and if not what should I report?",
+  "baseline_failure_hypothesis": "Agent computes single-point d' (~1.56) and reports it without recognizing that slope 0.75 means unequal variance, making single-point d' biased.",
+  "response": "No, plain d' is not fine here, and the z-ROC slope is exactly why.\n\n## The problem: unequal variance\n\nStandard d' = z(HR) \u2212 z(FAR) assumes an **equal-variance** Gaussian model, which predicts a z-ROC slope of 1.0. Your slope of 0.75 rejects that assumption \u2014 the signal distribution has higher variance than noise (\u03c3_signal = 1/0.75 \u2248 1.33). This is typical in recognition memory. Under unequal variance, equal-variance d' is a biased sensitivity estimate.\n\n## What to report instead: d_a\n\nSince you've already fit the z-ROC, report **d_a** (pronounced \"d-sub-a\"), the unequal-variance sensitivity index:\n\n**d_a = a \u00d7 \u221a(2 / (1 + b\u00b2))**\n\nwhere *a* is the z-ROC intercept and *b* is the slope.\n\n**Step 1 \u2014 recover the intercept** from your aggregate operating point:\n\n```\nz(0.85) =  1.036\nz(0.30) = \u22120.524\n\nz(HR) = a + b\u00b7z(FAR)\n1.036 = a + 0.75 \u00d7 (\u22120.524)\na = 1.036 + 0.393 = 1.429\n```\n\n**Step 2 \u2014 compute d_a:**\n\n```\nd_a = 1.429 \u00d7 \u221a(2 / (1 + 0.75\u00b2))\n    = 1.429 \u00d7 \u221a(2 / 1.5625)\n    = 1.429 \u00d7 1.131\n    \u2248 1.62\n```\n\nFor comparison, equal-variance d' = 1.036 \u2212 (\u22120.524) = **1.56**. The gap matters more at extreme HR/FAR values.\n\nYou should also report the slope *b* = 0.75 alongside d_a \u2014 it's theoretically meaningful and lets readers reconstruct the full z-ROC.\n\n## Optional: Az\n\nIf you want a single summary that's easier for non-SDT readers:\n\n**A_z = \u03a6(d_a / \u221a2) = \u03a6(1.62 / 1.414) = \u03a6(1.15) \u2248 .875**\n\nThis is the area under the fitted ROC and sidesteps the variance question entirely.\n\n---\n\n**One additional concern:** aggregating hit and false-alarm rates across subjects before computing anything conflates individual differences in sensitivity *and* bias into a single operating point. The standard approach is to compute d_a (or d') per subject and then average those. If this is for a manuscript, reviewers may flag the aggregation; individual-level estimates with a mean \u00b1 SE is safer.",
+  "assertions": [
+    {
+      "text": "Recognizes that z-ROC slope 0.75 (\u2260 1) indicates unequal variance, so single-point d' is biased/criterion-dependent",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends reporting d_a (and/or A_z) instead of single-point d'",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Computes d_a correctly as approximately 1.62 (using s = z-ROC slope = sigma_noise/sigma_signal convention), not the reciprocal-convention value ~1.47",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Notes that wider target/old than lure/new variance (slope < 1, ~0.8) is the normal recognition-memory pattern",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

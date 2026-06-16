@@ -1,0 +1,34 @@
+{
+  "eval_id": 14,
+  "name": "task-structure-same-different",
+  "condition": "baseline",
+  "prompt": "I ran a same-different discrimination task: on each trial participants saw two stimuli and judged whether they were the same or different. Overall they were 70% correct (35/50). Can I get d' by plugging 0.70 into the 2AFC formula d' = sqrt(2)*z(Pc)?",
+  "baseline_failure_hypothesis": "Agent applies the 2AFC sqrt(2)*z(Pc) formula to same-different data, producing a wrong-scale d' (~0.74).",
+  "response": "No \u2014 the 2AFC formula does not apply here, and plugging in overall accuracy will give you a misleading d'.\n\n## Why the formulas differ\n\nThe 2AFC formula `d' = \u221a2 \u00b7 z(Pc)` is derived for a specific task: two intervals are presented, exactly one contains the signal, and the participant picks which one. The optimal decision rule is \"choose the interval with the larger internal response\" \u2014 a one-dimensional comparison with no response bias possible.\n\nSame-different is a structurally different task. Each trial presents two stimuli (SS, SD, DS, or DD), and the participant places a threshold on the perceived *dissimilarity*. Two decision rules are plausible:\n\n- **Differencing model**: respond \"different\" if |x\u2082 \u2212 x\u2081| > c (uses absolute difference)\n- **Independent observations (IO) model**: each stimulus gets its own implicit detection decision, then combined\n\nUnder either model, response bias (a tendency to say \"same\" or \"different\" regardless of the stimuli) is possible and contaminates overall Pc. The 2AFC formula has no way to account for this.\n\n## What you actually need\n\nYou need to decompose the 50 trials by trial type:\n\n| | Said \"same\" | Said \"different\" |\n|---|---|---|\n| **Was same** | correct rejections | **false alarms (FA)** |\n| **Was different** | misses | **hits (H)** |\n\nThen compute **H** = p(\"different\" | different trials) and **FA** = p(\"different\" | same trials).\n\nUnder the **differencing model**, there's no closed-form inversion \u2014 you'd solve numerically for d' given H and FA using:\n\n```\nFA  = 2\u03a6(\u2212c/\u221a2)\nH   = \u03a6((d\u2032 \u2212 c)/\u221a2) + \u03a6(\u2212(d\u2032 + c)/\u221a2)\n```\n\nA common practical shortcut (if you're willing to treat it as a yes-no detection task) is the **yes-no approximation**:\n\n```\nd\u2032 \u2248 z(H) \u2212 z(FA)\n```\n\nThis is an approximation \u2014 it ignores the absolute-value structure of the same-different decision \u2014 but it's tractable and widely used.\n\n## The problem with your current data\n\nWith just 35/50 overall, you don't know whether errors came from same trials (false alarms) or different trials (misses), so d' is unidentifiable from Pc alone. Can you break down the 50 trials by trial type and response?",
+  "assertions": [
+    {
+      "text": "States that the 2AFC formula does NOT apply to a same-different task \u2014 the task structure is different and same-different is much less efficient than 2AFC",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Notes that same-different d' depends on the assumed decision rule (independent-observation vs differencing), so a single plug-in formula is insufficient",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Routes to the correct tool: sensR's same-different / discrim() machinery (or the protocol-specific psychometric function from Macmillan & Creelman ch. 9), rather than the 2AFC formula",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    false,
+    true,
+    false
+  ],
+  "passed": 1,
+  "total": 3,
+  "pass_rate": 0.3333333333333333,
+  "eval_passes": false
+}

@@ -1,0 +1,34 @@
+{
+  "eval_id": 11,
+  "name": "routing-decline-to-sibling-skill",
+  "condition": "baseline",
+  "prompt": "I have trial-by-trial reaction times from a two-choice perceptual task and I want to model the full RT distributions for correct and error responses to understand how evidence accumulates over time and what's driving the speed-accuracy tradeoff. How should I set up that model?",
+  "baseline_failure_hypothesis": "Agent forces an SDT/d' framing onto what is really an evidence-accumulation (DDM) problem, or fails to recognize the boundary.",
+  "response": "The right tool for this is the **Ratcliff Drift Diffusion Model (DDM)** \u2014 it simultaneously accounts for both RT distributions (correct and error) and accuracy, which is exactly what you need for SAT decomposition.\n\n## Core parameter structure\n\n| Parameter | What it captures |\n|---|---|\n| `v` (drift rate) | Evidence accumulation speed \u2014 your perceptual sensitivity |\n| `a` (boundary separation) | Response caution \u2014 the primary SAT knob |\n| `z` (starting point) | A priori response bias |\n| `t0` (non-decision time) | Encoding + motor latency |\n| `sv`, `sz`, `st0` | Across-trial variability \u2014 needed to explain fast errors |\n\nThe fast-errors-vs-slow-errors pattern in your data is diagnostic: **slow errors** \u2192 low `v` (weak evidence); **fast errors** \u2192 large `sz` or `sv` (variable starting point or drift).\n\n## Software recommendation\n\n**HDDM** (Wiecki et al., 2013) is the standard if you have trial-level covariates or want hierarchical structure across participants:\n\n```python\nimport hddm\n\n# Load your data: must have columns [subj_idx, response (0/1), rt]\ndata = hddm.load_csv(\"data.csv\")\n\n# Basic model\nm = hddm.HDDM(data, depends_on={\"v\": \"condition\"})\nm.find_starting_values()\nm.sample(2000, burn=500, dbname=\"traces.db\", db=\"pickle\")\n\n# Posterior summaries\nm.print_stats()\n```\n\nIf you want to condition drift rate on trial-level stimulus strength (e.g., coherence), `depends_on={\"v\": \"coherence_bin\"}` handles it.\n\n**PyDDM** (Shinn et al., 2020) is better if you want to build a custom generative model (e.g., time-varying drift, urgency signals, collapsing bounds):\n\n```python\nfrom pyddm import Model, Fittable\nfrom pyddm.models import DriftConstant, BoundConstant, NoiseConstant, OverlayNonDecision\n\nmodel = Model(\n    drift=DriftConstant(drift=Fittable(minval=0, maxval=4)),\n    noise=NoiseConstant(noise=1),\n    bound=BoundConstant(B=Fittable(minval=0.1, maxval=2)),\n    overlay=OverlayNonDecision(nondectime=Fittable(minval=0, maxval=0.4)),\n    T_dur=2.0\n)\n```\n\n## Practical setup checklist\n\n1. **Data format**: `[rt, response, subject, condition]` \u2014 RT in seconds, response coded 0/1\n2. **Trim outliers first**: drop RTs < 0.1s and > 2\u20133s (they contaminate likelihood)\n3. **Start with the 4-parameter model** (`v`, `a`, `z`, `t0`) before adding variability params \u2014 `sv`/`sz`/`st0` require a lot of data to identify reliably\n4. **Check fit**: plot predicted vs. observed RT quantiles (0.1, 0.3, 0.5, 0.7, 0.9) for both correct and error distributions separately \u2014 a good DDM fit tracks both\n\n## Interpreting the SAT\n\nOnce fitted, `a` is your SAT lever. If subjects are trading speed for accuracy across blocks/conditions, you expect `a` to vary while `v` stays constant. If accuracy differences are perceptual (not strategic), `v` varies while `a` is stable. That distinction is the main scientific payoff of fitting the full model versus just looking at d\u2032.\n\nWant me to set up a complete fitting script for your data format, or walk through the variability parameters and when they're worth adding?",
+  "assertions": [
+    {
+      "text": "Recognizes this is an evidence-accumulation / sequential-sampling problem (drift-diffusion model or similar: LBA, race models) about the TIME COURSE of the decision, not a static SDT/d' analysis",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Does NOT try to answer it with a plain d'/criterion analysis as if SDT were the right tool",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Correctly explains the relationship: SDT is the static/threshold model of the same kind of decision, while DDM models the RT distributions and speed-accuracy tradeoff; routes the user toward the evidence-accumulation framework (and names DDM tooling such as HDDM/PyDDM/brms-wiener or the cognitive-modeling approach)",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false
+  ],
+  "passed": 2,
+  "total": 3,
+  "pass_rate": 0.6666666666666666,
+  "eval_passes": false
+}

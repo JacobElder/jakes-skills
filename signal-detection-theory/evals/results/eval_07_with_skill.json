@@ -1,0 +1,34 @@
+{
+  "eval_id": 7,
+  "name": "llm-classifier-criterion-vs-capability",
+  "condition": "with_skill",
+  "prompt": "I'm evaluating an LLM content-moderation classifier on a balanced benchmark (500 violating, 500 benign). Prompt A flags 420/500 violations and 150/500 benign items as violations. Prompt B flags 350/500 violations and 40/500 benign as violations. The PM wants to ship Prompt A because it 'catches more violations.' How should I think about which prompt is the better classifier?",
+  "baseline_failure_hypothesis": "Agent reads Prompt A's higher catch rate as higher capability, treating a criterion shift as a discriminability difference; reports only recall/positive-rate.",
+  "response": "The PM is conflating hit rate with discriminability \u2014 the core mistake SDT exists to fix. Let me work through the numbers.\n\n## The 2\u00d72 tables\n\n|  | Violating (signal) | Benign (noise) |\n|---|---|---|\n| **Flagged (yes)** | 420 (hits) | 150 (FA) |\n| **Not flagged (no)** | 80 (misses) | 350 (CR) |\n\n**Prompt A:** HR = 0.84, FAR = 0.30\n\n|  | Violating | Benign |\n|---|---|---|\n| **Flagged** | 350 (hits) | 40 (FA) |\n| **Not flagged** | 150 (misses) | 460 (CR) |\n\n**Prompt B:** HR = 0.70, FAR = 0.08\n\n## SDT decomposition\n\nUsing d' = z(HR) \u2212 z(FAR) and c = \u22120.5\u00b7[z(HR) + z(FAR)]:\n\n| | Prompt A | Prompt B |\n|---|---|---|\n| d' (discriminability) | **1.52** | **1.93** |\n| c (bias) | \u22120.24 (liberal) | +0.44 (conservative) |\n| AUC = \u03a6(d'/\u221a2) | 0.858 | **0.914** |\n| Accuracy | 77% | **81%** |\n\n## What this means\n\n**Prompt B is the better classifier on every sensitivity-preserving metric.** The PM has the situation exactly backwards.\n\nPrompt A \"catches more violations\" not because it's more accurate, but because it has a **lower threshold** \u2014 it's running liberal (c = \u22120.24), indiscriminately saying \"violation\" more often. That produces 420 hits, but also 150 false alarms. The underlying discrimination ability is *weaker* (d' = 1.52 vs. 1.93).\n\nPrompt B is conservative (c = +0.44), so it flags less, but everything it does flag is more reliable. Its higher d' means its ROC sits above Prompt A's \u2014 it has genuinely better signal from noise separation.\n\n## The right operational question\n\nThe two prompts aren't at the same operating point \u2014 that's a **criterion difference**, not a capability difference. The correct question is: **at equal recall (hit rate), which prompt produces fewer false alarms?**\n\nUnder the equal-variance model, at Prompt A's HR = 0.84:\n- Prompt B's implied FAR at that hit rate \u2248 \u03a6(z(0.84) \u2212 d'_B) = \u03a6(0.994 \u2212 1.93) = \u03a6(\u22120.936) \u2248 **0.175**\n\nSo if you lowered Prompt B's threshold to match Prompt A's recall (84%), you'd get **17.5% false alarms instead of 30%** \u2014 roughly 87 false alarms per 500 benign items vs. 150. Prompt B dominates at any recall level.\n\n## How to frame this for the PM\n\n> \"Prompt A catches more violations because it's less selective, not because it's smarter. Prompt B has 27% better discrimination ability (d' = 1.93 vs. 1.52) and 6.6pp higher AUC. If we need Prompt A's recall, we can get it with Prompt B by lowering its threshold \u2014 and we'd cut the false-alarm rate nearly in half. Shipping Prompt A is choosing a worse detector because its default settings look aggressive.\"\n\n## If costs are asymmetric\n\nIf a missed violation is far costlier than a false flag (e.g., safety-critical content), the optimal criterion shifts toward liberal \u2014 that's a legitimate business decision. But that's an argument for **lowering Prompt B's threshold**, not for preferring Prompt A. The discriminability advantage of Prompt B is fixed; you can always dial the criterion.\n\nThe bottom line: report d' and AUC for model selection, then set the criterion (threshold) separately based on your cost/base-rate tradeoffs. Never pick a model because its default threshold catches more positives.",
+  "assertions": [
+    {
+      "text": "Frames the comparison in SDT terms: treats violation-flagging as hits/false-alarms and separates discriminability from criterion (yes-bias)",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Computes sensitivity for both prompts (A: HR=0.84 FAR=0.30, d' ~1.51, liberal c~-0.23; B: HR=0.70 FAR=0.08, d' ~1.92, conservative c~+0.44) and shows Prompt B is actually the BETTER discriminator; Prompt A's higher catch rate is driven by a more liberal criterion, not better discrimination",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Warns against shipping Prompt A purely on catch rate; recommends comparing d' (or AUC) plus an explicitly chosen operating point reflecting the cost of false positives vs misses",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 3,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

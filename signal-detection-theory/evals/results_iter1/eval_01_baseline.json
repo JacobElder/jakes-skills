@@ -1,0 +1,40 @@
+{
+  "eval_id": 1,
+  "name": "diagnosticity-ratio-confound-eyewitness",
+  "condition": "baseline",
+  "prompt": "We're comparing two police lineup procedures. Procedure A: correct-ID rate 0.60, false-ID rate 0.20 (diagnosticity 3.0). Procedure B: correct-ID rate 0.45, false-ID rate 0.10 (diagnosticity 4.5). A colleague wants to recommend Procedure B because its diagnosticity ratio is higher. Is the diagnosticity ratio a sound basis for saying B produces more accurate witnesses?",
+  "baseline_failure_hypothesis": "Agent accepts the diagnosticity ratio as a measure of accuracy and recommends B, missing that the ratio confounds discriminability with response bias.",
+  "response": "No \u2014 the diagnosticity ratio is not a sound basis for that conclusion. It conflates discriminability with response bias.\n\n## What SDT reveals\n\nCompute d' = z(H) \u2212 z(FA) for each:\n\n| Procedure | H | FA | z(H) | z(FA) | d' | c |\n|---|---|---|---|---|---|---|\n| A | .60 | .20 | +0.25 | \u22120.84 | **1.09** | +0.29 |\n| B | .45 | .10 | \u22120.13 | \u22121.28 | **1.16** | +0.70 |\n\nThe d' values are nearly identical (~1.1 for both). The large difference in diagnosticity ratios (3.0 vs 4.5) is almost entirely a difference in **criterion placement**, not discriminability. Witnesses in Procedure B are simply more conservative \u2014 they're less willing to make any identification.\n\n## Why diagnosticity is criterion-contaminated\n\nThe diagnosticity ratio H/FA is a likelihood ratio evaluated at one operating point on the ROC curve. Moving the criterion in a more conservative direction always inflates H/FA when there is any sensitivity at all, because the false-alarm rate shrinks faster than the hit rate as you move leftward on the ROC. An extreme illustration: if witnesses almost never make any ID, FA \u2192 0 and the ratio \u2192 \u221e \u2014 while actual discriminability is unchanged or could even be zero.\n\n## The practical implication\n\nProcedure B doesn't produce *more accurate* witnesses; it produces *more cautious* ones. A conservative criterion has real tradeoffs \u2014 fewer wrongful identifications but also more guilty suspects who go unidentified. Whether that's desirable is a policy decision about the relative costs of false alarms vs. misses, not a statement about perceptual accuracy.\n\nThe right basis for \"Procedure B produces more accurate witnesses\" would be a meaningfully larger d', ideally confirmed across the full ROC (e.g., the area under the ROC curve). On the evidence given, neither procedure has a detectably superior sensitivity.",
+  "assertions": [
+    {
+      "text": "States that the diagnosticity ratio (HR/FAR) confounds discriminability with response bias and is not a sound accuracy measure",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Explains that a more conservative procedure can raise the ratio without improving true discriminability",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Recommends ROC/AUC analysis (using confidence ratings) or a sensitivity index to compare discriminability independent of bias",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Does NOT simply recommend Procedure B on the basis of the higher ratio",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

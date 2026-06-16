@@ -1,0 +1,34 @@
+{
+  "eval_id": 8,
+  "name": "c-sign-interpretation",
+  "condition": "baseline",
+  "prompt": "Quick sanity check on my analysis: I have an observer with hit rate 0.40 and false-alarm rate 0.05. I computed criterion c and got about +0.95. Does a positive c mean this person is biased toward saying 'yes' (liberal) or 'no' (conservative)? And is c the same thing as beta?",
+  "baseline_failure_hypothesis": "Agent gets the sign backwards (calls c > 0 liberal) or conflates c with beta.",
+  "response": "Your calculation is correct. And you have the direction backwards \u2014 a **positive c means conservative** bias (biased toward \"no\").\n\nHere's the intuition: c measures where the criterion sits relative to the neutral point between the noise and signal distributions. Positive c means the criterion has shifted *rightward* \u2014 the observer demands stronger evidence before responding \"yes,\" so they miss more signals (low H = 0.40) but almost never cry wolf (low FA = 0.05). That pattern is the signature of a conservative responder. Liberal would be the opposite: negative c, high H, elevated FA.\n\n**c vs. beta: related but not the same**\n\nThey both measure bias, but differently:\n\n| | c | \u03b2 |\n|---|---|---|\n| Scale | Additive (z-score units) | Multiplicative (likelihood ratio) |\n| Unbiased | c = 0 | \u03b2 = 1 |\n| Conservative | c > 0 | \u03b2 > 1 |\n| Liberal | c < 0 | \u03b2 < 1 |\n\nFor your numbers: d\u2032 \u2248 1.39, and the two are linked by **ln(\u03b2) = d\u2032 \u00d7 c**, so \u03b2 \u2248 exp(1.39 \u00d7 0.95) \u2248 3.76. They agree on *direction*, but \u03b2's magnitude is scaled by d\u2032, which means \u03b2 conflates bias with sensitivity. If you compare two observers with the same criterion placement but different d\u2032 values, \u03b2 will differ even though their actual decision thresholds are identical. That's why c is generally preferred \u2014 it stays in additive z-score units and is independent of d\u2032 in the equal-variance Gaussian model.",
+  "assertions": [
+    {
+      "text": "States that c > 0 means CONSERVATIVE (biased toward 'no'), consistent with the low hit and false-alarm rates",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Explains that c and beta are different parameterizations of bias (c additive/centered at 0; beta multiplicative/centered at 1) and are not the same number, though they agree in direction",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Confirms the value is plausible given the data (someone rarely saying 'yes' is conservative)",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 3,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

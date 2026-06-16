@@ -1,0 +1,34 @@
+{
+  "eval_id": 6,
+  "name": "2afc-vs-yesno-scale-conversion",
+  "condition": "with_skill",
+  "prompt": "Observer X did a 2-interval forced-choice version of my discrimination task and got 80% correct. Observer Y did the yes/no version and I computed a d' of 1.5. Can I just say Observer Y (d'=1.5) is more sensitive than Observer X, or is 80% correct already 'better' than that? How do I compare them?",
+  "baseline_failure_hypothesis": "Agent compares 80% and d'=1.5 directly without converting, or assumes 80% maps to a higher d'.",
+  "response": "You cannot compare them directly \u2014 the 2AFC d' and the yes/no d' live on different scales. You need to convert first.\n\n## The conversion\n\nIn 2AFC the observer compares two observations and picks the larger. The decision variable is the *difference* of two independent draws, so its variance is 1 + 1 = 2 and its SD is \u221a2. That \u221a2 inflates the apparent effect. The conversion to the common (yes/no) scale is:\n\n```\nd'_2AFC = \u221a2 \u00b7 z(Pc)\n```\n\nFor Observer X at 80% correct:\n\n```\nz(0.80) = 0.842\nd' = \u221a2 \u00d7 0.842 = 1.414 \u00d7 0.842 \u2248 1.19\n```\n\n## The answer\n\n| Observer | Task | Raw performance | Common-scale d' |\n|---|---|---|---|\n| X | 2AFC | 80% correct | **1.19** |\n| Y | yes/no | \u2014 | **1.50** |\n\n**Observer Y is more sensitive** (d' = 1.50 vs. 1.19). But you couldn't see that from the raw numbers \u2014 80% sounds like it might be \"better than 1.5,\" and without the conversion it's genuinely ambiguous.\n\n## The pitfall this avoids\n\nReporting \"80% correct\" next to \"d' = 1.5\" and eyeballing them is one of the most common cross-task comparison errors in SDT (see pitfall #10 in the skill). The \u221a2 factor means 2AFC always *looks* better than yes/no at the same true discriminability: a d' of 1.5 in yes/no corresponds to 2AFC accuracy of \u03a6(1.5/\u221a2) = \u03a6(1.06) \u2248 85.5%. Observer X would need ~85.5% correct in 2AFC to match Observer Y's yes/no d'.\n\nAlso worth noting: Observer Y's yes/no d' comes with a **bias estimate** (c) that the 2AFC d' doesn't \u2014 2AFC largely neutralizes the response criterion, which is a different measurement situation, not just a scale issue. If you care about where observers set their threshold, you can only study that in Observer Y's paradigm.",
+  "assertions": [
+    {
+      "text": "States that 2AFC proportion correct and yes/no d' are on different scales and must be converted before comparison",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Applies d' = sqrt(2) * z(Pc) and computes the 2AFC d' as approximately 1.19",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Concludes Observer Y (d' = 1.5) is actually MORE sensitive than Observer X (converted d' ~ 1.19), correcting the intuition that 80% sounds high",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 3,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}
