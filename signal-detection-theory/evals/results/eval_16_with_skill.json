@@ -4,7 +4,7 @@
   "condition": "with_skill",
   "prompt": "I have two participants. Subject A (liberal responder): 45 hits out of 50 signal trials, 30 false alarms out of 50 noise trials. Subject B (conservative responder): 20 hits out of 50, 3 false alarms out of 50. To get a group d', my colleague pooled all the responses: 65 hits out of 100 signal trials and 33 false alarms out of 100 noise trials, then computed one d'. Is that valid?",
   "baseline_failure_hypothesis": "Agent validates the pooling approach or treats the pooled d' as equivalent to average per-subject d', missing that pooling subjects with heterogeneous criteria produces a biased (underestimated) d' due to the SDT version of Simpson's paradox.",
-  "response": "No, it's not valid \u2014 this is a classic aggregation artifact (pitfall #13 in the skill). Let me show you exactly what goes wrong with these numbers.\n\n## Per-subject computation (correct)\n\n**Subject A (liberal):** HR = 45/50 = 0.90, FAR = 30/50 = 0.60\n- d'_A = z(0.90) \u2212 z(0.60) = 1.282 \u2212 0.253 = **1.28**\n- c_A = \u22120.5(1.282 + 0.253) = **\u22120.77** (liberal, as expected)\n\n**Subject B (conservative):** HR = 20/50 = 0.40, FAR = 3/50 = 0.06\n- d'_B = z(0.40) \u2212 z(0.06) = \u22120.253 \u2212 (\u22121.555) = **1.30**\n- c_B = \u22120.5(\u22120.253 \u2212 1.555) = **+0.90** (conservative, as expected)\n\nMean d' across subjects \u2248 **1.29**. Crucially, A and B have *nearly identical sensitivity* \u2014 they just sit at radically different operating points on the same ROC.\n\n## What pooling produces (wrong)\n\nPooled HR = 65/100 = 0.65, FAR = 33/100 = 0.33\n- d'_pooled = z(0.65) \u2212 z(0.33) = 0.385 \u2212 (\u22120.440) = **0.83**\n\nThat's a **~36% underestimate** of the true group sensitivity \u2014 and it's not noise, it's a systematic artifact.\n\n## Why this happens\n\nSubject A sits at a high-HR/high-FAR operating point; Subject B sits at a low-HR/low-FAR point. Pooling their cells averages those two operating points in *probability space*, but then z-transforms the average. Because z() is nonlinear (steep near 0 and 1, flat in the middle), the averaged operating point (0.65, 0.33) maps to a z-difference that's much smaller than the average of the individual z-differences. The pooled point lands *closer to the chance diagonal* than either subject actually is.\n\nThis is the SDT version of Simpson's paradox: the aggregate misrepresents every individual in it.\n\n## The fix\n\nTwo options:\n\n1. **Compute per-subject d' and c, then summarize** \u2014 mean(d'_A, d'_B) = 1.29, with the distribution of c values also reported.\n2. **Fit a probit GLMM** on trial-level data with a random effect for subject \u2014 this is the principled modern approach that handles trial-count weighting and estimation uncertainty simultaneously. The `signal` fixed-effect coefficient is the group-average d'.\n\nWhat your colleague's approach also hides: A and B appear to have the same sensitivity but very different criteria, which is itself a finding worth reporting. The pooled d' erases both the sensitivity estimate *and* the between-subject criterion variation.",
+  "response": "No \u2014 this is a textbook example of the pooling artifact (pitfall #13). Let me work through the numbers to show you exactly why.\n\n## Per-subject estimates (log-linear correction applied)\n\n**Subject A (liberal):** HR = 45.5/51 = 0.892, FAR = 30.5/51 = 0.598\n- z(HR) = 1.237, z(FAR) = 0.248\n- **d'_A = 0.99**, c_A = **\u22120.74** (strongly liberal)\n\n**Subject B (conservative):** HR = 20.5/51 = 0.402, FAR = 3.5/51 = 0.069\n- z(HR) = \u22120.248, z(FAR) = \u22121.487\n- **d'_B = 1.24**, c_B = **+0.87** (strongly conservative)\n\nBoth subjects show moderate\u2013strong discriminability, and their criteria are nearly mirror images of each other.\n\n## What pooling produces\n\n**Pooled:** HR = 65.5/101 = 0.649, FAR = 33.5/101 = 0.332\n- z(HR) = 0.381, z(FAR) = \u22120.431\n- **d'_pooled = 0.81**, c_pooled \u2248 0.0\n\nThe pooled d' (0.81) is **below both individual d's** (0.99 and 1.24), and the mean of per-subject d's is 1.11. Pooling has lost about 0.30 d' units \u2014 a real effect size \u2014 and invented a \"neutral\" criterion that neither observer actually used.\n\n## Why it goes wrong\n\nThe two subjects are operating at **very different points on the same underlying ROC** \u2014 A sits on the liberal end, B on the conservative end. Pooling their cell counts averages those operating points into a single point (HR = 0.65, FAR = 0.33) that corresponds to a *lower* d' than either subject actually had. This is the SDT version of Simpson's paradox: the aggregate misrepresents the components.\n\nThe secondary error is the nonlinearity of z(). Even if you average rates first \u2014 mean HR = (0.89 + 0.40)/2 = 0.65, mean FAR = (0.60 + 0.06)/2 = 0.33 \u2014 you'd still compute d' from z(0.65) \u2212 z(0.33), which \u2260 the average of z(0.89) \u2212 z(0.60) and z(0.40) \u2212 z(0.06). z is nonlinear, so mean(z) \u2260 z(mean).\n\n## What to do instead\n\n1. **Summarize per-subject d's:** report M = 1.11, SD, etc. That's the right two-subject summary.\n2. **For a proper multi-subject design**, fit a probit GLMM \u2014 the fixed `signal` coefficient gives the group-average d' with correct uncertainty, handles heterogeneous criteria via random intercepts, and weights by trial counts. The pooled-cell shortcut is never the right path.",
   "assertions": [
     {
       "text": "States that pooling hits and false alarms across subjects with heterogeneous criteria is NOT valid \u2014 it produces a biased d' that does not equal the average of individual d's",
@@ -12,7 +12,7 @@
       "evidence": ""
     },
     {
-      "text": "Explains the mechanism: when subjects have different criteria (one liberal, one conservative), pooling compresses the z-scores and underestimates the true group d' (the pooled d' \u2248 0.82 is lower than the mean per-subject d' \u2248 1.11)",
+      "text": "Explains the mechanism: pooling subjects with heterogeneous criteria underestimates d' because the mixed operating point is pulled toward the chance diagonal \u2014 the z-score difference of the pooled point is smaller than the average of individual z-score differences (analogous to Simpson's paradox or Jensen's inequality on the z-transform)",
       "passed": null,
       "evidence": ""
     },
@@ -24,11 +24,11 @@
   ],
   "assertion_results": [
     true,
-    false,
+    true,
     true
   ],
-  "passed": 2,
+  "passed": 3,
   "total": 3,
-  "pass_rate": 0.6666666666666666,
-  "eval_passes": false
+  "pass_rate": 1.0,
+  "eval_passes": true
 }

@@ -192,7 +192,7 @@
       "baseline_failure_hypothesis": "Agent validates the pooling approach or treats the pooled d' as equivalent to average per-subject d', missing that pooling subjects with heterogeneous criteria produces a biased (underestimated) d' due to the SDT version of Simpson's paradox.",
       "assertions": [
         {"text": "States that pooling hits and false alarms across subjects with heterogeneous criteria is NOT valid — it produces a biased d' that does not equal the average of individual d's", "passed": null, "evidence": ""},
-        {"text": "Explains the mechanism: when subjects have different criteria (one liberal, one conservative), pooling compresses the z-scores and underestimates the true group d' (the pooled d' ≈ 0.82 is lower than the mean per-subject d' ≈ 1.11)", "passed": null, "evidence": ""},
+        {"text": "Explains the mechanism: pooling subjects with heterogeneous criteria underestimates d' because the mixed operating point is pulled toward the chance diagonal — the z-score difference of the pooled point is smaller than the average of individual z-score differences (analogous to Simpson's paradox or Jensen's inequality on the z-transform)", "passed": null, "evidence": ""},
         {"text": "Recommends computing per-subject d's and averaging (or fitting a probit GLMM), NOT pooling raw counts across heterogeneous observers", "passed": null, "evidence": ""}
       ]
     }
