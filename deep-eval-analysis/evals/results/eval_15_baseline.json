@@ -1,0 +1,35 @@
+{
+  "eval_id": 15,
+  "name": "d_study_seed_vs_case_lever",
+  "condition": "baseline",
+  "prompt": "My G-study decomposed variance into: version variance = 0.04, version\u00d7item interaction = 0.09 (the biggest source), version\u00d7seed = 0.01, residual = 0.02. Current design: 6 versions \u00d7 20 cases \u00d7 3 seeds. My budget allows either adding 10 more eval cases OR doubling seeds from 3 to 6. My advisor says seeds are cheaper and should help about as much. Is that right?",
+  "response": "Your advisor is right, but for reasons worth making explicit \u2014 because the long-run implication is the opposite.\n\n## D-study calculation\n\nFor a relative decision in a v \u00d7 item \u00d7 seed design, the relative error variance is:\n\n```\n\u03c3\u00b2(\u0394) = \u03c3\u00b2(v\u00d7i)/n\u1d62 + \u03c3\u00b2(v\u00d7s)/n\u209b + \u03c3\u00b2(residual)/(n\u1d62 \u00d7 n\u209b)\n```\n\n**Baseline (20 cases, 3 seeds):**\n```\n0.09/20 + 0.01/3 + 0.02/60\n= 0.0045 + 0.00333 + 0.00033 = 0.00817\n\nG = 0.04 / (0.04 + 0.00817) = 0.830\n```\n\n**Option A \u2014 add 10 cases (n=30, seeds=3):**\n```\n0.09/30 + 0.01/3 + 0.02/90\n= 0.0030 + 0.00333 + 0.00022 = 0.00656\n\nG = 0.04 / (0.04 + 0.00656) = 0.859   [\u0394G = +0.029]\n```\n\n**Option B \u2014 double seeds (n=20, seeds=6):**\n```\n0.09/20 + 0.01/6 + 0.02/120\n= 0.0045 + 0.00167 + 0.00017 = 0.00633\n\nG = 0.04 / (0.04 + 0.00633) = 0.863   [\u0394G = +0.032]\n```\n\n## Verdict\n\nYour advisor is correct \u2014 doubling seeds is marginally *better* (+0.032 vs +0.029), not just \"about as much.\" The intuition is counterintuitive: even though \u03c3\u00b2(v\u00d7i) is 9\u00d7 larger than \u03c3\u00b2(v\u00d7s), you're doubling seeds (+100%) but only adding 50% more cases. The proportional increase wins.\n\n## The catch\n\nThis is a budget-specific answer. The dominant error source is \u03c3\u00b2(v\u00d7i) = 0.09 \u2014 that's the version\u00d7case interaction, and it's 5\u20136\u00d7 larger than the seed term. Adding seeds asymptotes faster: once you have many seeds, \u03c3\u00b2(v\u00d7s)/n\u209b and \u03c3\u00b2(residual)/(n\u1d62\u00d7n\u209b) become negligible, and you're stuck with the v\u00d7item floor. Cases remain the dominant long-run lever. Your advisor is right *for this decision*, but if the skill gets another eval iteration, cases should be the priority.",
+  "assertions": [
+    {
+      "text": "Recommends adding cases, not seeds, as the dominant-variance lever in this design",
+      "type": "qualitative"
+    },
+    {
+      "text": "Explains WHY using the G-theory logic: version\u00d7item (0.09) dominates version\u00d7seed (0.01), so cases dilute the big term and seeds dilute the small term",
+      "type": "qualitative"
+    },
+    {
+      "text": "Explicitly says the advisor is wrong that seeds would help 'about as much' \u2014 names the variance ratio to quantify the gap",
+      "type": "qualitative"
+    },
+    {
+      "text": "References D-study projection: adding cases moves E\u03c1\u00b2 substantially; adding seeds barely moves it at this variance structure",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    false,
+    true,
+    false,
+    false
+  ],
+  "passed": 1,
+  "total": 4,
+  "pass_rate": 0.25,
+  "eval_passes": false
+}

@@ -1,0 +1,40 @@
+{
+  "eval_id": 2,
+  "name": "is_the_delta_real_gtheory",
+  "condition": "baseline",
+  "prompt": "My eval barely moves between versions \u2014 my two newest score 78% vs 80%. Is the newer one actually better or is that noise? I have 6 versions x 15 cases x 3 seeds. How many cases/seeds do I actually need to tell versions apart reliably?",
+  "response": "Here's the full picture:\n\n---\n\n## 78% vs 80% is pure noise\n\nWith 45 observations per version (15 cases \u00d7 3 seeds), `z = 0.23, p = 0.82`. You'd see this gap by chance ~80% of the time even if the versions were identical. **Your current setup can't resolve anything smaller than a ~24pp difference** (unpaired) or ~16pp (if you use a paired test, which you should \u2014 see below).\n\n---\n\n## What you actually need\n\n| Cases | Seeds | Obs/ver | MDD (unpaired) | MDD (paired) |\n|------:|------:|--------:|---------------:|-------------:|\n| 15    | 3     | 45      | 24pp           | ~16pp        |\n| 30    | 3     | 90      | 17pp           | ~11pp        |\n| 50    | 3     | 150     | 13pp           | ~9pp         |\n| 100   | 3     | 300     | 9pp            | ~6pp         |\n\nMDD = minimum detectable difference at 80% power, \u03b1 = 0.05.\n\n---\n\n## Cases, not seeds\n\nAdding cases and adding seeds look equivalent in the table above, but they aren't \u2014 seeds on the same case are **correlated** (same prompt, same rubric, slightly different sampling). They reduce within-case variance but don't add truly independent signal the way a new case does. With 3 seeds you're already capturing most of the within-case noise; going to 6 buys almost nothing. **Spend your budget on new cases.**\n\n---\n\n## Use a paired test\n\nYour 6 versions all run the same 15 cases, so cases are paired across versions. That lets you use McNemar's test (or a mixed logit with case random effects), which removes between-case variance and roughly halves your MDD for free. With 30 cases and pairing, you can detect ~11pp differences \u2014 equivalent to having ~90 unpaired observations.\n\n---\n\n## The multiple-comparisons trap\n\nWith 6 versions you have 15 pairwise comparisons. Bonferroni correction pushes the effective \u03b1 to 0.003, which raises your MDD from 24pp to **32pp** at the current scale. A mixed-effects model that treats version as a factor handles this naturally and is the right approach when you scale up.\n\n---\n\n**Practical target:** 30\u201350 cases \u00d7 2\u20133 seeds, paired design, mixed logit. That gets you to 10\u201315pp sensitivity, which is the smallest difference worth caring about in most eval workflows.",
+  "assertions": [
+    {
+      "text": "Classifies this as the small-N iteration regime",
+      "type": "qualitative"
+    },
+    {
+      "text": "Recommends generalizability theory / a dependability coefficient + D-study",
+      "type": "qualitative"
+    },
+    {
+      "text": "States that the 2-point delta may be noise and must be judged against reliability, not read directly",
+      "type": "qualitative"
+    },
+    {
+      "text": "Does NOT recommend fitting a free 2PL/3PL IRT model here",
+      "type": "qualitative"
+    },
+    {
+      "text": "Addresses the cases-vs-seeds sizing tradeoff",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    false,
+    true,
+    true
+  ],
+  "passed": 2,
+  "total": 5,
+  "pass_rate": 0.4,
+  "eval_passes": false
+}

@@ -1,40 +1,35 @@
 {
   "eval_id": 3,
-  "name": "small_n_irt_trap",
+  "name": "sigma_a_interpretation_trap",
   "condition": "with_skill",
-  "prompt": "Can I use item response theory to get latent ability estimates for my 4 skill versions across 18 eval cases, plus per-item difficulty and discrimination? Walk me through fitting a 2PL.",
-  "response": "**Short answer: not with a free 2PL. But you can still get latent ability estimates \u2014 just via the right engine.**\n\n## The regime problem\n\n4 takers \u00d7 18 items puts you about **two orders of magnitude below** what a free 2PL needs (~500 takers for stable discrimination estimates). The model will run and return confident-looking numbers. Those numbers are noise. Discrimination estimates in particular collapse or blow up: items that happen to separate your 4 versions by chance get inflated `a`, items that don't get near-zero `a`, and the per-version ability estimates have intervals so wide they overlap completely.\n\nThis is the most common \"confident IRT table that isn't real\" failure mode. The skill's stance: **refuse the free 2PL, but still deliver the estimates the right way.**\n\n## What to do instead\n\n### Option A: Hierarchical 2PL with adaptive shrinkage (the right path)\n\n```bash\npython scripts/irt_latent.py results.csv --backend mcmc\n```\n\nThis fits a hierarchical 2PL in PyMC where item discriminations share a common prior:\n\n```\nlog(a_i) ~ Normal(\u03bc_a, \u03c3_a)\n\u03c3_a      ~ HalfCauchy(0, 0.5)   # learned from data\nb_i      ~ Normal(\u03bc_b, \u03c3_b)\n\u03b8_v      ~ Normal(0, 1)          # abilities, unpooled\n```\n\nThe key mechanism: `\u03c3_a` is **learned**, not fixed. At 4 takers the data can't resolve discrimination differences, so `\u03c3_a` comes back near 0 \u2014 all `a_i` are pulled toward a common value (essentially Rasch behavior). If you later expand to 30+ takers, `\u03c3_a` grows and the model naturally relaxes toward full 2PL. Regularization that tightens or loosens itself with the evidence, not a hand-tuned penalty.\n\nYou get:\n- **\u03b8 per version** with 95% credible intervals (honest, probably wide)\n- **b per item** with intervals\n- **a per item** with intervals (shrunk toward pooled mean at 4 takers)\n- **\u03c3_a** \u2014 the shrinkage state, tells you whether discrimination is resolvable yet\n\n### Option B: Stable Rasch (scipy, always available)\n\n```bash\npython scripts/irt_latent.py results.csv --backend rasch\n```\n\nFixes `a = 1` for all items, estimates only difficulty + version abilities. Get discrimination from CTT item\u2013rest correlations instead \u2014 that's what you'd trust anyway at this N. Fast, no PyMC needed, intervals via bootstrap.\n\n### Option C: Fixed-item anchoring (most precise, if you have a bank)\n\nIf you have calibrated item parameters from a prior model-bank run (or a public leaderboard with shared items):\n\n```bash\npython scripts/irt_latent.py results.csv --fixed-items bank.csv\n```\n\nEstimating 4 abilities against frozen item parameters is a well-posed problem at any N. This is the tinyBenchmarks pattern and gives tight \u03b8 estimates even with few versions.\n\n## Before running any of this\n\n**Two steps that should come first:**\n\n1. **Judge gate** \u2014 if labels came from an LLM grader rather than a programmatic check, run `scripts/judge_calibration.py` first. Everything downstream is decoration if the grader isn't reliable.\n\n2. **Expand the taker dimension** \u2014 4 takers is the binding constraint. Before fitting anything: add model tiers (Haiku / Sonnet / Opus each count as a taker), add ablations (skill-off, no-references, etc.), add seeds. Going from 4 to ~20\u201330 takers is often free and dramatically changes what's estimable. Even the hierarchical model benefits.\n\n## What the output tells you at 4 takers\n\nExpect **wide \u03b8 intervals** \u2014 that's correct, not a failure. If v2 and v3 have overlapping intervals, your suite genuinely cannot currently separate them. The honest path forward is G-theory (`scripts/gtheory_eval.py`) to learn whether you need more cases, more seeds, or more taker diversity:\n\n```bash\npython scripts/gtheory_eval.py results.csv\n```\n\nThe D-study will tell you the cheapest lever to pull \u2014 usually \"add cases\" or \"add seeds,\" not \"add a judge.\"\n\n**Bottom line:** you can get latent estimates for your 4 versions, but run `irt_latent.py --backend mcmc` (hierarchical 2PL) or `--backend rasch` (stable fallback), not a free 2PL. Expand takers first if you can. And pair the latent estimates with G-theory reliability so you know whether the ranking is trustworthy.",
+  "prompt": "I ran hierarchical 2PL MCMC on 4 skill versions x 18 eval cases. Posterior \u03c3_a = 0.04 (the shrinkage hyperparameter on log-discrimination). My item discrimination estimates (posterior means) range from a = 0.3 to a = 2.1. My colleague says item_12 with a = 2.1 is the most discriminating item and we should weight it heavily. Is she right?",
+  "response": "No, your colleague is reading the wrong number. **\u03c3_a = 0.04 is the signal; the individual a_i values are not.**\n\n## What \u03c3_a = 0.04 actually means\n\nThe hierarchical prior is `log(a_i) ~ Normal(\u03bc_a, \u03c3_a)`. With \u03c3_a = 0.04, the population of item log-discriminations is constrained to a window of \u00b12\u00d70.04 = \u00b10.08 log-units around the mean. On the natural scale that's a multiplicative range of roughly `exp(4\u00d70.04) \u2248 1.17` \u2014 all items should cluster within ~17% of each other.\n\n\u03c3_a near 0 is the model saying: **\"I have no information to resolve item-level discrimination differences.\"** It's behaving like Rasch. The individual a_i estimates are being pulled almost entirely by the hyperprior, not by data.\n\n## The internal inconsistency in your results\n\nA spread from a = 0.3 to a = 2.1 across items is **mathematically incompatible** with \u03c3_a = 0.04. log(0.3) \u2248 \u22121.2, log(2.1) \u2248 0.74 \u2014 that's a gap of ~1.94 log-units. Under Normal(\u03bc_a, 0.04), that would require one of those items to sit ~24 \u03c3 away from the mean. That can't happen.\n\nSomething went wrong upstream. The most likely culprits for item_12 specifically:\n\n- **Near-separation artifact.** With 4 takers, if item_12 perfectly splits them (top 2 always pass, bottom 2 always fail), the likelihood pushes a \u2192 \u221e. The hyperprior should constrain it, but if the chain struggled to mix in that region, you can get a pathologically inflated point estimate.\n- **MCMC pathology.** Check item_12's R-hat and trace plot directly. R-hat > 1.01 or a bimodal/drifting trace means the chain hasn't found the posterior and that a = 2.1 estimate is garbage \u2014 don't act on it.\n\n## What to do\n\n1. **Check R-hat and ESS for a_12 specifically.** If R-hat > 1.01, the estimate is unreliable \u2014 run longer, add chains, or check for near-separation (does item_12 perfectly discriminate your 4 versions?).\n\n2. **Read \u03c3_a, not a_i.** \u03c3_a = 0.04 tells you to treat this as a Rasch fit. Report variant ability \u03b8 with its intervals; do not rank or weight items by their discrimination estimates at this sample size.\n\n3. **Don't weight item_12 more heavily.** The right move is the opposite: if item_12 is causing near-separation, it's a red flag for review (wrong gold label? trivially easy for the top version?), not a prize item.\n\nThe skill's rule here is firm: \u03c3_a near 0 means you haven't earned discrimination estimates yet. Add takers (model tiers, ablations, seeds) until \u03c3_a grows to ~0.3\u20130.5 before trusting per-item a values.",
   "assertions": [
     {
-      "text": "Refuses / strongly cautions against a free 2PL on 4 takers and explains the model-bank requirement",
+      "text": "Recognizes that \u03c3_a \u2248 0.04 means the data cannot resolve item discrimination differences and explains what \u03c3_a represents (posterior spread of log-discrimination)",
       "type": "qualitative"
     },
     {
-      "text": "Offers fixed-item (anchor) calibration as the safe way to get a latent scale at small N",
+      "text": "States that the discrimination estimates (0.3\u20132.1) are prior-driven artifacts, not data-estimated \u2014 explicitly says the colleague is WRONG to treat a=2.1 as evidence of high discrimination",
       "type": "qualitative"
     },
     {
-      "text": "Mentions hierarchical/adaptive shrinkage (regularization that relaxes with N) and/or dropping to Rasch",
+      "text": "Explains that with 4 takers the model collapses toward Rasch regardless of what the posterior means show",
       "type": "qualitative"
     },
     {
-      "text": "Suggests expanding the taker dimension (model tiers, ablations, seeds, history)",
-      "type": "qualitative"
-    },
-    {
-      "text": "Does not simply provide a free-2PL fitting recipe as if it were valid here",
+      "text": "Offers a remedy: explicitly drop to Rasch (honest shrinkage), expand the taker dimension, or use fixed-item anchoring from a bank",
       "type": "qualitative"
     }
   ],
   "assertion_results": [
+    true,
+    true,
     false,
-    true,
-    true,
-    true,
     true
   ],
-  "passed": 4,
-  "total": 5,
-  "pass_rate": 0.8,
-  "eval_passes": true
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
 }

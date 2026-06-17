@@ -128,7 +128,8 @@ Domain-specific rules:
 - "Reports item-level structure": PASS only if per-item difficulty AND a discrimination statistic are both produced or clearly described.
 - "Mutual-exclusion routing": PASS if the output recognizes a pure-method-theory request and defers to the dedicated skill. FAIL if it invokes the eval-audit workflow for a derivation question.
 - "Says advisor is wrong" / "does NOT clear the gate" / "does not green-light": these require an explicit negative statement, not a hedge or "proceed with caution."
-- "McDonald's omega" / "tau-equivalence": PASS only if omega is named and tau-equivalence is named as the violated assumption.
+- "Internal consistency wrong construct" / "does NOT recommend alpha or omega as primary": PASS only if the response explicitly says internal consistency is the wrong construct for diverse eval suites (not just a hedge like "alpha has limitations"). A response that recommends omega as the primary reliability metric = FAIL even if it also mentions G-theory.
+- "tau-equivalence" (when IC is the secondary topic): PASS only if omega is named AND tau-equivalence is named as the violated assumption.
 
 Output format (nothing else, no extra text):
 1: PASS
@@ -185,7 +186,8 @@ def run(eval_ids: list[int] | None, conditions: list[str],
         for condition in conditions:
             system = SKILL_WITH_REFS if condition == "with_skill" else None
             print(f"  [{condition}] executor...", end=" ", flush=True)
-            response = call_claude(base_prompt, system_extra=system, model=executor_model)
+            response = call_claude(base_prompt, system_extra=system, model=executor_model,
+                                   timeout=1200)
             time.sleep(delay)
 
             if not response or response == RATE_LIMIT_SENTINEL:

@@ -1,0 +1,30 @@
+{
+  "eval_id": 6,
+  "name": "mutual_exclusion_routing",
+  "condition": "baseline",
+  "prompt": "My team is debating whether to use a 1PL (Rasch) or a 2PL IRT model for our eval suite. Can you derive the mathematical difference between the two model forms, explain what the discrimination parameter a actually estimates, and walk me through which is better from a theoretical standpoint?",
+  "response": "## 1PL vs. 2PL IRT: Mathematical Derivation and Theoretical Comparison\n\n### Model Forms\n\n**1PL (Rasch model)**\n\n$$P(X_{ij} = 1 \\mid \\theta_j, b_i) = \\frac{1}{1 + e^{-(\\theta_j - b_i)}}$$\n\nwhere $\\theta_j$ is person ability and $b_i$ is item difficulty. The discrimination is fixed at $a_i = 1$ for all items.\n\n**2PL model**\n\n$$P(X_{ij} = 1 \\mid \\theta_j, a_i, b_i) = \\frac{1}{1 + e^{-a_i(\\theta_j - b_i)}}$$\n\nThe only structural difference is that $a_i$ is now item-specific and freely estimated. The $b_i$ parameter retains its interpretation as the $\\theta$ value where $P = 0.5$.\n\n---\n\n### What $a_i$ Actually Estimates\n\n$a_i$ is the **slope of the item characteristic curve (ICC) at the inflection point** $b_i$. Formally:\n\n$$\\frac{dP}{d\\theta}\\bigg|_{\\theta = b_i} = \\frac{a_i}{4}$$\n\nSubstantively, $a_i$ captures **how sharply the item discriminates** between examinees just below vs. just above the difficulty threshold. High $a_i$ items produce steep ICCs \u2014 a small difference in $\\theta$ produces a large difference in $P(\\text{correct})$. Low $a_i$ items have flat ICCs \u2014 they're nearly uninformative about $\\theta$ across most of the ability range.\n\nIn matrix form, $a_i$ is proportional to the factor loading of item $i$ on the latent dimension. A 2PL with one factor is formally equivalent to a probit factor model with unconstrained loadings.\n\n---\n\n### ICC Geometry\n\nFor items with the same $b_i$ but different $a_i$, the ICCs cross at $\\theta = b_i$. This **intersection means the ordering of item difficulties depends on the ability level being considered** \u2014 a direct violation of Rasch's specific objectivity assumption, and the core reason the two models are not nested in any practically useful sense for choosing between them.\n\n---\n\n### Theoretical Comparison\n\n| Criterion | 1PL (Rasch) | 2PL |\n|---|---|---|\n| Sufficient statistic for $\\theta$ | Raw sum score | Weighted sum ($a_i$-weighted) |\n| Measurement invariance | Strong \u2014 item ordering invariant across $\\theta$ | Weaker \u2014 item ordering depends on $\\theta$ |\n| Specific objectivity | Holds | Violated when ICCs cross |\n| Parameters per item | 1 | 2 |\n| Sample size required | ~200 | ~500+ |\n| Fit to data | Constrained, may misfit | More flexible, usually better fit |\n| Theoretical commitment | Items are exchangeable in discrimination | Items vary in how informative they are |\n\n---\n\n### Which Is Better for an Eval Suite?\n\n**It depends on what you want to claim about your scores.**\n\n**Prefer 1PL if:**\n- You want **raw scores to be meaningful** \u2014 the sufficient statistic property means summing correct responses loses no information about $\\theta$, which is nice for leaderboards and aggregation\n- Your items are **designed to be parallel** \u2014 same format, same cognitive operation, just varying topic difficulty\n- You have **small N** (fewer than ~500 evals run) and can't reliably estimate $a_i$\n- You want **score comparability** across subsets of items (adaptive evals, different eval versions)\n\n**Prefer 2PL if:**\n- Your items **genuinely vary in discriminating power** \u2014 e.g., a subtle edge-case question vs. a broad recall item should not be treated as equally informative about model ability\n- You have **heterogeneous item formats** (multiple choice, open-ended graded, tool-use tasks) where uniform discrimination is implausible\n- **Model fit matters** \u2014 if 1PL fits badly (Andersen LRT, item-fit statistics), forcing equal slopes distorts $\\hat{\\theta}$ estimates\n- You want to **identify which items best separate models** \u2014 high-$a_i$ items are your highest-leverage differentiators\n\n**My recommendation for an eval suite specifically:** Start with 1PL and check fit. If item-fit residuals are large or the Andersen LRT rejects invariance, move to 2PL. The 1PL's sufficient-statistic and invariance properties are genuinely valuable for eval interpretation, but not worth the distortion if the data don't support the equal-discrimination assumption. A practical middle path is to fit 2PL, inspect the $a_i$ distribution, and flag low-discrimination items ($a_i < 0.5$) for revision or removal rather than retaining them and accepting degraded measurement.",
+  "assertions": [
+    {
+      "text": "Defers the mathematical derivation of 1PL vs. 2PL (ICC form, discrimination parameter estimation) to the item-response-theory skill rather than providing it as an eval-analysis workflow step",
+      "type": "qualitative"
+    },
+    {
+      "text": "Answers the application-side question: which model is appropriate for eval suites depends on regime \u2014 Rasch for small N (stable, scipy-only), 2PL with MCMC for model banks (30+ takers)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Does not launch a CTT item-analysis or G-theory workflow in response to what is a model-selection and derivation question",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    true
+  ],
+  "passed": 1,
+  "total": 3,
+  "pass_rate": 0.3333333333333333,
+  "eval_passes": false
+}

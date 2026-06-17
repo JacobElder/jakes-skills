@@ -57,50 +57,54 @@ If labels came from anything other than an exact programmatic check, run
 **Stop and fix the rubric if κ is near chance or AUC≈0.5.** Carry the judge κ forward as the floor
 on label noise. (`06_judge_calibration.md`.)
 
-## Step 3 — CTT item pass (every regime)
+## Step 3 — Item-level diagnostics (every regime)
 
-Run `scripts/eval_item_analysis.py`. No model fitting, no distributional assumptions — the two
-core statistics map directly onto "is this item too easy/hard?" and "does it separate good runs
-from bad ones?" This step works at any N and is the only item-level method when takers < ~30.
+Run `scripts/eval_item_analysis.py`. Two core statistics — difficulty and the negative-discrimination
+alarm — work at any N without assuming items measure the same latent trait. Eval suites are
+diagnostic batteries covering diverse capabilities by design; items aren't expected to share a
+common factor. This means the r_rest *threshold* (e.g., trim if < 0.15) is a weak guide: low
+r_rest can mean "tests a unique capability," not "dead weight." Use difficulty and the broken-item
+alarm as the primary signals; treat r_rest thresholds as secondary.
 
-**Item difficulty (p):** per-item pass rate. Higher p = easier.
+**Item difficulty (p):** per-item pass rate. Higher p = easier. Valid regardless of what the item measures.
 
 | p range | Meaning | Action |
 |---|---|---|
-| p ≥ 0.95 | Saturated | Carries ~no info about version differences. Trim unless it guards a known regression (then keep as insurance). |
-| 0.30–0.70 | Mid-range | Max discriminative information. Keep. |
+| p ≥ 0.95 | Saturated | Carries ~no info about version differences. Trim unless it guards a known regression (then label and keep as insurance). |
+| 0.30–0.70 | Mid-range | Maximally informative about version differences. Keep. |
 | p ≤ 0.05 | Floored | Too hard *or* broken/mis-specified. Inspect before cutting. |
 
-**Item discrimination (item–rest correlation, r_rest):** correlate each taker's score on item i
-with that taker's rest score (sum over all other items). Avoids self-correlation inflation.
+**Broken-item alarm (negative r_rest or negative D):** if versions that do well overall tend to
+*fail* this item more than versions that do poorly, the item is actively broken — wrong gold
+label, inverted grader, or perverse rubric. Valid regardless of whether items are correlated.
 
-| r_rest | Meaning | Action |
-|---|---|---|
-| ≥ 0.30 | Strong — good runs pass, weak runs fail | Keep; core signal. |
-| 0.15–0.30 | Acceptable | Keep. |
-| 0–0.15 | Non-discriminating | Trim candidate. Adds runtime, not signal. |
-| **< 0** | **Broken — worse runs pass more than better runs** | **Urgent fix, not trim.** Wrong gold label, inverted grader, or perverse rubric. A single negative-discrimination item can flip a version comparison. |
+- `r_rest < 0` (item–rest correlation): correlate each taker's score on item i with rest-score.
+  Negative → **urgent fix, not trim.** A single broken item can flip a version comparison.
+- `D = p_top − p_bottom < 0` (discrimination index): pass rate of the top-third takers minus the
+  bottom-third. Negative = same alarm, more robust at tiny N (< ~8 takers).
 
-At tiny N (< ~8 takers), supplement with the **discrimination index** proxy: mean pass rate of
-the top-third takers minus the bottom-third (`D = p_top − p_bottom`). Flag `D < 0.15` as weak,
-`D < 0` as broken. More stable than r_rest at very small taker counts.
+**Do not use r_rest thresholds as a trim rule in diverse eval suites.** A case with r_rest = 0.08
+might be testing a unique capability that no other case covers. The right question before trimming
+on low r_rest is: "Is this the only case testing this capability?" If yes, keep it regardless of
+the correlation. If you have four similar cases and one has low r_rest, trim the weakest of the
+four — not on correlation alone, but on coverage redundancy.
 
 **Saturation / contamination / redundancy heuristics:**
 
 - **Suite saturation:** median difficulty very high (most items p > 0.9) → suite has aged out;
-  top takers are all bunched near ceiling, version differences are invisible. Add harder cases.
-- **Contamination smell:** a cluster of easy + non-discriminating items (p ≈ high ∧ r_rest ≈ 0)
-  whose answers are likely in training data. CTT flags the pattern; confirming contamination needs
-  the IRT 3PL guessing parameter or provenance checks (`04_irt_for_evals.md`).
-- **Redundant items:** very high inter-item correlation between two cases → they measure the same
-  thing. Keep one. The script reports an item–item matrix to spot clusters.
+  top takers all bunch near ceiling. Add harder cases.
+- **Contamination smell:** a cluster of easy items with near-zero discrimination whose answers are
+  likely in training data. CTT flags the pattern (easy ∧ D ≈ 0); confirming needs IRT 3PL or
+  provenance checks (`04_irt_for_evals.md`).
+- **Redundant items:** two cases with near-identical pass/fail patterns across takers → same
+  capability tested twice. Keep one. The script reports pairwise item correlations.
 
 Read the output for:
 
-- **negative-discrimination items** → fix list (urgent; can flip comparisons),
-- **saturated / floored / non-discriminating items** → trim candidates,
-- **redundant clusters** → keep-one candidates,
-- **overall saturation** (median difficulty very high) → suite has aged out.
+- **r_rest < 0 or D < 0 items** → fix list (urgent; broken items can flip comparisons),
+- **saturated / floored items with no guard role** → trim candidates,
+- **redundant pairs** → keep-one candidates,
+- **overall saturation** → suite needs harder cases.
 
 ## Step 4 — Reliability & sizing
 

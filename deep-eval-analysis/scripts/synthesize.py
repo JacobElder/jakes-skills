@@ -325,8 +325,12 @@ def make_figure(d, order, path, gt=None, sdt=None):
         ax.grid(color=GRID); ax.set_axisbelow(True)
     else:
         ax.axis("off")
-        ax.text(0.5, 0.5, "no triggering input\nrun sdt_trigger.py --out sdt.json\nand pass --sdt sdt.json",
-                ha="center", va="center", color="#999")
+        ax.set_facecolor("#f9f9f9")
+        ax.text(0.5, 0.58, "SDT triggering panel", ha="center", va="center",
+                color="#aaa", fontsize=10, style="italic")
+        ax.text(0.5, 0.42, "pass --sdt sdt_trigger.json to populate",
+                ha="center", va="center", color="#bbb", fontsize=8)
+        ax.set_title("SDT triggering: sensitivity vs bias", fontsize=10, loc="left")
 
     # Panel 8: scalar summary card  (bottom-right — the natural resting place for text)
     ax = fig.add_subplot(gs[3, 1]); ax.axis("off")

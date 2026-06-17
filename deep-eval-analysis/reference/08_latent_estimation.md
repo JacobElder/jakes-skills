@@ -50,10 +50,14 @@ rate dressed up as a latent score.
 The hierarchical 2PL pools item discriminations under `log(a_i) ~ Normal(μ, σ_a)` with a
 half-Cauchy hyperprior on σ_a, and **σ_a is learned from the data**:
 
-- σ_a near 0 → the data can't yet resolve differences in discrimination, so all `a_i` are pulled
-  toward a common value (≈ Rasch). Stable, conservative.
-- σ_a larger → the data genuinely distinguish discriminations, and the pooling relaxes toward full
-  2PL behavior.
+- **σ_a near 0 → the model is effectively Rasch, regardless of what the posterior means for a_i
+  show.** The per-item discrimination estimates are prior-driven artifacts, not data-estimated.
+  A spread of a_i values from 0.3 to 2.1 with σ_a ≈ 0 does not mean some items are highly
+  discriminating — it means the prior has pulled them apart while the data had nothing to say.
+  With fewer than ~15–20 takers, σ_a will almost always be near 0. This is the honest result;
+  don't treat point estimates of a_i as informative in this regime.
+- **σ_a larger → the data genuinely distinguish discriminations**, and the pooling relaxes toward full
+  2PL behavior. This requires roughly 15–20+ takers before the signal exceeds the prior.
 
 This is regularization that **tightens or loosens itself with the evidence** — the principled form
 of "regularize discrimination and relax it as N grows." Variant abilities θ are deliberately *not*

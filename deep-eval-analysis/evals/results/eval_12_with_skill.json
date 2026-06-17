@@ -1,0 +1,35 @@
+{
+  "eval_id": 12,
+  "name": "eval_content_drift",
+  "condition": "with_skill",
+  "prompt": "I've been tracking my skill across v3, v4, v5 and the pass rate is creeping up. But I realize I reworded some eval prompts and swapped a couple of gold answers along the way, though the item_id column names stayed the same. How do I know whether the improvement is real or just my eval changing under me?",
+  "response": "This is exactly the problem `reference/13_item_drift.md` was built for. The short answer: **column names are not trustworthy keys for a measurement model \u2014 content hashes are.** A reworded prompt under the same `item_id` is a different item, and a swapped gold answer can flip difficulty direction entirely. Your v3\u2192v5 gain is a mix of real skill improvement and ruler change, and right now you can't tell them apart.\n\n## What you need to do\n\n**Step 1 \u2014 Detect which items actually changed.**\n\nIf you logged the item text (or the eval prompt + gold answer) alongside each run's scores, run:\n\n```bash\npython scripts/item_drift.py manifest.csv \\\n  --text-col item_text --run-col run_id --score-col score \\\n  --out drift.json\n```\n\nIt hashes content per `item_id` per run and flags every case where the hash changed. It also reports the **stable anchor set** (items that were identical across all three runs) and the pass-rate swing on each drifted item. A big swing on a \"cosmetic\" reword is the tell that the edit changed what the item actually measures.\n\nIf you *didn't* log item text per run, check git history \u2014 the eval file at each version commit is the source of truth. Reconstruct the manifest from those snapshots.\n\n**Step 2 \u2014 Separate the comparison.**\n\nOnce you have the stable anchors vs. drifted items:\n\n- **Stable anchors only** \u2192 the only valid evidence about v3\u2192v5 skill improvement. Compute pass-rate change on this subset. If it's still creeping up, the improvement is real (at least on the parts of the eval that didn't change).\n- **Drifted items** \u2192 treat as new items from the rewrite date forward. Pass-rate change on these conflates \"better skill\" with \"different task\" \u2014 don't use them for the longitudinal comparison.\n- If the stable anchor set is tiny (say, 3 items out of 20), you can't support a strong claim either way \u2014 your ruler changed too much.\n\n**Step 3 \u2014 Fix the design going forward.**\n\nSuffix each item with its content hash so rewrites become explicit new items (`q07@a1b2` vs `q07@9f3c`). Deliberately freeze a subset of cases as your **anchor set** \u2014 these never get reworded, so every future version can be placed on the same scale. For v6 onward, calibrate anchors once, then score new versions against the fixed anchors via `scripts/irt_latent.py --fixed-items`.\n\n## The uncomfortable honest read on your current data\n\nWithout logged content, the best you can do retroactively is reconstruct from git. If git shows the rewords happened between v3\u2192v4, then:\n- v3 vs. v4: potentially confounded on those items\n- v4 vs. v5: cleaner if you didn't reword again\n\nEven if the stable-anchor subset is small, it's more trustworthy evidence than the full suite. Report the gain on that subset explicitly, note how many items were stable, and call the drifted-item gains provisional until you have a fixed anchor design in place.",
+  "assertions": [
+    {
+      "text": "Frames it as measurement invariance / drift and says column names can't be trusted as item keys",
+      "type": "qualitative"
+    },
+    {
+      "text": "Recommends content hashing to detect drift and treating changed items as new (not pooling across the change)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Recommends anchor/common-item linking to put runs on a comparable scale",
+      "type": "qualitative"
+    },
+    {
+      "text": "Warns the observed improvement may be instrument drift, not a real gain",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

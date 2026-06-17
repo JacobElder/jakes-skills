@@ -1,0 +1,40 @@
+{
+  "eval_id": 2,
+  "name": "is_the_delta_real_gtheory",
+  "condition": "with_skill",
+  "prompt": "My eval barely moves between versions \u2014 my two newest score 78% vs 80%. Is the newer one actually better or is that noise? I have 6 versions x 15 cases x 3 seeds. How many cases/seeds do I actually need to tell versions apart reliably?",
+  "response": "This is squarely the **small-N iteration regime** (6 takers), so G-theory is the right tool \u2014 not IRT. Let me walk through what the numbers say.\n\n## Short answer: 78% vs 80% is noise\n\nQuick sanity check before any formalism. With 15 cases \u00d7 3 seeds = 45 scored attempts per version, the SE of a single proportion at ~0.79 is:\n\n```\nSE = sqrt(0.79 \u00d7 0.21 / 45) \u2248 0.061\nSE_difference \u2248 sqrt(2 \u00d7 0.061\u00b2) \u2248 0.086\n```\n\nA 2pp difference is **0.23 SEs**. That's deep inside noise. You'd need roughly a 17pp gap to have even a 90% chance of calling it correctly at this sample size. The 78% vs 80% is not a result \u2014 it's a number.\n\n## Why to use G-theory, not a pass-rate comparison\n\nThe SE above treats every case as equivalent and ignores the case-selection variance (some cases are just harder \u2014 your versions' pass rates bounce around based on *which* 15 cases you happened to include). G-theory decomposes the score variance into:\n\n- **\u03c3\u00b2(version)** \u2014 the real signal you want\n- **\u03c3\u00b2(version \u00d7 case)** \u2014 versions differ on *which* cases they're good at; this is the dominant error source in most eval suites\n- **\u03c3\u00b2(version \u00d7 seed)** \u2014 run-to-run stochasticity\n- **\u03c3\u00b2(residual)**\n\nThe **E\u03c1\u00b2** (generalizability coefficient for ranking) is:\n\n```\nE\u03c1\u00b2 = \u03c3\u00b2(version) / [\u03c3\u00b2(version) + \u03c3\u00b2(v\u00d7c)/n_cases + \u03c3\u00b2(v\u00d7s)/n_seeds + \u03c3\u00b2(res)/(n_c \u00d7 n_s)]\n```\n\nWith 6 versions \u00d7 15 cases \u00d7 3 seeds, E\u03c1\u00b2 is typically **0.40\u20130.60** for eval suites where version\u00d7case interaction is moderate \u2014 well below the 0.80 you need to reliably rank versions. That's why your eval won't move: the noise floor is too high relative to the true version differences.\n\n## What the D-study will tell you (rough projections)\n\nThe D-study projects E\u03c1\u00b2 under hypothetical designs using your measured variance components. The near-universal finding:\n\n**Adding cases buys far more reliability than adding seeds.** Unless seed/run variance is abnormally large (rare for LLMs at temperature=0 or fixed seeds), the leverage looks roughly like:\n\n| Design | Typical E\u03c1\u00b2 |\n|--------|-------------|\n| 15 cases \u00d7 3 seeds (now) | ~0.45\u20130.60 |\n| 30 cases \u00d7 3 seeds | ~0.65\u20130.78 |\n| 40 cases \u00d7 3 seeds | ~0.73\u20130.83 \u2713 |\n| 15 cases \u00d7 6 seeds | ~0.50\u20130.65 (small gain) |\n| 30 cases \u00d7 6 seeds | ~0.70\u20130.85 \u2713 |\n\nThese are rough \u2014 the actual answer depends on your \u03c3\u00b2(v\u00d7c) vs \u03c3\u00b2(seed), which only your data reveals.\n\n## How to get the real answer\n\nRun `scripts/gtheory_eval.py` with your data in long format:\n\n```\ntaker_id,item_id,seed,score\nv1,case01,s1,1\nv1,case01,s2,0\n...\n```\n\n```bash\npython scripts/gtheory_eval.py results.csv \\\n  --object taker_id \\\n  --facets item_id seed \\\n  --design crossed\n```\n\nThe output gives you:\n1. **Variance components** \u2014 where your noise actually lives\n2. **Current E\u03c1\u00b2** with bootstrap CI \u2014 \"your suite can/cannot reliably rank versions\"\n3. **D-study table** \u2014 the cheapest path to E\u03c1\u00b2 \u2265 0.80 (cases vs seeds vs both)\n\nThe D-study is the deliverable. It converts \"my eval feels noisy\" into \"add 25 cases, the second seed set isn't worth it.\"\n\n## One more lever you may be underusing\n\nYou have 6 versions \u2014 but are you using all the taker-dimension variation you could? If you can add model tiers (Haiku/Sonnet/Opus) or ablations (skill-off, partial skill) as additional takers, you spread the response matrix across a real ability range, which makes the variance components much more estimable and often doubles the effective E\u03c1\u00b2 for the same case count. See `reference/07_small_sample_playbook.md` \u00a71 \u2014 expanding takers is the highest-leverage move before adding cases.",
+  "assertions": [
+    {
+      "text": "Classifies this as the small-N iteration regime",
+      "type": "qualitative"
+    },
+    {
+      "text": "Recommends generalizability theory / a dependability coefficient + D-study",
+      "type": "qualitative"
+    },
+    {
+      "text": "States that the 2-point delta may be noise and must be judged against reliability, not read directly",
+      "type": "qualitative"
+    },
+    {
+      "text": "Does NOT recommend fitting a free 2PL/3PL IRT model here",
+      "type": "qualitative"
+    },
+    {
+      "text": "Addresses the cases-vs-seeds sizing tradeoff",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

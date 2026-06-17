@@ -1,0 +1,35 @@
+{
+  "eval_id": 13,
+  "name": "facet_confounding",
+  "condition": "with_skill",
+  "prompt": "Performance differs by base model and by which judge model grades, and even the same model varies run to run depending on resources. I only ran my newest skill version on the newest base model with a stronger judge. Can I conclude the new skill version is better?",
+  "response": "No. Your design is **fully confounded** \u2014 skill version, base model, and judge all moved at once. Any improvement you observe is inseparable into:\n\n- the new skill version actually being better\n- the stronger base model performing better\n- the stronger judge scoring more generously (or more harshly)\n- run-to-run noise\n\n`reference/12_facets_and_confounding.md` is direct on this: *\"No amount of modeling rescues a confounded design.\"* You cannot produce a number that separates these; the honest output is \"can't tell.\"\n\n**Two paths forward:**\n\n**1. Hold base model and judge fixed** across all versions you're comparing. Run the old version on the new base model + new judge too. Now skill version is the only thing that varies, and you can compare cleanly \u2014 at the cost of not knowing how the old version performs under the old judge/model. This is the cheap fix if you still have the old version available.\n\n**2. Cross the facets** (the complete fix): run each skill version under multiple judges and base models, then model judge and base model as random facets in `gtheory_eval.py`. You get a skill-version estimate with judge and base-model variance separated out. This is more expensive but gives you results that generalize beyond a single judge/model combo.\n\n**Also flag:** run-to-run noise is a separate issue. Add seeds (rerun the same version \u00d7 case a few times) and `gtheory_eval.py --seed-facet` will tell you how much variance is stochastic noise vs. real version signal. The D-study output then tells you how many seeds you need to average down the noise.\n\nWithout at least option 1, any \"improvement\" you report is confounded and shouldn't drive a ship decision.",
+  "assertions": [
+    {
+      "text": "Identifies the confound: skill version is entangled with base model and judge, so the comparison can't isolate the skill effect",
+      "type": "qualitative"
+    },
+    {
+      "text": "Recommends crossing/holding fixed the facets (connected design), not just modeling around it",
+      "type": "qualitative"
+    },
+    {
+      "text": "Treats judge/base-model/run as facets whose variance should be separated; run-to-run noise handled via seeds/D-study",
+      "type": "qualitative"
+    },
+    {
+      "text": "Does not green-light the 'new version is better' conclusion from the confounded design",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

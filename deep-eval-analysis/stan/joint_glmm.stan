@@ -38,7 +38,8 @@ transformed data {
   int K_corr = use_corr ? 1 : 0;
   int V_te   = (has_lat && use_corr) ? V : 0;
   int V_tf   = (has_lat && (1 - use_corr)) ? V : 0;
-  int I_lat  = has_lat ? I : 0;
+  int I_lat  = has_lat ? I : 0;   // per-item latency params (lam)
+  int V_lat  = has_lat ? V : 0;   // per-variant speed trait (tau)
   int K_lat  = has_lat ? 1 : 0;
   int K_conf = has_conf ? 1 : 0;
   int V_conf = has_conf ? V : 0;
@@ -70,7 +71,7 @@ parameters {
 }
 
 transformed parameters {
-  vector[I_lat] tau;                   // length 0 if no latency
+  vector[V_lat] tau;                   // per-variant speed trait; length 0 if no latency
   if (has_lat) {
     if (use_corr)
       tau = rho[1] * theta + sqrt(1 - square(rho[1])) * tau_e;

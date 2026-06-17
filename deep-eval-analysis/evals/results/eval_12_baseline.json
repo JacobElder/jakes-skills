@@ -1,0 +1,35 @@
+{
+  "eval_id": 12,
+  "name": "eval_content_drift",
+  "condition": "baseline",
+  "prompt": "I've been tracking my skill across v3, v4, v5 and the pass rate is creeping up. But I realize I reworded some eval prompts and swapped a couple of gold answers along the way, though the item_id column names stayed the same. How do I know whether the improvement is real or just my eval changing under me?",
+  "response": "This is a measurement invariance problem. Your item IDs stayed constant but your items didn't \u2014 so you can't straightforwardly compare scores across versions.\n\n**The core diagnostic:** separate your items into *stable* (prompt and gold unchanged) vs. *changed* (anything modified). Improvement on stable items is credible signal. Improvement concentrated on changed items is suspect.\n\nConcretely:\n1. **Diff the eval JSON across v3/v4/v5** to enumerate which item_ids had any change to prompt text or expected answer\n2. **Compute stratified pass rates** \u2014 stable items only, changed items only, all items \u2014 for each version\n3. **Characterize the direction of changes** on changed items: did you make gold answers more lenient, or did you make prompts more explicit? Either inflates scores without real gain\n4. **Check if changed items flipped from fail\u2192pass** in the version where they were modified, even when the model response looks roughly the same quality\n\nIf your improvement holds on the stable-item stratum, it's real. If the gain disappears when you restrict to stable items, you've been measuring eval drift.\n\nThe stable items are your psychometric anchors \u2014 they're what put v3, v4, v5 scores on the same scale.\n\nWant me to write a script that diffs your eval JSON across versions, flags changed items, and recomputes stratified pass rates? I'd need to look at the structure of your eval files first.",
+  "assertions": [
+    {
+      "text": "Frames it as measurement invariance / drift and says column names can't be trusted as item keys",
+      "type": "qualitative"
+    },
+    {
+      "text": "Recommends content hashing to detect drift and treating changed items as new (not pooling across the change)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Recommends anchor/common-item linking to put runs on a comparable scale",
+      "type": "qualitative"
+    },
+    {
+      "text": "Warns the observed improvement may be instrument drift, not a real gain",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

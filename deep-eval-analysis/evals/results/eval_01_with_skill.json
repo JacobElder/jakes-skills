@@ -1,0 +1,40 @@
+{
+  "eval_id": 1,
+  "name": "trim_decision_ctt",
+  "condition": "with_skill",
+  "prompt": "I have eval results for several versions of my agent skill across ~22 cases (evals/fixtures/results_5versions.csv: columns taker_id,item_id,score,seed). I want to shrink this suite without losing signal. Which cases should I cut, which are dead weight, and which must I keep? Tell me what's actually going on with each.",
+  "response": "Here's the full picture.\n\n---\n\n## Regime & setup\n\n10 takers (opus, sonnet, haiku, v5\u2013v1, noskill, ablation_norefs) \u00d7 22 cases \u00d7 3 seeds = small-N iteration regime. No free IRT. CTT + G-theory is the right stack here, and with 10 takers the bootstrapped CIs are wide enough that you need to be careful about trimming on a point estimate alone.\n\nLabels look programmatic (0/1), so no judge gate needed.\n\n---\n\n## Reliability verdict first\n\n**E\u03c1\u00b2 = 0.912 [0.815, 0.942]** \u2014 dependable enough to rank versions. \u03a6 = 0.878 \u2014 dependable for threshold decisions too. The suite is not the problem. The D-study shows 11 items gets you to E\u03c1\u00b2 \u2248 0.84, so you have a lot of room to trim before reliability degrades below 0.80.\n\nOne flag worth noting upfront: **seed/run variance (0.142) is larger than your version\u00d7item residual (0.082).** Adding seeds buys more precision than adding cases. If 3 seeds per cell is your current design, bumping to 5 would tighten your version rankings more than expanding the case pool.\n\n---\n\n## What to do with each case\n\n### URGENT FIX \u2014 do not trim\n\n**`case_inverted`** (p=0.40, r_rest=\u22120.846, D=\u22120.778; CI: [\u22120.992, \u22120.539])\n\nThis is your only broken item, and the CI makes it unambiguous \u2014 the full interval is firmly negative. The best-performing takers (opus, sonnet, higher-tier versions) are *failing* this case more than the weaker ones. That's almost certainly an inverted gold label or an inverted rubric check, not a nuanced case. **Fix the gold label before your next eval run.** Once corrected, this becomes your highest-discriminating item \u2014 r_rest magnitude of 0.846 puts it in the top tier of the suite. Don't cut it, fix it.\n\n---\n\n### TRIM \u2014 dead weight\n\n**`case_saturated`** (p=1.000, r=NaN, D=0.000)\n\nEvery taker passes on every seed. Zero discrimination by construction \u2014 it cannot contribute to any version comparison. Cut it unless it's explicitly guarding a regression you care about, in which case label it `guard` and keep it. Ask yourself: \"Was there ever a version that failed this?\" If not, trim.\n\n**`case_09`** (p=0.267, r_rest=0.133; CI: [\u22120.728, 0.847])\n\nThe point estimate looks neutral-to-low, but the CI tells the real story: this case is statistically unknown. It spans from \"strongly negative\" to \"informative\" with equal plausibility at 10 takers. You simply don't have the data to trust this item in either direction. Trim it \u2014 or if it covers a unique capability nothing else tests, hold it and add more takers before deciding.\n\n---\n\n### TRIM ONE \u2014 perfect duplicate\n\n**`case_00` \u2194 `case_dupe00`** (pairwise r = 1.0 across takers)\n\nThese two cases produce identical pass/fail patterns for every taker on every seed. They're testing the exact same thing. Keep whichever has better provenance or a more clearly specified rubric; trim the other. This gives you the biggest free reliability-per-item gain after the fixes above.\n\n---\n\n### KEEP \u2014 the discriminating core\n\nThese 10 items have both mid-range difficulty and discrimination CI comfortably above zero:\n\n| Case | p | r_rest | CI lower | Note |\n|---|---|---|---|---|\n| case_07 | 0.53 | 0.885 | 0.768 | Best discriminator in suite |\n| case_06 | 0.80 | 0.888 | 0.817 | Best discriminator, slightly easy |\n| case_13 | 0.70 | 0.898 | 0.704 | Near-ceiling but still separating |\n| case_12 | 0.67 | 0.868 | 0.713 | Solid mid-range |\n| case_11 | 0.47 | 0.833 | 0.632 | Core signal item |\n| case_17 | 0.77 | 0.781 | 0.272 | Good point, CI acceptable |\n| case_15 | 0.60 | 0.669 | 0.299 | Mid-range, well targeted |\n| case_08 | 0.50 | 0.659 | 0.363 | Clean mid-range |\n| case_02 | 0.43 | 0.655 | 0.147 | |\n| case_01 | 0.60 | 0.718 | 0.237 | |\n\n---\n\n### KEEP \u2014 wider CIs but no evidence to cut\n\nThese items have positive point estimates but wide enough CIs that you shouldn't cut on uncertainty alone:\n\n| Case | p | r_rest | CI | Note |\n|---|---|---|---|---|\n| case_04 | 0.73 | 0.739 | [0.154, 0.929] | Positive but wide lower bound |\n| case_05 | 0.73 | 0.660 | [0.314, 0.963] | Similar |\n| case_03 | 0.50 | 0.432 | [\u22120.110, 0.806] | Low lower bound; keep if unique capability |\n| case_14 | 0.80 | 0.385 | [\u22120.634, 0.843] | Very wide \u2014 only keep if it covers something unique |\n| case_16 | 0.77 | 0.509 | [\u22120.289, 0.911] | Same |\n| case_noise | 0.43 | 0.407 | [\u22120.508, 0.944] | Very wide \u2014 check if this is a synthetic noise case |\n| case_10 | 0.23 | 0.655 | [0.246, 0.930] | Floored but CI clearly positive; hard, not broken |\n\n`case_10` is floored (p=0.23) but discriminates \u2014 it's genuinely hard for these takers, not broken. Keep as a ceiling-break item for your stronger variants.\n\n---\n\n## Recommended trimmed suite\n\nCut `case_saturated`, `case_09`, and one of `case_00`/`case_dupe00` (\u22123 cases). Fix `case_inverted`. That leaves **19 items** with projected E\u03c1\u00b2 \u2248 0.90 \u2014 well above the 0.80 decision threshold, and you've eliminated all the noise-generators without losing any signal.\n\nIf you want to trim more aggressively to ~12\u201313 items, the items with lower-bound CIs dipping negative (`case_03`, `case_14`, `case_16`, `case_noise`) are the next candidates \u2014 but only after verifying no unique capability is lost, and only once you bump seeds to 5 to compensate for the reduced n.",
+  "assertions": [
+    {
+      "text": "Reports per-item difficulty AND discrimination, not just a mean pass rate",
+      "type": "qualitative"
+    },
+    {
+      "text": "Flags the negative-discrimination item (case_inverted) as a FIX / broken item rather than a trim",
+      "type": "qualitative"
+    },
+    {
+      "text": "Recommends trimming the saturated and/or non-discriminating items",
+      "type": "qualitative"
+    },
+    {
+      "text": "Raises the guard-item exception (saturated items guarding a known regression should be kept)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Acknowledges small-N uncertainty (intervals / caution) rather than acting on point estimates",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

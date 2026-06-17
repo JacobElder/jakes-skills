@@ -1,72 +1,144 @@
 {
   "skill_name": "deep-eval-analysis",
-  "notes": "Tests whether the skill (a) triggers on eval-analysis tasks, (b) routes to the correct method by regime, (c) enforces the non-negotiable stances — especially refusing free IRT at small N — and (d) defers method-theory questions to the IRT/SDT skills (mutual exclusion). Fixtures live in evals/fixtures/. Run with-skill vs. no-skill baseline per the harness in evals/run_evals.md.",
+  "notes": "Tests whether the skill (a) triggers on eval-analysis tasks, (b) routes to the correct method by regime, (c) enforces the non-negotiable stances \u2014 especially refusing free IRT at small N \u2014 and (d) defers method-theory questions to the IRT/SDT skills (mutual exclusion). Fixtures live in evals/fixtures/. Run with-skill vs. no-skill baseline per the harness in evals/run_evals.md.",
   "evals": [
     {
       "id": 1,
       "name": "trim_decision_ctt",
       "prompt": "I have eval results for several versions of my agent skill across ~22 cases (evals/fixtures/results_5versions.csv: columns taker_id,item_id,score,seed). I want to shrink this suite without losing signal. Which cases should I cut, which are dead weight, and which must I keep? Tell me what's actually going on with each.",
-      "files": ["evals/fixtures/results_5versions.csv"],
+      "files": [
+        "evals/fixtures/results_5versions.csv"
+      ],
       "expected_output": "Runs CTT item analysis. Identifies the saturated item and the non-discriminating item as TRIM candidates; flags the negative-discrimination item (case_inverted) as FIX (urgent), NOT trim; notes the duplicate pair; raises the guard-item exception (don't auto-cut a saturated item that guards a regression); attaches uncertainty/CIs given small N; does NOT just report the mean pass rate.",
       "assertions": [
-        {"text": "Reports per-item difficulty AND discrimination, not just a mean pass rate", "type": "qualitative"},
-        {"text": "Flags the negative-discrimination item (case_inverted) as a FIX / broken item rather than a trim", "type": "qualitative"},
-        {"text": "Recommends trimming the saturated and/or non-discriminating items", "type": "qualitative"},
-        {"text": "Raises the guard-item exception (saturated items guarding a known regression should be kept)", "type": "qualitative"},
-        {"text": "Acknowledges small-N uncertainty (intervals / caution) rather than acting on point estimates", "type": "qualitative"}
+        {
+          "text": "Reports per-item difficulty AND discrimination, not just a mean pass rate",
+          "type": "qualitative"
+        },
+        {
+          "text": "Flags the negative-discrimination item (case_inverted) as a FIX / broken item rather than a trim",
+          "type": "qualitative"
+        },
+        {
+          "text": "Recommends trimming the saturated and/or non-discriminating items",
+          "type": "qualitative"
+        },
+        {
+          "text": "Raises the guard-item exception (saturated items guarding a known regression should be kept)",
+          "type": "qualitative"
+        },
+        {
+          "text": "Acknowledges small-N uncertainty (intervals / caution) rather than acting on point estimates",
+          "type": "qualitative"
+        }
       ]
     },
     {
       "id": 2,
       "name": "is_the_delta_real_gtheory",
-      "prompt": "My eval barely moves between versions — my two newest score 78% vs 80%. Is the newer one actually better or is that noise? I have 6 versions x 15 cases x 3 seeds. How many cases/seeds do I actually need to tell versions apart reliably?",
+      "prompt": "My eval barely moves between versions \u2014 my two newest score 78% vs 80%. Is the newer one actually better or is that noise? I have 6 versions x 15 cases x 3 seeds. How many cases/seeds do I actually need to tell versions apart reliably?",
       "files": [],
       "expected_output": "Identifies the small-N iteration regime. Reaches for generalizability theory (not IRT). Explains that a 2-point move must be judged against a dependability coefficient, and that a D-study answers the how-many-cases/seeds question. Notes whether cases or seeds are the better lever depending on the dominant variance source. Does not fit a free 2PL.",
       "assertions": [
-        {"text": "Classifies this as the small-N iteration regime", "type": "qualitative"},
-        {"text": "Recommends generalizability theory / a dependability coefficient + D-study", "type": "qualitative"},
-        {"text": "States that the 2-point delta may be noise and must be judged against reliability, not read directly", "type": "qualitative"},
-        {"text": "Does NOT recommend fitting a free 2PL/3PL IRT model here", "type": "qualitative"},
-        {"text": "Addresses the cases-vs-seeds sizing tradeoff", "type": "qualitative"}
+        {
+          "text": "Classifies this as the small-N iteration regime",
+          "type": "qualitative"
+        },
+        {
+          "text": "Recommends generalizability theory / a dependability coefficient + D-study",
+          "type": "qualitative"
+        },
+        {
+          "text": "States that the 2-point delta may be noise and must be judged against reliability, not read directly",
+          "type": "qualitative"
+        },
+        {
+          "text": "Does NOT recommend fitting a free 2PL/3PL IRT model here",
+          "type": "qualitative"
+        },
+        {
+          "text": "Addresses the cases-vs-seeds sizing tradeoff",
+          "type": "qualitative"
+        }
       ]
     },
     {
       "id": 3,
       "name": "sigma_a_interpretation_trap",
-      "prompt": "I ran hierarchical 2PL MCMC on 4 skill versions x 18 eval cases. Posterior σ_a = 0.04 (the shrinkage hyperparameter on log-discrimination). My item discrimination estimates (posterior means) range from a = 0.3 to a = 2.1. My colleague says item_12 with a = 2.1 is the most discriminating item and we should weight it heavily. Is she right?",
+      "prompt": "I ran hierarchical 2PL MCMC on 4 skill versions x 18 eval cases. Posterior \u03c3_a = 0.04 (the shrinkage hyperparameter on log-discrimination). My item discrimination estimates (posterior means) range from a = 0.3 to a = 2.1. My colleague says item_12 with a = 2.1 is the most discriminating item and we should weight it heavily. Is she right?",
       "files": [],
-      "expected_output": "Explains that σ_a ≈ 0 means the data cannot resolve item-by-item discrimination differences. The a estimates 0.3–2.1 are pulled from the prior, not estimated from the data — they reflect the hyperprior's shape, not real item variation. With only 4 takers, the model is effectively Rasch regardless of what the posterior means say. So item_12's a = 2.1 is not evidence of high discrimination; it's a prior artifact. Remedies: expand the taker dimension, drop explicitly to Rasch (which is honest about this), or use fixed-item anchoring from a bank. Do NOT treat these discrimination estimates as data-driven.",
+      "expected_output": "Explains that \u03c3_a \u2248 0 means the data cannot resolve item-by-item discrimination differences. The a estimates 0.3\u20132.1 are pulled from the prior, not estimated from the data \u2014 they reflect the hyperprior's shape, not real item variation. With only 4 takers, the model is effectively Rasch regardless of what the posterior means say. So item_12's a = 2.1 is not evidence of high discrimination; it's a prior artifact. Remedies: expand the taker dimension, drop explicitly to Rasch (which is honest about this), or use fixed-item anchoring from a bank. Do NOT treat these discrimination estimates as data-driven.",
       "assertions": [
-        {"text": "Recognizes that σ_a ≈ 0.04 means the data cannot resolve item discrimination differences and explains what σ_a represents (posterior spread of log-discrimination)", "type": "qualitative"},
-        {"text": "States that the discrimination estimates (0.3–2.1) are prior-driven artifacts, not data-estimated — explicitly says the colleague is WRONG to treat a=2.1 as evidence of high discrimination", "type": "qualitative"},
-        {"text": "Explains that with 4 takers the model collapses toward Rasch regardless of what the posterior means show", "type": "qualitative"},
-        {"text": "Offers a remedy: explicitly drop to Rasch (honest shrinkage), expand the taker dimension, or use fixed-item anchoring from a bank", "type": "qualitative"}
+        {
+          "text": "Recognizes that \u03c3_a \u2248 0.04 means the data cannot resolve item discrimination differences and explains what \u03c3_a represents (posterior spread of log-discrimination)",
+          "type": "qualitative"
+        },
+        {
+          "text": "States that the discrimination estimates (0.3\u20132.1) are prior-driven artifacts, not data-estimated \u2014 explicitly says the colleague is WRONG to treat a=2.1 as evidence of high discrimination",
+          "type": "qualitative"
+        },
+        {
+          "text": "Explains that with 4 takers the model collapses toward Rasch regardless of what the posterior means show",
+          "type": "qualitative"
+        },
+        {
+          "text": "Offers a remedy: explicitly drop to Rasch (honest shrinkage), expand the taker dimension, or use fixed-item anchoring from a bank",
+          "type": "qualitative"
+        }
       ]
     },
     {
       "id": 4,
       "name": "triggering_sdt",
       "prompt": "My skill sometimes fires on queries it shouldn't and sometimes fails to fire when it should. I have trigger eval data (evals/fixtures/trigger_eval.csv: skill_id,query_id,in_scope,fired). How do I figure out whether each skill needs its description rewritten or just made pushier?",
-      "files": ["evals/fixtures/trigger_eval.csv"],
+      "files": [
+        "evals/fixtures/trigger_eval.csv"
+      ],
       "expected_output": "Frames triggering as signal detection. Computes d' and criterion per skill. Splits the fix: low d' = rewrite the description's CONTENT; biased criterion = tune EAGERNESS (pushier if trigger-shy, carve-outs if trigger-happy). Notes raw accuracy hides this, mentions log-linear correction and the need for real out-of-scope noise trials. For the vague/overlapping skill flags content; for the shy one flags pushiness.",
       "assertions": [
-        {"text": "Frames triggering as a detection problem and computes d' and criterion", "type": "qualitative"},
-        {"text": "Separates the low-d' (rewrite content) case from the biased-criterion (tune eagerness) case", "type": "qualitative"},
-        {"text": "Notes that raw trigger accuracy conflates the two failures", "type": "qualitative"},
-        {"text": "Mentions log-linear correction and/or the need for genuine out-of-scope noise trials", "type": "qualitative"}
+        {
+          "text": "Frames triggering as a detection problem and computes d' and criterion",
+          "type": "qualitative"
+        },
+        {
+          "text": "Separates the low-d' (rewrite content) case from the biased-criterion (tune eagerness) case",
+          "type": "qualitative"
+        },
+        {
+          "text": "Notes that raw trigger accuracy conflates the two failures",
+          "type": "qualitative"
+        },
+        {
+          "text": "Mentions log-linear correction and/or the need for genuine out-of-scope noise trials",
+          "type": "qualitative"
+        }
       ]
     },
     {
       "id": 5,
       "name": "judge_trust_gate",
       "prompt": "I'm using an LLM to grade my agent-skill evals as pass/fail. Before I trust these pass rates and start making trim/ship decisions, how do I check the grader itself is reliable? I have two judges' labels on the same set of cases (evals/fixtures/two_judge_labels.csv).",
-      "files": ["evals/fixtures/two_judge_labels.csv"],
+      "files": [
+        "evals/fixtures/two_judge_labels.csv"
+      ],
       "expected_output": "Treats grader trust as the gate before any downstream analysis. Computes inter-rater agreement beyond chance (Cohen's/Fleiss' kappa), cites the ~0.8 LLM-human agreement benchmark, explains raw agreement is inflated on skewed pass rates. Says what to do if kappa is low (rewrite rubric, pairwise over absolute, ensemble) and to carry judge error as downstream uncertainty.",
       "assertions": [
-        {"text": "Treats judge reliability as a gate to run BEFORE difficulty/discrimination/ability analysis", "type": "qualitative"},
-        {"text": "Uses kappa (agreement beyond chance) rather than raw agreement percentage as the reliability metric", "type": "qualitative"},
-        {"text": "Gives a remediation path if the judge is unreliable (rubric rewrite / pairwise / ensemble)", "type": "qualitative"},
-        {"text": "States that the measured kappa (~0.43, moderate) does NOT clear the gate for downstream analysis and names the threshold required (substantial, ~0.6+)", "type": "qualitative"}
+        {
+          "text": "Treats judge reliability as a gate to run BEFORE difficulty/discrimination/ability analysis",
+          "type": "qualitative"
+        },
+        {
+          "text": "Uses kappa (agreement beyond chance) rather than raw agreement percentage as the reliability metric",
+          "type": "qualitative"
+        },
+        {
+          "text": "Gives a remediation path if the judge is unreliable (rubric rewrite / pairwise / ensemble)",
+          "type": "qualitative"
+        },
+        {
+          "text": "States that the measured kappa (~0.43, moderate) does NOT clear the gate for downstream analysis and names the threshold required (substantial, ~0.6+)",
+          "type": "qualitative"
+        }
       ]
     },
     {
@@ -74,51 +146,106 @@
       "name": "mutual_exclusion_routing",
       "prompt": "My team is debating whether to use a 1PL (Rasch) or a 2PL IRT model for our eval suite. Can you derive the mathematical difference between the two model forms, explain what the discrimination parameter a actually estimates, and walk me through which is better from a theoretical standpoint?",
       "files": [],
-      "expected_output": "The theoretical derivation and model-comparison math belong to the item-response-theory skill, not this one. This skill handles APPLIED eval analysis (which method for which regime, trim/keep/fix decisions, latent estimation) but the IRT derivation itself is out of scope. A correct response either defers the derivation to the IRT skill while handling the application question (small N → Rasch via irt_latent.py; model bank → 2PL via MCMC), or explicitly acknowledges the split and routes the theory question while answering the practical part. What it must NOT do is spin up the full CTT/G-theory trim workflow for what is primarily a method-theory derivation request.",
+      "expected_output": "The theoretical derivation and model-comparison math belong to the item-response-theory skill, not this one. This skill handles APPLIED eval analysis (which method for which regime, trim/keep/fix decisions, latent estimation) but the IRT derivation itself is out of scope. A correct response either defers the derivation to the IRT skill while handling the application question (small N \u2192 Rasch via irt_latent.py; model bank \u2192 2PL via MCMC), or explicitly acknowledges the split and routes the theory question while answering the practical part. What it must NOT do is spin up the full CTT/G-theory trim workflow for what is primarily a method-theory derivation request.",
       "assertions": [
-        {"text": "Defers the mathematical derivation of 1PL vs. 2PL (ICC form, discrimination parameter estimation) to the item-response-theory skill rather than providing it as an eval-analysis workflow step", "type": "qualitative"},
-        {"text": "Answers the application-side question: which model is appropriate for eval suites depends on regime — Rasch for small N (stable, scipy-only), 2PL with MCMC for model banks (30+ takers)", "type": "qualitative"},
-        {"text": "Does not launch a CTT item-analysis or G-theory workflow in response to what is a model-selection and derivation question", "type": "qualitative"}
+        {
+          "text": "Defers the mathematical derivation of 1PL vs. 2PL (ICC form, discrimination parameter estimation) to the item-response-theory skill rather than providing it as an eval-analysis workflow step",
+          "type": "qualitative"
+        },
+        {
+          "text": "Answers the application-side question: which model is appropriate for eval suites depends on regime \u2014 Rasch for small N (stable, scipy-only), 2PL with MCMC for model banks (30+ takers)",
+          "type": "qualitative"
+        },
+        {
+          "text": "Does not launch a CTT item-analysis or G-theory workflow in response to what is a model-selection and derivation question",
+          "type": "qualitative"
+        }
       ]
     },
     {
       "id": 7,
       "name": "latent_estimation_bank",
-      "prompt": "I have a response matrix from ~40 models run on the same eval cases (evals/fixtures/model_bank_40.csv). Model the evals and give me precise latent estimates: a latent ability for each model AND difficulty and discrimination for each eval case, all with uncertainty. Also tell me whether the suite can still separate my strongest models. I notice items it_sat and it_noise look anomalous — should I include them in the estimation?",
-      "files": ["evals/fixtures/model_bank_40.csv"],
-      "expected_output": "Recognizes the model-bank regime supports a full latent model. Uses the latent estimation engine (irt_latent.py --backend mcmc) to produce per-model theta with intervals AND per-item b/a with intervals on a common scale. Reports the learned sigma_a (discrimination spread — near 0 means all items behave similarly, larger means genuine discrimination variation). Crucially handles the anomalous items correctly: it_sat (100% pass rate) is saturated — non-informative, should be EXCLUDED from IRT estimation or treated as a fixed easy item (contributes zero Fisher information); it_noise has random-looking pass pattern inconsistent with ability ordering — check outfit statistics before including. Notes the suite may have ceiling issues for top models depending on where test information is concentrated.",
+      "prompt": "I have a response matrix from ~40 models run on the same eval cases (evals/fixtures/model_bank_40.csv). Model the evals and give me precise latent estimates: a latent ability for each model AND difficulty and discrimination for each eval case, all with uncertainty. Also tell me whether the suite can still separate my strongest models. I notice items it_sat and it_noise look anomalous \u2014 should I include them in the estimation?",
+      "files": [
+        "evals/fixtures/model_bank_40.csv"
+      ],
+      "expected_output": "Recognizes the model-bank regime supports a full latent model. Uses the latent estimation engine (irt_latent.py --backend mcmc) to produce per-model theta with intervals AND per-item b/a with intervals on a common scale. Reports the learned sigma_a (discrimination spread \u2014 near 0 means all items behave similarly, larger means genuine discrimination variation). Crucially handles the anomalous items correctly: it_sat (100% pass rate) is saturated \u2014 non-informative, should be EXCLUDED from IRT estimation or treated as a fixed easy item (contributes zero Fisher information); it_noise has random-looking pass pattern inconsistent with ability ordering \u2014 check outfit statistics before including. Notes the suite may have ceiling issues for top models depending on where test information is concentrated.",
       "assertions": [
-        {"text": "Produces latent ability (theta) per model AND difficulty + discrimination per item, all with intervals, on a common latent scale", "type": "qualitative"},
-        {"text": "Reports or describes sigma_a (the learned discrimination spread) and interprets what it says about whether items are uniformly or variably discriminating", "type": "qualitative"},
-        {"text": "Flags it_sat as saturated and recommends excluding it from IRT estimation (contributes zero Fisher information; contaminates the discrimination estimate)", "type": "qualitative"},
-        {"text": "Addresses it_noise as a potential contamination case requiring outfit/fit inspection before inclusion — not just a high-difficulty item", "type": "qualitative"},
-        {"text": "Addresses whether the strongest models are still separable (test information at the top of the ability range)", "type": "qualitative"}
+        {
+          "text": "Produces latent ability (theta) per model AND difficulty + discrimination per item, all with intervals, on a common latent scale",
+          "type": "qualitative"
+        },
+        {
+          "text": "Reports or describes sigma_a (the learned discrimination spread) and interprets what it says about whether items are uniformly or variably discriminating",
+          "type": "qualitative"
+        },
+        {
+          "text": "Flags it_sat as saturated and recommends excluding it from IRT estimation (contributes zero Fisher information; contaminates the discrimination estimate)",
+          "type": "qualitative"
+        },
+        {
+          "text": "Addresses it_noise as a potential contamination case requiring outfit/fit inspection before inclusion \u2014 not just a high-difficulty item",
+          "type": "qualitative"
+        },
+        {
+          "text": "Addresses whether the strongest models are still separable (test information at the top of the ability range)",
+          "type": "qualitative"
+        }
       ]
     },
     {
       "id": 8,
       "name": "latent_estimation_small_n_done_right",
-      "prompt": "I only have 5 versions of my skill across ~22 eval cases (evals/fixtures/results_5versions.csv), but I really do want latent ability estimates for each version and difficulty/discrimination for the cases. I know N is small — give me the best honest estimates you can, not a refusal.",
-      "files": ["evals/fixtures/results_5versions.csv"],
-      "expected_output": "Does NOT refuse — delivers latent estimates via the regime-appropriate method: hierarchical pooling with adaptive shrinkage (irt_latent.py --backend mcmc) or fixed-item anchoring if a bank is available, with deliberately wide, honest intervals. Explains that wide theta intervals / overlapping versions are the truthful result at N=5 (not a bug), points to expanding the taker dimension or anchoring to tighten them, and avoids a naive free 2PL. Distinguishes 'refuse the naive fit' from 'deliver estimates the right way.'",
+      "prompt": "I only have 5 versions of my skill across ~22 eval cases (evals/fixtures/results_5versions.csv), but I really do want latent ability estimates for each version and difficulty/discrimination for the cases. I know N is small \u2014 give me the best honest estimates you can, not a refusal.",
+      "files": [
+        "evals/fixtures/results_5versions.csv"
+      ],
+      "expected_output": "Does NOT refuse \u2014 delivers latent estimates via the regime-appropriate method: hierarchical pooling with adaptive shrinkage (irt_latent.py --backend mcmc) or fixed-item anchoring if a bank is available, with deliberately wide, honest intervals. Explains that wide theta intervals / overlapping versions are the truthful result at N=5 (not a bug), points to expanding the taker dimension or anchoring to tighten them, and avoids a naive free 2PL. Distinguishes 'refuse the naive fit' from 'deliver estimates the right way.'",
       "assertions": [
-        {"text": "Delivers latent estimates (does not just refuse) using a hierarchical/pooled or anchored method appropriate to small N", "type": "qualitative"},
-        {"text": "Reports honest uncertainty — wide intervals — and frames overlapping/imprecise estimates as the truthful result rather than a failure", "type": "qualitative"},
-        {"text": "Still avoids a naive free 2PL and explains the distinction between refusing that and delivering estimates properly", "type": "qualitative"},
-        {"text": "Suggests how to tighten the estimates (expand takers via model tiers/ablations/seeds, or anchor on a calibrated bank)", "type": "qualitative"}
+        {
+          "text": "Delivers latent estimates (does not just refuse) using a hierarchical/pooled or anchored method appropriate to small N",
+          "type": "qualitative"
+        },
+        {
+          "text": "Reports honest uncertainty \u2014 wide intervals \u2014 and frames overlapping/imprecise estimates as the truthful result rather than a failure",
+          "type": "qualitative"
+        },
+        {
+          "text": "Still avoids a naive free 2PL and explains the distinction between refusing that and delivering estimates properly",
+          "type": "qualitative"
+        },
+        {
+          "text": "Suggests how to tighten the estimates (expand takers via model tiers/ablations/seeds, or anchor on a calibrated bank)",
+          "type": "qualitative"
+        }
       ]
     },
     {
       "id": 9,
       "name": "fixed_item_anchoring",
       "prompt": "I have item parameters calibrated on a big model bank (evals/fixtures/calibrated_items.csv) and I want to place a few new skill variants on that same latent scale precisely, without re-estimating the items. My calibrated bank has 25 items. Should I use all 25 as anchors, or does it matter which ones I pick? And how do I interpret precision?",
-      "files": ["evals/fixtures/calibrated_items.csv", "evals/fixtures/model_bank_40.csv"],
+      "files": [
+        "evals/fixtures/calibrated_items.csv",
+        "evals/fixtures/model_bank_40.csv"
+      ],
       "expected_output": "Identifies fixed-item (anchor) calibration as the right tool: freeze the calibrated item parameters and estimate only theta per variant against them (irt_latent.py --fixed-items). Crucially addresses anchor item selection: NOT all items are equal. Items near the target variant's ability contribute the most Fisher information (peak of the ICC slope); saturated or floored items (b << or >> variant theta) contribute near-zero information even if they're in the bank. For new variants of unknown ability, use items spanning the full difficulty range. Reports theta with intervals and notes intervals depend on how informative the bank items are at that variant's level.",
       "assertions": [
-        {"text": "Recommends fixed-item / anchor calibration: freeze item params, estimate only variant ability theta (irt_latent.py --fixed-items)", "type": "qualitative"},
-        {"text": "Warns that not all anchor items are equally informative: items must be close to the variant's ability level to contribute Fisher information; saturated or floored items contribute near-zero information", "type": "qualitative"},
-        {"text": "Explains this is well-posed and precise at small N because items are not being estimated from few variants — only theta is estimated", "type": "qualitative"},
-        {"text": "Reports theta with uncertainty and notes intervals depend on how informative the selected anchor items are at that variant's ability level", "type": "qualitative"}
+        {
+          "text": "Recommends fixed-item / anchor calibration: freeze item params, estimate only variant ability theta (irt_latent.py --fixed-items)",
+          "type": "qualitative"
+        },
+        {
+          "text": "Warns that not all anchor items are equally informative: items must be close to the variant's ability level to contribute Fisher information; saturated or floored items contribute near-zero information",
+          "type": "qualitative"
+        },
+        {
+          "text": "Explains this is well-posed and precise at small N because items are not being estimated from few variants \u2014 only theta is estimated",
+          "type": "qualitative"
+        },
+        {
+          "text": "Reports theta with uncertainty and notes intervals depend on how informative the selected anchor items are at that variant's ability level",
+          "type": "qualitative"
+        }
       ]
     },
     {
@@ -126,25 +253,49 @@
       "name": "unified_glmm_feasibility",
       "prompt": "Can you give me one model that outputs IRT, SDT, calibration, AND G-theory parameters at once? I have correctness, CoT length, and a confidence score per response, but only 6 skill variants. I want the full joint covariance across all the latent traits so the channels share strength.",
       "files": [],
-      "expected_output": "Confirms the unification is real (all are readings of one GLMM) and that a joint fit can emit IRT + SDT (probit reading) + calibration + a G-theory reliability bridge — pointing to joint_glmm.py. Crucially does NOT just agree to estimate the full multi-trait covariance at 6 variants: explains that a rich trait covariance at small N is asserted by priors, not estimated (manufactured precision), and recommends estimating few correlations (e.g., theta-tau) or decoupling. Endorses the latency/CoT channel as the genuine identifiability win (van der Linden) and notes it still helps even when its own correlation is weakly identified. Notes SDT-for-triggering is a separate response process, not the same latent theta.",
+      "expected_output": "Confirms the unification is real (all are readings of one GLMM) and that a joint fit can emit IRT + SDT (probit reading) + calibration + a G-theory reliability bridge \u2014 pointing to joint_glmm.py. Crucially does NOT just agree to estimate the full multi-trait covariance at 6 variants: explains that a rich trait covariance at small N is asserted by priors, not estimated (manufactured precision), and recommends estimating few correlations (e.g., theta-tau) or decoupling. Endorses the latency/CoT channel as the genuine identifiability win (van der Linden) and notes it still helps even when its own correlation is weakly identified. Notes SDT-for-triggering is a separate response process, not the same latent theta.",
       "assertions": [
-        {"text": "Confirms one GLMM fit can emit IRT + SDT + calibration + a G-theory reliability bridge (does not claim it's impossible)", "type": "qualitative"},
-        {"text": "Pushes back on estimating a full multi-trait covariance at ~6 variants — explains it would be prior-asserted, not data-estimated (manufactured precision)", "type": "qualitative"},
-        {"text": "Endorses the latency/CoT channel as the real identifiability gain while noting its own correlation is weakly identified at small N", "type": "qualitative"},
-        {"text": "Distinguishes triggering-SDT as a separate response process rather than merging it into task-ability theta", "type": "qualitative"}
+        {
+          "text": "Confirms one GLMM fit can emit IRT + SDT + calibration + a G-theory reliability bridge (does not claim it's impossible)",
+          "type": "qualitative"
+        },
+        {
+          "text": "Pushes back on estimating a full multi-trait covariance at ~6 variants \u2014 explains it would be prior-asserted, not data-estimated (manufactured precision)",
+          "type": "qualitative"
+        },
+        {
+          "text": "Endorses the latency/CoT channel as the real identifiability gain while noting its own correlation is weakly identified at small N",
+          "type": "qualitative"
+        },
+        {
+          "text": "Distinguishes triggering-SDT as a separate response process rather than merging it into task-ability theta",
+          "type": "qualitative"
+        }
       ]
     },
     {
       "id": 11,
       "name": "synthesis_interpretation",
-      "prompt": "I ran the joint model and have the output. Give me a clear, synthesized read of the whole thing — IRT, SDT, G-theory, and calibration together, in plain language, plus a visualization — and tell me the single most useful thing to do next. The fit had a couple of divergences.",
+      "prompt": "I ran the joint model and have the output. Give me a clear, synthesized read of the whole thing \u2014 IRT, SDT, G-theory, and calibration together, in plain language, plus a visualization \u2014 and tell me the single most useful thing to do next. The fit had a couple of divergences.",
       "files": [],
       "expected_output": "Produces a unified plain-language interpretation covering all four frameworks (not just dumping parameters), via synthesize.py: targeting/trim from IRT, sensitivity from SDT, ranking reliability from G-theory, tracking from calibration, plus the item-person map and pairwise separation insights and a single ranked next-action. Crucially leads with a fit-quality caution because of the divergences (labels results provisional), and does not over-read extreme/unstable parameters (e.g., an implausibly large discrimination is flagged as a small-N artifact, not a real super-item). Frames overlapping variants honestly via separation rather than a false clean ranking.",
       "assertions": [
-        {"text": "Synthesizes all four frameworks in plain language with what-it-means/what-to-do, not a raw parameter dump", "type": "qualitative"},
-        {"text": "Leads with a fit-quality caution given the divergences and labels the read provisional", "type": "qualitative"},
-        {"text": "Surfaces the targeting (item-person) and pairwise-separation insights and gives ONE prioritized next action", "type": "qualitative"},
-        {"text": "Does not over-read unstable/extreme parameters — flags them as small-N artifacts rather than findings", "type": "qualitative"}
+        {
+          "text": "Synthesizes all four frameworks in plain language with what-it-means/what-to-do, not a raw parameter dump",
+          "type": "qualitative"
+        },
+        {
+          "text": "Leads with a fit-quality caution given the divergences and labels the read provisional",
+          "type": "qualitative"
+        },
+        {
+          "text": "Surfaces the targeting (item-person) and pairwise-separation insights and gives ONE prioritized next action",
+          "type": "qualitative"
+        },
+        {
+          "text": "Does not over-read unstable/extreme parameters \u2014 flags them as small-N artifacts rather than findings",
+          "type": "qualitative"
+        }
       ]
     },
     {
@@ -154,62 +305,124 @@
       "files": [],
       "expected_output": "Identifies this as a measurement-invariance / drift problem: column names aren't trustworthy keys, so a content rewrite under a stable item_id silently pools two different items and can fake a trend. Recommends hashing case content per run (item_drift.py) to detect which items changed, treating drifted items as new items (not pooling them), and linking runs onto a common scale via a stable anchor set (fixed-item equating). Notes a large pass-rate swing on a 'cosmetic' edit signals DIF. Concludes that a theta/pass-rate trend is only valid under invariance.",
       "assertions": [
-        {"text": "Frames it as measurement invariance / drift and says column names can't be trusted as item keys", "type": "qualitative"},
-        {"text": "Recommends content hashing to detect drift and treating changed items as new (not pooling across the change)", "type": "qualitative"},
-        {"text": "Recommends anchor/common-item linking to put runs on a comparable scale", "type": "qualitative"},
-        {"text": "Warns the observed improvement may be instrument drift, not a real gain", "type": "qualitative"}
+        {
+          "text": "Frames it as measurement invariance / drift and says column names can't be trusted as item keys",
+          "type": "qualitative"
+        },
+        {
+          "text": "Recommends content hashing to detect drift and treating changed items as new (not pooling across the change)",
+          "type": "qualitative"
+        },
+        {
+          "text": "Recommends anchor/common-item linking to put runs on a comparable scale",
+          "type": "qualitative"
+        },
+        {
+          "text": "Warns the observed improvement may be instrument drift, not a real gain",
+          "type": "qualitative"
+        }
       ]
     },
     {
       "id": 14,
       "name": "judge_calibration_vs_reliability",
-      "prompt": "My LLM grader has kappa = 0.72 with my human reference rater — that's substantial agreement, so I should be fine to trust these grades and start trimming evals, right? By the way, the judge also outputs confidence scores and it usually gives 0.90–0.98 even on cases where it later turns out to disagree with the human.",
+      "prompt": "My LLM grader has kappa = 0.72 with my human reference rater \u2014 that's substantial agreement, so I should be fine to trust these grades and start trimming evals, right? By the way, the judge also outputs confidence scores and it usually gives 0.90\u20130.98 even on cases where it later turns out to disagree with the human.",
       "files": [],
-      "expected_output": "Separates reliability (kappa — agreement beyond chance) from calibration (ECE/Brier — are confidence scores accurate). kappa = 0.72 clears the reliability gate but does NOT clear the calibration gate. Confidence scores that say 0.95 when empirical accuracy is ~70% are miscalibrated. Must compute ECE or Brier score on the confidence outputs against the human reference. Notes that a miscalibrated confident judge inflates apparent certainty in downstream pass rates without improving real measurement. Recommends Platt/temperature scaling or ignoring confidences and using binary labels only.",
+      "expected_output": "Separates reliability (kappa \u2014 agreement beyond chance) from calibration (ECE/Brier \u2014 are confidence scores accurate). kappa = 0.72 clears the reliability gate but does NOT clear the calibration gate. Confidence scores that say 0.95 when empirical accuracy is ~70% are miscalibrated. Must compute ECE or Brier score on the confidence outputs against the human reference. Notes that a miscalibrated confident judge inflates apparent certainty in downstream pass rates without improving real measurement. Recommends Platt/temperature scaling or ignoring confidences and using binary labels only.",
       "assertions": [
-        {"text": "Separates reliability (kappa) from calibration (ECE/Brier) — explicitly states these are two different checks, not one", "type": "qualitative"},
-        {"text": "States that kappa = 0.72 clears reliability but does NOT also clear calibration; both are required before trusting downstream analysis", "type": "qualitative"},
-        {"text": "Recommends computing ECE or Brier score on the confidence scores to assess calibration", "type": "qualitative"},
-        {"text": "Names the specific failure mode: overconfident judge (states 0.90+ but is only right ~70% of the time) and its downstream effect on pass-rate uncertainty", "type": "qualitative"}
+        {
+          "text": "Separates reliability (kappa) from calibration (ECE/Brier) \u2014 explicitly states these are two different checks, not one",
+          "type": "qualitative"
+        },
+        {
+          "text": "States that kappa = 0.72 clears reliability but does NOT also clear calibration; both are required before trusting downstream analysis",
+          "type": "qualitative"
+        },
+        {
+          "text": "Recommends computing ECE or Brier score on the confidence scores to assess calibration",
+          "type": "qualitative"
+        },
+        {
+          "text": "Names the specific failure mode: overconfident judge (states 0.90+ but is only right ~70% of the time) and its downstream effect on pass-rate uncertainty",
+          "type": "qualitative"
+        }
       ]
     },
     {
       "id": 15,
       "name": "d_study_seed_vs_case_lever",
-      "prompt": "My G-study decomposed variance into: version variance = 0.04, version×item interaction = 0.09 (the biggest source), version×seed = 0.01, residual = 0.02. Current design: 6 versions × 20 cases × 3 seeds. My budget allows either adding 10 more eval cases OR doubling seeds from 3 to 6. My advisor says seeds are cheaper and should help about as much. Is that right?",
+      "prompt": "My G-study decomposed variance into: version variance = 0.04, version\u00d7item interaction = 0.09 (the biggest source), version\u00d7seed = 0.01, residual = 0.02. Current design: 6 versions \u00d7 20 cases \u00d7 3 seeds. My budget allows either adding 10 more eval cases OR doubling seeds from 3 to 6. My advisor says seeds are cheaper and should help about as much. Is that right?",
       "files": [],
-      "expected_output": "Your advisor is wrong about 'about as much.' The dominant error is version×item interaction (0.09), not version×seed (0.01). G-coefficient denominator is: σ²(version×item)/n_items + σ²(version×seed)/n_seeds + ... Adding 10 cases halves the version×item term (from 0.09/20 to 0.09/30). Doubling seeds halves the seed term (from 0.01/3 to 0.01/6). Since 0.09 >> 0.01, cases are the high-leverage lever by almost an order of magnitude. D-study: +10 cases raises Eρ² substantially; +3 seeds barely moves it. Never add seeds as a substitute for cases when version×item interaction dominates.",
+      "expected_output": "Your advisor is wrong about 'about as much.' The dominant error is version\u00d7item interaction (0.09), not version\u00d7seed (0.01). G-coefficient denominator is: \u03c3\u00b2(version\u00d7item)/n_items + \u03c3\u00b2(version\u00d7seed)/n_seeds + ... Adding 10 cases halves the version\u00d7item term (from 0.09/20 to 0.09/30). Doubling seeds halves the seed term (from 0.01/3 to 0.01/6). Since 0.09 >> 0.01, cases are the high-leverage lever by almost an order of magnitude. D-study: +10 cases raises E\u03c1\u00b2 substantially; +3 seeds barely moves it. Never add seeds as a substitute for cases when version\u00d7item interaction dominates.",
       "assertions": [
-        {"text": "Recommends adding cases, not seeds, as the dominant-variance lever in this design", "type": "qualitative"},
-        {"text": "Explains WHY using the G-theory logic: version×item (0.09) dominates version×seed (0.01), so cases dilute the big term and seeds dilute the small term", "type": "qualitative"},
-        {"text": "Explicitly says the advisor is wrong that seeds would help 'about as much' — names the variance ratio to quantify the gap", "type": "qualitative"},
-        {"text": "References D-study projection: adding cases moves Eρ² substantially; adding seeds barely moves it at this variance structure", "type": "qualitative"}
+        {
+          "text": "Recommends adding cases, not seeds, as the dominant-variance lever in this design",
+          "type": "qualitative"
+        },
+        {
+          "text": "Explains WHY using the G-theory logic: version\u00d7item (0.09) dominates version\u00d7seed (0.01), so cases dilute the big term and seeds dilute the small term",
+          "type": "qualitative"
+        },
+        {
+          "text": "Explicitly says the advisor is wrong that seeds would help 'about as much' \u2014 names the variance ratio to quantify the gap",
+          "type": "qualitative"
+        },
+        {
+          "text": "References D-study projection: adding cases moves E\u03c1\u00b2 substantially; adding seeds barely moves it at this variance structure",
+          "type": "qualitative"
+        }
       ]
     },
     {
       "id": 16,
       "name": "contamination_vs_saturation",
-      "prompt": "I'm running a 40-model bank (evals/fixtures/model_bank_40.csv) and I see two anomalous items. it_sat passes 100% of the time — every model passes it. it_noise passes about 45% of the time but the pattern looks random: some of my weakest models pass it and some of my strongest fail it. My colleague says both are just outliers to trim. But I think these are two different problems. How do I tell the difference between saturation and contamination statistically, and does the fix differ?",
-      "files": ["evals/fixtures/model_bank_40.csv"],
-      "expected_output": "Distinguishes saturation from contamination as two separate IRT failure modes with different statistical signatures. it_sat looks genuinely saturated: very negative b parameter, all models pass, response pattern consistent with a very easy item. it_noise looks contaminated: pass rate is not at ceiling, but the who-passes pattern violates the ICC — weak models pass at rates inconsistent with their theta (random exposure to training data, not ability-ordered). Key diagnostics: (1) outfit/infit statistics — contamination inflates outfit (unexpected responses relative to model-predicted probability); (2) 3PL guessing parameter — c well above 0 or unexpected pattern for low-θ takers; (3) ability-ordered residual plot — does the empirical pass rate by ability bin track the model-implied ICC? Notes the different consequences: a saturated item is non-informative but validity-clean (trim for efficiency); a contaminated item pollutes theta estimates by injecting passes untethered from the latent skill being measured (audit and remove, not just trim).",
+      "prompt": "I'm running a 40-model bank (evals/fixtures/model_bank_40.csv) and I see two anomalous items. it_sat passes 100% of the time \u2014 every model passes it. it_noise passes about 45% of the time but the pattern looks random: some of my weakest models pass it and some of my strongest fail it. My colleague says both are just outliers to trim. But I think these are two different problems. How do I tell the difference between saturation and contamination statistically, and does the fix differ?",
+      "files": [
+        "evals/fixtures/model_bank_40.csv"
+      ],
+      "expected_output": "Distinguishes saturation from contamination as two separate IRT failure modes with different statistical signatures. it_sat looks genuinely saturated: very negative b parameter, all models pass, response pattern consistent with a very easy item. it_noise looks contaminated: pass rate is not at ceiling, but the who-passes pattern violates the ICC \u2014 weak models pass at rates inconsistent with their theta (random exposure to training data, not ability-ordered). Key diagnostics: (1) outfit/infit statistics \u2014 contamination inflates outfit (unexpected responses relative to model-predicted probability); (2) 3PL guessing parameter \u2014 c well above 0 or unexpected pattern for low-\u03b8 takers; (3) ability-ordered residual plot \u2014 does the empirical pass rate by ability bin track the model-implied ICC? Notes the different consequences: a saturated item is non-informative but validity-clean (trim for efficiency); a contaminated item pollutes theta estimates by injecting passes untethered from the latent skill being measured (audit and remove, not just trim).",
       "assertions": [
-        {"text": "Distinguishes saturation from contamination as two separate failure modes with different statistical signatures — not just 'both are high pass rate'", "type": "qualitative"},
-        {"text": "Invokes IRT model-fit residuals (outfit/infit statistics or ICC residuals) as the key contamination diagnostic, not just the raw pass rate or difficulty parameter alone", "type": "qualitative"},
-        {"text": "Names the guessing-pattern tell: weak-ability takers passing at rates inconsistent with their global theta (3PL c, unexpected-pass residuals)", "type": "qualitative"},
-        {"text": "States the different consequences: saturated items are non-informative but validity-clean; contaminated items pollute theta estimates and should be audited/removed, not just trimmed", "type": "qualitative"}
+        {
+          "text": "Distinguishes saturation from contamination as two separate failure modes with different statistical signatures \u2014 not just 'both are high pass rate'",
+          "type": "qualitative"
+        },
+        {
+          "text": "Invokes IRT model-fit residuals (outfit/infit statistics or ICC residuals) as the key contamination diagnostic, not just the raw pass rate or difficulty parameter alone",
+          "type": "qualitative"
+        },
+        {
+          "text": "Names the guessing-pattern tell: weak-ability takers passing at rates inconsistent with their global theta (3PL c, unexpected-pass residuals)",
+          "type": "qualitative"
+        },
+        {
+          "text": "States the different consequences: saturated items are non-informative but validity-clean; contaminated items pollute theta estimates and should be audited/removed, not just trimmed",
+          "type": "qualitative"
+        }
       ]
     },
     {
       "id": 17,
-      "name": "omega_vs_alpha",
-      "prompt": "I want to measure how internally consistent my eval suite is — do all the cases load on the same latent construct, or are some testing orthogonal things? I'm planning to report Cronbach's alpha. My eval has ~22 cases and I have results from 10 model versions. Is alpha the right tool?",
+      "name": "internal_consistency_wrong_construct",
+      "prompt": "I have ~22 eval cases covering different capabilities of my skill: some test routing decisions, some test whether it gates on judge reliability, some test trigger analysis, some test latent estimation. I want to know how reliable the suite is \u2014 do the cases all hang together? I'm planning to report Cronbach's alpha to show internal consistency. Is that appropriate?",
       "files": [],
-      "expected_output": "No — Cronbach's alpha assumes tau-equivalence: all items must have equal factor loadings (equal discrimination parameters in IRT terms). Eval suites routinely violate this; items have highly variable discrimination. Alpha underestimates reliability when tau-equivalence is violated and should not be used here. McDonald's omega (ωt / ωh) is the right tool: it estimates reliability from a factor model without the equal-loading constraint. omega_hierarchical (ωh) specifically tests whether a single latent factor dominates — the unidimensionality check. In IRT terms, the factor loadings in the omega model correspond directly to the a-parameters (discrimination), so omega is naturally consistent with the IRT framework. Tools: psych::omega() in R, semTools, or pingouin in Python. Note: G-theory's Eρ² is often more directly useful for eval suites than either omega or alpha, because it explicitly models the crossed version × case design and directly addresses whether version rankings are reproducible — which is usually the actual question.",
+      "expected_output": "No \u2014 Cronbach's alpha is the wrong tool and \"internal consistency\" is the wrong construct for this suite. Alpha assumes (a) all items measure the same latent trait and (b) tau-equivalence (equal factor loadings). Eval suites that intentionally cover different capabilities violate both. You do not want your G-theory routing case and your judge calibration case to correlate highly \u2014 they are testing orthogonal things by design. The right question is not \"do the items hang together?\" but \"do version rankings replicate across different samples of cases?\" \u2014 which is what G-theory's E\u03c1\u00b2 (generalizability coefficient) measures. Run gtheory_eval.py to get E\u03c1\u00b2 (relative, for ranking) or \u03a6 (absolute, for threshold decisions). If you need omega for some reason (e.g., a sub-battery of conceptually identical cases), omega beats alpha because tau-equivalence (equal discriminations) is violated \u2014 but this is not the primary reliability tool for a diverse eval suite.",
       "assertions": [
-        {"text": "Recommends McDonald's omega over Cronbach's alpha and names tau-equivalence (equal factor loadings / equal discriminations) as the violated assumption", "type": "qualitative"},
-        {"text": "Explains that tau-equivalence = all items have equal factor loadings = equal discrimination parameters — typically violated in eval suites with variable item discrimination", "type": "qualitative"},
-        {"text": "Names omega_hierarchical (ωh) as the tool for testing unidimensionality (whether a single latent factor dominates the suite)", "type": "qualitative"},
-        {"text": "Notes G-theory's Eρ² is often more directly useful than omega for eval suites because it models the crossed version × case design and addresses version-ranking reproducibility", "type": "qualitative"}
+        {
+          "text": "States that internal consistency (alpha or omega) is the wrong construct for a diverse eval suite \u2014 items intentionally cover different capabilities and are not designed to share a common latent factor",
+          "type": "qualitative"
+        },
+        {
+          "text": "Redirects to G-theory E\u03c1\u00b2 as the right reliability metric: asks whether version rankings replicate across case samples without assuming items measure the same thing",
+          "type": "qualitative"
+        },
+        {
+          "text": "Does NOT recommend alpha or omega as the primary reliability tool for this diverse suite \u2014 says the user is asking the wrong question",
+          "type": "qualitative"
+        },
+        {
+          "text": "If internal consistency comes up as secondary (e.g., for a narrow sub-battery), recommends omega over alpha and names tau-equivalence as the violated assumption",
+          "type": "qualitative"
+        }
       ]
     },
     {
@@ -217,12 +430,24 @@
       "name": "facet_confounding",
       "prompt": "Performance differs by base model and by which judge model grades, and even the same model varies run to run depending on resources. I only ran my newest skill version on the newest base model with a stronger judge. Can I conclude the new skill version is better?",
       "files": [],
-      "expected_output": "Flags the confounding directly: skill version is confounded with base model and judge, so 'v5 is better' is inseparable from 'newer model is better' and 'stronger judge scores higher' — no model fixes a confounded design. Recommends a connected/crossed design (run versions across more than one base model/judge) or holding judge and base model fixed across the compared versions. Frames judge, base model, and run as facets whose variance should be separated (G-theory / mixed model), treats run-to-run non-determinism as residual to be averaged with seeds (D-study sizes how many), and notes switching judges mid-stream is drift on the judge axis.",
+      "expected_output": "Flags the confounding directly: skill version is confounded with base model and judge, so 'v5 is better' is inseparable from 'newer model is better' and 'stronger judge scores higher' \u2014 no model fixes a confounded design. Recommends a connected/crossed design (run versions across more than one base model/judge) or holding judge and base model fixed across the compared versions. Frames judge, base model, and run as facets whose variance should be separated (G-theory / mixed model), treats run-to-run non-determinism as residual to be averaged with seeds (D-study sizes how many), and notes switching judges mid-stream is drift on the judge axis.",
       "assertions": [
-        {"text": "Identifies the confound: skill version is entangled with base model and judge, so the comparison can't isolate the skill effect", "type": "qualitative"},
-        {"text": "Recommends crossing/holding fixed the facets (connected design), not just modeling around it", "type": "qualitative"},
-        {"text": "Treats judge/base-model/run as facets whose variance should be separated; run-to-run noise handled via seeds/D-study", "type": "qualitative"},
-        {"text": "Does not green-light the 'new version is better' conclusion from the confounded design", "type": "qualitative"}
+        {
+          "text": "Identifies the confound: skill version is entangled with base model and judge, so the comparison can't isolate the skill effect",
+          "type": "qualitative"
+        },
+        {
+          "text": "Recommends crossing/holding fixed the facets (connected design), not just modeling around it",
+          "type": "qualitative"
+        },
+        {
+          "text": "Treats judge/base-model/run as facets whose variance should be separated; run-to-run noise handled via seeds/D-study",
+          "type": "qualitative"
+        },
+        {
+          "text": "Does not green-light the 'new version is better' conclusion from the confounded design",
+          "type": "qualitative"
+        }
       ]
     }
   ]

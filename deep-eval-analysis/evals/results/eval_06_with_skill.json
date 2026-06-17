@@ -1,0 +1,30 @@
+{
+  "eval_id": 6,
+  "name": "mutual_exclusion_routing",
+  "condition": "with_skill",
+  "prompt": "My team is debating whether to use a 1PL (Rasch) or a 2PL IRT model for our eval suite. Can you derive the mathematical difference between the two model forms, explain what the discrimination parameter a actually estimates, and walk me through which is better from a theoretical standpoint?",
+  "response": "For the mathematical derivation of the ICC forms and what the discrimination parameter estimates theoretically, consult the **item-response-theory skill** \u2014 that's where model derivations live. This skill deliberately doesn't re-derive methods; it applies them to eval data.\n\nFor your actual question \u2014 **which is better for your eval suite** \u2014 I can answer that directly, and it has nothing to do with theoretical elegance:\n\n**The answer is almost certainly Rasch (1PL), unless you have a model bank.**\n\nThe regime determines the model, not the theory:\n\n| Your taker count | Right choice | Why |\n|---|---|---|\n| < ~30 versions/models | `--backend rasch` (1PL) | 2PL needs ~500 takers for stable discrimination estimates; at small N it returns confident noise |\n| \u2265 ~30 versions/models | `--backend mcmc` (hierarchical 2PL) | The hierarchical prior pools discriminations with adaptive shrinkage \u2014 regularization that relaxes as N grows |\n| Few versions but a calibrated bank exists | `--fixed-items bank.csv` | Freeze item params from the bank, estimate only \u03b8 per version \u2014 most precise small-N path |\n\nThe \"which is theoretically better\" framing is the trap. A free 2PL at N=6 will return discrimination estimates that are essentially prior-shaped noise \u2014 the model still runs and prints numbers, which is exactly the danger. Rasch at N=6 gives you honest (if uncertain) difficulty and ability estimates.\n\nThe tell is `\u03c3_a` from `scripts/irt_latent.py --backend mcmc`: if it's near 0, the data have nothing to say about per-item discrimination variation and the model is behaving like Rasch anyway, regardless of which model you specified. That's the adaptive shrinkage working correctly.\n\n**Practical advice for your team:** Run `--backend rasch` now. If you expand to 30+ takers (model tiers, ablations, seeds, historical versions), switch to `--backend mcmc` and let the shrinkage decide how much 2PL behavior the data actually support. Don't fight the regime.",
+  "assertions": [
+    {
+      "text": "Defers the mathematical derivation of 1PL vs. 2PL (ICC form, discrimination parameter estimation) to the item-response-theory skill rather than providing it as an eval-analysis workflow step",
+      "type": "qualitative"
+    },
+    {
+      "text": "Answers the application-side question: which model is appropriate for eval suites depends on regime \u2014 Rasch for small N (stable, scipy-only), 2PL with MCMC for model banks (30+ takers)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Does not launch a CTT item-analysis or G-theory workflow in response to what is a model-selection and derivation question",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 3,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

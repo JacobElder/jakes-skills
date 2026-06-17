@@ -1,40 +1,35 @@
 {
   "eval_id": 3,
-  "name": "small_n_irt_trap",
+  "name": "sigma_a_interpretation_trap",
   "condition": "baseline",
-  "prompt": "Can I use item response theory to get latent ability estimates for my 4 skill versions across 18 eval cases, plus per-item difficulty and discrimination? Walk me through fitting a 2PL.",
-  "response": "Good \u2014 here's the full picture.\n\n---\n\n## Short answer: yes, but not a free 2PL\n\nAt 4 variants \u00d7 18 items, a plain free 2PL fit (MAP/EM) will produce confidently wrong estimates. Two hard problems hit simultaneously:\n\n1. **Discrimination runaway** \u2014 on items where one variant group is clean-perfect or always-zero, the MLE pushes `a` toward \u00b1\u221e.\n2. **\u03c3_a collapse** \u2014 joint MAP estimation of all discrimination parameters collapses their variance to 0, essentially forcing a Rasch model without telling you.\n\nThe fix is a **hierarchical Bayesian 2PL via MCMC**, which places a half-Cauchy hyperprior on `log(a_i)` and learns its spread from the data. That learned spread (\u03c3_a) is the key diagnostic: if it's near 0, your data can't resolve item-to-item discrimination differences and you're effectively Rasch; if it's larger, the pooling relaxes and you get genuine per-item discrimination estimates.\n\n---\n\n## The script you already have\n\n`scripts/irt_latent.py` does exactly this. Your data is already in the right format: `taker_id, item_id, score`. Aggregate seeds to a mean first (or let the script do it \u2014 it calls `.groupby().mean()` internally):\n\n```bash\n# Full hierarchical 2PL (requires PyMC)\npython scripts/irt_latent.py your_results.csv --backend mcmc\n\n# Always-available fallback (discrimination fixed at 1, only b and \u03b8)\npython scripts/irt_latent.py your_results.csv --backend rasch\n\n# Auto: MCMC if PyMC installed, else Rasch\npython scripts/irt_latent.py your_results.csv --backend auto\n```\n\n---\n\n## What you get back\n\n| Output | What it means |\n|---|---|\n| **\u03b8 per variant** (95% CI) | Latent ability for each of your 4 skill versions on a shared scale \u2014 comparable across versions, not just point estimates |\n| **b per item** (95% CI) | Difficulty \u2014 higher b means the item is harder (fewer variants pass) |\n| **a per item** (95% CI) | Discrimination \u2014 how sharply the item separates low-\u03b8 from high-\u03b8 variants; wide CI here means the estimate is soft |\n| **\u03c3_a** | The adaptive shrinkage state: near 0 = you're effectively Rasch; larger = data supports genuine discrimination spread |\n| **Saturation read** | Test information across the \u03b8 range; low information at the top of the scale means you can't separate your best variants |\n\n---\n\n## Two honest caveats for your setup\n\n**4 variants is thin.** You'll get honest estimates but wide \u03b8 intervals \u2014 the script flags low-precision rows rather than hiding the problem. If two variants' \u03b8 CIs overlap heavily, the suite genuinely can't tell them apart yet. G-theory (`scripts/gtheory_eval.py`) answers \"how many more items/seeds would help.\"\n\n**\u03c3_a will likely stay near 0.** With only 4 takers (variants), there's limited information to learn discrimination spread. The hierarchical prior keeps estimates stable, but don't over-read per-item `a` values \u2014 they're shrunk toward a common value and the CIs will be wide. The Rasch backend may be more honest in this situation since it doesn't pretend to estimate what it can't.\n\nIf you have a previously calibrated item bank, `--fixed-items bank.csv` is the sharpest small-N path: freeze item params and estimate only \u03b8 per variant, which concentrates all your data on the 4 numbers you actually care about.",
+  "prompt": "I ran hierarchical 2PL MCMC on 4 skill versions x 18 eval cases. Posterior \u03c3_a = 0.04 (the shrinkage hyperparameter on log-discrimination). My item discrimination estimates (posterior means) range from a = 0.3 to a = 2.1. My colleague says item_12 with a = 2.1 is the most discriminating item and we should weight it heavily. Is she right?",
+  "response": "Your colleague is wrong, and there's a more fundamental problem first.\n\n**The range 0.3\u20132.1 is inconsistent with \u03c3_a = 0.04.**\n\nIf \u03c3_a = 0.04 is the SD of the log-discrimination hyperprior (the standard hierarchical 2PL parameterization), then the prior on log(a) is N(\u03bc_a, 0.04\u00b2) \u2014 an extremely tight shrinkage distribution. Converting: 95% of mass falls within exp(\u03bc_a \u00b1 0.08) of the global mean. With that kind of pooling, posterior means should be nearly identical across items \u2014 not spanning log(0.3) \u2248 -1.2 to log(2.1) \u2248 0.74, a range of ~48 prior SDs.\n\nThat range is implausible under the stated model. Before trusting any discrimination estimate, you should:\n- Check your MCMC diagnostics (R\u0302, ESS, trace plots for \u03c3_a and each a_j)\n- Verify that \u03c3_a is being reported in log-space, not on the raw-a scale\n- Confirm the hierarchical prior is actually being applied and not silently dropped\n\n**If the estimates somehow were reliable, the weighting advice still fails.**\n\nIn IRT, discrimination already enters the likelihood \u2014 the model uses a_j internally when computing posterior \u03b8 (ability) estimates. You don't manually re-weight items afterward. If you did, you'd be double-counting the information from item_12.\n\n**The data are also thin.** You have 4 \"persons\" (skill versions) \u00d7 18 items. With n=4, the posterior variance on any single a_j will be enormous. A posterior mean of 2.1 may have a 95% credible interval spanning from 0.5 to 4+. A point estimate is not a stable signal here.\n\n**Bottom line:** \u03c3_a = 0.04 contradicts the reported spread; the model needs to be re-examined before any conclusions about item_12 are meaningful.",
   "assertions": [
     {
-      "text": "Refuses / strongly cautions against a free 2PL on 4 takers and explains the model-bank requirement",
+      "text": "Recognizes that \u03c3_a \u2248 0.04 means the data cannot resolve item discrimination differences and explains what \u03c3_a represents (posterior spread of log-discrimination)",
       "type": "qualitative"
     },
     {
-      "text": "Offers fixed-item (anchor) calibration as the safe way to get a latent scale at small N",
+      "text": "States that the discrimination estimates (0.3\u20132.1) are prior-driven artifacts, not data-estimated \u2014 explicitly says the colleague is WRONG to treat a=2.1 as evidence of high discrimination",
       "type": "qualitative"
     },
     {
-      "text": "Mentions hierarchical/adaptive shrinkage (regularization that relaxes with N) and/or dropping to Rasch",
+      "text": "Explains that with 4 takers the model collapses toward Rasch regardless of what the posterior means show",
       "type": "qualitative"
     },
     {
-      "text": "Suggests expanding the taker dimension (model tiers, ablations, seeds, history)",
-      "type": "qualitative"
-    },
-    {
-      "text": "Does not simply provide a free-2PL fitting recipe as if it were valid here",
+      "text": "Offers a remedy: explicitly drop to Rasch (honest shrinkage), expand the taker dimension, or use fixed-item anchoring from a bank",
       "type": "qualitative"
     }
   ],
   "assertion_results": [
     true,
-    true,
-    true,
-    true,
-    true
+    false,
+    false,
+    false
   ],
-  "passed": 5,
-  "total": 5,
-  "pass_rate": 1.0,
-  "eval_passes": true
+  "passed": 1,
+  "total": 4,
+  "pass_rate": 0.25,
+  "eval_passes": false
 }

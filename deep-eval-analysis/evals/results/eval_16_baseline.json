@@ -1,0 +1,35 @@
+{
+  "eval_id": 16,
+  "name": "contamination_vs_saturation",
+  "condition": "baseline",
+  "prompt": "I'm running a 40-model bank (evals/fixtures/model_bank_40.csv) and I see two anomalous items. it_sat passes 100% of the time \u2014 every model passes it. it_noise passes about 45% of the time but the pattern looks random: some of my weakest models pass it and some of my strongest fail it. My colleague says both are just outliers to trim. But I think these are two different problems. How do I tell the difference between saturation and contamination statistically, and does the fix differ?",
+  "response": "Your colleague is wrong to treat these identically. They have different etiologies and different fixes.\n\n## The two failure modes\n\n**it_sat (p = 1.0, saturation)** \u2014 the item-population mismatch. The item sits below the floor of your population's ability distribution: every model clears it regardless of general competence. The item carries zero Fisher information and contributes nothing to rank ordering.\n\n**it_noise (p \u2248 0.45, random pattern)** \u2014 likely contamination. The key tell is that weak models pass and strong models fail at a rate inconsistent with their performance elsewhere. That's not noise \u2014 that's the signature of verbatim memorization breaking the item-ability relationship. Some models saw the answer in training; their pass/fail is determined by training data, not ability.\n\n## Statistical tests that distinguish them\n\n### 1. Corrected item-total correlation (r_pbi)\n\nCompute the point-biserial correlation between each item and the **sum of all other items** (leaving the item out to avoid inflation):\n\n| Item | Expected r_pbi |\n|---|---|\n| True saturation | Undefined (no variance) or near-zero because everyone passes |\n| Contamination | Near-zero or **negative** \u2014 the item actively mispredicts ability |\n\nNegative r_pbi is a red flag that contamination is the mechanism, not difficulty mismatch.\n\n### 2. Score-conditional pass rate\n\nRank your 40 models by their total score on the non-anomalous items, then split into quintiles. Plot pass rate on the target item by quintile:\n\n```\nNormal item:       Q1=20%, Q2=40%, Q3=60%, Q4=80%, Q5=95%  (monotone \u2191)\nSaturated item:    Q1=100%, Q2=100%, ..., Q5=100%           (flat at ceiling)\nContaminated item: Q1=55%, Q2=60%, Q3=40%, Q4=45%, Q5=50%  (non-monotone, near-chance)\n```\n\nA contaminated item's pass rate won't rise with ability \u2014 it may even decline (stronger models reason through it and get it wrong; weaker models guessed the memorized answer).\n\n### 3. Guttman scalogram / violation count\n\nOrder items by difficulty and models by total score. In a clean bank you get a staircase of 1s (high-ability models pass hard items). Count scalogram violations per item \u2014 responses that break monotonicity. Contaminated items accumulate far more violations than their neighbors; saturated items have zero violations (no one fails).\n\n### 4. IRT outfit statistic (if you're fitting a model)\n\nFit a Rasch or 2PL to the clean items to get latent ability estimates \u03b8\u0302 for each model, then compute outfit on the anomalous items separately:\n\n- Saturated item: outfit \u2248 0 (no surprises, everyone passes as expected given high \u03b8\u0302 values, or the item is simply underpowered)\n- Contaminated item: very high outfit \u2014 models near/above the difficulty level unexpectedly fail while models well below it unexpectedly pass\n\n## Confirming contamination vs. saturation for it_sat\n\nThe tricky case is that 100% pass could also be contamination (everyone memorized it). From internal data alone you can't separate these. External checks:\n\n- **Run on weaker models**: if a clearly weaker population also passes at ~100%, it's true saturation. If they fail at meaningful rates, your population is contaminated.\n- **Content check**: does the exact question appear verbatim in common training corpora or benchmarks like MMLU, HumanEval, BIG-Bench?\n- **Paraphrase version**: write a semantically equivalent item with different surface form. If the paraphrase suddenly drops to 60-70% pass rate, the original was contaminated.\n\n## The fix differs\n\n| Problem | Fix |\n|---|---|\n| **Saturation** | Replace with harder items calibrated to the top of your ability range. The item isn't broken \u2014 it's just wrong for this population. Keep it only if you need a floor check. |\n| **Contamination** | Remove from all scoring immediately. Audit neighboring items from the same source. Replace with items verifiably absent from training corpora (novel construction, paraphrase, procedural generation). Optionally flag which models show anomalous pass patterns as potentially contamination-affected on related items. |\n\nSaturation is a calibration problem. Contamination is a data integrity problem. Trimming both without distinguishing them masks the fact that your benchmark may have additional contaminated items with less obvious signatures.",
+  "assertions": [
+    {
+      "text": "Distinguishes saturation from contamination as two separate failure modes with different statistical signatures \u2014 not just 'both are high pass rate'",
+      "type": "qualitative"
+    },
+    {
+      "text": "Invokes IRT model-fit residuals (outfit/infit statistics or ICC residuals) as the key contamination diagnostic, not just the raw pass rate or difficulty parameter alone",
+      "type": "qualitative"
+    },
+    {
+      "text": "Names the guessing-pattern tell: weak-ability takers passing at rates inconsistent with their global theta (3PL c, unexpected-pass residuals)",
+      "type": "qualitative"
+    },
+    {
+      "text": "States the different consequences: saturated items are non-informative but validity-clean; contaminated items pollute theta estimates and should be audited/removed, not just trimmed",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    false
+  ],
+  "passed": 2,
+  "total": 4,
+  "pass_rate": 0.5,
+  "eval_passes": false
+}

@@ -1,0 +1,35 @@
+{
+  "eval_id": 13,
+  "name": "facet_confounding",
+  "condition": "baseline",
+  "prompt": "Performance differs by base model and by which judge model grades, and even the same model varies run to run depending on resources. I only ran my newest skill version on the newest base model with a stronger judge. Can I conclude the new skill version is better?",
+  "response": "No \u2014 that comparison is confounded by three simultaneous changes: skill version, base model, and judge model. Any performance difference (or lack thereof) could be attributed to any combination of those factors.\n\nThe specific problems:\n\n**Base model change** \u2014 A stronger base model may score higher regardless of the skill. The skill's marginal contribution could actually be *smaller* on the new model (ceiling effects, or the new model already knows the material), so the delta could shrink even if the skill got better.\n\n**Judge model change** \u2014 A stronger judge grades on a different scale. It might be stricter (harder to earn full credit), more generous (better at recognizing correct but unexpected phrasing), or shift which evals are hard vs. easy. Scores from different judges aren't directly comparable.\n\n**Run-to-run variance** \u2014 Even on identical setup, stochastic variation means a single run of each can't separate signal from noise.\n\nTo isolate the skill version effect, you'd need to hold everything else constant \u2014 run both the old and new skill versions on the **same** base model with the **same** judge in the same run. That gives you a clean A/B where the only variable is the skill.\n\nThe most defensible evaluation design is: fix the base model and judge, then compare `with_skill` vs. `without` (or old skill vs. new skill) within the same run. Cross-run, cross-model, cross-judge comparisons are directionally suggestive at best.",
+  "assertions": [
+    {
+      "text": "Identifies the confound: skill version is entangled with base model and judge, so the comparison can't isolate the skill effect",
+      "type": "qualitative"
+    },
+    {
+      "text": "Recommends crossing/holding fixed the facets (connected design), not just modeling around it",
+      "type": "qualitative"
+    },
+    {
+      "text": "Treats judge/base-model/run as facets whose variance should be separated; run-to-run noise handled via seeds/D-study",
+      "type": "qualitative"
+    },
+    {
+      "text": "Does not green-light the 'new version is better' conclusion from the confounded design",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

@@ -1,0 +1,35 @@
+{
+  "eval_id": 11,
+  "name": "synthesis_interpretation",
+  "condition": "baseline",
+  "prompt": "I ran the joint model and have the output. Give me a clear, synthesized read of the whole thing \u2014 IRT, SDT, G-theory, and calibration together, in plain language, plus a visualization \u2014 and tell me the single most useful thing to do next. The fit had a couple of divergences.",
+  "response": "**Divergences: 26 \u2192 0.** The R-hat of 1.041 is purely a chain-length artifact (500 tune/draw vs. the full 1000/1000) \u2014 rerun with full draws and it should fall below 1.01. The substantive numbers barely moved: theta rankings identical, calibration slopes within rounding, reliability 0.635 \u2192 0.653.\n\nHere's the full synthesized picture:\n\n---\n\n## Synthesis (plain language)\n\n**IRT / SDT \u2014 item bank has two tiers.** Most items are working fine: moderate difficulty, discrimination 1\u20132, tight posteriors. Three items (it00, it08, it18) had apparent discriminations of 7\u201311 in the old fit, but those were artifacts of funnel-driven overestimation \u2014 the fixed model puts them at 1.5\u20131.7 with plausible CIs. The actual weak items are **it02** (floor item, b=\u22125, a=0.34 \u2014 contributes almost nothing), **it14** and **it21** (a\u22480.4, very low discrimination). In SDT terms, d' between any two variants on the weak items is noise.\n\n**Variant ability \u2014 one clear winner, one clear loser, everyone else ambiguous.** v5 (\u03b8\u22480.97) is the only variant whose interval excludes zero. v2 (\u03b8\u2248\u22120.90) nearly excludes zero from above. The six variants in the middle overlap substantially; you cannot rank them confidently at N=8 variants.\n\n**Calibration \u2014 the most diagnostic finding.** This is what the joint model uniquely reveals. v7 and v5 have actual calibration (slopes 0.83, 0.70 \u2014 approaching 1.0). v2 and v4 have slopes of 0.01 and 0.05 \u2014 their stated confidence is decorrelated from their correctness. Critically, **v7 has better calibration than v5 despite lower ability**. Accuracy and self-assessment are empirically separable traits, and the joint model is the only way to see this clearly.\n\n**G-theory \u2014 moderate reliability, identifiable lever.** E-\u03c1\u00b2 \u2248 0.65: good enough for group comparisons, not good enough to rank adjacent variants. The fastest way to improve it is dropping the floor/ceiling items (it02, it21, it14) \u2014 they consume degrees of freedom without differentiating variants.\n\n**Effort coupling \u2014 directional, don't over-read.** \u03c1 = +0.53 [\u22120.24, +0.92]. Higher-ability variants spend more effort. Plausible direction but prior-dominated at N=8. Treat as weak evidence that effort signals quality rather than speed.\n\n---\n\n**The single most useful thing** was the reparameterization \u2014 it fixed the divergences without touching the science. The visualization is in `/tmp/joint_synthesis.png` and the updated script is at `scripts/joint_glmm.py`. Run with `--draws 1000 --tune 1000` to get clean R-hats.",
+  "assertions": [
+    {
+      "text": "Synthesizes all four frameworks in plain language with what-it-means/what-to-do, not a raw parameter dump",
+      "type": "qualitative"
+    },
+    {
+      "text": "Leads with a fit-quality caution given the divergences and labels the read provisional",
+      "type": "qualitative"
+    },
+    {
+      "text": "Surfaces the targeting (item-person) and pairwise-separation insights and gives ONE prioritized next action",
+      "type": "qualitative"
+    },
+    {
+      "text": "Does not over-read unstable/extreme parameters \u2014 flags them as small-N artifacts rather than findings",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

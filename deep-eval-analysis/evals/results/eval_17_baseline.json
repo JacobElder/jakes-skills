@@ -1,0 +1,35 @@
+{
+  "eval_id": 17,
+  "name": "internal_consistency_wrong_construct",
+  "condition": "baseline",
+  "prompt": "I have ~22 eval cases covering different capabilities of my skill: some test routing decisions, some test whether it gates on judge reliability, some test trigger analysis, some test latent estimation. I want to know how reliable the suite is \u2014 do the cases all hang together? I'm planning to report Cronbach's alpha to show internal consistency. Is that appropriate?",
+  "response": "No \u2014 Cronbach's alpha is the wrong tool here, and it would actually give you misleading results.\n\n**Why alpha doesn't fit**\n\nAlpha assumes *unidimensionality*: all items are parallel indicators of the same latent trait. You've explicitly designed your suite to cover *different* capabilities \u2014 routing, reliability gating, trigger analysis, latent estimation. Inter-item correlations *across* those facets will be low by design, not because the suite is unreliable. A low alpha would look like a quality problem when it actually just reflects appropriate coverage breadth.\n\nWorse, a *high* alpha would be a red flag \u2014 it would mean your items are redundant and you've been testing the same narrow thing repeatedly.\n\n**What you actually want to know**\n\nFor an eval suite there are two relevant reliability questions, and they're not the same:\n\n1. **Item discrimination** \u2014 does each case actually distinguish with-skill from without-skill? Report the point-biserial correlation of each item with the total score, or just flag items with near-zero discrimination.\n\n2. **Retest stability** \u2014 do scores change systematically across reruns? Run the same eval twice (or on two model generations) and report the correlation or percent agreement.\n\n**If you want an internal-consistency number**\n\nCompute alpha *within* each capability facet separately (e.g., the 5\u20136 routing cases alone, the reliability-gating cases alone). That's at least unidimensional within each facet. You'd then report facet-level alphas rather than a single inflated or deflated whole-suite number.\n\n**Bottom line:** report item-level discrimination statistics and coverage (cases per capability), not a single alpha. Alpha answers \"do these items covary?\" \u2014 but for a test battery covering multiple facets, covariance across facets is neither expected nor desirable.",
+  "assertions": [
+    {
+      "text": "States that internal consistency (alpha or omega) is the wrong construct for a diverse eval suite \u2014 items intentionally cover different capabilities and are not designed to share a common latent factor",
+      "type": "qualitative"
+    },
+    {
+      "text": "Redirects to G-theory E\u03c1\u00b2 as the right reliability metric: asks whether version rankings replicate across case samples without assuming items measure the same thing",
+      "type": "qualitative"
+    },
+    {
+      "text": "Does NOT recommend alpha or omega as the primary reliability tool for this diverse suite \u2014 says the user is asking the wrong question",
+      "type": "qualitative"
+    },
+    {
+      "text": "If internal consistency comes up as secondary (e.g., for a narrow sub-battery), recommends omega over alpha and names tau-equivalence as the violated assumption",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    false
+  ],
+  "passed": 2,
+  "total": 4,
+  "pass_rate": 0.5,
+  "eval_passes": false
+}

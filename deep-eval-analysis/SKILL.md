@@ -64,12 +64,15 @@ These are the opinions this skill exists to enforce. Do not hedge them away.
 6. **Don't dilute uncertainty.** Report intervals, pre-commit decision thresholds, and treat a
    few-point pass-rate move across a small suite as noise until a reliability analysis says
    otherwise. A delta without a dependability coefficient is a vibe.
-7. **Internal consistency: McDonald's ω, not Cronbach's α.** Alpha assumes tau-equivalence
-   (equal factor loadings = equal item discriminations). Eval suites violate this routinely —
-   items have widely variable discrimination. Alpha underestimates reliability when violated.
-   McDonald's ω estimates reliability from a factor model; ωh tests unidimensionality. But
-   G-theory's Eρ² is usually more relevant than either, because it models the crossed
-   version × case design and directly answers whether version *rankings* are reproducible.
+7. **"Internal consistency" is the wrong question for eval suites.** Eval suites are diagnostic
+   batteries that intentionally cover different capabilities — they are not unidimensional scales.
+   Internal consistency (omega, alpha) measures how much items share a common latent factor. That
+   is a design goal for a personality inventory, not an eval suite. When someone asks "how
+   internally consistent is my eval suite?", redirect to G-theory's Eρ²: it asks whether version
+   *rankings* replicate across case samples, without assuming items all measure the same thing.
+   If the context genuinely requires an internal-consistency metric (e.g., a sub-battery of
+   semantically identical cases), McDonald's ω over Cronbach's α — alpha assumes tau-equivalence
+   (equal factor loadings), which eval items violate; ω estimates reliability from a factor model.
 
 ## Regime router — read this before choosing a method
 
@@ -101,7 +104,14 @@ This skill is the *application layer*. It deliberately does not derive the metho
 - **General multilevel/Bayesian estimation machinery** (brms/PyMC, priors, partial pooling) →
   the multilevel-modeling skill, when implementing the hierarchical small-N remedies.
 
-If a request is purely "explain IRT/SDT to me," that is the method skill's job, not this one.
+If a request is purely "explain IRT/SDT to me" or asks for a mathematical derivation (ICC form,
+d′ formula, likelihood derivation), do NOT derive it — say so explicitly and route to the
+method skill. Then answer the *application-side* question if one is embedded: e.g., "For the
+derivation, consult the item-response-theory skill. For your eval suite specifically: at small N
+use Rasch (`--backend rasch`); at model-bank size (30+ takers) use hierarchical 2PL MCMC
+(`--backend mcmc`)." Do not provide the derivation then note the routing — the routing comes
+first, and the derivation is omitted, not deferred to the end.
+
 If the request is "use IRT/SDT/G-theory to tell me something about my evals," you're in the
 right place.
 

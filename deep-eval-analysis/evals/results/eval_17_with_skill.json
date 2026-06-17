@@ -1,0 +1,35 @@
+{
+  "eval_id": 17,
+  "name": "internal_consistency_wrong_construct",
+  "condition": "with_skill",
+  "prompt": "I have ~22 eval cases covering different capabilities of my skill: some test routing decisions, some test whether it gates on judge reliability, some test trigger analysis, some test latent estimation. I want to know how reliable the suite is \u2014 do the cases all hang together? I'm planning to report Cronbach's alpha to show internal consistency. Is that appropriate?",
+  "response": "No \u2014 alpha is the wrong tool here, and the description you gave is the exact reason why.\n\nCronbach's \u03b1 measures how much items share a common latent factor \u2014 it's a design goal for a personality inventory or a unidimensional scale, where the assumption is that all items are noisy reflections of one underlying trait. You explicitly said your suite covers different capabilities: routing decisions, judge-reliability gating, trigger analysis, latent estimation. That is intentional heterogeneity, not a flaw. \u03b1 will return a low value and it will be **correct** \u2014 your items don't share a common factor, because they're not supposed to. Reporting a low \u03b1 as a reliability problem misdiagnoses the suite; reporting a high \u03b1 would be a red flag (it would mean your cases are redundant).\n\nThe right question is: **do version rankings replicate across case samples?** That's G-theory's generalizability coefficient E\u03c1\u00b2. It makes no assumption about a common factor \u2014 it just asks whether the ordering of your skill versions is stable if you drew a different set of 22 cases from the same capability universe. That's the reliability property that actually matters for \"can I trust this eval to compare two versions.\"\n\nConcretely: run `scripts/gtheory_eval.py` with version as the object of measurement and cases as a random facet. Read E\u03c1\u00b2 for ranking reliability (is version B actually better than A?) or \u03a6 if you're asking whether a version cleared a threshold. The D-study output will also tell you whether 22 cases is enough, or whether you need more to hit a dependable read.\n\nIf your use case genuinely requires an internal consistency metric on a sub-battery where items are semantically similar (e.g., five near-identical routing cases), McDonald's \u03c9 is defensible over \u03b1 \u2014 \u03b1 assumes tau-equivalence (equal factor loadings across items), which eval items violate; \u03c9 estimates reliability from a factor model that allows loadings to differ.\n\nBut for the suite as a whole: \u03b1 measures the wrong thing, G-theory measures the right thing.",
+  "assertions": [
+    {
+      "text": "States that internal consistency (alpha or omega) is the wrong construct for a diverse eval suite \u2014 items intentionally cover different capabilities and are not designed to share a common latent factor",
+      "type": "qualitative"
+    },
+    {
+      "text": "Redirects to G-theory E\u03c1\u00b2 as the right reliability metric: asks whether version rankings replicate across case samples without assuming items measure the same thing",
+      "type": "qualitative"
+    },
+    {
+      "text": "Does NOT recommend alpha or omega as the primary reliability tool for this diverse suite \u2014 says the user is asking the wrong question",
+      "type": "qualitative"
+    },
+    {
+      "text": "If internal consistency comes up as secondary (e.g., for a narrow sub-battery), recommends omega over alpha and names tau-equivalence as the violated assumption",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

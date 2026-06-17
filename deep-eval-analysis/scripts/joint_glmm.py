@@ -38,7 +38,8 @@ USAGE  : python joint_glmm.py results.csv --channels acc,latency,confidence
 Dependencies: numpy, pandas, pymc (this engine is MCMC-only by design — see the σ_a lesson in
 reference/07; the variance/correlation components need full Bayes, not a MAP optimizer).
 """
-import argparse, json, sys
+import os, argparse, json, sys
+os.environ.setdefault("PYTENSOR_FLAGS", "linker=cvm")
 import numpy as np
 import pandas as pd
 
@@ -77,8 +78,10 @@ def build_and_sample(df, takers, items, channels, slip, decouple, draws, tune, e
         # ---- hierarchical item parameters (adaptive shrinkage on discrimination) ----
         mu_b = pm.Normal("mu_b", 0, 1); sig_b = pm.HalfNormal("sig_b", 1.0)
         b = pm.Normal("b", mu_b, sig_b, shape=I)
-        mu_la = pm.Normal("mu_la", 0, 0.5); sig_la = pm.HalfCauchy("sig_la", 0.5)
-        loga = pm.Normal("loga", mu_la, sig_la, shape=I); a = pm.Deterministic("a", pm.math.exp(loga))
+        mu_la = pm.Normal("mu_la", 0, 0.5); sig_la = pm.HalfNormal("sig_la", 0.5)
+        loga_raw = pm.Normal("loga_raw", 0, 1, shape=I)
+        loga = pm.Deterministic("loga", mu_la + sig_la * loga_raw)
+        a = pm.Deterministic("a", pm.math.exp(loga))
         # ---- accuracy channel (probit; optional 4PL upper asymptote) ----
         eta = a[iv] * (theta_raw[tv] - b[iv])
         phi = pm.math.invprobit(eta)

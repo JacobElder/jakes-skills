@@ -1,0 +1,35 @@
+{
+  "eval_id": 16,
+  "name": "contamination_vs_saturation",
+  "condition": "with_skill",
+  "prompt": "I'm running a 40-model bank (evals/fixtures/model_bank_40.csv) and I see two anomalous items. it_sat passes 100% of the time \u2014 every model passes it. it_noise passes about 45% of the time but the pattern looks random: some of my weakest models pass it and some of my strongest fail it. My colleague says both are just outliers to trim. But I think these are two different problems. How do I tell the difference between saturation and contamination statistically, and does the fix differ?",
+  "response": "Your colleague is wrong to lump them \u2014 they fail for opposite reasons, and that difference dictates whether you trim or investigate.\n\n## The diagnostic split\n\n| | it_sat (p = 1.0) | it_noise (p \u2248 0.45) |\n|---|---|---|\n| CTT difficulty | 1.0 \u2014 degenerate | 0.45 \u2014 looks informative |\n| Item\u2013rest r | undefined (zero SD) | **negative** |\n| Discrimination D | 0 (trivially) | **< 0** |\n| IRT read | b \u2192 \u2212\u221e, a unestimable | a < 0 (inverted ICC) |\n| What it means | Bank outgrew the item | Item penalizes ability |\n| Fix | Safe to trim | **Investigate first** |\n\n---\n\n## it_sat \u2014 saturation\n\nEveryone passes, so the item has zero variance: r_rest is undefined and test information is 0 at every \u03b8. In IRT terms, the difficulty b sits far to the left of your whole taker distribution \u2014 every model clears it easily. The item isn't wrong; the bank has simply outgrown it. Trimming is safe. The one exception: if this item guards against a known regression (it should always pass), label it `guard` and keep it \u2014 \"everyone passes\" is the *goal* for a guard, not evidence of uselessness.\n\n## it_noise \u2014 negative discrimination (not contamination)\n\np \u2248 0.45 is the trap. Mid-range difficulty looks maximally informative in CTT, so this item would pass a difficulty filter and fool a naive sweep. But when weaker models pass and stronger models fail, you have a **negative item\u2013rest correlation** and a **negative D = p_top \u2212 p_bottom**. In IRT, the 2PL discrimination parameter a comes back negative \u2014 the ICC slopes downward instead of up. The item is actively penalizing ability.\n\nThis is categorically different from contamination in the 3PL sense. True contamination shows as a **high guessing parameter c**: a floor pass rate above chance even at very low \u03b8, from models reciting memorized answers. The ICC still slopes upward \u2014 better takers still pass more. What you're describing is an inverted ICC, which 3PL can't even represent with a positive a. Your item isn't contaminated; it's broken.\n\n**Why the fix differs:** For saturation, the item is merely stale \u2014 trim it and move on. For negative discrimination, trimming removes the symptom and hides the cause. The underlying problem \u2014 a wrong gold label, an inverted grader, a rubric that rewards failure \u2014 almost certainly affects other items you haven't flagged yet. Trimming it_noise without investigation means your other scores are also suspect at some unknown rate.\n\n---\n\n## How to diagnose this on your data\n\nRun the CTT item analysis first:\n\n```bash\npython scripts/eval_item_analysis.py evals/fixtures/model_bank_40.csv \\\n  --taker-col taker_id --item-col item_id --score-col score\n```\n\nFor it_sat you'll see p = 1.0 and a warning that r_rest is undefined (zero SD). For it_noise you'll see p \u2248 0.45 **and a `FIX` flag** because r_rest < 0 and D < 0. The script sorts fixes first, above trim candidates.\n\nThen, since you have 40 takers (bank regime), run the IRT audit for the full picture:\n\n```bash\npython scripts/irt_eval.py evals/fixtures/model_bank_40.csv \\\n  --taker-col taker_id --item-col item_id --score-col score\n```\n\nit_sat will show near-zero item information across all \u03b8, with b estimated as very negative. it_noise will return an effective discrimination **a < 0** and flagged as a mislabel candidate \u2014 this is the IRT-based mislabel detector that surfaces likely gold-label errors at high precision. Check the gold answer for it_noise before touching anything else.\n\n---\n\n## The colleague's error\n\nLumping these as \"outliers to trim\" conflates two opposite measurement failures. Saturation tells you the suite has aged \u2014 the next action is to add harder cases. Negative discrimination tells you the measurement instrument has a defect \u2014 the next action is to audit the rubric. Trimming it_noise before you find the defect is the one path that lets a grader or label problem persist quietly into your remaining results.",
+  "assertions": [
+    {
+      "text": "Distinguishes saturation from contamination as two separate failure modes with different statistical signatures \u2014 not just 'both are high pass rate'",
+      "type": "qualitative"
+    },
+    {
+      "text": "Invokes IRT model-fit residuals (outfit/infit statistics or ICC residuals) as the key contamination diagnostic, not just the raw pass rate or difficulty parameter alone",
+      "type": "qualitative"
+    },
+    {
+      "text": "Names the guessing-pattern tell: weak-ability takers passing at rates inconsistent with their global theta (3PL c, unexpected-pass residuals)",
+      "type": "qualitative"
+    },
+    {
+      "text": "States the different consequences: saturated items are non-informative but validity-clean; contaminated items pollute theta estimates and should be audited/removed, not just trimmed",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    false
+  ],
+  "passed": 2,
+  "total": 4,
+  "pass_rate": 0.5,
+  "eval_passes": false
+}

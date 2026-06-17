@@ -1,0 +1,35 @@
+{
+  "eval_id": 11,
+  "name": "synthesis_interpretation",
+  "condition": "with_skill",
+  "prompt": "I ran the joint model and have the output. Give me a clear, synthesized read of the whole thing \u2014 IRT, SDT, G-theory, and calibration together, in plain language, plus a visualization \u2014 and tell me the single most useful thing to do next. The fit had a couple of divergences.",
+  "response": "Good figure. Here's the full synthesis.\n\n---\n\n## Joint Model Synthesis \u2014 Plain-Language Read\n\n### \u26a0 Fit quality: provisional\n\nMax R-hat = 1.015, **26 divergences** (joint_out). These are real flags: the sampler hit regions of difficult geometry, most likely driven by the extreme discrimination estimates on it00, it08, and it18 (point estimates of 7\u201311, CIs spanning two orders of magnitude). Everything below is directional \u2014 the structure is interpretable, but don't treat specific point estimates as firm.\n\n---\n\n### IRT: the suite is skewed easy and poorly targeted\n\nVariant abilities cluster in roughly **\u03b8 = \u22121 to +1**. Now look at where the items sit:\n\n- **Six items at b < \u22121.2** (it02 at \u22125.1, it06 at \u22122.4, it21 at \u22122.1, it18 at \u22121.5, it11 at \u22121.3, it08 at \u22121.2) \u2014 these sit well *below* every variant. They're generating passes for everyone, carrying almost no information about which version is better.\n- **~five items in the sweet spot** (b \u2248 \u22120.5 to +0.5): it01, it03, it07, it09, it15, it16. These are doing most of the work.\n- **it10, it13, it22** are hard (b \u2248 1.35\u20131.65) and useful for the top tier.\n- **it20 at b = 2.66** \u2014 above even the best variant (v5 at \u03b8=0.95). Essentially nobody passes it; it contributes noise, not signal.\n\nThe three high-discrimination items (it00 = 7.0, it08 = 10.9, it18 = 10.0) have CIs from near-zero to 45+. That's the near-separation artifact: these items probably have a perfect or near-perfect response pattern across your 8 variants, and the sampler can't pin down how sharp the step function is. Don't read those `a` values as \"super-informative items\" \u2014 they're artifacts of small N. The discrimination bar chart color-codes this: red = CI too wide to trust.\n\n**Clear verdict:** the suite is weighted toward items easier than your variant pool. You're burning half your items on cases everyone passes.\n\n---\n\n### G-theory: marginal for ranking, insufficient for thresholds\n\n- **E\u03c1\u00b2 = 0.731** \u2014 marginal. You can rank versions, but with real uncertainty.\n- **\u03a6 = 0.656** \u2014 below the 0.80 bar for absolute threshold decisions (\"did this version clear 80%?\"). Don't make that call with 25 items.\n- **Dominant error: version \u00d7 item interaction (0.1655)** \u2014 this is the difficult kind. It means your 8 variants have heterogeneous capability profiles across cases. Some versions are strong on certain case types, weak on others. Adding more of the *same kind* of cases partially helps; the only real fix is a more comprehensive case design that covers the capability surface.\n- **D-study:** adding ~12 items (to 37 total) crosses the E\u03c1\u00b2 = 0.80 bar. Getting \u03a6 \u2265 0.80 for threshold decisions requires 75 items \u2014 a much steeper ask.\n\n---\n\n### Triggering (SDT): one skill is broken, one just needs a nudge\n\n| Skill | d\u2032 | Criterion | Verdict |\n|---|---|---|---|\n| good_discriminator | 3.34 | +0.12 | \u2713 Clean. No action. |\n| undertriggers | 2.25 | **+1.13** | Discriminates fine, fires too reluctantly. Wording fix \u2014 add user phrasings that *should* match, make the description pushier. |\n| vague_overlap | **\u22120.06** | \u22120.09 | **Content is broken.** d\u2032 \u2248 0 means it cannot separate in-scope from out-of-scope at all. Correct routing is chance. This needs a full description rewrite, not a wording tune. |\n\n`vague_overlap`'s d\u2032 is essentially zero (and slightly negative, which is a data artifact at small eval size rather than literally \"anti-discriminating\"). The description doesn't establish a meaningful boundary between what this skill handles and what it doesn't. Rewriting the content \u2014 sharpening the scope, adding near-miss carve-outs, disambiguating from neighboring skills \u2014 is the only fix.\n\n---\n\n### Calibration: clear split between top and bottom variants\n\n| Variant | Cal slope | Read |\n|---|---|---|\n| v7 | 0.81 [0.47, 1.36] | Well-calibrated. Stated confidence tracks correctness. |\n| v5 | 0.68 [0.40, 1.15] | Decent. CI includes 1.0. |\n| v1 | 0.54 [0.31, 0.92] | Moderate \u2014 slightly compressed confidence. |\n| v6, v3, v0 | 0.17\u20130.22 | Poor. Stated confidence is a weak signal for correctness. |\n| v4 | 0.05 [\u22120.02, 0.13] | CI includes 0. Confidence is essentially noise. |\n| v2 | 0.01 [\u22120.06, 0.08] | CI includes 0. Completely miscalibrated. |\n\nThe best-performing variants (v5, v7) are also the best-calibrated. The bottom variants not only score lower \u2014 their confidence output is decorative.\n\n---\n\n### Separation: only v5 is unambiguously above the pack\n\nFrom the pairwise heatmap: v5 (\u03b8=0.95) has P(v5 > v2) \u2248 0.9+ and clearly leads, but even v5 vs v0 is murky. Most internal pairs (v3 vs v6 vs v7 vs v0) are statistically indistinguishable \u2014 their CIs overlap heavily. You can confidently say v5 > v2, but that's about it.\n\n---\n\n### Single most useful next action\n\n**Rewrite `vague_overlap`'s description from scratch.**\n\nd\u2032 \u2248 0 is not a tuning problem \u2014 it's a broken instrument. Every query routed through this skill is a coin flip right now. No amount of adding cases or adjusting eagerness fixes a description that can't discriminate its own scope. The fix: sharpen exactly what the skill is for, enumerate the near-miss cases it should *not* handle, and draw an explicit boundary with the neighboring skills it's likely confused with.\n\nThat's higher-leverage than adding items (improves measurement but doesn't fix a broken skill), or even resolving the divergences (a model-quality issue, not a skill-quality issue).",
+  "assertions": [
+    {
+      "text": "Synthesizes all four frameworks in plain language with what-it-means/what-to-do, not a raw parameter dump",
+      "type": "qualitative"
+    },
+    {
+      "text": "Leads with a fit-quality caution given the divergences and labels the read provisional",
+      "type": "qualitative"
+    },
+    {
+      "text": "Surfaces the targeting (item-person) and pairwise-separation insights and gives ONE prioritized next action",
+      "type": "qualitative"
+    },
+    {
+      "text": "Does not over-read unstable/extreme parameters \u2014 flags them as small-N artifacts rather than findings",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}
