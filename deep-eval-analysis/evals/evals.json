@@ -1,0 +1,174 @@
+{
+  "skill_name": "deep-eval-analysis",
+  "notes": "Tests whether the skill (a) triggers on eval-analysis tasks, (b) routes to the correct method by regime, (c) enforces the non-negotiable stances — especially refusing free IRT at small N — and (d) defers method-theory questions to the IRT/SDT skills (mutual exclusion). Fixtures live in evals/fixtures/. Run with-skill vs. no-skill baseline per the harness in evals/run_evals.md.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "trim_decision_ctt",
+      "prompt": "I have eval results for several versions of my agent skill across ~22 cases (evals/fixtures/results_5versions.csv: columns taker_id,item_id,score,seed). I want to shrink this suite without losing signal. Which cases should I cut, which are dead weight, and which must I keep? Tell me what's actually going on with each.",
+      "files": ["evals/fixtures/results_5versions.csv"],
+      "expected_output": "Runs CTT item analysis. Identifies the saturated item and the non-discriminating item as TRIM candidates; flags the negative-discrimination item (case_inverted) as FIX (urgent), NOT trim; notes the duplicate pair; raises the guard-item exception (don't auto-cut a saturated item that guards a regression); attaches uncertainty/CIs given small N; does NOT just report the mean pass rate.",
+      "assertions": [
+        {"text": "Reports per-item difficulty AND discrimination, not just a mean pass rate", "type": "qualitative"},
+        {"text": "Flags the negative-discrimination item (case_inverted) as a FIX / broken item rather than a trim", "type": "qualitative"},
+        {"text": "Recommends trimming the saturated and/or non-discriminating items", "type": "qualitative"},
+        {"text": "Raises the guard-item exception (saturated items guarding a known regression should be kept)", "type": "qualitative"},
+        {"text": "Acknowledges small-N uncertainty (intervals / caution) rather than acting on point estimates", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "is_the_delta_real_gtheory",
+      "prompt": "My eval barely moves between versions — my two newest score 78% vs 80%. Is the newer one actually better or is that noise? I have 6 versions x 15 cases x 3 seeds. How many cases/seeds do I actually need to tell versions apart reliably?",
+      "files": [],
+      "expected_output": "Identifies the small-N iteration regime. Reaches for generalizability theory (not IRT). Explains that a 2-point move must be judged against a dependability coefficient, and that a D-study answers the how-many-cases/seeds question. Notes whether cases or seeds are the better lever depending on the dominant variance source. Does not fit a free 2PL.",
+      "assertions": [
+        {"text": "Classifies this as the small-N iteration regime", "type": "qualitative"},
+        {"text": "Recommends generalizability theory / a dependability coefficient + D-study", "type": "qualitative"},
+        {"text": "States that the 2-point delta may be noise and must be judged against reliability, not read directly", "type": "qualitative"},
+        {"text": "Does NOT recommend fitting a free 2PL/3PL IRT model here", "type": "qualitative"},
+        {"text": "Addresses the cases-vs-seeds sizing tradeoff", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "small_n_irt_trap",
+      "prompt": "Can I use item response theory to get latent ability estimates for my 4 skill versions across 18 eval cases, plus per-item difficulty and discrimination? Walk me through fitting a 2PL.",
+      "files": [],
+      "expected_output": "Pushes back on fitting a free 2PL to 4 takers — explains item parameters are estimated across takers and ~500 are needed for stable 2PL; this returns confident noise. Offers the remedy menu: expand the taker dimension (model tiers/ablations/seeds), fixed-item anchoring on a model bank, hierarchical adaptive shrinkage (regularization that relaxes as N grows), drop to Rasch, or use G-theory+CTT instead. Does NOT just hand over a 2PL recipe.",
+      "assertions": [
+        {"text": "Refuses / strongly cautions against a free 2PL on 4 takers and explains the model-bank requirement", "type": "qualitative"},
+        {"text": "Offers fixed-item (anchor) calibration as the safe way to get a latent scale at small N", "type": "qualitative"},
+        {"text": "Mentions hierarchical/adaptive shrinkage (regularization that relaxes with N) and/or dropping to Rasch", "type": "qualitative"},
+        {"text": "Suggests expanding the taker dimension (model tiers, ablations, seeds, history)", "type": "qualitative"},
+        {"text": "Does not simply provide a free-2PL fitting recipe as if it were valid here", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "triggering_sdt",
+      "prompt": "My skill sometimes fires on queries it shouldn't and sometimes fails to fire when it should. I have trigger eval data (evals/fixtures/trigger_eval.csv: skill_id,query_id,in_scope,fired). How do I figure out whether each skill needs its description rewritten or just made pushier?",
+      "files": ["evals/fixtures/trigger_eval.csv"],
+      "expected_output": "Frames triggering as signal detection. Computes d' and criterion per skill. Splits the fix: low d' = rewrite the description's CONTENT; biased criterion = tune EAGERNESS (pushier if trigger-shy, carve-outs if trigger-happy). Notes raw accuracy hides this, mentions log-linear correction and the need for real out-of-scope noise trials. For the vague/overlapping skill flags content; for the shy one flags pushiness.",
+      "assertions": [
+        {"text": "Frames triggering as a detection problem and computes d' and criterion", "type": "qualitative"},
+        {"text": "Separates the low-d' (rewrite content) case from the biased-criterion (tune eagerness) case", "type": "qualitative"},
+        {"text": "Notes that raw trigger accuracy conflates the two failures", "type": "qualitative"},
+        {"text": "Mentions log-linear correction and/or the need for genuine out-of-scope noise trials", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "judge_trust_gate",
+      "prompt": "I'm using an LLM to grade my agent-skill evals as pass/fail. Before I trust these pass rates and start making trim/ship decisions, how do I check the grader itself is reliable? I have two judges' labels on the same set of cases (evals/fixtures/two_judge_labels.csv).",
+      "files": ["evals/fixtures/two_judge_labels.csv"],
+      "expected_output": "Treats grader trust as the gate before any downstream analysis. Computes inter-rater agreement beyond chance (Cohen's/Fleiss' kappa), cites the ~0.8 LLM-human agreement benchmark, explains raw agreement is inflated on skewed pass rates. Says what to do if kappa is low (rewrite rubric, pairwise over absolute, ensemble) and to carry judge error as downstream uncertainty.",
+      "assertions": [
+        {"text": "Treats judge reliability as a gate to run BEFORE difficulty/discrimination/ability analysis", "type": "qualitative"},
+        {"text": "Uses kappa (agreement beyond chance), not raw agreement percentage, and explains why", "type": "qualitative"},
+        {"text": "Gives a remediation path if the judge is unreliable (rubric rewrite / pairwise / ensemble)", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 6,
+      "name": "mutual_exclusion_routing",
+      "prompt": "Explain how the 2PL item response model works — derive the item characteristic curve and what the discrimination parameter means mathematically.",
+      "files": [],
+      "expected_output": "This is a pure method-theory question. The deep-eval-analysis skill should recognize this belongs to the item-response-theory skill and defer, rather than treating it as an eval-analysis task. A correct outcome is either not engaging this skill, or explicitly routing to the IRT method skill. (Tests that the skill doesn't over-claim method-teaching territory.)",
+      "assertions": [
+        {"text": "Recognizes this as IRT-method theory and routes to / defers to the item-response-theory skill rather than handling it as an eval-analysis workflow", "type": "qualitative"},
+        {"text": "Does not invoke the eval-audit workflow (CTT/G-theory/trim rules) for what is a pure derivation request", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 7,
+      "name": "latent_estimation_bank",
+      "prompt": "I have a response matrix from ~40 models run on the same eval cases (evals/fixtures/model_bank_40.csv). Model the evals and give me precise latent estimates: a latent ability for each model AND difficulty and discrimination for each eval case, all with uncertainty. Also tell me whether the suite can still separate my strongest models.",
+      "files": ["evals/fixtures/model_bank_40.csv"],
+      "expected_output": "Recognizes the model-bank regime supports a full latent model. Uses the latent estimation engine (irt_latent.py) to produce per-model ability theta with intervals AND per-item difficulty/discrimination with intervals on a common scale. Reports the learned discrimination spread and a saturation/test-information read on whether the top models are separable. Does not just report mean pass rates.",
+      "assertions": [
+        {"text": "Produces latent ability (theta) per model AND difficulty + discrimination per item, all with intervals", "type": "qualitative"},
+        {"text": "Puts items and variants on a common latent scale rather than reporting raw pass rates", "type": "qualitative"},
+        {"text": "Addresses saturation / whether the strongest models are still separable (test information at the top)", "type": "qualitative"},
+        {"text": "Uses a hierarchical / proper estimation approach, not a naive free fit presented without uncertainty", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 8,
+      "name": "latent_estimation_small_n_done_right",
+      "prompt": "I only have 5 versions of my skill across ~22 eval cases (evals/fixtures/results_5versions.csv), but I really do want latent ability estimates for each version and difficulty/discrimination for the cases. I know N is small — give me the best honest estimates you can, not a refusal.",
+      "files": ["evals/fixtures/results_5versions.csv"],
+      "expected_output": "Does NOT refuse — delivers latent estimates via the regime-appropriate method: hierarchical pooling with adaptive shrinkage (irt_latent.py --backend mcmc) or fixed-item anchoring if a bank is available, with deliberately wide, honest intervals. Explains that wide theta intervals / overlapping versions are the truthful result at N=5 (not a bug), points to expanding the taker dimension or anchoring to tighten them, and avoids a naive free 2PL. Distinguishes 'refuse the naive fit' from 'deliver estimates the right way.'",
+      "assertions": [
+        {"text": "Delivers latent estimates (does not just refuse) using a hierarchical/pooled or anchored method appropriate to small N", "type": "qualitative"},
+        {"text": "Reports honest uncertainty — wide intervals — and frames overlapping/imprecise estimates as the truthful result rather than a failure", "type": "qualitative"},
+        {"text": "Still avoids a naive free 2PL and explains the distinction between refusing that and delivering estimates properly", "type": "qualitative"},
+        {"text": "Suggests how to tighten the estimates (expand takers via model tiers/ablations/seeds, or anchor on a calibrated bank)", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 9,
+      "name": "fixed_item_anchoring",
+      "prompt": "I have item parameters calibrated on a big model bank (evals/fixtures/calibrated_items.csv) and I want to place a few new skill variants on that same latent scale precisely, without re-estimating the items. How do I do that, and how precise will the variant estimates be?",
+      "files": ["evals/fixtures/calibrated_items.csv", "evals/fixtures/model_bank_40.csv"],
+      "expected_output": "Identifies fixed-item (anchor) calibration as the right tool: freeze the calibrated item parameters and estimate only theta per variant against them (irt_latent.py --fixed-items), which is well-posed and precise at any N because items aren't being learned from few variants. Reports theta with intervals/standard errors and notes that precision depends on how many anchor items overlap and how informative they are at each variant's ability.",
+      "assertions": [
+        {"text": "Recommends fixed-item / anchor calibration: freeze item params, estimate only variant ability theta", "type": "qualitative"},
+        {"text": "Explains this is well-posed and precise at small N because items are not being estimated from few variants", "type": "qualitative"},
+        {"text": "Reports theta with uncertainty and notes precision depends on the number/informativeness of anchor items", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 10,
+      "name": "unified_glmm_feasibility",
+      "prompt": "Can you give me one model that outputs IRT, SDT, calibration, AND G-theory parameters at once? I have correctness, CoT length, and a confidence score per response, but only 6 skill variants. I want the full joint covariance across all the latent traits so the channels share strength.",
+      "files": [],
+      "expected_output": "Confirms the unification is real (all are readings of one GLMM) and that a joint fit can emit IRT + SDT (probit reading) + calibration + a G-theory reliability bridge — pointing to joint_glmm.py. Crucially does NOT just agree to estimate the full multi-trait covariance at 6 variants: explains that a rich trait covariance at small N is asserted by priors, not estimated (manufactured precision), and recommends estimating few correlations (e.g., theta-tau) or decoupling. Endorses the latency/CoT channel as the genuine identifiability win (van der Linden) and notes it still helps even when its own correlation is weakly identified. Notes SDT-for-triggering is a separate response process, not the same latent theta.",
+      "assertions": [
+        {"text": "Confirms one GLMM fit can emit IRT + SDT + calibration + a G-theory reliability bridge (does not claim it's impossible)", "type": "qualitative"},
+        {"text": "Pushes back on estimating a full multi-trait covariance at ~6 variants — explains it would be prior-asserted, not data-estimated (manufactured precision)", "type": "qualitative"},
+        {"text": "Endorses the latency/CoT channel as the real identifiability gain while noting its own correlation is weakly identified at small N", "type": "qualitative"},
+        {"text": "Distinguishes triggering-SDT as a separate response process rather than merging it into task-ability theta", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 11,
+      "name": "synthesis_interpretation",
+      "prompt": "I ran the joint model and have the output. Give me a clear, synthesized read of the whole thing — IRT, SDT, G-theory, and calibration together, in plain language, plus a visualization — and tell me the single most useful thing to do next. The fit had a couple of divergences.",
+      "files": [],
+      "expected_output": "Produces a unified plain-language interpretation covering all four frameworks (not just dumping parameters), via synthesize.py: targeting/trim from IRT, sensitivity from SDT, ranking reliability from G-theory, tracking from calibration, plus the item-person map and pairwise separation insights and a single ranked next-action. Crucially leads with a fit-quality caution because of the divergences (labels results provisional), and does not over-read extreme/unstable parameters (e.g., an implausibly large discrimination is flagged as a small-N artifact, not a real super-item). Frames overlapping variants honestly via separation rather than a false clean ranking.",
+      "assertions": [
+        {"text": "Synthesizes all four frameworks in plain language with what-it-means/what-to-do, not a raw parameter dump", "type": "qualitative"},
+        {"text": "Leads with a fit-quality caution given the divergences and labels the read provisional", "type": "qualitative"},
+        {"text": "Surfaces the targeting (item-person) and pairwise-separation insights and gives ONE prioritized next action", "type": "qualitative"},
+        {"text": "Does not over-read unstable/extreme parameters — flags them as small-N artifacts rather than findings", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 12,
+      "name": "eval_content_drift",
+      "prompt": "I've been tracking my skill across v3, v4, v5 and the pass rate is creeping up. But I realize I reworded some eval prompts and swapped a couple of gold answers along the way, though the item_id column names stayed the same. How do I know whether the improvement is real or just my eval changing under me?",
+      "files": [],
+      "expected_output": "Identifies this as a measurement-invariance / drift problem: column names aren't trustworthy keys, so a content rewrite under a stable item_id silently pools two different items and can fake a trend. Recommends hashing case content per run (item_drift.py) to detect which items changed, treating drifted items as new items (not pooling them), and linking runs onto a common scale via a stable anchor set (fixed-item equating). Notes a large pass-rate swing on a 'cosmetic' edit signals DIF. Concludes that a theta/pass-rate trend is only valid under invariance.",
+      "assertions": [
+        {"text": "Frames it as measurement invariance / drift and says column names can't be trusted as item keys", "type": "qualitative"},
+        {"text": "Recommends content hashing to detect drift and treating changed items as new (not pooling across the change)", "type": "qualitative"},
+        {"text": "Recommends anchor/common-item linking to put runs on a comparable scale", "type": "qualitative"},
+        {"text": "Warns the observed improvement may be instrument drift, not a real gain", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 13,
+      "name": "facet_confounding",
+      "prompt": "Performance differs by base model and by which judge model grades, and even the same model varies run to run depending on resources. I only ran my newest skill version on the newest base model with a stronger judge. Can I conclude the new skill version is better?",
+      "files": [],
+      "expected_output": "Flags the confounding directly: skill version is confounded with base model and judge, so 'v5 is better' is inseparable from 'newer model is better' and 'stronger judge scores higher' — no model fixes a confounded design. Recommends a connected/crossed design (run versions across more than one base model/judge) or holding judge and base model fixed across the compared versions. Frames judge, base model, and run as facets whose variance should be separated (G-theory / mixed model), treats run-to-run non-determinism as residual to be averaged with seeds (D-study sizes how many), and notes switching judges mid-stream is drift on the judge axis.",
+      "assertions": [
+        {"text": "Identifies the confound: skill version is entangled with base model and judge, so the comparison can't isolate the skill effect", "type": "qualitative"},
+        {"text": "Recommends crossing/holding fixed the facets (connected design), not just modeling around it", "type": "qualitative"},
+        {"text": "Treats judge/base-model/run as facets whose variance should be separated; run-to-run noise handled via seeds/D-study", "type": "qualitative"},
+        {"text": "Does not green-light the 'new version is better' conclusion from the confounded design", "type": "qualitative"}
+      ]
+    }
+  ]
+}

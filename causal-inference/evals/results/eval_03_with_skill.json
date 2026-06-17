@@ -1,0 +1,40 @@
+{
+  "eval_id": 3,
+  "name": "near-iv-bias-amplification",
+  "condition": "with_skill",
+  "prompt": "I'm estimating the causal effect of receiving executive mentorship on promotion rates. Mentorship is almost exclusively given to employees who have already demonstrated high performance \u2014 the correlation between prior performance and receiving mentorship is around 0.85. Prior performance also predicts promotions directly. A colleague says I should control for prior performance to remove its confounding effect. Is that the right approach?",
+  "baseline_failure_hypothesis": "Base model endorses controlling for prior performance without warning that a near-IV amplifies unmeasured confounding \u2014 recommending the adjustment as an improvement rather than flagging bias-amplification risk.",
+  "response": "This is a bias amplification situation, and the r = 0.85 is the warning sign. Your colleague is half-right.\n\n## Prior performance's structural role\n\nThe DAG is:\n\n```\nPrior Performance \u2192 Mentorship \u2192 Promotion\nPrior Performance \u2192 Promotion\nU (ambition, visibility, relationship quality, ...) \u2192 Mentorship\nU \u2192 Promotion\n```\n\nPrior performance is a **confounder** (fork): it causes both mentorship receipt and promotion directly. In the absence of other confounders, controlling for it would be exactly correct \u2014 it blocks the back-door path `Mentorship \u2190 Prior Perf \u2192 Promotion` without touching the causal path.\n\n## Why the r = 0.85 makes this dangerous\n\nThe problem is that r = 0.85 means prior performance explains most of the variance in mentorship receipt, but not all of it. The residual variation \u2014 who gets mentorship *conditional on* equivalent performance \u2014 is driven by unmeasured factors: visibility with senior leaders, networking skill, ambition signals, manager relationships.\n\nThose residual drivers almost certainly also predict promotions.\n\nHere's the mechanism for why controlling amplifies bias: when you condition on prior performance, you remove its contribution to variation in mentorship. The remaining variation in mentorship is now **disproportionately driven by U** \u2014 the very unmeasured factors you can't adjust for. U becomes a stronger relative confounder post-adjustment than it was unconditionally.\n\nThis is the bias amplification trap: the coefficient estimate for mentorship after controlling for prior performance reflects selection on factors that are *harder* to measure and arguably more directly predictive of promotion than performance alone.\n\n## The concrete risk\n\nBefore adjustment: bias from prior performance + bias from U (partially cancelling or additive depending on signs).  \nAfter adjusting for prior performance: bias from prior performance \u2248 0, but remaining bias from U is amplified.\n\nYou may end up with an estimate that's *further* from the truth, not closer.\n\n## What to do instead\n\n**Control for prior performance anyway** \u2014 it's still the right move \u2014 but don't stop there and treat the problem as solved. The key question to ask: *what drives mentorship selection among employees with equivalent prior performance?* Whatever that answer is (manager preference, visibility, networking) needs to either be measured and adjusted for, or acknowledged as a serious threat to validity.\n\nThe more productive path is a design-based approach:\n\n- **Natural experiment or IV**: Is there any quasi-random variation in mentorship access? Program slot constraints, manager turnover, randomized pilot cohorts, lottery-based selection? A valid instrument here \u2014 something that affects mentorship assignment but has no direct path to promotions \u2014 would cut through the selection problem entirely.\n- **Matching within performance bands**: Compare employees in narrow prior-performance strata (high-performers with and without mentors) and look at whether there are remaining observable differences you can adjust for. This doesn't solve the unmeasured confounder problem, but it at least grounds the comparison in a defensible stratum.\n- **Sensitivity analysis**: After controlling for prior performance, quantify how strong an unmeasured confounder would need to be to explain away the estimated effect. Given the selection process you've described, this bar is probably not high \u2014 and that result itself is informative.\n\nThe r = 0.85 isn't just a nuisance for the regression; it's telling you that mentorship selection is almost perfectly non-random, and whoever designed the mentorship program selected on exactly the people most likely to be promoted anyway. That's the fundamental identification challenge, and controlling for performance alone doesn't resolve it.",
+  "assertions": [
+    {
+      "text": "Claude identifies prior performance as a near-instrument (or near-IV) \u2014 a variable that strongly predicts treatment assignment (r \u2248 0.85) and is not itself exogenous",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude warns that controlling for a near-IV in the presence of unmeasured confounders can amplify rather than reduce bias \u2014 the mechanism being that conditioning concentrates remaining treatment variation onto the part correlated with unmeasured factors",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude does NOT unconditionally endorse 'control for prior performance because it predicts both treatment and outcome'",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude explicitly states the conditional: if prior performance is the ONLY confounder and no unmeasured confounders exist, controlling is correct; but given the plausibility of unmeasured confounders like ambition, sponsorship, or political capital, the near-IV amplification risk makes mechanical conditioning dangerous. Claude states which scenario is more realistic and recommends sensitivity analysis or an alternative design rather than leaving the user with an unresolved 'it depends.'",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

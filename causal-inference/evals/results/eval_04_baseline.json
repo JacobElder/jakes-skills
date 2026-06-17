@@ -1,0 +1,40 @@
+{
+  "eval_id": 4,
+  "name": "table-2-fallacy",
+  "condition": "baseline",
+  "prompt": "I ran a regression of website conversion on a treatment dummy plus controls for age, country, browser, and time-of-day. The treatment coefficient is what I care about. But the country coefficient is huge and significant \u2014 does that mean country has a big causal effect on conversion?",
+  "baseline_failure_hypothesis": "Base model interprets the country coefficient as the causal effect of country, missing the Table 2 Fallacy: control-variable coefficients have a different adjustment set than the primary exposure and cannot be read as causal effects.",
+  "response": "No \u2014 and the reason matters for how you think about your whole model.\n\n**What the country coefficient actually means**\n\nIn a regression with controls, each coefficient answers: \"holding everything else constant, what's the association between this variable and the outcome?\" For your treatment dummy, that's the right question \u2014 you're trying to isolate the effect of the treatment. But for country, \"holding treatment, age, browser, and time-of-day constant\" is a weird question nobody asked. The coefficient just captures residual variation in conversion that correlates with country after partialing out the other variables.\n\nA large country coefficient could reflect:\n\n- **Genuine country-level differences** in baseline conversion rates (cultural norms, currency trust, UX familiarity)\n- **Confounding with unmeasured variables** \u2014 country is a proxy for income, payment infrastructure, device type, language, etc.\n- **Composition effects** \u2014 your country buckets may differ on dimensions not in the model\n- **Model misspecification** \u2014 if the relationship between age and conversion differs by country and you haven't included that interaction, country absorbs some of that\n\n**The key asymmetry**\n\nYour treatment was (presumably) randomly assigned or quasi-randomly assigned, which is why you can interpret its coefficient causally. Country is observed, not assigned \u2014 you can't make that leap. The significance just means country is a strong predictor of conversion; it says nothing about what would happen if you could *change* someone's country.\n\n**Practical implication**\n\nThe large country coefficient is actually good news for your treatment estimate \u2014 it means country explains a lot of residual variance, which tightens your standard errors. That's why you include controls. But don't read the country coefficient as anything more than \"this variable predicts the outcome well in this sample.\"\n\nIf you want to ask whether country *moderates* the treatment effect (i.e., does the treatment work differently in different countries), that requires a treatment \u00d7 country interaction term, not the main effect.",
+  "assertions": [
+    {
+      "text": "Claude names or describes the Table 2 Fallacy \u2014 that control variable coefficients in a regression designed to identify the focal treatment effect are not themselves causally identified",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude explains structurally why: the adjustment set was chosen to block back-door paths from treatment to conversion, not from country to conversion \u2014 these are different back-door sets requiring potentially different controls",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude notes that some controls in the model (e.g., browser) could be mediators on the country \u2192 conversion path, meaning the country coefficient might be partial (not total) and would be biased by conditioning on its own mediators",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude does NOT confirm that the country coefficient measures country's causal effect on conversion",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    false,
+    true
+  ],
+  "passed": 2,
+  "total": 4,
+  "pass_rate": 0.5,
+  "eval_passes": false
+}

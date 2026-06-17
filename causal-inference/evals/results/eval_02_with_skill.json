@@ -1,0 +1,40 @@
+{
+  "eval_id": 2,
+  "name": "selection-bias-power-users",
+  "condition": "with_skill",
+  "prompt": "We want to understand what drives long-term retention. Our analysis team filtered the dataset to users who were still active at the 90-day mark \u2014 these are our most engaged, highest-quality users. Within this group, completing the onboarding checklist correlates strongly with 6-month retention (r = 0.42, p < 0.001). Should we invest in improving onboarding completion as a lever for long-term retention?",
+  "baseline_failure_hypothesis": "Base model treats power-user filtering as a benign subgroup analysis rather than identifying it as conditioning on a collider \u2014 missing the selection-bias mechanism and accepting the r=0.42 correlation at face value.",
+  "response": "Two distinct structural problems here, and together they make the r = 0.42 nearly uninterpretable as a causal estimate.\n\n**Problem 1: You conditioned on a collider**\n\nFiltering to \"users active at 90 days\" before measuring the relationship between onboarding completion and 6-month retention is collider conditioning. \"Active at 90 days\" sits downstream of both onboarding completion and 6-month retention \u2014 it's a consequence of engagement, not a cause. Restricting the sample to this group opens spurious paths between anything that predicts 90-day survival.\n\nThe users excluded from this dataset \u2014 those who churned before 90 days \u2014 are disproportionately low-engagement users who also didn't complete onboarding. Removing them inflates the observed correlation, because you've eliminated the portion of the data where onboarding was incomplete *and* retention was poor.\n\n**Problem 2: Onboarding completion is likely a downstream indicator, not a lever**\n\nWithin the surviving 90-day population, the r = 0.42 is almost certainly driven by a latent engagement factor:\n\n```\nLatent engagement / product fit (U)\n        \u2199                    \u2198\nOnboarding completion    6-month retention\n```\n\nUsers with strong product-market fit, high motivation, and clear use cases complete onboarding *and* stay retained \u2014 because the same thing drives both. This is a classic fork. The correlation doesn't tell you that the first variable causes the second; it tells you they share a common cause.\n\n**Why intervening won't produce the observed effect**\n\nWhen you run a campaign to improve onboarding completion, you pull in the *marginal non-completers* \u2014 users who weren't going to complete it on their own. These users are structurally different from the completers in the observational data. They have lower latent engagement, which is exactly what predicts churn. The counterfactual effect `P(6-month retention | do(onboarding completion = 1))` for these users is likely much smaller than the correlation suggests \u2014 possibly near zero.\n\nThis is the downstream-indicator trap: onboarding completion is a valid *targeting signal* (users who complete it are worth investing in), but it's not a valid *intervention target* if the completion itself isn't what's driving retention.\n\n**What to do instead**\n\n1. **Re-run the analysis in the full user population** \u2014 include churned users. This removes the selection bias and gives you an honest starting correlation.\n2. **Disentangle the mechanism.** Does onboarding completion causally teach users something that makes them stay, or are completers just higher-engagement people? One diagnostic: look at whether *specific steps* in onboarding predict retention after controlling for overall engagement proxies (early login frequency, time-on-task, etc.).\n3. **Run an A/B test on onboarding completion** in the full population, measuring 6-month retention as the outcome. Randomize a nudge/friction-reduction treatment that increases completion rates, then see whether the users pushed into completion actually retain better. This is the only way to estimate the interventional effect cleanly.\n\nThe short answer: don't invest in improving onboarding completion as a retention lever based on this analysis. The number is probably inflated by selection bias and confounding, and even if some causal effect exists, its size is unknown. The RCT is the right next step.",
+  "assertions": [
+    {
+      "text": "Claude flags that restricting the analysis to '90-day active users' conditions on a downstream variable \u2014 users who survived to 90 days are already a selected, high-retention population",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude explains the collider mechanism specifically: being active at 90 days is a common effect of both onboarding engagement and baseline retention tendency, so conditioning on it induces spurious correlation between those two causes even if they are independent in the full population \u2014 this means the r = 0.42 could exist even if onboarding completion has zero causal effect",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude does NOT take the r = 0.42 correlation at face value as evidence that improving onboarding completion will causally improve retention",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude recommends analyzing the full user population (including churned users) rather than the 90-day survivors, or using an approach that corrects for selection (e.g., IPW)",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

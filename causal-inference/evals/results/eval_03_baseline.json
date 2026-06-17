@@ -1,0 +1,40 @@
+{
+  "eval_id": 3,
+  "name": "near-iv-bias-amplification",
+  "condition": "baseline",
+  "prompt": "I'm estimating the causal effect of receiving executive mentorship on promotion rates. Mentorship is almost exclusively given to employees who have already demonstrated high performance \u2014 the correlation between prior performance and receiving mentorship is around 0.85. Prior performance also predicts promotions directly. A colleague says I should control for prior performance to remove its confounding effect. Is that the right approach?",
+  "baseline_failure_hypothesis": "Base model endorses controlling for prior performance without warning that a near-IV amplifies unmeasured confounding \u2014 recommending the adjustment as an improvement rather than flagging bias-amplification risk.",
+  "response": "Your colleague is directionally correct \u2014 prior performance sits on a backdoor path (Mentorship \u2190 Prior Performance \u2192 Promotion), and blocking it is necessary to identify the causal effect. But with r = 0.85 between the confounder and treatment, controlling creates a second, harder problem: **positivity violation**.\n\n## The DAG\n\n```\nPrior Performance \u2192 Mentorship \u2192 Promotion\nPrior Performance \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2192 Promotion\n```\n\nControlling for prior performance blocks the backdoor path. So yes, include it.\n\n## The real problem: near-perfect selection\n\nWith r = 0.85, almost no high-performers go un-mentored and almost no low-performers get mentored. The counterfactual you need \u2014 \"what would a high-performer's promotion rate look like without mentorship?\" \u2014 has almost no empirical support in your data.\n\nPractically, this means:\n\n- **In regression:** severe multicollinearity inflates standard errors on the mentorship coefficient, and the estimate becomes heavily model-dependent (linear extrapolation into regions with no data)\n- **In propensity score methods:** extreme weights (high-performers who didn't get mentorship have huge IPW weights because they're nearly impossible cases), which destabilizes estimates\n- **Both:** you're extrapolating, not interpolating\n\n## What this means for your analysis\n\n1. **Check overlap explicitly.** Plot the propensity score distributions for mentored vs. non-mentored employees. If they barely overlap, your estimates are driven by functional form assumptions, not data.\n\n2. **Report the estimand carefully.** You may only be able to credibly estimate the ATT (effect *among those who actually received mentorship*) \u2014 not the ATE \u2014 because the control group analog for high-performers is sparse.\n\n3. **Unmeasured confounding is likely.** A confounder this strong is often a proxy for other selection factors (manager sponsorship, visibility, ambition, fit). Sensitivity analysis (e.g., Rosenbaum bounds, E-values) should accompany any estimate.\n\n4. **Look for design alternatives.** If promotion decisions involve a threshold in performance ratings, regression discontinuity around that cutoff could isolate quasi-random variation in mentorship assignment without the positivity problem.\n\nThe short version: control for prior performance, yes \u2014 but with r = 0.85 you're in a regime where the estimates are fragile and the overlap assumption is likely violated. The statistical answer to confounding (add the covariate) doesn't resolve the identification problem created by near-deterministic treatment assignment.",
+  "assertions": [
+    {
+      "text": "Claude identifies prior performance as a near-instrument (or near-IV) \u2014 a variable that strongly predicts treatment assignment (r \u2248 0.85) and is not itself exogenous",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude warns that controlling for a near-IV in the presence of unmeasured confounders can amplify rather than reduce bias \u2014 the mechanism being that conditioning concentrates remaining treatment variation onto the part correlated with unmeasured factors",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude does NOT unconditionally endorse 'control for prior performance because it predicts both treatment and outcome'",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude explicitly states the conditional: if prior performance is the ONLY confounder and no unmeasured confounders exist, controlling is correct; but given the plausibility of unmeasured confounders like ambition, sponsorship, or political capital, the near-IV amplification risk makes mechanical conditioning dangerous. Claude states which scenario is more realistic and recommends sensitivity analysis or an alternative design rather than leaving the user with an unresolved 'it depends.'",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

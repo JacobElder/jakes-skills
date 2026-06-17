@@ -1,0 +1,46 @@
+{
+  "eval_id": 1,
+  "name": "rung-identification",
+  "condition": "with_skill",
+  "prompt": "Due to a backend bug, our A/B testing framework assigned users to 'new_checkout' vs 'old_checkout' based on the last digit of their user ID \u2014 digits 0\u20134 got the new checkout, 5\u20139 got the old one. Conversion rates show +4.2% for new_checkout users. A junior analyst says 'this is essentially random since user IDs are arbitrary, so the +4.2% is our causal estimate of the checkout effect.' A senior engineer says 'user IDs are assigned sequentially, so this just compares newer users to older users.' Who's right, and can we use this as a valid causal estimate?",
+  "baseline_failure_hypothesis": "Base model validates the analyst's claim that arbitrary-looking assignment is essentially random, failing to name the cohort-confound from sequential ID assignment or specify what valid quasi-experimental identification requires.",
+  "response": "The senior engineer is raising the right alarm, but for a slightly imprecise reason. Neither analysis is complete. Here's the diagnostic:\n\n## Name the rung\n\nThis is a rung-2 question: what is the causal effect of new_checkout on conversion? The question is whether the accidental assignment mechanism happened to produce groups that are exchangeable \u2014 i.e., whether it approximates randomization.\n\n## The junior analyst's error\n\n\"User IDs are arbitrary\" is not a causal argument \u2014 it's a hand-wave. What matters is whether **last-digit \u2208 {0\u20134} is independent of all confounders of checkout \u2192 conversion**. Whether IDs feel arbitrary is irrelevant; you have to show balance.\n\n## The senior engineer's error (or imprecision)\n\nThe specific claim \u2014 \"sequential IDs compare newer to older users\" \u2014 is actually **mathematically weak** for strictly sequential integers. If IDs are 1, 2, 3, ... N, the last digit cycles uniformly through 0\u20139 in every consecutive block of 10. At scale, the last-digit partition ({0\u20134} vs. {5\u20139}) produces two groups with nearly identical sign-up-time distributions. The correlation between \"last digit\" and \"sign-up cohort\" approaches zero for large N with uniform sequential assignment.\n\nThe senior engineer's intuition is right to be skeptical, but the stated mechanism doesn't hold for ideal sequential IDs.\n\n## The real concerns\n\n**1. ID generation is rarely ideal.**\nIn practice: IDs have gaps (deleted accounts, reserved ranges), may be assigned in blocks by acquisition channel or geography, or may differ across environments (web vs. mobile sign-ups getting different ID ranges). Any of these create systematic last-digit patterns correlated with user type. You need to verify this, not assume it away.\n\n**2. Treatment timing matters.**\nWhen was the bug introduced? If this misassignment only applied starting mid-cohort, users who signed up before the bug have different assignment logic than users after. Your two \"treatment\" groups may actually be a mix of properly- and improperly-assigned users.\n\n**3. The balance check is the only arbiter.**\nWhether this is a valid natural experiment is an empirical question, not a theoretical one. The assignment mechanism is now fixed \u2014 you can check whether it worked.\n\n## What to actually do\n\nRun a covariate balance check before trusting the +4.2%:\n\n- Compare sign-up date distributions between new vs. old checkout groups\n- Compare acquisition channel, device type, geography, past purchase history, account age\n- Compare *pre-experiment* conversion rates (if any historical data exists)\n\nIf the groups are balanced, treat this as a valid natural experiment and the +4.2% is defensible as an ATE estimate (with appropriate standard errors). If groups are imbalanced on observable covariates, use regression adjustment or inverse propensity weighting to recover a cleaner estimate \u2014 though residual imbalance on *unobservables* remains a concern.\n\n## Bottom line\n\n| Analyst | Right about | Wrong about |\n|---|---|---|\n| Junior | Last digit of sequential IDs doesn't obviously track sign-up cohort | \"Therefore it's random\" \u2014 this requires verification, not assumption |\n| Senior | Be skeptical of accidental assignment; check your data | The specific mechanism (sequential \u2192 cohort correlation) is shaky for ideal sequential IDs |\n\nThe +4.2% is **not automatically a valid causal estimate**. It might be, but only a balance check tells you. If you find imbalance, you have an observational study with a quirky assignment mechanism \u2014 not an experiment.",
+  "assertions": [
+    {
+      "text": "Claude rejects the junior analyst's claim that last-digit user ID assignment is 'essentially random' \u2014 and explains that arbitrary-looking assignment is NOT the same as independent assignment from potential outcomes",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude identifies the specific threat the senior engineer raises: sequentially assigned user IDs create a cohort split, so digit groups 0\u20134 vs 5\u20139 differ systematically in account age, product experience, acquisition wave, and anything else that co-varies with signup time",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude states that the +4.2% difference is NOT a valid causal estimate without first verifying that the two groups are balanced on pre-treatment covariates \u2014 the assignment mechanism must be interrogated, not assumed benign",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude recommends a concrete diagnostic: run balance tests on pre-treatment covariates (account age, acquisition channel, historical conversion rates) between digit groups \u2014 if they differ, the 'natural experiment' is invalid and the estimate is confounded",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude explains what would actually constitute valid quasi-experimental identification here: either verify empirically that digit groups are balanced (and explain why they would be, given the sequential assignment concern), or use a different identification strategy (e.g., a holdout or time-based DiD)",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": true
+}

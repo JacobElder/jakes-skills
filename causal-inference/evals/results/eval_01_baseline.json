@@ -1,0 +1,46 @@
+{
+  "eval_id": 1,
+  "name": "rung-identification",
+  "condition": "baseline",
+  "prompt": "Due to a backend bug, our A/B testing framework assigned users to 'new_checkout' vs 'old_checkout' based on the last digit of their user ID \u2014 digits 0\u20134 got the new checkout, 5\u20139 got the old one. Conversion rates show +4.2% for new_checkout users. A junior analyst says 'this is essentially random since user IDs are arbitrary, so the +4.2% is our causal estimate of the checkout effect.' A senior engineer says 'user IDs are assigned sequentially, so this just compares newer users to older users.' Who's right, and can we use this as a valid causal estimate?",
+  "baseline_failure_hypothesis": "Base model validates the analyst's claim that arbitrary-looking assignment is essentially random, failing to name the cohort-confound from sequential ID assignment or specify what valid quasi-experimental identification requires.",
+  "response": "The senior engineer is wrong about the specific mechanism, and the junior analyst is mostly right \u2014 but neither has the complete picture.\n\n## Why the senior engineer is wrong\n\nIf IDs are assigned sequentially (1, 2, 3, \u2026 N), the last digit cycles 0\u20139 within every consecutive block of 10 users:\n\n```\nIDs 1\u201310:  last digits 1,2,3,4,5,6,7,8,9,0  \u2192  5 new, 5 old\nIDs 11\u201320: last digits 1,2,3,4,5,6,7,8,9,0  \u2192  5 new, 5 old\n...\n```\n\n**The two groups are perfectly interleaved across cohorts.** Every wave of users \u2014 early adopters, holiday surge, post-campaign influx \u2014 contributes equally to both groups. This is fundamentally different from splitting on ID being above/below some threshold, which *would* separate old from new users. The senior engineer is confusing \"sequential IDs\" with \"high vs. low IDs.\"\n\n## Why the junior analyst is mostly right\n\nBecause the last digit of sequential IDs cycles uniformly, it behaves like a pseudo-random assignment mechanism at the individual level. This is actually structurally similar to how some valid natural experiments work \u2014 deterministic but effectively orthogonal to most user characteristics.\n\n## But there are real threats the junior analyst is ignoring\n\nEven granting that cohort confounds are absent, the causal estimate is threatened by:\n\n1. **Batch ID assignment**: If user accounts are provisioned in batches by type (enterprise clients get IDs 1000\u20131099, API users get 1100\u20131199, etc.), the last-digit split can pick up user-type differences even with sequential within-batch assignment.\n\n2. **Non-compliance / intent-to-treat blurring**: Did *all* users in the new-checkout group actually see the new checkout? If some were routed differently (cached sessions, mobile app, third-party integrations), you're estimating ITT, not the actual checkout effect \u2014 and not the same ITT for both groups.\n\n3. **Interference (SUTVA violation)**: If users refer each other, share carts, or discuss the checkout experience, treatment can bleed across assignment groups.\n\n4. **Contemporaneous changes**: Was anything else different between the two groups during this period? A/B bugs often surface alongside deploys, so it's worth checking whether other features changed simultaneously for these user subsets.\n\n5. **ID-correlated behavior**: Unlikely but possible \u2014 vanity IDs, imported accounts, or third-party auth flows may disproportionately land on specific last digits.\n\n## Bottom line\n\nThe +4.2% is **defensible as a causal estimate** if (a) ID assignment is uniformly sequential with no batch patterns, (b) treatment assignment was stable and actually delivered the different checkout, and (c) standard no-interference assumptions hold. The right analysis move is to verify assumption (a) by checking ID distribution across user segments, run a balance check on pre-experiment covariates (account age, historical conversion, device type) across the two groups, and confirm compliance rates. If balance checks pass, you have something close to a valid natural experiment \u2014 not a textbook RCT, but publishable-grade quasi-experimental evidence.",
+  "assertions": [
+    {
+      "text": "Claude rejects the junior analyst's claim that last-digit user ID assignment is 'essentially random' \u2014 and explains that arbitrary-looking assignment is NOT the same as independent assignment from potential outcomes",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude identifies the specific threat the senior engineer raises: sequentially assigned user IDs create a cohort split, so digit groups 0\u20134 vs 5\u20139 differ systematically in account age, product experience, acquisition wave, and anything else that co-varies with signup time",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude states that the +4.2% difference is NOT a valid causal estimate without first verifying that the two groups are balanced on pre-treatment covariates \u2014 the assignment mechanism must be interrogated, not assumed benign",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude recommends a concrete diagnostic: run balance tests on pre-treatment covariates (account age, acquisition channel, historical conversion rates) between digit groups \u2014 if they differ, the 'natural experiment' is invalid and the estimate is confounded",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude explains what would actually constitute valid quasi-experimental identification here: either verify empirically that digit groups are balanced (and explain why they would be, given the sequential assignment concern), or use a different identification strategy (e.g., a holdout or time-based DiD)",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    false,
+    false,
+    true,
+    false,
+    false
+  ],
+  "passed": 1,
+  "total": 5,
+  "pass_rate": 0.2,
+  "eval_passes": false
+}

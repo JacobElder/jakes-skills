@@ -1,0 +1,40 @@
+{
+  "eval_id": 2,
+  "name": "selection-bias-power-users",
+  "condition": "baseline",
+  "prompt": "We want to understand what drives long-term retention. Our analysis team filtered the dataset to users who were still active at the 90-day mark \u2014 these are our most engaged, highest-quality users. Within this group, completing the onboarding checklist correlates strongly with 6-month retention (r = 0.42, p < 0.001). Should we invest in improving onboarding completion as a lever for long-term retention?",
+  "baseline_failure_hypothesis": "Base model treats power-user filtering as a benign subgroup analysis rather than identifying it as conditioning on a collider \u2014 missing the selection-bias mechanism and accepting the r=0.42 correlation at face value.",
+  "response": "This analysis has a serious methodological flaw: **conditioning on a collider (survivorship bias)**. The correlation you're seeing is not trustworthy as a causal signal.\n\n## The Problem\n\nBy filtering to users active at 90 days, you've conditioned on an outcome that sits downstream of both onboarding completion *and* latent user quality (motivation, product-market fit, prior experience). This is a collider, and conditioning on a collider opens a spurious path between its causes.\n\nThe causal structure looks roughly like this:\n\n```\nUser Quality \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba 6-mo Retention\n     \u2502                                                  \u25b2\n     \u25bc                                                  \u2502\nOnboarding Completion \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n     \u2502                       \u2502\n     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\u2502\n                        Active @ 90d  \u25c4\u2500\u2500 (you conditioned here)\n```\n\nWhen you condition on \"active at 90 days,\" you've pre-selected a group where high completion rates and high latent quality co-occur. Within that group, even a zero-effect intervention like onboarding would appear predictive of retention \u2014 because both are proxies for the same underlying user quality that got them to 90 days in the first place.\n\nPut plainly: the r = 0.42 may be measuring \"engaged users do everything\" rather than \"onboarding causes retention.\"\n\n## What to Do Instead\n\n1. **Re-run on the full cohort.** The question is whether completing onboarding predicts 6-month retention among *all* users, not among those who already survived 90 days. The 90-day filter discards exactly the users where poor onboarding might have caused churn.\n\n2. **Check whether the effect persists.** If onboarding completion still predicts 6-month retention in the full cohort, you have a stronger (though still observational) signal.\n\n3. **Control for engagement proxies.** Fit a model that includes early engagement signals (DAU in week 1, session depth, etc.) alongside onboarding completion. If the onboarding coefficient shrinks to near zero, the effect was driven by latent quality, not onboarding.\n\n4. **Run an experiment.** The only clean answer is a randomized nudge toward onboarding completion (in-app prompt, email, friction reduction) and measure retention in both arms from the *start* of the user lifecycle \u2014 not from a filtered subset.\n\n## Bottom Line\n\nDon't invest in onboarding improvements based on this analysis. The correlation is likely an artifact of selecting on survival. Re-run on the full cohort first; if the signal holds, then design an experiment before committing resources.",
+  "assertions": [
+    {
+      "text": "Claude flags that restricting the analysis to '90-day active users' conditions on a downstream variable \u2014 users who survived to 90 days are already a selected, high-retention population",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude explains the collider mechanism specifically: being active at 90 days is a common effect of both onboarding engagement and baseline retention tendency, so conditioning on it induces spurious correlation between those two causes even if they are independent in the full population \u2014 this means the r = 0.42 could exist even if onboarding completion has zero causal effect",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude does NOT take the r = 0.42 correlation at face value as evidence that improving onboarding completion will causally improve retention",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude recommends analyzing the full user population (including churned users) rather than the 90-day survivors, or using an approach that corrects for selection (e.g., IPW)",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}
