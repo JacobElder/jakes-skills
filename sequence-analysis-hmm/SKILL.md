@@ -5,7 +5,7 @@ description: Apply Hidden Markov Models and related sequence-analysis techniques
 
 # Sequence Analysis and Hidden Markov Models
 
-This skill helps Claude give expert-level help on sequence analysis problems where Hidden Markov Models (HMMs) or close relatives are the right tool. It covers the theory at the level a practitioner needs, the canonical algorithms (forward-backward, Viterbi, Baum-Welch), and the practical decisions — choosing K, picking emissions, handling numerical issues, validating fits — that determine whether a model actually works.
+This skill helps the agent give expert-level help on sequence analysis problems where Hidden Markov Models (HMMs) or close relatives are the right tool. It covers the theory at the level a practitioner needs, the canonical algorithms (forward-backward, Viterbi, Baum-Welch), and the practical decisions — choosing K, picking emissions, handling numerical issues, validating fits — that determine whether a model actually works.
 
 The skill is general-purpose: bioinformatics (genes, proteins, profile HMMs), time-series (regime switching, anomaly detection), and NLP/speech (tagging, decoding) all live here. When a question is squarely in one domain, consult the matching reference file for conventions, tools, and worked examples:
 
@@ -60,7 +60,7 @@ Concrete contrast for *"what's an HMM?"*:
 > **Good** (what the skill is asking for):
 > An HMM models a system you can't directly see, only its outputs. Imagine a friend rolling dice in another room and telling you the results — they might be using a fair die or a loaded die, switching between them sometimes, and you're trying to figure out which die was in use at each roll just from the numbers you heard. The "die in use" is the hidden state; the "number called out" is the observation. HMMs give you the math to reason about what state the system was probably in, and to learn the dice and switching patterns from enough data. Want me to dig into a specific application, or how the math works?
 
-The good version is one paragraph, uses a concrete metaphor, offers a continuation. The bad version is what happens when Claude reaches for structure-as-substitute-for-clarity. Resist that reflex.
+The good version is one paragraph, uses a concrete metaphor, offers a continuation. The bad version is what happens when the model reaches for structure-as-substitute-for-clarity. Resist that reflex.
 
 ## When an HMM is (and isn't) the right tool
 

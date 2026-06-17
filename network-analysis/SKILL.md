@@ -99,7 +99,7 @@ For any non-trivial network task, follow this loop. It catches the errors that d
 
 ## Common mistakes to watch for and call out
 
-These are errors Claude (and most analysts) make if not on guard. If the user's plan contains one of these, raise it before proceeding:
+These are errors the model (and most analysts) make if not on guard. If the user's plan contains one of these, raise it before proceeding:
 
 - **Projecting a bipartite network and then running standard SNA on the projection without backbone extraction.** The projection inherits a huge clique structure from each event/group node and inflates clustering, modularity, and centrality measures.
 - **Computing eigenvector centrality on a directed network with weak components.** Use Katz or PageRank.
@@ -159,4 +159,4 @@ Set a random seed before any stochastic algorithm (Louvain, SBM inference, ERGM 
 
 If the user's request is ambiguous, ask *one* clarifying question — usually it's "what is the substantive question this network should answer?" Network analysis methods are interpretable only relative to a substantive question. Five different reasonable questions about the same network demand five different methods.
 
-For deep dives on any specific area, read the corresponding reference file. The reference files contain formulas, library calls (Python and R), citations to canonical literature (Wasserman & Faust 1994; Snijders 2017; Newman 2018; Hunter et al. 2008; Holme & Saramäki 2012; Peixoto 2014/2017; Hamilton 2020), and worked examples. They are not light reading — they're designed to make Claude make decisions a domain expert would make. Read the relevant ones in full before recommending a method.
+For deep dives on any specific area, read the corresponding reference file. The reference files contain formulas, library calls (Python and R), citations to canonical literature (Wasserman & Faust 1994; Snijders 2017; Newman 2018; Hunter et al. 2008; Holme & Saramäki 2012; Peixoto 2014/2017; Hamilton 2020), and worked examples. They are not light reading — they're designed to help the agent make decisions a domain expert would make. Read the relevant ones in full before recommending a method.

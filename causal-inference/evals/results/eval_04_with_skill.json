@@ -1,0 +1,40 @@
+{
+  "eval_id": 4,
+  "name": "table-2-fallacy",
+  "condition": "with_skill",
+  "prompt": "I ran a regression of website conversion on a treatment dummy plus controls for age, country, browser, and time-of-day. The treatment coefficient is what I care about. But the country coefficient is huge and significant \u2014 does that mean country has a big causal effect on conversion?",
+  "baseline_failure_hypothesis": "Base model interprets the country coefficient as the causal effect of country, missing the Table 2 Fallacy: control-variable coefficients have a different adjustment set than the primary exposure and cannot be read as causal effects.",
+  "response": "No \u2014 this is the **Table 2 Fallacy**. The country coefficient tells you about model fit, not country's causal effect on conversion.\n\nHere's why: to identify the causal effect of *treatment*, you need controls that block back-door paths from treatment to conversion. Country may do that job well. But to identify the causal effect of *country* on conversion, you'd need a completely different adjustment set \u2014 every direct cause of conversion in the model, with nothing omitted and no colliders opened. That condition almost certainly doesn't hold here.\n\nPractically: country likely correlates with dozens of unmeasured things (payment method availability, internet speed, local competitors, purchasing power, cultural norms around online buying). Your regression doesn't include those, so the country coefficient is soaking up all that variation without properly isolating country's effect. It's a biased estimate of country's causal effect even if it's a valid control for the treatment effect.\n\nThe takeaway: **only the focal coefficient \u2014 treatment \u2014 deserves a causal reading.** The country coefficient is meaningful as a model-fit term (country membership predicts conversion), but \"significant and large\" does not mean \"country causes conversion at that magnitude.\" If you want to make a causal claim about country, that's a separate analysis with a separate DAG and a separate identification strategy.",
+  "assertions": [
+    {
+      "text": "Claude names or describes the Table 2 Fallacy \u2014 that control variable coefficients in a regression designed to identify the focal treatment effect are not themselves causally identified",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude explains structurally why: the adjustment set was chosen to block back-door paths from treatment to conversion, not from country to conversion \u2014 these are different back-door sets requiring potentially different controls",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude notes that some controls in the model (e.g., browser) could be mediators on the country \u2192 conversion path, meaning the country coefficient might be partial (not total) and would be biased by conditioning on its own mediators",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude does NOT confirm that the country coefficient measures country's causal effect on conversion",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

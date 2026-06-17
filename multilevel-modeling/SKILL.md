@@ -153,4 +153,4 @@ Prefer cluster-robust SEs when:
 
 ## A note on AI-generated MLM code
 
-Generated MLM code (including from Claude) routinely defaults to single-random-intercept models because that's the modal example in training data. When generating code, explicitly justify the random-effects structure in a comment, and flag to the user if the structure is a simplification of the maximal model. If unsure about the design, ask before fitting.
+Generated MLM code (including from AI models) routinely defaults to single-random-intercept models because that's the modal example in training data. When generating code, explicitly justify the random-effects structure in a comment, and flag to the user if the structure is a simplification of the maximal model. If unsure about the design, ask before fitting.

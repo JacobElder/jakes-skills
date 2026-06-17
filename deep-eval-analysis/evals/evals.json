@@ -66,7 +66,8 @@
       "assertions": [
         {"text": "Treats judge reliability as a gate to run BEFORE difficulty/discrimination/ability analysis", "type": "qualitative"},
         {"text": "Uses kappa (agreement beyond chance), not raw agreement percentage, and explains why", "type": "qualitative"},
-        {"text": "Gives a remediation path if the judge is unreliable (rubric rewrite / pairwise / ensemble)", "type": "qualitative"}
+        {"text": "Gives a remediation path if the judge is unreliable (rubric rewrite / pairwise / ensemble)", "type": "qualitative"},
+        {"text": "States that the measured kappa (~0.43, moderate) does NOT clear the gate for downstream analysis and names the threshold required (substantial, ~0.6+)", "type": "qualitative"}
       ]
     },
     {
@@ -155,6 +156,45 @@
         {"text": "Recommends content hashing to detect drift and treating changed items as new (not pooling across the change)", "type": "qualitative"},
         {"text": "Recommends anchor/common-item linking to put runs on a comparable scale", "type": "qualitative"},
         {"text": "Warns the observed improvement may be instrument drift, not a real gain", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 14,
+      "name": "judge_calibration_vs_reliability",
+      "prompt": "My LLM grader has kappa = 0.72 with my human reference rater — that's substantial agreement, so I should be fine to trust these grades and start trimming evals, right? By the way, the judge also outputs confidence scores and it usually gives 0.90–0.98 even on cases where it later turns out to disagree with the human.",
+      "files": [],
+      "expected_output": "Separates reliability (kappa — agreement beyond chance) from calibration (ECE/Brier — are confidence scores accurate). kappa = 0.72 clears the reliability gate but does NOT clear the calibration gate. Confidence scores that say 0.95 when empirical accuracy is ~70% are miscalibrated. Must compute ECE or Brier score on the confidence outputs against the human reference. Notes that a miscalibrated confident judge inflates apparent certainty in downstream pass rates without improving real measurement. Recommends Platt/temperature scaling or ignoring confidences and using binary labels only.",
+      "assertions": [
+        {"text": "Separates reliability (kappa) from calibration (ECE/Brier) — explicitly states these are two different checks, not one", "type": "qualitative"},
+        {"text": "States that kappa = 0.72 clears reliability but does NOT also clear calibration; both are required before trusting downstream analysis", "type": "qualitative"},
+        {"text": "Recommends computing ECE or Brier score on the confidence scores to assess calibration", "type": "qualitative"},
+        {"text": "Names the specific failure mode: overconfident judge (states 0.90+ but is only right ~70% of the time) and its downstream effect on pass-rate uncertainty", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 15,
+      "name": "d_study_seed_vs_case_lever",
+      "prompt": "My G-study decomposed variance into: version variance = 0.04, version×item interaction = 0.09 (the biggest source), version×seed = 0.01, residual = 0.02. Current design: 6 versions × 20 cases × 3 seeds. My budget allows either adding 10 more eval cases OR doubling seeds from 3 to 6. My advisor says seeds are cheaper and should help about as much. Is that right?",
+      "files": [],
+      "expected_output": "Your advisor is wrong about 'about as much.' The dominant error is version×item interaction (0.09), not version×seed (0.01). G-coefficient denominator is: σ²(version×item)/n_items + σ²(version×seed)/n_seeds + ... Adding 10 cases halves the version×item term (from 0.09/20 to 0.09/30). Doubling seeds halves the seed term (from 0.01/3 to 0.01/6). Since 0.09 >> 0.01, cases are the high-leverage lever by almost an order of magnitude. D-study: +10 cases raises Eρ² substantially; +3 seeds barely moves it. Never add seeds as a substitute for cases when version×item interaction dominates.",
+      "assertions": [
+        {"text": "Recommends adding cases, not seeds, as the dominant-variance lever in this design", "type": "qualitative"},
+        {"text": "Explains WHY using the G-theory logic: version×item (0.09) dominates version×seed (0.01), so cases dilute the big term and seeds dilute the small term", "type": "qualitative"},
+        {"text": "Explicitly says the advisor is wrong that seeds would help 'about as much' — names the variance ratio to quantify the gap", "type": "qualitative"},
+        {"text": "References D-study projection: adding cases moves Eρ² substantially; adding seeds barely moves it at this variance structure", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 16,
+      "name": "contamination_vs_saturation",
+      "prompt": "I'm running a 40-model bank (evals/fixtures/model_bank_40.csv) and I notice items it_sat and it_noise both have pass rates above 95%. My colleague says these are just easy items and I should trim them for being saturated — the low-ability models pass them too. But I'm worried some items might be contaminated (leaked to training data rather than genuinely easy). How do I tell the difference between saturation and contamination statistically, and does it matter which it is?",
+      "files": ["evals/fixtures/model_bank_40.csv"],
+      "expected_output": "Distinguishes saturation from contamination as two separate IRT failure modes with different statistical signatures. Saturated: very negative b parameter, but response pattern still fits the ICC — stronger models pass at higher rates consistent with their global theta. Contaminated: response pattern violates the ICC — weak-ability models pass at rates inconsistent with their global theta (high outfit residuals, guessing-like patterns untethered from ability). Key diagnostics: (1) outfit/infit statistics — contamination inflates outfit (unexpected responses relative to model-predicted probability); (2) 3PL guessing parameter — c well above 0 means low-θ takers succeed at a rate untethered from ability; (3) ICC residual plot — does the empirical pass rate by ability bin match the model-implied curve? Notes it matters: a saturated item is non-informative but validity-clean; a contaminated item injects noise into theta estimates — passes tied to training data leakage, not measured skill. Recommends trimming non-informative saturated items but auditing/removing contaminated items before they corrupt ability estimates.",
+      "assertions": [
+        {"text": "Distinguishes saturation from contamination as two separate failure modes with different statistical signatures — not just 'both are high pass rate'", "type": "qualitative"},
+        {"text": "Invokes IRT model-fit residuals (outfit/infit statistics or ICC residuals) as the key contamination diagnostic, not just the raw pass rate or difficulty parameter alone", "type": "qualitative"},
+        {"text": "Names the guessing-pattern tell: weak-ability takers passing at rates inconsistent with their global theta (3PL c, unexpected-pass residuals)", "type": "qualitative"},
+        {"text": "States the different consequences: saturated items are non-informative but validity-clean; contaminated items pollute theta estimates and should be audited/removed, not just trimmed", "type": "qualitative"}
       ]
     },
     {

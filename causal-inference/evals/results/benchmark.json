@@ -3,264 +3,12 @@
   "generated": "2026-06-16",
   "results": [
     {
-      "eval_id": 1,
-      "name": "rung-identification",
-      "condition": "baseline",
-      "prompt": "Due to a backend bug, our A/B testing framework assigned users to 'new_checkout' vs 'old_checkout' based on the last digit of their user ID \u2014 digits 0\u20134 got the new checkout, 5\u20139 got the old one. Conversion rates show +4.2% for new_checkout users. A junior analyst says 'this is essentially random since user IDs are arbitrary, so the +4.2% is our causal estimate of the checkout effect.' A senior engineer says 'user IDs are assigned sequentially, so this just compares newer users to older users.' Who's right, and can we use this as a valid causal estimate?",
-      "baseline_failure_hypothesis": "Base model validates the analyst's claim that arbitrary-looking assignment is essentially random, failing to name the cohort-confound from sequential ID assignment or specify what valid quasi-experimental identification requires.",
-      "response": "The senior engineer is wrong about the specific mechanism, and the junior analyst is mostly right \u2014 but neither has the complete picture.\n\n## Why the senior engineer is wrong\n\nIf IDs are assigned sequentially (1, 2, 3, \u2026 N), the last digit cycles 0\u20139 within every consecutive block of 10 users:\n\n```\nIDs 1\u201310:  last digits 1,2,3,4,5,6,7,8,9,0  \u2192  5 new, 5 old\nIDs 11\u201320: last digits 1,2,3,4,5,6,7,8,9,0  \u2192  5 new, 5 old\n...\n```\n\n**The two groups are perfectly interleaved across cohorts.** Every wave of users \u2014 early adopters, holiday surge, post-campaign influx \u2014 contributes equally to both groups. This is fundamentally different from splitting on ID being above/below some threshold, which *would* separate old from new users. The senior engineer is confusing \"sequential IDs\" with \"high vs. low IDs.\"\n\n## Why the junior analyst is mostly right\n\nBecause the last digit of sequential IDs cycles uniformly, it behaves like a pseudo-random assignment mechanism at the individual level. This is actually structurally similar to how some valid natural experiments work \u2014 deterministic but effectively orthogonal to most user characteristics.\n\n## But there are real threats the junior analyst is ignoring\n\nEven granting that cohort confounds are absent, the causal estimate is threatened by:\n\n1. **Batch ID assignment**: If user accounts are provisioned in batches by type (enterprise clients get IDs 1000\u20131099, API users get 1100\u20131199, etc.), the last-digit split can pick up user-type differences even with sequential within-batch assignment.\n\n2. **Non-compliance / intent-to-treat blurring**: Did *all* users in the new-checkout group actually see the new checkout? If some were routed differently (cached sessions, mobile app, third-party integrations), you're estimating ITT, not the actual checkout effect \u2014 and not the same ITT for both groups.\n\n3. **Interference (SUTVA violation)**: If users refer each other, share carts, or discuss the checkout experience, treatment can bleed across assignment groups.\n\n4. **Contemporaneous changes**: Was anything else different between the two groups during this period? A/B bugs often surface alongside deploys, so it's worth checking whether other features changed simultaneously for these user subsets.\n\n5. **ID-correlated behavior**: Unlikely but possible \u2014 vanity IDs, imported accounts, or third-party auth flows may disproportionately land on specific last digits.\n\n## Bottom line\n\nThe +4.2% is **defensible as a causal estimate** if (a) ID assignment is uniformly sequential with no batch patterns, (b) treatment assignment was stable and actually delivered the different checkout, and (c) standard no-interference assumptions hold. The right analysis move is to verify assumption (a) by checking ID distribution across user segments, run a balance check on pre-experiment covariates (account age, historical conversion, device type) across the two groups, and confirm compliance rates. If balance checks pass, you have something close to a valid natural experiment \u2014 not a textbook RCT, but publishable-grade quasi-experimental evidence.",
-      "assertions": [
-        {
-          "text": "Claude rejects the junior analyst's claim that last-digit user ID assignment is 'essentially random' \u2014 and explains that arbitrary-looking assignment is NOT the same as independent assignment from potential outcomes",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude identifies the specific threat the senior engineer raises: sequentially assigned user IDs create a cohort split, so digit groups 0\u20134 vs 5\u20139 differ systematically in account age, product experience, acquisition wave, and anything else that co-varies with signup time",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude states that the +4.2% difference is NOT a valid causal estimate without first verifying that the two groups are balanced on pre-treatment covariates \u2014 the assignment mechanism must be interrogated, not assumed benign",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude recommends a concrete diagnostic: run balance tests on pre-treatment covariates (account age, acquisition channel, historical conversion rates) between digit groups \u2014 if they differ, the 'natural experiment' is invalid and the estimate is confounded",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude explains what would actually constitute valid quasi-experimental identification here: either verify empirically that digit groups are balanced (and explain why they would be, given the sequential assignment concern), or use a different identification strategy (e.g., a holdout or time-based DiD)",
-          "passed": null,
-          "evidence": ""
-        }
-      ],
-      "assertion_results": [
-        false,
-        false,
-        true,
-        false,
-        false
-      ],
-      "passed": 1,
-      "total": 5,
-      "pass_rate": 0.2,
-      "eval_passes": false
-    },
-    {
-      "eval_id": 1,
-      "name": "rung-identification",
-      "condition": "with_skill",
-      "prompt": "Due to a backend bug, our A/B testing framework assigned users to 'new_checkout' vs 'old_checkout' based on the last digit of their user ID \u2014 digits 0\u20134 got the new checkout, 5\u20139 got the old one. Conversion rates show +4.2% for new_checkout users. A junior analyst says 'this is essentially random since user IDs are arbitrary, so the +4.2% is our causal estimate of the checkout effect.' A senior engineer says 'user IDs are assigned sequentially, so this just compares newer users to older users.' Who's right, and can we use this as a valid causal estimate?",
-      "baseline_failure_hypothesis": "Base model validates the analyst's claim that arbitrary-looking assignment is essentially random, failing to name the cohort-confound from sequential ID assignment or specify what valid quasi-experimental identification requires.",
-      "response": "The senior engineer is raising the right alarm, but for a slightly imprecise reason. Neither analysis is complete. Here's the diagnostic:\n\n## Name the rung\n\nThis is a rung-2 question: what is the causal effect of new_checkout on conversion? The question is whether the accidental assignment mechanism happened to produce groups that are exchangeable \u2014 i.e., whether it approximates randomization.\n\n## The junior analyst's error\n\n\"User IDs are arbitrary\" is not a causal argument \u2014 it's a hand-wave. What matters is whether **last-digit \u2208 {0\u20134} is independent of all confounders of checkout \u2192 conversion**. Whether IDs feel arbitrary is irrelevant; you have to show balance.\n\n## The senior engineer's error (or imprecision)\n\nThe specific claim \u2014 \"sequential IDs compare newer to older users\" \u2014 is actually **mathematically weak** for strictly sequential integers. If IDs are 1, 2, 3, ... N, the last digit cycles uniformly through 0\u20139 in every consecutive block of 10. At scale, the last-digit partition ({0\u20134} vs. {5\u20139}) produces two groups with nearly identical sign-up-time distributions. The correlation between \"last digit\" and \"sign-up cohort\" approaches zero for large N with uniform sequential assignment.\n\nThe senior engineer's intuition is right to be skeptical, but the stated mechanism doesn't hold for ideal sequential IDs.\n\n## The real concerns\n\n**1. ID generation is rarely ideal.**\nIn practice: IDs have gaps (deleted accounts, reserved ranges), may be assigned in blocks by acquisition channel or geography, or may differ across environments (web vs. mobile sign-ups getting different ID ranges). Any of these create systematic last-digit patterns correlated with user type. You need to verify this, not assume it away.\n\n**2. Treatment timing matters.**\nWhen was the bug introduced? If this misassignment only applied starting mid-cohort, users who signed up before the bug have different assignment logic than users after. Your two \"treatment\" groups may actually be a mix of properly- and improperly-assigned users.\n\n**3. The balance check is the only arbiter.**\nWhether this is a valid natural experiment is an empirical question, not a theoretical one. The assignment mechanism is now fixed \u2014 you can check whether it worked.\n\n## What to actually do\n\nRun a covariate balance check before trusting the +4.2%:\n\n- Compare sign-up date distributions between new vs. old checkout groups\n- Compare acquisition channel, device type, geography, past purchase history, account age\n- Compare *pre-experiment* conversion rates (if any historical data exists)\n\nIf the groups are balanced, treat this as a valid natural experiment and the +4.2% is defensible as an ATE estimate (with appropriate standard errors). If groups are imbalanced on observable covariates, use regression adjustment or inverse propensity weighting to recover a cleaner estimate \u2014 though residual imbalance on *unobservables* remains a concern.\n\n## Bottom line\n\n| Analyst | Right about | Wrong about |\n|---|---|---|\n| Junior | Last digit of sequential IDs doesn't obviously track sign-up cohort | \"Therefore it's random\" \u2014 this requires verification, not assumption |\n| Senior | Be skeptical of accidental assignment; check your data | The specific mechanism (sequential \u2192 cohort correlation) is shaky for ideal sequential IDs |\n\nThe +4.2% is **not automatically a valid causal estimate**. It might be, but only a balance check tells you. If you find imbalance, you have an observational study with a quirky assignment mechanism \u2014 not an experiment.",
-      "assertions": [
-        {
-          "text": "Claude rejects the junior analyst's claim that last-digit user ID assignment is 'essentially random' \u2014 and explains that arbitrary-looking assignment is NOT the same as independent assignment from potential outcomes",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude identifies the specific threat the senior engineer raises: sequentially assigned user IDs create a cohort split, so digit groups 0\u20134 vs 5\u20139 differ systematically in account age, product experience, acquisition wave, and anything else that co-varies with signup time",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude states that the +4.2% difference is NOT a valid causal estimate without first verifying that the two groups are balanced on pre-treatment covariates \u2014 the assignment mechanism must be interrogated, not assumed benign",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude recommends a concrete diagnostic: run balance tests on pre-treatment covariates (account age, acquisition channel, historical conversion rates) between digit groups \u2014 if they differ, the 'natural experiment' is invalid and the estimate is confounded",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude explains what would actually constitute valid quasi-experimental identification here: either verify empirically that digit groups are balanced (and explain why they would be, given the sequential assignment concern), or use a different identification strategy (e.g., a holdout or time-based DiD)",
-          "passed": null,
-          "evidence": ""
-        }
-      ],
-      "assertion_results": [
-        true,
-        false,
-        true,
-        true,
-        true
-      ],
-      "passed": 4,
-      "total": 5,
-      "pass_rate": 0.8,
-      "eval_passes": true
-    },
-    {
-      "eval_id": 2,
-      "name": "selection-bias-power-users",
-      "condition": "baseline",
-      "prompt": "We want to understand what drives long-term retention. Our analysis team filtered the dataset to users who were still active at the 90-day mark \u2014 these are our most engaged, highest-quality users. Within this group, completing the onboarding checklist correlates strongly with 6-month retention (r = 0.42, p < 0.001). Should we invest in improving onboarding completion as a lever for long-term retention?",
-      "baseline_failure_hypothesis": "Base model treats power-user filtering as a benign subgroup analysis rather than identifying it as conditioning on a collider \u2014 missing the selection-bias mechanism and accepting the r=0.42 correlation at face value.",
-      "response": "This analysis has a serious methodological flaw: **conditioning on a collider (survivorship bias)**. The correlation you're seeing is not trustworthy as a causal signal.\n\n## The Problem\n\nBy filtering to users active at 90 days, you've conditioned on an outcome that sits downstream of both onboarding completion *and* latent user quality (motivation, product-market fit, prior experience). This is a collider, and conditioning on a collider opens a spurious path between its causes.\n\nThe causal structure looks roughly like this:\n\n```\nUser Quality \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba 6-mo Retention\n     \u2502                                                  \u25b2\n     \u25bc                                                  \u2502\nOnboarding Completion \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n     \u2502                       \u2502\n     \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba\u2502\n                        Active @ 90d  \u25c4\u2500\u2500 (you conditioned here)\n```\n\nWhen you condition on \"active at 90 days,\" you've pre-selected a group where high completion rates and high latent quality co-occur. Within that group, even a zero-effect intervention like onboarding would appear predictive of retention \u2014 because both are proxies for the same underlying user quality that got them to 90 days in the first place.\n\nPut plainly: the r = 0.42 may be measuring \"engaged users do everything\" rather than \"onboarding causes retention.\"\n\n## What to Do Instead\n\n1. **Re-run on the full cohort.** The question is whether completing onboarding predicts 6-month retention among *all* users, not among those who already survived 90 days. The 90-day filter discards exactly the users where poor onboarding might have caused churn.\n\n2. **Check whether the effect persists.** If onboarding completion still predicts 6-month retention in the full cohort, you have a stronger (though still observational) signal.\n\n3. **Control for engagement proxies.** Fit a model that includes early engagement signals (DAU in week 1, session depth, etc.) alongside onboarding completion. If the onboarding coefficient shrinks to near zero, the effect was driven by latent quality, not onboarding.\n\n4. **Run an experiment.** The only clean answer is a randomized nudge toward onboarding completion (in-app prompt, email, friction reduction) and measure retention in both arms from the *start* of the user lifecycle \u2014 not from a filtered subset.\n\n## Bottom Line\n\nDon't invest in onboarding improvements based on this analysis. The correlation is likely an artifact of selecting on survival. Re-run on the full cohort first; if the signal holds, then design an experiment before committing resources.",
-      "assertions": [
-        {
-          "text": "Claude flags that restricting the analysis to '90-day active users' conditions on a downstream variable \u2014 users who survived to 90 days are already a selected, high-retention population",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude explains the collider mechanism specifically: being active at 90 days is a common effect of both onboarding engagement and baseline retention tendency, so conditioning on it induces spurious correlation between those two causes even if they are independent in the full population \u2014 this means the r = 0.42 could exist even if onboarding completion has zero causal effect",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude does NOT take the r = 0.42 correlation at face value as evidence that improving onboarding completion will causally improve retention",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude recommends analyzing the full user population (including churned users) rather than the 90-day survivors, or using an approach that corrects for selection (e.g., IPW)",
-          "passed": null,
-          "evidence": ""
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        true,
-        true
-      ],
-      "passed": 4,
-      "total": 4,
-      "pass_rate": 1.0,
-      "eval_passes": true
-    },
-    {
-      "eval_id": 2,
-      "name": "selection-bias-power-users",
-      "condition": "with_skill",
-      "prompt": "We want to understand what drives long-term retention. Our analysis team filtered the dataset to users who were still active at the 90-day mark \u2014 these are our most engaged, highest-quality users. Within this group, completing the onboarding checklist correlates strongly with 6-month retention (r = 0.42, p < 0.001). Should we invest in improving onboarding completion as a lever for long-term retention?",
-      "baseline_failure_hypothesis": "Base model treats power-user filtering as a benign subgroup analysis rather than identifying it as conditioning on a collider \u2014 missing the selection-bias mechanism and accepting the r=0.42 correlation at face value.",
-      "response": "Two distinct structural problems here, and together they make the r = 0.42 nearly uninterpretable as a causal estimate.\n\n**Problem 1: You conditioned on a collider**\n\nFiltering to \"users active at 90 days\" before measuring the relationship between onboarding completion and 6-month retention is collider conditioning. \"Active at 90 days\" sits downstream of both onboarding completion and 6-month retention \u2014 it's a consequence of engagement, not a cause. Restricting the sample to this group opens spurious paths between anything that predicts 90-day survival.\n\nThe users excluded from this dataset \u2014 those who churned before 90 days \u2014 are disproportionately low-engagement users who also didn't complete onboarding. Removing them inflates the observed correlation, because you've eliminated the portion of the data where onboarding was incomplete *and* retention was poor.\n\n**Problem 2: Onboarding completion is likely a downstream indicator, not a lever**\n\nWithin the surviving 90-day population, the r = 0.42 is almost certainly driven by a latent engagement factor:\n\n```\nLatent engagement / product fit (U)\n        \u2199                    \u2198\nOnboarding completion    6-month retention\n```\n\nUsers with strong product-market fit, high motivation, and clear use cases complete onboarding *and* stay retained \u2014 because the same thing drives both. This is a classic fork. The correlation doesn't tell you that the first variable causes the second; it tells you they share a common cause.\n\n**Why intervening won't produce the observed effect**\n\nWhen you run a campaign to improve onboarding completion, you pull in the *marginal non-completers* \u2014 users who weren't going to complete it on their own. These users are structurally different from the completers in the observational data. They have lower latent engagement, which is exactly what predicts churn. The counterfactual effect `P(6-month retention | do(onboarding completion = 1))` for these users is likely much smaller than the correlation suggests \u2014 possibly near zero.\n\nThis is the downstream-indicator trap: onboarding completion is a valid *targeting signal* (users who complete it are worth investing in), but it's not a valid *intervention target* if the completion itself isn't what's driving retention.\n\n**What to do instead**\n\n1. **Re-run the analysis in the full user population** \u2014 include churned users. This removes the selection bias and gives you an honest starting correlation.\n2. **Disentangle the mechanism.** Does onboarding completion causally teach users something that makes them stay, or are completers just higher-engagement people? One diagnostic: look at whether *specific steps* in onboarding predict retention after controlling for overall engagement proxies (early login frequency, time-on-task, etc.).\n3. **Run an A/B test on onboarding completion** in the full population, measuring 6-month retention as the outcome. Randomize a nudge/friction-reduction treatment that increases completion rates, then see whether the users pushed into completion actually retain better. This is the only way to estimate the interventional effect cleanly.\n\nThe short answer: don't invest in improving onboarding completion as a retention lever based on this analysis. The number is probably inflated by selection bias and confounding, and even if some causal effect exists, its size is unknown. The RCT is the right next step.",
-      "assertions": [
-        {
-          "text": "Claude flags that restricting the analysis to '90-day active users' conditions on a downstream variable \u2014 users who survived to 90 days are already a selected, high-retention population",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude explains the collider mechanism specifically: being active at 90 days is a common effect of both onboarding engagement and baseline retention tendency, so conditioning on it induces spurious correlation between those two causes even if they are independent in the full population \u2014 this means the r = 0.42 could exist even if onboarding completion has zero causal effect",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude does NOT take the r = 0.42 correlation at face value as evidence that improving onboarding completion will causally improve retention",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude recommends analyzing the full user population (including churned users) rather than the 90-day survivors, or using an approach that corrects for selection (e.g., IPW)",
-          "passed": null,
-          "evidence": ""
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        true,
-        true
-      ],
-      "passed": 4,
-      "total": 4,
-      "pass_rate": 1.0,
-      "eval_passes": true
-    },
-    {
-      "eval_id": 3,
-      "name": "near-iv-bias-amplification",
-      "condition": "baseline",
-      "prompt": "I'm estimating the causal effect of receiving executive mentorship on promotion rates. Mentorship is almost exclusively given to employees who have already demonstrated high performance \u2014 the correlation between prior performance and receiving mentorship is around 0.85. Prior performance also predicts promotions directly. A colleague says I should control for prior performance to remove its confounding effect. Is that the right approach?",
-      "baseline_failure_hypothesis": "Base model endorses controlling for prior performance without warning that a near-IV amplifies unmeasured confounding \u2014 recommending the adjustment as an improvement rather than flagging bias-amplification risk.",
-      "response": "Your colleague is directionally correct \u2014 prior performance sits on a backdoor path (Mentorship \u2190 Prior Performance \u2192 Promotion), and blocking it is necessary to identify the causal effect. But with r = 0.85 between the confounder and treatment, controlling creates a second, harder problem: **positivity violation**.\n\n## The DAG\n\n```\nPrior Performance \u2192 Mentorship \u2192 Promotion\nPrior Performance \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2192 Promotion\n```\n\nControlling for prior performance blocks the backdoor path. So yes, include it.\n\n## The real problem: near-perfect selection\n\nWith r = 0.85, almost no high-performers go un-mentored and almost no low-performers get mentored. The counterfactual you need \u2014 \"what would a high-performer's promotion rate look like without mentorship?\" \u2014 has almost no empirical support in your data.\n\nPractically, this means:\n\n- **In regression:** severe multicollinearity inflates standard errors on the mentorship coefficient, and the estimate becomes heavily model-dependent (linear extrapolation into regions with no data)\n- **In propensity score methods:** extreme weights (high-performers who didn't get mentorship have huge IPW weights because they're nearly impossible cases), which destabilizes estimates\n- **Both:** you're extrapolating, not interpolating\n\n## What this means for your analysis\n\n1. **Check overlap explicitly.** Plot the propensity score distributions for mentored vs. non-mentored employees. If they barely overlap, your estimates are driven by functional form assumptions, not data.\n\n2. **Report the estimand carefully.** You may only be able to credibly estimate the ATT (effect *among those who actually received mentorship*) \u2014 not the ATE \u2014 because the control group analog for high-performers is sparse.\n\n3. **Unmeasured confounding is likely.** A confounder this strong is often a proxy for other selection factors (manager sponsorship, visibility, ambition, fit). Sensitivity analysis (e.g., Rosenbaum bounds, E-values) should accompany any estimate.\n\n4. **Look for design alternatives.** If promotion decisions involve a threshold in performance ratings, regression discontinuity around that cutoff could isolate quasi-random variation in mentorship assignment without the positivity problem.\n\nThe short version: control for prior performance, yes \u2014 but with r = 0.85 you're in a regime where the estimates are fragile and the overlap assumption is likely violated. The statistical answer to confounding (add the covariate) doesn't resolve the identification problem created by near-deterministic treatment assignment.",
-      "assertions": [
-        {
-          "text": "Claude identifies prior performance as a near-instrument (or near-IV) \u2014 a variable that strongly predicts treatment assignment (r \u2248 0.85) and is not itself exogenous",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude warns that controlling for a near-IV in the presence of unmeasured confounders can amplify rather than reduce bias \u2014 the mechanism being that conditioning concentrates remaining treatment variation onto the part correlated with unmeasured factors",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude does NOT unconditionally endorse 'control for prior performance because it predicts both treatment and outcome'",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude explicitly states the conditional: if prior performance is the ONLY confounder and no unmeasured confounders exist, controlling is correct; but given the plausibility of unmeasured confounders like ambition, sponsorship, or political capital, the near-IV amplification risk makes mechanical conditioning dangerous. Claude states which scenario is more realistic and recommends sensitivity analysis or an alternative design rather than leaving the user with an unresolved 'it depends.'",
-          "passed": null,
-          "evidence": ""
-        }
-      ],
-      "assertion_results": [
-        true,
-        false,
-        true,
-        true
-      ],
-      "passed": 3,
-      "total": 4,
-      "pass_rate": 0.75,
-      "eval_passes": false
-    },
-    {
-      "eval_id": 3,
-      "name": "near-iv-bias-amplification",
-      "condition": "with_skill",
-      "prompt": "I'm estimating the causal effect of receiving executive mentorship on promotion rates. Mentorship is almost exclusively given to employees who have already demonstrated high performance \u2014 the correlation between prior performance and receiving mentorship is around 0.85. Prior performance also predicts promotions directly. A colleague says I should control for prior performance to remove its confounding effect. Is that the right approach?",
-      "baseline_failure_hypothesis": "Base model endorses controlling for prior performance without warning that a near-IV amplifies unmeasured confounding \u2014 recommending the adjustment as an improvement rather than flagging bias-amplification risk.",
-      "response": "This is a bias amplification situation, and the r = 0.85 is the warning sign. Your colleague is half-right.\n\n## Prior performance's structural role\n\nThe DAG is:\n\n```\nPrior Performance \u2192 Mentorship \u2192 Promotion\nPrior Performance \u2192 Promotion\nU (ambition, visibility, relationship quality, ...) \u2192 Mentorship\nU \u2192 Promotion\n```\n\nPrior performance is a **confounder** (fork): it causes both mentorship receipt and promotion directly. In the absence of other confounders, controlling for it would be exactly correct \u2014 it blocks the back-door path `Mentorship \u2190 Prior Perf \u2192 Promotion` without touching the causal path.\n\n## Why the r = 0.85 makes this dangerous\n\nThe problem is that r = 0.85 means prior performance explains most of the variance in mentorship receipt, but not all of it. The residual variation \u2014 who gets mentorship *conditional on* equivalent performance \u2014 is driven by unmeasured factors: visibility with senior leaders, networking skill, ambition signals, manager relationships.\n\nThose residual drivers almost certainly also predict promotions.\n\nHere's the mechanism for why controlling amplifies bias: when you condition on prior performance, you remove its contribution to variation in mentorship. The remaining variation in mentorship is now **disproportionately driven by U** \u2014 the very unmeasured factors you can't adjust for. U becomes a stronger relative confounder post-adjustment than it was unconditionally.\n\nThis is the bias amplification trap: the coefficient estimate for mentorship after controlling for prior performance reflects selection on factors that are *harder* to measure and arguably more directly predictive of promotion than performance alone.\n\n## The concrete risk\n\nBefore adjustment: bias from prior performance + bias from U (partially cancelling or additive depending on signs).  \nAfter adjusting for prior performance: bias from prior performance \u2248 0, but remaining bias from U is amplified.\n\nYou may end up with an estimate that's *further* from the truth, not closer.\n\n## What to do instead\n\n**Control for prior performance anyway** \u2014 it's still the right move \u2014 but don't stop there and treat the problem as solved. The key question to ask: *what drives mentorship selection among employees with equivalent prior performance?* Whatever that answer is (manager preference, visibility, networking) needs to either be measured and adjusted for, or acknowledged as a serious threat to validity.\n\nThe more productive path is a design-based approach:\n\n- **Natural experiment or IV**: Is there any quasi-random variation in mentorship access? Program slot constraints, manager turnover, randomized pilot cohorts, lottery-based selection? A valid instrument here \u2014 something that affects mentorship assignment but has no direct path to promotions \u2014 would cut through the selection problem entirely.\n- **Matching within performance bands**: Compare employees in narrow prior-performance strata (high-performers with and without mentors) and look at whether there are remaining observable differences you can adjust for. This doesn't solve the unmeasured confounder problem, but it at least grounds the comparison in a defensible stratum.\n- **Sensitivity analysis**: After controlling for prior performance, quantify how strong an unmeasured confounder would need to be to explain away the estimated effect. Given the selection process you've described, this bar is probably not high \u2014 and that result itself is informative.\n\nThe r = 0.85 isn't just a nuisance for the regression; it's telling you that mentorship selection is almost perfectly non-random, and whoever designed the mentorship program selected on exactly the people most likely to be promoted anyway. That's the fundamental identification challenge, and controlling for performance alone doesn't resolve it.",
-      "assertions": [
-        {
-          "text": "Claude identifies prior performance as a near-instrument (or near-IV) \u2014 a variable that strongly predicts treatment assignment (r \u2248 0.85) and is not itself exogenous",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude warns that controlling for a near-IV in the presence of unmeasured confounders can amplify rather than reduce bias \u2014 the mechanism being that conditioning concentrates remaining treatment variation onto the part correlated with unmeasured factors",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude does NOT unconditionally endorse 'control for prior performance because it predicts both treatment and outcome'",
-          "passed": null,
-          "evidence": ""
-        },
-        {
-          "text": "Claude explicitly states the conditional: if prior performance is the ONLY confounder and no unmeasured confounders exist, controlling is correct; but given the plausibility of unmeasured confounders like ambition, sponsorship, or political capital, the near-IV amplification risk makes mechanical conditioning dangerous. Claude states which scenario is more realistic and recommends sensitivity analysis or an alternative design rather than leaving the user with an unresolved 'it depends.'",
-          "passed": null,
-          "evidence": ""
-        }
-      ],
-      "assertion_results": [
-        true,
-        true,
-        true,
-        true
-      ],
-      "passed": 4,
-      "total": 4,
-      "pass_rate": 1.0,
-      "eval_passes": true
-    },
-    {
       "eval_id": 4,
       "name": "table-2-fallacy",
-      "condition": "baseline",
+      "condition": "with_skill",
       "prompt": "I ran a regression of website conversion on a treatment dummy plus controls for age, country, browser, and time-of-day. The treatment coefficient is what I care about. But the country coefficient is huge and significant \u2014 does that mean country has a big causal effect on conversion?",
       "baseline_failure_hypothesis": "Base model interprets the country coefficient as the causal effect of country, missing the Table 2 Fallacy: control-variable coefficients have a different adjustment set than the primary exposure and cannot be read as causal effects.",
-      "response": "No \u2014 and the reason matters for how you think about your whole model.\n\n**What the country coefficient actually means**\n\nIn a regression with controls, each coefficient answers: \"holding everything else constant, what's the association between this variable and the outcome?\" For your treatment dummy, that's the right question \u2014 you're trying to isolate the effect of the treatment. But for country, \"holding treatment, age, browser, and time-of-day constant\" is a weird question nobody asked. The coefficient just captures residual variation in conversion that correlates with country after partialing out the other variables.\n\nA large country coefficient could reflect:\n\n- **Genuine country-level differences** in baseline conversion rates (cultural norms, currency trust, UX familiarity)\n- **Confounding with unmeasured variables** \u2014 country is a proxy for income, payment infrastructure, device type, language, etc.\n- **Composition effects** \u2014 your country buckets may differ on dimensions not in the model\n- **Model misspecification** \u2014 if the relationship between age and conversion differs by country and you haven't included that interaction, country absorbs some of that\n\n**The key asymmetry**\n\nYour treatment was (presumably) randomly assigned or quasi-randomly assigned, which is why you can interpret its coefficient causally. Country is observed, not assigned \u2014 you can't make that leap. The significance just means country is a strong predictor of conversion; it says nothing about what would happen if you could *change* someone's country.\n\n**Practical implication**\n\nThe large country coefficient is actually good news for your treatment estimate \u2014 it means country explains a lot of residual variance, which tightens your standard errors. That's why you include controls. But don't read the country coefficient as anything more than \"this variable predicts the outcome well in this sample.\"\n\nIf you want to ask whether country *moderates* the treatment effect (i.e., does the treatment work differently in different countries), that requires a treatment \u00d7 country interaction term, not the main effect.",
+      "response": "No \u2014 this is the **Table 2 Fallacy**. The country coefficient tells you about model fit, not country's causal effect on conversion.\n\nHere's why: to identify the causal effect of *treatment*, you need controls that block back-door paths from treatment to conversion. Country may do that job well. But to identify the causal effect of *country* on conversion, you'd need a completely different adjustment set \u2014 every direct cause of conversion in the model, with nothing omitted and no colliders opened. That condition almost certainly doesn't hold here.\n\nPractically: country likely correlates with dozens of unmeasured things (payment method availability, internet speed, local competitors, purchasing power, cultural norms around online buying). Your regression doesn't include those, so the country coefficient is soaking up all that variation without properly isolating country's effect. It's a biased estimate of country's causal effect even if it's a valid control for the treatment effect.\n\nThe takeaway: **only the focal coefficient \u2014 treatment \u2014 deserves a causal reading.** The country coefficient is meaningful as a model-fit term (country membership predicts conversion), but \"significant and large\" does not mean \"country causes conversion at that magnitude.\" If you want to make a causal claim about country, that's a separate analysis with a separate DAG and a separate identification strategy.",
       "assertions": [
         {
           "text": "Claude names or describes the Table 2 Fallacy \u2014 that control variable coefficients in a regression designed to identify the focal treatment effect are not themselves causally identified",
@@ -285,26 +33,21 @@
       ],
       "assertion_results": [
         true,
-        false,
+        true,
         false,
         true
       ],
-      "passed": 2,
+      "passed": 3,
       "total": 4,
-      "pass_rate": 0.5,
+      "pass_rate": 0.75,
       "eval_passes": false
     }
   ],
   "summary": {
-    "baseline": {
-      "passed": 10,
-      "total": 17,
-      "pct": 58.8
-    },
     "with_skill": {
-      "passed": 12,
-      "total": 13,
-      "pct": 92.3
+      "passed": 3,
+      "total": 4,
+      "pct": 75.0
     }
   }
 }

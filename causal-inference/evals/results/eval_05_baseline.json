@@ -1,0 +1,46 @@
+{
+  "eval_id": 5,
+  "name": "did-parallel-trends-violation",
+  "condition": "baseline",
+  "prompt": "We're evaluating a new customer success program we rolled out to different regions at different times over 18 months \u2014 15 regions got it in Q1, 20 in Q3, and 10 in Q4. We ran a standard two-way fixed-effects (TWFE) regression with region and quarter fixed effects, and the coefficient on 'treated' is +6% on renewal rate. A reviewer says 'TWFE with staggered rollout can give biased estimates even when parallel trends holds \u2014 is that right, and should I be worried?",
+  "baseline_failure_hypothesis": "Base model may miss the Goodman-Bacon TWFE heterogeneity problem with staggered adoption, or not recommend a heterogeneity-robust DiD estimator (Callaway-Sant'Anna, Sun-Abraham).",
+  "response": "Your reviewer is correct, and this is worth taking seriously. Here's the core issue:\n\n## Why TWFE breaks with staggered rollout\n\nTWFE identifies treatment effects by comparing treated vs. untreated units within periods, but with staggered adoption it runs out of clean \"untreated\" controls. It fills the gap by using **already-treated units as implicit controls** for later adopters. In your case:\n\n- Q3 adopters' post-treatment outcomes are compared partly against Q1 regions \u2014 which are already treated\n- Q4 adopters are compared against both Q1 and Q3 regions \u2014 also already treated\n\nThis is only fine if treatment effects are *constant and immediate* (a flat, stable lift). If effects are **heterogeneous across cohorts** or **dynamic over time** (which a CS program almost certainly is \u2014 it takes time to ramp), the already-treated controls are trending away from the counterfactual, and TWFE picks up a garbled weighted average. Goodman-Bacon (2021) shows the TWFE coefficient decomposes into a weighted average of all 2\u00d72 comparisons, and **some weights can be negative**.\n\n## How worried should you be?\n\nYou have no never-treated group \u2014 every comparison eventually uses early adopters as controls for later ones. The risk is highest if:\n- The program's effect on renewal rate builds over time (plausible for CS programs)\n- Early adopters (Q1) differ systematically from late adopters (Q4) in how they responded\n\nA quick diagnostic: run the **Goodman-Bacon decomposition** to see how much weight lands on \"forbidden\" treated-vs-treated comparisons. If it's large (>20\u201330%), your +6% estimate may be materially off.\n\n## What to do\n\n**1. Goodman-Bacon decomposition first** \u2014 this tells you whether the contaminated comparisons are driving the estimate.\n\nIn R:\n```r\nlibrary(bacondecomp)\nbacon(renewal_rate ~ treated, data = df, id_var = \"region\", time_var = \"quarter\")\n```\n\n**2. Staggered DiD estimators** \u2014 replace TWFE with an estimator that explicitly handles cohort \u00d7 time heterogeneity:\n\n```r\nlibrary(did)  # Callaway & Sant'Anna (2021)\ncs <- att_gt(yname = \"renewal_rate\",\n             tname = \"quarter\",\n             idname = \"region\",\n             gname = \"cohort\",  # quarter first treated\n             data = df)\naggte(cs, type = \"simple\")  # overall ATT\naggte(cs, type = \"dynamic\")  # event-study plot by relative period\n```\n\nSun & Abraham (2021) is another good option via `fixest::sunab()` if you prefer sticking closer to a regression framework.\n\n**3. Plot cohort-specific event studies** \u2014 separate pre/post trends for Q1, Q3, and Q4 cohorts. If effects are heterogeneous (Q1 regions show bigger gains than Q4), TWFE is blending them with bad weights.\n\n## Bottom line\n\nThe +6% could be right, low, or even have the wrong sign relative to any one cohort's true effect. Given you have three distinct cohorts and no clean control group, I'd treat the TWFE estimate as a first pass and report the Callaway-Sant'Anna estimate as the primary result. If they're close, you're in good shape. If they diverge, that tells you exactly where the heterogeneity is hiding.",
+  "assertions": [
+    {
+      "text": "Claude confirms the reviewer is correct \u2014 TWFE with staggered adoption and heterogeneous treatment effects can be biased even when parallel trends holds for every cohort",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude explains the core mechanism: TWFE uses already-treated units as controls for later-treated units ('forbidden comparisons'), which is only unbiased if treatment effects are constant across cohorts and over time",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude names or describes the Goodman-Bacon decomposition problem \u2014 that TWFE is a weighted average of 2\u00d72 DiDs, some receiving negative weights when later-cohort treatment effects differ from early-cohort effects",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude recommends a heterogeneity-robust DiD estimator (e.g., Callaway-Sant'Anna, Sun-Abraham, or Borusyak-Jaravel-Spiess) rather than standard TWFE",
+      "passed": null,
+      "evidence": ""
+    },
+    {
+      "text": "Claude explains that the TWFE bias is severe enough to reverse the sign of the estimate: if later-treated cohorts have larger treatment effects (e.g., because Q3/Q4 regions benefit more from the program), their negative-weighted forbidden comparisons can drag the aggregate TWFE coefficient NEGATIVE \u2014 meaning the +6% estimate could be an underestimate, zero, or even the wrong sign relative to the true average effect",
+      "passed": null,
+      "evidence": ""
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    false
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": true
+}
