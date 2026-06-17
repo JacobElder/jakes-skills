@@ -20,11 +20,13 @@ Outputs (every run):
   * a saturation read (test information across the ability range)
 
 Backends:
-  --backend laplace  (default) MAP + Laplace normal approximation. scipy only,
-                     fast, portable. Approximation can understate skew for extreme
-                     items; intervals are symmetric on the estimation scale.
-  --backend mcmc     full posterior via PyMC if installed (pip install pymc). Use
-                     when you want exact HDIs / to check the Laplace approximation.
+  --backend auto     (default) MCMC 2PL if PyMC installed, else stable Rasch.
+  --backend mcmc     full posterior via PyMC (pip install pymc). Use when you
+                     want exact HDIs or per-item discrimination with adaptive
+                     shrinkage. NumPy 2.x + Numba conflict: if you see a Numba
+                     import error set PYTENSOR_FLAGS=linker=py before running,
+                     or the script sets it automatically when invoked directly.
+  --backend rasch    hierarchical 1PL, scipy-only, always available.
 
 Modes:
   default            joint estimation of items + variants.
@@ -33,11 +35,13 @@ Modes:
                      precise small-N path when a bank exists.
 
 INPUT  : long-format CSV: taker_id,item_id,score  (score binarized at --thresh)
-USAGE  : python irt_latent.py results.csv [--backend laplace|mcmc] [--thresh 0.5]
+USAGE  : python irt_latent.py results.csv [--backend auto|rasch|mcmc] [--thresh 0.5]
                   [--fixed-items bank.csv] [--out estimates.json]
-Dependencies: numpy, pandas, scipy. (PyMC only for --backend mcmc.)
+Dependencies: numpy, pandas, scipy. (PyMC only for --backend mcmc/auto with PyMC installed.)
 """
-import argparse, json, sys
+import os, argparse, json, sys
+# Avoid NumPy 2.x / Numba compiled-against-1.x crash when pytensor uses the Numba linker.
+os.environ.setdefault("PYTENSOR_FLAGS", "linker=py")
 import numpy as np
 import pandas as pd
 from scipy.optimize import minimize

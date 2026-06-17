@@ -1,0 +1,35 @@
+{
+  "eval_id": 4,
+  "name": "triggering_sdt",
+  "condition": "with_skill",
+  "prompt": "My skill sometimes fires on queries it shouldn't and sometimes fails to fire when it should. I have trigger eval data (evals/fixtures/trigger_eval.csv: skill_id,query_id,in_scope,fired). How do I figure out whether each skill needs its description rewritten or just made pushier?",
+  "response": "The results cleanly route each skill to a different fix. Here's the interpretation:\n\n---\n\n## Per-skill diagnosis\n\n### `vague_overlap` \u2014 **Rewrite the description's content**\n- d\u2032 = \u22120.06 (chance), accuracy = 49%\n- The trigger is firing **randomly** \u2014 H=52%, FA=55%. It can't separate in-scope from out-of-scope at all. This is not a threshold problem; at d\u2032\u22480, every criterion setting just trades misses for false alarms 1-for-1. No amount of making it pushier or more reluctant will help.\n- **Fix:** Rewrite what the skill says it's *for*. Sharpen the scope, add examples of near-miss queries it should *not* catch, and resolve whatever conceptual overlap is causing it to fire on noise.\n\n### `undertriggers` \u2014 **Make the description pushier**\n- d\u2032 = 2.25 (healthy), criterion c = +1.13 (strongly positive = trigger-shy), accuracy = 75%\n- The description *can* tell in-scope from out-of-scope (d\u2032 is fine), but it sets the bar too high. 20 misses, 0 false alarms \u2014 it's correctly identifying what it should catch but refusing to commit. \n- **Fix:** Add more user phrasings that should match, make the trigger language more affirmative. No content rewrite needed; this is a wording-eagerness problem.\n\n### `good_discriminator` \u2014 **Leave it alone**\n- d\u2032 = 3.34, c = +0.12 (neutral), accuracy = 96%\n- 38 hits, 2 misses, 1 false alarm. Working as intended.\n\n---\n\n## The key split (why raw accuracy hides this)\n\n`undertriggers` and `vague_overlap` have similar *accuracy* (75% vs 49%), but they need opposite fixes. `undertriggers` just needs a pushier description because d\u2032 tells you the discrimination is already there. `vague_overlap` needs a content rewrite because d\u2032\u22480 means there's nothing to tune \u2014 adjusting eagerness on a near-random detector only moves which errors you make, not how many.\n\nThe log-linear correction firing on `undertriggers` (0 false alarms in a 40-trial noise set) is expected \u2014 it means your noise set may be too easy. If you can get realistic near-miss queries in there, the FA rate will likely be non-zero and the estimate will tighten.",
+  "assertions": [
+    {
+      "text": "Frames triggering as a detection problem and computes d' and criterion",
+      "type": "qualitative"
+    },
+    {
+      "text": "Separates the low-d' (rewrite content) case from the biased-criterion (tune eagerness) case",
+      "type": "qualitative"
+    },
+    {
+      "text": "Notes that raw trigger accuracy conflates the two failures",
+      "type": "qualitative"
+    },
+    {
+      "text": "Mentions log-linear correction and/or the need for genuine out-of-scope noise trials",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

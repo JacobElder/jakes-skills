@@ -32,16 +32,15 @@
     },
     {
       "id": 3,
-      "name": "small_n_irt_trap",
-      "prompt": "Can I use item response theory to get latent ability estimates for my 4 skill versions across 18 eval cases, plus per-item difficulty and discrimination? Walk me through fitting a 2PL.",
+      "name": "sigma_a_interpretation_trap",
+      "prompt": "I ran hierarchical 2PL MCMC on 4 skill versions x 18 eval cases. Posterior σ_a = 0.04 (the shrinkage hyperparameter on log-discrimination). My item discrimination estimates (posterior means) range from a = 0.3 to a = 2.1. My colleague says item_12 with a = 2.1 is the most discriminating item and we should weight it heavily. Is she right?",
       "files": [],
-      "expected_output": "Pushes back on fitting a free 2PL to 4 takers — explains item parameters are estimated across takers and ~500 are needed for stable 2PL; this returns confident noise. Offers the remedy menu: expand the taker dimension (model tiers/ablations/seeds), fixed-item anchoring on a model bank, hierarchical adaptive shrinkage (regularization that relaxes as N grows), drop to Rasch, or use G-theory+CTT instead. Does NOT just hand over a 2PL recipe.",
+      "expected_output": "Explains that σ_a ≈ 0 means the data cannot resolve item-by-item discrimination differences. The a estimates 0.3–2.1 are pulled from the prior, not estimated from the data — they reflect the hyperprior's shape, not real item variation. With only 4 takers, the model is effectively Rasch regardless of what the posterior means say. So item_12's a = 2.1 is not evidence of high discrimination; it's a prior artifact. Remedies: expand the taker dimension, drop explicitly to Rasch (which is honest about this), or use fixed-item anchoring from a bank. Do NOT treat these discrimination estimates as data-driven.",
       "assertions": [
-        {"text": "Refuses / strongly cautions against a free 2PL on 4 takers and explains the model-bank requirement", "type": "qualitative"},
-        {"text": "Offers fixed-item (anchor) calibration as the safe way to get a latent scale at small N", "type": "qualitative"},
-        {"text": "Mentions hierarchical/adaptive shrinkage (regularization that relaxes with N) and/or dropping to Rasch", "type": "qualitative"},
-        {"text": "Suggests expanding the taker dimension (model tiers, ablations, seeds, history)", "type": "qualitative"},
-        {"text": "Does not simply provide a free-2PL fitting recipe as if it were valid here", "type": "qualitative"}
+        {"text": "Recognizes that σ_a ≈ 0.04 means the data cannot resolve item discrimination differences and explains what σ_a represents (posterior spread of log-discrimination)", "type": "qualitative"},
+        {"text": "States that the discrimination estimates (0.3–2.1) are prior-driven artifacts, not data-estimated — explicitly says the colleague is WRONG to treat a=2.1 as evidence of high discrimination", "type": "qualitative"},
+        {"text": "Explains that with 4 takers the model collapses toward Rasch regardless of what the posterior means show", "type": "qualitative"},
+        {"text": "Offers a remedy: explicitly drop to Rasch (honest shrinkage), expand the taker dimension, or use fixed-item anchoring from a bank", "type": "qualitative"}
       ]
     },
     {
@@ -65,7 +64,7 @@
       "expected_output": "Treats grader trust as the gate before any downstream analysis. Computes inter-rater agreement beyond chance (Cohen's/Fleiss' kappa), cites the ~0.8 LLM-human agreement benchmark, explains raw agreement is inflated on skewed pass rates. Says what to do if kappa is low (rewrite rubric, pairwise over absolute, ensemble) and to carry judge error as downstream uncertainty.",
       "assertions": [
         {"text": "Treats judge reliability as a gate to run BEFORE difficulty/discrimination/ability analysis", "type": "qualitative"},
-        {"text": "Uses kappa (agreement beyond chance), not raw agreement percentage, and explains why", "type": "qualitative"},
+        {"text": "Uses kappa (agreement beyond chance) rather than raw agreement percentage as the reliability metric", "type": "qualitative"},
         {"text": "Gives a remediation path if the judge is unreliable (rubric rewrite / pairwise / ensemble)", "type": "qualitative"},
         {"text": "States that the measured kappa (~0.43, moderate) does NOT clear the gate for downstream analysis and names the threshold required (substantial, ~0.6+)", "type": "qualitative"}
       ]
@@ -73,25 +72,27 @@
     {
       "id": 6,
       "name": "mutual_exclusion_routing",
-      "prompt": "Explain how the 2PL item response model works — derive the item characteristic curve and what the discrimination parameter means mathematically.",
+      "prompt": "My team is debating whether to use a 1PL (Rasch) or a 2PL IRT model for our eval suite. Can you derive the mathematical difference between the two model forms, explain what the discrimination parameter a actually estimates, and walk me through which is better from a theoretical standpoint?",
       "files": [],
-      "expected_output": "This is a pure method-theory question. The deep-eval-analysis skill should recognize this belongs to the item-response-theory skill and defer, rather than treating it as an eval-analysis task. A correct outcome is either not engaging this skill, or explicitly routing to the IRT method skill. (Tests that the skill doesn't over-claim method-teaching territory.)",
+      "expected_output": "The theoretical derivation and model-comparison math belong to the item-response-theory skill, not this one. This skill handles APPLIED eval analysis (which method for which regime, trim/keep/fix decisions, latent estimation) but the IRT derivation itself is out of scope. A correct response either defers the derivation to the IRT skill while handling the application question (small N → Rasch via irt_latent.py; model bank → 2PL via MCMC), or explicitly acknowledges the split and routes the theory question while answering the practical part. What it must NOT do is spin up the full CTT/G-theory trim workflow for what is primarily a method-theory derivation request.",
       "assertions": [
-        {"text": "Recognizes this as IRT-method theory and routes to / defers to the item-response-theory skill rather than handling it as an eval-analysis workflow", "type": "qualitative"},
-        {"text": "Does not invoke the eval-audit workflow (CTT/G-theory/trim rules) for what is a pure derivation request", "type": "qualitative"}
+        {"text": "Defers the mathematical derivation of 1PL vs. 2PL (ICC form, discrimination parameter estimation) to the item-response-theory skill rather than providing it as an eval-analysis workflow step", "type": "qualitative"},
+        {"text": "Answers the application-side question: which model is appropriate for eval suites depends on regime — Rasch for small N (stable, scipy-only), 2PL with MCMC for model banks (30+ takers)", "type": "qualitative"},
+        {"text": "Does not launch a CTT item-analysis or G-theory workflow in response to what is a model-selection and derivation question", "type": "qualitative"}
       ]
     },
     {
       "id": 7,
       "name": "latent_estimation_bank",
-      "prompt": "I have a response matrix from ~40 models run on the same eval cases (evals/fixtures/model_bank_40.csv). Model the evals and give me precise latent estimates: a latent ability for each model AND difficulty and discrimination for each eval case, all with uncertainty. Also tell me whether the suite can still separate my strongest models.",
+      "prompt": "I have a response matrix from ~40 models run on the same eval cases (evals/fixtures/model_bank_40.csv). Model the evals and give me precise latent estimates: a latent ability for each model AND difficulty and discrimination for each eval case, all with uncertainty. Also tell me whether the suite can still separate my strongest models. I notice items it_sat and it_noise look anomalous — should I include them in the estimation?",
       "files": ["evals/fixtures/model_bank_40.csv"],
-      "expected_output": "Recognizes the model-bank regime supports a full latent model. Uses the latent estimation engine (irt_latent.py) to produce per-model ability theta with intervals AND per-item difficulty/discrimination with intervals on a common scale. Reports the learned discrimination spread and a saturation/test-information read on whether the top models are separable. Does not just report mean pass rates.",
+      "expected_output": "Recognizes the model-bank regime supports a full latent model. Uses the latent estimation engine (irt_latent.py --backend mcmc) to produce per-model theta with intervals AND per-item b/a with intervals on a common scale. Reports the learned sigma_a (discrimination spread — near 0 means all items behave similarly, larger means genuine discrimination variation). Crucially handles the anomalous items correctly: it_sat (100% pass rate) is saturated — non-informative, should be EXCLUDED from IRT estimation or treated as a fixed easy item (contributes zero Fisher information); it_noise has random-looking pass pattern inconsistent with ability ordering — check outfit statistics before including. Notes the suite may have ceiling issues for top models depending on where test information is concentrated.",
       "assertions": [
-        {"text": "Produces latent ability (theta) per model AND difficulty + discrimination per item, all with intervals", "type": "qualitative"},
-        {"text": "Puts items and variants on a common latent scale rather than reporting raw pass rates", "type": "qualitative"},
-        {"text": "Addresses saturation / whether the strongest models are still separable (test information at the top)", "type": "qualitative"},
-        {"text": "Uses a hierarchical / proper estimation approach, not a naive free fit presented without uncertainty", "type": "qualitative"}
+        {"text": "Produces latent ability (theta) per model AND difficulty + discrimination per item, all with intervals, on a common latent scale", "type": "qualitative"},
+        {"text": "Reports or describes sigma_a (the learned discrimination spread) and interprets what it says about whether items are uniformly or variably discriminating", "type": "qualitative"},
+        {"text": "Flags it_sat as saturated and recommends excluding it from IRT estimation (contributes zero Fisher information; contaminates the discrimination estimate)", "type": "qualitative"},
+        {"text": "Addresses it_noise as a potential contamination case requiring outfit/fit inspection before inclusion — not just a high-difficulty item", "type": "qualitative"},
+        {"text": "Addresses whether the strongest models are still separable (test information at the top of the ability range)", "type": "qualitative"}
       ]
     },
     {
@@ -110,13 +111,14 @@
     {
       "id": 9,
       "name": "fixed_item_anchoring",
-      "prompt": "I have item parameters calibrated on a big model bank (evals/fixtures/calibrated_items.csv) and I want to place a few new skill variants on that same latent scale precisely, without re-estimating the items. How do I do that, and how precise will the variant estimates be?",
+      "prompt": "I have item parameters calibrated on a big model bank (evals/fixtures/calibrated_items.csv) and I want to place a few new skill variants on that same latent scale precisely, without re-estimating the items. My calibrated bank has 25 items. Should I use all 25 as anchors, or does it matter which ones I pick? And how do I interpret precision?",
       "files": ["evals/fixtures/calibrated_items.csv", "evals/fixtures/model_bank_40.csv"],
-      "expected_output": "Identifies fixed-item (anchor) calibration as the right tool: freeze the calibrated item parameters and estimate only theta per variant against them (irt_latent.py --fixed-items), which is well-posed and precise at any N because items aren't being learned from few variants. Reports theta with intervals/standard errors and notes that precision depends on how many anchor items overlap and how informative they are at each variant's ability.",
+      "expected_output": "Identifies fixed-item (anchor) calibration as the right tool: freeze the calibrated item parameters and estimate only theta per variant against them (irt_latent.py --fixed-items). Crucially addresses anchor item selection: NOT all items are equal. Items near the target variant's ability contribute the most Fisher information (peak of the ICC slope); saturated or floored items (b << or >> variant theta) contribute near-zero information even if they're in the bank. For new variants of unknown ability, use items spanning the full difficulty range. Reports theta with intervals and notes intervals depend on how informative the bank items are at that variant's level.",
       "assertions": [
-        {"text": "Recommends fixed-item / anchor calibration: freeze item params, estimate only variant ability theta", "type": "qualitative"},
-        {"text": "Explains this is well-posed and precise at small N because items are not being estimated from few variants", "type": "qualitative"},
-        {"text": "Reports theta with uncertainty and notes precision depends on the number/informativeness of anchor items", "type": "qualitative"}
+        {"text": "Recommends fixed-item / anchor calibration: freeze item params, estimate only variant ability theta (irt_latent.py --fixed-items)", "type": "qualitative"},
+        {"text": "Warns that not all anchor items are equally informative: items must be close to the variant's ability level to contribute Fisher information; saturated or floored items contribute near-zero information", "type": "qualitative"},
+        {"text": "Explains this is well-posed and precise at small N because items are not being estimated from few variants — only theta is estimated", "type": "qualitative"},
+        {"text": "Reports theta with uncertainty and notes intervals depend on how informative the selected anchor items are at that variant's ability level", "type": "qualitative"}
       ]
     },
     {
@@ -195,6 +197,19 @@
         {"text": "Invokes IRT model-fit residuals (outfit/infit statistics or ICC residuals) as the key contamination diagnostic, not just the raw pass rate or difficulty parameter alone", "type": "qualitative"},
         {"text": "Names the guessing-pattern tell: weak-ability takers passing at rates inconsistent with their global theta (3PL c, unexpected-pass residuals)", "type": "qualitative"},
         {"text": "States the different consequences: saturated items are non-informative but validity-clean; contaminated items pollute theta estimates and should be audited/removed, not just trimmed", "type": "qualitative"}
+      ]
+    },
+    {
+      "id": 17,
+      "name": "omega_vs_alpha",
+      "prompt": "I want to measure how internally consistent my eval suite is — do all the cases load on the same latent construct, or are some testing orthogonal things? I'm planning to report Cronbach's alpha. My eval has ~22 cases and I have results from 10 model versions. Is alpha the right tool?",
+      "files": [],
+      "expected_output": "No — Cronbach's alpha assumes tau-equivalence: all items must have equal factor loadings (equal discrimination parameters in IRT terms). Eval suites routinely violate this; items have highly variable discrimination. Alpha underestimates reliability when tau-equivalence is violated and should not be used here. McDonald's omega (ωt / ωh) is the right tool: it estimates reliability from a factor model without the equal-loading constraint. omega_hierarchical (ωh) specifically tests whether a single latent factor dominates — the unidimensionality check. In IRT terms, the factor loadings in the omega model correspond directly to the a-parameters (discrimination), so omega is naturally consistent with the IRT framework. Tools: psych::omega() in R, semTools, or pingouin in Python. Note: G-theory's Eρ² is often more directly useful for eval suites than either omega or alpha, because it explicitly models the crossed version × case design and directly addresses whether version rankings are reproducible — which is usually the actual question.",
+      "assertions": [
+        {"text": "Recommends McDonald's omega over Cronbach's alpha and names tau-equivalence (equal factor loadings / equal discriminations) as the violated assumption", "type": "qualitative"},
+        {"text": "Explains that tau-equivalence = all items have equal factor loadings = equal discrimination parameters — typically violated in eval suites with variable item discrimination", "type": "qualitative"},
+        {"text": "Names omega_hierarchical (ωh) as the tool for testing unidimensionality (whether a single latent factor dominates the suite)", "type": "qualitative"},
+        {"text": "Notes G-theory's Eρ² is often more directly useful than omega for eval suites because it models the crossed version × case design and addresses version-ranking reproducibility", "type": "qualitative"}
       ]
     },
     {

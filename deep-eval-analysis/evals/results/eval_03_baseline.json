@@ -1,0 +1,40 @@
+{
+  "eval_id": 3,
+  "name": "small_n_irt_trap",
+  "condition": "baseline",
+  "prompt": "Can I use item response theory to get latent ability estimates for my 4 skill versions across 18 eval cases, plus per-item difficulty and discrimination? Walk me through fitting a 2PL.",
+  "response": "Good \u2014 here's the full picture.\n\n---\n\n## Short answer: yes, but not a free 2PL\n\nAt 4 variants \u00d7 18 items, a plain free 2PL fit (MAP/EM) will produce confidently wrong estimates. Two hard problems hit simultaneously:\n\n1. **Discrimination runaway** \u2014 on items where one variant group is clean-perfect or always-zero, the MLE pushes `a` toward \u00b1\u221e.\n2. **\u03c3_a collapse** \u2014 joint MAP estimation of all discrimination parameters collapses their variance to 0, essentially forcing a Rasch model without telling you.\n\nThe fix is a **hierarchical Bayesian 2PL via MCMC**, which places a half-Cauchy hyperprior on `log(a_i)` and learns its spread from the data. That learned spread (\u03c3_a) is the key diagnostic: if it's near 0, your data can't resolve item-to-item discrimination differences and you're effectively Rasch; if it's larger, the pooling relaxes and you get genuine per-item discrimination estimates.\n\n---\n\n## The script you already have\n\n`scripts/irt_latent.py` does exactly this. Your data is already in the right format: `taker_id, item_id, score`. Aggregate seeds to a mean first (or let the script do it \u2014 it calls `.groupby().mean()` internally):\n\n```bash\n# Full hierarchical 2PL (requires PyMC)\npython scripts/irt_latent.py your_results.csv --backend mcmc\n\n# Always-available fallback (discrimination fixed at 1, only b and \u03b8)\npython scripts/irt_latent.py your_results.csv --backend rasch\n\n# Auto: MCMC if PyMC installed, else Rasch\npython scripts/irt_latent.py your_results.csv --backend auto\n```\n\n---\n\n## What you get back\n\n| Output | What it means |\n|---|---|\n| **\u03b8 per variant** (95% CI) | Latent ability for each of your 4 skill versions on a shared scale \u2014 comparable across versions, not just point estimates |\n| **b per item** (95% CI) | Difficulty \u2014 higher b means the item is harder (fewer variants pass) |\n| **a per item** (95% CI) | Discrimination \u2014 how sharply the item separates low-\u03b8 from high-\u03b8 variants; wide CI here means the estimate is soft |\n| **\u03c3_a** | The adaptive shrinkage state: near 0 = you're effectively Rasch; larger = data supports genuine discrimination spread |\n| **Saturation read** | Test information across the \u03b8 range; low information at the top of the scale means you can't separate your best variants |\n\n---\n\n## Two honest caveats for your setup\n\n**4 variants is thin.** You'll get honest estimates but wide \u03b8 intervals \u2014 the script flags low-precision rows rather than hiding the problem. If two variants' \u03b8 CIs overlap heavily, the suite genuinely can't tell them apart yet. G-theory (`scripts/gtheory_eval.py`) answers \"how many more items/seeds would help.\"\n\n**\u03c3_a will likely stay near 0.** With only 4 takers (variants), there's limited information to learn discrimination spread. The hierarchical prior keeps estimates stable, but don't over-read per-item `a` values \u2014 they're shrunk toward a common value and the CIs will be wide. The Rasch backend may be more honest in this situation since it doesn't pretend to estimate what it can't.\n\nIf you have a previously calibrated item bank, `--fixed-items bank.csv` is the sharpest small-N path: freeze item params and estimate only \u03b8 per variant, which concentrates all your data on the 4 numbers you actually care about.",
+  "assertions": [
+    {
+      "text": "Refuses / strongly cautions against a free 2PL on 4 takers and explains the model-bank requirement",
+      "type": "qualitative"
+    },
+    {
+      "text": "Offers fixed-item (anchor) calibration as the safe way to get a latent scale at small N",
+      "type": "qualitative"
+    },
+    {
+      "text": "Mentions hierarchical/adaptive shrinkage (regularization that relaxes with N) and/or dropping to Rasch",
+      "type": "qualitative"
+    },
+    {
+      "text": "Suggests expanding the taker dimension (model tiers, ablations, seeds, history)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Does not simply provide a free-2PL fitting recipe as if it were valid here",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 5,
+  "total": 5,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

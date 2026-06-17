@@ -1,0 +1,35 @@
+{
+  "eval_id": 14,
+  "name": "judge_calibration_vs_reliability",
+  "condition": "baseline",
+  "prompt": "My LLM grader has kappa = 0.72 with my human reference rater \u2014 that's substantial agreement, so I should be fine to trust these grades and start trimming evals, right? By the way, the judge also outputs confidence scores and it usually gives 0.90\u20130.98 even on cases where it later turns out to disagree with the human.",
+  "response": "Two separate issues here, and the second one should give you pause.\n\n**On kappa = 0.72:** Aggregate kappa can hide systematic failure modes. It's a weighted average across all your evals \u2014 if the grader is perfect on 80% of straightforward cases and systematically wrong on a particular item type (say, edge-case rubrics or partially-correct responses), the overall kappa looks fine while those specific cases are unreliable. Before trusting it for trimming, you want kappa broken down by eval category, not just the headline number.\n\n**On the confidence scores \u2014 this is the real problem.** What you're describing is a calibration failure, not a reliability success. A grader giving 0.90\u20130.98 confidence *even on the cases where it disagrees with the human* means confidence is essentially uninformative about whether the grade is correct. The confidence scores have near-zero discriminative power for identifying disagreements.\n\nThis matters because:\n- If you're using confidence to identify \"safe-to-trust\" grades (e.g., \"high confidence \u2192 probably correct\"), you can't \u2014 the signal is flat across both agreement and disagreement cases.\n- A grader that *knows* it's uncertain would express lower confidence on the disagreement cases. The fact that it doesn't means it has no useful internal uncertainty signal.\n\n**Practical upshot:** The kappa gives you a reasonable prior that aggregate grades are mostly right. But for trimming decisions you'd be relying on individual grades, not the aggregate \u2014 and for individual grades you have no way to tell from the grader's own output whether it's one of the 28% it gets wrong. You need to spot-check the disagreement cases manually and look for category-level patterns before trimming anything based solely on grader output.",
+  "assertions": [
+    {
+      "text": "Separates reliability (kappa) from calibration (ECE/Brier) \u2014 explicitly states these are two different checks, not one",
+      "type": "qualitative"
+    },
+    {
+      "text": "States that kappa = 0.72 clears reliability but does NOT also clear calibration; both are required before trusting downstream analysis",
+      "type": "qualitative"
+    },
+    {
+      "text": "Recommends computing ECE or Brier score on the confidence scores to assess calibration",
+      "type": "qualitative"
+    },
+    {
+      "text": "Names the specific failure mode: overconfident judge (states 0.90+ but is only right ~70% of the time) and its downstream effect on pass-rate uncertainty",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    false
+  ],
+  "passed": 2,
+  "total": 4,
+  "pass_rate": 0.5,
+  "eval_passes": false
+}

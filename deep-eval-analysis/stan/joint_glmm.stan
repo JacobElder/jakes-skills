@@ -3,9 +3,8 @@
 // Mirrors scripts/joint_glmm.py (PyMC) exactly. Probit accuracy link; optional latency (van der
 // Linden), confidence (calibration), and 4PL upper-asymptote (slip) channels.
 //
-// COMPATIBILITY: written in the OLDER Stan array syntax ("int x[N]", not "array[N] int x") so it
-// parses on both old and new Stan / RStan / cmdstanr. Conditional channel parameters are sized via
-// transformed-data ints. Run `stanc joint_glmm.stan` first to confirm it parses on your toolchain.
+// COMPATIBILITY: uses the new Stan 2.27+ array syntax ("array[N] int x"). Requires cmdstan >= 2.27
+// or RStan >= 2.21 / brms >= 2.17. Run `stanc joint_glmm.stan` first to confirm it parses.
 //
 // Parameter <-> framework map:
 //   b[i], a[i]=exp(loga[i])      -> IRT difficulty / discrimination; SDT sensitivity & criterion (probit)
@@ -20,9 +19,9 @@ data {
   int<lower=1> V;                 // variants (takers)
   int<lower=1> I;                 // items
   int<lower=1> N;                 // observations
-  int<lower=1, upper=V> tv[N];    // variant index per obs (1-based)
-  int<lower=1, upper=I> iv[N];    // item index per obs
-  int<lower=0, upper=1> y[N];     // binary correctness
+  array[N] int<lower=1, upper=V> tv;    // variant index per obs (1-based)
+  array[N] int<lower=1, upper=I> iv;    // item index per obs
+  array[N] int<lower=0, upper=1> y;     // binary correctness
   int<lower=0, upper=1> use_corr; // estimate theta-tau correlation
   int<lower=0, upper=1> has_lat;  // latency/effort channel on
   int<lower=0, upper=1> has_conf; // confidence channel on

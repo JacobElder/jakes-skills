@@ -64,6 +64,12 @@ These are the opinions this skill exists to enforce. Do not hedge them away.
 6. **Don't dilute uncertainty.** Report intervals, pre-commit decision thresholds, and treat a
    few-point pass-rate move across a small suite as noise until a reliability analysis says
    otherwise. A delta without a dependability coefficient is a vibe.
+7. **Internal consistency: McDonald's ω, not Cronbach's α.** Alpha assumes tau-equivalence
+   (equal factor loadings = equal item discriminations). Eval suites violate this routinely —
+   items have widely variable discrimination. Alpha underestimates reliability when violated.
+   McDonald's ω estimates reliability from a factor model; ωh tests unidimensionality. But
+   G-theory's Eρ² is usually more relevant than either, because it models the crossed
+   version × case design and directly answers whether version *rankings* are reproducible.
 
 ## Regime router — read this before choosing a method
 
@@ -77,7 +83,7 @@ methods are valid. Getting this wrong is the #1 way to produce confident nonsens
 | **Model-bank regime**: responses from ~30+ models/checkpoints (your own runs across model tiers, or a public leaderboard) on shared items | **IRT** for item difficulty/discrimination/saturation/contamination and item selection (`reference/04_irt_for_evals.md`); CTT as a fast first pass | Over-trusting IRT below ~30 takers without hierarchical shrinkage |
 | **Trigger / routing analysis**: did the skill fire when it should, and stay quiet when it shouldn't | **SDT** (d′, criterion) per skill (`reference/05_sdt_for_triggering.md`) | Reporting only trigger accuracy/F1 — it hides the bias-vs-signal split |
 | **"Can I even trust these labels?"**: an LLM or human is grading | **Judge calibration** (κ, agreement, Brier/ECE) (`reference/06_judge_calibration.md`) — do this before the rows above | Treating grader output as ground truth |
-| **"Give me latent estimates"**: ability per variant + difficulty/discrimination per item, on one scale, with intervals | **Latent estimation** (`reference/08_latent_estimation.md`, `scripts/irt_latent.py`): hierarchical 2PL (MCMC) for the bank, hierarchical Rasch or fixed-item anchoring for small N | A naive free 2PL/3PL at small N (unstable discrimination, collapsed variance) |
+| **"Give me latent estimates"**: ability per variant + difficulty/discrimination per item, on one scale, with intervals | **Latent estimation** (`reference/08_latent_estimation.md`, `scripts/irt_latent.py`): `--backend auto` defaults to hierarchical 2PL via MCMC if PyMC is installed, else stable hierarchical Rasch (scipy-only, always available). Fixed-item anchoring for precise small-N placement on a pre-calibrated scale. | A naive free 2PL/3PL at small N (unstable discrimination, collapsed variance); MAP/EM point estimation (σ_a collapses to 0 under joint mode) |
 | **"Give me everything at once"** / I logged latency or confidence too / I want IRT+SDT+calibration+G-theory from one model | **Unified joint GLMM** (`reference/09_joint_glmm.md`, `scripts/joint_glmm.py`): one fit, channels switchable; latency channel buys identifiability | A full multi-trait covariance at small N — it's asserted by priors, not estimated. Stack channels you don't have. |
 | **"Is this comparison even valid?"**: judge/model changed, runs are noisy, or my eval cases got reworded | **Facets & invariance** (`reference/12_facets_and_confounding.md`, `reference/13_item_drift.md`, `scripts/item_drift.py`): model judge/model/seed as facets, check confounding, hash cases for drift | Reading a θ trend off a suite whose ruler (judge, base model, or case content) silently changed |
 
@@ -109,8 +115,8 @@ Follow this order. Each step has a reference file with the concrete recipe and t
    pass/fail labels, verify the grader is reliable before continuing. → `reference/06_judge_calibration.md`
 3. **Run the CTT item pass.** Per-item difficulty and discrimination; flag saturated, floored,
    non-discriminating, and (urgent) negative-discrimination items. This is the cheap, robust
-   first look that works in every regime. → `reference/02_ctt_item_analysis.md`,
-   script `scripts/eval_item_analysis.py`
+   first look that works in every regime (the only item-level method when takers < ~30). →
+   `reference/01_diagnostic_workflow.md` §Step 3, script `scripts/eval_item_analysis.py`
 3. **Quantify reliability and right-size the suite.** How much of your score variance is real
    version differences vs. case-selection noise, judge inconsistency, or seed-to-seed sampling —
    and how many cases/seeds/judges you actually need. → `reference/03_generalizability_theory.md`,
@@ -133,11 +139,9 @@ Follow this order. Each step has a reference file with the concrete recipe and t
 
 ## Reference files
 
-- `reference/01_diagnostic_workflow.md` — the end-to-end audit, regime decision tree, and the
-  trim/keep/fix decision rules with thresholds.
-- `reference/02_ctt_item_analysis.md` — classical item statistics on eval data: difficulty,
-  item–rest (point-biserial) discrimination, the mid-range difficulty filter, saturation and
-  contamination heuristics. The robust default in every regime.
+- `reference/01_diagnostic_workflow.md` — the end-to-end audit, regime decision tree, trim/keep/fix
+  decision rules with thresholds, and the CTT item statistics (difficulty, item–rest discrimination,
+  discrimination index, saturation/contamination/redundancy heuristics). The robust default in every regime.
 - `reference/03_generalizability_theory.md` — variance components for evals (version × case ×
   judge × seed), generalizability vs. dependability coefficients, and D-studies to size your
   suite. The primary reliability tool for small-N iteration.

@@ -59,8 +59,43 @@ on label noise. (`06_judge_calibration.md`.)
 
 ## Step 3 — CTT item pass (every regime)
 
-Run `scripts/eval_item_analysis.py`. Produces per-item difficulty, item–rest discrimination, the
-discrimination index, item–item redundancy, and bootstrap CIs. Read it for:
+Run `scripts/eval_item_analysis.py`. No model fitting, no distributional assumptions — the two
+core statistics map directly onto "is this item too easy/hard?" and "does it separate good runs
+from bad ones?" This step works at any N and is the only item-level method when takers < ~30.
+
+**Item difficulty (p):** per-item pass rate. Higher p = easier.
+
+| p range | Meaning | Action |
+|---|---|---|
+| p ≥ 0.95 | Saturated | Carries ~no info about version differences. Trim unless it guards a known regression (then keep as insurance). |
+| 0.30–0.70 | Mid-range | Max discriminative information. Keep. |
+| p ≤ 0.05 | Floored | Too hard *or* broken/mis-specified. Inspect before cutting. |
+
+**Item discrimination (item–rest correlation, r_rest):** correlate each taker's score on item i
+with that taker's rest score (sum over all other items). Avoids self-correlation inflation.
+
+| r_rest | Meaning | Action |
+|---|---|---|
+| ≥ 0.30 | Strong — good runs pass, weak runs fail | Keep; core signal. |
+| 0.15–0.30 | Acceptable | Keep. |
+| 0–0.15 | Non-discriminating | Trim candidate. Adds runtime, not signal. |
+| **< 0** | **Broken — worse runs pass more than better runs** | **Urgent fix, not trim.** Wrong gold label, inverted grader, or perverse rubric. A single negative-discrimination item can flip a version comparison. |
+
+At tiny N (< ~8 takers), supplement with the **discrimination index** proxy: mean pass rate of
+the top-third takers minus the bottom-third (`D = p_top − p_bottom`). Flag `D < 0.15` as weak,
+`D < 0` as broken. More stable than r_rest at very small taker counts.
+
+**Saturation / contamination / redundancy heuristics:**
+
+- **Suite saturation:** median difficulty very high (most items p > 0.9) → suite has aged out;
+  top takers are all bunched near ceiling, version differences are invisible. Add harder cases.
+- **Contamination smell:** a cluster of easy + non-discriminating items (p ≈ high ∧ r_rest ≈ 0)
+  whose answers are likely in training data. CTT flags the pattern; confirming contamination needs
+  the IRT 3PL guessing parameter or provenance checks (`04_irt_for_evals.md`).
+- **Redundant items:** very high inter-item correlation between two cases → they measure the same
+  thing. Keep one. The script reports an item–item matrix to spot clusters.
+
+Read the output for:
 
 - **negative-discrimination items** → fix list (urgent; can flip comparisons),
 - **saturated / floored / non-discriminating items** → trim candidates,
