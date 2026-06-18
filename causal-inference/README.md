@@ -48,6 +48,20 @@ The skill confirms the concern: TWFE with staggered adoption and heterogeneous t
 
 ---
 
+## Example output
+
+### Collider conditioning manufactures spurious correlation
+
+Conditioning on a collider — a variable caused by both your predictor and your outcome — creates a spurious association that does not exist in the population.
+
+![Collider bias](collider_bias.png)
+
+In this simulation, X and Y are independent (r = 0.08 in the full sample — noise around zero). Both cause Z (a selection or mediator variable). Once the analysis conditions on Z — by filtering to Z > 0, controlling for Z in regression, or stratifying — X and Y appear correlated (r = −0.28 within the conditioned sample). The skill flags this immediately and refuses to interpret the conditional estimate as a causal effect of X on Y.
+
+The base model often describes collider bias correctly in the abstract. It struggles to *detect it* when the conditioning variable looks like a reasonable control — for example, filtering to "active users" before measuring onboarding effects, or controlling for "hours worked" when estimating the pay gap.
+
+---
+
 ## What it does
 
 The base model knows causal inference concepts. The skill gives the agent the *precision to apply them correctly under pressure*. The hard cases in causal inference require the agent to:

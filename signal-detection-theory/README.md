@@ -110,6 +110,18 @@ With the skill, the model identifies the confound with type-1 sensitivity and ro
 
 ---
 
+## Example output
+
+### Accuracy collapses two different problems into one number
+
+Two trigger systems. Trigger B has a higher hit rate (93% vs 82%) — the base model stops here and concludes B is better. SDT reveals they have completely different failure modes requiring completely different fixes.
+
+![Accuracy vs SDT decomposition](accuracy_vs_sdt.png)
+
+**Left** — Hit rate alone makes B look superior. **Centre** — ROC curves show B's operating point is far from the optimal frontier; it achieves high recall by firing on almost everything. **Right** — The SDT decomposition: A has high discriminability (d′=2.2) and a slightly conservative criterion (c=+0.2, minor wording tweak needed); B has poor discriminability (d′=0.9, content fix needed) and a very liberal criterion (c=−1.0, major threshold adjustment needed). Same metric, two completely different diagnoses.
+
+---
+
 ## What the skill does
 
 The base model knows SDT formulas. The skill gives the agent the *conviction to apply the right ones*. The skill's most important moves are:

@@ -54,6 +54,20 @@ The skill runs the analysis, checks the block test, maps the directionality ques
 
 ---
 
+## Example output
+
+### The single-parameter fallacy — and what congruence actually requires
+
+The most common RSA error: treating a significant a4 as sufficient evidence of congruence. It is not. Congruence requires the full C1–C4 conjunction to hold simultaneously.
+
+![RSA surface and single-parameter fallacy](rsa_surface_and_fallacy.png)
+
+**Left** — A 3D response surface with a marked line of congruence (LOC, where X = Y) and line of incongruence (LOIC, where X = −Y). The surface curvature along LOC and LOIC determines whether there is a congruence effect and in which direction incongruence hurts. **Centre** — The single-parameter fallacy: a4 = −0.21 is statistically significant, but a3 ≠ 0 and p10 ≠ 0 mean the full set of congruence conditions is not met. The base model often stops at a4; the skill walks through all four. **Right** — The C1–C4 checklist applied: C1 (block test passed), C2 (a4 < 0 ✓), C3 (a3 ≈ 0, CI includes zero — cannot claim directional mismatch), C4 (p10 outside acceptable range — strict congruence not supported).
+
+The skill refuses to endorse the write-up until every checklist item is evaluated. A negative, significant a4 is necessary — it is not sufficient.
+
+---
+
 ## What it does
 
 The base model knows RSA vocabulary. The skill gives the agent the *precision to hold methodological positions when pushed, evaluate the full checklist rather than one parameter, and refuse analyses that don't meet preconditions*. The hard cases require the agent to:

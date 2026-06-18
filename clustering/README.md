@@ -50,6 +50,18 @@ The skill flags the problem: Euclidean distance on one-hot encodings imposes arb
 
 ---
 
+## Example output
+
+### k-means finds clusters even in pure noise
+
+k-means always partitions data into exactly k groups — it has no mechanism to say "there is no structure here." Without comparing against a null (shuffled) baseline, a silhouette score alone is meaningless.
+
+![k-means null comparison](kmeans_null_comparison.png)
+
+Both panels show k=4 clusters with confident-looking color assignments. The left has real structure (silhouette = 0.72). The right is 300 uniformly random points — yet k-means returns a silhouette of 0.42 and four tidy-looking clusters. The skill requires a null comparison: fit k-means on the shuffled data and confirm the real silhouette exceeds the noise floor.
+
+---
+
 ## What it does
 
 The base model knows clustering algorithms. The skill gives the agent the *precision to apply them correctly when the standard approach is wrong*. The hard cases require the agent to:
