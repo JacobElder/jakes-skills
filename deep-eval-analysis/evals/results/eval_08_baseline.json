@@ -1,0 +1,35 @@
+{
+  "eval_id": 8,
+  "name": "latent_estimation_small_n_done_right",
+  "condition": "baseline",
+  "prompt": "I only have 5 skill versions across 22 eval cases. I ran irt_latent.py --backend mcmc and got these results:\n\nsigma_a = 0.06 (posterior mean, 95% CI [0.01, 0.18]) \u2014 very small, nearly Rasch\n\nVariant ability (theta), all with wide intervals:\n  v4:  \u03b8=1.02 [\u22120.63, 2.68]   v2: \u03b8=\u22120.41 [\u22122.01, 1.19]\n  v5:  \u03b8=0.82 [\u22120.81, 2.45]   v1: \u03b8=\u22120.87 [\u22122.49, 0.74]\n  v3:  \u03b8=0.14 [\u22121.43, 1.71]\n\nItem difficulty range: b from \u22121.9 to +1.8, most CIs spanning ~3 logits.\nMax R-hat = 1.003. Discriminations: a_i range 0.7 to 1.4 (but sigma_a \u2248 0 so these are prior-driven).\n\nI want precise latent ability estimates for each version with discrimination per item. What do these results tell me, and are the estimates trustworthy?",
+  "response": "The reference material is directly prescriptive here. Let me give you the full read.\n\n---\n\n## What the results are telling you\n\n### 1. \u03c3_a = 0.06 \u2014 you're in Rasch territory, not 2PL\n\nFrom `08_latent_estimation.md`, the explicit threshold:\n\n> **With fewer than ~8 takers, \u03c3_a will be near 0 by construction.** Between ~8\u201320 takers it will almost always be near 0.\n\nYou have 5 takers. The model correctly found it can't learn discrimination variance from so few examinees \u2014 the hyperprior collapsed. That **a_i range of 0.7\u20131.4 is prior-driven noise, not signal.** Ignore the per-item discrimination estimates entirely. They are artifacts of the log-Normal prior spreading slightly around 1.0, not information in your data.\n\n### 2. Wide \u03b8 CIs (~3.3 logit width) are the correct, honest answer\n\nThis is not a convergence failure \u2014 R-hat 1.003 confirms the sampler worked. The intervals are wide because there simply isn't enough information to pin them tighter at N=5. From the reference:\n\n> Wide \u03b8 intervals / \"low precision\" flags at small N are correct, not a failure.\n\n### 3. What IS trustworthy\n\nThe **rank ordering** is probably real:\n\n```\nv4 (1.02) > v5 (0.82) > v3 (0.14) > v2 (\u22120.41) > v1 (\u22120.87)\n```\n\nThe point estimate separations are consistent and follow expected skill iteration progression. But no adjacent pair has non-overlapping CIs, so you can't claim a statistically separable difference between any two neighbors.\n\n---\n\n## What you actually need for \"precise estimates + per-item discrimination\"\n\nNeither is achievable with 5 takers. Thresholds from the docs:\n\n| Quantity | Minimum takers | Your N |\n|---|---|---|\n| Reliable \u03b8 ordering | ~5+ (marginal) | 5 \u2713 (barely) |\n| \u03c3_a > 0 (any discrimination signal) | ~8\u201315+ | 5 \u2717 |\n| Per-item discrimination trustworthy | ~15\u201320+ | 5 \u2717 |\n| Full 2PL makes sense | ~30+ | 5 \u2717 |\n\n---\n\n## The right fix\n\nYour fixture data has **opus, sonnet, haiku, noskill, ablation_norefs** \u2014 that's 5 more takers sitting unused. Two options:\n\n**Option A \u2014 Add all takers, use `--backend rasch`**  \nInclude opus, sonnet, haiku, noskill, ablation_norefs to get N=10. Switch to Rasch since \u03c3_a \u2248 0 anyway \u2014 it's the honest model at this N, gives tighter \u03b8 estimates than the 2PL that collapsed to Rasch, and doesn't waste posterior computation on unidentifiable discriminations.\n\n**Option B \u2014 Fixed-item anchoring (most precise small-N path)**  \nFrom `04_irt_for_evals.md`:\n> Calibrate items once on the bank, freeze (a, b), then estimate only \u03b8 for each new version against the fixed items. Estimating 6 abilities against known items is well-posed at any N.\n\nIf you have a pre-calibrated item bank (from a prior run with many takers), use `--fixed-items bank.csv`. This gives you narrow, calibrated \u03b8 CIs even at N=5.\n\n---\n\n## Direct answers\n\n**What do the results tell you?** The model is working correctly and honestly telling you: your suite can rank these 5 versions (v4 best, v1 worst) but has no statistical power to estimate per-item discrimination or report precise \u03b8 values. \u03c3_a = 0.06 is the model correctly reporting it can't identify the 2PL parameter at this N.\n\n**Are the estimates trustworthy?** The rank is probably right. The \u03b8 point estimates are directionally reasonable. The per-item a_i values are completely untrustworthy \u2014 discard them. If you need a number to report, use the \u03b8 point estimates with the explicit caveat that CIs span ~3 logits and no pair is statistically distinguishable. The right step is adding the anchor takers already in your fixture and switching to `--backend rasch`.",
+  "assertions": [
+    {
+      "text": "Delivers latent estimates (does not just refuse) using a hierarchical/pooled or anchored method appropriate to small N",
+      "type": "qualitative"
+    },
+    {
+      "text": "Reports honest uncertainty \u2014 wide intervals \u2014 and frames overlapping/imprecise estimates as the truthful result rather than a failure",
+      "type": "qualitative"
+    },
+    {
+      "text": "Still avoids a naive free 2PL and explains the distinction between refusing that and delivering estimates properly",
+      "type": "qualitative"
+    },
+    {
+      "text": "Suggests how to tighten the estimates (expand takers via model tiers/ablations/seeds, or anchor on a calibrated bank)",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

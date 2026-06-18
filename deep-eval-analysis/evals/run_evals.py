@@ -123,6 +123,7 @@ FAIL = it does not, or only gestures at it vaguely (partial credit = FAIL).
 Domain-specific rules:
 - "Refuses free 2PL at small N": PASS only if the output declines/strongly warns AND gives the reason (item params estimated across takers; ~hundreds needed). A caveat + recipe = FAIL.
 - "σ_a ≈ 0 means cannot resolve discrimination" / "says colleague is WRONG": PASS only if both (a) σ_a is identified as the key signal that discrimination isn't resolvable AND (b) the response explicitly says the colleague is wrong / the a=2.1 estimate is not trustworthy. A hedge or "proceed with caution" = FAIL.
+- "model collapses toward Rasch" / "collapses toward Rasch regardless": PASS if the response says EITHER (a) σ_a near 0 means the model is behaving like / collapsing toward Rasch (data-driven framing), OR (b) at N takers < ~8–15 the model will always collapse toward Rasch (structural framing). Both are correct statements of the same phenomenon.
 - "Uses kappa not raw agreement": PASS if it names an agreement-beyond-chance statistic (Cohen's/Fleiss' kappa) as the reliability metric. Does not require an explanation of why raw agreement is inflated.
 - "Separates low-d' from biased-criterion": PASS only if BOTH branches are present AND mapped to different fixes.
 - "Reports item-level structure": PASS only if per-item difficulty AND a discrimination statistic are both produced or clearly described.
@@ -130,6 +131,8 @@ Domain-specific rules:
 - "Says advisor is wrong" / "does NOT clear the gate" / "does not green-light": these require an explicit negative statement, not a hedge or "proceed with caution."
 - "Internal consistency wrong construct" / "does NOT recommend alpha or omega as primary": PASS only if the response explicitly says internal consistency is the wrong construct for diverse eval suites (not just a hedge like "alpha has limitations"). A response that recommends omega as the primary reliability metric = FAIL even if it also mentions G-theory.
 - "tau-equivalence" (when IC is the secondary topic): PASS only if omega is named AND tau-equivalence is named as the violated assumption.
+- "kappa clears reliability but NOT calibration; both required": PASS only if the response explicitly distinguishes the two gates AND says calibration (ECE/Brier) is a SEPARATE required check. A response that says "you can proceed" with binary labels while ignoring whether confidence calibration was checked = FAIL.
+- "Recommends computing ECE or Brier score": PASS only if the response explicitly recommends computing ECE or Brier score on the confidence scores (not just "ignore the confidence scores" without first quantifying them).
 
 Output format (nothing else, no extra text):
 1: PASS
@@ -145,7 +148,7 @@ def grade_assertions(prompt: str, response: str, assertions: list[dict],
     texts = [a["text"] for a in assertions]
     numbered = "\n".join(f"{i+1}. {t}" for i, t in enumerate(texts))
     prompt_trunc = prompt[:500] + ("..." if len(prompt) > 500 else "")
-    resp_trunc = response[:4000] + ("..." if len(response) > 4000 else "")
+    resp_trunc = response[:8000] + ("..." if len(response) > 8000 else "")
     grader_prompt = (
         f"Eval prompt:\n{prompt_trunc}\n\n"
         f"Model response to grade:\n\n{resp_trunc}\n\n"

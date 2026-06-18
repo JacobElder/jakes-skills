@@ -1,0 +1,35 @@
+{
+  "eval_id": 10,
+  "name": "unified_glmm_feasibility",
+  "condition": "baseline",
+  "prompt": "Can you give me one model that outputs IRT, SDT, calibration, AND G-theory parameters at once? I have correctness, CoT length, and a confidence score per response, but only 6 skill variants. I want the full joint covariance across all the latent traits so the channels share strength.",
+  "response": "This is a multivariate latent-variable model \u2014 a three-channel hierarchical model where variant-level random effects share a joint prior. Here's the architecture and a complete Stan spec.\n\n## Model structure\n\nEach observation `(i=item, j=variant)` has three outcomes: correctness `y`, log-CoT `t`, logit-confidence `c`. Latent per-variant quantities `[\u03b8_j, u_j^t, u_j^c]` draw from MVN(0, \u03a3_variant) \u2014 this 3\u00d73 covariance is the strength-sharing object you want.\n\n| Framework | What it lives in |\n|---|---|\n| **IRT** | `\u03b8_j` (ability), `b_i` (difficulty), `a_i` (discrimination) on the correctness channel |\n| **SDT** | `\u03b8_j` IS `d'` on a logit scale; criterion `c_j \u2248 \u2212mean(b_i)` per variant; hit/FA rates are generated quantities |\n| **G-theory** | Variance decomposition on CoT and confidence: `\u03c3\u00b2_variant / (\u03c3\u00b2_variant + \u03c3\u00b2_item + \u03c3\u00b2_resid)` |\n| **Calibration** | `\u03a9_variant[1,3]` = cor(\u03b8, conf tendency); perfect calibration = 1.0 |\n\n## Stan model\n\n```stan\ndata {\n  int<lower=1> N;\n  int<lower=1> J;          // 6 skill variants\n  int<lower=1> I;          // eval items\n  array[N] int<lower=1,upper=J> jj;\n  array[N] int<lower=1,upper=I> ii;\n  array[N] int<lower=0,upper=1> y;\n  vector[N] log_cot;       // centered\n  vector[N] logit_conf;    // centered\n}\nparameters {\n  // IRT item parameters\n  vector[I] b;\n  vector<lower=0>[I] a;\n\n  // Variant-level joint traits: [theta, u_cot, u_conf]\n  matrix[J, 3] z_var;\n  cholesky_factor_corr[3] L_var;\n  vector<lower=0>[3] sigma_var;\n\n  // Item-level effects on CoT and confidence (separate, not joint w/ difficulty)\n  matrix[I, 2] z_item;\n  cholesky_factor_corr[2] L_item;\n  vector<lower=0>[2] sigma_item;\n\n  real<lower=0> sigma_cot;\n  real<lower=0> sigma_conf;\n}\ntransformed parameters {\n  matrix[J, 3] u_var  = z_var  * diag_pre_multiply(sigma_var,  L_var)';\n  matrix[I, 2] u_item = z_item * diag_pre_multiply(sigma_item, L_item)';\n\n  vector[J] theta  = u_var[, 1];\n  vector[J] u_cot  = u_var[, 2];\n  vector[J] u_conf = u_var[, 3];\n}\nmodel {\n  b ~ normal(0, 1);\n  a ~ lognormal(0, 0.5);\n  to_vector(z_var)  ~ std_normal();\n  to_vector(z_item) ~ std_normal();\n  L_var  ~ lkj_corr_cholesky(4);   // tighter prior \u2014 only 6 variants\n  L_item ~ lkj_corr_cholesky(2);\n  sigma_var  ~ exponential(1);\n  sigma_item ~ exponential(1);\n  sigma_cot  ~ exponential(1);\n  sigma_conf ~ exponential(1);\n\n  for (n in 1:N) {\n    int j = jj[n]; int i = ii[n];\n    y[n]          ~ bernoulli_logit(a[i] * (theta[j] - b[i]));\n    log_cot[n]    ~ normal(u_cot[j]  + u_item[i, 1], sigma_cot);\n    logit_conf[n] ~ normal(u_conf[j] + u_item[i, 2], sigma_conf);\n  }\n}\ngenerated quantities {\n  matrix[3, 3] Omega_var  = multiply_lower_tri_self_transpose(L_var);\n  matrix[2, 2] Omega_item = multiply_lower_tri_self_transpose(L_item);\n\n  // G-theory generalizability coefficients (n_items items)\n  real G_cot  = square(sigma_var[2]) /\n    (square(sigma_var[2]) + square(sigma_cot) / I);\n  real G_conf = square(sigma_var[3]) /\n    (square(sigma_var[3]) + square(sigma_conf) / I);\n\n  // SDT: d' and criterion per variant (probit scale \u2248 logit/1.7)\n  vector[J] d_prime = theta / 0.588;   // rescale logit\u2192probit\n  real mean_b = mean(b);\n  vector[J] criterion = -theta + mean_b * to_vector(a) / mean(a);\n}\n```\n\n## Reading the output\n\n- **`Omega_var[1,3]`** \u2014 calibration quality: cor(latent ability, confidence tendency). Negative = overconfident bad variants, positive = well-calibrated.\n- **`Omega_var[1,2]`** \u2014 efficiency tradeoff: cor(ability, CoT length). Near zero = no relationship; positive = more able variants also verbosify.\n- **`G_cot`, `G_conf`** \u2014 how much of CoT/confidence variance is between-variant vs. noise; analogous to a reliability coefficient.\n- **`d_prime[j]`** \u2014 SDT sensitivity per variant (derived; hits/FAs as a check in post-processing).\n- **`b[i]`, `a[i]`** \u2014 item difficulty and discrimination; items where `a` is near zero contribute little information.\n\n## The n=6 caveat\n\nThe 3\u00d73 \u03a3_variant is estimated from 6 \"persons.\" The correlations will have wide posteriors \u2014 plan on reporting 90% credible intervals, not point estimates. The `lkj_corr_cholesky(4)` prior shrinks toward zero correlation and prevents the sampler from chasing spurious \u03a3 structure. If two chains give wildly different `Omega_var` estimates, tighten it to `lkj(8)` or fix the off-diagonals at zero as a comparison model.\n\nFor data prep: center `log_cot` and `logit_conf` globally before fitting so the item-level intercepts stay on a common scale.",
+  "assertions": [
+    {
+      "text": "Confirms one GLMM fit can emit IRT + SDT + calibration + a G-theory reliability bridge (does not claim it's impossible)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Pushes back on estimating a full multi-trait covariance at ~6 variants \u2014 explains it would be prior-asserted, not data-estimated (manufactured precision)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Endorses the latency/CoT channel as the real identifiability gain while noting its own correlation is weakly identified at small N",
+      "type": "qualitative"
+    },
+    {
+      "text": "Distinguishes triggering-SDT as a separate response process rather than merging it into task-ability theta",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    false,
+    false,
+    false
+  ],
+  "passed": 1,
+  "total": 4,
+  "pass_rate": 0.25,
+  "eval_passes": false
+}

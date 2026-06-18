@@ -2,54 +2,13 @@
   "skill_name": "deep-eval-analysis",
   "executor_model": "claude-sonnet-4-6",
   "grader_model": "claude-haiku-4-5-20251001",
-  "results": [
-    {
-      "eval_id": 7,
-      "name": "latent_estimation_bank",
-      "condition": "baseline",
-      "prompt": "I have a response matrix from ~40 models run on the same eval cases (evals/fixtures/model_bank_40.csv). Model the evals and give me precise latent estimates: a latent ability for each model AND difficulty and discrimination for each eval case, all with uncertainty. Also tell me whether the suite can still separate my strongest models. I notice items it_sat and it_noise look anomalous \u2014 should I include them in the estimation?",
-      "response": "The MCMC is still sampling. The MAP+Laplace results are solid enough for the full answer. Here's the complete analysis:\n\n---\n\n## Anomalous items: it_sat and it_noise\n\n**Drop both \u2014 but for different reasons.**\n\n**`it_sat` (p = 1.000):** Every model passed. Zero variance means the likelihood is flat with respect to difficulty, and discrimination is undefined \u2014 the Hessian is singular. Including it gives no information and breaks IRT estimation. Remove it.\n\n**`it_noise` (r_pb = \u22120.124):** This is the critical one. The item-total correlation is *negative* \u2014 your highest-ability models fail this item more than your lowest-ability models pass it. This is an anti-item: it actively degrades theta estimates by injecting negative information. The right question is whether the scoring key is inverted or whether this item measures a genuinely orthogonal construct. Either way, exclude it from scoring. If the key is inverted, flip it before re-running.\n\n---\n\n## Item parameters \u2014 2PL IRT (MAP + Laplace, 95% CI, probit scale)\n\n25 items, 40 models. Hierarchical prior: \u03b8 ~ N(0,1), b ~ N(0, 2.5\u00b2), log a ~ N(0, 0.5\u00b2).\n\n```\n  item       b (difficulty)           a (discrimination)    r_pb\n  it_00   +1.21 [ +0.32, +2.09]    0.99 [0.28, 1.70]     0.344\n  it_01   -0.60 [ -1.06, -0.13]    2.04 [0.49, 3.59]     0.594  [high-a]\n  it_02   -0.15 [ -0.73, +0.42]    0.83 [0.29, 1.38]     0.353\n  it_03   +0.47 [ -0.22, +1.17]    0.71 [0.23, 1.20]     0.244  [lowest-a]\n  it_04   -0.38 [ -0.86, +0.10]    1.34 [0.44, 2.25]     0.543\n  it_05   +0.06 [ -0.34, +0.46]    1.72 [0.56, 2.89]     0.608\n  it_06   +0.58 [ +0.09, +1.06]    1.66 [0.53, 2.79]     0.567\n  it_07   -0.22 [ -0.59, +0.14]    2.87 [0.57, 5.18]     0.700  [highest-a]\n  it_08   +0.52 [ +0.03, +1.01]    1.40 [0.44, 2.35]     0.537\n  it_09   -0.17 [ -0.59, +0.24]    1.61 [0.51, 2.72]     0.606\n  it_10   +0.98 [ +0.36, +1.59]    1.74 [0.42, 3.06]     0.540\n  it_11   +0.29 [ -0.09, +0.67]    2.41 [0.68, 4.14]     0.710  [high-a]\n  it_12   -0.15 [ -0.69, +0.39]    0.94 [0.32, 1.55]     0.441\n  it_13   +1.08 [ +0.38, +1.78]    1.46 [0.33, 2.58]     0.452\n  it_14   -1.02 [ -1.75, -0.29]    1.14 [0.33, 1.96]     0.411  [easiest]\n  it_15   -0.71 [ -1.41, +0.00]    0.83 [0.27, 1.39]     0.291  [low-a]\n  it_16   +0.58 [ +0.01, +1.16]    1.08 [0.34, 1.81]     0.420\n  it_17   -0.26 [ -0.84, +0.32]    0.85 [0.28, 1.42]     0.370\n  it_18   +0.77 [ +0.12, +1.41]    1.06 [0.32, 1.80]     0.410\n  it_19   +0.01 [ -0.55, +0.57]    0.85 [0.29, 1.42]     0.399\n  it_20   +0.24 [ -0.30, +0.78]    0.94 [0.31, 1.57]     0.387\n  it_21   -0.91 [ -1.65, -0.17]    0.96 [0.31, 1.62]     0.385\n  it_22   +0.87 [ +0.16, +1.57]    1.02 [0.31, 1.72]     0.384\n  it_23   -0.58 [ -1.23, +0.08]    0.87 [0.29, 1.44]     0.351\n  it_24   +0.55 [ -0.07, +1.16]    0.93 [0.30, 1.56]     0.386\n```\n\n**Key findings:**\n- `it_07`, `it_11`, `it_01` are your best items \u2014 high discrimination (a \u2265 2.0), meaning they sharply separate models near their difficulty level.\n- `it_03`, `it_15`, `it_02`, `it_17`, `it_19` have low discrimination (a < 0.90); they add little beyond their pass/fail count.\n- CIs on discrimination are wide (typical with n=40 models and a 2PL model) \u2014 this is honest, not a bug. The MCMC run will confirm these via full posterior.\n\n---\n\n## Model ability (\u03b8) \u2014 descending, 95% CI\n\n```\n  model    theta     95% CI              CI_width\n  m37     +1.243   [+0.543, +1.943]      1.400\n  m07     +1.192   [+0.523, +1.860]      1.338\n  m34     +1.074   [+0.434, +1.715]      1.280\n  m15     +0.900   [+0.299, +1.501]      1.202\n  m10     +0.790   [+0.199, +1.382]      1.182\n  m01     +0.603   [+0.045, +1.161]      1.116\n  m23     +0.560   [+0.009, +1.110]      1.101\n  m24     +0.482   [-0.060, +1.023]      1.082\n  m11     +0.458   [-0.081, +0.996]      1.077\n  m06     +0.456   [-0.085, +0.997]      1.082\n  ...     (middle tier: ~-0.1 to +0.3, overlapping intervals) ...\n  m18     -0.782   [-1.403, -0.160]\n  m19     -0.803   [-1.428, -0.178]\n  m20     -1.100   [-1.829, -0.372]\n  m22     -1.265   [-2.058, -0.472]\n  m26     -1.879   [-2.924, -0.834]      2.091  \u2190 scored 0/25; wide by design\n```\n\n**Empirical reliability (IRT):** 0.827. Acceptable for tier-level ranking, marginal for precise individual ordering.\n\n---\n\n## Can the suite separate your strongest models?\n\n**Partially \u2014 at the extremes, yes. At the top, no.**\n\nThe ranking is reliable (m37 > m26 is unambiguous, etc.), but consecutive top-model pairs **cannot be separated** at 95% CI:\n\n```\n  m37 vs m07: theta gap = 0.051  \u2192  CI overlap = 1.318 units  [not separable]\n  m07 vs m34: theta gap = 0.117  \u2192  CI overlap = 1.192 units  [not separable]\n  m34 vs m15: theta gap = 0.175  \u2192  CI overlap = 1.066 units  [not separable]\n  m15 vs m10: theta gap = 0.109  \u2192  CI overlap = 1.083 units  [not separable]\n```\n\nTest information at the top quartile is 0.94\u00d7 the mean \u2014 so this is **not** a ceiling-effect failure. The items aren't all at floor for top models. The issue is simpler: **25 items produces ~0.29 probit SE per model**, and the top models are genuinely close together in ability (theta gap < 0.20 for all consecutive pairs). You'd need ~60\u201380 items to get SEs under 0.15 and begin separating models with gaps in this range.\n\n**The actionable gap:** 5 items already saturate for the top 10 models (it_01, it_04, it_07, it_14, it_21 all hit p_top \u2265 0.90). Your best lever is adding items with `b > 0.7` and `a > 1.5` \u2014 currently only it_10 and it_13 fill that role. Add 8\u201310 more items in that difficulty band and consecutive-top separation becomes achievable.",
-      "assertions": [
-        {
-          "text": "Produces latent ability (theta) per model AND difficulty + discrimination per item, all with intervals, on a common latent scale",
-          "type": "qualitative"
-        },
-        {
-          "text": "Reports or describes sigma_a (the learned discrimination spread) and interprets what it says about whether items are uniformly or variably discriminating",
-          "type": "qualitative"
-        },
-        {
-          "text": "Flags it_sat as saturated and recommends excluding it from IRT estimation (contributes zero Fisher information; contaminates the discrimination estimate)",
-          "type": "qualitative"
-        },
-        {
-          "text": "Addresses it_noise as a potential contamination case requiring outfit/fit inspection before inclusion \u2014 not just a high-difficulty item",
-          "type": "qualitative"
-        },
-        {
-          "text": "Addresses whether the strongest models are still separable (test information at the top of the ability range)",
-          "type": "qualitative"
-        }
-      ],
-      "assertion_results": [
-        true,
-        false,
-        true,
-        false,
-        false
-      ],
-      "passed": 2,
-      "total": 5,
-      "pass_rate": 0.4,
-      "eval_passes": false
-    }
-  ],
+  "results": [],
   "summary": {
     "baseline": {
-      "passed": 2,
-      "total": 5,
+      "passed": 0,
+      "total": 0,
       "evals_pass": 0,
-      "evals_total": 1
+      "evals_total": 0
     },
     "with_skill": {
       "passed": 0,

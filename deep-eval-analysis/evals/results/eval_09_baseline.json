@@ -1,0 +1,35 @@
+{
+  "eval_id": 9,
+  "name": "fixed_item_anchoring",
+  "condition": "baseline",
+  "prompt": "I have item parameters calibrated on a big model bank (evals/fixtures/calibrated_items.csv) and I want to place a few new skill variants on that same latent scale precisely, without re-estimating the items. My calibrated bank has 25 items. Should I use all 25 as anchors, or does it matter which ones I pick? And how do I interpret precision?",
+  "response": "Let me look at your item parameter distribution to give concrete numbers.\n\nThe b range is \u22121.48 to +1.47 and a range is 0.65 to 2.01. Here's the answer to both questions.\n\n---\n\n## Should you use all 25 anchors?\n\n**Yes, by default.** Test information is additive \u2014 I(\u03b8) = \u03a3 I_j(\u03b8) \u2014 so every additional item either helps or is neutral. Dropping items can only reduce precision.\n\nThe one real exception: items that were **poorly fitting** in the original calibration import calibration error as anchors. If you have fit statistics (RMSEA per item, residuals), drop misfitting items. Without evidence of misfit, keep all 25.\n\n**When a subset would make sense:**\n\n| Situation | Action |\n|---|---|\n| Variant has ceiling/floor on many items | Items at b far from \u03b8 contribute near-zero information; de-emphasizing them changes nothing in practice, but doesn't hurt to include them |\n| Some items have known construct-irrelevant content for this variant type | Exclude those items |\n| You need to minimize administration cost | Select items with b near expected \u03b8 and highest a \u2014 this is CAT logic |\n\nWith your bank, the high-a items (it_01 a=2.01, it_07 a=1.83, it_11 a=1.83, it_06 a=1.75, it_18 a=1.78) contribute the most information anywhere near their b values. Dropping them would visibly hurt precision.\n\n---\n\n## How to interpret precision\n\nUnder 2PL with fixed item parameters, \u03b8 is estimated by MLE or MAP. The precision is:\n\n**Test information at \u03b8:**\n$$I(\\theta) = \\sum_{j} a_j^2 \\, P_j(\\theta) \\bigl[1 - P_j(\\theta)\\bigr]$$\n\nwhere P_j(\u03b8) = logistic(a_j(\u03b8 \u2212 b_j)).\n\n**Standard error:**\n$$\\text{SE}(\\hat\\theta) = \\frac{1}{\\sqrt{I(\\hat\\theta)}}$$\n\n**Practical benchmarks on the logit scale:**\n\n| SE | 95% CI half-width | Quality |\n|---|---|---|\n| < 0.2 | \u00b10.39 logits | Excellent |\n| 0.2\u20130.35 | \u00b10.39\u20130.69 logits | Good |\n| 0.35\u20130.5 | \u00b10.69\u20130.98 logits | Acceptable |\n| > 0.5 | > \u00b11.0 logit | Questionable \u2014 variants hard to rank |\n\nWith your 25 items spanning \u22121.5 to +1.5 b and decent a values, a variant near \u03b8 = 0 will get SE \u2248 0.15\u20130.20 (very precise). A variant at the extremes (\u03b8 \u2248 \u00b12) will get SE \u2248 0.4\u20130.6 because few items are informative there.\n\n**What to report:** \u03b8\u0302 with its 95% CI: \u03b8\u0302 \u00b1 1.96 \u00d7 SE(\u03b8\u0302). Compare variants by whether their CIs overlap \u2014 non-overlapping CIs mean the ordering is reliable at 95%.\n\n---\n\n**TL;DR:** Use all 25 \u2014 information only accumulates. Precision = 1/\u221aI(\u03b8\u0302); a SE < 0.35 logits means you can reliably rank variants within \u00b10.7 logits.",
+  "assertions": [
+    {
+      "text": "Recommends fixed-item / anchor calibration: freeze item params, estimate only variant ability theta (irt_latent.py --fixed-items)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Warns that not all anchor items are equally informative: items must be close to the variant's ability level to contribute Fisher information; saturated or floored items contribute near-zero information",
+      "type": "qualitative"
+    },
+    {
+      "text": "Explains this is well-posed and precise at small N because items are not being estimated from few variants \u2014 only theta is estimated",
+      "type": "qualitative"
+    },
+    {
+      "text": "Reports theta with uncertainty and notes intervals depend on how informative the selected anchor items are at that variant's ability level",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

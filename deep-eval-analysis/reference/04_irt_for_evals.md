@@ -51,11 +51,30 @@ then prefer to report it alongside CTT.
    frontier systems.
 4. **Contamination / luck via the guessing parameter.** A 3PL `c` well above 0 on an item means
    takers pass it at a rate untethered from ability — classic on contaminated or guess-able
-   multiple-choice items. A cluster of high-`c` items inflates scores without measuring capability.
-5. **Mislabel auditing.** Items where high-θ takers fail and low-θ takers pass (negative effective
-   discrimination under the model) surface likely **gold-label errors** — IRT-based mislabel
-   detectors flag these at high precision on real benchmarks. This is the model-bank analogue of
-   CTT's negative item–rest correlation, and it's one of IRT's highest-value eval uses.
+   items where weak takers pass at unexpectedly high rates. Key diagnostic: **outfit/infit
+   statistics** (standardized mean-squared residuals). Contamination inflates *outfit* — the
+   model predicts a weak taker passes at 5% but they pass at 45%; the squared residual is huge.
+   The ability-ordered residual plot (empirical pass rate by θ bin vs the model-implied ICC) is
+   the most direct check: a contaminated item has a flat empirical pass rate at low θ, far above
+   the ICC. A cluster of high-`c` items inflates scores without measuring capability.
+   **Do not confuse contamination with negative discrimination:** contamination means the floor is
+   high (weak takers pass more than expected, but strong takers still pass more than weak takers);
+   negative discrimination means the ICC slopes downward (stronger takers pass *less* — a broken
+   item, not contamination).
+5. **Negative discrimination / mislabel auditing.** Items where high-θ takers fail and low-θ
+   takers pass (inverted ICC — negative `a` in 2PL) signal likely **gold-label errors** or
+   inverted graders. IRT-based mislabel detectors flag these at high precision on real benchmarks.
+   This is the model-bank analogue of CTT's negative item–rest correlation, and it's one of
+   IRT's highest-value eval uses. The fix is investigation, not just trimming — if the label is
+   wrong for this item, it may be wrong for others.
+
+## Contamination vs saturation vs negative discrimination — the three failure modes
+
+| Failure mode | Pattern | CTT signal | IRT signal | Consequence | Fix |
+|---|---|---|---|---|---|
+| **Saturation** | Everyone passes (p→1.0) | r_rest undefined (zero SD) | b → −∞, `a` unidentifiable | Non-informative, zero test info | Safe to trim (unless a guard item) |
+| **Contamination** | Weak takers pass at unexpectedly high rates; pass rate nearly flat across ability | r_rest low but positive; D low | c >> 0, high outfit; empirical ICC flat at low θ | **Pollutes θ estimates** — adds passes untethered from ability, inflating all takers' scores | Audit and remove; don't just trim |
+| **Negative discrimination** | Strong takers fail more than weak takers (inverted ICC) | r_rest < 0, D < 0 | `a` < 0; item information negative | Actively punishes ability; contaminates ranking | Investigate immediately — likely wrong gold label |
 
 ## Fixed-item (anchor) calibration — the bridge to small N
 

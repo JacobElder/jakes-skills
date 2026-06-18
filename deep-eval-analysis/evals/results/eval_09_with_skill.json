@@ -1,0 +1,35 @@
+{
+  "eval_id": 9,
+  "name": "fixed_item_anchoring",
+  "condition": "with_skill",
+  "prompt": "I have item parameters calibrated on a big model bank (evals/fixtures/calibrated_items.csv) and I want to place a few new skill variants on that same latent scale precisely, without re-estimating the items. My calibrated bank has 25 items. Should I use all 25 as anchors, or does it matter which ones I pick? And how do I interpret precision?",
+  "response": "Good. I'll compute the item information at a neutral ability point (\u03b8=0) for each of your 25 items, since that's likely near where new skill variants start, then answer both questions concretely.\n\n---\n\n## Does anchor selection matter?\n\n**For validity: no.** Any subset of calibrated items gives unbiased \u03b8 estimates \u2014 you're not re-estimating items, so there's no identification problem regardless of which you include.\n\n**For precision: very much yes.** Item information at \u03b8 is `I_i(\u03b8) = a\u00b2\u00b7P\u00b7(1\u2212P)` where `P = \u03c3(a\u00b7(\u03b8\u2212b))`. It peaks when `\u03b8 = b` (the item is perfectly targeted) and degrades as `\u03b8` moves away from `b`. Your 25 items vary by nearly 8\u00d7 in how much they contribute at \u03b8=0.\n\n---\n\n## Per-item information at \u03b8=0 (your fixture)\n\n`SE(\u03b8) \u2248 1/\u221a\u03a3 I_i(\u03b8)` \u2014 so a higher total is tighter.\n\n| Item | a | b | I(\u03b8=0) | Tier |\n|---|---|---|---|---|\n| it_11 | 1.83 | \u22120.08 | **0.83** | top |\n| it_18 | 1.78 | +0.19 | **0.77** | top |\n| it_06 | 1.75 | +0.43 | **0.67** | top |\n| it_08 | 1.40 | +0.02 | 0.49 | high |\n| it_07 | 1.83 | \u22120.85 | 0.48 | high |\n| it_01 | 2.01 | \u22120.96 | 0.45 | high |\n| it_10 | 1.41 | +0.77 | 0.38 | high |\n| it_09 | 1.48 | \u22120.87 | 0.37 | high |\n| it_22 | 1.21 | +0.12 | 0.36 | high |\n| it_16 | 1.24 | +0.70 | 0.32 | mid |\n| it_00 | 1.42 | +1.14 | 0.28 | mid |\n| it_03 | 1.09 | +0.48 | 0.28 | mid |\n| it_12 | 1.01 | \u22120.47 | 0.24 | mid |\n| it_05 | 0.94 | +0.12 | 0.22 | mid |\n| it_14 | 1.48 | \u22121.39 | 0.22 | mid |\n| it_13 | 1.58 | +1.47 | 0.20 | mid |\n| it_04 | 1.14 | \u22121.35 | 0.19 | mid |\n| it_21 | 1.31 | \u22121.48 | 0.19 | mid |\n| it_02 | 0.92 | \u22120.82 | 0.18 | low |\n| it_24 | 0.82 | +0.19 | 0.17 | low |\n| it_20 | 0.75 | +0.41 | 0.14 | low |\n| it_23 | 0.81 | \u22121.12 | 0.13 | low |\n| it_15 | 0.80 | \u22121.27 | 0.12 | low |\n| it_17 | 0.68 | \u22120.65 | 0.11 | low |\n| it_19 | 0.65 | +0.41 | 0.10 | low |\n\n**Total I(\u03b8=0) \u2248 7.91 \u2192 SE \u2248 0.36 \u2192 95% CI width \u2248 \u00b10.71 logits**\n\nThe top 9 items alone account for 5.40/7.91 = **68% of total information** at \u03b8=0. The 7 lowest-discrimination items (a < 0.85: it_02, it_15, it_17, it_19, it_20, it_23, it_24) together contribute **1.03 \u2014 only 13%** of total information.\n\n---\n\n## The practical recommendation\n\n**If scoring is free (automated eval):** use all 25. Adding a weak item never hurts \u2014 each contributes \u03b5 > 0, and you get coverage of the extremes (it_13, it_21) which matters if a variant turns out to be much stronger or weaker than expected.\n\n**If scoring has a cost:** keep the 10\u201312 highest-information items, prioritizing:\n1. Mid-difficulty **and** high-discrimination: it_11, it_18, it_06, it_08 are your best anchors \u2014 they're near \u03b8=0 and have a \u2265 1.40.\n2. **Don't drop** it_07, it_01, it_09 even though they're at b \u2248 \u22120.85 to \u22120.96. With high a, they're still highly informative, and they tell you where variants with weaker-than-expected ability sit.\n3. **Safe to drop** if you must trim: it_15, it_17, it_19, it_20 (all a < 0.80, the signal floor). They contribute almost nothing and won't be missed.\n\nOne coverage caveat: keep at least one item with b > 1.0 (it_13 or it_00). If a new variant turns out to be strong (\u03b8 ~ 1.2), your information collapses without hard items \u2014 you'd know they pass everything easy but can't place them precisely.\n\n---\n\n## Interpreting precision\n\nThe script (`irt_latent.py --fixed-items calibrated_items.csv`) reports three things per variant:\n\n**1. \u03b8 with 95% credible interval**\nThe width tells you how precisely the suite placed this variant. With all 25 items at \u03b8=0 you get SE \u2248 0.36, so intervals are roughly \u00b10.70 logits. At \u03b8=1 (harder end of your bank), information drops because fewer items are targeted there \u2014 intervals widen to ~\u00b11.0+. The script will flag rows where SE > 0.5 as \"low precision.\"\n\n**2. SE from the test information function**\n`SE(\u03b8\u0302) \u2248 1/\u221aI(\u03b8\u0302)`. At \u03b8=0 with all 25 items: SE \u2248 0.36. At \u03b8=1: I drops to roughly ~4 \u2192 SE \u2248 0.50. This is why hard variants get less precise estimates from this bank \u2014 you'd need harder anchors to pin them down.\n\n**3. Separability between variants**\nThe decision-relevant question isn't \"is SE small\" \u2014 it's \"can I tell variant A from variant B?\" Two variants are separable if their \u03b8 estimates differ by roughly 2\u20133\u00d7 their pooled SE. With SE \u2248 0.36 each, you need |\u03b8_A \u2212 \u03b8_B| \u2265 ~0.7\u20131.0 logits to call it reliably. Smaller gaps are in the noise at this anchor count. The script computes P(\u03b8_A > \u03b8_B) from the posterior overlap \u2014 a value < 0.85 means \"you can't call it.\"\n\nIf your variants are clustered (e.g., all land in \u03b8 \u2208 [\u22120.3, +0.5]), your current bank is well-targeted and separation is real. If they land near \u03b8=1.2+, the bank is under-informative there and you'll want to add harder anchors from a new calibration sweep.",
+  "assertions": [
+    {
+      "text": "Recommends fixed-item / anchor calibration: freeze item params, estimate only variant ability theta (irt_latent.py --fixed-items)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Warns that not all anchor items are equally informative: items must be close to the variant's ability level to contribute Fisher information; saturated or floored items contribute near-zero information",
+      "type": "qualitative"
+    },
+    {
+      "text": "Explains this is well-posed and precise at small N because items are not being estimated from few variants \u2014 only theta is estimated",
+      "type": "qualitative"
+    },
+    {
+      "text": "Reports theta with uncertainty and notes intervals depend on how informative the selected anchor items are at that variant's ability level",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}

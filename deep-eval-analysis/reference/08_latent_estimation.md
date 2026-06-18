@@ -54,8 +54,10 @@ half-Cauchy hyperprior on σ_a, and **σ_a is learned from the data**:
   show.** The per-item discrimination estimates are prior-driven artifacts, not data-estimated.
   A spread of a_i values from 0.3 to 2.1 with σ_a ≈ 0 does not mean some items are highly
   discriminating — it means the prior has pulled them apart while the data had nothing to say.
-  With fewer than ~15–20 takers, σ_a will almost always be near 0. This is the honest result;
-  don't treat point estimates of a_i as informative in this regime.
+  **With fewer than ~8 takers, σ_a will be near 0 by construction** — the model structurally
+  collapses toward Rasch regardless of what the per-item posterior means show. Between ~8–20
+  takers it will almost always be near 0. This is the honest result; don't treat point estimates
+  of a_i as informative in this regime.
 - **σ_a larger → the data genuinely distinguish discriminations**, and the pooling relaxes toward full
   2PL behavior. This requires roughly 15–20+ takers before the signal exceeds the prior.
 

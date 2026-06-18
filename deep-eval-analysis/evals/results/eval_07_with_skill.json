@@ -1,0 +1,40 @@
+{
+  "eval_id": 7,
+  "name": "latent_estimation_bank",
+  "condition": "with_skill",
+  "prompt": "I ran python scripts/irt_latent.py model_bank_40.csv --backend mcmc and got these results:\n\nsigma_a = 0.41 (posterior mean, 95% CI [0.28, 0.58]) \u2014 the learned discrimination spread\n\nTop-5 / bottom-5 variant abilities (theta):\n  m37: \u03b8=1.74 [0.82, 2.66]     m26: \u03b8=\u22122.32 [\u22123.40, \u22121.23]\n  m07: \u03b8=1.54 [0.65, 2.43]     m22: \u03b8=\u22121.79 [\u22122.77, \u22120.80]\n  m34: \u03b8=1.35 [0.48, 2.22]     m20: \u03b8=\u22121.56 [\u22122.50, \u22120.61]\n  m10: \u03b8=1.18 [0.32, 2.03]     m19: \u03b8=\u22120.96 [\u22121.83, \u22120.09]\n  m15: \u03b8=1.18 [0.32, 2.03]     m18: \u03b8=\u22120.96 [\u22121.83, \u22120.09]\n\nTwo anomalous items from the item difficulty output:\n  it_sat:   b=\u22123.19 [\u22124.41, \u22121.96], a=0.98 [0.54, 1.42]   (everyone passes)\n  it_noise: b=0.34 [\u22120.35, 1.03],   a=1.21 [0.67, 1.75]   (45% pass, but the pattern is random \u2014 weak models pass as often as strong ones)\n\nSaturation check: test information at top-quartile ability = 0.97\u00d7 mean.\n\nHelp me interpret this: (1) what do the theta estimates tell me about model separation at the top? (2) what does sigma_a = 0.41 tell me about item discrimination variability? (3) should I include it_sat and it_noise in the final analysis? (4) can the suite still separate my top performers?",
+  "response": "Working through all four questions from the reference material.\n\n---\n\n## 1. What \u03b8 estimates tell you about top-performer separation\n\nThe top-5 abilities span 1.18\u20131.74, but their intervals tell the real story:\n\n```\nm37: [0.82, 2.66]\nm07: [0.65, 2.43]\nm34: [0.48, 2.22]\nm10: [0.32, 2.03]\nm15: [0.32, 2.03]  \u2190 identical to m10\n```\n\nEvery one of these intervals overlaps with every other. m10 and m15 are literally indistinguishable \u2014 same point estimate, same CI. A pairwise separation calculation (reference/10) for the closest pair would give P(\u03b8_m37 > \u03b8_m15) \u2248 0.65\u20130.70: not a confident call. You can reliably separate the top cluster from the bottom cluster (m37 lower bound 0.82 vs. m26 upper bound \u22121.23 \u2014 no overlap), but you **cannot rank within the top**. The suite is telling you these five are all \"high ability\" without resolving the ordering.\n\n---\n\n## 2. What \u03c3_a = 0.41 [0.28, 0.58] means\n\nThis is the key diagnostic from `reference/08_latent_estimation.md`. \u03c3_a is the learned discrimination spread under `log(a_i) ~ Normal(\u03bc_a, \u03c3_a)`.\n\n**The critical reading:** the 95% CI [0.28, 0.58] excludes zero comfortably. At 40 takers (above the ~15\u201320 threshold where the data start speaking), the model is **genuinely estimating item discrimination variability** \u2014 not collapsing to Rasch or asserting spreads from the prior. On the log scale, \u03c3_a = 0.41 means items roughly 1 SD apart have discrimination ratios of e^(2\u00d70.41) \u2248 2.3\u00d7 \u2014 a real, substantive spread. The 2PL is earning its free parameter here. Per-item discrimination estimates are worth reading; you're not in the \"\u03c3_a \u2248 0 means prior-driven artifacts\" regime.\n\n---\n\n## 3. Should you keep it_sat and it_noise? No to both, for different reasons\n\n**it_sat** (b = \u22123.19, a = 0.98): saturated. Difficulty is 3+ logits below your weakest variant's \u03b8 (m26 at \u22122.32). The item contributes near-zero information where any of your 40 takers actually live. The discrimination is fine (a = 0.98), but it's well-aimed at an ability level that doesn't exist in your bank. **Trim it** unless it guards a known regression \u2014 if it does, label it `guard` and keep it, but don't let it influence \u03b8 estimates (exclude from the analysis, run it as a separate sentinel check).\n\n**it_noise** (b = 0.34, a = 1.21): this is the more dangerous one. The description \u2014 \"45% pass, but weak models pass as often as strong ones\" \u2014 is the **contamination pattern** from `reference/04_irt_for_evals.md`, not just noise. The 2PL has no guessing floor parameter, so it force-fits a slope onto what's actually a flat ICC with a high base rate. The a = 1.21 is a 2PL artifact: the model found *some* variation to fit, but the empirical pass rate is independent of ability. If you ran a 3PL, you'd see c >> 0. **Remove it_noise from the analysis.** Keeping it pollutes \u03b8 estimates by adding passes untethered from ability across all takers \u2014 reference/04 is explicit that contamination inflates the whole bank's scores, unlike saturation which just adds no information.\n\nThe distinction matters: it_sat is dead weight (cuts cleanly), it_noise is actively misleading (must be removed before re-estimating).\n\n---\n\n## 4. Can the suite separate top performers?\n\nMixed verdict. The saturation check (0.97\u00d7 mean information at the top quartile) is **good news** \u2014 the suite is not losing precision at high ability. The items are well-targeted enough that information doesn't collapse where your top variants live. This means the suite is in principle capable of separating them.\n\nBut the \u03b8 intervals tell you it isn't doing so *yet*. Wide intervals (\u00b1 ~0.9 logits) at the top are a **case count problem**, not a suite-targeting problem. The suite is aimed correctly; there just isn't enough information per variant to narrow the estimates. Two paths forward:\n\n- **Add harder items** if you want to spread top-variant abilities further apart on the latent scale \u2014 items with b > 1.5 to better differentiate m37 from m07.\n- **Add more cases to the existing mid-difficulty range** to accumulate information per variant and narrow the intervals \u2014 a G-theory D-study (`gtheory_eval.py`) will tell you exactly how many additional cases get you to E\u03c1\u00b2 = 0.80.\n\nRe-run after dropping it_sat and it_noise \u2014 removing the contaminated item in particular should tighten \u03b8 estimates for everyone, since it was adding noise-correlated passes.",
+  "assertions": [
+    {
+      "text": "Produces latent ability (theta) per model AND difficulty + discrimination per item, all with intervals, on a common latent scale",
+      "type": "qualitative"
+    },
+    {
+      "text": "Reports or describes sigma_a (the learned discrimination spread) and interprets what it says about whether items are uniformly or variably discriminating",
+      "type": "qualitative"
+    },
+    {
+      "text": "Flags it_sat as saturated and recommends excluding it from IRT estimation (contributes zero Fisher information; contaminates the discrimination estimate)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Addresses it_noise as a potential contamination case requiring outfit/fit inspection before inclusion \u2014 not just a high-difficulty item",
+      "type": "qualitative"
+    },
+    {
+      "text": "Addresses whether the strongest models are still separable (test information at the top of the ability range)",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    false,
+    true
+  ],
+  "passed": 4,
+  "total": 5,
+  "pass_rate": 0.8,
+  "eval_passes": true
+}

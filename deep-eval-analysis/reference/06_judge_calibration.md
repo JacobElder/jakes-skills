@@ -30,20 +30,32 @@ suite is dead on arrival regardless of how its numbers look. This is the judge-l
 item discrimination.
 
 ### 3. Calibration — are the judge's confidences honest?
-Only if the judge emits a probability/confidence (not just a label). Calibration ≠ accuracy: a
-judge can be accurate but overconfident.
+Only if the judge emits a probability/confidence (not just a label). **Calibration is an
+independent gate from reliability — clearing kappa does NOT clear calibration.** A judge can
+agree with humans 72% of the time (solid kappa) while being severely overconfident (states 0.95
+on every judgment). These two problems have different consequences and different fixes.
+
+When the judge emits confidence scores, **compute Brier score and/or ECE** before relying on those
+scores in any downstream analysis. Do not skip this step or substitute "it looks overconfident"
+for a quantified measurement.
 
 - **Brier score** — mean squared error of probabilistic predictions (lower better). Captures
   accuracy and calibration together.
 - **Expected Calibration Error (ECE)** — bin predictions by confidence, compare each bin's mean
   confidence to its empirical accuracy, average the gaps. Low ECE = "when it says 0.8 it's right
-  ~80% of the time."
+  ~80% of the time." High ECE with stated confidence of 0.95 and accuracy of 70% is a concrete
+  failure that must be reported.
 - **Reliability diagram** — plot predicted confidence vs. observed accuracy per bin; the diagonal
   is perfect. The script returns the binned data for this.
-- **Known failure mode:** LLM judges are frequently **overconfident** — high stated confidence,
-  ECE that doesn't improve as you'd hope. Don't let a confident judge talk you out of the
-  agreement check. If it's overconfident, either recalibrate (Platt/temperature scaling on the
-  confidences) or ignore the confidences and use only the binary label with its measured κ.
+- **Known failure mode:** LLM judges are frequently **overconfident** — high stated confidence
+  (0.90–0.98), low ECE improvement as you'd hope. **Don't let a confident judge talk you out of
+  the agreement check.** Once you've computed ECE/Brier: if overconfidence is mild, recalibrate
+  (Platt/temperature scaling); if severe, ignore the confidence scores entirely and report only
+  the binary label with its measured κ.
+
+**The two-gate rule:** κ clears the *binary-label* gate. ECE/Brier clears the *confidence-score*
+gate. Both must be cleared before using confidence scores downstream. A response that only checks
+kappa and then proceeds to use confidence scores has skipped a required gate.
 
 ## What to do when the judge fails the gate
 

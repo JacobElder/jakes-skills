@@ -1,0 +1,35 @@
+{
+  "eval_id": 8,
+  "name": "latent_estimation_small_n_done_right",
+  "condition": "with_skill",
+  "prompt": "I only have 5 skill versions across 22 eval cases. I ran irt_latent.py --backend mcmc and got these results:\n\nsigma_a = 0.06 (posterior mean, 95% CI [0.01, 0.18]) \u2014 very small, nearly Rasch\n\nVariant ability (theta), all with wide intervals:\n  v4:  \u03b8=1.02 [\u22120.63, 2.68]   v2: \u03b8=\u22120.41 [\u22122.01, 1.19]\n  v5:  \u03b8=0.82 [\u22120.81, 2.45]   v1: \u03b8=\u22120.87 [\u22122.49, 0.74]\n  v3:  \u03b8=0.14 [\u22121.43, 1.71]\n\nItem difficulty range: b from \u22121.9 to +1.8, most CIs spanning ~3 logits.\nMax R-hat = 1.003. Discriminations: a_i range 0.7 to 1.4 (but sigma_a \u2248 0 so these are prior-driven).\n\nI want precise latent ability estimates for each version with discrimination per item. What do these results tell me, and are the estimates trustworthy?",
+  "response": "The results are telling you one clear thing and hiding another. Let me break them apart.\n\n## What's trustworthy vs. not\n\n**\u03c3_a = 0.06 [0.01, 0.18]: the model couldn't learn discrimination**\n\nThis is the structural verdict before anything else. `reference/08_latent_estimation.md` is explicit: *\"With fewer than ~8 takers, \u03c3_a will be near 0 by construction.\"* At 5 takers you're well below that threshold \u2014 the model collapsed toward Rasch regardless of the per-item posteriors. The a_i range of 0.7\u20131.4 is **prior noise, not data signal.** A spread of 0.7 to 1.4 with \u03c3_a \u2248 0 does not mean some items discriminate better than others \u2014 it means the prior pulled them apart while the data had nothing to say. Discard these discrimination estimates entirely. You cannot get per-item discrimination at this N with a free IRT fit.\n\n**\u03b8 estimates: honest but too wide for pair comparisons**\n\n| Variant | \u03b8 | 95% CI | Width |\n|---|---|---|---|\n| v4 | 1.02 | [\u22120.63, 2.68] | 3.31 |\n| v5 | 0.82 | [\u22120.81, 2.45] | 3.26 |\n| v3 | 0.14 | [\u22121.43, 1.71] | 3.14 |\n| v2 | \u22120.41 | [\u22122.01, 1.19] | 3.20 |\n| v1 | \u22120.87 | [\u22122.49, 0.74] | 3.23 |\n\nEvery adjacent pair's intervals overlap heavily. The only coarse claim with any support: *v4 and v5 are probably stronger than v1 and v2* \u2014 the extreme pair (v4 vs. v1) has partial non-overlap, P(\u03b8_v4 > \u03b8_v1) \u2248 0.85 by a normal approximation. Promoting v4 over v3 based on a 0.88-logit gap that's inside a 3-logit CI is a coin flip dressed as a measurement.\n\nThe wide intervals aren't a failure of the sampler (R-hat 1.003 is excellent). They're the correct posterior given the data volume. This is the honesty you asked for.\n\n## What to do\n\n**Immediate: your fixture data already has 10 takers**\n\nYour CSV shows `opus`, `sonnet`, `haiku`, `noskill`, `ablation_norefs` alongside v1\u2013v5. If you ran `irt_latent.py` only on v1\u2013v5, you left 5 free takers on the table. Including the model tiers and ablations doubles your taker count to 10, spreading responses across a real ability range (opus/sonnet/haiku span wide) \u2014 exactly what makes difficulty and discrimination estimable. Rerun on the full fixture.\n\nEven at 10 takers you're borderline for discrimination (the `07_small_sample_playbook.md` threshold is ~15\u201320 before \u03c3_a starts picking up signal), but \u03b8 intervals will tighten appreciably. If you only care about ranking v1\u2013v5, the model tiers are just scaffolding to anchor the item difficulty scale \u2014 that's valid and the right use.\n\n**For discrimination specifically: switch methods**\n\nDrop the IRT discrimination ask and use CTT item-rest correlations (`eval_item_analysis.py`) instead. At your N, those are the honest discrimination proxy: they don't pretend to be on a latent scale, they bootstrap cleanly over takers, and negative r_rest still fires the broken-item alarm that matters most. Run `--backend rasch` if you need latent placement without the manufactured a_i spread.\n\n**For the ranking: run G-theory first**\n\nThe \u03b8 estimates give you a ranking; G-theory gives you a dependability coefficient that tells you whether that ranking is reliable enough to act on. Run `gtheory_eval.py` with seed as a facet \u2014 3 seeds per cell means you can separate version variance from run-to-run noise. The D-study will tell you how many cases or seeds would bring E\u03c1\u00b2 to 0.80. That's the answer to \"are these results trustworthy\" expressed as a number with a lever.\n\n## Bottom line\n\n| Output | Trustworthy? | Action |\n|---|---|---|\n| \u03b8 ranking (v4 > v5 > v3 > v2 > v1) | Direction plausible, no pair separation | Use as a weak prior; confirm with G-theory |\n| \u03b8 intervals | Correct \u2014 wide because data are sparse | Don't read point estimates; check overlap |\n| Per-item a_i (0.7\u20131.4) | No \u2014 prior-driven artifacts | Discard; use CTT r_rest instead |\n| Item difficulty b | Most reliable output | Usable for targeting assessment |\n| Convergence | Fine | Not the problem |\n\nThe model worked correctly. The constraints are in the data, not the sampler.",
+  "assertions": [
+    {
+      "text": "Delivers latent estimates (does not just refuse) using a hierarchical/pooled or anchored method appropriate to small N",
+      "type": "qualitative"
+    },
+    {
+      "text": "Reports honest uncertainty \u2014 wide intervals \u2014 and frames overlapping/imprecise estimates as the truthful result rather than a failure",
+      "type": "qualitative"
+    },
+    {
+      "text": "Still avoids a naive free 2PL and explains the distinction between refusing that and delivering estimates properly",
+      "type": "qualitative"
+    },
+    {
+      "text": "Suggests how to tighten the estimates (expand takers via model tiers/ablations/seeds, or anchor on a calibrated bank)",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    true
+  ],
+  "passed": 4,
+  "total": 4,
+  "pass_rate": 1.0,
+  "eval_passes": true
+}
