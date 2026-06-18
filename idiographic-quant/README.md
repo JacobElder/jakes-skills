@@ -95,6 +95,18 @@ With the skill, the response routes to the correct person-specific network metho
 
 ---
 
+## Example output
+
+### The pooled correlation has the wrong sign
+
+Running a regression on pooled cross-person data gives a positive stress → wellbeing relationship. Within every individual, the relationship is negative: wellbeing drops on high-stress days. The base model stops at the pooled result and draws the wrong clinical conclusion.
+
+![Within-person vs between-person](within_vs_between.png)
+
+**Left** — Pooled regression across 10 participants: positive slope (r = +0.48), because people with higher trait stress tend to also have higher trait wellbeing — a selection effect, not a causal one. **Right** — Within-person regression lines, one per participant: every slope is negative (mean r ≈ −0.44). Stress on a given day predicts lower wellbeing that day for each person. The skill names this as the **ergodicity trap** — Fisher et al. (2018) documented this sign reversal empirically across six datasets — and redirects to measuring the individual over time rather than applying the group coefficient to a client.
+
+---
+
 ## What the skill does
 
 The base model knows idiographic statistics. The skill gives the agent the *conviction to apply it correctly and refuse when it doesn't apply*. Its most important moves are:

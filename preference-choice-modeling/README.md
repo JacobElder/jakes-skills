@@ -130,6 +130,18 @@ With the skill, the response derives from the precision the decision actually re
 
 ---
 
+## Example output
+
+### IIA violation: adding a near-identical option steals share from an unrelated one
+
+The Independence of Irrelevant Alternatives (IIA) assumption baked into standard MNL models says that adding a new option reduces all existing options' shares proportionally — regardless of how similar the new option is to existing ones.
+
+![IIA violation](iia_violation.png)
+
+**Left** — Original binary choice: Car and Bus split 50/50. **Centre** — A Red Bus is added (near-identical to Blue Bus). MNL predicts each option gets 33%: Car drops from 50% to 33%. **Right** — The correct prediction: Car stays at 50%, unaffected by the bus-vs-bus competition; the two bus options split the remaining 50%. The base model validates the MNL result. The skill names the IIA violation immediately and redirects to Nested Logit (grouping transport modes into a nest) or Mixed Logit (allowing preference heterogeneity), with a clear explanation of why MNL systematically overestimates the new option's draw from unrelated alternatives.
+
+---
+
 ## What the skill does
 
 The base model knows MaxDiff and CBC methods. The skill gives the agent the *conviction to apply them correctly*. The skill's most important moves are:

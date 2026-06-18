@@ -104,6 +104,18 @@ With the skill, the response names the cross-sectional identification strategy s
 
 ---
 
+## Example output
+
+### Degree and betweenness centrality give opposite answers for the most important node
+
+In a network with two dense cliques connected by a single bridge, the node that "matters most" depends entirely on what question you are asking. Using the wrong centrality measure leads to the wrong intervention target.
+
+![Degree vs betweenness centrality](degree_vs_betweenness.png)
+
+**Left (degree centrality)** — Nodes inside the cliques rank highest: they have the most connections. The bridge node scores near the bottom — it directly connects only two nodes. **Right (betweenness centrality)** — The bridge node scores highest by far: every shortest path between the two cliques must pass through it. Remove it and the two communities are completely disconnected. The clique hubs score low because their many connections are all redundant within the clique. The skill raises the centrality-process mismatch before any computation: betweenness for gatekeeping and diffusion bottlenecks, degree for local influence, eigenvector for status in well-connected graphs. Choosing the wrong measure and then targeting interventions at the "most central" node is a common failure the skill flags before any analysis proceeds.
+
+---
+
 ## What the skill does
 
 The base model knows network analysis methods. The skill gives the agent the *conviction to apply them correctly*. The skill's most important moves are:

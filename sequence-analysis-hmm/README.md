@@ -117,6 +117,18 @@ With the skill, the geometric duration assumption is named immediately:
 
 ---
 
+## Example output
+
+### HMM exploits transition structure where naive thresholding fails
+
+A naive threshold fires on every spike above a cutoff, regardless of whether the system has shifted regimes. HMM Viterbi decoding uses the learned transition matrix to stay in state during transient fluctuations — dramatically reducing false alarms.
+
+![HMM state recovery](hmm_state_recovery.png)
+
+**Top** — Raw time series from a two-regime process (low volatility: σ=0.5; high volatility: σ=2.0). The naive threshold (±1.0, orange dashed) fires on many low-volatility spikes. **Middle** — Naive threshold decoded states: many false detections (red), accuracy ≈72%. **Bottom** — HMM Viterbi decoded states: transition structure suppresses false alarms during transient spikes, accuracy ≈94%. The skill prescribes multi-restart fitting (20 seeds minimum) and posterior decoding alongside Viterbi — soft state probabilities reveal uncertainty at regime transitions that the hard Viterbi path conceals. It also names the geometric duration assumption as the correct diagnosis when an HMM "flickers" between states at the wrong timescale.
+
+---
+
 ## Benchmark: skill vs. base model
 
 Content evals were run live against the `claude` CLI (haiku model) with and without the skill appended as a system prompt. Triggering and routing evals are from analytical rubric review.

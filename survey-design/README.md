@@ -2,6 +2,18 @@
 
 Design, review, and repair self-report surveys and questionnaires. Covers question wording, response format selection, scale construction, instrument assembly, response-bias mitigation, and the specific errors that originate at design time.
 
+## Example output
+
+### Acquiescence bias inflates cross-construct correlations
+
+When all items use an agree/disagree format, people who tend to agree ("yea-sayers") raise every score regardless of item content. This inflates the apparent correlation between anxiety and extraversion — two constructs that are genuinely near-orthogonal — and erodes discriminant validity.
+
+![Acquiescence bias](acquiescence_bias.png)
+
+**Left** — Agree/disagree format: acquiescence tendency contaminates all 8 items. Cross-construct correlations (A1–A4 with E1–E4) are meaningfully elevated (mean r ≈ 0.28) even though the underlying constructs are independent. **Right** — Balanced or forced-choice format: acquiescence cannot inflate scores because there is no direction to agree with. Cross-construct correlations drop to near zero (mean r ≈ 0.02) and the two constructs are cleanly separated. The skill names acquiescence as a **structural design problem** — not a statistical correction to apply after data collection — and recommends balanced formats, forced-choice items, or mixed-keyed batteries at design time, before the data is contaminated.
+
+---
+
 ## Why it matters
 
 The base model knows survey design facts but gives accommodating responses. When a user insists on a methodologically weak design, it opens with "Sure, I can help you finalize the survey with those choices!" — validating a 2-point Agree/Disagree scale and "select all that apply" grids without explaining what either costs. When reviewing a survey, it lists abstract bias names without providing concrete rewrites. When asked how many scale points to use, it defers to "it depends" without stating the specific finding (reliability plateaus at 5–7 for agree/disagree; 5 beats 7 and 11 for that format specifically).
