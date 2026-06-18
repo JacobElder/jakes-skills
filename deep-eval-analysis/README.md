@@ -138,12 +138,12 @@ The base model knows the methods. The skill gives the agent the *conviction to a
 
 ## Benchmark: skill vs. base model
 
-Evaluated across 16 scenarios covering the full diagnostic workflow. Each eval has 3–5 specific, objectively checkable assertions graded strictly against evidence.
+Evaluated across 17 scenarios covering the full diagnostic workflow. Each eval has 3–5 specific, objectively checkable assertions graded strictly against evidence.
 
 ```
-baseline  : 31/64 (48.4%)
-with_skill: 64/64 (100.0%)
-delta     : +51.6pp assertions | +68.75pp cases (16/16 vs. 5/16)
+baseline  : 42/70 (60.0%) | 4/17 evals pass
+with_skill: 67/70 (95.7%) | 15/17 evals pass
+delta     : +35.7pp
 ```
 
 ### Results by eval
@@ -151,44 +151,44 @@ delta     : +51.6pp assertions | +68.75pp cases (16/16 vs. 5/16)
 | # | Eval | Baseline | With skill | Delta |
 |---|------|:---:|:---:|:---:|
 | 1 | trim_decision_ctt | 2/5 | **5/5 ✓** | +60pp |
-| 2 | is_the_delta_real_gtheory | 3/5 | **5/5 ✓** | +40pp |
-| 3 | small_n_irt_trap | 0/5 | **5/5 ✓** | +100pp |
-| 4 | triggering_sdt | 0/4 | **4/4 ✓** | +100pp |
-| 5 | judge_trust_gate | 3/4 | **4/4 ✓** | +25pp |
-| 6 | mutual_exclusion_routing | 2/2 ✓ | 2/2 ✓ | 0pp |
-| 7 | latent_estimation_bank | 4/4 ✓ | 4/4 ✓ | 0pp |
-| 8 | latent_estimation_small_n_done_right | 3/4 | **4/4 ✓** | +25pp |
-| 9 | fixed_item_anchoring | 3/3 ✓ | 3/3 ✓ | 0pp |
-| 10 | unified_glmm_feasibility | 1/4 | **4/4 ✓** | +75pp |
-| 11 | synthesis_interpretation | 1/4 | **4/4 ✓** | +75pp |
+| 2 | is_the_delta_real_gtheory | 2/5 | **5/5 ✓** | +60pp |
+| 3 | sigma_a_interpretation_trap | 1/4 | **4/4 ✓** | +75pp |
+| 4 | triggering_sdt | 1/4 | **4/4 ✓** | +75pp |
+| 5 | judge_trust_gate | 4/4 ✓ | **4/4 ✓** | 0pp |
+| 6 | mutual_exclusion_routing | 1/3 | **3/3 ✓** | +67pp |
+| 7 | latent_estimation_bank | 4/5 ✓ | **4/5 ✓** | 0pp |
+| 8 | latent_estimation_small_n_done_right | 4/4 ✓ | **4/4 ✓** | 0pp |
+| 9 | fixed_item_anchoring | 3/4 | **4/4 ✓** | +25pp |
+| 10 | unified_glmm_feasibility | 1/4 | 3/4 | +50pp |
+| 11 | synthesis_interpretation | 3/4 | **4/4 ✓** | +25pp |
 | 12 | eval_content_drift | 3/4 | **4/4 ✓** | +25pp |
 | 13 | facet_confounding | 3/4 | **4/4 ✓** | +25pp |
-| 14 | judge_calibration_vs_reliability | 0/4 | **4/4 ✓** | +100pp |
-| 15 | d_study_seed_vs_case_lever | 2/4 | **4/4 ✓** | +50pp |
-| 16 | contamination_vs_saturation | 1/4 | **4/4 ✓** | +75pp |
+| 14 | judge_calibration_vs_reliability | 2/4 | 3/4 | +25pp |
+| 15 | d_study_seed_vs_case_lever | 4/4 ✓ | **4/4 ✓** | 0pp |
+| 16 | contamination_vs_saturation | 2/4 | **4/4 ✓** | +50pp |
+| 17 | internal_consistency_wrong_construct | 2/4 | **4/4 ✓** | +50pp |
 
 ### Where the base model fails
 
 | Eval | What the base model gets wrong |
 |------|-------------------------------|
-| small_n_irt_trap (3) | Provides a free 2PL fitting recipe with a small caveat; doesn't name the taker-count requirement (~200–500) or offer the remedy menu |
+| sigma_a_interpretation_trap (3) | Interprets per-item discrimination point estimates as meaningful at 4 takers; misses that σ_a ≈ 0 means the model collapsed toward Rasch and individual a_i values are prior-driven artifacts |
 | triggering_sdt (4) | Reaches for accuracy/precision/recall; doesn't compute d' and c or separate the content-fix from the eagerness-fix |
+| mutual_exclusion_routing (6) | Tries to apply the eval-audit workflow to a pure-method-theory question instead of deferring to the dedicated skill |
 | unified_glmm_feasibility (10) | Agrees to estimate a full multi-trait covariance at 6 variants; doesn't flag that this is prior-asserted, not data-estimated |
-| synthesis_interpretation (11) | Dumps parameters without a fit-quality caution on divergences; over-reads extreme discrimination as a real super-item |
-| judge_calibration_vs_reliability (14) | Reads kappa = 0.72 as sufficient to proceed; doesn't separate reliability from calibration or name ECE/Brier |
-| contamination_vs_saturation (16) | Identifies the two failure modes conceptually but relies on pass rates/discrimination parameters; misses outfit statistics as the calibration diagnostic and misses that contamination pollutes theta estimates |
-| d_study_seed_vs_case_lever (15) | Leans toward cases but hedges ("I wouldn't call the advisor wrong without cost info"); doesn't run D-study math showing the 9:1 variance ratio |
+| judge_calibration_vs_reliability (14) | Reads kappa = 0.72 as sufficient to proceed; doesn't separate reliability from calibration or recommend computing ECE/Brier |
+| contamination_vs_saturation (16) | Identifies the two failure modes conceptually but relies on pass rates; misses outfit statistics as the contamination diagnostic and misses that contaminated items pollute theta estimates |
+| internal_consistency_wrong_construct (17) | Recommends alpha or omega as the reliability metric for a diverse eval suite; doesn't identify that internal consistency is the wrong construct |
 | is_the_delta_real (2) | Suggests t-tests or "add more seeds"; doesn't route to G-theory or frame the delta against a dependability coefficient |
 
 ### Where the base model is partially right
 
 | Eval | What helps | Missing |
 |------|---|---|
-| trim_decision_ctt | Flags saturated and floor items | Misses the guard-item exception; doesn't flag negative-discrimination item as FIX (vs. trim) |
-| judge_trust_gate | Uses kappa, explains why raw agreement is inflated | Doesn't say kappa 0.43 does NOT clear the gate; offers "proceed with caution" instead of a hard stop |
-| eval_content_drift | Identifies the measurement-invariance framing | Doesn't recommend anchor/common-item linking for cross-run comparability |
-| facet_confounding | Identifies the confound; doesn't green-light the conclusion | Doesn't invoke facet/G-theory language or model judge/model/run as facets |
-| contamination_vs_saturation | Correctly identifies them as different failure modes | Misses outfit statistics; misses that contamination specifically corrupts theta estimates |
+| trim_decision_ctt (1) | Flags saturated and floor items | Misses the guard-item exception; doesn't flag negative-discrimination item as FIX (vs. trim) |
+| synthesis_interpretation (11) | Synthesizes framework outputs in plain language; flags fit caution | Doesn't explicitly surface item-person targeting and pairwise separation as distinct insights |
+| eval_content_drift (12) | Identifies the measurement-invariance framing | Doesn't recommend anchor/common-item linking for cross-run comparability |
+| facet_confounding (13) | Identifies the confound; doesn't green-light the conclusion | Doesn't invoke facet/G-theory language or model judge/model/run as facets |
 
 ## What's inside
 
@@ -219,7 +219,7 @@ scripts/
   sdt_trigger.py                     — d', criterion, A', log-linear correction, per skill
   synthesize.py                      — plain-language synthesis + multi-panel figure
 evals/
-  evals.json                         — 16 capability evals across the diagnostic workflow
+  evals.json                         — 17 capability evals across the diagnostic workflow
   grader_prompt.md                   — strict assertion-grader instructions
   fixtures/                          — synthetic eval data for all fixture-based evals
 ```

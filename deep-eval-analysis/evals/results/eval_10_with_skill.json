@@ -1,0 +1,35 @@
+{
+  "eval_id": 10,
+  "name": "unified_glmm_feasibility",
+  "condition": "with_skill",
+  "prompt": "Can you give me one model that outputs IRT, SDT, calibration, AND G-theory parameters at once? I have correctness, CoT length, and a confidence score per response, but only 6 skill variants. I want the full joint covariance across all the latent traits so the channels share strength.",
+  "response": "`scripts/joint_glmm.py` does exactly this \u2014 one MCMC fit that reads as IRT + SDT probit + G-theory reliability + calibration. Run it as:\n\n```bash\npython scripts/joint_glmm.py results.csv \\\n  --channels acc,latency,confidence \\\n  --out joint.json\npython scripts/synthesize.py joint.json --fig synthesis.png\n```\n\nBut I have to be direct about the \"full joint covariance\" request, because `reference/09_joint_glmm.md` exists specifically to flag this:\n\n**At 6 variants you cannot estimate a rich trait covariance \u2014 you assert it via priors.**\n\nA \u03b8 (ability) \u00d7 \u03c4 (effort/CoT) \u00d7 confidence trait covariance matrix has 3 correlations. Your 6 data points can't distinguish those from the LKJ prior you put on them. The posterior will look precise and will be manufactured. That's the failure mode, not a feature.\n\n**What the channels actually buy you at N=6:**\n\n| Channel | What it does | Honest caveat |\n|---|---|---|\n| CoT length | Informs \u03b8 via the \u03b8\u2013\u03c4 correlation (van der Linden) \u2014 genuinely tightens ability estimates | The correlation itself has a wide interval; it still helps \u03b8 even when the correlation is uncertain |\n| Confidence | Calibration slope per variant \u2014 is high-confidence actually high-accuracy? | Estimable because it's variant-level, not covariance |\n| The SDT probit reading | Falls out of the IRT accuracy channel for free \u2014 no extra data needed | Same channel, different interpretation |\n| G-theory reliability | Marginal IRT reliability \u03c1 = Var(\u03b8\u0302)/(Var(\u03b8\u0302) + mean posterior var) | Only adds judge/seed variance components if those facets are in your design |\n\n**The right model call for your situation:**\n\n```bash\npython scripts/joint_glmm.py results.csv \\\n  --channels acc,latency,confidence \\\n  --decouple \\          # estimate \u03b8 and \u03c4 independently, don't trust the covariance\n  --out joint.json\n```\n\n`--decouple` runs the channels but doesn't jointly model the trait covariance \u2014 so the CoT channel still contributes identifiability information to \u03b8 estimates through the data, without asserting a 3\u00d73 correlation matrix that 6 variants can't populate.\n\nRead `\u03c3_a` in the output carefully: at 6 variants it will be near 0 (the model collapses toward Rasch regardless of what per-item `a` point estimates show). That's honest, not a failure \u2014 the discrimination spread isn't estimable yet.\n\n**The honest summary:** you get one fit, four framework readings, and the CoT channel genuinely helps \u03b8 precision. What you don't get is a trustworthy full trait covariance \u2014 at N=6 that number is an LKJ prior wearing a data costume.",
+  "assertions": [
+    {
+      "text": "Confirms one GLMM fit can emit IRT + SDT + calibration + a G-theory reliability bridge (does not claim it's impossible)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Pushes back on estimating a full multi-trait covariance at ~6 variants \u2014 explains it would be prior-asserted, not data-estimated (manufactured precision)",
+      "type": "qualitative"
+    },
+    {
+      "text": "Endorses the latency/CoT channel as the real identifiability gain while noting its own correlation is weakly identified at small N",
+      "type": "qualitative"
+    },
+    {
+      "text": "Distinguishes triggering-SDT as a separate response process rather than merging it into task-ability theta",
+      "type": "qualitative"
+    }
+  ],
+  "assertion_results": [
+    true,
+    true,
+    true,
+    false
+  ],
+  "passed": 3,
+  "total": 4,
+  "pass_rate": 0.75,
+  "eval_passes": false
+}

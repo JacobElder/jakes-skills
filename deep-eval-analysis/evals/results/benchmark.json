@@ -2,19 +2,49 @@
   "skill_name": "deep-eval-analysis",
   "executor_model": "claude-sonnet-4-6",
   "grader_model": "claude-haiku-4-5-20251001",
-  "results": [],
+  "results": [
+    {
+      "eval_id": 11,
+      "name": "synthesis_interpretation",
+      "condition": "with_skill",
+      "prompt": "I ran the joint model and have the output. Give me a clear, synthesized read of the whole thing \u2014 IRT, SDT, G-theory, and calibration together, in plain language, plus a visualization \u2014 and tell me the single most useful thing to do next. The fit had a couple of divergences.",
+      "response": "Here's the full synthesis \u2014 all four frameworks, plain language, then the one action.\n\n---\n\n## Fit quality \u2014 read everything as provisional\n\n**R-hat peaked at 1.045** (threshold is 1.01); zero actual divergences in this run (if you saw divergences in yours, that's a slightly different mixing problem \u2014 same conclusion: re-run with `--tune 2000 --draws 2000` before making any ship decision off these numbers). The direction of every finding below is reliable; the magnitudes have wider true uncertainty than the printed intervals suggest.\n\n---\n\n## IRT \u2014 item targeting and discrimination\n\n**The suite is well-targeted.** Your 8 variants span ability \u03b8 \u2208 [\u22120.9, +0.9]; item difficulties span b \u2208 [\u22125.3, +2.7]. Most items sit near the variant band, so the suite is actually doing useful measurement work.\n\nOne exception: **it02** (b = \u22125.3) is so easy it's below the entire variant range \u2014 everyone passes it regardless of ability. That's a guard item or a dead-weight saturated case; label it guard if it protects a known regression, otherwise cut it.\n\n**13 of 25 items discriminate sharply** (a > 1), meaning they produce real ability-split information. **1 item is essentially flat** (a < 0.5 from the raw posterior) \u2014 it makes the same prediction for strong and weak variants. That's the first trim candidate once convergence is clean.\n\n**4PL slip**: every item's upper asymptote is near the Beta(20,1) prior (\u2265 0.92). At 8 variants this is expected \u2014 it's a robustness device, not an estimated carelessness rate. Nothing flagged as genuinely mislabeled here.\n\n---\n\n## SDT \u2014 probit reading\n\nIn the joint model, each item's discrimination `a` is simultaneously the IRT slope and the signal-detection sensitivity per unit of variant ability. **Sharpest item: it18** (a \u2248 1.7), which gives the best d\u2032 per unit of ability difference. Items with a < 0.5 are detection-insensitive \u2014 they can't separate variants even if ability differences are large. The flat item above is the one you'd rewrite or drop.\n\nFor actual trigger/routing SDT analysis (d\u2032 and criterion per skill, content vs. eagerness split), the joint model isn't the right tool \u2014 the accuracy channel here is task performance, not the signal/noise triggering process. Run `sdt_trigger.py` with `in_scope`/`fired` data for that.\n\n---\n\n## G-theory \u2014 reliability\n\n**IRT empirical reliability \u2248 0.63.** That's the latent-scale analogue of E\u03c1\u00b2. The \"trustworthy enough for fine ranking\" bar is ~0.80. At 0.63, the suite supports coarse directional ordering (v5 is probably the strongest; v2/v4 are probably the weakest) but **cannot dependably separate adjacent variants**. Mean ability posterior SD is \u00b10.43 logits \u2014 that's the per-variant uncertainty floor, and it's wide.\n\n**7 of 28 variant pairs are clearly distinguishable** (P(\u03b8_row > \u03b8_col) > 0.95). The other 21 pairs overlap \u2014 ranking them is noise, not signal.\n\n---\n\n## Calibration \u2014 who tracks their own confidence\n\n**2 of 8 variants are reasonably well-calibrated** (v5 slope \u2248 0.66, v7 slope \u2248 0.78; slope = 1.0 is perfect). **The other 6 are substantially overconfident**, particularly v2 (slope \u2248 0.01) and v4 (slope \u2248 0.04) \u2014 their stated confidence scores carry nearly no information about whether they actually got the item right. If you're using confidence for anything downstream (routing, abstention, ensemble weighting), v2 and v4's scores are noise.\n\n**Effort channel**: ability\u2013effort correlation is +0.52, but the interval [\u22120.28, +0.92] spans zero. The channel still tightened ability estimates by adding information per cell, but don't report the correlation as a finding \u2014 it's prior-influenced at this N.\n\n---\n\n## Visualization\n\nThe eight-panel figure above. Key panels to focus on: the **item\u2013person map** (top-left) confirms good targeting but shows it02 floating far left of the variant band. The **pairwise separation heatmap** (top-right of the middle row) makes the 7-vs-21 split concrete \u2014 only the diagonal corners are clearly blue/red. The **calibration panel** makes v2 and v4's flat slopes immediately visible.\n\n---\n\n## The single most useful thing to do next\n\n**Expand the taker dimension.** At 8 variants, reliability is stuck at 0.63 and 75% of pairs can't be separated. This isn't a \"run more draws\" problem \u2014 it's a data-depth problem. The G-theory D-study will confirm it, but the direction is clear: add model tiers (Haiku / Sonnet / Opus as additional takers), ablations (skill-off, partial-skill), seeds, and any prior-version history. Getting to ~20\u201325 takers on these same 25 items will push E\u03c1\u00b2 above 0.80, tighten \u03b8 intervals substantially, and make the convergence issues go away \u2014 more takers means more information per item, which is what the sampler needs to mix. The items are fine; the taker dimension is the bottleneck.",
+      "assertions": [
+        {
+          "text": "Synthesizes all four frameworks in plain language with what-it-means/what-to-do, not a raw parameter dump",
+          "type": "qualitative"
+        },
+        {
+          "text": "Leads with a fit-quality caution given the divergences and labels the read provisional",
+          "type": "qualitative"
+        },
+        {
+          "text": "Surfaces the targeting (item-person) and pairwise-separation insights and gives ONE prioritized next action",
+          "type": "qualitative"
+        },
+        {
+          "text": "Does not over-read unstable/extreme parameters \u2014 flags them as small-N artifacts rather than findings",
+          "type": "qualitative"
+        }
+      ],
+      "assertion_results": [
+        true,
+        true,
+        true,
+        true
+      ],
+      "passed": 4,
+      "total": 4,
+      "pass_rate": 1.0,
+      "eval_passes": true
+    }
+  ],
   "summary": {
-    "baseline": {
-      "passed": 0,
-      "total": 0,
-      "evals_pass": 0,
-      "evals_total": 0
-    },
     "with_skill": {
-      "passed": 0,
-      "total": 0,
-      "evals_pass": 0,
-      "evals_total": 0
+      "passed": 4,
+      "total": 4,
+      "evals_pass": 1,
+      "evals_total": 1
     }
   }
 }
