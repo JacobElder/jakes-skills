@@ -1,5 +1,5 @@
 {
-  "skill_name": "deep-eval-analysis",
+  "skill_name": "eval-psychometrics",
   "notes": "Tests whether the skill (a) triggers on eval-analysis tasks, (b) routes to the correct method by regime, (c) enforces the non-negotiable stances \u2014 especially refusing free IRT at small N \u2014 and (d) defers method-theory questions to the IRT/SDT skills (mutual exclusion). Fixtures live in evals/fixtures/. Run with-skill vs. no-skill baseline per the harness in evals/run_evals.md.",
   "evals": [
     {

@@ -1,5 +1,5 @@
 ---
-name: deep-eval-analysis
+name: eval-psychometrics
 description: >-
   Analyze evaluation suites as measurement instruments, not just scoreboards. Use whenever
   someone has eval results (especially agent/skill evals) and wants more than a single pass
@@ -14,7 +14,7 @@ description: >-
   method, defer to the dedicated item-response-theory and signal-detection-theory skills.
 ---
 
-# Deep Eval Analysis
+# Eval Psychometrics
 
 ## The one idea
 

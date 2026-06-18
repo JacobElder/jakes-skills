@@ -1,4 +1,4 @@
-# Grader prompt — deep-eval-analysis
+# Grader prompt — eval-psychometrics
 
 You are grading one model output against a list of assertions. Be strict, evidence-based, and
 immune to fluent hand-waving. A confident answer that gets the *method selection* wrong fails,

@@ -1,4 +1,4 @@
-# Deep Eval Analysis Skill
+# Eval Psychometrics Skill
 
 A skill that treats an eval suite as a *psychometric instrument* and audits it — diagnosing which items carry signal, which are dead weight, how reliable the whole thing is, and how confidently you can act on a delta between versions. It gives the agent the conviction to push back on the most common failure: reading a pass rate and calling it a measurement.
 
@@ -9,13 +9,13 @@ The skill has a strong point of view. It routes to the right method by regime �
 ## Installation
 
 ```bash
-npx skills add https://github.com/JacobElder/jakes-skills/tree/main/deep-eval-analysis
+npx skills add https://github.com/JacobElder/jakes-skills/tree/main/eval-psychometrics
 ```
 
 Or manually:
 
 ```bash
-cp -r jakes-skills/deep-eval-analysis ~/.claude/skills/deep-eval-analysis
+cp -r jakes-skills/eval-psychometrics ~/.claude/skills/eval-psychometrics
 ```
 
 Once installed, the skill applies automatically whenever you ask about trimming an eval suite, diagnosing why a benchmark won't move, checking whether a delta is real, sizing seeds vs. cases, trusting an LLM grader, diagnosing trigger over/under-firing, or placing versions on a latent ability scale — even when you don't name a method.

@@ -1,4 +1,4 @@
-# Running the deep-eval-analysis evals
+# Running the eval-psychometrics evals
 
 This skill's outputs are **judgment + correct-method-selection**, so the evals are graded
 qualitatively against assertions rather than by exact match. The point of each case is to check a
@@ -9,7 +9,7 @@ qualitatively against assertions rather than by exact match. The point of each c
 
 For each eval, run two configurations on the same prompt:
 
-- **with_skill** — Claude has `deep-eval-analysis` available.
+- **with_skill** — Claude has `eval-psychometrics` available.
 - **baseline (no_skill)** — Claude has none of these skills available.
 
 The signal is the *delta*: does the skill change Claude from "fits a 2PL to 4 versions and reports
@@ -21,11 +21,11 @@ its place on that case — either the case is too easy or the skill needs sharpe
 
 1. For each eval in `evals.json`, spawn two subagents in the same turn (with-skill, baseline),
    passing the prompt and any `files`. Save outputs under
-   `deep-eval-analysis-workspace/iteration-N/<eval-name>/{with_skill,no_skill}/`.
+   `eval-psychometrics-workspace/iteration-N/<eval-name>/{with_skill,no_skill}/`.
 2. Grade each output against its `assertions` using `evals/grader_prompt.md`. Write
    `grading.json` per run with fields `text`, `passed`, `evidence` (exact field names the
    skill-creator viewer expects).
-3. Aggregate (`python -m scripts.aggregate_benchmark <workspace>/iteration-N --skill-name deep-eval-analysis`)
+3. Aggregate (`python -m scripts.aggregate_benchmark <workspace>/iteration-N --skill-name eval-psychometrics`)
    and open the eval viewer for human review before editing the skill.
 4. Iterate: read failures, sharpen the relevant reference file or the SKILL.md routing, re-run.
 

@@ -1,5 +1,5 @@
 """
-Eval runner for deep-eval-analysis skill.
+Eval runner for eval-psychometrics skill.
 
 For each eval in evals/evals.json:
   1. Get baseline response (no skill).
@@ -109,7 +109,7 @@ def call_claude(prompt: str, system_extra: str | None = None,
     return out
 
 
-GRADER_SYSTEM = """You are a strict grader for the deep-eval-analysis skill evals.
+GRADER_SYSTEM = """You are a strict grader for the eval-psychometrics skill evals.
 
 You will be shown:
 1. The eval prompt (what the user asked).
@@ -254,7 +254,7 @@ def run(eval_ids: list[int] | None, conditions: list[str],
             print(f"delta       : {delta:+.1f}pp")
 
     benchmark = {
-        "skill_name": "deep-eval-analysis",
+        "skill_name": "eval-psychometrics",
         "executor_model": executor_model,
         "grader_model": grader_model,
         "results": all_results,
