@@ -14,6 +14,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [causal-inference](#causal-inference) | Causal reasoning & experiment design | +19pp across 13 scenarios |
 | [clustering](#clustering) | Cluster analysis: method selection, validation, mixed-type data | +17.9pp (95/95 with skill, 78/95 base) |
 | [comp-modeling](#comp-modeling) | Computational & cognitive modeling | Eval suite included |
+| [deep-eval-analysis](#deep-eval-analysis) | Eval-suite auditing: item analysis, reliability, latent estimation, judge calibration | +40.0pp (70/70 with skill, 42/70 base) |
 | [dimensionality-reduction](#dimensionality-reduction) | PCA, EFA, t-SNE, UMAP, ICA, NMF and embedding validation | +14pp (43/43 with skill, 37/43 base); +33pp on pitfall traps |
 | [experimental-design](#experimental-design) | Experimental and quasi-experimental design (A/B, RCT, power, DiD, RD) | Eval suite included |
 | [idiographic-quant](#idiographic-quant) | Person-specific / N-of-1 quantitative methods (ESM/EMA, VAR networks, single-case experiments) | +65pp (17/17 with skill, 6/17 base) |
@@ -100,6 +101,18 @@ Fit generative process models of behavior — RL, prospect theory, drift-diffusi
 **Why it matters:** The skill enforces the simulate → recover → fit → compare → PPC workflow and flags the field-wide failure modes that separate publishable modeling from plausible-looking but unreliable results: parameter recovery before trusting estimates, model recovery before trusting comparisons, and the α/β identifiability trap that invalidates fits for subjects near the boundary.
 
 → [comp-modeling/](comp-modeling/)
+
+---
+
+## deep-eval-analysis
+
+Treat an eval suite as a psychometric instrument and audit it — diagnosing which items carry signal, which are dead weight, how reliable the whole thing is, and how confidently you can act on a delta between versions. Routes by regime: CTT item analysis and G-theory for small iteration suites (the default, 2–8 skill versions), IRT only at model-bank scale (30+ takers), SDT for trigger/routing analysis, and judge calibration gating before any downstream number.
+
+**Why it matters:** The base model reads a pass rate and treats it as a measurement. It fits a free 2PL to 6 versions and hands over discrimination estimates (which are prior noise at that N), recommends t-tests for a 2pp delta (the variance is mostly case-selection, not sampling error), and proceeds through a kappa = 0.72 judge as sufficient without checking whether the confidence scores are calibrated. The skill enforces the full audit chain: gate on judge trust first (kappa for binary reliability, ECE/Brier for calibration — two separate gates), route to G-theory to frame the delta against a dependability coefficient, report item-level structure not just the mean, refuse the naive free 2PL but still deliver latent estimates via hierarchical adaptive shrinkage. It also distinguishes saturation (non-informative but validity-clean — trim) from contamination (weak models pass at rates untethered from ability — outfit inflation pollutes theta — audit and remove).
+
+**Gap:** +40.0pp — 70/70 with skill (100%) vs. 42/70 base (60.0%). Largest gains on regime routing (+75pp on sigma_a interpretation, unified GLMM feasibility), trigger analysis decomposition (+75pp), judge calibration vs. reliability distinction (+50pp), and contamination vs. saturation differentiation (+50pp).
+
+→ [deep-eval-analysis/](deep-eval-analysis/)
 
 ---
 
