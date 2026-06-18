@@ -124,6 +124,45 @@ With the skill, the model refuses the naive fit and offers the right remedies:
 
 ---
 
+## Example output
+
+Running `scripts/synthesize.py` on an eval suite produces a unified eight-panel figure. Here is an annotated example:
+
+![Eval suite — unified measurement read](sample_synthesis.png)
+
+### Panel by panel
+
+**Item-person map** *(top left)* — Each horizontal line is one eval case plotted at its estimated difficulty on the latent scale. Red lines are negatively discriminating items (high-θ variants fail more than low-θ — a broken or mislabeled case); blue lines are discriminating normally. The variant abilities appear as dots on the x-axis. The question being answered: are your cases actually targeted at where your variants sit? Cases clustered far left of your variants are too easy; they contribute no ranking signal.
+
+**Variant ranking with uncertainty** *(top right)* — Forest plot of per-variant θ estimates with 95% credible intervals. Overlapping intervals mean those variants cannot be reliably separated at current suite size and design. This is the honest version of a leaderboard.
+
+**Item information functions** *(middle left)* — The test information curve shows where on the ability scale each item (and the suite as a whole) is most informative. A suite saturated at the low end but with a gap at the high end can't distinguish your top variants regardless of pass rate.
+
+**Pairwise separation** *(middle right)* — Heatmap of P(row variant > col variant). A full ranking matrix that survives partial overlap in credible intervals. Cells near 0.5 on the diagonal mean those two variants are statistically indistinguishable; cells approaching 1.0 indicate clean separation.
+
+**Calibration by variant** *(bottom left)* — Confidence-correctness slope per variant. A well-calibrated variant's stated confidence tracks empirical accuracy. Flat slopes (near zero) mean confidence scores carry no information; slopes > 1 indicate overconfidence. The dashed threshold marks the calibration gate.
+
+**G-theory D-study** *(bottom center-right)* — The reliability curve (Eρ²) as a function of number of eval cases, with your current suite marked. The bar below shows variance decomposition: how much of the total variance comes from versions vs. items vs. the version×item interaction. When interaction dominates (the common case), adding cases is the high-leverage move; adding seeds barely moves the curve.
+
+**SDT triggering** *(bottom left, below calibration)* — Per-skill d′ (y-axis) and criterion c (x-axis). High d′ with c near 0 is ideal. Low d′ means the trigger description can't separate relevant from irrelevant queries — a content fix. Adequate d′ with c shifted right means the trigger is too conservative — a threshold fix. These are independent problems requiring different interventions.
+
+**Headline numbers** *(bottom right)* — Summary statistics extracted from all four frameworks:
+
+```
+Reliability (rank variants): 0.67
+Mean θ uncertainty:           0.80
+Sharpest item a:             11.5   Flat items (a < 0.3): 2
+Variant ability span:        [-0.8, -1.8]
+Ability/effort corr:         +0.53  (-0.33, +0.93)
+Items flagged (slope < 0.85): 0
+G-theory Eρ²/Φ:              0.711 / 0.656
+Convergence:                 R-hat 1.001, div: 3
+```
+
+The reliability of 0.67 means variant rankings replicate across item samples at a moderate level — borderline for shipping decisions. The D-study curve (not shown in text) would tell you how many additional cases are needed to push this above 0.80. The wide ability/effort correlation interval (−0.33 to +0.93) is expected at small N and is reported honestly rather than suppressed.
+
+---
+
 ## What the skill does
 
 The base model knows the methods. The skill gives the agent the *conviction to apply the right ones in the right order* and to refuse the dangerous wrong ones. Its most important moves:
