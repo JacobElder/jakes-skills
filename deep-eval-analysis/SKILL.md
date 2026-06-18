@@ -51,11 +51,20 @@ These are the opinions this skill exists to enforce. Do not hedge them away.
    free 2PL; still deliver the estimates. See `reference/08_latent_estimation.md`.
 3. **Gate on judge trust first.** If the grader (human or LLM) isn't reliable and calibrated,
    every downstream number is decoration. Check inter-rater agreement before difficulty,
-   discrimination, or ability.
+   discrimination, or ability. When a judge emits confidence scores and is overconfident
+   (e.g., states 0.90–0.98 while being right only ~70% of the time), **pass-rate uncertainty
+   estimates appear artificially tight** — you will believe measurements are more precise than
+   they are. Always name this downstream consequence when overconfidence is detected; it is not
+   a cosmetic issue.
 4. **Triggering is a detection problem, not an accuracy problem.** Raw trigger accuracy
    conflates two different failures. Use signal detection theory to split *discriminability*
    (d′ — the description can't tell relevant from irrelevant; a content fix) from *bias*
    (criterion — the description fires too eagerly or too reluctantly; a wording fix).
+   **Critical distinction:** the joint GLMM (`reference/09`) has an "SDT probit reading" —
+   that is task-performance SDT (d′ between variants = discrimination × Δθ), not triggering.
+   Triggering asks "does the skill fire on the right queries?" — a completely separate binary
+   detection problem with its own d′ and criterion that must NOT be merged into task-ability θ.
+   Keep triggering in `sdt_trigger.py`; the joint GLMM handles task performance.
 5. **Trim on evidence, fix on evidence, but protect the guards.** Cut saturated and
    non-discriminating items; *fix* negative-discrimination items urgently. But a saturated item
    that guards against a known regression or safety failure is insurance, not dead weight —
@@ -87,7 +96,7 @@ methods are valid. Getting this wrong is the #1 way to produce confident nonsens
 | **Trigger / routing analysis**: did the skill fire when it should, and stay quiet when it shouldn't | **SDT** (d′, criterion) per skill (`reference/05_sdt_for_triggering.md`) | Reporting only trigger accuracy/F1 — it hides the bias-vs-signal split |
 | **"Can I even trust these labels?"**: an LLM or human is grading | **Judge calibration** (κ, agreement, Brier/ECE) (`reference/06_judge_calibration.md`) — do this before the rows above | Treating grader output as ground truth |
 | **"Give me latent estimates"**: ability per variant + difficulty/discrimination per item, on one scale, with intervals | **Latent estimation** (`reference/08_latent_estimation.md`, `scripts/irt_latent.py`): `--backend auto` defaults to hierarchical 2PL via MCMC if PyMC is installed, else stable hierarchical Rasch (scipy-only, always available). Fixed-item anchoring for precise small-N placement on a pre-calibrated scale. | A naive free 2PL/3PL at small N (unstable discrimination, collapsed variance); MAP/EM point estimation (σ_a collapses to 0 under joint mode) |
-| **"Give me everything at once"** / I logged latency or confidence too / I want IRT+SDT+calibration+G-theory from one model | **Unified joint GLMM** (`reference/09_joint_glmm.md`, `scripts/joint_glmm.py`): one fit, channels switchable; latency channel buys identifiability | A full multi-trait covariance at small N — it's asserted by priors, not estimated. Stack channels you don't have. |
+| **"Give me everything at once"** / I logged latency or confidence too / I want IRT+SDT+calibration+G-theory from one model | **Unified joint GLMM** (`reference/09_joint_glmm.md`, `scripts/joint_glmm.py`): one fit, channels switchable; latency/CoT channel buys identifiability — but the θ–τ correlation is **weakly identified at small N** (wide interval — endorse the channel gain, report the caveat); the SDT probit here is **task-performance SDT** (d′ between variants = a×Δθ), not trigger-SDT (`sdt_trigger.py`), which is a separate response process | A full multi-trait covariance at small N — it's asserted by priors, not estimated. Stack channels you don't have. |
 | **"Is this comparison even valid?"**: judge/model changed, runs are noisy, or my eval cases got reworded | **Facets & invariance** (`reference/12_facets_and_confounding.md`, `reference/13_item_drift.md`, `scripts/item_drift.py`): model judge/model/seed as facets, check confounding, hash cases for drift | Reading a θ trend off a suite whose ruler (judge, base model, or case content) silently changed |
 
 When in doubt you are in the **small-N iteration** regime. Start there.

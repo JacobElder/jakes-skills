@@ -52,6 +52,11 @@ for a quantified measurement.
   the agreement check.** Once you've computed ECE/Brier: if overconfidence is mild, recalibrate
   (Platt/temperature scaling); if severe, ignore the confidence scores entirely and report only
   the binary label with its measured κ.
+- **Downstream consequence of overconfidence:** when a judge states 0.90–0.98 confidence but is
+  only right ~70% of the time, **pass-rate uncertainty estimates appear artificially tight** —
+  you will believe your measurements are more precise than they actually are. This is not a minor
+  cosmetic issue: decisions made on apparently-tight uncertainty are under-hedged. Always name
+  this consequence explicitly when overconfidence is detected.
 
 **The two-gate rule:** κ clears the *binary-label* gate. ECE/Brier clears the *confidence-score*
 gate. Both must be cleared before using confidence scores downstream. A response that only checks

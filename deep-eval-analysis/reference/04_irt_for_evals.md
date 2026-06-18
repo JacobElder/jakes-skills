@@ -61,6 +61,12 @@ then prefer to report it alongside CTT.
    high (weak takers pass more than expected, but strong takers still pass more than weak takers);
    negative discrimination means the ICC slopes downward (stronger takers pass *less* — a broken
    item, not contamination).
+   **Workflow: always confirm with outfit/infit before removal.** A suspiciously flat pass pattern
+   is contamination *evidence*, not contamination *confirmation* — at small N a flat pattern can
+   reflect wide uncertainty rather than structural contamination. The correct sequence is:
+   (1) flag as suspicious from the pass pattern or high c, (2) run outfit/infit statistics to
+   confirm — contaminated items show outfit z > 2 or outfit MSQ > 1.3 — then (3) remove or audit.
+   Do not skip step 2 and jump directly from "flat pattern" to "remove."
 5. **Negative discrimination / mislabel auditing.** Items where high-θ takers fail and low-θ
    takers pass (inverted ICC — negative `a` in 2PL) signal likely **gold-label errors** or
    inverted graders. IRT-based mislabel detectors flag these at high precision on real benchmarks.

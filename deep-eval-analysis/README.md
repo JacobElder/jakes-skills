@@ -142,8 +142,8 @@ Evaluated across 17 scenarios covering the full diagnostic workflow. Each eval h
 
 ```
 baseline  : 42/70 (60.0%) | 4/17 evals pass
-with_skill: 67/70 (95.7%) | 15/17 evals pass
-delta     : +35.7pp
+with_skill: 70/70 (100.0%) | 17/17 evals pass
+delta     : +40.0pp
 ```
 
 ### Results by eval
@@ -156,14 +156,14 @@ delta     : +35.7pp
 | 4 | triggering_sdt | 1/4 | **4/4 ✓** | +75pp |
 | 5 | judge_trust_gate | 4/4 ✓ | **4/4 ✓** | 0pp |
 | 6 | mutual_exclusion_routing | 1/3 | **3/3 ✓** | +67pp |
-| 7 | latent_estimation_bank | 4/5 ✓ | **4/5 ✓** | 0pp |
+| 7 | latent_estimation_bank | 4/5 ✓ | **5/5 ✓** | +20pp |
 | 8 | latent_estimation_small_n_done_right | 4/4 ✓ | **4/4 ✓** | 0pp |
 | 9 | fixed_item_anchoring | 3/4 | **4/4 ✓** | +25pp |
-| 10 | unified_glmm_feasibility | 1/4 | 3/4 | +50pp |
+| 10 | unified_glmm_feasibility | 1/4 | **4/4 ✓** | +75pp |
 | 11 | synthesis_interpretation | 3/4 | **4/4 ✓** | +25pp |
 | 12 | eval_content_drift | 3/4 | **4/4 ✓** | +25pp |
 | 13 | facet_confounding | 3/4 | **4/4 ✓** | +25pp |
-| 14 | judge_calibration_vs_reliability | 2/4 | 3/4 | +25pp |
+| 14 | judge_calibration_vs_reliability | 2/4 | **4/4 ✓** | +50pp |
 | 15 | d_study_seed_vs_case_lever | 4/4 ✓ | **4/4 ✓** | 0pp |
 | 16 | contamination_vs_saturation | 2/4 | **4/4 ✓** | +50pp |
 | 17 | internal_consistency_wrong_construct | 2/4 | **4/4 ✓** | +50pp |
