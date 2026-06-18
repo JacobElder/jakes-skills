@@ -14,7 +14,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [causal-inference](#causal-inference) | Causal reasoning & experiment design | +19pp across 13 scenarios |
 | [clustering](#clustering) | Cluster analysis: method selection, validation, mixed-type data | +17.9pp (95/95 with skill, 78/95 base) |
 | [comp-modeling](#comp-modeling) | Computational & cognitive modeling | Eval suite included |
-| [deep-eval-analysis](#deep-eval-analysis) | Eval-suite auditing: item analysis, reliability, latent estimation, judge calibration | +40.0pp (70/70 with skill, 42/70 base) |
+| [eval-psychometrics](#eval-psychometrics) | Eval-suite auditing: item analysis, reliability, latent estimation, judge calibration | +40.0pp (70/70 with skill, 42/70 base) |
 | [dimensionality-reduction](#dimensionality-reduction) | PCA, EFA, t-SNE, UMAP, ICA, NMF and embedding validation | +14pp (43/43 with skill, 37/43 base); +33pp on pitfall traps |
 | [experimental-design](#experimental-design) | Experimental and quasi-experimental design (A/B, RCT, power, DiD, RD) | Eval suite included |
 | [idiographic-quant](#idiographic-quant) | Person-specific / N-of-1 quantitative methods (ESM/EMA, VAR networks, single-case experiments) | +65pp (17/17 with skill, 6/17 base) |
@@ -104,7 +104,7 @@ Fit generative process models of behavior — RL, prospect theory, drift-diffusi
 
 ---
 
-## deep-eval-analysis
+## eval-psychometrics
 
 Treat an eval suite as a psychometric instrument and audit it — diagnosing which items carry signal, which are dead weight, how reliable the whole thing is, and how confidently you can act on a delta between versions. Routes by regime: CTT item analysis and G-theory for small iteration suites (the default, 2–8 skill versions), IRT only at model-bank scale (30+ takers), SDT for trigger/routing analysis, and judge calibration gating before any downstream number.
 
@@ -112,7 +112,7 @@ Treat an eval suite as a psychometric instrument and audit it — diagnosing whi
 
 **Gap:** +40.0pp — 70/70 with skill (100%) vs. 42/70 base (60.0%). Largest gains on regime routing (+75pp on sigma_a interpretation, unified GLMM feasibility), trigger analysis decomposition (+75pp), judge calibration vs. reliability distinction (+50pp), and contamination vs. saturation differentiation (+50pp).
 
-→ [deep-eval-analysis/](deep-eval-analysis/)
+→ [eval-psychometrics/](eval-psychometrics/)
 
 ---
 
