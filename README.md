@@ -13,10 +13,10 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [boglehead](#boglehead) | Personal investing | +24pp on original 10 scenarios |
 | [causal-inference](#causal-inference) | Causal reasoning & experiment design | +19pp across 13 scenarios |
 | [clustering](#clustering) | Cluster analysis: method selection, validation, mixed-type data | +17.9pp (95/95 with skill, 78/95 base) |
-| [comp-modeling](#comp-modeling) | Computational & cognitive modeling | Eval suite included |
+| [comp-modeling](#comp-modeling) | Computational & cognitive modeling | +30pp on content evals (23/23 with skill, 16/23 base); +33pp routing, +10pp triggering |
 | [eval-psychometrics](#eval-psychometrics) | Eval-suite auditing: item analysis, reliability, latent estimation, judge calibration | +40.0pp (70/70 with skill, 42/70 base) |
 | [dimensionality-reduction](#dimensionality-reduction) | PCA, EFA, t-SNE, UMAP, ICA, NMF and embedding validation | +14pp (43/43 with skill, 37/43 base); +33pp on pitfall traps |
-| [experimental-design](#experimental-design) | Experimental and quasi-experimental design (A/B, RCT, power, DiD, RD) | Eval suite included |
+| [experimental-design](#experimental-design) | Experimental and quasi-experimental design (A/B, RCT, power, DiD, RD) | 9 task evals + 26 trigger evals (live benchmark not yet run) |
 | [idiographic-quant](#idiographic-quant) | Person-specific / N-of-1 quantitative methods (ESM/EMA, VAR networks, single-case experiments) | +65pp (17/17 with skill, 6/17 base) |
 | [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | +13.7pp across 16 trap-based evals (100% vs 86.2%); +80pp on singular-fit simplification, +60pp on growth curve time slopes |
 | [multiverse-analysis](#multiverse-analysis) | Multiverse / specification-curve analysis | +21.9pp (32/32 with skill, 25/32 base) |
@@ -100,6 +100,8 @@ Fit generative process models of behavior — RL, prospect theory, drift-diffusi
 
 **Why it matters:** The skill enforces the simulate → recover → fit → compare → PPC workflow and flags the field-wide failure modes that separate publishable modeling from plausible-looking but unreliable results: parameter recovery before trusting estimates, model recovery before trusting comparisons, and the α/β identifiability trap that invalidates fits for subjects near the boundary.
 
+**Gap:** +30pp on content evals — 23/23 with skill (100%) vs. 16/23 base (70%). Largest gains on fitting without recovery or baseline comparison (+100pp), boundary/identifiability traps, and model comparison reliability. Routing evals: +33pp; trigger evals: +10pp.
+
 → [comp-modeling/](comp-modeling/)
 
 ---
@@ -134,7 +136,7 @@ Design, critique, and size experiments correctly — A/B tests, RCTs, within-sub
 
 **Why it matters:** The skill carries a complete, self-contained power analysis script (`scripts/power_analysis.py`, no dependencies) that handles proportions, means, ratio-metric variance (delta method), and cluster designs with ICC — and gives runnable code rather than rules of thumb. It enforces pre-specification discipline, explains SRM and peeking problems in online experiments, distinguishes ITT from per-protocol, and is honest when a design can't support causal claims.
 
-**Gap:** Eval suite included (9 task evals + 26 trigger evals). Bundled `power_analysis.py` covers proportions, means, and cluster-randomized designs.
+**Eval suite:** 9 task evals (A/B design, quasi-experiments, sample size, result interpretation, honest limits) + 26 trigger classification queries. Live API benchmark not yet run. `power_analysis.py` is fully tested via a unit suite (`scripts/test_power_analysis.py`).
 
 → [experimental-design/](experimental-design/)
 
