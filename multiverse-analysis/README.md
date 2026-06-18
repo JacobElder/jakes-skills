@@ -58,6 +58,20 @@ permutation_test(mv, analyze, data, shuffle="group", n_perm=500)
 
 ---
 
+## Example output
+
+Running `specification_curve(res, outfile="curve.png")` on the mindfulness intervention example above produces this plot:
+
+![Specification curve — mindfulness intervention multiverse](scripts/multiverse_specification_curve.png)
+
+**Top panel** — Each point is one universe (specification), sorted by effect size. Red = p < .05, blue = p ≥ .05. The orange diamond marks the original published specification (d = 0.98). Here all 12 specifications are significant, and the effect holds across every combination of outlier rule, covariate choice, and outcome transform — a robust finding.
+
+**Bottom panel** — Decision grid showing which analytical choices were active for each specification. Reading down a column tells you exactly what was varied. `decision_importance()` (not shown) would rank which row drives the most variance in effect size.
+
+A fragile finding would show a mix of red and blue points and variance concentrated in one decision row — telling you exactly which analytical choice is load-bearing.
+
+---
+
 ## Honest framing enforced
 
 The skill is opinionated — deliberately so. It will tell you when your effect is fragile, warn against using the multiverse to cherry-pick a preferred specification, flag when mixing DVs on different scales makes the specification curve meaningless, and apply the "reasonable specification" criteria to curate the decision set rather than pad it.

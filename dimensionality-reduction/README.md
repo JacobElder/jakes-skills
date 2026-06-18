@@ -140,6 +140,18 @@ With the skill, the response identifies the circularity:
 
 ---
 
+## Example output
+
+### PCA preprocessing for UMAP: 2.5× speedup with equivalent structure
+
+A common missed optimization: running UMAP directly on high-dimensional data when a quick PCA first pass to ~50 components preserves all meaningful variance and dramatically cuts runtime.
+
+![PCA → UMAP vs. direct UMAP](evals/pca_umap_comparison.png)
+
+Both embeddings recover the same five-cluster structure. Direct UMAP on 1000-dimensional data takes 14.4s; PCA(50) → UMAP takes 5.8s — 2.5× faster with no loss in separation quality. The skill recommends this pipeline automatically when input dimensionality is high and UMAP is the chosen method.
+
+---
+
 ## What the skill does
 
 The base model knows dimensionality reduction methods. The skill gives the agent the *conviction to apply them correctly* — and specifically to hold the line on claims the user wants to make from embeddings. Its most important moves are:

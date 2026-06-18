@@ -118,6 +118,26 @@ With the skill, the response identifies why log-rank fails here:
 
 ---
 
+## Example output
+
+### Clustered recurrent events: naive vs. robust standard errors
+
+When subjects can experience multiple events (infections, hospitalizations, relapses), ignoring the within-subject clustering produces standard errors that are too small — making results appear more precise than they are.
+
+![Andersen-Gill clustering comparison](evals/results/andersen_gill_detailed.png)
+
+**Top left** — CI width comparison. The naive Andersen-Gill model (ignoring clustering) produces a confidence interval that excludes zero; the robust model (with `cluster_col`) produces a wider interval that correctly accounts for within-subject correlation. Both point estimates are similar (−0.42), but the naive SE is 0.126 vs. 0.101 for robust — a 20% inflation that changes the inferential picture.
+
+**Top right** — SE comparison: naive SE = 0.126 vs. robust SE = 0.101.
+
+**Bottom left** — Distribution of recurrent events per subject (mean = 1.40), showing the within-subject correlation that makes clustering correction necessary.
+
+**Bottom right** — p-values: naive p = 0.0046, robust p = 0.0004. In this simulated example the robust model is more conservative for the SE but the point estimate is more precisely estimated once clustering is properly accounted for.
+
+The skill catches this before it becomes a published table — naming `cluster_col` in `lifelines.CoxPHFitter` or `robust=True` in R's `coxph` with a `cluster()` term.
+
+---
+
 ## What the skill does
 
 The base model knows survival analysis methods. The skill gives the agent the *conviction to apply them correctly*. Its most important moves are:

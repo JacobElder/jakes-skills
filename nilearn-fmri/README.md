@@ -69,6 +69,41 @@ Without the skill, the base model handles this task reasonably — it knows `Fir
 
 ---
 
+## Example output
+
+### tSNR map: the `detrend=True` bug
+
+The most visually striking failure in the suite. Setting `detrend=True` removes the temporal mean before computing `mean/std`, making tSNR ≈ 0 everywhere.
+
+| Without skill (`detrend=True`) | With skill (`detrend=False`) |
+|:---:|:---:|
+| ![tSNR all zeros](noskill_e7/tsnr.png) | ![tSNR correct](tsnr_out/tsnr_map.png) |
+| Median tSNR ≈ 0 — map is clinically meaningless | Median tSNR = 20 — physically interpretable values |
+
+The code runs to completion in both cases. The bug is invisible unless you check the map.
+
+---
+
+### FDR thresholding: display cutoff vs. statistical threshold
+
+Using `plot_stat_map(threshold=3.0)` is not FDR correction — it is an arbitrary display cutoff.
+
+![FDR comparison](results_threshold/comparison.png)
+
+The unthresholded map (left) has 81 voxels above z=3.0. The FDR-corrected map (right) uses `threshold_stats_img(alpha=0.05)`, which computes the true z threshold (z=3.48) and keeps 42 voxels — 39 fewer false positives in a 16³ toy brain. In a full-brain scan the gap is orders of magnitude larger.
+
+---
+
+### First-level GLM and functional connectivity
+
+| First-level GLM glass brain | Connectivity matrix | Mean connectome |
+|:---:|:---:|:---:|
+| ![GLM glass brain](results_glm/glass_brain.png) | ![Connectivity matrix](matrix.png) | ![Connectome](connectome.png) |
+
+The GLM output shows activation in visual cortex for the face > scrambled contrast. The connectivity matrix and connectome plots are produced by the correct `NiftiLabelsMasker` + `ConnectivityMeasure` pipeline — using the wrong masker (`NiftiMapsMasker` on a label atlas) returns a 1×1 scalar per subject with no spatial information.
+
+---
+
 ## What goes wrong without the skill: concrete statistical consequences
 
 | Failure | Cause | Correct output | Wrong output |
