@@ -2,6 +2,65 @@
 
 Design, review, and repair self-report surveys and questionnaires. Covers question wording, response format selection, scale construction, instrument assembly, response-bias mitigation, and the specific errors that originate at design time.
 
+## Installation
+
+```bash
+npx skills add https://github.com/JacobElder/jakes-skills/tree/main/survey-design
+```
+
+Or manually:
+
+```bash
+cp -r jakes-skills/survey-design ~/.claude/skills/survey-design
+```
+
+Once installed, the skill applies automatically whenever you ask about survey design, questionnaire wording, scale construction, response format selection, agree/disagree scales, "select all that apply," acquiescence bias, leading questions, double-barreled items, response-style mitigation, or instrument assembly — including informal descriptions like "we want to add a quick pulse survey" or "can you review our questionnaire?"
+
+---
+
+## Example use cases
+
+### "We want to keep it simple — just Strongly Agree / Disagree"
+
+> We're designing a quick employee engagement pulse. To keep it simple, we want a 2-point response scale: Agree or Disagree.
+
+Without the skill, the model accommodates the choice and moves on:
+
+> A 2-point scale is perfectly usable for a quick pulse. You lose some nuance compared to a 5-point scale, but the simplicity may increase completion rates. Just make sure your items are clearly worded so respondents know what they're agreeing or disagreeing with.
+
+With the skill, the model names the variance loss before offering to help:
+
+> A 2-point scale costs you a lot here — but not for the reason most people think.
+>
+> The primary problem isn't nuance; it's that dichotomizing continuous attitudes discards most of the variance you're trying to measure. Employees who feel "somewhat engaged" and "extremely engaged" get the same score. In practice, 2-point agree/disagree items measure almost nothing: all items pile near "Agree" in any halfway-positive workplace context, and you can't distinguish the signal you care about from ceiling effects.
+>
+> The specific finding on format: for agree/disagree worded items, 5 response options outperform 7 and 11 on reliability, completion time, and validity. Five is the evidence-based choice here, not "more options = more granularity."
+>
+> If the real goal is brevity, the fix is fewer *items*, not fewer *options* — three well-targeted 5-point items outperform ten 2-point items on every psychometric criterion.
+
+---
+
+### "Our product features question will have 15 options — we'll use 'select all that apply'"
+
+> We're asking respondents which of our 15 product features they use. We'll use a "Select all that apply" format so they can pick as many as they want.
+
+Without the skill, the model suggests a few tips and moves on:
+
+> SATA (Select All That Apply) is a natural fit for this question. A few tips: randomize the option order to avoid position bias, consider adding a "None of the above" option, and keep the list short enough that respondents won't get fatigued — 15 options is on the longer side, so trimming where possible would help.
+
+With the skill, the model flags the satisficing mechanism before any tips:
+
+> SATA has a systematic undercount problem that's important to understand before choosing it. The satisficing mechanism works like this: respondents scan the list, select the first few options that feel "good enough," and stop — not because they've considered all options, but because selection feels complete. Items near the bottom of a 15-item SATA list are reliably underselected regardless of their true prevalence, by roughly 15–25% relative to the top items.
+>
+> For 15 features, this matters: if you rotate the order, the systematic undercount moves with the rotation — you can diagnose satisficing, but you can't correct for it after the fact.
+>
+> **Better approaches for this use case:**
+> - **Forced-choice ranking:** "Which 3 features do you use most?" reduces cognitive load and gives clean priority data.
+> - **Binary yes/no per feature (grid):** each feature gets its own yes/no question. More items, but each is independently answered without satisficing across the list. Watch for straightlining if the grid is long.
+> - **SATA with position rotation:** acceptable if you only need relative prevalence and plan to report with position-order context. Just don't report raw SATA endorsement rates as absolute usage.
+
+---
+
 ## Example output
 
 ### Acquiescence bias inflates cross-construct correlations
@@ -65,4 +124,3 @@ The **psychometrics skill** handles what happens after data exists: reliability 
 | `references/response-styles-and-error.md` | Satisficing model; acquiescence, ERS, MRS, straightlining; social desirability; mode effects |
 | `references/questionnaire-assembly.md` | Order effects; length/fatigue; nonresponse; pretesting; attention checks |
 
-→ [survey-design/](survey-design/)
