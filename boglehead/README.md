@@ -91,6 +91,18 @@ The skill rejects the split: AGTHX and the S&P 500 index hold the same large-cap
 
 ---
 
+## Example output
+
+### Fee drag compounds into six-figure gaps over a career
+
+The same market return, different cost structures. This is not a marginal difference.
+
+![Fee drag over 30 years](fee_drag.png)
+
+**$100,000 invested at 7% gross annual return over 30 years.** VTI (0.03% ER): ~$755k. A 1.5% advisor + active-fund drag (common for managed accounts): ~$498k — a $257k shortfall. A whole-life insurance equivalent (3% drag on invested capital): ~$324k — a $431k shortfall. The skill names the dollar cost, not just the percentage, because percentage points don't land until someone sees what their neighbor's retirement account looks like. The same math applies to the AUM fee debate, the expense ratio debate, and the "my advisor's alpha justifies the fee" claim — the skill works through the arithmetic, not the abstract principle.
+
+---
+
 ## The financial stakes
 
 Bad financial advice isn't just suboptimal — the dollar cost compounds for decades. Here are three of the most common anti-patterns the skill addresses, with rough estimates of what they actually cost:

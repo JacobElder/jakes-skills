@@ -105,6 +105,15 @@ Evaluated on 11 capability evals spanning the full ABM lifecycle, graded by
 | With skill | 57 / 57 | **100%** |
 | **Delta** | | **+29.8 pp** |
 
+```mermaid
+xychart-beta horizontal
+    title "Pass rate by lifecycle phase (■ with skill  □ base model)"
+    x-axis ["Reporting stochastic output", "Sensitivity analysis", "Calibration vs validation", "ODD documentation", "Model selection", "Triggering (22 queries)"]
+    y-axis "Pass rate (%)" 0 --> 100
+    bar [100, 100, 100, 100, 100, 100]
+    bar [60, 60, 80, 80, 80, 100]
+```
+
 Trigger routing (22 queries): **100%** accuracy — the skill fires on ABM tasks
 and skips unrelated queries (ML training, CFD, Monte Carlo finance, etc.).
 
@@ -112,6 +121,18 @@ The largest gains come from tasks that require the bundled scaffolding: running
 global sensitivity analysis with Morris + Sobol (+5 on eval 7), properly
 reporting stochastic output (+3 on eval 10), and applying the full
 verification → calibration → validation distinction (+2 on eval 2).
+
+## Example output
+
+### One stochastic run is an anecdote — the ensemble is the result
+
+ABM outputs are stochastic. A single run produces a plausible trajectory, not a finding. The skill requires ensemble analysis before any result is reported.
+
+![Single run vs. ensemble: SIR epidemic model](stochastic_variance.png)
+
+**Left** — A single SIR epidemic run (N=1000, β=0.35, γ=0.10): peak infection appears at day ~25, count ~407. Report this and you've reported one possible world. **Right** — 100-run ensemble: the median peak is ~364, but individual runs range from below 200 to above 400. The single run (dashed red) falls near the upper tail. The shaded bands show 5–95th and 25–75th percentile envelopes. The skill enforces this before any parameter interpretation or policy conclusion: stochastic ABMs need enough replications for the output distribution to stabilize (CV convergence method, bundled in `scripts/replication_convergence.py`), and results should report ensemble statistics — not the trajectory that happened to come first.
+
+---
 
 ## Design philosophy
 

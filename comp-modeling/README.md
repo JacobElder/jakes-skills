@@ -101,6 +101,18 @@ With the skill, the boundary pileup triggers a named diagnosis with specific nex
 
 ---
 
+## Example output
+
+### MLE at small N produces boundary pileup; hierarchical Bayes recovers cleanly
+
+Parameter recovery is the diagnostic the skill requires before any model is trusted. The same RW model, different estimation approaches.
+
+![Parameter recovery: MLE vs hierarchical Bayes](parameter_recovery.png)
+
+**Left** — MLE on small-N subjects: recovered learning rates pile up at 0 and 1 because the likelihood is flat and the optimizer finds edge solutions. Recovery correlation r = 0.75 even though the scatter looks scattered — the boundary pileup alone signals the estimates are not trustworthy. **Right** — Hierarchical Bayesian inference with adequate N: shrinkage pulls extreme estimates toward the group mean, recovery correlation r = 0.97, and boundary pileup disappears. The skill requires parameter recovery simulation before any substantive interpretation; without it, a publication's "α = 0.12 for patients vs. α = 0.34 for controls" is noise dressed as findings.
+
+---
+
 ## Benchmark: skill vs. base model
 
 Content evals were run live against the `claude` CLI (haiku model) with and without the skill appended as a system prompt. Triggering evals are from analytical rubric review. Routing evals require actual skill installation (file-loading mechanics) and were scored analytically.

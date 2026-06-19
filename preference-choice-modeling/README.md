@@ -167,6 +167,15 @@ without_skill: 55.2%  (16/29 assertions)
 delta:         +41.4pp
 ```
 
+```mermaid
+xychart-beta horizontal
+    title "Pass rate by eval (■ with skill  □ base model)"
+    x-axis ["Dual-response none", "Anchoring", "Cross-wave", "CBC sample size", "Sparse MaxDiff", "CBC prohibitions", "MaxDiff method"]
+    y-axis "Pass rate (%)" 0 --> 100
+    bar [100, 100, 100, 100, 80, 100, 100]
+    bar [75, 50, 50, 50, 60, 50, 50]
+```
+
 | Eval | With skill | Without skill | Delta |
 |------|:---:|:---:|:---:|
 | method-selection-maxdiff | 100% | 50% | +50pp |

@@ -78,6 +78,15 @@ With skill      83 / 83      100.0%
 Delta                        +32.5pp
 ```
 
+```mermaid
+xychart-beta horizontal
+    title "Pass rate by scenario (■ with skill  □ base model)"
+    x-axis ["Handoff to exp-design", "End-to-end", "Single-bias guard", "Incentive skepticism", "Premature solutioning"]
+    y-axis "Pass rate (%)" 0 --> 100
+    bar [100, 100, 100, 100, 100]
+    bar [50, 40, 0, 0, 0]
+```
+
 20 evals, 83 assertions. The skill achieves 100% with-skill pass rate; the base model passes 10/20 evals (50%) and 56/83 assertions (67.5%).
 
 The largest gains come from cases where the base model is "helpfully compliant":
@@ -91,6 +100,16 @@ The largest gains come from cases where the base model is "helpfully compliant":
 | handoff to exp-design | routes AB test mechanics rather than computing them | 50% | 100% | **+50pp** |
 
 The base model already handles: contextual (not dispositional) attribution, problem-as-outcome framing, re-diagnosing a proposed design for new barriers, scope-guarding pure statistics, ethics (declining dark patterns), and scale constraints. The skill's value concentrates on the diagnosis-before-design discipline, bias-as-hypothesis rigor, three-way intervention generation, and test-mechanics handoff.
+
+## Example output
+
+### Premature solutioning vs. diagnosis-first design
+
+The base model's failure mode on behavioral design requests: implement what's asked, skip the diagnostic step that determines whether the solution addresses the actual barrier.
+
+![Diagnosis before design](diagnosis_first.png)
+
+**Left** — Base model: "Add a progress bar" → implement feature → outcome unchanged. The user's stated request is executed without asking what behavioral barrier is actually causing drop-off. The feature solves the surface request, not the underlying problem. **Right** — With skill: the same request triggers a diagnostic question ("Why are users dropping off?"), a named behavioral barrier (uncertainty aversion at the commitment step), and a targeted intervention (social proof + reversibility cue) that addresses the mechanism. The skill's largest gap is on premature solutioning (+100pp, 0% → 100%): the base model is "helpfully compliant" — it implements what was asked without the diagnostic step that determines whether what was asked is the right thing to build.
 
 ## Eval suite
 

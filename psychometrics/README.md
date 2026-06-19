@@ -199,6 +199,10 @@ F5        0.88          —                  —
 
 Without the skill: "the eigenvalue > 1 criterion identified 4 components — your scale has 4 dimensions." With the skill: parallel analysis is required first; the 4-factor result is an overextraction artifact.
 
+![Parallel analysis vs. Kaiser criterion](parallel_analysis_vs_kaiser.png)
+
+**Blue line** — observed eigenvalues for a 20-item, genuinely 2-factor scale. **Red dashed** — 95th percentile of eigenvalues from 500 random datasets of the same dimensions (the parallel analysis threshold). **Grey dotted** — Kaiser's eigenvalue > 1 cutoff. Kaiser retains 4 factors (eigenvalues 1–4 all cross 1.0). Parallel analysis retains 2 (factors 3 and 4 fall below the random-data threshold at 1.24 and 1.20 vs. thresholds of 1.32 and 1.27). The two extra factors are random noise that clear Kaiser's bar but not parallel analysis's bar — a gap that becomes two meaningless subscales if not caught here.
+
 ---
 
 ### Pattern matrix vs. structure matrix (oblique rotation, r = .52 between factors)

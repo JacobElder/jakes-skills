@@ -147,6 +147,15 @@ The base model knows idiographic statistics. The skill gives the agent the *conv
 
 **Automated benchmark result (haiku, iter-1):** 17/17 with skill (100%), 6/17 baseline (35%), **+65pp delta**. Evals run via `idiographic-quant/evals/run_evals.py` (baseline vs `--append-system-prompt SKILL.md + references`). Differentiating evals (skill passes, base fails): E0, E1, E2, E3, E4, E5, E6, E11, E13, E14, E16 — 11/17.
 
+```mermaid
+xychart-beta horizontal
+    title "Pass rate by category (■ with skill  □ base model)"
+    x-axis ["Scope (nominothetic guard)", "Causal (N-of-1 design)", "Method (ESM/VAR)", "Pushback (ergodicity)", "Ergodicity trap"]
+    y-axis "Pass rate (%)" 0 --> 100
+    bar [100, 100, 100, 100, 100]
+    bar [100, 0, 20, 25, 0]
+```
+
 ---
 
 ## Sources

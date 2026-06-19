@@ -150,6 +150,15 @@ without_skill:  84.6%  (33/39 expectations)
 delta:         +15.4pp
 ```
 
+```mermaid
+xychart-beta horizontal
+    title "Pass rate by eval (■ with skill  □ base model)"
+    x-axis ["Reporting standards", "Non-trigger", "Node selection", "Stability", "Hairball tuning", "Bootstrap CI", "Expected influence", "GGM estimation"]
+    y-axis "Pass rate (%)" 0 --> 100
+    bar [100, 100, 100, 100, 100, 100, 100, 100]
+    bar [80, 100, 75, 100, 80, 80, 80, 83]
+```
+
 | Eval | With skill | Without skill | Delta |
 |------|:---:|:---:|:---:|
 | ggm-estimation-likert | 100% | 83% | +17pp |

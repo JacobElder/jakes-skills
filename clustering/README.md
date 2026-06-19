@@ -62,6 +62,16 @@ Both panels show k=4 clusters with confident-looking color assignments. The left
 
 ---
 
+### k-means fails on non-convex shapes; density-based clustering succeeds
+
+k-means minimizes within-cluster variance, which assumes spherical, compact clusters. Crescent-shaped (or ring, spiral, interlocking) data violates this assumption completely.
+
+![Non-convex clustering: k-means vs DBSCAN](nonconvex_shapes.png)
+
+**Left** — k-means with k=2: the linear Voronoi boundary cuts across both crescents, mixing points from each true group. Cluster purity 74% — wrong by construction because the method assumes convex geometry. **Right** — DBSCAN: density connectivity follows the crescent shape, achieving 100% purity. No k to specify, and noise points are labeled rather than forced into a cluster. The skill names this failure mode at the method-selection step — before any code is written — and routes to HDBSCAN (for variable-density data) or spectral clustering rather than suggesting k-means hyperparameter tuning.
+
+---
+
 ## What it does
 
 The base model knows clustering algorithms. The skill gives the agent the *precision to apply them correctly when the standard approach is wrong*. The hard cases require the agent to:
@@ -85,6 +95,15 @@ Condition       Score       Pass rate
 Base model      78 / 95     82.1%
 With skill      95 / 95     100.0%
 Delta                       +17.9 pp
+```
+
+```mermaid
+xychart-beta horizontal
+    title "Pass rate by scenario (■ with skill  □ base model)"
+    x-axis ["LPA/GMM equivalence", "Null comparison", "BIRCH at scale", "HDBSCAN noise", "Mixed-type framing", "Clusterability gate", "HDBSCAN transductive", "Mixed-type code", "Non-convex shapes", "k selection"]
+    y-axis "Pass rate (%)" 0 --> 100
+    bar [100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
+    bar [80, 80, 75, 75, 75, 50, 50, 50, 50, 40]
 ```
 
 The largest gains come from scenarios where a specific methodology piece is easy to overlook:

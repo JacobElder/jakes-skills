@@ -70,6 +70,14 @@ Running `specification_curve(res, outfile="curve.png")` on the mindfulness inter
 
 A fragile finding would show a mix of red and blue points and variance concentrated in one decision row — telling you exactly which analytical choice is load-bearing.
 
+### Fragile vs. robust effects: what the base model misses
+
+The base model reports a single estimate from one specification. The skill reports the full specification curve and names whether the effect is fragile or robust.
+
+![Fragile vs. robust specification curves](specification_contrast.png)
+
+**Left — Fragile effect:** 24/64 specifications reach p < .05; the rest do not. Sign flips appear. The base model would report the original author's single estimate (orange star) without revealing that 40 other reasonable analytical choices produce non-significant results. **Right — Robust effect:** 64/64 specifications significant, consistent positive direction across all analytical choices. This is the finding worth reporting. The skill's job is to map the full curve before any conclusion is drawn — and to distinguish "the effect is fragile on this decision" (look at which row of the grid drives variance) from "the effect is fragile, full stop."
+
 ---
 
 ## Honest framing enforced
@@ -81,6 +89,15 @@ The skill is opinionated — deliberately so. It will tell you when your effect 
 ## Benchmark
 
 Evaluated on 6 tasks spanning the full skill surface. Graded with `claude-sonnet-4-6` executor and `claude-haiku-4-5` grader; an eval passes when all must-pass assertions hold and ≥ 80 % of scored assertions hold.
+
+```mermaid
+xychart-beta horizontal
+    title "Pass rate by eval (■ with skill  □ base model)"
+    x-axis ["Cherry-picking pushback", "Correlation estimand", "Binary DV constraint", "Scale comparability", "Fragile detection", "Full pipeline"]
+    y-axis "Pass rate (%)" 0 --> 100
+    bar [100, 100, 100, 100, 100, 100]
+    bar [80, 80, 80, 60, 83, 83]
+```
 
 | Eval | Topic | Base | With skill |
 |------|-------|------|------------|

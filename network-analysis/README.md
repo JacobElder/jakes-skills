@@ -134,6 +134,15 @@ Evaluated across 4 iterations using trap-based evals — prompts where the naive
 
 ### Iteration 4 — final results (8 scenarios)
 
+```mermaid
+xychart-beta horizontal
+    title "Pass rate by scenario (■ with skill  □ base model)"
+    x-axis ["Link prediction", "Community stability", "Large-scale tool", "Temporal aggregation", "Centrality-process", "ERGM degeneracy", "Bipartite projection", "Peer effects"]
+    y-axis "Pass rate (%)" 0 --> 100
+    bar [100, 100, 100, 100, 100, 100, 100, 100]
+    bar [100, 40, 80, 40, 80, 100, 40, 60]
+```
+
 ```
 with_skill:    100%  (40/40 assertions)
 without_skill:  67.5%  (27/40 assertions)

@@ -102,6 +102,15 @@ With skill      66 / 66     100.0%
 Delta                       +31.8 pp
 ```
 
+```mermaid
+xychart-beta horizontal
+    title "Pass rate by eval (■ with skill  □ base model)"
+    x-axis ["Non-commensurable", "DoE disambiguation", "Separate-mean centering", "Strict vs. broad", "Directionality fallacy", "Full RSA pipeline", "Difference-score redirect", "RSA vs. moderation", "Measurement error", "Single-param fallacy", "Coeff-fishing refusal", "Failed-gate refusal", "Power planning"]
+    y-axis "Pass rate (%)" 0 --> 100
+    bar [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 80, 100, 100]
+    bar [100, 100, 100, 86, 83, 71, 60, 80, 80, 50, 20, 25, 20]
+```
+
 The largest gains come from scenarios where the skill's methodological positions are load-bearing:
 
 | Eval | Topic | Base | Skill | Gap |

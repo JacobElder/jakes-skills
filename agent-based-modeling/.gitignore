@@ -3,5 +3,6 @@ __pycache__/
 *.pyo
 *.skill
 *.png
+!stochastic_variance.png
 evals/results/
 .DS_Store

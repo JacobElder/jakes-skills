@@ -24,6 +24,15 @@ The skill gives the agent the conviction to explain the *specific* data-quality 
 
 **+52pp** — 100% with skill vs. 48.5% base (36/36 assertions across 6 evals).
 
+```mermaid
+xychart-beta horizontal
+    title "Pass rate by eval (■ with skill  □ base model)"
+    x-axis ["Pushback on bad design", "Calibration (clean survey)", "Psychometrics boundary", "Scale-points decision", "Design engagement pulse", "Review customer-sat survey"]
+    y-axis "Pass rate (%)" 0 --> 100
+    bar [100, 100, 100, 100, 100, 100]
+    bar [17, 57, 67, 60, 57, 57]
+```
+
 | Eval | What it tests | With skill | Without |
 |---|---|---|---|
 | Review customer-sat survey | Detects double-barreled, leading, acquiescence, SATA, sensitive items, scale labeling; provides concrete rewrites | 7/7 | 4/7 |
