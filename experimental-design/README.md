@@ -158,6 +158,18 @@ python -m unittest scripts/test_power_analysis.py -v
 
 ---
 
+## Example output
+
+### Peeking inflates Type I error — sequential testing controls it
+
+Daily significance checks with a fixed p < .05 threshold inflate the true false positive rate far beyond the nominal 5%. This is not a theoretical concern — it compounds with every additional look.
+
+![Peeking inflates Type I error; O'Brien-Fleming controls it](peeking_type1_error.png)
+
+**Left** — Fixed-horizon threshold (p < .05 per look): with 20 interim peeks, the true Type I error rate reaches ~30–35%. A result "significant" at any one peek has a high probability of being noise. **Right** — O'Brien-Fleming spending function: by pre-registering the number of analyses and adjusting the threshold at each (spending more conservatively early, more liberally late), the cumulative false positive rate stays at nominal α regardless of how many looks are taken. The skill names the magnitude of the peeking problem — "this inflates Type I error to ~30–35%" lands differently than "peeking is a concern" — and routes to always-valid inference or group sequential testing rather than ad hoc Bonferroni corrections.
+
+---
+
 ## Evals
 
 `evals/evals.json` — 9 task evals spanning the full workflow:
