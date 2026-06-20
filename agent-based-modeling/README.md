@@ -13,30 +13,6 @@ agents make validation *worse*, not better. These claims are grounded in the
 peer-reviewed ABM methodology literature — not personal preference — and the
 references directory documents the evidence behind each stance.
 
-## What's inside
-
-```
-SKILL.md                          — skill hub; load this first
-references/
-  odd-protocol.md                 — ODD documentation standard (7 elements, 11 design concepts)
-  validation-and-calibration.md   — verify → calibrate → validate; ABC, history matching
-  analysis-and-experiments.md     — replications, global SA, burn-in, reporting
-  limitations-and-pitfalls.md     — over-parameterization, artefacts, black-box, boundary conditions
-  frameworks-and-tools.md         — NetLogo, Mesa, Repast, Agents.jl, FLAME GPU
-  generative-llm-agents.md        — LLM-driven agents: appeal, dangers, responsible use
-  key-literature.md               — annotated bibliography by phase
-assets/
-  mesa_model_template.py          — runnable Schelling model (Mesa 3.x); adapt, don't start blank
-  odd_template.md                 — fill-in ODD model-description template
-scripts/
-  replication_convergence.py      — how many runs? (CV convergence method)
-  sensitivity_analysis.py         — Morris screening + Sobol indices via SALib
-evals/
-  evals.json                      — 11 capability evals across the ABM lifecycle
-  trigger_eval.json               — 22 should/should-not-trigger queries
-  run_evals.py                    — eval harness (requires claude CLI)
-```
-
 ## Installation
 
 ```bash
@@ -59,68 +35,7 @@ pip install -r requirements.txt
 
 Requires Python 3.10+.
 
-## Run the scripts
-
-```bash
-# How many replications does your model need?
-python scripts/replication_convergence.py --demo
-
-# Global sensitivity analysis (Morris + Sobol)
-python scripts/sensitivity_analysis.py --demo
-
-# Run the Mesa Schelling template
-python assets/mesa_model_template.py --seed 1
-python assets/mesa_model_template.py --converge   # uses replication_convergence.py
-```
-
-## Run the evals
-
-Requires the [Claude Code CLI](https://claude.ai/code) (`claude` on PATH) and an
-Anthropic API key.
-
-```bash
-# Capability evals — baseline and with skill loaded
-python evals/run_evals.py
-
-# With-skill only (faster)
-python evals/run_evals.py --condition with_skill
-
-# Trigger routing evals
-python evals/run_evals.py --trigger
-
-# Re-use cached results
-python evals/run_evals.py --skip-existing
-```
-
-Results are written to `evals/results/`.
-
-## Benchmark results
-
-Evaluated on 11 capability evals spanning the full ABM lifecycle, graded by
-`claude-haiku-4-5` against explicit assertions (executor: `claude-sonnet-4-6`).
-
-| Condition | Score | Pass rate |
-|-----------|-------|-----------|
-| Base model (no skill) | 40 / 57 | 70.2% |
-| With skill | 57 / 57 | **100%** |
-| **Delta** | | **+29.8 pp** |
-
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by lifecycle phase (■ with skill  □ base model)"
-    x-axis ["Reporting stochastic output", "Sensitivity analysis", "Calibration vs validation", "ODD documentation", "Model selection", "Triggering (22 queries)"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100]
-    bar [60, 60, 80, 80, 80, 100]
-```
-
-Trigger routing (22 queries): **100%** accuracy — the skill fires on ABM tasks
-and skips unrelated queries (ML training, CFD, Monte Carlo finance, etc.).
-
-The largest gains come from tasks that require the bundled scaffolding: running
-global sensitivity analysis with Morris + Sobol (+5 on eval 7), properly
-reporting stochastic output (+3 on eval 10), and applying the full
-verification → calibration → validation distinction (+2 on eval 2).
+---
 
 ## Example use cases
 
@@ -197,6 +112,36 @@ ABM outputs are stochastic. A single run produces a plausible trajectory, not a 
 
 ---
 
+## Benchmark results
+
+Evaluated on 11 capability evals spanning the full ABM lifecycle, graded by
+`claude-haiku-4-5` against explicit assertions (executor: `claude-sonnet-4-6`).
+
+| Condition | Score | Pass rate |
+|-----------|-------|-----------|
+| Base model (no skill) | 40 / 57 | 70.2% |
+| With skill | 57 / 57 | **100%** |
+| **Delta** | | **+29.8 pp** |
+
+```mermaid
+xychart-beta horizontal
+    title "Pass rate by lifecycle phase (■ with skill  □ base model)"
+    x-axis ["Reporting stochastic output", "Sensitivity analysis", "Calibration vs validation", "ODD documentation", "Model selection", "Triggering (22 queries)"]
+    y-axis "Pass rate (%)" 0 --> 100
+    bar [100, 100, 100, 100, 100, 100]
+    bar [60, 60, 80, 80, 80, 100]
+```
+
+Trigger routing (22 queries): **100%** accuracy — the skill fires on ABM tasks
+and skips unrelated queries (ML training, CFD, Monte Carlo finance, etc.).
+
+The largest gains come from tasks that require the bundled scaffolding: running
+global sensitivity analysis with Morris + Sobol (+5 on eval 7), properly
+reporting stochastic output (+3 on eval 10), and applying the full
+verification → calibration → validation distinction (+2 on eval 2).
+
+---
+
 ## Design philosophy
 
 **Opinionated by design.** The most common ABM failure modes are not technical —
@@ -216,3 +161,63 @@ actually is, not an undifferentiated capability dump.
 skill explicitly directs users to them rather than re-deriving these computations
 by hand each time.
 
+---
+
+## Structure
+
+```
+SKILL.md                          — skill hub; load this first
+references/
+  odd-protocol.md                 — ODD documentation standard (7 elements, 11 design concepts)
+  validation-and-calibration.md   — verify → calibrate → validate; ABC, history matching
+  analysis-and-experiments.md     — replications, global SA, burn-in, reporting
+  limitations-and-pitfalls.md     — over-parameterization, artefacts, black-box, boundary conditions
+  frameworks-and-tools.md         — NetLogo, Mesa, Repast, Agents.jl, FLAME GPU
+  generative-llm-agents.md        — LLM-driven agents: appeal, dangers, responsible use
+  key-literature.md               — annotated bibliography by phase
+assets/
+  mesa_model_template.py          — runnable Schelling model (Mesa 3.x); adapt, don't start blank
+  odd_template.md                 — fill-in ODD model-description template
+scripts/
+  replication_convergence.py      — how many runs? (CV convergence method)
+  sensitivity_analysis.py         — Morris screening + Sobol indices via SALib
+evals/
+  evals.json                      — 11 capability evals across the ABM lifecycle
+  trigger_eval.json               — 22 should/should-not-trigger queries
+  run_evals.py                    — eval harness (requires claude CLI)
+```
+
+## Run the scripts
+
+```bash
+# How many replications does your model need?
+python scripts/replication_convergence.py --demo
+
+# Global sensitivity analysis (Morris + Sobol)
+python scripts/sensitivity_analysis.py --demo
+
+# Run the Mesa Schelling template
+python assets/mesa_model_template.py --seed 1
+python assets/mesa_model_template.py --converge   # uses replication_convergence.py
+```
+
+## Run the evals
+
+Requires the [Claude Code CLI](https://claude.ai/code) (`claude` on PATH) and an
+Anthropic API key.
+
+```bash
+# Capability evals — baseline and with skill loaded
+python evals/run_evals.py
+
+# With-skill only (faster)
+python evals/run_evals.py --condition with_skill
+
+# Trigger routing evals
+python evals/run_evals.py --trigger
+
+# Re-use cached results
+python evals/run_evals.py --skip-existing
+```
+
+Results are written to `evals/results/`.

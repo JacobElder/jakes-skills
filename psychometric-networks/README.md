@@ -113,18 +113,6 @@ With the skill, the response makes the same correction but adds the critical pra
 
 ---
 
-## Example output
-
-### Regularization removes indirect paths that look like real edges
-
-A full Pearson correlation network of 12 symptom items (4 anxiety, 4 depression, 4 positive affect) produces a dense, nearly uninterpretable graph — almost every item connects to every other. EBICglasso removes the indirect paths, revealing the true conditional dependence structure.
-
-![Regularized vs full network](regularized_vs_full.png)
-
-**Left** — Full Pearson correlation network: dense cross-cluster edges everywhere. Indirect paths (anxiety item → depression item through shared variance in a common neighbor) masquerade as direct relationships. **Right** — EBICglasso regularized network: sparse. Only edges that survive partial correlation regularization remain; cross-cluster edges are zeroed out because they are fully explained by within-cluster paths. The skill enforces `cor_auto` (polychoric correlations for Likert items) as the first fix for hairball density, checks for node redundancy with `goldbricker` before estimation, and requires the Burger et al. (2023) reporting checklist including a mandatory cross-sectional causal limitations statement.
-
----
-
 ## What the skill does
 
 The base model knows the psychometric network literature. The skill gives the agent the *specific field conventions* to apply them correctly. The key moves:
@@ -135,6 +123,18 @@ The base model knows the psychometric network literature. The skill gives the ag
 - **Name Burger et al. (2023) for reporting.** The authoritative reporting checklist for cross-sectional GGMs. The base model gives solid generic checklists; the skill names the paper and frames causal limitations as a required, not optional, element.
 - **Gate the Bringmann critique.** Betweenness and closeness are inappropriate for dense weighted partial-correlation graphs (Bringmann et al., 2019) — but this caveat belongs only in psychometric contexts, not as a response to generic graph-theory questions. The skill applies the critique where relevant and stays neutral where it isn't.
 - **State the difference-test norm.** Few centrality pairs are typically statistically distinguishable in published psychometric networks. This is the expected outcome, not a methodological failure, and users should frame their results accordingly.
+
+---
+
+## Example output
+
+### Regularization removes indirect paths that look like real edges
+
+A full Pearson correlation network of 12 symptom items (4 anxiety, 4 depression, 4 positive affect) produces a dense, nearly uninterpretable graph — almost every item connects to every other. EBICglasso removes the indirect paths, revealing the true conditional dependence structure.
+
+![Regularized vs full network](regularized_vs_full.png)
+
+**Left** — Full Pearson correlation network: dense cross-cluster edges everywhere. Indirect paths (anxiety item → depression item through shared variance in a common neighbor) masquerade as direct relationships. **Right** — EBICglasso regularized network: sparse. Only edges that survive partial correlation regularization remain; cross-cluster edges are zeroed out because they are fully explained by within-cluster paths. The skill enforces `cor_auto` (polychoric correlations for Likert items) as the first fix for hairball density, checks for node redundancy with `goldbricker` before estimation, and requires the Burger et al. (2023) reporting checklist including a mandatory cross-sectional causal limitations statement.
 
 ---
 

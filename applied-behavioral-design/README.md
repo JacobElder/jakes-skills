@@ -66,6 +66,18 @@ The base model knows behavioral concepts. The skill gives the agent the *discipl
 
 Without the skill, the model tends to helpfully comply with whatever solution the user arrived with, name one bias as the explanation, and skip the diagnostic workflow entirely.
 
+## Example output
+
+### Premature solutioning vs. diagnosis-first design
+
+The base model's failure mode on behavioral design requests: implement what's asked, skip the diagnostic step that determines whether the solution addresses the actual barrier.
+
+![Diagnosis before design](diagnosis_first.png)
+
+**Left** — Base model: "Add a progress bar" → implement feature → outcome unchanged. The user's stated request is executed without asking what behavioral barrier is actually causing drop-off. The feature solves the surface request, not the underlying problem. **Right** — With skill: the same request triggers a diagnostic question ("Why are users dropping off?"), a named behavioral barrier (uncertainty aversion at the commitment step), and a targeted intervention (social proof + reversibility cue) that addresses the mechanism. The skill's largest gap is on premature solutioning (+100pp, 0% → 100%): the base model is "helpfully compliant" — it implements what was asked without the diagnostic step that determines whether what was asked is the right thing to build.
+
+---
+
 ## Benchmark: skill vs. base model
 
 Evaluated on 20 scenarios covering Gate 1/2 enforcement, target-behavior precision, decision-action mapping, bias-hypothesis generation, three-way intervention design, incentive skepticism, experimental-design handoff, ethics, scarcity populations, scale constraints, and full end-to-end quality. Each scenario is graded on 4–5 specific assertions about whether the model gave the correct, opinionated, diagnosis-first response.
@@ -100,16 +112,6 @@ The largest gains come from cases where the base model is "helpfully compliant":
 | handoff to exp-design | routes AB test mechanics rather than computing them | 50% | 100% | **+50pp** |
 
 The base model already handles: contextual (not dispositional) attribution, problem-as-outcome framing, re-diagnosing a proposed design for new barriers, scope-guarding pure statistics, ethics (declining dark patterns), and scale constraints. The skill's value concentrates on the diagnosis-before-design discipline, bias-as-hypothesis rigor, three-way intervention generation, and test-mechanics handoff.
-
-## Example output
-
-### Premature solutioning vs. diagnosis-first design
-
-The base model's failure mode on behavioral design requests: implement what's asked, skip the diagnostic step that determines whether the solution addresses the actual barrier.
-
-![Diagnosis before design](diagnosis_first.png)
-
-**Left** — Base model: "Add a progress bar" → implement feature → outcome unchanged. The user's stated request is executed without asking what behavioral barrier is actually causing drop-off. The feature solves the surface request, not the underlying problem. **Right** — With skill: the same request triggers a diagnostic question ("Why are users dropping off?"), a named behavioral barrier (uncertainty aversion at the commitment step), and a targeted intervention (social proof + reversibility cue) that addresses the mechanism. The skill's largest gap is on premature solutioning (+100pp, 0% → 100%): the base model is "helpfully compliant" — it implements what was asked without the diagnostic step that determines whether what was asked is the right thing to build.
 
 ## Eval suite
 

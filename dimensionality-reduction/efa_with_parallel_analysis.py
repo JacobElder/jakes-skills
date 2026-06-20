@@ -37,8 +37,13 @@ def run_parallel_analysis(
     """
     n_subjects, n_items = data.shape
 
-    # Observed eigenvalues
-    cov_matrix = data.cov()
+    # Observed eigenvalues — must use correlation matrix, not covariance.
+    # Covariance eigenvalues scale with variable variance; correlation eigenvalues
+    # are bounded (max = n_items) and comparable to the random-data eigenvalues
+    # generated below (which also use np.corrcoef). Mixing covariance and
+    # correlation eigenvalues makes factor retention decisions wrong when
+    # variables have different scales.
+    cov_matrix = data.corr()
     observed_evals = np.linalg.eigvals(cov_matrix)
     observed_evals = np.sort(observed_evals)[::-1]
 

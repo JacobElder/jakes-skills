@@ -48,6 +48,21 @@ The skill confirms the concern: TWFE with staggered adoption and heterogeneous t
 
 ---
 
+## What it does
+
+The base model knows causal inference concepts. The skill gives the agent the *precision to apply them correctly under pressure*. The hard cases in causal inference require the agent to:
+
+- **Reject a seemingly-valid natural experiment** (sequential user IDs aren't truly random; the identification assumption must be verified, not assumed)
+- **State that bias direction is unknown** rather than guessing it's upward (a violated exclusion restriction can bias an IV estimate in any direction — more data doesn't fix it)
+- **Name the right condition that's violated** in a front-door setup (complete mediation, not just the back-door block)
+- **Recommend the right alternative estimand** when the question and the data don't match (LATE vs ATE in forced rollouts; cluster randomization for network features)
+- **Apply the do-operator formally** to distinguish observation from intervention (P(churn | low logins) vs P(churn | do(low logins)))
+- **Refuse to endorse a near-IV as a confounder control** (conditioning amplifies bias when unmeasured confounding is present)
+
+Without the skill, the model tends to agree with the plausible-sounding parts of an argument, characterize violations with confident-but-wrong directionality, or miss the condition that's most commonly overlooked. These aren't subtle — they lead directly to wrong decisions.
+
+---
+
 ## Example output
 
 ### Collider conditioning manufactures spurious correlation
@@ -61,19 +76,6 @@ In this simulation, X and Y are independent (r = 0.08 in the full sample — noi
 The base model often describes collider bias correctly in the abstract. It struggles to *detect it* when the conditioning variable looks like a reasonable control — for example, filtering to "active users" before measuring onboarding effects, or controlling for "hours worked" when estimating the pay gap.
 
 ---
-
-## What it does
-
-The base model knows causal inference concepts. The skill gives the agent the *precision to apply them correctly under pressure*. The hard cases in causal inference require the agent to:
-
-- **Reject a seemingly-valid natural experiment** (sequential user IDs aren't truly random; the identification assumption must be verified, not assumed)
-- **State that bias direction is unknown** rather than guessing it's upward (a violated exclusion restriction can bias an IV estimate in any direction — more data doesn't fix it)
-- **Name the right condition that's violated** in a front-door setup (complete mediation, not just the back-door block)
-- **Recommend the right alternative estimand** when the question and the data don't match (LATE vs ATE in forced rollouts; cluster randomization for network features)
-- **Apply the do-operator formally** to distinguish observation from intervention (P(churn | low logins) vs P(churn | do(low logins)))
-- **Refuse to endorse a near-IV as a confounder control** (conditioning amplifies bias when unmeasured confounding is present)
-
-Without the skill, the model tends to agree with the plausible-sounding parts of an argument, characterize violations with confident-but-wrong directionality, or miss the condition that's most commonly overlooked. These aren't subtle — they lead directly to wrong decisions.
 
 ## Benchmark: skill vs. base model
 

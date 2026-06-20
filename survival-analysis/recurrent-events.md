@@ -58,7 +58,9 @@ summary(fit_ag)
 # cluster(id) gives robust variance to handle within-subject correlation.
 ```
 
-The `cluster(id)` (or, equivalently, `+ cluster(id)` and using robust = TRUE) is **essential**. Without it, standard errors assume independence between rows from the same subject and are too small. The point estimate is unaffected.
+The `cluster(id)` term is **essential**. Without it, standard errors assume independence between rows from the same subject and are too small. The point estimate is unaffected.
+
+Note: In R's `survival` package, `robust=TRUE` is **not** a valid `coxph()` argument (you'll get an "unused argument" error). The correct R idiom for sandwich/robust SEs is `+ cluster(id)` in the formula, as shown above. (In Python's lifelines, `robust=True` is a keyword argument to `fit()` — the two interfaces differ.)
 
 ### Python
 

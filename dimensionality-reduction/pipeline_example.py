@@ -98,21 +98,12 @@ def continuity_score(X_high, X_low, k=15):
     """
     Quantify whether new neighbors are not introduced (0-1, higher is better).
     Complement of trustworthiness. Measures absence of false neighbors.
+
+    Continuity is trustworthiness with the roles of high-dim and low-dim swapped:
+    it asks whether neighbors in the low-dim space were also neighbors in high-dim.
     """
-    n = X_high.shape[0]
-
-    nbrs_high = NearestNeighbors(n_neighbors=k + 1).fit(X_high)
-    indices_high = nbrs_high.kneighbors(X_high, return_distance=False)[:, 1:]
-
-    nbrs_low = NearestNeighbors(n_neighbors=k + 1).fit(X_low)
-    indices_low = nbrs_low.kneighbors(X_low, return_distance=False)[:, 1:]
-
-    cont = 0
-    for i in range(n):
-        matches = len(set(indices_high[i]) & set(indices_low[i]))
-        cont += matches / k
-
-    return cont / n
+    # Continuity = trustworthiness with roles swapped
+    return trustworthiness_score(X_low, X_high, k=k)
 
 
 def distance_preservation(X_high, X_low, sample_size=None):

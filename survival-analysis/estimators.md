@@ -75,8 +75,11 @@ plt.tight_layout()
 ```python
 from sksurv.nonparametric import kaplan_meier_estimator
 
-times, surv_prob, conf_int = kaplan_meier_estimator(
-    df['event'].astype(bool), df['time'], conf_type="log-log"
+# kaplan_meier_estimator returns a 2-tuple (times, survival_probs).
+# Confidence intervals are not returned by this function; use lifelines
+# or the R survfit interface if you need pointwise CIs.
+times, survival_probs = kaplan_meier_estimator(
+    df['event'].astype(bool), df['time']
 )
 ```
 

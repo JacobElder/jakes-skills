@@ -95,18 +95,6 @@ With the skill, the response routes to the correct person-specific network metho
 
 ---
 
-## Example output
-
-### The pooled correlation has the wrong sign
-
-Running a regression on pooled cross-person data gives a positive stress → wellbeing relationship. Within every individual, the relationship is negative: wellbeing drops on high-stress days. The base model stops at the pooled result and draws the wrong clinical conclusion.
-
-![Within-person vs between-person](within_vs_between.png)
-
-**Left** — Pooled regression across 10 participants: positive slope (r = +0.48), because people with higher trait stress tend to also have higher trait wellbeing — a selection effect, not a causal one. **Right** — Within-person regression lines, one per participant: every slope is negative (mean r ≈ −0.44). Stress on a given day predicts lower wellbeing that day for each person. The skill names this as the **ergodicity trap** — Fisher et al. (2018) documented this sign reversal empirically across six datasets — and redirects to measuring the individual over time rather than applying the group coefficient to a client.
-
----
-
 ## What the skill does
 
 The base model knows idiographic statistics. The skill gives the agent the *conviction to apply it correctly and refuse when it doesn't apply*. Its most important moves are:
@@ -118,6 +106,18 @@ The base model knows idiographic statistics. The skill gives the agent the *conv
 - **Guard the nomothetic direction.** Idiographic methods applied to genuinely population-level questions (A/B tests, group RCTs, cross-sectional surveys) are a category error. The skill recognizes these cases and recommends standard between-group approaches, explaining why aggregation is the right move.
 - **Enforce non-negotiable assumption checks.** Stationarity must be checked, not assumed (and is often in direct tension with the theory motivating the study — acknowledge it, don't paper it over). Cross-night lags must be excluded (beepvar/dayvar). Within-person reliability must be assessed separately from between-person alpha. Lüdtke/Nickell bias from person-mean centering on few occasions is real and has a known fix (DSEM latent centering or more T).
 - **Stop centrality-to-treatment-target inferences.** High network centrality is a hypothesis about a target, not a lever. Betweenness and closeness are unstable in psychological networks. A cross-sectional network from many people cannot license claims about a single patient's within-person dynamics — that requires their own time series.
+
+---
+
+## Example output
+
+### The pooled correlation has the wrong sign
+
+Running a regression on pooled cross-person data gives a positive stress → wellbeing relationship. Within every individual, the relationship is negative: wellbeing drops on high-stress days. The base model stops at the pooled result and draws the wrong clinical conclusion.
+
+![Within-person vs between-person](within_vs_between.png)
+
+**Left** — Pooled regression across 10 participants: positive slope (r = +0.48), because people with higher trait stress tend to also have higher trait wellbeing — a selection effect, not a causal one. **Right** — Within-person regression lines, one per participant: every slope is negative (mean r ≈ −0.44). Stress on a given day predicts lower wellbeing that day for each person. The skill names this as the **ergodicity trap** — Fisher et al. (2018) documented this sign reversal empirically across six datasets — and redirects to measuring the individual over time rather than applying the group coefficient to a client.
 
 ---
 

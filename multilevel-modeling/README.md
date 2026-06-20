@@ -88,18 +88,6 @@ With the skill, the response leads with a direct answer to the actual question:
 
 ---
 
-## Example output
-
-### Type I error inflation from omitting random slopes
-
-When a within-subjects manipulation is present but random slopes are excluded, the model treats all within-subject variance as residual error — producing test statistics that are far too large. The simulation below uses 30 subjects × 20 observations under a null effect (500 iterations):
-
-![Type I error inflation](type1_error_inflation.png)
-
-Omitting random slopes drives the actual Type I error rate to **51%** at a nominal α = .05. The correct model with random intercepts + slopes holds at **6%**. This is the Barr et al. (2013) finding the skill enforces: every within-subjects design needs `(1 + condition | subject)`, not just `(1 | subject)`.
-
----
-
 ## What the skill does
 
 The base model has strong factual knowledge of multilevel modeling. The skill's job is to change the **defaults and framing** — whether it pushes back firmly vs. hedges, whether it validates a user's wrong model before noting caveats, whether it holds the correct position when the user seems satisfied with a flawed analysis.
@@ -112,6 +100,18 @@ The skill's most important moves:
 - **Treat treatment-coded "main effects" in interaction models as simple effects.** The skill corrects the framing before any numbers are reported.
 - **Calibrate response length to the question.** "What's the ICC?" gets a 3-sentence definition with the formula, not a full MLM workflow.
 - **Not over-engineer narrow questions.** A paired t-test for two balanced time points is defensible; the skill says so rather than reflexively pushing MLM.
+
+---
+
+## Example output
+
+### Type I error inflation from omitting random slopes
+
+When a within-subjects manipulation is present but random slopes are excluded, the model treats all within-subject variance as residual error — producing test statistics that are far too large. The simulation below uses 30 subjects × 20 observations under a null effect (500 iterations):
+
+![Type I error inflation](type1_error_inflation.png)
+
+Omitting random slopes drives the actual Type I error rate to **51%** at a nominal α = .05. The correct model with random intercepts + slopes holds at **6%**. This is the Barr et al. (2013) finding the skill enforces: every within-subjects design needs `(1 + condition | subject)`, not just `(1 | subject)`.
 
 ---
 

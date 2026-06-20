@@ -140,18 +140,6 @@ With the skill, the response identifies the circularity:
 
 ---
 
-## Example output
-
-### PCA preprocessing for UMAP: 2.5× speedup with equivalent structure
-
-A common missed optimization: running UMAP directly on high-dimensional data when a quick PCA first pass to ~50 components preserves all meaningful variance and dramatically cuts runtime.
-
-![PCA → UMAP vs. direct UMAP](evals/pca_umap_comparison.png)
-
-Both embeddings recover the same five-cluster structure. Direct UMAP on 1000-dimensional data takes 14.4s; PCA(50) → UMAP takes 5.8s — 2.5× faster with no loss in separation quality. The skill recommends this pipeline automatically when input dimensionality is high and UMAP is the chosen method.
-
----
-
 ## What the skill does
 
 The base model knows dimensionality reduction methods. The skill gives the agent the *conviction to apply them correctly* — and specifically to hold the line on claims the user wants to make from embeddings. Its most important moves are:
@@ -166,6 +154,18 @@ The base model knows dimensionality reduction methods. The skill gives the agent
 - **Flags NMF's nonnegativity requirement as a hard constraint.** NMF on data with negative values (log-fold-change, standardized features) is a silent correctness bug. The skill redirects before the user produces meaningless components.
 - **Identifies out-of-sample transform gaps.** Vanilla t-SNE has no reusable transform. The skill catches this before a user builds a production pipeline around t-SNE, redirecting to PCA, UMAP, or a parametric encoder.
 - **Bundles validated diagnostics.** `dr_diagnostics.py` computes trustworthiness, continuity, kNN overlap, and Shepard correlation in a consistent, tested way. The skill directs the agent to use it rather than reinventing metrics per analysis.
+
+---
+
+## Example output
+
+### PCA preprocessing for UMAP: 2.5× speedup with equivalent structure
+
+A common missed optimization: running UMAP directly on high-dimensional data when a quick PCA first pass to ~50 components preserves all meaningful variance and dramatically cuts runtime.
+
+![PCA → UMAP vs. direct UMAP](evals/pca_umap_comparison.png)
+
+Both embeddings recover the same five-cluster structure. Direct UMAP on 1000-dimensional data takes 14.4s; PCA(50) → UMAP takes 5.8s — 2.5× faster with no loss in separation quality. The skill recommends this pipeline automatically when input dimensionality is high and UMAP is the chosen method.
 
 ---
 

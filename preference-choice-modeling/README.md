@@ -130,18 +130,6 @@ With the skill, the response derives from the precision the decision actually re
 
 ---
 
-## Example output
-
-### IIA violation: adding a near-identical option steals share from an unrelated one
-
-The Independence of Irrelevant Alternatives (IIA) assumption baked into standard MNL models says that adding a new option reduces all existing options' shares proportionally — regardless of how similar the new option is to existing ones.
-
-![IIA violation](iia_violation.png)
-
-**Left** — Original binary choice: Car and Bus split 50/50. **Centre** — A Red Bus is added (near-identical to Blue Bus). MNL predicts each option gets 33%: Car drops from 50% to 33%. **Right** — The correct prediction: Car stays at 50%, unaffected by the bus-vs-bus competition; the two bus options split the remaining 50%. The base model validates the MNL result. The skill names the IIA violation immediately and redirects to Nested Logit (grouping transport modes into a nest) or Mixed Logit (allowing preference heterogeneity), with a clear explanation of why MNL systematically overestimates the new option's draw from unrelated alternatives.
-
----
-
 ## What the skill does
 
 The base model knows MaxDiff and CBC methods. The skill gives the agent the *conviction to apply them correctly*. The skill's most important moves are:
@@ -152,6 +140,18 @@ The base model knows MaxDiff and CBC methods. The skill gives the agent the *con
 - **Derive sample size from the decision, not platform defaults.** Sawtooth's n ≥ 300 floor and Qualtrics' n ≥ 200 are industry minimums, not targets. The skill derives from required precision on the smallest detectable share difference or utility gap, then checks whether subgroup readout requirements increase that floor.
 - **Establish dual-response None as the CBC default.** Omitting None inflates simulated shares and conflates relative preference with purchase likelihood. Explicit None is not the same as dual-response None. The skill names dual-response None as the default and identifies the specific narrow contexts where omitting None is defensible.
 - **Flag individual-level degradation at k > 60.** With 75+ MaxDiff items, each respondent sees only a fraction of the item pool — their personal utility estimates are partially imputed from the population prior. This must be stated explicitly: individual-level readout is weak at this scale, and aggregate or segment-level is the appropriate aspiration.
+
+---
+
+## Example output
+
+### IIA violation: adding a near-identical option steals share from an unrelated one
+
+The Independence of Irrelevant Alternatives (IIA) assumption baked into standard MNL models says that adding a new option reduces all existing options' shares proportionally — regardless of how similar the new option is to existing ones.
+
+![IIA violation](iia_violation.png)
+
+**Left** — Original binary choice: Car and Bus split 50/50. **Centre** — A Red Bus is added (near-identical to Blue Bus). MNL predicts each option gets 33%: Car drops from 50% to 33%. **Right** — The correct prediction: Car stays at 50%, unaffected by the bus-vs-bus competition; the two bus options split the remaining 50%. The base model validates the MNL result. The skill names the IIA violation immediately and redirects to Nested Logit (grouping transport modes into a nest) or Mixed Logit (allowing preference heterogeneity), with a clear explanation of why MNL systematically overestimates the new option's draw from unrelated alternatives.
 
 ---
 

@@ -110,18 +110,6 @@ With the skill, the model identifies the confound with type-1 sensitivity and ro
 
 ---
 
-## Example output
-
-### Accuracy collapses two different problems into one number
-
-Two trigger systems. Trigger B has a higher hit rate (93% vs 82%) — the base model stops here and concludes B is better. SDT reveals they have completely different failure modes requiring completely different fixes.
-
-![Accuracy vs SDT decomposition](accuracy_vs_sdt.png)
-
-**Left** — Hit rate alone makes B look superior. **Centre** — ROC curves show B's operating point is far from the optimal frontier; it achieves high recall by firing on almost everything. **Right** — The SDT decomposition: A has high discriminability (d′=2.2) and a slightly conservative criterion (c=+0.2, minor wording tweak needed); B has poor discriminability (d′=0.9, content fix needed) and a very liberal criterion (c=−1.0, major threshold adjustment needed). Same metric, two completely different diagnoses.
-
----
-
 ## What the skill does
 
 The base model knows SDT formulas. The skill gives the agent the *conviction to apply the right ones*. The skill's most important moves are:
@@ -133,6 +121,18 @@ The base model knows SDT formulas. The skill gives the agent the *conviction to 
 - **Flag the two-step plug-in weakness.** Computing per-subject d' then running a t-test loses power, ignores unequal trial counts, and requires ad-hoc edge corrections. A probit GLMM (with random effects for subjects *and* items) is the modern default; the `signal:condition` interaction gives the d' difference directly.
 - **Route metacognition to meta-d', not gamma.** Confidence–accuracy correlations confound type-1 sensitivity. meta-d'/M-ratio controls for this; HMeta-d gives robust estimates with sparse data.
 - **Interpret c relative to c_opt, not c = 0.** Under rare signals or asymmetric payoffs, a positive c is rational, not biased. The optimal criterion depends on base rates and payoffs.
+
+---
+
+## Example output
+
+### Accuracy collapses two different problems into one number
+
+Two trigger systems. Trigger B has a higher hit rate (93% vs 82%) — the base model stops here and concludes B is better. SDT reveals they have completely different failure modes requiring completely different fixes.
+
+![Accuracy vs SDT decomposition](accuracy_vs_sdt.png)
+
+**Left** — Hit rate alone makes B look superior. **Centre** — ROC curves show B's operating point is far from the optimal frontier; it achieves high recall by firing on almost everything. **Right** — The SDT decomposition: A has high discriminability (d′=2.2) and a slightly conservative criterion (c=+0.2, minor wording tweak needed); B has poor discriminability (d′=0.9, content fix needed) and a very liberal criterion (c=−1.0, major threshold adjustment needed). Same metric, two completely different diagnoses.
 
 ## How the wrong method changes the numbers
 

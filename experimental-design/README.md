@@ -91,15 +91,47 @@ The base model knows experiment design. The skill gives the agent the *convictio
 - **Detect SRM before interpreting results.** Sample Ratio Mismatch — where the ratio of treatment to control users diverges from the design target — invalidates all downstream inference. The skill checks for SRM as the first step in result interpretation, before any effect estimate is discussed.
 - **Distinguish statistical from practical significance.** A 0.3% lift with p < .001 in a large experiment is a precise measurement of a negligible effect. The skill requires effect size comparison against the pre-specified MDE, not just a p-value threshold.
 
----
-
-## Five principles
+Five core principles:
 
 1. **Comparison / control.** An effect only means something against a counterfactual. Always ask: *compared to what?*
 2. **Randomization.** Random assignment makes treatment and control exchangeable on everything — measured and unmeasured — except the treatment. Without it you have correlation, not causation.
 3. **Replication.** One unit per condition tells you nothing about noise. Unit of analysis must match unit of randomization.
 4. **Local control.** Variance you remove by design (blocking, stratification, within-subjects) is cheaper than variance you overpower with sample size.
 5. **Pre-specification.** Decide the primary metric, test, stopping rule, and success threshold *before* seeing outcome data. The "garden of forking paths" manufactures false positives with no intent to cheat.
+
+---
+
+## Example output
+
+### Peeking inflates Type I error — sequential testing controls it
+
+Daily significance checks with a fixed p < .05 threshold inflate the true false positive rate far beyond the nominal 5%. This is not a theoretical concern — it compounds with every additional look.
+
+![Peeking inflates Type I error; O'Brien-Fleming controls it](peeking_type1_error.png)
+
+**Left** — Fixed-horizon threshold (p < .05 per look): with 20 interim peeks, the true Type I error rate reaches ~30–35%. A result "significant" at any one peek has a high probability of being noise. **Right** — O'Brien-Fleming spending function: by pre-registering the number of analyses and adjusting the threshold at each (spending more conservatively early, more liberally late), the cumulative false positive rate stays at nominal α regardless of how many looks are taken. The skill names the magnitude of the peeking problem — "this inflates Type I error to ~30–35%" lands differently than "peeking is a concern" — and routes to always-valid inference or group sequential testing rather than ad hoc Bonferroni corrections.
+
+---
+
+## Eval suite
+
+`evals/evals.json` — 9 task evals spanning the full workflow:
+
+| # | Name | What it tests |
+|---|---|---|
+| 1 | checkout-ab-full-brief | End-to-end A/B brief: randomization unit, ITT, guardrails, runtime, peeking warning, SRM, open decisions |
+| 2 | scoped-sample-size-onboarding | Focused sample-size answer: correct N, absolute vs. relative disambiguation, runtime translation, stays scoped |
+| 3 | critique-no-control-before-after | No-control critique: counterfactual missing, alternative explanations, constructive path forward |
+| 4 | within-subjects-navigation-study | Within-subjects design: counterbalancing, mixed-effects analysis, honest power limits |
+| 5 | quasi-experiment-state-fee-cap | DiD + synthetic control: parallel trends, threats, falsification checks |
+| 6 | social-interference-cluster-randomization | SUTVA violation: spillover direction, cluster randomization, design effect (ICC) |
+| 7 | file-based-power-from-csv | File-grounded power: reads CSV, derives baseline and traffic, runtime estimate, CUPED, seasonality |
+| 8 | reading-results-ship-decision | Result interpretation: SRM first, CI not just p-value, lift vs. MDE, statistical vs. practical significance |
+| 9 | cant-test-this-retrospective-pricing | Honest limits: no counterfactual, alternative explanations, best available methods, assumptions stated |
+
+`evals/trigger_eval.json` — 26 trigger-classification queries (13 should-invoke / 13 should-not).
+
+`evals/files/checkout_history.csv` — 63 days of synthetic checkout data used by eval 7.
 
 ---
 
@@ -155,54 +187,6 @@ Run the tests:
 ```bash
 python -m unittest scripts/test_power_analysis.py -v
 ```
-
----
-
-## Example output
-
-### Peeking inflates Type I error — sequential testing controls it
-
-Daily significance checks with a fixed p < .05 threshold inflate the true false positive rate far beyond the nominal 5%. This is not a theoretical concern — it compounds with every additional look.
-
-![Peeking inflates Type I error; O'Brien-Fleming controls it](peeking_type1_error.png)
-
-**Left** — Fixed-horizon threshold (p < .05 per look): with 20 interim peeks, the true Type I error rate reaches ~30–35%. A result "significant" at any one peek has a high probability of being noise. **Right** — O'Brien-Fleming spending function: by pre-registering the number of analyses and adjusting the threshold at each (spending more conservatively early, more liberally late), the cumulative false positive rate stays at nominal α regardless of how many looks are taken. The skill names the magnitude of the peeking problem — "this inflates Type I error to ~30–35%" lands differently than "peeking is a concern" — and routes to always-valid inference or group sequential testing rather than ad hoc Bonferroni corrections.
-
----
-
-## Evals
-
-`evals/evals.json` — 9 task evals spanning the full workflow:
-
-| # | Name | What it tests |
-|---|---|---|
-| 1 | checkout-ab-full-brief | End-to-end A/B brief: randomization unit, ITT, guardrails, runtime, peeking warning, SRM, open decisions |
-| 2 | scoped-sample-size-onboarding | Focused sample-size answer: correct N, absolute vs. relative disambiguation, runtime translation, stays scoped |
-| 3 | critique-no-control-before-after | No-control critique: counterfactual missing, alternative explanations, constructive path forward |
-| 4 | within-subjects-navigation-study | Within-subjects design: counterbalancing, mixed-effects analysis, honest power limits |
-| 5 | quasi-experiment-state-fee-cap | DiD + synthetic control: parallel trends, threats, falsification checks |
-| 6 | social-interference-cluster-randomization | SUTVA violation: spillover direction, cluster randomization, design effect (ICC) |
-| 7 | file-based-power-from-csv | File-grounded power: reads CSV, derives baseline and traffic, runtime estimate, CUPED, seasonality |
-| 8 | reading-results-ship-decision | Result interpretation: SRM first, CI not just p-value, lift vs. MDE, statistical vs. practical significance |
-| 9 | cant-test-this-retrospective-pricing | Honest limits: no counterfactual, alternative explanations, best available methods, assumptions stated |
-
-`evals/trigger_eval.json` — 26 trigger-classification queries (13 should-invoke / 13 should-not).
-
-`evals/files/checkout_history.csv` — 63 days of synthetic checkout data used by eval 7.
-
----
-
-## Install
-
-**Upload the `.skill` file** in any Claude interface that supports skills (claude.ai → Settings → Skills → Upload).
-
-**Or drop the folder** into your local skills directory:
-
-```
-~/.claude/skills/experimental-design/
-```
-
-The `.skill` package excludes `evals/` — that directory stays in the repo for benchmarking and is not needed at runtime.
 
 ## License
 

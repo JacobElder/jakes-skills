@@ -24,6 +24,8 @@ The 7-step workflow: **pin the estimand → elicit decisions → flag nonsensica
 
 Steps 1–3 are judgment and reasoning with you. Steps 4–7 are execution using the bundled `scripts/multiverse.py` engine (pandas / numpy / matplotlib only) or R's `multiverse` / `specr` packages. The skill ships with both a Python engine and R snippets; the R examples have been executed against `multiverse` 0.6.2 and `specr` 1.0.0.
 
+The skill is opinionated — deliberately so. It will tell you when your effect is fragile, warn against using the multiverse to cherry-pick a preferred specification, flag when mixing DVs on different scales makes the specification curve meaningless, and apply the "reasonable specification" criteria to curate the decision set rather than pad it.
+
 ---
 
 ## Example use cases
@@ -117,12 +119,6 @@ The base model reports a single estimate from one specification. The skill repor
 ![Fragile vs. robust specification curves](specification_contrast.png)
 
 **Left — Fragile effect:** 24/64 specifications reach p < .05; the rest do not. Sign flips appear. The base model would report the original author's single estimate (orange star) without revealing that 40 other reasonable analytical choices produce non-significant results. **Right — Robust effect:** 64/64 specifications significant, consistent positive direction across all analytical choices. This is the finding worth reporting. The skill's job is to map the full curve before any conclusion is drawn — and to distinguish "the effect is fragile on this decision" (look at which row of the grid drives variance) from "the effect is fragile, full stop."
-
----
-
-## Honest framing enforced
-
-The skill is opinionated — deliberately so. It will tell you when your effect is fragile, warn against using the multiverse to cherry-pick a preferred specification, flag when mixing DVs on different scales makes the specification curve meaningless, and apply the "reasonable specification" criteria to curate the decision set rather than pad it.
 
 ---
 

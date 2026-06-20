@@ -4,4 +4,8 @@ DS_attributes
 .claude/
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+node_modules/
 *-workspace/

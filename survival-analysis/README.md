@@ -118,6 +118,20 @@ With the skill, the response identifies why log-rank fails here:
 
 ---
 
+## What the skill does
+
+The base model knows survival analysis methods. The skill gives the agent the *conviction to apply them correctly*. Its most important moves are:
+
+- **Catch immortal time bias before it contaminates a result.** Time-varying treatment coded as a baseline covariate is one of the most common and consequential errors in observational survival analysis. The skill names it by name and provides the counting-process fix.
+- **Block 1−KM and naïve censoring when competing events are present.** Treating one event as censoring on another's time-to-event overestimates cumulative incidence. The skill routes to Aalen-Johansen CIFs and names cause-specific Cox vs Fine-Gray as answering different questions (etiology vs absolute risk).
+- **Flag left truncation when age is the time scale.** Subjects entered the study at varying ages; `Surv(age_at_exit, event)` assumes they were at risk since birth. The skill always checks for delayed entry and corrects to `Surv(age_at_entry, age_at_exit, event)`.
+- **Redirect from standard log-rank against crossing or delayed effects.** Log-rank cancels out when early and late differences are opposite. The skill names FH(0,1) for delayed effects, MaxCombo when shape is unknown, and RMST as the effect summary that's interpretable under any hazard pattern.
+- **Name complete separation before it produces fake output.** `coxph` reports "convergence achieved" with HR near 0 or ∞ and enormous SE. The skill recognizes this symptom, describes why partial likelihood fails, and redirects to Firth-penalized Cox or descriptive reporting.
+- **Require PH checking — and enforce the right escalation.** Significant `cox.zph` is not optional. The skill holds the line when users want to "just report the HR anyway," while correctly updating when the residual plot shows a mild deviation in a large sample.
+- **Maintain Python-honest claims.** Several methods have clean R implementations but no Python equivalent (joint frailty, Royston-Parmar splines, cluster-robust SEs in Andersen-Gill). The skill flags these as ecosystem gaps rather than offering a broken workaround.
+
+---
+
 ## Example output
 
 ### Clustered recurrent events: naive vs. robust standard errors
@@ -135,20 +149,6 @@ When subjects can experience multiple events (infections, hospitalizations, rela
 **Bottom right** — p-values: naive p = 0.0046, robust p = 0.0004. In this simulated example the robust model is more conservative for the SE but the point estimate is more precisely estimated once clustering is properly accounted for.
 
 The skill catches this before it becomes a published table — naming `cluster_col` in `lifelines.CoxPHFitter` or `robust=True` in R's `coxph` with a `cluster()` term.
-
----
-
-## What the skill does
-
-The base model knows survival analysis methods. The skill gives the agent the *conviction to apply them correctly*. Its most important moves are:
-
-- **Catch immortal time bias before it contaminates a result.** Time-varying treatment coded as a baseline covariate is one of the most common and consequential errors in observational survival analysis. The skill names it by name and provides the counting-process fix.
-- **Block 1−KM and naïve censoring when competing events are present.** Treating one event as censoring on another's time-to-event overestimates cumulative incidence. The skill routes to Aalen-Johansen CIFs and names cause-specific Cox vs Fine-Gray as answering different questions (etiology vs absolute risk).
-- **Flag left truncation when age is the time scale.** Subjects entered the study at varying ages; `Surv(age_at_exit, event)` assumes they were at risk since birth. The skill always checks for delayed entry and corrects to `Surv(age_at_entry, age_at_exit, event)`.
-- **Redirect from standard log-rank against crossing or delayed effects.** Log-rank cancels out when early and late differences are opposite. The skill names FH(0,1) for delayed effects, MaxCombo when shape is unknown, and RMST as the effect summary that's interpretable under any hazard pattern.
-- **Name complete separation before it produces fake output.** `coxph` reports "convergence achieved" with HR near 0 or ∞ and enormous SE. The skill recognizes this symptom, describes why partial likelihood fails, and redirects to Firth-penalized Cox or descriptive reporting.
-- **Require PH checking — and enforce the right escalation.** Significant `cox.zph` is not optional. The skill holds the line when users want to "just report the HR anyway," while correctly updating when the residual plot shows a mild deviation in a large sample.
-- **Maintain Python-honest claims.** Several methods have clean R implementations but no Python equivalent (joint frailty, Royston-Parmar splines, cluster-robust SEs in Andersen-Gill). The skill flags these as ecosystem gaps rather than offering a broken workaround.
 
 ---
 

@@ -78,20 +78,6 @@ With the skill, the response corrects the false premise directly and stops befor
 
 ---
 
-## Example output
-
-### The difference-in-significance fallacy
-
-"Significant in one group, not the other" is not evidence that the effects differ. The correct test is a direct comparison of the two coefficients — and its SE is √(SE₁² + SE₂²), which is larger than either individual SE.
-
-![Difference in significance fallacy](diff_in_significance_fallacy.png)
-
-**Left** — Drug A (β = 0.42, p = 0.03) and Drug B (β = 0.31, p = 0.12) both plotted against zero. Drug A's CI excludes zero; Drug B's CI includes it. The naive reading: A works, B doesn't. **Centre** — The same two estimates plotted against *each other*: the difference is 0.11, with a CI of [−0.10, +0.32]. The CI easily includes zero (p = 0.18). The two effects cannot be distinguished. **Right** — The key geometry: the SE of a difference is √(SE₁² + SE₂²) ≈ 1.41× larger than either individual SE, which is exactly why "just outside the threshold" vs "just inside the threshold" so often fails to hold up as a real comparison.
-
-The skill opens with "No — that's the difference-in-significance fallacy" and explains the correct test before offering any alternatives.
-
----
-
 ## What the skill does
 
 The base model has strong statistical knowledge. The skill's job is to change **defaults and framing** — whether it pushes back on a false premise or validates it with caveats, whether it names the correct estimand move before choosing a procedure, whether it holds the "simple method is fine here" position when over-engineering is the real risk.
@@ -107,6 +93,20 @@ The skill's most important moves:
 - **Handle post-selection inference.** Stepwise regression invalidates the p-values in the final model — the selection step is implicit multiplicity.
 - **Apply MCAR/MAR/MNAR taxonomy correctly.** Complete-case analysis is unbiased under different conditions than researchers typically assume.
 - **Stop when the simple method is adequate.** "Welch's t-test is fine here" is a complete answer — don't append alternatives that imply a problem that doesn't exist.
+
+---
+
+## Example output
+
+### The difference-in-significance fallacy
+
+"Significant in one group, not the other" is not evidence that the effects differ. The correct test is a direct comparison of the two coefficients — and its SE is √(SE₁² + SE₂²), which is larger than either individual SE.
+
+![Difference in significance fallacy](diff_in_significance_fallacy.png)
+
+**Left** — Drug A (β = 0.42, p = 0.03) and Drug B (β = 0.31, p = 0.12) both plotted against zero. Drug A's CI excludes zero; Drug B's CI includes it. The naive reading: A works, B doesn't. **Centre** — The same two estimates plotted against *each other*: the difference is 0.11, with a CI of [−0.10, +0.32]. The CI easily includes zero (p = 0.18). The two effects cannot be distinguished. **Right** — The key geometry: the SE of a difference is √(SE₁² + SE₂²) ≈ 1.41× larger than either individual SE, which is exactly why "just outside the threshold" vs "just inside the threshold" so often fails to hold up as a real comparison.
+
+The skill opens with "No — that's the difference-in-significance fallacy" and explains the correct test before offering any alternatives.
 
 ---
 
