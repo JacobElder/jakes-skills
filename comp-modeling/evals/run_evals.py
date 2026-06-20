@@ -64,7 +64,7 @@ def call_claude(prompt: str, system_extra: str | None = None,
            "--dangerously-skip-permissions"]
     if system_extra:
         cmd += ["--append-system-prompt", system_extra]
-    result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+    result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
     return result.stdout.strip()
 
 

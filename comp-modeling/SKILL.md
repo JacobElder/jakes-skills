@@ -25,14 +25,16 @@ description: >
     transformer fine-tuning, regression for prediction, churn modeling
   - SEM, CFA, factor analysis, latent variable structural models
   - Descriptive statistics on aggregate behavior (means, ANOVAs, t-tests) when the user
-    has not expressed interest in a process model
+    has not expressed interest in a process model — including "compare RT across conditions"
+    or "compare accuracy between groups" when no process model is mentioned
   - Deep learning, reinforcement learning for robotics/games (not human behavior)
   - Bayesian statistics that aren't modeling cognition (e.g., Bayesian regression for
     non-behavioral data)
 
-  EDGE CASES — when ambiguous (e.g., "I have RT data"), ask one clarifying question
-  before loading the skill: are they modeling the decision process (DDM) or just
-  summarizing condition means?
+  EDGE CASES — when ambiguous (e.g., "I have RT data" or "I want to compare conditions"),
+  ask one clarifying question BEFORE loading the skill: are they modeling the decision
+  process (DDM, race model) or just comparing summary statistics (mean RT, t-test)?
+  Only load the skill if the user confirms they want a process model.
 ---
 
 # Computational & Cognitive Modeling
@@ -141,7 +143,7 @@ There are field-wide failure modes that every careful modeler watches for. When 
 - **A reward prediction error regressor is only as good as the model that produced it.** If you fit a model badly and then use its trial-by-trial RPE in an fMRI GLM, the neural results inherit the modeling sins.
 - **Never use the word "publishable" to evaluate a parameter estimate or model fit.** The correct framing is to name what is missing: parameter recovery, at least one comparison model, and posterior predictive checks. If all three are done, say "the evidence supports this interpretation" — not "publishable."
 - **The two-step task's `w` has documented test-retest reliability problems.** When a user wants to correlate `w` with clinical or trait measures, say this explicitly: Brown et al. (2020), Shahar et al. (2019), and Kool et al. (2016) document poor test-retest reliability of `w`. Individual-difference correlations built on `w` inherit that noise. Always report `w` with full uncertainty; caution against treating it as a precision measure of model-based RL.
-- **A negative learning rate in a standard RL/bandit model is almost always a bug.** In Rescorla-Wagner / Q-learning on bandit, reversal, or instrumental learning tasks, α ∈ [0,1] by definition — Q-values moving away from outcomes on every trial is not coherent. α < 0 here means a sign error in the likelihood (reversed RPE), an unconstrained parameter, or a data-coding mistake. Check the code before interpreting. **Exception:** in motivated cognition, self-concept updating, and social learning models, negative learning rates can be legitimate theoretical constructs — subjects updating *away* from self-discrepant feedback (coherence motivation), outgroup social information, or expectation-violating evidence. If someone is fitting one of these models: (1) verify the parameter space explicitly allows negative values by design, with a theoretical prediction motivating it; (2) check that recovery confirms the parameter is identifiable when α can go negative; (3) do not treat it as a bug unless the task is a standard reward-learning paradigm.
+- **A negative learning rate in a standard RL/bandit model is a bug — say so directly.** In Rescorla-Wagner / Q-learning on bandit, reversal, or instrumental learning tasks, α ∈ [0,1] by definition — Q-values moving away from outcomes on every trial is not coherent. α < 0 in a standard MLE fit means: a sign error in the likelihood (reversed RPE), an unconstrained optimizer, or a data-coding mistake. **Do not hedge with "not necessarily" when the user is fitting a standard model with per-subject MLE.** Diagnose the bug first; only after ruling out implementation errors can you consider whether the task is a special case. **Exception (applies only when the user explicitly names a non-standard model):** in motivated cognition, self-concept updating, and social learning models specifically designed to allow negative rates, α < 0 can be a legitimate theoretical construct. This exception does NOT apply to standard reward-learning paradigms. If the user is using per-subject MLE on a standard bandit or reversal task, call it a bug.
 - **Pooling trials across subjects to get "more data" destroys the analysis.** Concatenating all subjects' trial sequences and fitting one set of parameters violates trial independence (trials from different subjects are treated as a single learner), erases individual differences, and produces parameters that describe no real subject. The correct approach is either per-subject estimation (MLE/MAP) or hierarchical Bayes. Grand-mean fitting is never an acceptable substitute.
 - **Fitting to block-level accuracy curves instead of trial-by-trial choices loses the likelihood.** The RL/DDM generative model is defined over individual trial outcomes (which arm was chosen, was a reward received?). Fitting the model to aggregated accuracy per block discards the RPE sequence, prevents recovery of trial-level latent variables, and produces parameters that cannot be interpreted. Always fit to the full trial-by-trial sequence.
 - **ε-greedy produces a degenerate likelihood for behavioral data — use softmax instead.** ε-greedy assigns equal probability to all non-greedy options, so the optimizer receives no gradient signal about *which* non-greedy option was chosen. This makes the likelihood non-differentiable and poorly suited to MLE, MAP, or MCMC. Softmax provides a smooth, differentiable likelihood where every choice carries information about β. ε-greedy is appropriate for ML/robotics control; for human behavioral fitting it is almost never the right choice. See `references/reinforcement_learning.md` (ε-greedy pitfall).
@@ -163,7 +165,7 @@ If the task is "an RL bandit-ish thing on simple choices," `hBayesDM::bandit2arm
 
 Common failure modes and the first thing to try:
 
-- **MCMC divergences, R-hat > 1.01, low ESS** → reparameterize (non-centered for hierarchical scales; logit-transform bounded parameters); tighten priors slightly; increase `adapt_delta` to 0.95 or 0.99; check the model code for label-switching or unidentified mixtures.
+- **MCMC divergences, R-hat > 1.01, low ESS** → reparameterize first (non-centered for hierarchical scales; logit-transform bounded parameters); tighten priors slightly; increase `adapt_delta` to 0.95 or 0.99; check the model code for label-switching or unidentified mixtures. **Do NOT just run more iterations as the primary fix** — if the geometry is wrong, more iterations sample the wrong region longer. Reparameterization and `adapt_delta` are the structural fixes; more iterations only help once those are in place.
 - **MLE doesn't converge / wildly different estimates across restarts** → likelihood surface is rough; switch to MAP with weak priors; check for bugs in the log-likelihood (sign errors are common); use multiple random starts and accept the best.
 - **Parameters at the boundary** → switch to MAP/HB; reconsider the parameter range; check whether the experiment actually contains information about that parameter.
 - **Model fits but predicts qualitatively wrong behavior** → that's a model misspecification, not a fitting issue. Do posterior predictive checks and find the discrepancy.

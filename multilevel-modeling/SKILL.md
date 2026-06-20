@@ -114,7 +114,7 @@ If the user's request is underspecified, ask before fitting. Useful elicitation 
 - "For each predictor, does it vary within clusters, between clusters, or both?"
 - "Are you committed to frequentist, or open to a Bayesian fit? With few clusters or convergence trouble, Bayesian regularization helps a lot."
 
-Use the mobile-friendly interactive question tool when there are 1–3 well-defined choices to elicit. Don't ask more than 3 at once.
+Don't ask more than 3 questions at once.
 
 ## When NOT to use MLM — and what to use instead
 

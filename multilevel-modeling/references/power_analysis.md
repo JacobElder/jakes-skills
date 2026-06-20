@@ -93,9 +93,16 @@ def simulate_one(n_subjects, n_per_subject, effect_size, sigma_u=1.0, sigma_e=1.
 n_sims, rejections = 500, 0
 for i in range(n_sims):
     d = simulate_one(50, 20, effect_size=0.3, seed=i)
-    # Frequentist: fit with pymer4 or statsmodels, check p < .05
-    # Or Bayesian: fit, check posterior excludes 0
-    ...
+    # Frequentist path: fit with pymer4 or statsmodels, check p < .05
+    try:
+        from pymer4.models import Lmer
+        fit = Lmer("y ~ treatment + (1 | subject)", data=d)
+        result = fit.fit(REML=False)
+        p_val = result["P-val"]["treatment"]
+        if p_val < 0.05:
+            rejections += 1
+    except Exception:
+        pass  # skip failed fits
 power = rejections / n_sims
 ```
 
@@ -120,6 +127,36 @@ Gelman & Carlin's design analysis framework is especially useful for small-clust
 # Average over many sims under the assumed true effect.
 ```
 
+## Cluster RCT power: the binding constraint
+
+This section covers the most commonly misunderstood aspect of cluster RCT power.
+
+**The binding precision constraint for a cluster-level treatment effect is the number of clusters per arm, not total student N.**
+
+When treatment is randomized at the school level (or clinic, village, etc.), the school count per arm is what determines power for the treatment effect. Adding more students within existing schools increases within-school precision but contributes zero additional cluster-level degrees of freedom. A study with 20 schools per arm has 20 school-level comparisons regardless of whether each school has 25 students or 250. Adding 500 more students spread evenly across the same 20 schools does not improve power for the treatment effect one bit.
+
+This is true even if you analyze school means. Two studies, both with 20 school means per arm:
+- Study A: means based on n = 10 students per school
+- Study B: means based on n = 100 students per school
+
+Study B's school means are estimated more precisely (less within-school sampling error), which can improve power modestly. But the school-level sample size (20 per arm) is still the primary power driver — and once cluster sizes are reasonably large (say, n ≥ 20–30), additional students yield diminishing returns relative to adding more clusters.
+
+**When someone reports G*Power results for a cluster RCT:**
+
+Even if the user correctly treats the school as the unit of analysis (comparing school means, k = 20 per arm), G*Power still falls short:
+
+1. The effect size input must be in school-mean SD units, not student-level SD. These differ by a factor of √(ρ + (1 − ρ)/n) where ρ = ICC and n = students per school. If the user entered a student-level Cohen's d, the power estimate is wrong.
+2. G*Power does not accept ICC as an explicit input. The ICC-to-effect-size conversion must be done manually before entering G*Power.
+3. G*Power does not produce a sensitivity analysis over plausible ICC values, which grant reviewers (especially NIH/IES study sections) require.
+
+**Recommended tools for cluster RCT power:**
+- **PowerUp! / PowerUpR** (Dong & Maynard, 2013) — purpose-built for cluster RCTs, ICC is an explicit input, widely cited in IES proposals
+- **Spybrook et al. formulas** — the analytic standard for two-level cluster RCTs in education research
+- **`simr` in R** — simulation-based, handles unequal cluster sizes, covariate adjustment, and produces power curves
+- **Optimal Design / PowerUp!** — free tools with GUI for non-R users
+
+Always report a sensitivity table over plausible ICC values (e.g., ρ = 0.05–0.20 for educational outcomes) rather than a single power number.
+
 ## Practical heuristics from the literature
 
 - **Maas & Hox (2005)** simulation work: with ~30 clusters of ~30, fixed-effect estimates are unbiased but their SEs are downward biased by ~15%. Use Kenward-Roger or Bayesian estimation in this regime.
@@ -137,7 +174,7 @@ Spell out the assumptions. A power analysis without stated assumed effect size, 
 
 ## Common pitfalls
 
-1. **Using OLS power formulas for MLM** (G*Power without the multilevel module, etc.). Massively overestimates power for clustered designs. For cluster RCTs specifically: G*Power run on the number of *clusters* per arm tells you power for a school-means comparison, which ignores the ICC and design effect on student outcomes. G*Power run on total *students* assumes independence. Neither is correct — use `simr`, PowerUp!, or the Spybrook et al. formulas.
+1. **Using OLS power formulas for MLM** (G*Power without the multilevel module, etc.). Massively overestimates power for clustered designs. For cluster RCTs: even if you correctly use the number of *clusters* per arm as the G*Power input (comparing school means), G*Power still fails because (a) the effect size must be in school-mean SD units adjusted for ICC — not student-level SD, and (b) G*Power has no ICC input and produces no sensitivity analysis over ICC. G*Power run on total *students* is additionally wrong because it assumes independence. Use `simr`, PowerUp!, or the Spybrook et al. formulas — these accept ICC as an explicit parameter. The fundamental precision constraint for the treatment effect is the **number of clusters per arm**, not total student N; adding students within existing schools does not add cluster-level degrees of freedom or improve power for the cluster-level treatment effect.
 2. **Assuming ICC = 0 to get a "best case" estimate.** That's not best case; that's "no clustering, no MLM needed." Use realistic ICC.
 3. **Powering on the pilot estimate of the effect.** Pilot estimates are biased upward (the ones that get followed up are the ones that looked promising). Power on the smallest effect you'd care about, not the one you observed.
 4. **Ignoring power for variance components** when those are the inferential target (e.g., is there meaningful between-school variation?). Variance components need many clusters to be precisely estimated, far more than fixed effects do.

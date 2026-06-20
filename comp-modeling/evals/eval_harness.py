@@ -205,7 +205,9 @@ EVALS: list[Eval] = [
         prompt="I have a bunch of subjects whose fitted learning rate is essentially 1.0 (at the upper bound), and inverse temperature β is all over the place. The model fit is okay on LOO.",
         category="content",
         rubric_keywords=["boundary", "trade-off", "tradeoff", "identifia", "non-identif"],
-        rubric_must_have_all=["α", "β"],  # or 'alpha', 'beta' — accept either
+        rubric_must_have_all=[],  # removed encoding-fragile Greek char check;
+                                  # rubric_keywords already capture the core α/β trade-off concept;
+                                  # models may write "alpha"/"beta" (English) not "α"/"β" (Unicode)
         notes="Should recognize the α/β identification issue.",
     ),
     Eval(
@@ -313,8 +315,13 @@ EVALS: list[Eval] = [
             "beta   3.21   0.05  0.41  2.44 2.93 3.20 3.49 4.03    220  1.03\n"
         ),
         category="content",
-        rubric_keywords=["Rhat", "1.01", "convergence", "ESS", "n_eff", "more iter"],
-        notes="Should engage with the actual diagnostics, not say 'looks great'.",
+        rubric_keywords=["Rhat", "1.01", "convergence", "ESS", "n_eff", "adapt_delta",
+                         "reparameter", "non-centered"],
+        rubric_must_not_have=["looks great", "looks fine", "looks good"],
+        notes="Should engage with the actual diagnostics and flag Rhat > 1.01 and low n_eff. "
+              "Must NOT say the fit looks good. Must recommend reparameterization or adapt_delta, "
+              "NOT just 'run more iterations'. Removed 'more iter' keyword — that is the wrong fix "
+              "per the skill's MCMC debugging section.",
     ),
 
     # ------- Gap-fill evals (added post-review) -------

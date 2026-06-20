@@ -99,7 +99,7 @@ Then derive from there. See the references for the underlying math.
 **MaxDiff items (k):**
 - ≤ 15: comfortable for full design (every respondent sees every item ~3–5 times)
 - 16–30: full design still feasible; respondent burden becomes the constraint, not statistical
-- 31–60: **sparse MaxDiff territory**. Each respondent sees a subset (typically 3–5 showings/item per respondent, designed so the *aggregate* design is balanced)
+- 31–60: **sparse MaxDiff territory**. Each respondent sees a subset (typically 3–5 showings/item per respondent, designed so the *aggregate* design is balanced). Additionally ensure adequate co-occurrence balance: each item should appear alongside every other item at least 2–3 times across respondents so that pair utilities are directly estimated, not inferred through indirect chains.
 - 61–150: sparse MaxDiff or Bandit MaxDiff; **individual-level utilities degrade — this must be stated explicitly when k is in this range.** Each respondent sees only a fraction of the item pool, so their personal utility estimates are partially imputed from the population prior. Plan for aggregate or segment-level readout as the primary deliverable. Do not present individual-level HB scores as reliable without explicitly noting this limitation.
 - 150+: rethink the list. You're probably conflating multiple constructs. Cluster items first, then MaxDiff the clusters, then MaxDiff within clusters in a follow-up.
 
