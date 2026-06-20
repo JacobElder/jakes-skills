@@ -22,14 +22,14 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [multiverse-analysis](#multiverse-analysis) | Multiverse / specification-curve analysis | +21.9pp (32/32 with skill, 25/32 base) |
 | [network-analysis](#network-analysis) | Network science & social network analysis | +32.5pp across 8 trap-based evals |
 | [nilearn-fmri](#nilearn-fmri) | fMRI analysis with nilearn | +42pp across 8 scenarios |
-| [preference-choice-modeling](#preference-choice-modeling) | MaxDiff and choice-based conjoint (CBC, ACBC, anchoring) | +41.4pp (28/29 with skill, 16/29 base) |
+| [preference-choice-modeling](#preference-choice-modeling) | MaxDiff and choice-based conjoint (CBC, ACBC, anchoring) | +44.8pp (29/29 with skill, 16/29 base) |
 | [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +15.4pp across 8 scenarios (intersection skill) |
 | [psychometrics](#psychometrics) | Measurement theory & scale development | +97.5pp across 8 scenarios |
 | [response-surface-analysis](#response-surface-analysis) | Congruence RSA (Edwards-Parry polynomial regression, a1–a5) | +31.8pp (66/66 with skill, 45/66 base) |
 | [robust-statistics](#robust-statistics) | Applied statistical reasoning: estimands, fallacies, diagnostics, GLMs | +38pp overall (37/37 with skill, 23/37 base) |
 | [sequence-analysis-hmm](#sequence-analysis-hmm) | Hidden Markov Models & sequence analysis | +40pp across 10 content evals |
-| [signal-detection-theory](#signal-detection-theory) | Signal Detection Theory (d', ROC, meta-d', sensitivity vs. bias) | +19.2pp (52/52 with skill, 42/52 base) |
-| [survey-design](#survey-design) | Survey & questionnaire design | +52pp across 6 evals (100% vs. 48.5%) |
+| [signal-detection-theory](#signal-detection-theory) | Signal Detection Theory (d', ROC, meta-d', sensitivity vs. bias) | +20.7pp (58/58 with skill, 46/58 base) |
+| [survey-design](#survey-design) | Survey & questionnaire design | +48.6pp across 6 evals (100% vs. 51.4%) |
 | [survival-analysis](#survival-analysis) | Time-to-event modeling (R & Python) | +28pp (29/29 with skill, 21/29 base) |
 
 ---
@@ -208,7 +208,7 @@ Apply practitioner-grade methodology to MaxDiff and choice-based conjoint (CBC, 
 
 **Why it matters:** The base model knows MaxDiff and CBC methods but validates common plan errors. It recommends prohibitions as "the standard approach" for unrealistic attribute combinations (alternative-specific design is better, with no D-efficiency cost and no confounding). It accepts z-score equating for cross-wave comparisons (anchored share-above-anchor is the only valid metric). It gives flat sample-size rules of thumb rather than deriving from required simulator precision on the smallest detectable share difference. The skill takes the opinionated practitioner position on all six documented traps.
 
-**Gap:** +41.4pp — 28/29 with skill (96.6%) vs. 16/29 base (55.2%). Largest gains on prohibitions vs. alternative-specific design (+50pp), cross-wave comparability (+50pp), anchoring for absolute importance (+50pp), and subgroup sample size derivation (+50pp).
+**Gap:** +44.8pp — 29/29 with skill (100%) vs. 16/29 base (55.2%). Largest gains on prohibitions vs. alternative-specific design (+50pp), cross-wave comparability (+50pp), anchoring for absolute importance (+50pp), and subgroup sample size derivation (+50pp).
 
 → [preference-choice-modeling/](preference-choice-modeling/)
 
@@ -280,7 +280,7 @@ Apply Signal Detection Theory correctly to any two-class discrimination task —
 
 **Why it matters:** The base model knows SDT formulas but applies them without checking their assumptions and validates popular but flawed shorthand. It accepts the AUC→d' conversion without flagging the equal-variance assumption (recognition memory z-ROC slopes cluster at ≈ 0.8, not 1.0). It recommends gamma as a metacognition measure without routing to meta-d'. It reads the diagnosticity ratio (HR/FAR) as a sensitivity measure rather than a criterion-confounded ratio. It applies 2AFC d' to same-different tasks. The skill catches each of these before they become published findings.
 
-**Gap:** +19.2pp — 52/52 with skill (100%) vs. 42/52 base (80.8%). Key differentiating evals: AUC→d' equal-variance trap (+67pp), same-different task structure (+67pp), metacognition routing to HMeta-d, and LLM classifier criterion vs. capability decomposition.
+**Gap:** +20.7pp — 58/58 with skill (100%) vs. 46/58 base (79.3%). Key differentiating evals: AUC→d' equal-variance trap (+67pp), same-different task structure (+67pp), rating-data z-ROC fitting (+67pp), metacognition routing to HMeta-d, and LLM classifier criterion vs. capability decomposition.
 
 → [signal-detection-theory/](signal-detection-theory/)
 
@@ -292,7 +292,7 @@ Design, review, and repair self-report surveys and questionnaires. Covers questi
 
 **Why it matters:** The base model knows survey design facts but gives accommodating responses. When a user insists on a methodologically weak design, it validates the choices and provides formatting tips rather than explaining the data-quality cost. The skill gives the agent the conviction to explain the *specific* mechanism behind each design problem — the variance loss from a 2-point scale, the satisficing dynamic that causes "select all that apply" to undercount late items, the acquiescence inflation from agree/disagree batteries — and hold that position under pushback. It also enforces a clean boundary with psychometrics: questions about reliability coefficients, factor analysis, and IRT are handed off rather than improvised.
 
-**Gap:** +52pp — 100% with skill vs. 48.5% base (36/36 assertions across 6 evals). Biggest gaps on the pushback eval (+83pp — base model validates user's bad choices; skill explains the data-quality cost and recommends the correct alternative) and the calibration eval (correctly avoids inventing flaws in a well-designed instrument).
+**Gap:** +48.6pp — 100% with skill vs. 51.4% base (35/35 assertions across 6 evals). Biggest gaps on the pushback eval (+83pp — base model validates user's bad choices; skill explains the data-quality cost and recommends the correct alternative) and the calibration eval (correctly avoids inventing flaws in a well-designed instrument).
 
 → [survey-design/](survey-design/)
 
