@@ -183,21 +183,21 @@ result = fit_zroc_mle(hits_by_rating, fas_by_rating)
 
 ## Benchmark: skill vs. base model
 
-Evaluated across 15 scenarios covering the core SDT failure modes. Each eval has 3–4 specific, objectively checkable assertions graded by a separate model.
+Evaluated across 17 scenarios covering the core SDT failure modes. Each eval has 3–4 specific, objectively checkable assertions graded by a separate model.
 
 ```
-baseline  : 42/52 (80.8%)
-with_skill: 52/52 (100.0%)
-delta     : +19.2pp
+baseline  : 46/58 (79.3%)
+with_skill: 58/58 (100.0%)
+delta     : +20.7pp
 ```
 
 ```mermaid
 xychart-beta horizontal
     title "Pass rate by eval (■ with skill  □ base model)"
-    x-axis ["task-structure same-diff", "auc-to-dprime trap", "optimal-criterion", "routing DDM", "aprime claim", "from-scratch analysis", "c-sign interpretation", "llm-classifier", "2afc-vs-yesno", "metacognition", "two-step vs GLMM", "extreme-cell correction", "unequal-variance d'", "diagnosticity-ratio", "vigilance criterion"]
+    x-axis ["task-structure same-diff", "auc-to-dprime trap", "optimal-criterion", "routing DDM", "aprime claim", "from-scratch analysis", "c-sign interpretation", "llm-classifier", "2afc-vs-yesno", "metacognition", "two-step vs GLMM", "extreme-cell correction", "unequal-variance d'", "diagnosticity-ratio", "vigilance criterion", "rating zROC", "pooling artifact"]
     y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
-    bar [33, 33, 100, 67, 67, 100, 100, 67, 100, 75, 100, 75, 100, 75, 100]
+    bar [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
+    bar [33, 33, 100, 67, 67, 100, 100, 67, 100, 75, 100, 75, 100, 75, 100, 33, 100]
 ```
 
 ### Results by eval
@@ -219,8 +219,10 @@ xychart-beta horizontal
 | 12 | optimal-criterion-rare-signals | 3/3 ✓ | 3/3 ✓ |
 | 13 | auc-to-dprime-equal-variance-trap | 1/3 | **3/3 ✓** |
 | 14 | task-structure-same-different | 1/3 | **3/3 ✓** |
+| 15 | rating-data-zroc-fitting | 1/3 | **3/3 ✓** |
+| 16 | pooling-aggregation-artifact | 3/3 ✓ | 3/3 ✓ |
 
-### Where the base model fails (8 differentiating evals)
+### Where the base model fails (9 differentiating evals)
 
 | Eval | What the base model gets wrong |
 |------|-------------------------------|
@@ -232,6 +234,7 @@ xychart-beta horizontal
 | routing-decline-to-sibling-skill | Doesn't explain the DDM/SDT boundary or route to evidence-accumulation frameworks by name |
 | auc-to-dprime-equal-variance-trap | Accepts the AUC→d' conversion without flagging the equal-variance assumption |
 | task-structure-same-different | Applies the 2AFC formula to a same-different task; doesn't note efficiency loss vs. 2AFC |
+| rating-data-zroc-fitting | Doesn't fit the z-ROC from confidence-rating data or extract slope/intercept to derive d_a and A_z |
 
 ### Where the base model is partially right
 

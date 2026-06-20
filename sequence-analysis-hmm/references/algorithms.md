@@ -106,11 +106,26 @@ def viterbi(pi, A, B_obs):
 
 ## Baum-Welch (EM for HMMs)
 
+> **Pedagogical implementation only — do not copy for production use.**
+> The `baum_welch_step` function below mixes scaled forward probabilities with unscaled
+> backward probabilities. For sequences longer than ~100 time steps the unscaled backward
+> pass underflows to zero and the function silently returns wrong results. Production code
+> should either (1) rescale the backward pass using the same `c[t]` constants from the
+> forward pass, or (2) work entirely in log-space. See the warning comment inside the
+> function for details.
+
 E-step uses forward-backward to compute posterior expectations; M-step updates parameters in closed form. Iterate to convergence.
 
 ```python
 def baum_welch_step(X, pi, A, B_obs, emission_distribution):
-    """One iteration of EM. Returns updated parameters and log-likelihood."""
+    """One iteration of EM. Returns updated parameters and log-likelihood.
+
+    WARNING: This is a pedagogical implementation only. The backward pass here is
+    unscaled, which will underflow (→ 0) for sequences longer than ~100 time steps.
+    Production use: either (1) rescale backward using the same c[t] scaling constants
+    from the forward pass, or (2) use log-space computations throughout.
+    This function is correct only for very short sequences.
+    """
     T, K = B_obs.shape
 
     # E-step

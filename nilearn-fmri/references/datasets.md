@@ -205,7 +205,7 @@ from nilearn.image import resample_to_img
 atlas_resampled = resample_to_img(
     atlas.maps, fmri_img,
     interpolation="nearest",   # for label atlas; use "continuous" for probabilistic
-    force_resample=True, copy_header=True
+    force_resample=True
 )
 ```
 A `NiftiLabelsMasker` will also try to resample automatically when fitted, so often this isn't needed explicitly. But if you see "shapes don't match" errors, this is the fix.

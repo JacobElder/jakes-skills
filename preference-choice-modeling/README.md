@@ -159,12 +159,12 @@ The Independence of Irrelevant Alternatives (IIA) assumption baked into standard
 
 Evaluated across 2 iterations using trap-based evals — prompts where the naive helpful answer validates a methodological error or omits a critical caveat. Each eval has 4–5 specific, objectively checkable assertions. Executor agents write responses without seeing the assertions; a separate grader evaluates strictly against them.
 
-### Iteration 2 — results (7 scenarios)
+### Iteration 3 — results (7 scenarios)
 
 ```
-with_skill:    96.6%  (28/29 assertions)
+with_skill:    100.0% (29/29 assertions)
 without_skill: 55.2%  (16/29 assertions)
-delta:         +41.4pp
+delta:         +44.8pp
 ```
 
 ```mermaid
@@ -172,7 +172,7 @@ xychart-beta horizontal
     title "Pass rate by eval (■ with skill  □ base model)"
     x-axis ["Dual-response none", "Anchoring", "Cross-wave", "CBC sample size", "Sparse MaxDiff", "CBC prohibitions", "MaxDiff method"]
     y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 80, 100, 100]
+    bar [100, 100, 100, 100, 100, 100, 100]
     bar [75, 50, 50, 50, 60, 50, 50]
 ```
 
@@ -180,7 +180,7 @@ xychart-beta horizontal
 |------|:---:|:---:|:---:|
 | method-selection-maxdiff | 100% | 50% | +50pp |
 | prohibitions-cbc-design | 100% | 50% | +50pp |
-| sparse-maxdiff-design | 80% | 60% | +20pp |
+| sparse-maxdiff-design | 100% | 60% | +40pp |
 | cbc-sample-size-with-subgroups | 100% | 50% | +50pp |
 | cross-wave-maxdiff-comparability | 100% | 50% | +50pp |
 | anchoring-absolute-importance | 100% | 50% | +50pp |
@@ -202,7 +202,8 @@ xychart-beta horizontal
 | Iteration | With skill | Without skill | Delta | Notes |
 |---|:---:|:---:|:---:|---|
 | 1 | 100% | 70.4% | +29.6pp | 7 evals; non-discriminating: wrong-method-pricing, HB-troubleshooting, ACBC-vs-CBC |
-| 2 | **96.6%** | **55.2%** | **+41.4pp** | 7 new evals targeting identified gaps; harder without-skill floor |
+| 2 | 96.6% | 55.2% | +41.4pp | 7 new evals targeting identified gaps; harder without-skill floor |
+| 3 | **100%** | **55.2%** | **+44.8pp** | Added co-occurrence balance guidance to sparse MaxDiff section; fixed remaining failing assertion |
 
 ---
 

@@ -58,7 +58,16 @@ out <- list(backend = "stan(R)",
             difficulty = tbl(items, b), discrimination = tbl(items, a),
             empirical_reliability = round(var(tm) / (var(tm) + mean(tsd^2)), 3),
             mean_theta_sd = round(mean(tsd), 3),
-            diagnostics = list(max_rhat = round(max_rhat, 3), divergences = 0))
+            diagnostics = list(max_rhat = round(max_rhat, 3),
+              divergences = {
+                if (requireNamespace("cmdstanr", quietly = TRUE)) {
+                  diag <- fit$diagnostic_summary(quiet = TRUE)
+                  sum(diag$num_divergent)
+                } else {
+                  sampler_params <- rstan::get_sampler_params(fit, inc_warmup = FALSE)
+                  sum(sapply(sampler_params, function(x) sum(x[, "divergent__"])))
+                }
+              }))
 if (use_slip)  out$slip_upper <- tbl(items, draws_of("d_up"))
 if (use_corr == 1) { r <- draws_of("rho")[, 1]
   out$rho_theta_tau <- list(est = round(mean(r), 3), lo = round(quantile(r, .025), 3),

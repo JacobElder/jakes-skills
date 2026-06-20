@@ -168,7 +168,7 @@ def main():
 
     # Connectivity
     print(f"\nComputing connectivity ({args.kind})...")
-    measure = ConnectivityMeasure(kind=args.kind, standardize="zscore_sample")
+    measure = ConnectivityMeasure(kind=args.kind)
     matrices = measure.fit_transform(all_ts)
     np.save(out / "connectivity_matrices.npy", matrices)
     print(f"Matrices shape: {matrices.shape}")

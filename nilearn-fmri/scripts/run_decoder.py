@@ -54,9 +54,9 @@ def make_cv(spec, groups):
         from sklearn.model_selection import LeaveOneGroupOut
         return LeaveOneGroupOut()
     if spec.startswith("kfold:"):
-        from sklearn.model_selection import StratifiedKFold
+        from sklearn.model_selection import KFold
         k = int(spec.split(":")[1])
-        return StratifiedKFold(n_splits=k, shuffle=True, random_state=42)
+        return KFold(n_splits=k, shuffle=True, random_state=42)
     if spec.startswith("group_kfold:"):
         from sklearn.model_selection import GroupKFold
         k = int(spec.split(":")[1])

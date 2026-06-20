@@ -33,7 +33,7 @@ Typical use
             "covariate": {"none": [], "time_of_day": ["time_of_day"]},
         },
         # drop combinations that are not meaningful before they ever run:
-        constraints=[lambda c: not (c["dv"] == "falls" and c["model"] == "linear")],
+        constraints=[lambda c: not (c["dv"] == "falls" and c["covariate"] == "none")],
     )
     print(mv.summary())              # how many universes, after constraints
     results = mv.run(analyze, data)  # tidy DataFrame: one row per universe

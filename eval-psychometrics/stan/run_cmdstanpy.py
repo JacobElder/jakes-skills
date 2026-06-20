@@ -81,7 +81,9 @@ def main():
     try:
         summ = fit.summary(); rh = summ["R_hat"].max()
         out["diagnostics"] = {"max_rhat": round(float(rh), 3),
-                              "divergences": int(fit.diagnose().count("divergent") if False else 0)}
+                              "divergences": int(
+                                  fit.method_variables()['divergent__'].values.sum()
+                              )}
     except Exception:
         out["diagnostics"] = {"max_rhat": float("nan"), "divergences": 0}
     if args.slip:
