@@ -18,7 +18,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [dimensionality-reduction](#dimensionality-reduction) | PCA, EFA, t-SNE, UMAP, ICA, NMF and embedding validation | +14pp (43/43 with skill, 37/43 base); +33pp on pitfall traps |
 | [experimental-design](#experimental-design) | Experimental and quasi-experimental design (A/B, RCT, power, DiD, RD) | 9 task evals + 26 trigger evals (live benchmark not yet run) |
 | [idiographic-quant](#idiographic-quant) | Person-specific / N-of-1 quantitative methods (ESM/EMA, VAR networks, single-case experiments) | +65pp (17/17 with skill, 6/17 base) |
-| [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | +13.7pp across 16 trap-based evals (100% vs 86.2%); +80pp on singular-fit simplification, +60pp on growth curve time slopes |
+| [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | +13.8pp (80/80 with skill, 69/80 base); +80pp on singular-fit simplification, +60pp on growth curve time slopes |
 | [multiverse-analysis](#multiverse-analysis) | Multiverse / specification-curve analysis | +21.9pp (32/32 with skill, 25/32 base) |
 | [network-analysis](#network-analysis) | Network science & social network analysis | +32.5pp across 8 trap-based evals |
 | [nilearn-fmri](#nilearn-fmri) | fMRI analysis with nilearn | +42pp across 8 scenarios |
@@ -160,7 +160,7 @@ Apply hierarchical / multilevel / mixed-effects models correctly across the full
 
 **Why it matters:** The base model knows multilevel modeling but defaults to hedging on wrong analyses. The most consequential failure is validating or gently caveating a random-intercepts-only model when the design has within-cluster manipulations — an omission that inflates Type I error 2–5× at nominal α = .05 (Barr et al., 2013; Schielzeth & Forstmeier, 2009). The skill opens with a firm no on that case, enforces diagnosis before any simplification of singular models, and corrects the common reflex to recommend MLM for every repeated-measures question even when a paired t-test is the defensible answer.
 
-**Gap:** +13.7pp across 16 trap-based evals (100% with skill, 86.2% without). Six evals discriminate: singular-fit simplification (+80pp — base model skips allFit() and upstream fixes, accepts iterative dropping), growth curve time slope (+60pp — validates advisor's "drop slope if variance ≈ 0" convention), convergence simplification with Bates et al. citation (+20pp), reviewer-requested cluster means (+20pp), CRSE vs. MLM cases (+20pp), and cluster RCT G*Power (+20pp). Ten evals show no gap — gaps appear when wrong practice is framed as established convention or backed by authority; the base model handles direct descriptions of wrong analyses correctly.
+**Gap:** +13.8pp — 80/80 with skill (100%) vs. 69/80 base (86.2%). Six evals discriminate: singular-fit simplification (+80pp — base model skips allFit() and upstream fixes, accepts iterative dropping), growth curve time slope (+60pp — validates advisor's "drop slope if variance ≈ 0" convention), convergence simplification with Bates et al. citation (+20pp), reviewer-requested cluster means (+20pp), CRSE vs. MLM cases (+20pp), and cluster RCT G*Power (+20pp — base model accepts committee-approved G*Power t-test without flagging that schools are the binding precision constraint, not students). Ten evals show no gap.
 
 → [multilevel-modeling/](multilevel-modeling/)
 

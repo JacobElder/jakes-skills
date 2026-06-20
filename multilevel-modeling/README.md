@@ -215,7 +215,7 @@ Expanded to 16 evals (80 total expectations). Added three traps covering growth 
 
 | | With skill | Without skill | Delta |
 |--|:---:|:---:|:---:|
-| **Total expectations** | **80/80 (100%)** | **69/80 (86.2%)** | **+13.7pp** |
+| **Total expectations** | **79/80 (98.8%)** | **69/80 (86.2%)** | **+12.5pp** |
 
 | Eval | With skill | Without skill | Delta |
 |------|:---:|:---:|:---:|
@@ -252,6 +252,23 @@ Six evals discriminate consistently:
 **New eval results:** `growth-curve-time-slope` is the strongest new discriminator (+60pp) — the base model explicitly validates the wrong advisor convention. `three-level-district-fixed` showed no gap; the base model correctly identifies that district fixed effects are collinear with a district-level treatment. `cluster-rct-power-gpower` discriminates modestly (+20pp).
 
 **Ten evals remain non-discriminating:** The base model handles MLM-vs-GEE-vs-CRSE decisions, items-as-fixed, treatment coding, and within-cluster slope detection correctly without the skill.
+
+### Iteration 5 — power_analysis.md fix (cluster RCT binding constraint)
+
+Added the "Cluster RCT power: the binding constraint" section to `references/power_analysis.md`, covering:
+- Why school count per arm (not total student N) is the binding precision constraint
+- Why G*Power fails even when used on school means (effect size must be in school-mean SD units; no ICC input; no sensitivity table)
+- Recommended tools: PowerUp!, simr, Spybrook et al. formulas
+
+Also fixed the Python ellipsis placeholder in the power simulation example with real runnable pymer4 code.
+
+| | With skill | Without skill | Delta |
+|--|:---:|:---:|:---:|
+| **Total expectations** | **80/80 (100%)** | **69/80 (86.2%)** | **+13.8pp** |
+
+| Eval fixed | Assertion | Before | After |
+|---|---|:---:|:---:|
+| `cluster-rct-power-gpower` | "schools, not students, are the binding precision constraint" | 4/5 | **5/5** |
 
 ---
 
