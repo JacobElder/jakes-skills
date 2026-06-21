@@ -1,6 +1,6 @@
 # Psychometric Networks Skill
 
-A skill for the network approach to psychological measurement — treating questionnaire items and clinical symptoms as nodes in a Gaussian Graphical Model rather than indicators of a latent variable. It gives the agent the conviction to apply field-specific conventions that the base model underuses: the `bootnet` accuracy-and-stability workflow, CS-coefficient thresholds, the goldbricker redundancy check, the Bringmann critique of betweenness and closeness, the Robinaugh Expected Influence fix for mixed-valence affect networks, and the Burger et al. (2023) reporting standards. This is an **intersection skill** — it assumes the user's general psychometrics and network-analysis parent skills are loaded and focuses only on what is specific to running these methods on psychological items.
+A skill for the network approach to psychological measurement — treating questionnaire items and clinical symptoms as nodes in a Gaussian Graphical Model rather than indicators of a latent variable. It gives the agent the conviction to apply field-specific conventions that the base model underuses: the `bootnet` accuracy-and-stability workflow, CS-coefficient thresholds, the goldbricker redundancy check, the Bringmann critique of betweenness and closeness, the Robinaugh Expected Influence fix for mixed-valence affect networks, the Burger et al. (2023) reporting standards, causal-boundary distinctions between GGM and SEM/causal-discovery algorithms, and the correct framing of Granger causality as predictive temporal association rather than interventional causality. This is an **intersection skill** — it assumes the user's general psychometrics and network-analysis parent skills are loaded and focuses only on what is specific to running these methods on psychological items.
 
 ## Installation
 
@@ -123,6 +123,8 @@ The base model knows the psychometric network literature. The skill gives the ag
 - **Name Burger et al. (2023) for reporting.** The authoritative reporting checklist for cross-sectional GGMs. The base model gives solid generic checklists; the skill names the paper and frames causal limitations as a required, not optional, element.
 - **Gate the Bringmann critique.** Betweenness and closeness are inappropriate for dense weighted partial-correlation graphs (Bringmann et al., 2019) — but this caveat belongs only in psychometric contexts, not as a response to generic graph-theory questions. The skill applies the critique where relevant and stays neutral where it isn't.
 - **State the difference-test norm.** Few centrality pairs are typically statistically distinguishable in published psychometric networks. This is the expected outcome, not a methodological failure, and users should frame their results accordingly.
+- **Enforce the GGM–causal boundary.** GGM edges are undirected partial correlations — not causal effects. Centrality ≠ causal influence. Edge absence is a regularization artifact, not evidence of causal independence. The skill draws sharp distinctions between GGM (conditional dependence exploration), SEM/path analysis (directed causal model testing), and causal discovery algorithms (PC, FCI, LiNGAM — skeleton + orientation under strong assumptions).
+- **Reframe Granger causality correctly.** `graphicalVAR` temporal edges are Granger-causal: X predicts future Y beyond Y's autocorrelation. The skill enforces "Granger-predicts" language and flags the common-cause alternative — two variables can exhibit Granger causality because a third latent variable drives both with a lag — and contrasts this with interventional causality (Pearl's do-calculus / potential outcomes).
 
 ---
 
@@ -208,6 +210,10 @@ The jump from iteration 1 to iteration 2 reflects both skill improvements (two t
 | 6 | `node-selection-question` | Node selection as theoretical choice; goldbricker for redundancy; Fried's work |
 | 7 | `negative-trigger-generic-network` | Betweenness question with no psychometric context: answer generically, don't over-trigger |
 | 8 | `reporting-standards-checklist` | Burger et al. (2023) checklist: estimation details, bootstrapped CIs, CS-coefficients, causal limitations |
+| 9 | `centrality-causal-interpretation` | High centrality ≠ causal driver; GGM centrality is statistical, not causal; betweenness instability |
+| 10 | `granger-temporal-network-causal-claim` | graphicalVAR edges are Granger/predictive, not interventional; enforce "Granger-predicts" language |
+| 11 | `ggm-vs-sem-mediation` | Directed mediation requires SEM; GGM is undirected and cannot test directional mediation paths |
+| 12 | `pc-algorithm-vs-ggm` | PC vs. GGM: different inferential goals; PC requires faithfulness + no hidden confounders; GGM is undirected |
 
 ---
 
@@ -224,3 +230,7 @@ The jump from iteration 1 to iteration 2 reflects both skill improvements (two t
 - **Constantin, M. A., Schuurman, N. K. & Vermunt, J. (2022).** "A general Monte Carlo method for sample size analysis in the context of network models." *Psychological Methods.* — Power analysis via simulation for network studies.
 - **Forbes, M. K., Wright, A. G. C., Markon, K. E. & Krueger, R. F. (2017).** "Evidence that psychopathology symptom networks have limited replicability." *Journal of Abnormal Psychology* 126: 969–988. — Replication critique of cross-sectional networks.
 - **Marsman, M., et al. (2018).** "An introduction to network psychometrics: Relating Ising network models to item response theory models." *Multivariate Behavioral Research* 53: 15–35. — Statistical equivalence between Ising models and latent-variable IRT models.
+- **Borsboom, D. & Cramer, A. O. J. (2013).** "Network analysis: An integrative approach to the structure of psychopathology." *Annual Review of Clinical Psychology* 9: 91–121. — The theoretical case for the causal network interpretation of psychopathology; key reference for the GGM–causal relationship.
+- **Granger, C. W. J. (1969).** "Investigating causal relations by econometric models and cross-spectral methods." *Econometrica* 37: 424–438. — Original Granger causality paper; defines the predictive-precedence criterion.
+- **Pearl, J. (2009).** *Causality: Models, Reasoning, and Inference* (2nd ed.). Cambridge University Press. — Do-calculus and the distinction between observational (Granger-style) and interventional causality.
+- **Runge, J., et al. (2019).** "Detecting and quantifying causal associations in large nonlinear time series datasets." *Science Advances* 5: eaau4996. — Limitations of Granger causality for complex nonlinear time series; context for graphicalVAR interpretation.

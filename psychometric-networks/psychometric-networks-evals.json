@@ -103,6 +103,58 @@
         "Specifies the estimation details that must be documented: estimator (EBICglasso), gamma/tuning parameter, and correlation method (polychoric or cor_auto)",
         "Includes explicit acknowledgment of cross-sectional / causal-inference limitations as a required element"
       ]
+    },
+    {
+      "id": 9,
+      "name": "centrality-causal-interpretation",
+      "prompt": "I ran a GGM on 9 DSM-5 depression symptoms (N=480) using EBICglasso. The betweenness centrality plot shows that 'depressed mood' has the highest betweenness score, substantially higher than all other nodes. I want to conclude in my paper that depressed mood is the central driver of the depression symptom network and that clinicians should prioritize targeting it in treatment to reduce the other symptoms. Is this a valid interpretation?",
+      "expected_output": "The interpretation is not valid. The response should clearly refuse to endorse the causal claim. GGM centrality measures statistical connectivity (how much a node co-varies with its neighbors after conditioning on all others), not causal influence. A high-centrality node in a GGM is not necessarily a good intervention target — that requires causal evidence the cross-sectional GGM does not supply. Additional concerns: (1) betweenness centrality is particularly inappropriate for dense weighted partial-correlation graphs (Bringmann et al. 2019) and should not be the primary index; (2) centrality estimates have wide bootstrapped CIs and poor test-retest reliability in typical clinical samples (Epskamp et al.; Bringmann et al.); (3) if the user wants to identify treatment targets, they need time-series/temporal network data, causal discovery under stated assumptions, or intervention study evidence. Should suggest reframing: 'depressed mood showed the highest betweenness in the estimated network' rather than 'is the central driver'.",
+      "expectations": [
+        "Does NOT validate the conclusion that high centrality implies causal influence or that targeting the node will reduce other symptoms",
+        "Explains that GGM centrality reflects statistical connectivity (partial correlation structure), not causal importance or interventional effect",
+        "Notes that establishing a causal treatment target requires evidence beyond a cross-sectional GGM — e.g., temporal/ESM data, causal discovery methods under stated assumptions, or intervention studies",
+        "Raises the instability of centrality estimates (wide bootstrapped CIs, poor test-retest reliability at typical sample sizes — referencing Epskamp et al., Bringmann et al., or equivalent)",
+        "Flags that betweenness centrality is specifically inappropriate or contested for dense weighted partial-correlation psychometric networks (Bringmann et al. 2019)"
+      ]
+    },
+    {
+      "id": 10,
+      "name": "granger-temporal-network-causal-claim",
+      "prompt": "I fitted a temporal network using graphicalVAR on 60 days of ESM data (5 assessments per day) for a single participant with depression and anxiety. The temporal network shows a strong directed edge from anxiety to depression but not from depression to anxiety. I want to write in my paper that 'anxiety causally predicts depression over time, but depression does not causally predict anxiety.' Is this wording appropriate?",
+      "expected_output": "The wording 'causally predicts' is not appropriate. graphicalVAR temporal edges are Granger-causal: they indicate that past values of anxiety improve prediction of future depression beyond depression's autocorrelation. Granger causality is a predictive/forecasting concept, not interventional causality. The correct framing is 'anxiety Granger-predicts depression' or 'past anxiety is predictive of future depression beyond its own autocorrelation.' Key limitations to flag: (1) Granger causality can hold even when a common unmeasured variable drives both (e.g., stress driving anxiety at t and depression at t+1, making anxiety appear to predict depression); (2) instantaneous effects (within-occasion) are handled by the contemporaneous network, not the temporal edges; (3) a single-subject (N=1) idiographic analysis cannot be generalized to the population. Should recommend language like 'anxiety Granger-predicts depression' and acknowledge that this is a predictive temporal association, not an interventional causal claim.",
+      "expectations": [
+        "States that 'causally predicts' is not appropriate wording for graphicalVAR temporal edges",
+        "Explains what Granger causality actually means: past X improves prediction of future Y beyond Y's autocorrelation — a predictive claim, not interventional causality",
+        "Recommends alternative language such as 'Granger-predicts', 'past anxiety is predictive of future depression', or 'lagged predictive association'",
+        "Notes at least one key limitation of Granger causality: common unmeasured causes, instantaneous effects not captured by lagged edges, or the distinction between predictive and interventional causality",
+        "Does NOT endorse 'anxiety causally predicts depression' as an accurate summary of what graphicalVAR estimates"
+      ]
+    },
+    {
+      "id": 11,
+      "name": "ggm-vs-sem-mediation",
+      "prompt": "I have cross-sectional survey data on social support, self-esteem, and depression across 350 participants. I want to test whether self-esteem mediates the relationship between social support and depression — specifically, whether social support improves self-esteem, which then reduces depression. Should I use a psychometric network (GGM) or SEM for this? What's the difference?",
+      "expected_output": "SEM is the correct tool for testing this directed mediation hypothesis. The user has a specific causal story with direction: social support → self-esteem → depression. SEM encodes this as a path model with directional arrows; the indirect path coefficient (social support → self-esteem × self-esteem → depression) is the mediation estimate. Fit indices evaluate whether the specified causal structure is consistent with the data. A GGM is undirected — it can show that self-esteem is connected to both social support and depression (and might be a 'bridge node' between them in a community structure), but it cannot test directed mediation because it has no edge direction. The key distinction: SEM tests a specific causal model the researcher specifies; GGM explores conditional dependence structure without imposing direction. If the user wants to test the specific mediation hypothesis, use SEM with CFA for measurement. If they want exploratory structure discovery without committing to direction, use GGM. Should NOT recommend GGM as appropriate for testing the directed mediation the user described.",
+      "expectations": [
+        "Recommends SEM (not GGM) for testing the directed mediation hypothesis the user described",
+        "Explains that GGM is undirected — it cannot test directed mediation because edges are symmetric partial correlations with no causal direction",
+        "Explains that SEM encodes the researcher's causal hypothesis as directional paths and tests whether the specified structure fits the data",
+        "Clarifies what GGM can offer for this data: conditional dependence structure, bridge nodes between clusters — but not directed mediation",
+        "Does NOT recommend GGM as an appropriate substitute for SEM when the user's goal is testing a specific directional mediation hypothesis"
+      ]
+    },
+    {
+      "id": 12,
+      "name": "pc-algorithm-vs-ggm",
+      "prompt": "I want to understand the causal structure among 10 anxiety symptoms from my cross-sectional survey. A colleague said I should use a psychometric network (GGM), but I've been reading about causal discovery and I'm thinking of using the PC algorithm instead, since both produce graphs and I actually want to know the causal directions. Is the PC algorithm a better choice if I want causal structure?",
+      "expected_output": "PC and GGM are fundamentally different tools with different inferential goals, so the choice depends on what assumptions the user is willing to accept. PC explicitly tries to infer causal structure: it tests conditional independence iteratively and orients edges using Meek rules, outputting a CPDAG (completed partially directed acyclic graph) under the Markov condition, faithfulness assumption, acyclicity, and — critically — no hidden common causes. If these assumptions hold, PC edge orientations carry causal meaning. If they don't (and hidden confounders are common in psychological symptom data), the orientations are unreliable. GGM estimates the partial correlation graph with regularization; edges are undirected and represent conditional dependence, not causal direction. It makes no causal orientation claims. If the user is willing to accept the strong assumptions required by PC and is targeting causal direction discovery, PC (or FCI, which allows hidden confounders) may be appropriate — but the assumptions must be stated. Should clarify that neither tool 'proves' causality from observational cross-sectional data; both require assumptions. GGM is better if the goal is exploring conditional dependence without causal commitment; PC/FCI if the goal is causal skeleton discovery under stated assumptions.",
+      "expectations": [
+        "Explains that PC and GGM have fundamentally different inferential goals: PC attempts causal structure discovery with orientation; GGM estimates undirected conditional dependence",
+        "States the key assumptions required by PC for causal interpretation: Markov condition, faithfulness, acyclicity, and no hidden common causes (or mentions FCI as the version that allows hidden confounders)",
+        "Notes that these assumptions are often questionable for cross-sectional psychological symptom data (hidden confounders, possible cycles)",
+        "Clarifies that GGM edges are undirected and carry no causal orientation — it is not a competitor to PC for causal discovery but serves a different purpose",
+        "Does NOT claim that PC is straightforwardly better or that GGM is simply an inferior version of PC — frames the choice as depending on what the user's goals and assumption tolerances are"
+      ]
     }
   ]
 }

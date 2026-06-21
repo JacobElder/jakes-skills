@@ -113,6 +113,63 @@ The field moves quickly and consolidates in a few canonical sources. Send the us
 - **Robinaugh, Hoekstra, Toner & Borsboom (2020)** in *Psychological Medicine* — a decade-in review of where the field has and hasn't delivered.
 - **`psych-networks.com`** — the field's blog, run by Fried, has running commentary on debates and new methods.
 
+## Boundary with causal inference methods
+
+Psychometric networks, causal discovery algorithms, and structural equation models all use graph structures and sometimes causal language. They are fundamentally different tools with different inferential goals. Get this boundary right when the user conflates them.
+
+### GGM vs. causal discovery (PC, FCI, LiNGAM, GES)
+
+A **Gaussian Graphical Model** estimates the partial correlation graph by regularizing the precision matrix. Its edges are undirected and represent conditional dependence — two nodes connected in a GGM share variance after conditioning on all other nodes. That is a statistical regularization claim, not a causal claim. Edge absence under EBICglasso is a regularization artifact, not evidence of causal independence: the lasso can zero out a true partial correlation if the sample is small or the tuning parameter is conservative.
+
+**Causal discovery algorithms** (PC, FCI, LiNGAM, GES, GFCI, etc.) explicitly attempt to identify causal structure from observational data using conditional independence tests and orientation rules (Meek rules, FCI rules, LiNGAM's ICA-based approach). They output a DAG or CPDAG with causal semantics under strong assumptions: the Markov condition, the faithfulness assumption, acyclicity (for DAG methods), and — for PC — no hidden common causes. When these assumptions hold, the orientation of edges carries causal meaning. When they don't (and hidden confounders are common in psychology), the orientation is unreliable.
+
+Key traps to prevent:
+- **Interpreting GGM edge weights as causal effects.** They are partial correlations, not causal effect estimates. A weight of 0.3 between depression and fatigue does not mean "depression increases fatigue by 0.3 units if you intervene on depression."
+- **Concluding that a "hub" node causes other symptoms.** Centrality in a GGM reflects statistical connectivity (how much a node's value co-varies with its neighbors, net of the rest), not causal influence. A node can be highly central purely because it shares measurement variance with many neighbors.
+- **Treating GGM communities as causal modules.** Walktrap or Louvain communities from a GGM reflect statistical clustering, not causally coherent subsystems.
+- **Claiming PC/GGM equivalence because both produce graphs.** The inferential goals are opposite: GGM estimates the precision matrix with regularization; PC tests conditional independence iteratively and orients edges using orientation rules. A GGM edge is symmetric (A–B). A PC edge carries a direction (A→B) with causal meaning under stated assumptions. They are not interchangeable.
+
+If the user wants to explore conditional dependence patterns, bridge structure, or community detection without causal commitment, GGM is appropriate. If the user wants to infer causal structure and is willing to accept the strong assumptions (faithfulness, no hidden confounders, acyclicity), causal discovery algorithms are appropriate — but the assumptions must be stated explicitly and the output is a skeleton of candidate causal structures, not confirmed causal relationships.
+
+### GGM vs. structural equation modeling / path analysis
+
+**SEM and path analysis** are researcher-specified causal models. The researcher draws arrows based on theory; those arrows encode directional causal hypotheses (A→B means the researcher claims A causes B). Fit indices (CFI, RMSEA, SRMR) assess whether the specified causal structure is consistent with the data. Path coefficients are interpreted as causal effect estimates under the model. This is a *test of a pre-specified causal story*, not discovery.
+
+A GGM is an *undirected* model. It can identify that self-esteem and depression are conditionally dependent after controlling for all other measured variables, but it cannot tell you whether self-esteem causes depression or vice versa (or both), because edges have no direction. It cannot test mediation. It cannot test a causal pathway from X through M to Y, because "through" implies direction.
+
+When a user asks whether to use a GGM or SEM:
+- **Test a directed causal hypothesis (mediation, moderation, path model)?** → SEM. The directed arrows encode the hypothesis; the fit test evaluates it.
+- **Explore conditional dependence structure, bridge nodes between symptom clusters, or identify community structure without imposing direction?** → GGM.
+- **Both?** → `psychonetrics` supports confirmatory GGMs that can be compared via SEM-style fit indices, allowing the user to test network structures rather than just estimate them.
+
+The Borsboom & Cramer (2013, *Psychological Review*) paper frames symptom networks causally — symptoms cause each other — but that theoretical claim is not the same as the GGM encoding causal direction. The GGM is consistent with the causal interpretation but does not establish it.
+
+## Granger causality: predictive, not interventional
+
+Temporal networks built with `graphicalVAR` or `mlVAR` produce **directed** edges representing lagged predictions. These are commonly described as "Granger-causal" — a term that is widely misread as implying interventional causality. It does not.
+
+**What Granger causality actually means:** X Granger-causes Y if past values of X improve prediction of Y beyond Y's own past (Granger, 1969, *Econometrica*). It is a statement about incremental predictive validity in time series, not about what would happen if you intervened on X. The name is historical and misleading — Granger himself acknowledged the limitation. Two variables can exhibit Granger causality purely because they are both caused by a common third variable C with a lagged effect (C→X and C→Y, offset by one lag): the model will show X→Y even though X does not cause Y.
+
+**What Granger causality cannot handle:**
+- Hidden common causes (latent variables driving multiple observed symptoms)
+- Instantaneous effects (within-occasion, same-lag associations — handled separately by the contemporaneous network in graphicalVAR, but still not identifiably causal)
+- Non-linear dynamics
+- Short time series with feedback loops (Runge et al., 2019, *Science Advances*, "Detecting and quantifying causal associations in large nonlinear time series datasets")
+
+**The right language:** When describing `graphicalVAR` temporal edges, use "Granger-predicts" rather than "causes":
+- Correct: "Anxiety Granger-predicts depression" or "past anxiety is predictive of future depression beyond depression's autocorrelation"
+- Incorrect: "Anxiety causally predicts depression" or "anxiety drives depression over time"
+
+**Contrast with interventional causality.** Pearl's do-calculus (Pearl, 2009, *Causality*) defines causality in terms of interventions: X causes Y if setting X=x (via external intervention) changes the distribution of Y. This requires a causal graph with no hidden confounders (or explicit accounting for them). Granger causality does not satisfy the do-calculus definition. The potential outcomes framework (Rubin) similarly requires intervention or assignment to treatment — temporal prediction does not suffice.
+
+**In psychometric networks specifically:** `graphicalVAR` temporal edges are frequently interpreted as "X activates Y over time" or "X is a causal precursor of Y." These are stronger claims than the data support. The correct claim is that knowing a person's level of X at time *t* helps predict their level of Y at time *t+1*, beyond knowing their own prior level of Y. That is meaningful and worth reporting, but it is a predictive temporal association, not an interventional causal claim. Always flag this distinction when reviewing graphicalVAR output.
+
+When a user reports a temporal network finding, prompt them to:
+1. Replace "X causes Y" with "X Granger-predicts Y" or "past X predicts future Y"
+2. Acknowledge that the Granger temporal edge is consistent with, but does not establish, X as a causal driver of Y
+3. Note the common-cause alternative: both X and Y may be driven by an unmeasured variable
+4. Distinguish temporal network edges (Granger/lagged) from contemporaneous network edges (within-occasion partial correlations, also not interventionally causal)
+
 ## Python and other ecosystems
 
 R remains dominant; the canonical packages (`qgraph`, `bootnet`, `IsingFit`, `mgm`, `graphicalVAR`, `mlVAR`, `psychonetrics`, `EGAnet`) have no full Python equivalent. If the user wants Python, options are: `scikit-learn`'s `GraphicalLasso`/`GraphicalLassoCV` for the GGM estimation step, `networkx` for centrality on the resulting adjacency, and `statsmodels` for VAR; but you lose `bootnet`'s accuracy/stability machinery and the polychoric handling, and you'll need to roll those yourself. For most users, the right answer is to do the network estimation in R via `reticulate` or a saved-output handoff and bring results back to Python for downstream work.
