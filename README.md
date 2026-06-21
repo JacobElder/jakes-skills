@@ -23,7 +23,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [network-analysis](#network-analysis) | Network science & social network analysis | +32.5pp across 8 trap-based evals |
 | [nilearn-fmri](#nilearn-fmri) | fMRI analysis with nilearn | +42pp across 8 scenarios |
 | [preference-choice-modeling](#preference-choice-modeling) | MaxDiff and choice-based conjoint (CBC, ACBC, anchoring) | +44.8pp (29/29 with skill, 16/29 base) |
-| [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +11.9pp (58/59 with skill, 51/59 base); 12 evals incl. causal-boundary + Granger |
+| [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +13.6pp (59/59 with skill, 51/59 base); 12 evals incl. causal-boundary + Granger |
 | [psychometrics](#psychometrics) | Measurement theory & scale development | +97.5pp across 8 scenarios |
 | [response-surface-analysis](#response-surface-analysis) | Congruence RSA (Edwards-Parry polynomial regression, a1–a5) | +31.8pp (66/66 with skill, 45/66 base) |
 | [robust-statistics](#robust-statistics) | Applied statistical reasoning: estimands, fallacies, diagnostics, GLMs | +38pp overall (37/37 with skill, 23/37 base) |

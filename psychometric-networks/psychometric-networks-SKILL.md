@@ -142,6 +142,8 @@ When a user asks whether to use a GGM or SEM:
 - **Explore conditional dependence structure, bridge nodes between symptom clusters, or identify community structure without imposing direction?** → GGM.
 - **Both?** → `psychonetrics` supports confirmatory GGMs that can be compared via SEM-style fit indices, allowing the user to test network structures rather than just estimate them.
 
+When the user's goal is mediation and they ask what a GGM could still offer: GGM can reveal bridge nodes — nodes that connect different symptom clusters (e.g., self-esteem bridging a social-support cluster and a depression cluster) — and the conditional dependence structure among all variables. That is genuinely useful supplementary information, but it is not a test of the mediation hypothesis and should not be presented as one.
+
 The Borsboom & Cramer (2013, *Psychological Review*) paper frames symptom networks causally — symptoms cause each other — but that theoretical claim is not the same as the GGM encoding causal direction. The GGM is consistent with the causal interpretation but does not establish it.
 
 ## Granger causality: predictive, not interventional

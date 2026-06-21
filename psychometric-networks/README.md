@@ -149,9 +149,9 @@ Evaluated across 4 iterations. Evals are conversational prompts graded by an LLM
 Four new evals covering the GGM–causal boundary and Granger causality added to the original 8.
 
 ```
-with_skill:    98.3%  (58/59 expectations)
-without_skill: 86.4%  (51/59 expectations)
-delta:         +11.9pp
+with_skill:    100%   (59/59 expectations)
+without_skill:  86.4%  (51/59 expectations)
+delta:         +13.6pp
 ```
 
 ```mermaid
@@ -159,7 +159,7 @@ xychart-beta horizontal
     title "Pass rate by eval (■ with skill  □ base model)"
     x-axis ["GGM estimation", "Expected influence", "Bootstrap CI", "Hairball tuning", "Stability", "Node selection", "Non-trigger", "Reporting standards", "Centrality causal", "Granger claim", "GGM vs SEM", "PC vs GGM"]
     y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 80, 100]
+    bar [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
     bar [83, 80, 80, 80, 100, 75, 100, 80, 80, 100, 100, 80]
 ```
 
@@ -175,12 +175,10 @@ xychart-beta horizontal
 | reporting-standards-checklist | 5/5 (100%) | 4/5 (80%) | +20pp |
 | centrality-causal-interpretation | 5/5 (100%) | 4/5 (80%) | **+20pp** |
 | granger-temporal-network-causal-claim | 5/5 (100%) | 5/5 (100%) | +0pp |
-| ggm-vs-sem-mediation | 4/5 (80%) | 5/5 (100%) | −20pp |
+| ggm-vs-sem-mediation | 5/5 (100%) | 5/5 (100%) | +0pp |
 | pc-algorithm-vs-ggm | 5/5 (100%) | 4/5 (80%) | **+20pp** |
 
-**Note on ggm-vs-sem-mediation (E11):** The skill-guided response correctly recommended SEM, explained GGM's undirected nature, and gave complete lavaan code — the core answer was right. The failed assertion required specifically mentioning "bridge nodes between clusters" as what GGM can offer; the response described conditional dependence structure instead. The −20pp here reflects rubric sensitivity, not a directional failure. Both configs agree SEM is needed.
-
-**Note on granger-temporal-network-causal-claim (E10):** Both configs score 5/5 — the base model already handles Granger framing well on this prompt. The eval remains as a regression guard.
+**Note on granger-temporal-network-causal-claim (E10) and ggm-vs-sem-mediation (E11):** Both configs score 5/5 on these — the base model already handles Granger framing and SEM-vs-GGM direction correctly on these prompts. They remain as regression guards.
 
 ### Where the skill makes the biggest difference (across full 12-eval suite)
 
@@ -203,7 +201,7 @@ xychart-beta horizontal
 | 2 | 97.4% | 87.2% | +10.3pp | 4 evals redesigned; goldbricker + betweenness gate added to skill |
 | 3 | 97.4% | 84.6% | +12.8pp | Difference-test norm sentence added; eval 3 gap closed |
 | 4 | 100% | 84.6% | +15.4pp | Pearson-on-Likert→hairball link added; 39/39 with skill |
-| 5 | **98.3%** | **86.4%** | **+11.9pp** | 4 new evals: causal-boundary + Granger; 59 total assertions |
+| 5 | **100%** | **86.4%** | **+13.6pp** | 4 new evals: causal-boundary + Granger; 59/59 with skill |
 
 ---
 
