@@ -144,46 +144,56 @@ A full Pearson correlation network of 12 symptom items (4 anxiety, 4 depression,
 
 Evaluated across 4 iterations. Evals are conversational prompts graded by an LLM judge against specific, objective expectations. Executor and grader are separate calls to eliminate self-grading inflation.
 
-### Iteration 4 — final results (8 scenarios, 39 total expectations)
+### Iteration 5 — expanded suite (12 scenarios, 59 total expectations)
+
+Four new evals covering the GGM–causal boundary and Granger causality added to the original 8.
 
 ```
-with_skill:    100%   (39/39 expectations)
-without_skill:  84.6%  (33/39 expectations)
-delta:         +15.4pp
+with_skill:    98.3%  (58/59 expectations)
+without_skill: 86.4%  (51/59 expectations)
+delta:         +11.9pp
 ```
 
 ```mermaid
 xychart-beta horizontal
     title "Pass rate by eval (■ with skill  □ base model)"
-    x-axis ["Reporting standards", "Non-trigger", "Node selection", "Stability", "Hairball tuning", "Bootstrap CI", "Expected influence", "GGM estimation"]
+    x-axis ["GGM estimation", "Expected influence", "Bootstrap CI", "Hairball tuning", "Stability", "Node selection", "Non-trigger", "Reporting standards", "Centrality causal", "Granger claim", "GGM vs SEM", "PC vs GGM"]
     y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100, 100, 100]
-    bar [80, 100, 75, 100, 80, 80, 80, 83]
+    bar [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 80, 100]
+    bar [83, 80, 80, 80, 100, 75, 100, 80, 80, 100, 100, 80]
 ```
 
 | Eval | With skill | Without skill | Delta |
 |------|:---:|:---:|:---:|
-| ggm-estimation-likert | 100% | 83% | +17pp |
-| expected-influence-vs-strength | 100% | 80% | +20pp |
-| bootstrap-ci-vs-difference-test | 100% | 80% | +20pp |
-| hairball-gamma-tuning | 100% | 80% | +20pp |
-| stability-interpretation | 100% | 100% | +0pp |
-| node-selection-question | 100% | 75% | +25pp |
-| negative-trigger-generic-network | 100% | 100% | +0pp |
-| reporting-standards-checklist | 100% | 80% | +20pp |
+| ggm-estimation-likert | 6/6 (100%) | 5/6 (83%) | +17pp |
+| expected-influence-vs-strength | 5/5 (100%) | 4/5 (80%) | +20pp |
+| bootstrap-ci-vs-difference-test | 5/5 (100%) | 4/5 (80%) | +20pp |
+| hairball-gamma-tuning | 5/5 (100%) | 4/5 (80%) | +20pp |
+| stability-interpretation | 5/5 (100%) | 5/5 (100%) | +0pp |
+| node-selection-question | 4/4 (100%) | 3/4 (75%) | +25pp |
+| negative-trigger-generic-network | 4/4 (100%) | 4/4 (100%) | +0pp |
+| reporting-standards-checklist | 5/5 (100%) | 4/5 (80%) | +20pp |
+| centrality-causal-interpretation | 5/5 (100%) | 4/5 (80%) | **+20pp** |
+| granger-temporal-network-causal-claim | 5/5 (100%) | 5/5 (100%) | +0pp |
+| ggm-vs-sem-mediation | 4/5 (80%) | 5/5 (100%) | −20pp |
+| pc-algorithm-vs-ggm | 5/5 (100%) | 4/5 (80%) | **+20pp** |
 
-The two non-discriminating evals (stability-interpretation, negative-trigger) reflect topics where base-model coverage already matches the skill. They remain as regression guards.
+**Note on ggm-vs-sem-mediation (E11):** The skill-guided response correctly recommended SEM, explained GGM's undirected nature, and gave complete lavaan code — the core answer was right. The failed assertion required specifically mentioning "bridge nodes between clusters" as what GGM can offer; the response described conditional dependence structure instead. The −20pp here reflects rubric sensitivity, not a directional failure. Both configs agree SEM is needed.
 
-### Where the base model fails most
+**Note on granger-temporal-network-causal-claim (E10):** Both configs score 5/5 — the base model already handles Granger framing well on this prompt. The eval remains as a regression guard.
 
-| Scenario | What the gap is | With skill | Without skill |
-|---|---|:---:|:---:|
-| node-selection-question | Misses node redundancy as a concrete concern; never names `goldbricker` | 100% | 75% |
-| ggm-estimation-likert | Misses the Epskamp, Borsboom & Fried (2018) tutorial reference | 100% | 83% |
-| hairball-gamma-tuning | Uses `cor_auto` in code but never explicitly names Pearson-on-Likert as a cause of hairball density | 100% | 80% |
-| expected-influence-vs-strength | Names EI as the right index but doesn't make the unipolar-equivalence distinction | 100% | 80% |
-| bootstrap-ci-vs-difference-test | Corrects the CI fallacy but doesn't state that non-distinguishability is the norm | 100% | 80% |
-| reporting-standards-checklist | Gives a solid checklist but omits cross-sectional/causal limitations as required | 100% | 80% |
+### Where the skill makes the biggest difference (across full 12-eval suite)
+
+| Scenario | Base model gap | What the skill adds |
+|---|:---:|---|
+| node-selection-question | 75% base | Names `goldbricker` for redundancy; frames node selection as theoretical |
+| centrality-causal-interpretation | 80% base | Flags that high betweenness ≠ causal influence; names centrality instability (Bringmann et al.) |
+| ggm-estimation-likert | 83% base | Requires the Epskamp, Borsboom & Fried (2018) tutorial citation |
+| pc-algorithm-vs-ggm | 80% base | Distinguishes inferential goals of PC and GGM; states faithfulness + no hidden confounders assumption |
+| expected-influence-vs-strength | 80% base | Makes the unipolar-equivalence distinction; cites Robinaugh et al. (2016) |
+| bootstrap-ci-vs-difference-test | 80% base | States that non-distinguishability is the norm, not an exception |
+| hairball-gamma-tuning | 80% base | Explicitly names Pearson-on-Likert as the cause of hairball density |
+| reporting-standards-checklist | 80% base | Includes cross-sectional / causal limitations flag per Burger et al. (2023) |
 
 ### Iteration history
 
@@ -192,9 +202,8 @@ The two non-discriminating evals (stability-interpretation, negative-trigger) re
 | 1 | 92.3% | 89.7% | +2.6pp | Baseline; 5 of 8 evals non-discriminating |
 | 2 | 97.4% | 87.2% | +10.3pp | 4 evals redesigned; goldbricker + betweenness gate added to skill |
 | 3 | 97.4% | 84.6% | +12.8pp | Difference-test norm sentence added; eval 3 gap closed |
-| 4 | **100%** | **84.6%** | **+15.4pp** | Pearson-on-Likert→hairball link added; 39/39 with skill |
-
-The jump from iteration 1 to iteration 2 reflects both skill improvements (two targeted additions) and eval redesign (replacing four non-discriminating evals with harder probes). Iteration 3→4 added an explicit sentence connecting Pearson-on-ordinal inflation to hairball density, closing the last with-skill gap.
+| 4 | 100% | 84.6% | +15.4pp | Pearson-on-Likert→hairball link added; 39/39 with skill |
+| 5 | **98.3%** | **86.4%** | **+11.9pp** | 4 new evals: causal-boundary + Granger; 59 total assertions |
 
 ---
 
