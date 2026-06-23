@@ -195,6 +195,12 @@ With the skill, the response opens with the ECS case, explains metatable overhea
 > end
 > ```
 
+The result in motion — 22 enemies, same starting positions, same target:
+
+![Enemy horde: beeline stacking (base model) vs. flow field + separation steering (with skill)](enemy_horde_comparison.gif)
+
+**Left** — base model output: every enemy beelines directly to the player, all stacking into an indistinguishable blob. **Right** — with-skill output: flow field navigation + boids-style separation steering keeps enemies spread, readable, and encircling — the spread bar shows the difference quantitatively.
+
 ---
 
 ## What the skill does
@@ -220,15 +226,6 @@ delta:         +18.5pp
 ```
 
 ![Benchmark: skill vs. base model per eval](benchmark_comparison.png)
-
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by eval (■ with skill  □ base model)"
-    x-axis ["scope-finish-deckbuilder", "hitstop-priority-trap", "rigidbody-avatar-trap", "enemy-horde-pathing", "godot-platformer-feel", "godot-autoload-overuse", "procgen-dungeon-validate", "framerate-dependent-debug", "game-feel-diagnosis", "engine-select-cozy-sim", "survivors-collision-love", "survivors-like-perf-love", "camera-lerp-trap", "ecs-small-game-trap"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
-    bar [43, 60, 60, 71, 80, 80, 83, 83, 100, 88, 86, 100, 100, 100]
-```
 
 ### Results by eval
 
