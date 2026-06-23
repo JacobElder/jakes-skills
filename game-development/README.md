@@ -207,6 +207,92 @@ The result in motion — 22 enemies, same starting positions, same target:
 
 ---
 
+### "How do I make enemies flash white on hit and give them an outline in Godot?"
+
+> I want my enemies to flash white when they take damage, and have a colored outline around their sprites at all times. How do I do this in Godot 4?
+
+Without the skill, the response uses `modulate` — a built-in Color property that tints the whole sprite. It works, but produces no outline and the tint is a blunt color shift rather than a clean white flash:
+
+> ```gdscript
+> func take_damage():
+>     modulate = Color(1.5, 0.5, 0.5)   # reddish tint
+>     await get_tree().create_timer(0.1).timeout
+>     modulate = Color.WHITE
+> ```
+
+With the skill, the response leads with a `canvas_item` shader using `mix()` to blend toward white (preserving alpha), plus a second pass doing the 8-direction UV-offset outline — the correct shader technique for both effects:
+
+> ```glsl
+> // HitFlashOutline.gdshader
+> shader_type canvas_item;
+> uniform float flash_t : hint_range(0.0, 1.0) = 0.0;
+> uniform vec4 outline_color : source_color = vec4(1.0, 0.2, 0.2, 1.0);
+> uniform float outline_width : hint_range(1.0, 8.0) = 3.0;
+>
+> void fragment() {
+>     vec4 col = texture(TEXTURE, UV);
+>     vec2 texel = outline_width / vec2(textureSize(TEXTURE, 0));
+>     float a = col.a;
+>     a = max(a, texture(TEXTURE, UV + vec2( texel.x,       0.0)).a);
+>     a = max(a, texture(TEXTURE, UV + vec2(-texel.x,       0.0)).a);
+>     a = max(a, texture(TEXTURE, UV + vec2(      0.0,  texel.y)).a);
+>     a = max(a, texture(TEXTURE, UV + vec2(      0.0, -texel.y)).a);
+>     // outline where the dilated mask exceeds the original alpha
+>     if (col.a < 0.1 && a > 0.1) {
+>         COLOR = outline_color;
+>         return;
+>     }
+>     COLOR = mix(col, vec4(1.0), flash_t);  // white flash preserves shape
+> }
+> ```
+
+The outline is always visible; the flash fires on damage and decays in two frames:
+
+![Hit flash + outline: base model (modulate tint, no outline) vs. with-skill (shader mix() flash + 8-direction outline)](hit_flash_outline_comparison.gif)
+
+**Left** — base model output: a red color modulate tint. No outline, no crisp white flash. **Right** — with-skill output: persistent colored outline using the 8-direction UV-offset technique, plus a clean white flash that fires on impact using `mix()` in the shader (preserving alpha correctly, unlike setting `modulate = Color.WHITE`).
+
+---
+
+### "My enemies dissolve when they die but it looks wrong — just a ghost fade"
+
+> In my Godot game, enemies fade out when they die using `modulate.a = 0`. It looks bad — they turn into a transparent ghost. How do I get a proper dissolve effect?
+
+Without the skill, the response keeps the alpha approach and suggests `Tween` to animate `modulate.a` from 1 to 0 — cleaner code, same ghost result:
+
+> ```gdscript
+> func die():
+>     var tween = create_tween()
+>     tween.tween_property(self, "modulate:a", 0.0, 0.8)
+>     await tween.finished
+>     queue_free()
+> ```
+
+With the skill, the response explains that `alpha = 0` is the wrong tool for dissolve — it fades the whole sprite uniformly, producing a ghost. The correct approach is a noise-texture shader using `discard`, which removes pixels hard-edge based on a threshold, creating a pixel-by-pixel dissolve:
+
+> ```glsl
+> // Dissolve.gdshader
+> shader_type canvas_item;
+> uniform sampler2D noise_texture;
+> uniform float dissolve_amount : hint_range(0.0, 1.0) = 0.0;
+>
+> void fragment() {
+>     float noise = texture(noise_texture, UV).r;
+>     // discard — not alpha = 0 — so there is no ghost transparency
+>     if (noise < dissolve_amount) discard;
+>     COLOR = texture(TEXTURE, UV);
+> }
+> ```
+> Drive `dissolve_amount` via AnimationPlayer from 0 → 1 over the death duration.
+
+The visual difference between the two approaches:
+
+![Dissolve shader: base model (uniform alpha fade) vs. with-skill (noise discard dissolve)](dissolve_shader_comparison.gif)
+
+**Left** — base model output: `alpha = 0` fade. The sprite becomes a transparent ghost that lingers. **Right** — with-skill output: `discard` against a smooth noise texture. Pixels wink out individually, edge-first — the standard dissolve effect used in action games and RPGs.
+
+---
+
 ## What the skill does
 
 The base model knows game development concepts. The skill gives the agent the *specific non-negotiables* to apply them correctly.
