@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Defines TE as a conditional mutual information I(Y_{t+1}; X_past | Y_past) and notes it is directed/asymmetric, unlike ordinary MI.",
+      "passed": true,
+      "evidence": "Defines TE_{X\u2192Y} = I(Y_{t+1}; X_t^(l) | Y_t^(k)); explicitly states asymmetric by construction unlike MI."
+    },
+    {
+      "text": "States TE is the nonlinear generalization of Granger causality and that they coincide for linear-Gaussian processes (bonus: Granger statistic = 2*TE in nats); so plain Granger suffices for linear data.",
+      "passed": true,
+      "evidence": "States TE is nonlinear generalization of Granger; for jointly Gaussian linear processes Geweke statistic = 2\u00b7TE in nats; recommend Granger/VAR for linear data."
+    },
+    {
+      "text": "Warns it is not model-free causality: a hidden common cause produces spurious TE, and target history length k must be set adequately (else inflation).",
+      "passed": true,
+      "evidence": "States TE is directed predictive information not interventional causality; hidden common driver produces spurious TE; k must be set from target's own autocorrelation."
+    },
+    {
+      "text": "Requires a surrogate/permutation (e.g. source time-shift) null and notes plug-in TE is biased upward / undersamples as history grows.",
+      "passed": true,
+      "evidence": "States permutation null is mandatory; notes K^(k+l+1) state space undersamples fast; plug-in biased upward like MI."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

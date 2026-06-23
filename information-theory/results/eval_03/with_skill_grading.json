@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies that standard VI / the ELBO minimizes reverse KL, i.e. KL(q||p).",
+      "passed": true,
+      "evidence": "Explicitly states ELBO = minimizing KL(q\u2016p) = reverse KL."
+    },
+    {
+      "text": "Explains reverse KL is mode-seeking / zero-forcing and therefore underestimates variance \u2014 the narrow intervals are expected, not a tuning bug.",
+      "passed": true,
+      "evidence": "States reverse KL is mode-seeking/zero-forcing; explains optimizer locks onto one mode and is systematically too narrow. Frames this as expected, not a bug."
+    },
+    {
+      "text": "Contrasts with forward KL KL(p||q) being mass-covering / variance-respecting.",
+      "passed": true,
+      "evidence": "Explicitly contrasts forward KL (mass-covering, used by EP and MCMC) with reverse KL (mode-seeking, used by VI)."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

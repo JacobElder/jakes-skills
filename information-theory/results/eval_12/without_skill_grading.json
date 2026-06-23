@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Recommends a regularity/complexity entropy (sample entropy, permutation entropy, or multiscale entropy) rather than Shannon entropy of binned amplitude values.",
+      "passed": true,
+      "evidence": "Recommends SampEn with m=2, r=0.15\u00d7SD; also covers permutation entropy and MSE."
+    },
+    {
+      "text": "Explains WHY Shannon entropy of the amplitude distribution is the wrong tool here: it is order-invariant / unchanged by shuffling, so it cannot capture temporal predictability or complexity.",
+      "passed": true,
+      "evidence": "States Shannon entropy ignores temporal order \u2014 periodic signal can have high Shannon entropy if histogram is flat."
+    },
+    {
+      "text": "Gives concrete parameter guidance (e.g., m=2, r=0.2*SD for SampEn, or embedding order for permutation entropy) and notes sensitivity to N / sampling.",
+      "passed": true,
+      "evidence": "Gives m=2, r=0.15\u00d7SD for SampEn; L=5 for permutation entropy; notes stationarity and epoch-length effects."
+    },
+    {
+      "text": "Does not report the measure in bits as if it were Shannon information, and/or notes values are only comparable across signals at matched parameters.",
+      "passed": true,
+      "evidence": "Practical checklist includes parameter documentation; does not claim bits."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Both pass all assertions. Base model handles the EEG entropy disambiguation reasonably. Skill adds the explicit Shannon/SampEn lineage explanation."
+  }
+}

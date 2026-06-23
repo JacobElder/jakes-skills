@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Answers NO: low log-loss does not guarantee calibration.",
+      "passed": true,
+      "evidence": "Core answer is NO; explains the distinction between average quality (log-loss) and per-prediction calibration."
+    },
+    {
+      "text": "Correctly states log-loss is a strictly proper scoring rule (minimized by true probabilities in expectation), but proper-ness is about expected score, not a calibration guarantee for the fitted model.",
+      "passed": true,
+      "evidence": "States log-loss is strictly proper; explains proper scoring rule gives expectation-level guarantee not per-prediction calibration. Three failure modes where a miscalibrated model can still have good average log-loss."
+    },
+    {
+      "text": "Recommends a calibration diagnostic (reliability diagram / expected calibration error) distinct from the loss value.",
+      "passed": true,
+      "evidence": "Recommends reliability diagrams / ECE as the diagnostic."
+    },
+    {
+      "text": "Recommends temperature scaling (or isotonic/Platt) as the fix, noting temperature scaling preserves the argmax/accuracy.",
+      "passed": true,
+      "evidence": "Recommends temperature scaling (one-parameter cross-entropy minimization); notes it preserves argmax/accuracy."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

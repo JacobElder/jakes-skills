@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Recommends a regularity/complexity entropy (sample entropy, permutation entropy, or multiscale entropy) rather than Shannon entropy of binned amplitude values.",
+      "passed": true,
+      "evidence": "Recommends SampEn (m=2, r=0.2\u00d7SD) as primary; also covers permutation entropy and MSE. Does not recommend Shannon entropy of amplitude distribution."
+    },
+    {
+      "text": "Explains WHY Shannon entropy of the amplitude distribution is the wrong tool here: it is order-invariant / unchanged by shuffling, so it cannot capture temporal predictability or complexity.",
+      "passed": true,
+      "evidence": "Explicitly states Shannon entropy ignores temporal order; shuffling a sine wave gives same Shannon entropy as white noise but they are maximally different in complexity."
+    },
+    {
+      "text": "Gives concrete parameter guidance (e.g., m=2, r=0.2*SD for SampEn, or embedding order for permutation entropy) and notes sensitivity to N / sampling.",
+      "passed": true,
+      "evidence": "Gives m=2, r=0.2\u00d7SD; notes parameter sensitivity ('m, r, and N all move the number'); warns against comparing across different parameter sets."
+    },
+    {
+      "text": "Does not report the measure in bits as if it were Shannon information, and/or notes values are only comparable across signals at matched parameters.",
+      "passed": true,
+      "evidence": "States 'SampEn is not in bits'; notes values only comparable at matched parameters."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

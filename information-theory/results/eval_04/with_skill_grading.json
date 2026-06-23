@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "States the decomposition H(p,q) = H(p) + D_KL(p||q).",
+      "passed": true,
+      "evidence": "Explicitly states the identity H(p,q) = H(p) + D_KL(p\u2016q) as the central hinge."
+    },
+    {
+      "text": "Explains that minimizing cross-entropy over q equals maximum likelihood equals minimizing KL to the empirical distribution \u2014 the same objective.",
+      "passed": true,
+      "evidence": "Shows argmin_q H(p\u0302,q) = argmin KL(p\u0302\u2016q) = argmax log q(x\u1d62) = MLE."
+    },
+    {
+      "text": "Notes that 'cross-entropy loss', 'negative log-likelihood', and 'log loss' name the same thing (base only changes bits vs nats).",
+      "passed": true,
+      "evidence": "Explicitly states these are the same objective; only difference is log base (bits vs nats) and whether you average or sum."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

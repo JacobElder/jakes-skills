@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Connects information gain to mutual information / entropy reduction (H(Y) \u2212 H(Y|split)).",
+      "passed": true,
+      "evidence": "Explicitly connects information gain to plug-in mutual information; cites H(Y) \u2212 H(Y|split) definition."
+    },
+    {
+      "text": "Explains high-cardinality splits inflate measured information gain (spurious purity / upward bias), i.e. it is overfitting, not real signal.",
+      "passed": true,
+      "evidence": "States upward bias is (K_X\u22121)(K_Y\u22121)/(2N); for customer_id K_X \u2248 N so bias \u2248 (K_Y\u22121)/2 \u2014 a fixed large offset unrelated to signal. Pure leaves are mechanical."
+    },
+    {
+      "text": "Recommends a concrete fix: gain ratio, penalizing cardinality, or excluding ID-like columns.",
+      "passed": true,
+      "evidence": "Recommends (1) drop ID columns (correct structural fix), (2) gain ratio for custom rankers, (3) permutation null."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

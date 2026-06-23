@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Flags that ranking by marginal MI ignores redundancy among features, and recommends a redundancy-aware criterion (mRMR, JMI, or conditional MI).",
+      "passed": true,
+      "evidence": "Identifies redundancy as the biggest failure mode; recommends mRMR or post-hoc correlation check."
+    },
+    {
+      "text": "Notes MI estimates are biased (upward) and the bias is worse for high-cardinality/continuous features, which can distort the ranking.",
+      "passed": true,
+      "evidence": "States high-cardinality categoricals are systematically overscored due to finite-sample bias."
+    },
+    {
+      "text": "Recommends a sound estimation practice (KSG over fixed-bin histograms for continuous features, and/or a permutation null).",
+      "passed": false,
+      "evidence": "The without-skill response does not specifically recommend KSG over histogram binning for continuous features, or a permutation null test. Mentions the bias issue but not the estimation fix."
+    },
+    {
+      "text": "Gives a nuanced verdict rather than simply endorsing top-k-by-MI.",
+      "passed": true,
+      "evidence": "Does not endorse; identifies multiple gotchas."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertion 8c (KSG recommendation, permutation null) differentiates \u2014 the skill's estimation chapter drives this recommendation."
+  }
+}

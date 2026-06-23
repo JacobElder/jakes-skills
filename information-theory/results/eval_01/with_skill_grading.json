@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "States that empirical/plug-in mutual information is biased upward (overestimates) in finite samples.",
+      "passed": true,
+      "evidence": "Transcript explicitly states plug-in MI is biased upward by (K_X-1)(K_Y-1)/(2N) \u2248 0.26 nats and quantifies it precisely."
+    },
+    {
+      "text": "Connects the problem to undersampling: 150 rows is small relative to the ~12\u00d78 joint cells.",
+      "passed": true,
+      "evidence": "States 150 rows over 12\u00d78 = 96 cells gives ~1.6 rows/cell; identifies this as well below the ~10 per cell threshold."
+    },
+    {
+      "text": "Recommends a permutation/shuffle null test or an explicit bias correction (Miller\u2013Madow/NSB).",
+      "passed": true,
+      "evidence": "Provides complete runnable code for permutation null (500 shuffles) and Miller\u2013Madow correction with all three entropy terms corrected."
+    },
+    {
+      "text": "Does NOT simply affirm 0.42 as a real, trustworthy effect size.",
+      "passed": true,
+      "evidence": "Explicitly refuses to take 0.42 at face value; estimates signal gap as only ~0.16 nats at best after bias correction."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

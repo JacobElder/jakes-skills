@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Computes H(Y|X) = H(Y) - I(X;Y) = log2(10) - 1.5 ~= 1.822 bits.",
+      "passed": true,
+      "evidence": "H(Y|X) = log\u2082(10) - 1.5 = 3.322 - 1.5 = 1.822 bits. Correct."
+    },
+    {
+      "text": "Applies Fano's inequality H(Y|X) <= H(Pe) + Pe*log2(K-1) to bound the error rate.",
+      "passed": true,
+      "evidence": "Applies Fano: H(Y|X) \u2264 H(Pe) + Pe\u00b7log\u2082(K-1)."
+    },
+    {
+      "text": "Gives a numeric floor: weak-form ~0.247 and/or the tight solution ~0.298 (accept ~0.25-0.30), i.e. at least ~25-30% error is unavoidable.",
+      "passed": true,
+      "evidence": "Loose bound: Pe \u2265 (1.822-1)/log\u2082(9) \u2248 0.259; tight: Pe \u2248 0.296. Both within acceptance range."
+    },
+    {
+      "text": "Interprets it as a model-independent floor (a result below it implies leakage / broken eval), ideally noting a biased-low H(Y|X) loosens the bound.",
+      "passed": true,
+      "evidence": "States floor is model-independent; implies leakage if beaten. Notes MI resolves only 45% of label entropy."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Both pass all assertions. Fano's inequality is well-known to the base model."
+  }
+}

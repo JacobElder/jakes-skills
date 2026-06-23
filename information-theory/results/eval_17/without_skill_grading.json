@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Defines TE as a conditional mutual information I(Y_{t+1}; X_past | Y_past) and notes it is directed/asymmetric, unlike ordinary MI.",
+      "passed": true,
+      "evidence": "Defines TE = I(Y_{t+1}; X_past | Y_past); explicitly asymmetric unlike MI."
+    },
+    {
+      "text": "States TE is the nonlinear generalization of Granger causality and that they coincide for linear-Gaussian processes (bonus: Granger statistic = 2*TE in nats); so plain Granger suffices for linear data.",
+      "passed": true,
+      "evidence": "States TE is nonlinear generalization of Granger; for jointly Gaussian they are equivalent; Barnett et al. cited."
+    },
+    {
+      "text": "Warns it is not model-free causality: a hidden common cause produces spurious TE, and target history length k must be set adequately (else inflation).",
+      "passed": true,
+      "evidence": "Lists confounding variables / common drivers; embedding dimension selection as key pitfall."
+    },
+    {
+      "text": "Requires a surrogate/permutation (e.g. source time-shift) null and notes plug-in TE is biased upward / undersamples as history grows.",
+      "passed": true,
+      "evidence": "Mandatory surrogate testing noted (no analytic null); sample size demands (500-1000 minimum)."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Both pass all assertions. TE knowledge is reasonably well-represented in the base model. Skill adds Geweke = 2*TE equivalence explicitly."
+  }
+}

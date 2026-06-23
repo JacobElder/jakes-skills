@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "States AIC targets out-of-sample predictive accuracy (expected KL / deviance); efficient, does not assume a true model in the set.",
+      "passed": true,
+      "evidence": "States AIC estimates out-of-sample predictive deviance (expected KL); efficient but not consistent; does not assume true model in candidate set."
+    },
+    {
+      "text": "States BIC targets the true/parsimonious model (marginal-likelihood / consistency) under the assumption the true model is among the candidates.",
+      "passed": true,
+      "evidence": "States BIC \u2248 log marginal likelihood via Laplace; consistent if true model is in candidate set \u2014 explicitly owns that assumption."
+    },
+    {
+      "text": "Frames the choice by the question being asked (prediction vs identifying the true model) rather than declaring one universally superior or averaging them.",
+      "passed": true,
+      "evidence": "Reframes as category error; provides decision rule by question; explicitly prohibits averaging."
+    },
+    {
+      "text": "Recommends cross-validation / LOO (or notes AIC \u2248 LOO) as a direct way to settle a prediction-focused decision.",
+      "passed": true,
+      "evidence": "Recommends LOO-CV as a direct arbiter; notes AIC \u2248 LOO asymptotically."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

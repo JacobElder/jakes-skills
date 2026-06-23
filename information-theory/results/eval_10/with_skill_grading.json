@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Uses the correct 1-D Gaussian KL formula 0.5*[ln(var_q/var_p) + (var_p + (mu_p-mu_q)^2)/var_q - 1] (variances, not std).",
+      "passed": true,
+      "evidence": "Uses exact variance-form formula: KL = \u00bd[ln(var_q/var_p) + (var_p+(\u03bc_p-\u03bc_q)\u00b2)/var_q - 1]."
+    },
+    {
+      "text": "Forward KL(p||q) with var_p=1, var_q=2, mu_p=0, mu_q=1 evaluates to approximately 0.3466 nats (= 0.5 bits exactly).",
+      "passed": true,
+      "evidence": "Computes KL(p\u2016q) = 0.3466 nats = 0.5 bits exactly. Shows calculation step by step."
+    },
+    {
+      "text": "Reverse KL(q||p) evaluates to approximately 0.6534 nats (= 0.9427 bits). NOT equal to the forward value.",
+      "passed": true,
+      "evidence": "Computes KL(q\u2016p) = 0.6534 nats \u2248 0.9427 bits. Shows calculation."
+    },
+    {
+      "text": "Explicitly states the two values differ, so KL is asymmetric / not a metric.",
+      "passed": true,
+      "evidence": "States 'KL divergence is not symmetric' with the ratio nearly 2:1; explains structural reason for asymmetry."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

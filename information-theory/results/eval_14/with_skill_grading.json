@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Cites the data-processing inequality: post-processing/feature engineering cannot increase information about the target beyond what the inputs already contain.",
+      "passed": true,
+      "evidence": "Invokes DPI explicitly: no deterministic transform can create information beyond I(inputs;Y)."
+    },
+    {
+      "text": "Identifies a feature that increases label MI / produces near-perfect performance as a leakage signature (encodes the label or post-outcome/future info), not genuine new signal.",
+      "passed": true,
+      "evidence": "States a feature increasing MI above I(raw inputs;Y) is direct evidence of leakage (future data, label encoding, contaminated splits)."
+    },
+    {
+      "text": "Gives concrete diagnostics: audit feature construction for label/future leakage, check temporal availability at prediction time, and/or re-estimate MI against a permutation null.",
+      "passed": true,
+      "evidence": "Provides six-row diagnostic checklist: temporal audit, feature construction review, permutation null for MI, leakage pattern mapping."
+    },
+    {
+      "text": "Optionally connects to Fano (information implies an error floor) to argue the result is implausibly good.",
+      "passed": true,
+      "evidence": "Connects to Fano's inequality: honest I(X;Y) implies error floor; AUC 0.98 that beats that floor is not believable."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

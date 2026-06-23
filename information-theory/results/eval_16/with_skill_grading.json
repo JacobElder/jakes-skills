@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies binning as fragile: the result depends on bin count/edges and can flip, and plug-in MI on binned data is biased upward.",
+      "passed": true,
+      "evidence": "Three problems: upward bias (quantified as (K-1)\u00b2/2N), bin count/edge dependency that can flip results qualitatively, and equal-width bins misrepresent skewed latency."
+    },
+    {
+      "text": "Recommends the KSG / k-NN estimator for continuous MI instead of histogram binning.",
+      "passed": true,
+      "evidence": "Recommends KSG estimator; references scripts/entropy_mi_estimators.py ksg_mi."
+    },
+    {
+      "text": "Notes a relevant KSG property: continuous (no bins), approximately invariant to monotone transforms of each variable, and the ties->jitter caveat or choice of k.",
+      "passed": true,
+      "evidence": "Notes roughly invariant to monotone reparameterization; mentions ties->jitter and k sensitivity."
+    },
+    {
+      "text": "Recommends a permutation null and/or bootstrap CI rather than reporting a bare MI value.",
+      "passed": true,
+      "evidence": "States bootstrap CI and permutation null are required; a bare MI number is not evidence."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

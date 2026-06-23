@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Uses the Gaussian R(D) = 0.5*log2(sigma^2/D) for 0<=D<=sigma^2 (0 above sigma^2).",
+      "passed": true,
+      "evidence": "States R(D) = \u00bd log\u2082(\u03c3\u00b2/D) with D(R) = \u03c3\u00b2\u00b72^(-2R) inverse. Correct formula."
+    },
+    {
+      "text": "R(D) at sigma^2=4, D=1 is exactly 1.0 bit/sample.",
+      "passed": true,
+      "evidence": "R(1) = \u00bd log\u2082(4) = 1.0 bit/sample. Correct."
+    },
+    {
+      "text": "R(D) at D=0.25 is exactly 2.0 bits/sample, and states the rule that halving D adds 0.5 bit/sample.",
+      "passed": true,
+      "evidence": "R(0.25) = \u00bd log\u2082(16) = 2.0 bits/sample. Rule stated: each additional bit reduces MSE by factor of 4."
+    },
+    {
+      "text": "Notes R(D) is the minimum I(X;Xhat) under the distortion constraint (mutual information is the quantity being minimized; dual of capacity).",
+      "passed": false,
+      "evidence": "The without-skill response gives the formula and numbers correctly but does not note R(D) as minimum I(X;X\u0302) or the duality with channel capacity."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertion 19d (R(D) as minimum MI, dual of capacity) differentiates the skill. Base model knows the formula but misses the information-theoretic interpretation."
+  }
+}

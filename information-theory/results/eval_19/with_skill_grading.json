@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Uses the Gaussian R(D) = 0.5*log2(sigma^2/D) for 0<=D<=sigma^2 (0 above sigma^2).",
+      "passed": true,
+      "evidence": "States R(D) = \u00bd log\u2082(\u03c3\u00b2/D) with domain 0 \u2264 D \u2264 \u03c3\u00b2; shows table including R=0 for D\u2265\u03c3\u00b2."
+    },
+    {
+      "text": "R(D) at sigma^2=4, D=1 is exactly 1.0 bit/sample.",
+      "passed": true,
+      "evidence": "R(1) = \u00bd log\u2082(4) = \u00bd\u00d72 = 1.0 bit/sample exactly."
+    },
+    {
+      "text": "R(D) at D=0.25 is exactly 2.0 bits/sample, and states the rule that halving D adds 0.5 bit/sample.",
+      "passed": true,
+      "evidence": "R(0.25) = \u00bd log\u2082(16) = \u00bd\u00d74 = 2.0 bits/sample; algebraic proof that halving D adds \u00bd bit."
+    },
+    {
+      "text": "Notes R(D) is the minimum I(X;Xhat) under the distortion constraint (mutual information is the quantity being minimized; dual of capacity).",
+      "passed": true,
+      "evidence": "States R(D) is minimum mutual information I(X;X\u0302) subject to distortion constraint; dual of channel capacity."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies binning as fragile: the result depends on bin count/edges and can flip, and plug-in MI on binned data is biased upward.",
+      "passed": true,
+      "evidence": "Identifies upward bias (Miller correction), arbitrary bin count dependency, and skewed marginals issue."
+    },
+    {
+      "text": "Recommends the KSG / k-NN estimator for continuous MI instead of histogram binning.",
+      "passed": true,
+      "evidence": "Recommends KSG nearest-neighbor estimator or sklearn mutual_info_regression."
+    },
+    {
+      "text": "Notes a relevant KSG property: continuous (no bins), approximately invariant to monotone transforms of each variable, and the ties->jitter caveat or choice of k.",
+      "passed": false,
+      "evidence": "The without-skill response recommends KSG but does not specifically note the monotone-invariance property or the ties->jitter caveat. Mentions quantile-based bins as alternative."
+    },
+    {
+      "text": "Recommends a permutation null and/or bootstrap CI rather than reporting a bare MI value.",
+      "passed": false,
+      "evidence": "The without-skill response does not recommend a permutation null or bootstrap CI. Recommends Spearman's \u03c1 as an alternative but not a null test."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 2,
+    "total": 4,
+    "pass_rate": 0.5
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions 16c (KSG properties: monotone-invariance, jitter) and 16d (permutation null) differentiate the skill. Base model recommends KSG but misses these details."
+  }
+}

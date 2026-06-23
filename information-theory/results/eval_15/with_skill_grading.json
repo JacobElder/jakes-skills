@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "States WAIC and PSIS-LOO both estimate expected out-of-sample (pointwise) log predictive density / predictive KL, and recommends PSIS-LOO (generally preferred over WAIC).",
+      "passed": true,
+      "evidence": "States both estimate expected log predictive density / out-of-sample deviance; prefers PSIS-LOO as default with self-diagnostic."
+    },
+    {
+      "text": "Requires checking the Pareto k-hat diagnostic; flags k-hat > 0.7 as unreliable importance sampling for those observations.",
+      "passed": true,
+      "evidence": "Explicitly requires checking k\u0302 per observation; flags k\u0302 > 0.7 as unreliable importance sampling (influence too high)."
+    },
+    {
+      "text": "Says to compare elpd DIFFERENCES relative to their standard error, not point estimates alone (a small difference vs SE is not decisive).",
+      "passed": true,
+      "evidence": "Uses SE on the difference (dse); treats |\u0394ELPD| < 2\u00d7dse as indeterminate."
+    },
+    {
+      "text": "Mentions arviz (az.compare/az.loo) and/or explicitly avoids DIC.",
+      "passed": true,
+      "evidence": "Recommends arviz.compare; mentions az.loo; does not recommend DIC."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

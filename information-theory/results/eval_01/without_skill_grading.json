@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "States that empirical/plug-in mutual information is biased upward (overestimates) in finite samples.",
+      "passed": true,
+      "evidence": "States plug-in MI has substantial upward bias (~0.25 nats rough calculation), mentions bias floor."
+    },
+    {
+      "text": "Connects the problem to undersampling: 150 rows is small relative to the ~12\u00d78 joint cells.",
+      "passed": true,
+      "evidence": "Identifies 150 rows across 96 cells (12\u00d78 table) as sparse."
+    },
+    {
+      "text": "Recommends a permutation/shuffle null test or an explicit bias correction (Miller\u2013Madow/NSB).",
+      "passed": true,
+      "evidence": "Recommends permutation test to compare observed MI against null distribution."
+    },
+    {
+      "text": "Does NOT simply affirm 0.42 as a real, trustworthy effect size.",
+      "passed": true,
+      "evidence": "States 'there is probably some real association' but 'permutation test is required to confirm'; does not endorse 0.42 unconditionally."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Both responses handle this well. With-skill provides exact bias quantification and runnable code; without-skill somewhat vaguer but correct direction."
+  }
+}

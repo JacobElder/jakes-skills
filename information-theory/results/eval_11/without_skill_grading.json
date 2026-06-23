@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies this as sample entropy / a time-series regularity measure (Richman-Moorman), explicitly NOT Shannon entropy of the value distribution.",
+      "passed": false,
+      "evidence": "The without-skill response computes SampEn but never explicitly identifies it as a regularity statistic distinct from Shannon entropy, nor states it is NOT Shannon entropy. The disambiguation is absent."
+    },
+    {
+      "text": "Computes r = 0.2 * SD correctly: SD ~= 14.87, so r ~= 2.97 (accepts 2.9-3.0).",
+      "passed": false,
+      "evidence": "Uses sample SD (ddof=1) = 15.12, giving r = 3.02. Outside the acceptance range 2.9-3.0 (just barely), but the root issue is using wrong SD convention."
+    },
+    {
+      "text": "Reports SampEn ~= 0.61 (accept 0.59-0.62) using the -ln(A/B) definition with self-matches EXCLUDED (Chebyshev metric, m=2).",
+      "passed": false,
+      "evidence": "Reports SampEn = 0.539, outside the acceptance range 0.59-0.62. The difference is due to using sample SD vs population SD for r, leading to different match counts."
+    },
+    {
+      "text": "States the result is unitless (not bits) and/or that SampEn is only comparable across signals at the same (m, r, N); reports the parameters used.",
+      "passed": true,
+      "evidence": "Reports parameters used; notes values only comparable at same (m, r, N). Does not explicitly state unitless but implies it."
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 3,
+    "total": 4,
+    "pass_rate": 0.25
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Strong discriminator: with-skill correctly identifies Shannon/SampEn distinction (thesis 7) and uses the correct SD convention from the script. Without-skill misses the disambiguation and uses wrong SD."
+  }
+}

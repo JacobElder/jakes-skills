@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "States clearly that negative differential entropy is valid and not a bug.",
+      "passed": true,
+      "evidence": "States '-2.4 is not a bug'; differential entropy does not have the non-negativity guarantee of discrete Shannon entropy."
+    },
+    {
+      "text": "Explains differential entropy is not simply 'entropy for continuous variables' (e.g., can be negative; not expected surprisal).",
+      "passed": true,
+      "evidence": "Distinguishes differential entropy from discrete Shannon entropy; explains densities can exceed 1."
+    },
+    {
+      "text": "Notes it is not invariant under reparameterization/rescaling (depends on units), so its value is scale-dependent.",
+      "passed": false,
+      "evidence": "The baseline response focuses on why values go negative (density > 1) but does not explicitly address scale-dependence / reparameterization non-invariance. Mentions debugging advice but not the coordinate-dependence issue."
+    },
+    {
+      "text": "Does NOT incorrectly claim entropy must always be non-negative.",
+      "passed": true,
+      "evidence": "Correctly validates the negative value."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertion 2c (reparameterization non-invariance) is a key differentiator \u2014 the skill explicitly covers this, the baseline misses it."
+  }
+}

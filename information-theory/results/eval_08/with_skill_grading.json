@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Flags that ranking by marginal MI ignores redundancy among features, and recommends a redundancy-aware criterion (mRMR, JMI, or conditional MI).",
+      "passed": true,
+      "evidence": "Explicitly flags redundancy blindness; recommends mRMR or JMI/CMIM greedy selection instead of top-k ranking."
+    },
+    {
+      "text": "Notes MI estimates are biased (upward) and the bias is worse for high-cardinality/continuous features, which can distort the ranking.",
+      "passed": true,
+      "evidence": "States plug-in MI is biased upward; bias is worst for high-cardinality/continuous features \u2014 exactly where overfit is most likely."
+    },
+    {
+      "text": "Recommends a sound estimation practice (KSG over fixed-bin histograms for continuous features, and/or a permutation null).",
+      "passed": true,
+      "evidence": "Recommends KSG for continuous features and permutation null; mandatory for any reported MI value."
+    },
+    {
+      "text": "Gives a nuanced verdict rather than simply endorsing top-k-by-MI.",
+      "passed": true,
+      "evidence": "Does not endorse the approach; identifies three failure modes with concrete fixes."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

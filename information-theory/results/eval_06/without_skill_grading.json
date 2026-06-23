@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "States AIC targets out-of-sample predictive accuracy (expected KL / deviance); efficient, does not assume a true model in the set.",
+      "passed": true,
+      "evidence": "States AIC targets out-of-sample prediction / predictive accuracy; efficient not consistent; does not require true model in set."
+    },
+    {
+      "text": "States BIC targets the true/parsimonious model (marginal-likelihood / consistency) under the assumption the true model is among the candidates.",
+      "passed": true,
+      "evidence": "States BIC targets identifying correct model structure / parsimony; consistency property noted."
+    },
+    {
+      "text": "Frames the choice by the question being asked (prediction vs identifying the true model) rather than declaring one universally superior or averaging them.",
+      "passed": true,
+      "evidence": "Provides decision rule: prediction goal \u2192 AIC; structural truth \u2192 BIC. Does not declare one universally better."
+    },
+    {
+      "text": "Recommends cross-validation / LOO (or notes AIC \u2248 LOO) as a direct way to settle a prediction-focused decision.",
+      "passed": false,
+      "evidence": "The without-skill response does not recommend CV/LOO as an arbiter or note the AIC \u2248 LOO equivalence."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 1,
+    "total": 4,
+    "pass_rate": 0.75
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertion 6d (AIC \u2248 LOO / recommend CV) differentiates the skill. The skill explicitly connects AIC to LOO; the base model misses this."
+  }
+}

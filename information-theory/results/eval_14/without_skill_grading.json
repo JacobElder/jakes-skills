@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Cites the data-processing inequality: post-processing/feature engineering cannot increase information about the target beyond what the inputs already contain.",
+      "passed": false,
+      "evidence": "The without-skill response does not cite the data-processing inequality. It lists five categories of leakage causes but does not use DPI as the principled argument."
+    },
+    {
+      "text": "Identifies a feature that increases label MI / produces near-perfect performance as a leakage signature (encodes the label or post-outcome/future info), not genuine new signal.",
+      "passed": true,
+      "evidence": "Identifies the 'too good to be true' result as likely leakage; lists target leakage as most common cause."
+    },
+    {
+      "text": "Gives concrete diagnostics: audit feature construction for label/future leakage, check temporal availability at prediction time, and/or re-estimate MI against a permutation null.",
+      "passed": true,
+      "evidence": "Provides systematic checklist: temporal audit, cold holdout, feature ablation, production simulation."
+    },
+    {
+      "text": "Optionally connects to Fano (information implies an error floor) to argue the result is implausibly good.",
+      "passed": false,
+      "evidence": "No mention of Fano's inequality or information-theoretic error floor in the without-skill response."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 2,
+    "total": 4,
+    "pass_rate": 0.5
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Strong discriminator: DPI as the principled argument (14a) and Fano floor (14d) are skill-specific. Without-skill identifies leakage but without the information-theoretic framing."
+  }
+}

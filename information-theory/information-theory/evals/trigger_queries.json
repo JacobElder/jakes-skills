@@ -1,0 +1,138 @@
+[
+  {
+    "query": "I've got a 150-row table of device_type (mobile/desktop/tablet) against support_outcome (resolved/escalated/abandoned). I computed mutual information and got 0.42 nats \u2014 is that a real association or am I fooling myself with so few rows per cell?",
+    "should_trigger": true
+  },
+  {
+    "query": "Can you explain how cross-entropy loss, negative log-likelihood, and KL divergence are all the same thing? My DS lead keeps using them interchangeably and I want to know if that's actually correct or sloppy.",
+    "should_trigger": true
+  },
+  {
+    "query": "My variational inference posterior keeps coming out way too confident \u2014 the credible intervals are visibly too narrow compared to the MCMC run. Is this an optimization bug or something more fundamental about the objective?",
+    "should_trigger": true
+  },
+  {
+    "query": "We're estimating that our event-log stream is about 1.18 bits per character. How compressible does that make it, realistically, and what's the theoretical floor I should expect a compressor to hit?",
+    "should_trigger": true
+  },
+  {
+    "query": "Model A has 9 parameters, model B has 5. AIC slightly prefers A, BIC clearly prefers B. Which one do I actually report in the paper, and how do I justify the choice rather than just picking the one I like?",
+    "should_trigger": true
+  },
+  {
+    "query": "I computed the differential entropy of one of my continuous features and got -2.4. A negative entropy seems like it has to be a bug \u2014 what did I do wrong?",
+    "should_trigger": true
+  },
+  {
+    "query": "What's the KL divergence between N(0,1) and N(2,3), and does it matter which way round I put them? I always forget whether KL is symmetric.",
+    "should_trigger": true
+  },
+  {
+    "query": "I ranked all 180 of my candidate features by mutual information with the churn label and kept the top 25. A teammate says MI ranking is biased and I'm probably keeping a bunch of redundant high-cardinality junk. Is she right?",
+    "should_trigger": true
+  },
+  {
+    "query": "My decision tree's first split is on customer_id and it gets near-perfect information gain on training data. Obviously something is wrong but I want to understand exactly why the split criterion is rewarding this.",
+    "should_trigger": true
+  },
+  {
+    "query": "For a biodiversity side project I sampled 30 individuals across species and want a single number for how diverse the community is. People mention a 'diversity index' \u2014 how do I compute it and what are the gotchas with so few individuals?",
+    "should_trigger": true
+  },
+  {
+    "query": "I have a set of RR interval series from a wearable study and want to compute the sample entropy of each one (m=2, r=0.2*SD). Can you sanity-check my approach and tell me how to read the numbers across participants?",
+    "should_trigger": true
+  },
+  {
+    "query": "I want to quantify how complex / unpredictable an EEG channel is. Which 'entropy' is the right one here \u2014 I keep seeing sample entropy, permutation entropy, and plain Shannon entropy thrown around and I don't know which applies.",
+    "should_trigger": true
+  },
+  {
+    "query": "My PyTorch training crashes with 'Expected target size [32, 10], got [32]' on nn.CrossEntropyLoss. How do I fix the tensor shapes I'm passing to the loss?",
+    "should_trigger": false
+  },
+  {
+    "query": "I'm redesigning the navigation for our docs site and want help with the information architecture \u2014 how to group the sections and label the top-level menu so people can find things.",
+    "should_trigger": false
+  },
+  {
+    "query": "Can you explain the second law of thermodynamics and why entropy always increases in an isolated system? Trying to refresh my undergrad physics.",
+    "should_trigger": false
+  },
+  {
+    "query": "I have about $40k in a taxable brokerage and I'm trying to decide between a total-market index fund and a target-date fund. Which makes more sense for a long horizon?",
+    "should_trigger": false
+  },
+  {
+    "query": "I need to compress about 200 PDFs so I can email them \u2014 they're too big for the attachment limit. What's the easiest way to zip and shrink them on my Mac?",
+    "should_trigger": false
+  },
+  {
+    "query": "I have log lines like 'epoch=12 H=3.41 bits loss=0.88'. Write me a regex to pull out the number after 'H=' so I can plot it.",
+    "should_trigger": false
+  },
+  {
+    "query": "My random forest's feature_importances_ change a lot between runs and even reorder the top features. How do I get a more stable importance ranking?",
+    "should_trigger": false
+  },
+  {
+    "query": "I'm reading a trajectory-optimization paper that uses the 'cross-entropy method' to sample action sequences for model-predictive control. Can you walk me through how that CEM update loop works?",
+    "should_trigger": false
+  },
+  {
+    "query": "Our team keeps talking about 'entropy' in the codebase \u2014 meaning the accumulating tech debt and dead code that makes everything harder to change. Any strategies for measuring and reducing that kind of software rot?",
+    "should_trigger": false
+  },
+  {
+    "query": "I ran an A/B test on the new onboarding flow: 4.1% vs 4.6% conversion over two weeks. Is that difference significant at the 0.05 level, and how should I set up the test?",
+    "should_trigger": false
+  },
+  {
+    "query": "How many survey respondents do I need to estimate our top-task completion rate within +/- 3 percentage points? Trying to figure out the sample size before we field it.",
+    "should_trigger": false
+  },
+  {
+    "query": "I want the power spectrum of an accelerometer signal \u2014 just the FFT magnitude across frequency bands so I can see which rhythms dominate. What's the cleanest way to compute and plot that?",
+    "should_trigger": false
+  },
+  {
+    "query": "I've got two coupled sensor time series and I want to figure out which one is driving the other \u2014 the relationship looks nonlinear so I don't think a plain VAR will cut it. What's the right information-theoretic measure and how do I keep it from giving me spurious directionality?",
+    "should_trigger": true
+  },
+  {
+    "query": "I have a zero-mean Gaussian-ish signal and I need to know the minimum number of bits per sample to store it if I can tolerate a certain mean-squared error. Is there a clean formula for the bits-vs-fidelity tradeoff?",
+    "should_trigger": true
+  },
+  {
+    "query": "My event-log stream has strong sequential structure. If I want the true per-symbol information content \u2014 not just the entropy of how often each event type shows up \u2014 how do I compute that, and why are the two different?",
+    "should_trigger": true
+  },
+  {
+    "query": "Before I spend another week tuning models: given that the mutual information between my features and the label is only about 1.5 bits for a 10-class problem, is there a hard floor on the error rate that no classifier can beat?",
+    "should_trigger": true
+  },
+  {
+    "query": "My classifier's log-loss is really low and my PM wants to show the predicted probabilities to users as confidence scores. Is a low log-loss enough to trust that those probabilities are actually calibrated?",
+    "should_trigger": true
+  },
+  {
+    "query": "What's the cleanest tool or codec to compress a folder of 4K video files for archiving? I care about file size vs visible quality but I just want a practical recommendation, not theory.",
+    "should_trigger": false
+  },
+  {
+    "query": "How do I do post-training int8 quantization of my PyTorch model so it runs faster on edge devices? Looking for the API and a code snippet.",
+    "should_trigger": false
+  },
+  {
+    "query": "Can you give me a short history of Claude Shannon and how information theory got started? It's for a talk intro, just the story and the people.",
+    "should_trigger": false
+  },
+  {
+    "query": "I have a 2x2 contingency table with small counts and want to test for association. How do I compute a Fisher exact test p-value in scipy?",
+    "should_trigger": false
+  },
+  {
+    "query": "My smartwatch says my heart rate variability has been low for a few weeks and I'm worried it means something is wrong with my health. Should I be concerned?",
+    "should_trigger": false
+  }
+]

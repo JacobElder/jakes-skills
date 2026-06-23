@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Finds the stationary distribution mu = (2/3, 1/3) (mu P = mu).",
+      "passed": true,
+      "evidence": "Solves \u03bcP = \u03bc, finds \u03bc = (2/3, 1/3). Shows derivation."
+    },
+    {
+      "text": "Computes entropy rate as the stationary-weighted average of per-row transition entropies: (2/3)H(0.9,0.1)+(1/3)H(0.2,0.8) ~= 0.553 bits/step (accept 0.55-0.56).",
+      "passed": true,
+      "evidence": "H(\ud835\udcb3) = (2/3)(0.4690) + (1/3)(0.7219) = 0.5533 bits/step. Within acceptance range."
+    },
+    {
+      "text": "Gives the marginal state-visit entropy H(2/3,1/3) ~= 0.918 bits and states it is LARGER than the entropy rate.",
+      "passed": true,
+      "evidence": "H(\u03bc) = H_b(2/3, 1/3) = 0.9183 bits. States it is larger than entropy rate."
+    },
+    {
+      "text": "Explains the marginal overstates per-symbol information because it ignores dependence on the previous state (i.i.d. is the only case where they coincide).",
+      "passed": true,
+      "evidence": "Explains the 0.365-bit gap equals MI between current and next state; strong self-loops make next state predictable from current state."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

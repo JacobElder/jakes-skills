@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies that Huffman codes assign an integer number of bits per symbol, so the per-symbol overhead can be up to ~1 bit \u2014 the loss is inherent, not a bug.",
+      "passed": true,
+      "evidence": "States Huffman cannot assign fractional-bit codewords; common symbol needs 0.074 bits but floors at 1 bit."
+    },
+    {
+      "text": "Explains the skew (p\u22480.95) is exactly the regime where this hurts, since the entropy is well below 1 bit/symbol.",
+      "passed": true,
+      "evidence": "Shows the dominant symbol deserves 0.074 bits but gets 1 bit, so ~13\u00d7 overhead."
+    },
+    {
+      "text": "Recommends arithmetic coding and/or ANS, which approach the entropy bound (within O(1) bits total, not per symbol).",
+      "passed": true,
+      "evidence": "Recommends arithmetic coding / ANS as the principled solution; notes block coding as partial fix."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Both responses pass all assertions. This is a well-known coding result; base model handles it correctly."
+  }
+}

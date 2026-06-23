@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Connects information gain to mutual information / entropy reduction (H(Y) \u2212 H(Y|split)).",
+      "passed": true,
+      "evidence": "Connects information gain to H(Y) \u2212 H(Y|split); identifies it as entropy reduction."
+    },
+    {
+      "text": "Explains high-cardinality splits inflate measured information gain (spurious purity / upward bias), i.e. it is overfitting, not real signal.",
+      "passed": true,
+      "evidence": "Explains unique-ID creates one leaf per row (trivially pure); gain equals full training set entropy; this is overfitting not signal."
+    },
+    {
+      "text": "Recommends a concrete fix: gain ratio, penalizing cardinality, or excluding ID-like columns.",
+      "passed": true,
+      "evidence": "Recommends (1) drop identifier columns, (2) gain ratio (C4.5), (3) min_samples_leaf, (4) target encoding."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Both pass all assertions. Decision tree / information gain bias is well-known to the base model."
+  }
+}

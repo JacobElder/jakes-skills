@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Computes H(Y|X) = H(Y) - I(X;Y) = log2(10) - 1.5 ~= 1.822 bits.",
+      "passed": true,
+      "evidence": "H(Y|X) = log\u2082(10) - 1.5 = 3.3219 - 1.5 = 1.8219 bits. Correct."
+    },
+    {
+      "text": "Applies Fano's inequality H(Y|X) <= H(Pe) + Pe*log2(K-1) to bound the error rate.",
+      "passed": true,
+      "evidence": "Applies Fano: H(Y|X) \u2264 H(P\u2091) + P\u2091\u00b7log\u2082(K\u22121) with K=10."
+    },
+    {
+      "text": "Gives a numeric floor: weak-form ~0.247 and/or the tight solution ~0.298 (accept ~0.25-0.30), i.e. at least ~25-30% error is unavoidable.",
+      "passed": true,
+      "evidence": "Weak floor: (1.8219-1)/log\u2082(10) \u2248 0.247. Tight solution (bisection): P\u2091 \u2248 0.298. Both given."
+    },
+    {
+      "text": "Interprets it as a model-independent floor (a result below it implies leakage / broken eval), ideally noting a biased-low H(Y|X) loosens the bound.",
+      "passed": true,
+      "evidence": "States floor is model-independent; any result below it implies leakage or broken eval. Notes biased-low H(Y|X) gives over-optimistic (too-loose) floor."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

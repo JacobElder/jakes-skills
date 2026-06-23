@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies that Huffman codes assign an integer number of bits per symbol, so the per-symbol overhead can be up to ~1 bit \u2014 the loss is inherent, not a bug.",
+      "passed": true,
+      "evidence": "Explicitly states Huffman is optimal only among codes with integer bits per symbol; overhead is inherent, not a bug. Computes exact overhead at p=0.95."
+    },
+    {
+      "text": "Explains the skew (p\u22480.95) is exactly the regime where this hurts, since the entropy is well below 1 bit/symbol.",
+      "passed": true,
+      "evidence": "Calculates entropy \u2248 0.286 bits/symbol vs 1.0 bit/symbol floor, showing 3.5\u00d7 overhead specific to skewed distributions."
+    },
+    {
+      "text": "Recommends arithmetic coding and/or ANS, which approach the entropy bound (within O(1) bits total, not per symbol).",
+      "passed": true,
+      "evidence": "Recommends arithmetic/ANS; explains O(1) bits total overhead (not per symbol), directly from coding.md."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

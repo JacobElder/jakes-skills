@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies this as sample entropy / a time-series regularity measure (Richman-Moorman), explicitly NOT Shannon entropy of the value distribution.",
+      "passed": true,
+      "evidence": "Opens with 'This is NOT a Shannon entropy question.' Identifies SampEn as time-series regularity in Pincus/Richman-Moorman lineage."
+    },
+    {
+      "text": "Computes r = 0.2 * SD correctly: SD ~= 14.87, so r ~= 2.97 (accepts 2.9-3.0).",
+      "passed": true,
+      "evidence": "SD = 14.869 ms, r = 2.974 ms (population std ddof=0). Within acceptance range 2.9-3.0."
+    },
+    {
+      "text": "Reports SampEn ~= 0.61 (accept 0.59-0.62) using the -ln(A/B) definition with self-matches EXCLUDED (Chebyshev metric, m=2).",
+      "passed": true,
+      "evidence": "SampEn = 0.606 using script. Within acceptance range 0.59-0.62. Self-matches excluded confirmed."
+    },
+    {
+      "text": "States the result is unitless (not bits) and/or that SampEn is only comparable across signals at the same (m, r, N); reports the parameters used.",
+      "passed": true,
+      "evidence": "States result is 'not in bits'; parameters (m=2, r, N=30) explicitly reported; comparisons must use matched parameters."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

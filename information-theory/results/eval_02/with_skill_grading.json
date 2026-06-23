@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "States clearly that negative differential entropy is valid and not a bug.",
+      "passed": true,
+      "evidence": "Opens with: '-2.4 is not a bug.' Explains differential entropy can be negative."
+    },
+    {
+      "text": "Explains differential entropy is not simply 'entropy for continuous variables' (e.g., can be negative; not expected surprisal).",
+      "passed": true,
+      "evidence": "Explicitly distinguishes differential entropy from discrete Shannon entropy; states it is not expected surprisal."
+    },
+    {
+      "text": "Notes it is not invariant under reparameterization/rescaling (depends on units), so its value is scale-dependent.",
+      "passed": true,
+      "evidence": "Explains reparameterization non-invariance; recommends MI as the coordinate-free alternative."
+    },
+    {
+      "text": "Does NOT incorrectly claim entropy must always be non-negative.",
+      "passed": true,
+      "evidence": "Correctly asserts the opposite \u2014 that negative values are expected and meaningful."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Assertions are well-targeted and discriminating."
+  }
+}

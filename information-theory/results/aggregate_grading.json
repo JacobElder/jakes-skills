@@ -1,0 +1,155 @@
+{
+  "with_skill": {
+    "passed": 75,
+    "total": 75,
+    "rate": 1.0
+  },
+  "without_skill": {
+    "passed": 64,
+    "total": 75,
+    "rate": 0.8533333333333334
+  },
+  "delta_pp": 14.666666666666666,
+  "evals": [
+    {
+      "id": 1,
+      "name": "mi_undersampled_categorical",
+      "with_skill": "4/4",
+      "without_skill": "4/4",
+      "delta_pp": 0.0
+    },
+    {
+      "id": 2,
+      "name": "differential_entropy_negative",
+      "with_skill": "4/4",
+      "without_skill": "3/4",
+      "delta_pp": 25.0
+    },
+    {
+      "id": 3,
+      "name": "vi_reverse_kl_underestimates_variance",
+      "with_skill": "3/3",
+      "without_skill": "3/3",
+      "delta_pp": 0.0
+    },
+    {
+      "id": 4,
+      "name": "crossentropy_nll_kl_identity",
+      "with_skill": "3/3",
+      "without_skill": "3/3",
+      "delta_pp": 0.0
+    },
+    {
+      "id": 5,
+      "name": "huffman_vs_arithmetic_skewed",
+      "with_skill": "3/3",
+      "without_skill": "3/3",
+      "delta_pp": 0.0
+    },
+    {
+      "id": 6,
+      "name": "aic_bic_disagreement",
+      "with_skill": "4/4",
+      "without_skill": "3/4",
+      "delta_pp": 25.0
+    },
+    {
+      "id": 7,
+      "name": "bits_per_char_compression",
+      "with_skill": "3/3",
+      "without_skill": "3/3",
+      "delta_pp": 0.0
+    },
+    {
+      "id": 8,
+      "name": "mi_feature_selection_ranking",
+      "with_skill": "4/4",
+      "without_skill": "3/4",
+      "delta_pp": 25.0
+    },
+    {
+      "id": 9,
+      "name": "decision_tree_high_cardinality_gain",
+      "with_skill": "3/3",
+      "without_skill": "3/3",
+      "delta_pp": 0.0
+    },
+    {
+      "id": 10,
+      "name": "kl_gaussians_asymmetry_numeric",
+      "with_skill": "4/4",
+      "without_skill": "4/4",
+      "delta_pp": 0.0
+    },
+    {
+      "id": 11,
+      "name": "sample_entropy_compute_and_report",
+      "with_skill": "4/4",
+      "without_skill": "1/4",
+      "delta_pp": 75.0
+    },
+    {
+      "id": 12,
+      "name": "entropy_disambiguation_timeseries",
+      "with_skill": "4/4",
+      "without_skill": "4/4",
+      "delta_pp": 0.0
+    },
+    {
+      "id": 13,
+      "name": "calibration_proper_not_calibrated",
+      "with_skill": "4/4",
+      "without_skill": "4/4",
+      "delta_pp": 0.0
+    },
+    {
+      "id": 14,
+      "name": "dpi_leakage_detection",
+      "with_skill": "4/4",
+      "without_skill": "2/4",
+      "delta_pp": 50.0
+    },
+    {
+      "id": 15,
+      "name": "waic_psis_loo_pareto_k",
+      "with_skill": "4/4",
+      "without_skill": "4/4",
+      "delta_pp": 0.0
+    },
+    {
+      "id": 16,
+      "name": "continuous_mi_ksg_vs_binning",
+      "with_skill": "4/4",
+      "without_skill": "2/4",
+      "delta_pp": 50.0
+    },
+    {
+      "id": 17,
+      "name": "transfer_entropy_directionality",
+      "with_skill": "4/4",
+      "without_skill": "4/4",
+      "delta_pp": 0.0
+    },
+    {
+      "id": 18,
+      "name": "markov_entropy_rate",
+      "with_skill": "4/4",
+      "without_skill": "4/4",
+      "delta_pp": 0.0
+    },
+    {
+      "id": 19,
+      "name": "rate_distortion_gaussian",
+      "with_skill": "4/4",
+      "without_skill": "3/4",
+      "delta_pp": 25.0
+    },
+    {
+      "id": 20,
+      "name": "fano_error_floor",
+      "with_skill": "4/4",
+      "without_skill": "4/4",
+      "delta_pp": 0.0
+    }
+  ]
+}

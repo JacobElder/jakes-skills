@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "Identifies that standard VI / the ELBO minimizes reverse KL, i.e. KL(q||p).",
+      "passed": true,
+      "evidence": "States mean-field VI minimizes KL(q\u2016p) = reverse KL."
+    },
+    {
+      "text": "Explains reverse KL is mode-seeking / zero-forcing and therefore underestimates variance \u2014 the narrow intervals are expected, not a tuning bug.",
+      "passed": true,
+      "evidence": "Explains zero-forcing behavior: optimizer concentrates q tightly on a mode, producing marginals that are systematically too narrow."
+    },
+    {
+      "text": "Contrasts with forward KL KL(p||q) being mass-covering / variance-respecting.",
+      "passed": true,
+      "evidence": "Contrasts with minimizing KL(p\u2016q) which is mass-covering."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "claims": [],
+  "eval_feedback": {
+    "suggestions": [],
+    "overall": "Both responses cover all three assertions well. Base model knows VI/KL direction well. Skill adds mean-field compounding detail."
+  }
+}
