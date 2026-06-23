@@ -282,6 +282,154 @@
         {"text": "Does NOT suggest manually raycasting from pivot to camera and repositioning the camera as the primary solution — SpringArm3D handles this", "prog": false},
         {"text": "Does NOT suggest parenting Camera3D directly to the CharacterBody3D as a good approach — that produces a fixed angle with no clip protection", "prog": false}
       ]
+    },
+    {
+      "id": 18,
+      "name": "status-effects-design",
+      "prompt": "I'm building a JRPG in Godot 4. I need to implement status effects — things like Poison, Paralysis, Burn, and Berserk. How should I structure this system? I want to be able to stack some effects, have them tick each turn, and easily add new ones without touching existing code.",
+      "files": [],
+      "targets": ["rpg-systems status effects", "data-driven component pattern", "non-negotiable #3 decouple"],
+      "assertions": [
+        {"text": "Recommends a data-driven or component-based approach where each effect is a Resource/class with defined methods (enter/tick/exit or apply/remove) rather than a hardcoded if-elif chain in the combat loop", "prog": false},
+        {"text": "Defines a clear effect contract — each status effect knows what it does on application, each tick, and on removal — so new effects are authored as new data/classes, not by modifying existing combat code", "prog": false},
+        {"text": "Addresses stacking policy as per-effect configuration: some effects replace (paralysis), some stack additively (poison instances), some cap at N — this decision belongs in the effect data, not hardcoded in a central manager", "prog": false},
+        {"text": "Separates effect definition (what the effect does, its duration) from effect instance state (who has it, remaining ticks) — the same StatusEffectData resource/class can be shared; per-entity state is tracked separately", "prog": false},
+        {"text": "Implements the tick loop by iterating the entity's active_effects list and calling each effect's tick method — NOT a giant if/elif chain checking named effects by string or enum", "prog": false},
+        {"text": "Does NOT implement the system as a collection of boolean flags on the entity (is_poisoned: bool, is_paralyzed: bool, is_burned: bool) — this pattern cannot be extended without modifying the entity class for every new effect", "prog": false}
+      ]
+    },
+    {
+      "id": 19,
+      "name": "inventory-equipment-data",
+      "prompt": "I'm designing an inventory and equipment system for an action-RPG in Godot 4 — like Zelda or a roguelike. Players can pick up items, equip weapons and armor, and see their stats change. How should I architect this so it's data-driven and easy to extend with new items?",
+      "files": [],
+      "targets": ["rpg-systems inventory equipment", "data-driven resources", "stat modifiers", "non-negotiable #3 decouple"],
+      "assertions": [
+        {"text": "Represents items as data resources (Godot Resource subclass or equivalent ScriptableObject pattern) — item definitions are authored as data assets, not hardcoded classes per item type", "prog": false},
+        {"text": "Separates item definition (ItemData: name, icon, stats, slot type) from item instance (a runtime wrapper holding the ItemData reference plus quantity, durability, or enchantments)", "prog": false},
+        {"text": "Equipment slots are typed (dict keyed by an enum or typed array of EquipmentSlot) — not a list of booleans or untyped strings. Equipping an item checks slot compatibility and swaps correctly.", "prog": false},
+        {"text": "Stat modifiers use an additive+multiplicative pattern (base_stat * (1 + sum_of_additive_bonuses) * product_of_multipliers) or a modifier list rather than recomputing from scratch with custom logic per item", "prog": false},
+        {"text": "Emits a signal/event on equip and unequip so the HUD and stat display update reactively — the inventory does NOT reach directly into HUD nodes to update labels", "prog": false},
+        {"text": "Does NOT hardcode item effects as if/elif chains by item name or ID (e.g. 'if item.name == Sword: damage += 5') — item stat contributions come from the item's data", "prog": false}
+      ]
+    },
+    {
+      "id": 20,
+      "name": "audio-bus-hierarchy",
+      "prompt": "My game needs working volume sliders for Music, SFX, and a Master volume — and players should be able to mute each category independently. How do I set this up properly in Godot 4, and what else should I know about organizing game audio?",
+      "files": [],
+      "targets": ["audio-architecture bus hierarchy", "AudioServer", "volume control", "godot idioms"],
+      "assertions": [
+        {"text": "Instructs setting up an Audio Bus Layout with multiple named buses (Master, Music, SFX at minimum) — NOT routing all sounds through the single default Master bus", "prog": false},
+        {"text": "Explains that AudioStreamPlayer/2D/3D nodes connect to the appropriate bus via the 'bus' property — so music players go to the Music bus, SFX players to the SFX bus, etc.", "prog": false},
+        {"text": "Volume sliders call AudioServer.set_bus_volume_db(bus_index, linear_to_db(value)) — NOT setting volume_db on individual AudioStreamPlayer nodes, which would require tracking every player instance", "prog": false},
+        {"text": "Uses linear_to_db() (or the equivalent dB conversion) when converting slider values to bus volume — a direct linear mapping produces perceptually wrong volume response", "prog": false},
+        {"text": "Muting a category uses AudioServer.set_bus_mute(bus_index, true/false) — enabling per-category mute independently of volume", "prog": false},
+        {"text": "Does NOT recommend a single AudioManager that plays all sounds from one shared AudioStreamPlayer — this prevents per-category volume and mute control and can only play one sound at a time", "prog": false}
+      ]
+    },
+    {
+      "id": 21,
+      "name": "adaptive-music",
+      "prompt": "I want my game's music to react to gameplay — peaceful ambient music when exploring, tense music during combat, and a dramatic sting when the boss appears. How do I implement adaptive or dynamic music in Godot 4?",
+      "files": [],
+      "targets": ["audio-architecture adaptive music", "stem-based layering", "state machine music"],
+      "assertions": [
+        {"text": "Recommends a stem/layer approach: multiple AudioStreamPlayers all looping synchronized stems (e.g. exploration_base, exploration_melody, combat_drums, combat_strings) with volume faded in/out per state — NOT stopping one track and starting another, which causes silence gaps and sync loss", "prog": false},
+        {"text": "Synchronizes stems by matching playback_position: when adding a new stem, set its playback_position to match a currently playing stem before calling play(), so all stems stay in sync", "prog": false},
+        {"text": "Uses a state machine (e.g. Exploration / Combat / BossFight) to drive which stems are audible — state transitions tween the volume of the relevant stems in/out", "prog": false},
+        {"text": "Transitions between states by tweening stem volumes (fade in combat drums, fade out ambient melody) rather than abruptly cutting or crossfading between two separate non-synchronized tracks", "prog": false},
+        {"text": "Does NOT implement adaptive music as simply calling stop() on one AudioStreamPlayer and play() on a different one — this causes an audible silence gap and the new track starts from the beginning rather than the correct beat", "prog": false}
+      ]
+    },
+    {
+      "id": 22,
+      "name": "sprite-hit-flash-outline",
+      "prompt": "I'm making a 2D game in Godot 4. I need two visual effects: (1) a white flash on my sprites when they take damage, so players can clearly see a hit registered, and (2) a colored outline/glow around interactable objects so players know they can interact with them. How do I write these shaders in Godot?",
+      "files": [],
+      "targets": ["shaders canvas_item", "hit flash", "sprite outline", "shader uniforms"],
+      "assertions": [
+        {"text": "Both effects use shader_type canvas_item (not spatial or sky) — 2D sprite effects require the canvas_item shader type in Godot", "prog": false},
+        {"text": "Hit flash: the fragment shader replaces the visible pixel color with white (or a mix toward white) while preserving the original texture's alpha — so only non-transparent pixels flash, not the whole bounding box", "prog": false},
+        {"text": "Hit flash is controlled by a shader uniform (e.g. flash_amount: float 0.0–1.0 or flash_active: bool) set from GDScript via set_shader_parameter(), then reset after a short duration via a tween or timer", "prog": false},
+        {"text": "Outline: samples the texture at offset UV positions in N/S/E/W (or 8) directions; where the current pixel is transparent but an adjacent sample is opaque, renders the outline color — this is the UV-offset expansion approach, not a post-process on the whole screen", "prog": false},
+        {"text": "Outline color and size are exposed as shader uniforms so they're tunable from the Inspector without editing the shader source", "prog": false},
+        {"text": "Does NOT recommend a post-process effect applied to the entire screen for per-sprite hit flash or outline — these are per-sprite ShaderMaterial effects", "prog": false}
+      ]
+    },
+    {
+      "id": 23,
+      "name": "dissolve-shader",
+      "prompt": "I want a dissolve effect for when enemies die in my 2D game in Godot 4 — the sprite should disintegrate over about half a second, starting from random-looking parts of the sprite rather than fading out uniformly. How do I make this?",
+      "files": [],
+      "targets": ["shaders dissolve", "noise texture", "canvas_item shader", "discard"],
+      "assertions": [
+        {"text": "Uses a noise texture (NoiseTexture2D resource) sampled in the fragment shader to determine which pixels dissolve first — pixels with noise value below a threshold disappear, producing a non-uniform, organic dissolution pattern", "prog": false},
+        {"text": "The dissolve threshold is a shader uniform (e.g. dissolve_amount: float, 0.0 = fully visible → 1.0 = fully dissolved) that is animated from GDScript via a tween on the shader parameter", "prog": false},
+        {"text": "Uses 'discard' in the fragment function to remove dissolved pixels — NOT setting the alpha channel to 0.0, because discarding is required for correct rendering order with other transparent objects in Godot's canvas_item pipeline", "prog": false},
+        {"text": "Optionally adds an edge effect: pixels near the dissolve threshold boundary receive a bright or emissive color (e.g. orange/fire glow) so the dissolve has a burning/energized edge rather than just a hard cutoff", "prog": false},
+        {"text": "The dissolve animation is driven from GDScript as a Tween on the shader parameter, with queue_free() called when the tween completes — NOT a separate animated texture or sprite-sheet approach", "prog": false}
+      ]
+    },
+    {
+      "id": 24,
+      "name": "multiplayer-scope-trap",
+      "prompt": "I'm making a 2D co-op action RPG in Godot 4. My solo game is done and plays great. Should I add online multiplayer? How hard is it really, and what approach should I take?",
+      "files": [],
+      "targets": ["multiplayer-netcode scope trap", "authoritative server", "effort estimate", "local coop first"],
+      "assertions": [
+        {"text": "Leads with an honest scope warning: adding online multiplayer to a finished solo game typically adds 30–100%+ more development time — it is NOT a 'just sync the state' addition, even for a finished game", "prog": false},
+        {"text": "Clearly distinguishes local co-op (same machine, shared input, nearly trivial to add) from online multiplayer (latency, packet loss, desync, game state synchronization — fundamentally different problems requiring architectural changes)", "prog": false},
+        {"text": "Recommends starting with local co-op / split-screen as the first step toward co-op — ship that, then evaluate online — rather than jumping straight to online networking", "prog": false},
+        {"text": "If online is pursued: recommends an authoritative server architecture (one machine owns the true game state; clients send inputs and receive updates) rather than naive peer-to-peer state sync, which is vulnerable to cheating and desync", "prog": false},
+        {"text": "Names Godot's built-in MultiplayerAPI and at least one relay/backend service or third-party library (Nakama, Photon, or similar) — explains that direct P2P connections usually require a relay server for NAT traversal", "prog": false},
+        {"text": "Does NOT say 'just sync position and health' as if networking is a simple add-on — acknowledges latency, cheating prevention, disconnect/reconnect handling, and desync as real problems requiring real design", "prog": false}
+      ]
+    },
+    {
+      "id": 25,
+      "name": "rollback-netcode",
+      "prompt": "I'm building a 2D fighting game in Godot 4. Everyone says rollback netcode is the gold standard for fighting games. What is it, how does it work, and should I implement it myself?",
+      "files": [],
+      "targets": ["multiplayer-netcode rollback vs delay-based", "GGPO", "determinism requirement", "use existing library"],
+      "assertions": [
+        {"text": "Correctly explains rollback: each client predicts the opponent's input (typically last known), simulates forward, and when the true input arrives, rolls back the game state to the divergence frame and re-simulates forward from there — corrections are invisible if latency is low", "prog": false},
+        {"text": "Distinguishes rollback from delay-based netcode: delay-based adds input delay so both clients always have each other's inputs before simulating (simpler, but feels bad at variable latency); rollback hides latency through speculation and correction, feeling much better in practice", "prog": false},
+        {"text": "States the hard requirement: the game simulation must be fully deterministic — same inputs always produce exactly the same outputs, with seeded RNG, no random behavior outside of seeded generators, and no floating-point platform divergence", "prog": false},
+        {"text": "Names GGPO or the Godot Rollback Netcode addon (by Snopek / GDRollback) as the existing library to use — strongly recommends against implementing rollback from scratch, which is expert-level work", "prog": false},
+        {"text": "Scopes rollback to where it is appropriate: low-player-count, fast-paced, latency-sensitive games (fighting games, beat-em-ups, some RTS) — NOT for MMOs, large-world games, or games with many synchronized objects", "prog": false},
+        {"text": "Does NOT recommend rollback as the universal correct choice for all multiplayer games — it is the right choice specifically for fighting games; other game types have better-suited approaches", "prog": false}
+      ]
+    },
+    {
+      "id": 26,
+      "name": "roguelike-run-save",
+      "prompt": "I'm making a roguelike in Godot 4. I need players to be able to save mid-run and quit, then resume later — but death must be permanent and players start over from scratch. I also want meta-progression: permanent upgrades that persist between runs (like unlocked characters and bonus starting items). How do I structure this?",
+      "files": [],
+      "targets": ["save-and-progression run save", "meta-progression", "dual save file pattern", "serialize logical state not nodes"],
+      "assertions": [
+        {"text": "Separates two distinct save files: a run save (volatile — deleted on death or run completion) and a meta save (permanent — persists across all runs, tracks unlocks, currency, best stats)", "prog": false},
+        {"text": "The run save serializes logical game state — floor number, inventory as item IDs + quantities, current stats, dungeon seed, explored flags — NOT engine objects, scene trees, or node hierarchies", "prog": false},
+        {"text": "Includes a version field in the save file from day one, so future content additions can migrate existing saves rather than breaking them", "prog": false},
+        {"text": "Describes the run lifecycle: on game start check for an existing run save → prompt to resume or start new. On death: delete the run save, tally results into the meta save. On run completion: same meta-update then delete run save.", "prog": false},
+        {"text": "The meta save is minimal and persistent: unlocked characters/items, earned permanent currency, best-run records — NOT a snapshot of the current run state", "prog": false},
+        {"text": "Does NOT recommend saving the entire scene tree, node hierarchy, or engine objects — only the logical data model that can be used to reconstruct the game state from scratch", "prog": false}
+      ]
+    },
+    {
+      "id": 27,
+      "name": "save-format-versioning",
+      "prompt": "I've shipped my roguelike and players have save files from v1.0. In my next update I'm adding a new 'Stamina' stat and reorganizing how items are stored in the save file. How do I update my save format without corrupting or discarding everyone's existing saves?",
+      "files": [],
+      "targets": ["save-and-progression format versioning", "migration chain", "backwards compatibility"],
+      "assertions": [
+        {"text": "Centers the solution on a version field in the save file — every save file has an integer version number, and the load function checks it to determine what migrations to run", "prog": false},
+        {"text": "Implements a migration chain: load the file, read version, run migrations in order (migrate_v1_to_v2, migrate_v2_to_v3, etc.) until reaching the current version — each migration transforms the old structure to the new one", "prog": false},
+        {"text": "For the new Stamina stat: the migration sets a sensible default value (not null, not 0 if 0 would be unplayable) for any save that doesn't have it yet", "prog": false},
+        {"text": "For the reorganized item storage: the migration reads the old item format and writes the new format field-by-field — it does not simply discard or ignore items that don't match the new schema", "prog": false},
+        {"text": "Recommends backing up the original save file before writing the migrated version (copy to a .bak file), so players can recover if migration has a bug", "prog": false},
+        {"text": "Does NOT recommend deleting old saves or requiring players to start over as the primary solution, and does NOT recommend checking for field presence (hasattr / has()) as a substitute for proper versioned migrations — that approach becomes unmaintainable after multiple updates", "prog": false}
+      ]
     }
   ]
 }

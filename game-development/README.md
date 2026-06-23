@@ -4,6 +4,8 @@ A skill that gives the agent the procedural knowledge to build games that feel g
 
 Covers **pixel art and retro games** (Zelda-like top-down, JRPG turn-based combat, Stardew-style farming sims) including pixel-perfect rendering setup (Nearest filter + integer scaling + camera snapping), grid-locked movement with tween animation, TileMap workflows, and sprite animation pipelines. Also covers **3D games**: CharacterBody3D controllers, SpringArm3D camera rigs that auto-prevent wall clipping, camera-relative movement, 3D pathfinding via NavigationAgent3D, skeletal animation blend trees, baked lighting, and modular level design.
 
+Also covers **RPG systems** (status effects with per-effect StackPolicy, stat modifiers via additive + multiplicative formula, inventory, ability systems, crafting), **audio architecture** (bus hierarchy for volume sliders, stem-based adaptive music that syncs playback position instead of stop-and-start crossfade, 3D spatial audio, AudioPool), **shaders and visual effects** (hit flash, 8-direction sprite outline, dissolve via discard not alpha=0, palette swap, post-process), **multiplayer and netcode** (scope reality check, local co-op before online, rollback vs delay-based, authoritative server, relay services), and **save systems and meta-progression** (dual-file roguelike saves, version field from day 1, migration chains).
+
 ## Installation
 
 ```bash
@@ -16,7 +18,7 @@ Or manually:
 cp -r jakes-skills/game-development ~/.claude/skills/game-development
 ```
 
-Once installed, the skill applies automatically when the user wants to build or improve a game in Godot, Unity, LÖVE, PyGame, Bevy, or Phaser — including character controllers, collision, enemy AI, procedural generation, game feel, engine selection, pixel art rendering, top-down movement, JRPG turn-based combat, 3D character controllers, third-person cameras, or scoping a project.
+Once installed, the skill applies automatically when the user wants to build or improve a game in Godot, Unity, LÖVE, PyGame, Bevy, or Phaser — including character controllers, collision, enemy AI, procedural generation, game feel, engine selection, pixel art rendering, top-down movement, JRPG turn-based combat, 3D character controllers, third-person cameras, scoping a project, RPG systems (status effects, inventory, stat modifiers), audio architecture (bus hierarchy, adaptive music), shaders and visual effects, multiplayer and netcode, or save systems and meta-progression.
 
 ---
 
@@ -207,7 +209,7 @@ The result in motion — 22 enemies, same starting positions, same target:
 
 ## What the skill does
 
-The base model knows game development concepts. The skill gives the agent the *specific non-negotiables* to apply them correctly. The five moves:
+The base model knows game development concepts. The skill gives the agent the *specific non-negotiables* to apply them correctly.
 
 - **Frame independence without exception.** Every generated movement line is audited before return: `position += speed` is flagged and corrected to `position += speed * delta`. Physics in `_physics_process`/`FixedUpdate`, not `_process`/`Update`. This is the most common silent defect in generated game code.
 - **Full platformer feel recipe — 2D and 3D.** Godot and Unity platformer requests get the complete set: asymmetric gravity (fast up, weighted down), coyote time, jump buffer, variable jump height. These four apply to 3D (CharacterBody3D) exactly as to 2D. The base model produces working but floaty code missing exactly these four.
@@ -217,17 +219,21 @@ The base model knows game development concepts. The skill gives the agent the *s
 - **Pixel-perfect rendering, always both settings.** Pixel art requests get both: texture filter → Nearest AND Stretch Mode → canvas_items with a small base resolution. Missing either produces blurry or shimmering pixels. Camera pixel-snapping (round before assign) is included as the third piece.
 - **3D camera: SpringArm3D, not a raycast.** Third-person camera requests lead with the SpringArm3D pivot rig (Player → CameraPivot → SpringArm3D → Camera3D) as the singular correct structure. The base model often leads with a manual raycast option; the skill names SpringArm as primary, explains the mask setup (world layer only), and warns against direct Camera3D parenting.
 - **Retro/pixel-art patterns.** Zelda-like top-down requests get: grid-locked movement (logical grid position + tween visual), facing direction from last non-zero velocity, 4-directional priority, TileMap layer setup, and collision layer architecture. JRPG requests get: ATB/turn-order state machine pattern, damage formula in data, dialogue character-reveal system.
+- **RPG systems: component pattern and correct stat formula.** Status effects are StatusEffectData Resources on an EffectManager component (not subclasses on enemies) with per-effect StackPolicy (REPLACE / ADD / IGNORE) — the base model uses a single global max_stacks flag and misses the per-effect policy. Stat modifiers use the flat-then-additive-then-multiplicative formula; the base model uses simple summation.
+- **Audio: bus hierarchy and stem-based adaptive music.** Audio bus setup is always Master → Music / SFX → subgroups, with volume saved as linear [0,1] and converted via `linear_to_db()` at assignment time. Adaptive music uses continuously-playing stems (all tracks run from game start, volumes set to 0), never stop-and-start crossfades that restart from position 0 — the most common mistake in generated adaptive music code, worth 80pp delta in evals.
+- **Multiplayer: scope warning and local co-op first.** Any online multiplayer request opens with an honest scope estimate (online multiplayer adds 30–100% dev time, plus hosting costs). The recommendation path is always: local co-op → LAN → online. The base model skips local co-op and jumps to MultiplayerAPI; the skill names it first.
+- **Save systems: logical state only, version field mandatory from day 1.** Save code serializes logical data (item IDs, numbers, seeds) — never Nodes, Resources with signals, or scene trees. Version field is included from the first line of the save dict. Roguelike runs use dual-file: volatile run.json (deleted on death) + permanent meta.json (unlocks, currency, records). Save format changes always use a migration chain (migrate_v1_to_v2 functions), never field-presence checks.
 
 ---
 
 ## Benchmark: skill vs. base model
 
-Evaluated across 18 scenarios covering the core game-development failure modes, including 4 new evals targeting pixel art rendering and 3D game development. Evals are LLM-graded against specific, objective assertions; executor and grader are separate calls to prevent self-grading inflation.
+Evaluated across 28 scenarios covering the core game-development failure modes — including pixel art rendering, 3D game development, RPG systems, audio architecture, shaders, multiplayer netcode, and save systems. Evals are LLM-graded against specific, objective assertions; executor and grader are separate calls to prevent self-grading inflation.
 
 ```
-with_skill:    100%   (119/119 expectations)
-without_skill:  79.8%  (95/119 expectations)
-delta:         +20.2pp
+with_skill:    100%   (177/177 expectations)
+without_skill:  81.4%  (144/177 expectations)
+delta:         +18.6pp
 ```
 
 ![Benchmark: skill vs. base model per eval](benchmark_comparison.png)
@@ -254,6 +260,16 @@ delta:         +20.2pp
 | survivors-like-perf-love | 7/7 (100%) | 7/7 (100%) | +0pp |
 | camera-lerp-framerate-trap | 5/5 (100%) | 5/5 (100%) | +0pp |
 | ecs-small-game-trap | 5/5 (100%) | 5/5 (100%) | +0pp |
+| adaptive-music | 1/5 (20%) | **5/5 (100%)** | +80pp |
+| inventory-equipment-data | 4/6 (67%) | **6/6 (100%)** | +33pp |
+| multiplayer-scope-trap | 4/6 (67%) | **6/6 (100%)** | +33pp |
+| status-effects-design | 5/6 (83%) | **6/6 (100%)** | +17pp |
+| audio-bus-hierarchy | 6/6 (100%) | 6/6 (100%) | +0pp |
+| sprite-hit-flash-outline | 6/6 (100%) | 6/6 (100%) | +0pp |
+| dissolve-shader | 5/5 (100%) | 5/5 (100%) | +0pp |
+| rollback-netcode | 6/6 (100%) | 6/6 (100%) | +0pp |
+| roguelike-run-save | 6/6 (100%) | 6/6 (100%) | +0pp |
+| save-format-versioning | 6/6 (100%) | 6/6 (100%) | +0pp |
 
 ### Where the skill makes the biggest difference
 
@@ -264,9 +280,13 @@ delta:         +20.2pp
 | rigidbody-avatar-trap | 60% base | Identifies force-driven Rigidbody2D as the architectural root cause of floatiness; recommends kinematic controller switch |
 | 3d-camera-springarm | 57% base | Recommends SpringArm3D as the primary (not optional) solution; correctly excludes player/enemy layers from the spring mask; names direct Camera3D parenting as the bug |
 | zelda-topdown-grid | 57% base | Implements grid-locked tween pattern explicitly (logical snaps, visual tweens); covers last-facing idle animation; defines layer/mask architecture |
+| adaptive-music | 20% base | Stems play continuously at volume 0 (never stop-and-start); late stem entry syncs playback_position from the running stems; base model crossfades by stopping old track and restarting from 0 |
 | enemy-horde-pathing | 71% base | Recommends a shared flow field (Dijkstra-map) instead of per-enemy A*; names separation steering to prevent stacking |
+| inventory-equipment-data | 67% base | Flat + additive-percent + multiplicative modifier formula; type-agnostic modifier dispatch; base model uses simple summation |
+| multiplayer-scope-trap | 67% base | Opens with scope warning (30–100% extra dev time); recommends local co-op before online; base model skips straight to MultiplayerAPI |
 | godot-platformer-feel | 80% base | Full platformer recipe: asymmetric gravity + coyote time + jump buffer + variable jump height (all four, not just gravity) |
 | godot-autoload-overuse | 80% base | Doesn't open with "solid starting point"; names the antipattern immediately; doesn't hedge with "will ship fine for small games" |
+| status-effects-design | 83% base | Per-effect StackPolicy enum (REPLACE/ADD/IGNORE); base model uses a single global max_stacks flag |
 | 3d-character-controller | 86% base | Applies all 2D platformer feel techniques (asymmetric gravity, coyote, jump buffer, variable height) to 3D; enforces @export tunables |
 
 ### Evals where the base model already performs well (regression guards)
@@ -278,6 +298,12 @@ delta:         +20.2pp
 | survivors-like-perf-love | Base model covers spatial hashing and pooling on this specific framing |
 | camera-lerp-framerate-trap | Frame-independence diagnostic already correct in base model |
 | ecs-small-game-trap | Base model appropriately recommends against ECS for tiny single-mechanic games |
+| audio-bus-hierarchy | Base model knows AudioServer.set_bus_volume_db() API well |
+| sprite-hit-flash-outline | Base model handles basic 2D shader patterns (hit flash, outline) correctly |
+| dissolve-shader | Base model uses discard correctly for dissolve effects |
+| rollback-netcode | Base model correctly explains rollback, determinism requirement, and recommends godot-rollback-netcode addon |
+| roguelike-run-save | Base model uses dual-file pattern and version field when prompted with roguelike context |
+| save-format-versioning | Base model implements migration chain pattern when explicitly asked about format migration |
 
 ---
 
@@ -303,6 +329,16 @@ delta:         +20.2pp
 | 15 | `zelda-topdown-grid` | Pixel art / retro: TileMap, grid-locked movement, 4-directional animation, facing, collision layers |
 | 16 | `3d-character-controller` | 3D: CharacterBody3D, manual gravity, camera-relative input, @export, coyote/buffer/variable height in 3D |
 | 17 | `3d-camera-springarm` | 3D: SpringArm3D rig as primary solution, mask config, no direct Camera3D parenting |
+| 18 | `status-effects-design` | RPG: StatusEffectData Resource, StackPolicy enum (REPLACE/ADD/IGNORE), component pattern |
+| 19 | `inventory-equipment-data` | RPG: ItemData + StatModifier, flat+additive-pct+multiplicative formula, type-agnostic dispatch |
+| 20 | `audio-bus-hierarchy` | Audio: Master→Music/SFX bus tree, AudioServer.set_bus_volume_db(), linear_to_db() |
+| 21 | `adaptive-music` | Audio: stem-based approach (all stems run continuously), playback_position sync for late entry |
+| 22 | `sprite-hit-flash-outline` | Shaders: hit flash via mix(), 8-direction outline via textureSize() UV offset |
+| 23 | `dissolve-shader` | Shaders: noise texture + discard (not alpha=0), AnimationPlayer-driven threshold |
+| 24 | `multiplayer-scope-trap` | Multiplayer: scope warning, local co-op first recommendation, honest time/cost estimate |
+| 25 | `rollback-netcode` | Multiplayer: rollback mechanics, determinism requirement, GGPO/godot-rollback-netcode |
+| 26 | `roguelike-run-save` | Save systems: dual-file (run.json + meta.json), logical state only, version field |
+| 27 | `save-format-versioning` | Save systems: migration chain, sensible defaults, backup before migration |
 
 ---
 
@@ -314,6 +350,10 @@ delta:         +20.2pp
 - **Fix Your Timestep (Glenn Fiedler, 2004).** `gafferongames.com/post/fix_your_timestep/` — The definitive reference for fixed-timestep simulation with interpolated rendering.
 - **Screen Space (various).** Trauma-based screenshake: `squirrel.pl/media/gdc2012_camera.pdf` (Squirrel Eiserloh, GDC 2012).
 - **Bevy ECS documentation.** `bevyengine.org` — Reference ECS architecture for Rust game development; patterns portable to LÖVE/Lua flat-table ECS-ish.
-- **Godot 4 documentation.** `docs.godotengine.org` — CharacterBody2D, move_and_slide, signal system, autoload/singleton antipattern notes.
-- **Unity Manual.** `docs.unity3d.com` — Rigidbody2D kinematic mode, FixedUpdate, CharacterController, Time.timeScale, Cinemachine ImpulseSource.
+- **Godot 4 documentation.** `docs.godotengine.org` — CharacterBody2D, move_and_slide, signal system, autoload/singleton antipattern notes. AudioServer, FileAccess, JSON APIs.
+- **Unity Manual.** `docs.unity3d.com` — Rigidbody2D kinematic mode, FixedUpdate, CharacterController, Time.timeScale, Cinemachine ImpulseSource, Audio Mixer.
 - **LÖVE documentation.** `love2d.org/wiki/` — love.update(dt), love.physics, love.graphics. Reference for all LÖVE eval patterns.
+- **GGPO Networking SDK.** `ggpo.net` — Reference implementation of rollback netcode; the technical standard for fighting games.
+- **godot-rollback-netcode (Chris Snopek / Snopek Games).** The community addon for rollback netcode in Godot 4.
+- **Nakama (Heroic Labs).** `heroiclabs.com/nakama` — Open-source relay/matchmaking server used in Godot multiplayer architecture recommendations.
+- **Photon Engine.** `photonengine.com` — Commercial relay/matchmaking alternative; covered in multiplayer relay services section.
