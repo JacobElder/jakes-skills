@@ -185,14 +185,7 @@ with_skill: 70/70 (100.0%) | 17/17 evals pass
 delta     : +40.0pp
 ```
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate — key differentiating evals (■ with skill  □ base model)"
-    x-axis ["IRT boundary (σ_a)", "Trigger routing (SDT)", "GLMM feasibility", "Mutual exclusion", "CTT trim decision", "Delta real? (G-theory)", "Judge calibration", "Contamination / saturation"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100, 100, 100]
-    bar [25, 25, 25, 33, 40, 40, 50, 50]
-```
+![Pass rate — key differentiating evals: with skill vs. base model](benchmark_comparison.png)
 
 ### Results by eval
 

@@ -221,14 +221,7 @@ Both embeddings recover the same five-cluster structure. Direct UMAP on 1000-dim
 
 **Automated benchmark result (haiku, iter-3):** 43/43 with skill (100%), 37/43 baseline (86%), **+14pp delta**. Pitfall category: 15/15 with skill (100%), 10/15 baseline (67%), **+33pp delta**. Evals run via `dimensionality-reduction/evals/run_evals.py`.
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by category (■ with skill  □ base model)"
-    x-axis ["Scope (F)", "Adversarial (E)", "Communication (D)", "Code (C)", "Pitfall (B)", "Method selection (A)"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100]
-    bar [100, 100, 100, 100, 67, 83]
-```
+![Pass rate by category: with skill vs. base model](benchmark_comparison.png)
 
 ---
 

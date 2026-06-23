@@ -133,14 +133,7 @@ A naive threshold fires on every spike above a cutoff, regardless of whether the
 
 Content evals were run live against the `claude` CLI (haiku model) with and without the skill appended as a system prompt. Triggering and routing evals are from analytical rubric review.
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by eval category (■ with skill  □ base model)"
-    x-axis ["Triggering (15, analytical)", "Routing (3, analytical)", "Content (10, live API)"]
-    y-axis "Pass rate" 0 --> 1
-    bar [0.93, 1.00, 1.00]
-    bar [0.73, 0.67, 0.60]
-```
+![Pass rate by category: with skill vs. base model](benchmark_comparison.png)
 
 | | With skill | Base model | Gap |
 |--|:---:|:---:|:---:|

@@ -114,14 +114,7 @@ The skill opens with "No — that's the difference-in-significance fallacy" and 
 
 Evaluated against 37 evals: 21 from the original suite (testing a range of statistical reasoning), 16 new evals (targeting specific failure modes). Each eval uses `must_pass` assertions (necessary conditions) and `scored` assertions (80% threshold required). All 37 evals confirmed across both conditions.
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by eval type (■ with skill  □ base model)"
-    x-axis ["Non-differentiating (22 evals)", "Differentiating (15 evals)"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100]
-    bar [100, 7]
-```
+![Pass rate: with skill vs. base model (differentiating vs. non-differentiating evals)](benchmark_comparison.png)
 
 | | With skill | Without skill |
 |--|:---:|:---:|

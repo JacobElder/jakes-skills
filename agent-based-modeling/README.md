@@ -123,14 +123,7 @@ Evaluated on 11 capability evals spanning the full ABM lifecycle, graded by
 | With skill | 57 / 57 | **100%** |
 | **Delta** | | **+29.8 pp** |
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by lifecycle phase (■ with skill  □ base model)"
-    x-axis ["Reporting stochastic output", "Sensitivity analysis", "Calibration vs validation", "ODD documentation", "Model selection", "Triggering (22 queries)"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100]
-    bar [60, 60, 80, 80, 80, 100]
-```
+![Pass rate by lifecycle phase: with skill (blue) vs. base model (grey)](benchmark_comparison.png)
 
 Trigger routing (22 queries): **100%** accuracy — the skill fires on ABM tasks
 and skips unrelated queries (ML training, CFD, Monte Carlo finance, etc.).

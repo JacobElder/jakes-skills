@@ -136,14 +136,7 @@ The most common nilearn mistake is `standardize=True`. It was deprecated in 0.13
 
 Evaluated on 16 scenarios graded against 8–12 specific expectations each. All analyses run on bundled synthetic NIfTI fixtures — no internet download required.
 
-```mermaid
-xychart-beta horizontal
-    title "Pass Rate by Eval (■ with skill  □ base model)"
-    x-axis ["GLM: block design", "Connectivity (3 sub)", "MVPA decoding", "GLM: FDR threshold", "Group (2nd-level) GLM", "Seed connectivity", "NiftiMasker tSNR", "Multi-run GLM", "Atlas space mismatch", "Multi-contrast GLM", "DecoderRegressor", "Tangent connectivity", "Cluster-level threshold", "first_level_from_bids", "Interactive HTML viz", "get_clusters_table peaks"]
-    y-axis "Pass rate" 0 --> 1
-    bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-    bar [0.67, 0.64, 0.70, 0.33, 0.25, 0.78, 0.70, 0.80, 0.78, 0.55, 0.30, 0.44, 0.30, 0.33, 0.38, 0.30]
-```
+![Pass rate by eval: with skill vs. base model](benchmark_comparison.png)
 
 | | With skill | Without skill |
 |--|:---:|:---:|

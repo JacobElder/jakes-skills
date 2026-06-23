@@ -132,14 +132,7 @@ Without the skill, the model tends to give balanced pros-and-cons responses or s
 
 Evaluated on 19 scenarios graded against 4–5 specific assertions each. The first 10 form the original benchmark; 9 additional scenarios probe new anti-patterns, edge cases, and tax-specific traps.
 
-```mermaid
-xychart-beta horizontal
-    title "Pass Rate by Scenario (■ with skill  □ base model)"
-    x-axis ["Whole life insurance", "Dividend strategy", "Market timing", "Investment waterfall", "Three-fund portfolio", "High ER active fund", "1% AUM advisor", "Tax placement", "Lump sum vs DCA", "Portfolio review", "Variable annuity", "100% equities at 25", "International skepticism", "Multi-turn pushback", "RSU sell at vest", "ESPP sell immediately", "HSA pay out-of-pocket", "Social Security timing", "NUA before rollover"]
-    y-axis "Pass rate" 0 --> 1
-    bar [1.0, 1.0, 1.0, 0.8, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-    bar [0.6, 0.6, 0.6, 0.2, 1.0, 1.0, 0.8, 1.0, 0.6, 1.0, 0.8, 1.0, 1.0, 1.0, 0.8, 0.8, 1.0, 1.0, 0.8]
-```
+![Pass rate by scenario: with skill vs. base model](benchmark_comparison.png)
 
 | | With skill | Without skill |
 |--|:---:|:---:|

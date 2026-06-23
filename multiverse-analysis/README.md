@@ -126,14 +126,7 @@ The base model reports a single estimate from one specification. The skill repor
 
 Evaluated on 6 tasks spanning the full skill surface. Graded with `claude-sonnet-4-6` executor and `claude-haiku-4-5` grader; an eval passes when all must-pass assertions hold and ≥ 80 % of scored assertions hold.
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by eval (■ with skill  □ base model)"
-    x-axis ["Cherry-picking pushback", "Correlation estimand", "Binary DV constraint", "Scale comparability", "Fragile detection", "Full pipeline"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100]
-    bar [80, 80, 80, 60, 83, 83]
-```
+![Pass rate by eval: with skill vs. base model](benchmark_comparison.png)
 
 | Eval | Topic | Base | With skill |
 |------|-------|------|------------|

@@ -117,14 +117,7 @@ Parameter recovery is the diagnostic the skill requires before any model is trus
 
 Content evals were run live against the `claude` CLI (haiku model) with and without the skill appended as a system prompt. Triggering evals are from analytical rubric review. Routing evals require actual skill installation (file-loading mechanics) and were scored analytically.
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by eval category (■ with skill  □ base model)"
-    x-axis ["Triggering (10, analytical)", "Routing (12, analytical)", "Content (23, live API)"]
-    y-axis "Pass rate" 0 --> 1
-    bar [0.90, 0.92, 1.00]
-    bar [0.80, 0.58, 0.70]
-```
+![Pass rate by category: with skill vs. base model](benchmark_comparison.png)
 
 | | With skill | Base model | Gap |
 |--|:---:|:---:|:---:|

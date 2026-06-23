@@ -97,14 +97,7 @@ With skill      95 / 95     100.0%
 Delta                       +17.9 pp
 ```
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by scenario (■ with skill  □ base model)"
-    x-axis ["LPA/GMM equivalence", "Null comparison", "BIRCH at scale", "HDBSCAN noise", "Mixed-type framing", "Clusterability gate", "HDBSCAN transductive", "Mixed-type code", "Non-convex shapes", "k selection"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
-    bar [80, 80, 75, 75, 75, 50, 50, 50, 50, 40]
-```
+![Pass rate by scenario: with skill vs. base model](benchmark_comparison.png)
 
 The largest gains come from scenarios where a specific methodology piece is easy to overlook:
 

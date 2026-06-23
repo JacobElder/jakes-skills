@@ -154,14 +154,7 @@ without_skill:  86.4%  (51/59 expectations)
 delta:         +13.6pp
 ```
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by eval (■ with skill  □ base model)"
-    x-axis ["GGM estimation", "Expected influence", "Bootstrap CI", "Hairball tuning", "Stability", "Node selection", "Non-trigger", "Reporting standards", "Centrality causal", "Granger claim", "GGM vs SEM", "PC vs GGM"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
-    bar [83, 80, 80, 80, 100, 75, 100, 80, 80, 100, 100, 80]
-```
+![Pass rate by eval: with skill vs. base model](benchmark_comparison.png)
 
 | Eval | With skill | Without skill | Delta |
 |------|:---:|:---:|:---:|

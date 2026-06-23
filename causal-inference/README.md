@@ -81,14 +81,7 @@ The base model often describes collider bias correctly in the abstract. It strug
 
 Evaluated on 13 causal inference scenarios covering common applied pitfalls. Each scenario is graded on 4–5 specific assertions about whether the model reached the correct causal conclusion.
 
-```mermaid
-xychart-beta horizontal
-    title "Pass Rate by Scenario (■ with skill  □ base model)"
-    x-axis ["IV exclusion violation", "Simpson's paradox", "Table 2 fallacy", "Near-IV bias amplification", "Predictive vs causal", "Selection bias", "Rung identification", "DiD staggered rollout", "Front-door criterion", "LATE vs ATE rollout", "RDD manipulation", "Mediator overcontrol", "Interference / SUTVA"]
-    y-axis "Pass rate" 0 --> 1
-    bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-    bar [0.5, 0.5, 0.5, 0.75, 0.75, 0.75, 0.8, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-```
+![Pass rate by scenario: with skill vs. base model](benchmark_comparison.png)
 
 | | With skill | Without skill |
 |--|:---:|:---:|

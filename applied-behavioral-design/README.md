@@ -90,14 +90,7 @@ With skill      83 / 83      100.0%
 Delta                        +32.5pp
 ```
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by scenario (■ with skill  □ base model)"
-    x-axis ["Handoff to exp-design", "End-to-end", "Single-bias guard", "Incentive skepticism", "Premature solutioning"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100]
-    bar [50, 40, 0, 0, 0]
-```
+![Pass rate by scenario: with skill vs. base model](benchmark_comparison.png)
 
 20 evals, 83 assertions. The skill achieves 100% with-skill pass rate; the base model passes 10/20 evals (50%) and 56/83 assertions (67.5%).
 

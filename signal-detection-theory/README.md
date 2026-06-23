@@ -191,14 +191,7 @@ with_skill: 58/58 (100.0%)
 delta     : +20.7pp
 ```
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by eval (■ with skill  □ base model)"
-    x-axis ["task-structure same-diff", "auc-to-dprime trap", "optimal-criterion", "routing DDM", "aprime claim", "from-scratch analysis", "c-sign interpretation", "llm-classifier", "2afc-vs-yesno", "metacognition", "two-step vs GLMM", "extreme-cell correction", "unequal-variance d'", "diagnosticity-ratio", "vigilance criterion", "rating zROC", "pooling artifact"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100]
-    bar [33, 33, 100, 67, 67, 100, 100, 67, 100, 75, 100, 75, 100, 75, 100, 33, 100]
-```
+![Pass rate by eval: with skill vs. base model](benchmark_comparison.png)
 
 ### Results by eval
 

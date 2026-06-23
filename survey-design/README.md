@@ -95,14 +95,7 @@ When all items use an agree/disagree format, people who tend to agree ("yea-saye
 
 **+48.6pp** — 100% with skill vs. 51.4% base (35/35 assertions across 6 evals).
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by eval (■ with skill  □ base model)"
-    x-axis ["Pushback on bad design", "Calibration (clean survey)", "Psychometrics boundary", "Scale-points decision", "Design engagement pulse", "Review customer-sat survey"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100]
-    bar [17, 57, 67, 60, 57, 57]
-```
+![Pass rate by eval: with skill vs. base model](benchmark_comparison.png)
 
 | Eval | What it tests | With skill | Without |
 |---|---|---|---|

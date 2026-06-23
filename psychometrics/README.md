@@ -280,14 +280,7 @@ Evaluated across 7 iterations using "trap-based" evals — prompts where the nai
 
 ### Iteration 2 — core trap benchmark (8 scenarios)
 
-```mermaid
-xychart-beta horizontal
-    title "Pass Rate by Scenario (■ with skill  □ base model)"
-    x-axis ["PCA as factor analysis", "Reverse-item method factor", "Alpha meets threshold", "Factor score indeterminacy", "GRM for polytomous IRT", "Test-retest: state anxiety", "Construct definition gate", "Longitudinal invariance"]
-    y-axis "Pass rate" 0 --> 1
-    bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-    bar [0.0, 0.0, 0.0, 0.0, 0.2, 0.0, 0.0, 0.0]
-```
+![Pass rate by scenario across both eval iterations: with skill vs. base model](benchmark_comparison.png)
 
 | | With skill | Without skill |
 |--|:---:|:---:|
@@ -297,14 +290,7 @@ xychart-beta horizontal
 
 ### Iterations 3–4 — extended benchmark (10 additional scenarios)
 
-```mermaid
-xychart-beta horizontal
-    title "Pass Rate by Scenario (■ with skill  □ base model)"
-    x-axis ["WLSMV multi-turn", "Structure vs pattern matrix", "N-per-item rule", "Bifactor/omega-h", "Partial scalar invariance", "Kappa vs ICC", "Correlated residuals", "Formative vs reflective", "3PL personality items", "Validity multi-turn"]
-    y-axis "Pass rate" 0 --> 1
-    bar [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
-    bar [0.17, 0.2, 0.17, 0.0, 0.17, 0.0, 0.0, 0.0, 0.0, 0.0]
-```
+![Pass rate by scenario across both eval iterations: with skill vs. base model](benchmark_comparison.png)
 
 | | With skill | Without skill |
 |--|:---:|:---:|

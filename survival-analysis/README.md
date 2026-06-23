@@ -190,14 +190,7 @@ The skill catches this before it becomes a published table — naming `cluster_c
 
 **Automated benchmark result (haiku, iter-1)**: 29/29 with skill (100%), 21/29 baseline (72%), **+28pp delta**.
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by category (■ with skill  □ base model)"
-    x-axis ["Multi-turn (G)", "Adversarial (F)", "R/Python (E)", "Communication (D)", "Code (C)", "Pitfall detection (B)", "Method selection (A)"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [100, 100, 100, 100, 100, 100, 100]
-    bar [67, 50, 100, 100, 75, 60, 80]
-``` Evals run via `survival-analysis/evals/run_evals.py` (baseline vs `--append-system-prompt SKILL.md`). C4 (Python cluster-robust SEs for Andersen-Gill) uses `statsmodels.duration.hazard_regression.PHReg` with `groups=id` in `.fit()` for the sandwich correction — the Python equivalent of R's `cluster(id)`.
+![Pass rate by category: with skill vs. base model](benchmark_comparison.png) Evals run via `survival-analysis/evals/run_evals.py` (baseline vs `--append-system-prompt SKILL.md`). C4 (Python cluster-robust SEs for Andersen-Gill) uses `statsmodels.duration.hazard_regression.PHReg` with `groups=id` in `.fit()` for the sandwich correction — the Python equivalent of R's `cluster(id)`.
 
 ---
 

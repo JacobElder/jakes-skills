@@ -135,14 +135,7 @@ Redesigned as 10 trap prompts: the user presents a wrong analysis as already don
 |--|:---:|:---:|:---:|
 | **Total expectations** | **47/50 (94%)** | **42/50 (84%)** | **+10pp** |
 
-```mermaid
-xychart-beta horizontal
-    title "Pass rate by eval — trap-based (■ with skill  □ base model)"
-    x-axis ["paired-t defensible", "singular-fit", "OLS rubber-stamp", "items-as-fixed", "GLMM marginal", "treatment coding", "reviewer cluster", "aggregation fallacy", "convergence", "random intercept"]
-    y-axis "Pass rate (%)" 0 --> 100
-    bar [80, 60, 100, 100, 100, 100, 100, 100, 100, 100]
-    bar [80, 20, 100, 80, 100, 100, 100, 60, 100, 100]
-```
+![Pass rate by eval: with skill vs. base model](benchmark_comparison.png)
 
 | Eval | With skill | Without skill | Delta |
 |------|:---:|:---:|:---:|
