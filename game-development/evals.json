@@ -1,0 +1,224 @@
+{
+  "skill_name": "game-development",
+  "notes": "Each eval targets specific non-negotiables and references. Assertions are written to be checkable by a grader (LLM or human) against the model's output. 'prog' assertions are also checkable programmatically by scripts/grade_programmatic.py against with-skill Godot/code outputs. Baseline = no skill.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "godot-platformer-feel",
+      "prompt": "I'm making a 2D platformer in Godot 4. Can you write me a player controller script? I really want the jumping to feel good and tight, not floaty.",
+      "files": [],
+      "targets": ["non-negotiable #1 frame independence", "non-negotiable #4 juice", "collision-and-physics platformer recipe", "godot idioms"],
+      "assertions": [
+        {"text": "Puts movement in _physics_process (fixed timestep), NOT _process", "prog": true},
+        {"text": "Implements coyote time (jump allowed shortly after leaving a ledge)", "prog": true},
+        {"text": "Implements jump buffering (jump pressed shortly before landing is honored)", "prog": true},
+        {"text": "Implements variable jump height (releasing jump early shortens the hop)", "prog": true},
+        {"text": "Uses asymmetric gravity (falls faster than it rises)", "prog": true},
+        {"text": "Uses CharacterBody2D + move_and_slide (kinematic), not a RigidBody for the avatar", "prog": true},
+        {"text": "Exposes feel constants as @export tunables rather than hardcoding them", "prog": true},
+        {"text": "Uses acceleration/deceleration (e.g. move_toward) rather than snapping horizontal velocity", "prog": true},
+        {"text": "Suggests at least one visual/audio juice element (squash-stretch, dust particle, landing sound, or screenshake)", "prog": false},
+        {"text": "Uses the Input Map (Input.get_axis / is_action_*) rather than hardcoded keycodes", "prog": true}
+      ]
+    },
+    {
+      "id": 1,
+      "name": "survivors-like-perf-love",
+      "prompt": "I want to build a Vampire Survivors style game in LÖVE where there can be hundreds of enemies and projectiles on screen at once. How should I structure it and handle all the collision checks so it doesn't grind to a halt?",
+      "files": [],
+      "targets": ["non-negotiable #1", "non-negotiable #3 decouple", "collision spatial partitioning + pooling", "code-first/LÖVE idioms"],
+      "assertions": [
+        {"text": "Recommends a spatial partitioning structure (uniform grid / spatial hash, or quadtree) for the broad phase to avoid O(n^2)", "prog": false},
+        {"text": "Explicitly identifies naive all-pairs collision as O(n^2) and the bottleneck", "prog": false},
+        {"text": "Recommends object pooling for enemies/projectiles instead of allocating/freeing every frame", "prog": false},
+        {"text": "Uses a fixed timestep / dt-correct loop (LÖVE love.update(dt), values multiplied by dt)", "prog": false},
+        {"text": "Recommends a component/entity (ECS-ish) structure rather than a deep class hierarchy", "prog": false},
+        {"text": "Decouples spawning/damage via events or a clear system boundary rather than god objects", "prog": false},
+        {"text": "Mentions concrete LÖVE specifics (callbacks, or libraries like bump/hump) appropriately", "prog": false}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "scope-finish-deckbuilder",
+      "prompt": "I keep starting game projects and abandoning them halfway. I have an idea for a roguelike deckbuilder. Help me actually finish it this time.",
+      "files": [],
+      "targets": ["non-negotiable #2 find the fun / scope", "production-and-scope process"],
+      "assertions": [
+        {"text": "Leads with scope/process, not with architecture or a big system design", "prog": false},
+        {"text": "Says to build the smallest playable toy/core-loop first and prove it's fun before content", "prog": false},
+        {"text": "Lays out an escalating path (toy -> prototype -> vertical slice -> production) or equivalent staged plan", "prog": false},
+        {"text": "Gives concrete scope-cutting discipline (treat features as costs, cut list, define 'done', one core mechanic)", "prog": false},
+        {"text": "Defines a concrete finishable 'done' target for a small first version", "prog": false},
+        {"text": "Names the hidden iceberg work (menus/save/options) and/or recommends timeboxing", "prog": false},
+        {"text": "Does NOT immediately produce a large multi-system architecture or feature list as the main answer", "prog": false}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "engine-select-python-cozy-sim",
+      "prompt": "I'm a data scientist, very comfortable in Python, but I've never made a game. I'd like to build a cozy farming/automation sim that I might eventually try to sell on Steam. What should I build it in, and how should I structure it?",
+      "files": [],
+      "targets": ["non-negotiable #5 engine selection", "architecture data-driven", "engine-selection person-matching"],
+      "assertions": [
+        {"text": "Recommends Godot as the primary choice and connects it to the user (GDScript is Python-like, free/MIT, good 2D, ships to Steam)", "prog": false},
+        {"text": "Addresses PyGame honestly as a learning/toy option but flags it as a weaker path to a commercial Steam title", "prog": false},
+        {"text": "Does NOT reflexively default to Unity without justification", "prog": false},
+        {"text": "Recommends data-driven design (crops/machines/recipes as data/Resources, not hardcoded) for a sim", "prog": false},
+        {"text": "Injects scope realism for a first commercial sim project (start small, prove the loop)", "prog": false},
+        {"text": "Gives a sensible starting structure (scenes/components, save system as data snapshot) rather than just naming an engine", "prog": false},
+        {"text": "Does NOT suggest that Python expertise alone makes PyGame a viable path to a commercial Steam game — acknowledges its infrastructure gap (no scene editor, no animation pipeline, Steam packaging friction)", "prog": false},
+        {"text": "Gives honest tradeoff: Godot's smaller asset store / ecosystem vs Unity — does not imply Godot is strictly superior in every dimension", "prog": false}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "game-feel-diagnosis",
+      "prompt": "My 2D action game (Unity) technically works but it feels lifeless and floaty, and hitting enemies has no impact. What can I do?",
+      "files": [],
+      "targets": ["non-negotiable #4 juice", "game-feel toolkit", "unity feel idioms"],
+      "assertions": [
+        {"text": "Recommends hitstop/hitlag (brief freeze on impact) to sell hits", "prog": false},
+        {"text": "Recommends screenshake (ideally trauma-based) on impacts", "prog": false},
+        {"text": "Recommends particles/flash on hits (sparks, hit flash, debris)", "prog": false},
+        {"text": "Recommends sound on impactful actions / pitch variation", "prog": false},
+        {"text": "Addresses 'floaty' with movement feel (asymmetric gravity, acceleration, tighter control) not just visuals", "prog": false},
+        {"text": "Recommends tweening/easing and/or squash-stretch instead of instant snaps", "prog": false},
+        {"text": "Mentions knockback/recoil to convey impact", "prog": false},
+        {"text": "Gives Unity-specific levers (Time.timeScale for hitstop, Cinemachine/impulse for shake, DOTween/coroutines) where relevant", "prog": false},
+        {"text": "Advises restraint/accessibility (don't overdo shake; reduce-motion option) rather than maxing every effect", "prog": false}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "enemy-horde-pathing",
+      "prompt": "I'm making a survivors-like in Godot 4. I've got a few hundred enemies that all chase the player, but they bunch up into a single blob on top of each other and the framerate tanks. How should I handle their movement and pathfinding?",
+      "files": [],
+      "targets": ["enemy-ai flow fields + separation", "non-negotiable #1", "collision spatial grid", "performance for many agents"],
+      "assertions": [
+        {"text": "Recommends a flow field / vector-field (Dijkstra-map) pathing shared by all agents instead of per-enemy A*", "prog": true},
+        {"text": "Explicitly warns against running A*/pathfinding per enemy per frame for hundreds of agents", "prog": false},
+        {"text": "Recommends separation steering (boids-style) to stop enemies stacking into one blob", "prog": true},
+        {"text": "Backs 'nearby enemies' queries with a spatial grid/hash, not an all-pairs scan", "prog": false},
+        {"text": "Mentions time-slicing/LOD AI and/or pooling for the many-agent performance problem", "prog": false},
+        {"text": "Keeps movement frame-independent (fixed step / delta)", "prog": false},
+        {"text": "Recomputes the field on goal movement/timer, not naively every frame for every agent", "prog": false}
+      ]
+    },
+    {
+      "id": 6,
+      "name": "procgen-dungeon-validate",
+      "prompt": "Help me write procedural level generation for my roguelike — rooms connected by corridors. A couple of my generated levels have had the exit walled off in an unreachable area, which is a disaster. How should I approach this?",
+      "files": [],
+      "targets": ["procedural-generation gen + validate", "seeded RNG/determinism", "data-driven"],
+      "assertions": [
+        {"text": "Centers the fix on generate-then-validate: flood-fill/reachability check from start to exit, regenerate or patch if invalid", "prog": false},
+        {"text": "Recommends seeding the RNG (reproducible runs, debuggable, shareable seeds)", "prog": false},
+        {"text": "Recommends a concrete generation technique (room placement+corridors, BSP, etc.) appropriate to the ask", "prog": false},
+        {"text": "Addresses connectivity guarantee (carve connecting corridor / ensure spanning connectivity), not just detection", "prog": false},
+        {"text": "Mentions controlled randomness or constraints where relevant (spacing, validity rules) rather than pure uniform random", "prog": false},
+        {"text": "Does not hand back unseeded, unvalidated generation that could still softlock", "prog": false}
+      ]
+    },
+    {
+      "id": 7,
+      "name": "framerate-dependent-debug",
+      "prompt": "Players keep telling me my game runs way faster on their gaming PC than on my older laptop, and it's unplayable on fast machines. I can't figure out why. Here's my movement code:\n\n```gdscript\nfunc _process(delta):\n    if Input.is_action_pressed(\"right\"):\n        position.x += 5\n    if Input.is_action_pressed(\"left\"):\n        position.x -= 5\n    velocity.y += 1\n    position.y += velocity.y\n```\n\nWhat's going on?",
+      "files": [],
+      "targets": ["non-negotiable #1 frame independence (diagnostic)", "game-loop-and-time", "godot _process vs _physics_process"],
+      "assertions": [
+        {"text": "Correctly diagnoses framerate dependence: speeds are per-frame, so more FPS = faster movement", "prog": true},
+        {"text": "Fixes movement to be per-second by multiplying by delta (e.g. 300 * delta), not per-frame constants", "prog": true},
+        {"text": "Notes gravity/velocity integration is also framerate-dependent and must use delta", "prog": false},
+        {"text": "Recommends moving physics/movement to _physics_process (fixed timestep) rather than _process", "prog": true},
+        {"text": "Explains the concept (frame independence) so the user can avoid it elsewhere, not just patches the snippet", "prog": false},
+        {"text": "Identifies that 'velocity.y += 1; position.y += velocity.y' is doubly framerate-dependent: velocity itself grows proportionally with FPS, making gravity quadratically worse at high framerates (not just linearly faster)", "prog": false}
+      ]
+    },
+    {
+      "id": 8,
+      "name": "survivors-collision-love",
+      "prompt": "I'm building a survivors-like in LÖVE and I need the core collision/update systems to handle hundreds of projectiles against hundreds of enemies without the framerate dying. Just write me the core systems — the spatial structure and how projectiles check against enemies — I'll wire up rendering and spawning myself.",
+      "files": [],
+      "targets": ["collision spatial partitioning + pooling (as CODE)", "non-negotiable #1", "code-first/LÖVE idioms", "second-engine grader coverage"],
+      "assertions": [
+        {"text": "Implements a spatial hash/grid for the broad phase rather than checking all pairs", "prog": true},
+        {"text": "Projectiles query only nearby cells, not every enemy (avoids O(n^2))", "prog": true},
+        {"text": "Uses object pooling / instance reuse instead of allocating and collecting every frame", "prog": true},
+        {"text": "Movement and timers are frame-independent (multiplied by dt)", "prog": true},
+        {"text": "Uses LÖVE idioms correctly (love.update(dt), tables as entities)", "prog": true},
+        {"text": "No nested all-pairs loop over every entity against every other entity", "prog": false},
+        {"text": "Code is correct and runnable (valid Lua, coherent narrow-phase overlap test)", "prog": false}
+      ]
+    },
+    {
+      "id": 9,
+      "name": "camera-lerp-framerate-trap",
+      "prompt": "I'm writing a smooth camera follow in Godot 4 and it feels different on different machines — buttery smooth on my desktop but sluggish and slow on my laptop. Here's my code:\n\n```gdscript\nfunc _process(delta):\n    position = position.lerp(target.global_position, 0.1)\n```\n\nWhat's wrong and how do I fix it properly?",
+      "files": [],
+      "targets": ["non-negotiable #1 frame independence", "lerp-per-frame antipattern", "game-loop-and-time"],
+      "assertions": [
+        {"text": "Correctly diagnoses that lerp(a, b, 0.1) per frame is framerate-dependent — higher FPS means the camera catches up faster", "prog": false},
+        {"text": "Does NOT suggest the naive fix of multiplying the lerp weight by delta (e.g. 0.1 * delta) — that is mathematically wrong and produces different convergence", "prog": false},
+        {"text": "Provides the correct framerate-independent formula: lerp(a, b, 1.0 - pow(decay, delta)) where decay is the fraction remaining per second, or equivalent exponential decay", "prog": false},
+        {"text": "Explains WHY the exponential form is correct (lerp each frame compounds multiplicatively, so the right delta correction is an exponent, not a multiplication)", "prog": false},
+        {"text": "Either uses the exponential decay formula in _process OR recommends moving to _physics_process (fixed timestep) as an alternative that sidesteps the issue", "prog": false}
+      ]
+    },
+    {
+      "id": 10,
+      "name": "rigidbody-avatar-trap",
+      "prompt": "I'm making a 2D platformer in Godot 4. I'm using RigidBody2D with apply_central_impulse for jumping, but the movement feels slippery and unpredictable — I can't get reliable ground detection and the character slides everywhere. Here's my setup:\n\n```gdscript\nextends RigidBody2D\n\nfunc _physics_process(delta):\n    if Input.is_action_pressed(\"ui_right\"):\n        apply_central_force(Vector2(800, 0))\n    if Input.is_action_just_pressed(\"ui_accept\"):\n        apply_central_impulse(Vector2(0, -500))\n```\n\nHow do I fix the slippery feel?",
+      "files": [],
+      "targets": ["collision-and-physics kinematic-vs-rigidbody", "non-negotiable #4 juice", "godot idioms"],
+      "assertions": [
+        {"text": "Identifies the root cause as using RigidBody2D (physics simulation) instead of a kinematic controller", "prog": false},
+        {"text": "Recommends switching the architecture to CharacterBody2D + move_and_slide rather than just tuning RigidBody parameters", "prog": false},
+        {"text": "Explains why RigidBody is wrong for precise avatar control (fighting the physics engine, forces-based motion is hard to author, non-deterministic feel)", "prog": false},
+        {"text": "Does NOT primarily suggest tuning RigidBody properties (linear_damp, angular_damp, physics material, mass) as the main fix", "prog": false},
+        {"text": "Mentions at least one feel improvement beyond the architecture switch (coyote time, jump buffer, asymmetric gravity, or Input Map)", "prog": false}
+      ]
+    },
+    {
+      "id": 11,
+      "name": "ecs-small-game-trap",
+      "prompt": "I'm starting a new 2D roguelike with about 20 enemy types. I keep reading that ECS (Entity-Component-System) is the professional approach for game development. Should I build my game on an ECS architecture? I don't want to paint myself into a corner.",
+      "files": [],
+      "targets": ["non-negotiable #3 decouple / composition", "architecture", "scope"],
+      "assertions": [
+        {"text": "Does NOT blindly recommend a full ECS framework for a 20-enemy-type roguelike", "prog": false},
+        {"text": "Explains when ECS actually earns its overhead (10k+ entities with cache-sensitive simulation, e.g. factory sims, colony builders, custom physics) — not a 20-enemy roguelike", "prog": false},
+        {"text": "Recommends an appropriate level of composition for this scale: Godot nodes as components, plain data tables, or simple component bags — without a heavy ECS framework", "prog": false},
+        {"text": "Names real costs of full ECS frameworks at small scale: cognitive overhead, tooling complexity, debugging difficulty, integration friction with engine features", "prog": false},
+        {"text": "Does NOT imply that using Godot/Unity node composition is an architectural mistake or inferior to ECS for this scope", "prog": false}
+      ]
+    },
+    {
+      "id": 12,
+      "name": "hitstop-priority-trap",
+      "prompt": "I've added particle explosion effects, four different hit sound variations, and screen shake to my attacks in my 2D action game. The attacks still feel weak and unsatisfying — enemies just take damage numbers but there's no sense of impact. I've spent weeks on visual effects. What am I still missing?",
+      "files": [],
+      "targets": ["non-negotiable #4 juice", "game-feel hitstop priority", "game-feel toolkit"],
+      "assertions": [
+        {"text": "Identifies hitstop/hitlag (brief freeze on impact) as the most likely missing element, given that particles and sound are already present", "prog": false},
+        {"text": "Explains WHY hitstop is the highest-ROI impact technique: it's what makes the brain register a hit as 'landed' — a brief freeze sells force in a way no amount of particles can", "prog": false},
+        {"text": "Does NOT primarily recommend adding more particles, more sounds, or stronger screenshake as the main fix", "prog": false},
+        {"text": "Gives concrete hitstop implementation guidance (2–8 frames / 30–130 ms, Time.timeScale = 0 or skipping sim steps, scale with hit weight)", "prog": false},
+        {"text": "Explains the stacking principle: hitstop + flash + screenshake + sound together create impact where any single element alone is underwhelming", "prog": false}
+      ]
+    },
+    {
+      "id": 13,
+      "name": "godot-autoload-overuse",
+      "prompt": "I'm organizing my Godot 4 project and I've set up these autoloads (singletons): GameManager, UIManager, AudioManager, EnemyManager, PlayerManager, InventoryManager, SaveManager, and EventBus. Everything is wired through these. Is this a solid architecture for a solo indie game?",
+      "files": [],
+      "targets": ["non-negotiable #3 decouple", "godot idioms", "architecture"],
+      "assertions": [
+        {"text": "Identifies this pattern as autoload overuse / too many global singletons for a solo indie game", "prog": false},
+        {"text": "Explains specific problems: hidden dependencies between systems, initialization order fragility, singletons that accumulate unrelated state, difficulty isolating and testing scenes", "prog": false},
+        {"text": "Recommends EventBus (or 1–2 utilities like AudioManager or SaveManager) as the only well-justified autoloads — not a manager for every system", "prog": false},
+        {"text": "Recommends moving most logic into scenes/nodes that own their state, using signals to communicate upward and across", "prog": false},
+        {"text": "Does NOT validate all 8 autoloads as a good or neutral pattern", "prog": false}
+      ]
+    }
+  ]
+}

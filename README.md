@@ -17,6 +17,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [eval-psychometrics](#eval-psychometrics) | Eval-suite auditing: item analysis, reliability, latent estimation, judge calibration | +40.0pp (70/70 with skill, 42/70 base) |
 | [dimensionality-reduction](#dimensionality-reduction) | PCA, EFA, t-SNE, UMAP, ICA, NMF and embedding validation | +14pp (43/43 with skill, 37/43 base); +33pp on pitfall traps |
 | [experimental-design](#experimental-design) | Experimental and quasi-experimental design (A/B, RCT, power, DiD, RD) | 9 task evals + 26 trigger evals (live benchmark not yet run) |
+| [game-development](#game-development) | Game programming: frame independence, game feel/juice, ECS, collision, enemy AI, procedural gen, engine selection | +18.5pp (92/92 with skill, 75/92 base) |
 | [idiographic-quant](#idiographic-quant) | Person-specific / N-of-1 quantitative methods (ESM/EMA, VAR networks, single-case experiments) | +65pp (17/17 with skill, 6/17 base) |
 | [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | +13.8pp (80/80 with skill, 69/80 base); +80pp on singular-fit simplification, +60pp on growth curve time slopes |
 | [multiverse-analysis](#multiverse-analysis) | Multiverse / specification-curve analysis | +21.9pp (32/32 with skill, 25/32 base) |
@@ -139,6 +140,18 @@ Design, critique, and size experiments correctly — A/B tests, RCTs, within-sub
 **Eval suite:** 9 task evals (A/B design, quasi-experiments, sample size, result interpretation, honest limits) + 26 trigger classification queries. Live API benchmark not yet run. `power_analysis.py` is fully tested via a unit suite (`scripts/test_power_analysis.py`).
 
 → [experimental-design/](experimental-design/)
+
+---
+
+## game-development
+
+Build games that feel good and ship — not just games that compile. Covers the techniques that separate "a programmer made this" from "this is a game": frame-independent movement (every generated code line audited), the full platformer feel recipe (asymmetric gravity, coyote time, jump buffer, variable jump height), the juice toolkit (hitstop, trauma-based screenshake, tweening/easing, squash-and-stretch), ECS architecture for many-entity games (survivors-like, bullet-hell), spatial-hash collision for hundreds of objects, flow-field pathfinding for enemy hordes, and the prototype → vertical-slice → ship process that prevents projects from dying in scope.
+
+**Why it matters:** The base model generates game code that compiles but fails silently on the basics: movement tied to frame rate, symmetric jump gravity that always feels floaty, "add particles" as the only game feel advice, class hierarchies that collapse at 200+ entities, and scope so large the project never ships. The skill enforces the five non-negotiables (frame independence, find the fun first, decouple via ECS/signals, juice as core not polish, deliberate engine selection) and applies them to Godot 4.x, Unity, LÖVE/Lua, PyGame, Bevy, and Phaser.
+
+**Gap:** +18.5pp — 92/92 with skill (100%) vs. 75/92 base (81.5%). Largest gains on scope discipline (+57pp), hitstop vs. particles priority (+40pp), rigidbody-as-floatiness root cause (+40pp), enemy flow-field pathfinding (+29pp), and full platformer feel recipe (+20pp including all four techniques).
+
+→ [game-development/](game-development/)
 
 ---
 
