@@ -19,6 +19,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [experimental-design](#experimental-design) | Experimental and quasi-experimental design (A/B, RCT, power, DiD, RD) | 9 task evals + 26 trigger evals (live benchmark not yet run) |
 | [game-development](#game-development) | Game programming: frame independence, game feel/juice, ECS, collision, enemy AI, procedural gen, engine selection | +18.5pp (92/92 with skill, 75/92 base) |
 | [idiographic-quant](#idiographic-quant) | Person-specific / N-of-1 quantitative methods (ESM/EMA, VAR networks, single-case experiments) | +65pp (17/17 with skill, 6/17 base) |
+| [information-theory](#information-theory) | Shannon entropy, MI, KL divergence, cross-entropy/NLL/MLE, SampEn disambiguation, AIC vs BIC, rate–distortion | +14.7pp (75/75 with skill, 64/75 base) |
 | [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | +13.8pp (80/80 with skill, 69/80 base); +80pp on singular-fit simplification, +60pp on growth curve time slopes |
 | [multiverse-analysis](#multiverse-analysis) | Multiverse / specification-curve analysis | +21.9pp (32/32 with skill, 25/32 base) |
 | [network-analysis](#network-analysis) | Network science & social network analysis | +32.5pp across 8 trap-based evals |
@@ -164,6 +165,18 @@ Apply person-specific quantitative methods to questions about variation within a
 **Gap:** +65pp — 17/17 with skill (100%) vs. 6/17 baseline (35%) on haiku. Differentiating on 11/17 evals: underpowered network pushback, ergodicity trap, single-case causal design, nomothetic guard, pooled person-specific routing, P-technique, ergodicity script use, N-of-1 trial design, DSEM for multi-item latent constructs, DFA vs. P-technique when autocorrelation is present, and continuous-time models for unequally-spaced ESM. The 6 evals the base model already passes (centrality trap, stationarity/theory tension, cross-night lag, Nickell bias, ESM protocol design, multiple baseline) serve as regression checks.
 
 → [idiographic-quant/](idiographic-quant/)
+
+---
+
+## information-theory
+
+Apply information theory correctly in practice — not just recall formulas, but catch the failure modes that produce confident, formula-correct, wrong answers. Covers Shannon entropy, entropy rate, differential entropy, mutual information, transfer entropy, KL and f-divergences, Fisher information, Huffman/arithmetic coding, rate–distortion/information bottleneck, and model selection via AIC/BIC/WAIC/LOO/MDL. Bundled scripts (`sample_entropy.py`, `entropy_mi_estimators.py`, `info_criteria.py`) give verified implementations with selftests against closed-form ground truth.
+
+**Why it matters:** The base model is fluent in information theory formulas but misses the subtle conventions and pitfalls that determine whether a number is right: it uses sample std (ddof=1) for SampEn tolerance where the literature uses population std (ddof=0) — a silent 12% difference; it recommends KSG for continuous MI but skips the permutation null and ties-jitter caveat that make it work on real data; it explains DPI conceptually but doesn't apply it to catch leakage implausibility or connect it to Fano's error floor; and it treats differential entropy as "entropy for continuous data" without flagging that it can be negative, has no reparameterization invariance, and lives on a different scale than discrete entropy.
+
+**Gap:** +14.7pp — 75/75 with skill (100%) vs. 64/75 base (85.3%). The base model is already strong; the skill targets the precision layer. Largest gains on SampEn ddof convention (+75pp), continuous MI protocol (+50pp), and DPI-as-diagnostic (+50pp).
+
+→ [information-theory/](information-theory/)
 
 ---
 
