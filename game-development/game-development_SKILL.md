@@ -1,6 +1,6 @@
 ---
 name: game-development
-description: Procedural knowledge for designing and coding video games — game loops, game feel/juice, entity architecture, collision and physics, character controllers, enemy AI and pathfinding, procedural generation, and the prototype-to-ship process — plus opinionated engine selection across Godot, Unity, Bevy, LÖVE, PyGame, and Phaser. Use this whenever the user wants to build, prototype, or improve a game or game system, including character and platformer controllers, game loops, collision, enemy AI, spawning, pathfinding or flow fields, procedural level and content generation, making a game feel juicier, fixing framerate-dependent movement, choosing an engine, or scoping a game so it ships. Also trigger on Godot, Unity, Bevy, LÖVE/love2d, Pygame, Phaser, GDScript, sprites, tilemaps, ECS, or game jams, or a bare genre like platformer, roguelike, shooter, survivors-like, or puzzle, or just wanting to make a game — even small or toy games. The patterns go well beyond default code generation.
+description: Procedural knowledge for designing and coding video games — game loops, game feel/juice, entity architecture, collision and physics, character controllers, enemy AI and pathfinding, procedural generation, the prototype-to-ship process, pixel art and retro games, and 3D game development — plus opinionated engine selection across Godot, Unity, Bevy, LÖVE, PyGame, and Phaser. Use this whenever the user wants to build, prototype, or improve a game or game system, including character and platformer controllers, game loops, collision, enemy AI, spawning, pathfinding or flow fields, procedural level and content generation, making a game feel juicier, fixing framerate-dependent movement, choosing an engine, or scoping a game so it ships. Also trigger on Godot, Unity, Bevy, LÖVE/love2d, Pygame, Phaser, GDScript, sprites, tilemaps, ECS, or game jams, or a bare genre like platformer, roguelike, shooter, survivors-like, puzzle, top-down, action-RPG, JRPG, farming sim, or 3D platformer. Trigger on pixel art, pixel-perfect, retro, 8-bit, 16-bit, Stardew-like, Zelda-like, Final Fantasy-like, TileMap, spritesheet, turn-based combat, dialogue system, or wanting to make a pixel art game. Trigger on 3D controller, third-person camera, first-person shooter, SpringArm, NavigationAgent, skeletal animation, blend tree, LOD, NavMesh, CharacterBody3D, or any 3D game question. The patterns go well beyond default code generation.
 ---
 
 # Game Development
@@ -9,7 +9,7 @@ description: Procedural knowledge for designing and coding video games — game 
 
 Default code generation produces games that **compile but feel dead**: movement tied to frame rate, a single god object with a 400-line `update()`, instant state changes with no weight, collision that tunnels at speed, and a scope so large the project never ships. This skill encodes the procedural knowledge that separates that from games that feel good and get finished.
 
-The audience is small-scale games — solo and small-team 2D, plus modest 3D. Everything here is scoped to what one person or a few people can actually build and ship. It is engine-aware but engine-agnostic at the core: the loop, the feel, the architecture, and the process matter more than the tool.
+The audience is small-scale games — solo and small-team 2D (including pixel art and retro-style), plus modest 3D. Everything here is scoped to what one person or a few people can actually build and ship. It is engine-aware but engine-agnostic at the core: the loop, the feel, the architecture, and the process matter more than the tool.
 
 ## The five non-negotiables
 
@@ -42,6 +42,8 @@ Read the relevant reference file(s) before writing substantial code. They contai
 | Anything in **Godot / GDScript** | `references/engines/godot.md` |
 | Anything in **Unity / C#** | `references/engines/unity.md` |
 | **Code-first** engines: LÖVE/Lua, PyGame, Phaser/JS, Bevy/Rust, Macroquad | `references/engines/code-first.md` |
+| **Pixel art / retro games**: blurry pixels, integer scaling, pixel-perfect setup, TileMap, top-down Zelda-like, grid-locked movement, 4-directional animation, screen transitions, JRPG turn-based combat, ATB, dialogue systems, sprite sheets, retro aesthetics, Stardew-like farming sim | `references/pixel-art-and-retro.md` |
+| **3D games**: CharacterBody3D, third-person camera, SpringArm, first-person controller, camera-relative movement, 3D pathfinding, NavigationAgent3D, baked vs real-time lighting, LOD, skeletal animation, blend trees, AnimationTree, modular level design, GridMap | `references/3d-games.md` |
 
 ## Opinionated defaults (the one-screen version)
 
@@ -53,6 +55,9 @@ When the user has not specified otherwise, these are the stances to take. Each i
 - **Pool anything you spawn frequently** — bullets, enemies, particles, damage numbers. Allocating in the hot loop causes GC hitches and frame spikes.
 - **Separate data from code.** Enemy stats, level layouts, dialogue, and tuning values belong in data files / resources / ScriptableObjects, not hardcoded in logic. It makes tuning (the bulk of game work) fast.
 - **Tune by feel, with numbers exposed.** Expose movement and feel constants (jump height, coyote time, acceleration, screenshake magnitude) as editable values, because they will be changed dozens of times during playtesting.
+- **Pixel art games need two settings, not one.** Texture filter must be **Nearest** (not Linear/Bilinear) and scaling must be an integer factor of the base resolution. Getting one wrong produces blurry or shimmering pixels. In Godot: Project Settings → Rendering → Textures → Canvas Textures → Default Texture Filter → Nearest, and Stretch Mode → canvas_items with a small base resolution. → `references/pixel-art-and-retro.md`
+- **3D character controllers are kinematic, not physics-based.** CharacterBody3D (Godot) or a kinematic Rigidbody controller (Unity) gives the precise authored feel players expect. Leaving movement to forces-and-impulses on a RigidBody produces fighting-the-physics-engine sludge. The 3D platformer feel techniques (coyote time, variable jump, asymmetric gravity, camera-relative input) are the same as 2D. → `references/3d-games.md`
+- **3D camera: always use a SpringArm.** A Camera3D parented directly to the player has no wall-clip protection. A SpringArm3D pivot rig (Player → CameraPivot → SpringArm3D → Camera3D) auto-shortens when geometry is in the way, eliminates clipping for free. → `references/3d-games.md`
 
 ## How to approach a game-dev request
 
@@ -72,5 +77,7 @@ Default code generation produces plausible game code that quietly violates the b
 - **Spawned-in-a-loop things are pooled; many-object collision uses a spatial structure**, not allocation-per-frame and not O(n²) all-pairs.
 - **Feel/tuning constants are exposed** (`@export` / `[SerializeField]` / data), not buried as magic numbers.
 - **Scope is honest.** You built/spec'd the core loop, not a menu-and-save-system scaffold around an unproven idea.
+- **Pixel art games: check both Nearest filter AND integer scaling.** Blurry pixels almost always mean one of the two is wrong. Also check that the camera position is rounded to the nearest integer — sub-pixel camera positions cause tile shimmer even with correct filtering.
+- **3D controllers: CharacterBody3D (not RigidBody3D) for the player, camera in a SpringArm3D rig.** If you wrote a 3D controller, verify movement uses `move_and_slide()` with manual velocity, not forces/impulses. If you wrote a third-person camera, verify it sits inside a SpringArm3D (not parented directly to the player). Verify input direction is rotated by the camera basis before being applied to velocity.
 
 If output violates one, fix it or call it out explicitly — silently shipping the default mistake is the thing this skill exists to prevent.

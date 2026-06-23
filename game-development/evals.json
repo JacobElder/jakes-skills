@@ -219,6 +219,69 @@
         {"text": "Recommends moving most logic into scenes/nodes that own their state, using signals to communicate upward and across", "prog": false},
         {"text": "Does NOT validate all 8 autoloads as a good or neutral pattern", "prog": false}
       ]
+    },
+    {
+      "id": 14,
+      "name": "pixel-perfect-setup",
+      "prompt": "I'm making a pixel art game in Godot 4, inspired by games like Stardew Valley and the original Legend of Zelda. When I run my game, all my sprites look blurry — the pixel edges are soft instead of crisp. How do I fix this and set up the project correctly for pixel art?",
+      "files": [],
+      "targets": ["pixel-art-and-retro rendering setup", "pixel-perfect filter + integer scaling"],
+      "assertions": [
+        {"text": "Instructs the user to change the texture filter to Nearest (no filter / point sampling) — specifically via Project Settings → Rendering → Textures → Canvas Textures → Default Texture Filter → Nearest (or equivalent), NOT bilinear/linear", "prog": false},
+        {"text": "Addresses viewport scaling: set Stretch Mode to 'canvas_items' (or 'viewport') with a small base resolution (e.g. 320×180) so the game upscales at an integer factor — NOT just making the window larger without fixing the filter", "prog": false},
+        {"text": "Explains WHY blurring happens: the default bilinear filter interpolates between adjacent pixels when scaling, which smooths pixel edges; Nearest-neighbor takes the closest pixel instead", "prog": false},
+        {"text": "Mentions that individual sprite textures may also need their import filter set to Nearest if they were imported before the project default was changed", "prog": false},
+        {"text": "Does NOT recommend using a fractional scale factor (e.g. 1.5× or 2.7×) — integer scaling is required to keep all pixels the same on-screen size", "prog": false},
+        {"text": "Optionally mentions snapping the camera position to integers each frame to prevent sub-pixel shimmer during scrolling", "prog": false}
+      ]
+    },
+    {
+      "id": 15,
+      "name": "zelda-topdown-grid",
+      "prompt": "I'm building a top-down action RPG in Godot 4 — like the original Legend of Zelda. How should I handle the grid-based world, player movement, and collision? I want it to feel like the classic game where movement is 4-directional and the world is tile-based.",
+      "files": [],
+      "targets": ["pixel-art-and-retro top-down movement", "TileMap", "grid-locked vs free", "4-directional animation"],
+      "assertions": [
+        {"text": "Uses CharacterBody2D (kinematic) for the player, NOT RigidBody2D", "prog": false},
+        {"text": "Recommends or describes a TileMap node for the tile-based world (with collision shapes on wall/obstacle tiles via TileSet)", "prog": false},
+        {"text": "Explains or implements 4-directional movement (cardinal directions only) — preferring one axis over the other when diagonal input is given, matching classic Zelda behavior", "prog": false},
+        {"text": "Addresses how to drive the animation from the facing/velocity direction (last non-zero direction) so the sprite keeps facing the last direction when standing still", "prog": false},
+        {"text": "For grid-locked movement: describes animating the visual position with a tween while the logical grid position updates instantly (so collision logic is tile-coordinate based but movement looks smooth)", "prog": false},
+        {"text": "Mentions collision/physics layers to separate player, enemies, and environment tiles", "prog": false},
+        {"text": "Does NOT suggest a 3D approach or overcomplicate the architecture beyond what a classic top-down 2D game needs", "prog": false}
+      ]
+    },
+    {
+      "id": 16,
+      "name": "3d-character-controller",
+      "prompt": "I'm making a 3D platformer in Godot 4 — think Super Mario 64 style. How do I build a character controller that actually feels tight and responsive? My previous attempt using RigidBody3D was floaty and the physics felt like I was fighting the engine.",
+      "files": [],
+      "targets": ["3d-games CharacterBody3D", "non-negotiable #1", "camera-relative movement", "3D platformer feel"],
+      "assertions": [
+        {"text": "Recommends switching from RigidBody3D to CharacterBody3D + move_and_slide() — explains WHY RigidBody is wrong for avatar control (fighting the physics engine, forces-based = hard to author, non-deterministic feel)", "prog": false},
+        {"text": "Puts physics in _physics_process (fixed timestep, NOT _process)", "prog": false},
+        {"text": "Applies gravity manually using velocity.y -= gravity * delta (or get_gravity()), NOT relying on the physics engine to apply it", "prog": false},
+        {"text": "Implements camera-relative horizontal movement: rotates the raw input vector by the camera pivot's Y rotation (basis) so the player moves relative to where the camera is facing", "prog": false},
+        {"text": "Uses acceleration and deceleration (move_toward) on horizontal velocity rather than snapping instantly to max speed", "prog": false},
+        {"text": "Exposes feel constants as @export tunables (speed, jump_velocity, acceleration, etc.)", "prog": false},
+        {"text": "Suggests at least one platformer feel technique for 3D (coyote time, jump buffer, variable jump height, or asymmetric fall gravity)", "prog": false}
+      ]
+    },
+    {
+      "id": 17,
+      "name": "3d-camera-springarm",
+      "prompt": "I'm building a third-person 3D game in Godot 4. My camera keeps clipping through walls — when I walk near a wall or into a corner, the camera goes inside the geometry. Also, how should I handle the camera rotation so it orbits around the player properly with mouse input?",
+      "files": [],
+      "targets": ["3d-games third-person camera", "SpringArm3D", "camera-relative movement", "wall clipping"],
+      "assertions": [
+        {"text": "Recommends SpringArm3D as the solution to wall clipping — explains that it auto-shortens when geometry is between the camera and pivot, eliminating clip without manual raycasting", "prog": false},
+        {"text": "Describes the correct node hierarchy: Player → CameraPivot (Node3D) → SpringArm3D → Camera3D — NOT Camera3D as a direct child of the player", "prog": false},
+        {"text": "Rotates the CameraPivot (not the Camera3D directly) based on mouse motion — horizontal mouse → CameraPivot.rotate_y(), vertical mouse → CameraPivot.rotation.x with clamping", "prog": false},
+        {"text": "Clamps vertical (pitch) rotation to prevent gimbal flip (e.g. -60° to 80°)", "prog": false},
+        {"text": "Notes that SpringArm3D's collision mask should include the environment/world layer (so walls shorten the arm) but NOT the player or enemy layers (so the arm doesn't shorten due to nearby actors)", "prog": false},
+        {"text": "Does NOT suggest manually raycasting from pivot to camera and repositioning the camera as the primary solution — SpringArm3D handles this", "prog": false},
+        {"text": "Does NOT suggest parenting Camera3D directly to the CharacterBody3D as a good approach — that produces a fixed angle with no clip protection", "prog": false}
+      ]
     }
   ]
 }

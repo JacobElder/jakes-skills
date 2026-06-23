@@ -2,6 +2,8 @@
 
 A skill that gives the agent the procedural knowledge to build games that feel good and ship — not just games that compile. It encodes the techniques that separate "a programmer made this" from "this is a game": frame-independent movement, asymmetric jump gravity with coyote time and jump buffering, the juice toolkit (hitstop, trauma-based screenshake, tweening/easing, squash-and-stretch), ECS architecture for many-entity games, spatial-hash collision for hundreds of objects, flow-field pathfinding for enemy hordes, and the prototype → vertical-slice → ship process that prevents projects from dying in scope creep.
 
+Covers **pixel art and retro games** (Zelda-like top-down, JRPG turn-based combat, Stardew-style farming sims) including pixel-perfect rendering setup (Nearest filter + integer scaling + camera snapping), grid-locked movement with tween animation, TileMap workflows, and sprite animation pipelines. Also covers **3D games**: CharacterBody3D controllers, SpringArm3D camera rigs that auto-prevent wall clipping, camera-relative movement, 3D pathfinding via NavigationAgent3D, skeletal animation blend trees, baked lighting, and modular level design.
+
 ## Installation
 
 ```bash
@@ -14,7 +16,7 @@ Or manually:
 cp -r jakes-skills/game-development ~/.claude/skills/game-development
 ```
 
-Once installed, the skill applies automatically when the user wants to build or improve a game in Godot, Unity, LÖVE, PyGame, Bevy, or Phaser — including character controllers, collision, enemy AI, procedural generation, game feel, engine selection, or scoping a project.
+Once installed, the skill applies automatically when the user wants to build or improve a game in Godot, Unity, LÖVE, PyGame, Bevy, or Phaser — including character controllers, collision, enemy AI, procedural generation, game feel, engine selection, pixel art rendering, top-down movement, JRPG turn-based combat, 3D character controllers, third-person cameras, or scoping a project.
 
 ---
 
@@ -208,21 +210,24 @@ The result in motion — 22 enemies, same starting positions, same target:
 The base model knows game development concepts. The skill gives the agent the *specific non-negotiables* to apply them correctly. The five moves:
 
 - **Frame independence without exception.** Every generated movement line is audited before return: `position += speed` is flagged and corrected to `position += speed * delta`. Physics in `_physics_process`/`FixedUpdate`, not `_process`/`Update`. This is the most common silent defect in generated game code.
-- **Full platformer feel recipe.** Godot and Unity platformer requests get the complete set: asymmetric gravity (fast up, weighted down), coyote time, jump buffer, variable jump height. The base model produces working but floaty code missing exactly these four.
+- **Full platformer feel recipe — 2D and 3D.** Godot and Unity platformer requests get the complete set: asymmetric gravity (fast up, weighted down), coyote time, jump buffer, variable jump height. These four apply to 3D (CharacterBody3D) exactly as to 2D. The base model produces working but floaty code missing exactly these four.
 - **Juice toolkit by name.** Diagnosing "floaty" or "lifeless" triggers explicit naming of: tweening/easing (not instant snaps), squash-and-stretch on 2D characters, hitstop (Time.timeScale freeze), trauma-based screenshake, knockback, hit flash, and sound with pitch randomization. Not just "add particles."
 - **ECS for many-entity games.** Survivors-like, bullet-hell, or RTS prompts get an explicit ECS or ECS-ish recommendation with the reason — metatable dispatch overhead at scale, god objects spread across class hierarchies — and a working flat-data-table + system-function architecture.
 - **Deliberate engine selection.** The default is Godot 4.x for most small 2D and indie 3D — stated with a reason, not hedged. Python game → not PyGame for Steam, Godot with GDExtension or Godot 4's Python-like GDScript. Casual web → Phaser, not Unity WebGL.
+- **Pixel-perfect rendering, always both settings.** Pixel art requests get both: texture filter → Nearest AND Stretch Mode → canvas_items with a small base resolution. Missing either produces blurry or shimmering pixels. Camera pixel-snapping (round before assign) is included as the third piece.
+- **3D camera: SpringArm3D, not a raycast.** Third-person camera requests lead with the SpringArm3D pivot rig (Player → CameraPivot → SpringArm3D → Camera3D) as the singular correct structure. The base model often leads with a manual raycast option; the skill names SpringArm as primary, explains the mask setup (world layer only), and warns against direct Camera3D parenting.
+- **Retro/pixel-art patterns.** Zelda-like top-down requests get: grid-locked movement (logical grid position + tween visual), facing direction from last non-zero velocity, 4-directional priority, TileMap layer setup, and collision layer architecture. JRPG requests get: ATB/turn-order state machine pattern, damage formula in data, dialogue character-reveal system.
 
 ---
 
 ## Benchmark: skill vs. base model
 
-Evaluated across 14 scenarios covering the core game-development failure modes. Evals are LLM-graded against specific, objective assertions; executor and grader are separate calls to prevent self-grading inflation.
+Evaluated across 18 scenarios covering the core game-development failure modes, including 4 new evals targeting pixel art rendering and 3D game development. Evals are LLM-graded against specific, objective assertions; executor and grader are separate calls to prevent self-grading inflation.
 
 ```
-with_skill:    100%   (92/92 expectations)
-without_skill:  81.5%  (75/92 expectations)
-delta:         +18.5pp
+with_skill:    100%   (119/119 expectations)
+without_skill:  79.8%  (95/119 expectations)
+delta:         +20.2pp
 ```
 
 ![Benchmark: skill vs. base model per eval](benchmark_comparison.png)
@@ -234,13 +239,17 @@ delta:         +18.5pp
 | scope-finish-deckbuilder | 3/7 (43%) | **7/7 (100%)** | +57pp |
 | hitstop-priority-trap | 3/5 (60%) | **5/5 (100%)** | +40pp |
 | rigidbody-avatar-trap | 3/5 (60%) | **5/5 (100%)** | +40pp |
+| 3d-camera-springarm | 4/7 (57%) | **7/7 (100%)** | +43pp |
+| zelda-topdown-grid | 4/7 (57%) | **7/7 (100%)** | +43pp |
 | enemy-horde-pathing | 5/7 (71%) | **7/7 (100%)** | +29pp |
+| 3d-character-controller | 6/7 (86%) | **7/7 (100%)** | +14pp |
 | godot-platformer-feel | 8/10 (80%) | **10/10 (100%)** | +20pp |
 | godot-autoload-overuse | 4/5 (80%) | **5/5 (100%)** | +20pp |
 | procgen-dungeon-validate | 5/6 (83%) | **6/6 (100%)** | +17pp |
 | framerate-dependent-debug | 5/6 (83%) | **6/6 (100%)** | +17pp |
 | engine-select-python-cozy-sim | 7/8 (88%) | **8/8 (100%)** | +12pp |
 | survivors-collision-love | 6/7 (86%) | **7/7 (100%)** | +14pp |
+| pixel-perfect-setup | 6/6 (100%) | 6/6 (100%) | +0pp |
 | game-feel-diagnosis | 9/9 (100%) | 9/9 (100%) | +0pp |
 | survivors-like-perf-love | 7/7 (100%) | 7/7 (100%) | +0pp |
 | camera-lerp-framerate-trap | 5/5 (100%) | 5/5 (100%) | +0pp |
@@ -253,14 +262,18 @@ delta:         +18.5pp
 | scope-finish-deckbuilder | 43% base | Leads with toy→prototype→vertical-slice→ship; names the next cut; refuses to scaffold saves/menus before fun is proven |
 | hitstop-priority-trap | 60% base | Names hitstop as the highest-ROI fix for weak combat; gives correct frame-duration guidance (30–130 ms); warns against maxing it out |
 | rigidbody-avatar-trap | 60% base | Identifies force-driven Rigidbody2D as the architectural root cause of floatiness; recommends kinematic controller switch |
+| 3d-camera-springarm | 57% base | Recommends SpringArm3D as the primary (not optional) solution; correctly excludes player/enemy layers from the spring mask; names direct Camera3D parenting as the bug |
+| zelda-topdown-grid | 57% base | Implements grid-locked tween pattern explicitly (logical snaps, visual tweens); covers last-facing idle animation; defines layer/mask architecture |
 | enemy-horde-pathing | 71% base | Recommends a shared flow field (Dijkstra-map) instead of per-enemy A*; names separation steering to prevent stacking |
 | godot-platformer-feel | 80% base | Full platformer recipe: asymmetric gravity + coyote time + jump buffer + variable jump height (all four, not just gravity) |
 | godot-autoload-overuse | 80% base | Doesn't open with "solid starting point"; names the antipattern immediately; doesn't hedge with "will ship fine for small games" |
+| 3d-character-controller | 86% base | Applies all 2D platformer feel techniques (asymmetric gravity, coyote, jump buffer, variable height) to 3D; enforces @export tunables |
 
 ### Evals where the base model already performs well (regression guards)
 
 | Eval | Note |
 |---|---|
+| pixel-perfect-setup | Base model knows Nearest filter + canvas_items setup well from Godot documentation |
 | game-feel-diagnosis | Base model names all feedback channels; these evals serve as non-regression guards |
 | survivors-like-perf-love | Base model covers spatial hashing and pooling on this specific framing |
 | camera-lerp-framerate-trap | Frame-independence diagnostic already correct in base model |
@@ -286,6 +299,10 @@ delta:         +18.5pp
 | 11 | `ecs-small-game-trap` | Anti-over-engineering: don't recommend ECS for tiny single-mechanic games |
 | 12 | `hitstop-priority-trap` | Juice priority: hitstop first, not particles first |
 | 13 | `godot-autoload-overuse` | Godot idioms: autoload overuse antipattern diagnosis |
+| 14 | `pixel-perfect-setup` | Pixel art rendering: Nearest filter + integer scaling + camera snapping |
+| 15 | `zelda-topdown-grid` | Pixel art / retro: TileMap, grid-locked movement, 4-directional animation, facing, collision layers |
+| 16 | `3d-character-controller` | 3D: CharacterBody3D, manual gravity, camera-relative input, @export, coyote/buffer/variable height in 3D |
+| 17 | `3d-camera-springarm` | 3D: SpringArm3D rig as primary solution, mask config, no direct Camera3D parenting |
 
 ---
 
