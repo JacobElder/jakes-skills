@@ -7,34 +7,95 @@
       "name": "godot-platformer-feel",
       "prompt": "I'm making a 2D platformer in Godot 4. Can you write me a player controller script? I really want the jumping to feel good and tight, not floaty.",
       "files": [],
-      "targets": ["non-negotiable #1 frame independence", "non-negotiable #4 juice", "collision-and-physics platformer recipe", "godot idioms"],
+      "targets": [
+        "non-negotiable #1 frame independence",
+        "non-negotiable #4 juice",
+        "collision-and-physics platformer recipe",
+        "godot idioms"
+      ],
       "assertions": [
-        {"text": "Puts movement in _physics_process (fixed timestep), NOT _process", "prog": true},
-        {"text": "Implements coyote time (jump allowed shortly after leaving a ledge)", "prog": true},
-        {"text": "Implements jump buffering (jump pressed shortly before landing is honored)", "prog": true},
-        {"text": "Implements variable jump height (releasing jump early shortens the hop)", "prog": true},
-        {"text": "Uses asymmetric gravity (falls faster than it rises)", "prog": true},
-        {"text": "Uses CharacterBody2D + move_and_slide (kinematic), not a RigidBody for the avatar", "prog": true},
-        {"text": "Exposes feel constants as @export tunables rather than hardcoding them", "prog": true},
-        {"text": "Uses acceleration/deceleration (e.g. move_toward) rather than snapping horizontal velocity", "prog": true},
-        {"text": "Suggests at least one visual/audio juice element (squash-stretch, dust particle, landing sound, or screenshake)", "prog": false},
-        {"text": "Uses the Input Map (Input.get_axis / is_action_*) rather than hardcoded keycodes", "prog": true}
+        {
+          "text": "Puts movement in _physics_process (fixed timestep), NOT _process",
+          "prog": true
+        },
+        {
+          "text": "Implements coyote time (jump allowed shortly after leaving a ledge)",
+          "prog": true
+        },
+        {
+          "text": "Implements jump buffering (jump pressed shortly before landing is honored)",
+          "prog": true
+        },
+        {
+          "text": "Implements variable jump height (releasing jump early shortens the hop)",
+          "prog": true
+        },
+        {
+          "text": "Uses asymmetric gravity (falls faster than it rises)",
+          "prog": true
+        },
+        {
+          "text": "Uses CharacterBody2D + move_and_slide (kinematic), not a RigidBody for the avatar",
+          "prog": true
+        },
+        {
+          "text": "Exposes feel constants as @export tunables rather than hardcoding them",
+          "prog": true
+        },
+        {
+          "text": "Uses acceleration/deceleration (e.g. move_toward) rather than snapping horizontal velocity",
+          "prog": true
+        },
+        {
+          "text": "Suggests at least one visual/audio juice element (squash-stretch, dust particle, landing sound, or screenshake)",
+          "prog": false
+        },
+        {
+          "text": "Uses the Input Map (Input.get_axis / is_action_*) rather than hardcoded keycodes",
+          "prog": true
+        }
       ]
     },
     {
       "id": 1,
       "name": "survivors-like-perf-love",
-      "prompt": "I want to build a Vampire Survivors style game in LÖVE where there can be hundreds of enemies and projectiles on screen at once. How should I structure it and handle all the collision checks so it doesn't grind to a halt?",
+      "prompt": "I want to build a Vampire Survivors style game in L\u00d6VE where there can be hundreds of enemies and projectiles on screen at once. How should I structure it and handle all the collision checks so it doesn't grind to a halt?",
       "files": [],
-      "targets": ["non-negotiable #1", "non-negotiable #3 decouple", "collision spatial partitioning + pooling", "code-first/LÖVE idioms"],
+      "targets": [
+        "non-negotiable #1",
+        "non-negotiable #3 decouple",
+        "collision spatial partitioning + pooling",
+        "code-first/L\u00d6VE idioms"
+      ],
       "assertions": [
-        {"text": "Recommends a spatial partitioning structure (uniform grid / spatial hash, or quadtree) for the broad phase to avoid O(n^2)", "prog": false},
-        {"text": "Explicitly identifies naive all-pairs collision as O(n^2) and the bottleneck", "prog": false},
-        {"text": "Recommends object pooling for enemies/projectiles instead of allocating/freeing every frame", "prog": false},
-        {"text": "Uses a fixed timestep / dt-correct loop (LÖVE love.update(dt), values multiplied by dt)", "prog": false},
-        {"text": "Recommends a component/entity (ECS-ish) structure rather than a deep class hierarchy", "prog": false},
-        {"text": "Decouples spawning/damage via events or a clear system boundary rather than god objects", "prog": false},
-        {"text": "Mentions concrete LÖVE specifics (callbacks, or libraries like bump/hump) appropriately", "prog": false}
+        {
+          "text": "Recommends a spatial partitioning structure (uniform grid / spatial hash, or quadtree) for the broad phase to avoid O(n^2)",
+          "prog": false
+        },
+        {
+          "text": "Explicitly identifies naive all-pairs collision as O(n^2) and the bottleneck",
+          "prog": false
+        },
+        {
+          "text": "Recommends object pooling for enemies/projectiles instead of allocating/freeing every frame",
+          "prog": false
+        },
+        {
+          "text": "Uses a fixed timestep / dt-correct loop (L\u00d6VE love.update(dt), values multiplied by dt)",
+          "prog": false
+        },
+        {
+          "text": "Recommends a component/entity (ECS-ish) structure rather than a deep class hierarchy",
+          "prog": false
+        },
+        {
+          "text": "Decouples spawning/damage via events or a clear system boundary rather than god objects",
+          "prog": false
+        },
+        {
+          "text": "Mentions concrete L\u00d6VE specifics (callbacks, or libraries like bump/hump) appropriately",
+          "prog": false
+        }
       ]
     },
     {
@@ -42,15 +103,39 @@
       "name": "scope-finish-deckbuilder",
       "prompt": "I keep starting game projects and abandoning them halfway. I have an idea for a roguelike deckbuilder. Help me actually finish it this time.",
       "files": [],
-      "targets": ["non-negotiable #2 find the fun / scope", "production-and-scope process"],
+      "targets": [
+        "non-negotiable #2 find the fun / scope",
+        "production-and-scope process"
+      ],
       "assertions": [
-        {"text": "Leads with scope/process, not with architecture or a big system design", "prog": false},
-        {"text": "Says to build the smallest playable toy/core-loop first and prove it's fun before content", "prog": false},
-        {"text": "Lays out an escalating path (toy -> prototype -> vertical slice -> production) or equivalent staged plan", "prog": false},
-        {"text": "Gives concrete scope-cutting discipline (treat features as costs, cut list, define 'done', one core mechanic)", "prog": false},
-        {"text": "Defines a concrete finishable 'done' target for a small first version", "prog": false},
-        {"text": "Names the hidden iceberg work (menus/save/options) and/or recommends timeboxing", "prog": false},
-        {"text": "Does NOT immediately produce a large multi-system architecture or feature list as the main answer", "prog": false}
+        {
+          "text": "Leads with scope/process, not with architecture or a big system design",
+          "prog": false
+        },
+        {
+          "text": "Says to build the smallest playable toy/core-loop first and prove it's fun before content",
+          "prog": false
+        },
+        {
+          "text": "Lays out an escalating path (toy -> prototype -> vertical slice -> production) or equivalent staged plan",
+          "prog": false
+        },
+        {
+          "text": "Gives concrete scope-cutting discipline (treat features as costs, cut list, define 'done', one core mechanic)",
+          "prog": false
+        },
+        {
+          "text": "Defines a concrete finishable 'done' target for a small first version",
+          "prog": false
+        },
+        {
+          "text": "Names the hidden iceberg work (menus/save/options) and/or recommends timeboxing",
+          "prog": false
+        },
+        {
+          "text": "Does NOT immediately produce a large multi-system architecture or feature list as the main answer",
+          "prog": false
+        }
       ]
     },
     {
@@ -58,16 +143,44 @@
       "name": "engine-select-python-cozy-sim",
       "prompt": "I'm a data scientist, very comfortable in Python, but I've never made a game. I'd like to build a cozy farming/automation sim that I might eventually try to sell on Steam. What should I build it in, and how should I structure it?",
       "files": [],
-      "targets": ["non-negotiable #5 engine selection", "architecture data-driven", "engine-selection person-matching"],
+      "targets": [
+        "non-negotiable #5 engine selection",
+        "architecture data-driven",
+        "engine-selection person-matching"
+      ],
       "assertions": [
-        {"text": "Recommends Godot as the primary choice and connects it to the user (GDScript is Python-like, free/MIT, good 2D, ships to Steam)", "prog": false},
-        {"text": "Addresses PyGame honestly as a learning/toy option but flags it as a weaker path to a commercial Steam title", "prog": false},
-        {"text": "Does NOT reflexively default to Unity without justification", "prog": false},
-        {"text": "Recommends data-driven design (crops/machines/recipes as data/Resources, not hardcoded) for a sim", "prog": false},
-        {"text": "Injects scope realism for a first commercial sim project (start small, prove the loop)", "prog": false},
-        {"text": "Gives a sensible starting structure (scenes/components, save system as data snapshot) rather than just naming an engine", "prog": false},
-        {"text": "Does NOT suggest that Python expertise alone makes PyGame a viable path to a commercial Steam game — acknowledges its infrastructure gap (no scene editor, no animation pipeline, Steam packaging friction)", "prog": false},
-        {"text": "Gives honest tradeoff: Godot's smaller asset store / ecosystem vs Unity — does not imply Godot is strictly superior in every dimension", "prog": false}
+        {
+          "text": "Recommends Godot as the primary choice and connects it to the user (GDScript is Python-like, free/MIT, good 2D, ships to Steam)",
+          "prog": false
+        },
+        {
+          "text": "Addresses PyGame honestly as a learning/toy option but flags it as a weaker path to a commercial Steam title",
+          "prog": false
+        },
+        {
+          "text": "Does NOT reflexively default to Unity without justification",
+          "prog": false
+        },
+        {
+          "text": "Recommends data-driven design (crops/machines/recipes as data/Resources, not hardcoded) for a sim",
+          "prog": false
+        },
+        {
+          "text": "Injects scope realism for a first commercial sim project (start small, prove the loop)",
+          "prog": false
+        },
+        {
+          "text": "Gives a sensible starting structure (scenes/components, save system as data snapshot) rather than just naming an engine",
+          "prog": false
+        },
+        {
+          "text": "Does NOT suggest that Python expertise alone makes PyGame a viable path to a commercial Steam game \u2014 acknowledges its infrastructure gap (no scene editor, no animation pipeline, Steam packaging friction)",
+          "prog": false
+        },
+        {
+          "text": "Gives honest tradeoff: Godot's smaller asset store / ecosystem vs Unity \u2014 does not imply Godot is strictly superior in every dimension",
+          "prog": false
+        }
       ]
     },
     {
@@ -75,17 +188,48 @@
       "name": "game-feel-diagnosis",
       "prompt": "My 2D action game (Unity) technically works but it feels lifeless and floaty, and hitting enemies has no impact. What can I do?",
       "files": [],
-      "targets": ["non-negotiable #4 juice", "game-feel toolkit", "unity feel idioms"],
+      "targets": [
+        "non-negotiable #4 juice",
+        "game-feel toolkit",
+        "unity feel idioms"
+      ],
       "assertions": [
-        {"text": "Recommends hitstop/hitlag (brief freeze on impact) to sell hits", "prog": false},
-        {"text": "Recommends screenshake (ideally trauma-based) on impacts", "prog": false},
-        {"text": "Recommends particles/flash on hits (sparks, hit flash, debris)", "prog": false},
-        {"text": "Recommends sound on impactful actions / pitch variation", "prog": false},
-        {"text": "Addresses 'floaty' with movement feel (asymmetric gravity, acceleration, tighter control) not just visuals", "prog": false},
-        {"text": "Recommends tweening/easing and/or squash-stretch instead of instant snaps", "prog": false},
-        {"text": "Mentions knockback/recoil to convey impact", "prog": false},
-        {"text": "Gives Unity-specific levers (Time.timeScale for hitstop, Cinemachine/impulse for shake, DOTween/coroutines) where relevant", "prog": false},
-        {"text": "Advises restraint/accessibility (don't overdo shake; reduce-motion option) rather than maxing every effect", "prog": false}
+        {
+          "text": "Recommends hitstop/hitlag (brief freeze on impact) to sell hits",
+          "prog": false
+        },
+        {
+          "text": "Recommends screenshake (ideally trauma-based) on impacts",
+          "prog": false
+        },
+        {
+          "text": "Recommends particles/flash on hits (sparks, hit flash, debris)",
+          "prog": false
+        },
+        {
+          "text": "Recommends sound on impactful actions / pitch variation",
+          "prog": false
+        },
+        {
+          "text": "Addresses 'floaty' with movement feel (asymmetric gravity, acceleration, tighter control) not just visuals",
+          "prog": false
+        },
+        {
+          "text": "Recommends tweening/easing and/or squash-stretch instead of instant snaps",
+          "prog": false
+        },
+        {
+          "text": "Mentions knockback/recoil to convey impact",
+          "prog": false
+        },
+        {
+          "text": "Gives Unity-specific levers (Time.timeScale for hitstop, Cinemachine/impulse for shake, DOTween/coroutines) where relevant",
+          "prog": false
+        },
+        {
+          "text": "Advises restraint/accessibility (don't overdo shake; reduce-motion option) rather than maxing every effect",
+          "prog": false
+        }
       ]
     },
     {
@@ -93,30 +237,78 @@
       "name": "enemy-horde-pathing",
       "prompt": "I'm making a survivors-like in Godot 4. I've got a few hundred enemies that all chase the player, but they bunch up into a single blob on top of each other and the framerate tanks. How should I handle their movement and pathfinding?",
       "files": [],
-      "targets": ["enemy-ai flow fields + separation", "non-negotiable #1", "collision spatial grid", "performance for many agents"],
+      "targets": [
+        "enemy-ai flow fields + separation",
+        "non-negotiable #1",
+        "collision spatial grid",
+        "performance for many agents"
+      ],
       "assertions": [
-        {"text": "Recommends a flow field / vector-field (Dijkstra-map) pathing shared by all agents instead of per-enemy A*", "prog": true},
-        {"text": "Explicitly warns against running A*/pathfinding per enemy per frame for hundreds of agents", "prog": false},
-        {"text": "Recommends separation steering (boids-style) to stop enemies stacking into one blob", "prog": true},
-        {"text": "Backs 'nearby enemies' queries with a spatial grid/hash, not an all-pairs scan", "prog": false},
-        {"text": "Mentions time-slicing/LOD AI and/or pooling for the many-agent performance problem", "prog": false},
-        {"text": "Keeps movement frame-independent (fixed step / delta)", "prog": false},
-        {"text": "Recomputes the field on goal movement/timer, not naively every frame for every agent", "prog": false}
+        {
+          "text": "Recommends a flow field / vector-field (Dijkstra-map) pathing shared by all agents instead of per-enemy A*",
+          "prog": true
+        },
+        {
+          "text": "Explicitly warns against running A*/pathfinding per enemy per frame for hundreds of agents",
+          "prog": false
+        },
+        {
+          "text": "Recommends separation steering (boids-style) to stop enemies stacking into one blob",
+          "prog": true
+        },
+        {
+          "text": "Backs 'nearby enemies' queries with a spatial grid/hash, not an all-pairs scan",
+          "prog": false
+        },
+        {
+          "text": "Mentions time-slicing/LOD AI and/or pooling for the many-agent performance problem",
+          "prog": false
+        },
+        {
+          "text": "Keeps movement frame-independent (fixed step / delta)",
+          "prog": false
+        },
+        {
+          "text": "Recomputes the field on goal movement/timer, not naively every frame for every agent",
+          "prog": false
+        }
       ]
     },
     {
       "id": 6,
       "name": "procgen-dungeon-validate",
-      "prompt": "Help me write procedural level generation for my roguelike — rooms connected by corridors. A couple of my generated levels have had the exit walled off in an unreachable area, which is a disaster. How should I approach this?",
+      "prompt": "Help me write procedural level generation for my roguelike \u2014 rooms connected by corridors. A couple of my generated levels have had the exit walled off in an unreachable area, which is a disaster. How should I approach this?",
       "files": [],
-      "targets": ["procedural-generation gen + validate", "seeded RNG/determinism", "data-driven"],
+      "targets": [
+        "procedural-generation gen + validate",
+        "seeded RNG/determinism",
+        "data-driven"
+      ],
       "assertions": [
-        {"text": "Centers the fix on generate-then-validate: flood-fill/reachability check from start to exit, regenerate or patch if invalid", "prog": false},
-        {"text": "Recommends seeding the RNG (reproducible runs, debuggable, shareable seeds)", "prog": false},
-        {"text": "Recommends a concrete generation technique (room placement+corridors, BSP, etc.) appropriate to the ask", "prog": false},
-        {"text": "Addresses connectivity guarantee (carve connecting corridor / ensure spanning connectivity), not just detection", "prog": false},
-        {"text": "Mentions controlled randomness or constraints where relevant (spacing, validity rules) rather than pure uniform random", "prog": false},
-        {"text": "Does not hand back unseeded, unvalidated generation that could still softlock", "prog": false}
+        {
+          "text": "Centers the fix on generate-then-validate: flood-fill/reachability check from start to exit, regenerate or patch if invalid",
+          "prog": false
+        },
+        {
+          "text": "Recommends seeding the RNG (reproducible runs, debuggable, shareable seeds)",
+          "prog": false
+        },
+        {
+          "text": "Recommends a concrete generation technique (room placement+corridors, BSP, etc.) appropriate to the ask",
+          "prog": false
+        },
+        {
+          "text": "Addresses connectivity guarantee (carve connecting corridor / ensure spanning connectivity), not just detection",
+          "prog": false
+        },
+        {
+          "text": "Mentions controlled randomness or constraints where relevant (spacing, validity rules) rather than pure uniform random",
+          "prog": false
+        },
+        {
+          "text": "Does not hand back unseeded, unvalidated generation that could still softlock",
+          "prog": false
+        }
       ]
     },
     {
@@ -124,58 +316,144 @@
       "name": "framerate-dependent-debug",
       "prompt": "Players keep telling me my game runs way faster on their gaming PC than on my older laptop, and it's unplayable on fast machines. I can't figure out why. Here's my movement code:\n\n```gdscript\nfunc _process(delta):\n    if Input.is_action_pressed(\"right\"):\n        position.x += 5\n    if Input.is_action_pressed(\"left\"):\n        position.x -= 5\n    velocity.y += 1\n    position.y += velocity.y\n```\n\nWhat's going on?",
       "files": [],
-      "targets": ["non-negotiable #1 frame independence (diagnostic)", "game-loop-and-time", "godot _process vs _physics_process"],
+      "targets": [
+        "non-negotiable #1 frame independence (diagnostic)",
+        "game-loop-and-time",
+        "godot _process vs _physics_process"
+      ],
       "assertions": [
-        {"text": "Correctly diagnoses framerate dependence: speeds are per-frame, so more FPS = faster movement", "prog": true},
-        {"text": "Fixes movement to be per-second by multiplying by delta (e.g. 300 * delta), not per-frame constants", "prog": true},
-        {"text": "Notes gravity/velocity integration is also framerate-dependent and must use delta", "prog": false},
-        {"text": "Recommends moving physics/movement to _physics_process (fixed timestep) rather than _process", "prog": true},
-        {"text": "Explains the concept (frame independence) so the user can avoid it elsewhere, not just patches the snippet", "prog": false},
-        {"text": "Identifies that 'velocity.y += 1; position.y += velocity.y' is doubly framerate-dependent: velocity itself grows proportionally with FPS, making gravity quadratically worse at high framerates (not just linearly faster)", "prog": false}
+        {
+          "text": "Correctly diagnoses framerate dependence: speeds are per-frame, so more FPS = faster movement",
+          "prog": true
+        },
+        {
+          "text": "Fixes movement to be per-second by multiplying by delta (e.g. 300 * delta), not per-frame constants",
+          "prog": true
+        },
+        {
+          "text": "Notes gravity/velocity integration is also framerate-dependent and must use delta",
+          "prog": false
+        },
+        {
+          "text": "Recommends moving physics/movement to _physics_process (fixed timestep) rather than _process",
+          "prog": true
+        },
+        {
+          "text": "Explains the concept (frame independence) so the user can avoid it elsewhere, not just patches the snippet",
+          "prog": false
+        },
+        {
+          "text": "Identifies that 'velocity.y += 1; position.y += velocity.y' is doubly framerate-dependent: velocity itself grows proportionally with FPS, making gravity quadratically worse at high framerates (not just linearly faster)",
+          "prog": false
+        }
       ]
     },
     {
       "id": 8,
       "name": "survivors-collision-love",
-      "prompt": "I'm building a survivors-like in LÖVE and I need the core collision/update systems to handle hundreds of projectiles against hundreds of enemies without the framerate dying. Just write me the core systems — the spatial structure and how projectiles check against enemies — I'll wire up rendering and spawning myself.",
+      "prompt": "I'm building a survivors-like in L\u00d6VE and I need the core collision/update systems to handle hundreds of projectiles against hundreds of enemies without the framerate dying. Just write me the core systems \u2014 the spatial structure and how projectiles check against enemies \u2014 I'll wire up rendering and spawning myself.",
       "files": [],
-      "targets": ["collision spatial partitioning + pooling (as CODE)", "non-negotiable #1", "code-first/LÖVE idioms", "second-engine grader coverage"],
+      "targets": [
+        "collision spatial partitioning + pooling (as CODE)",
+        "non-negotiable #1",
+        "code-first/L\u00d6VE idioms",
+        "second-engine grader coverage"
+      ],
       "assertions": [
-        {"text": "Implements a spatial hash/grid for the broad phase rather than checking all pairs", "prog": true},
-        {"text": "Projectiles query only nearby cells, not every enemy (avoids O(n^2))", "prog": true},
-        {"text": "Uses object pooling / instance reuse instead of allocating and collecting every frame", "prog": true},
-        {"text": "Movement and timers are frame-independent (multiplied by dt)", "prog": true},
-        {"text": "Uses LÖVE idioms correctly (love.update(dt), tables as entities)", "prog": true},
-        {"text": "No nested all-pairs loop over every entity against every other entity", "prog": false},
-        {"text": "Code is correct and runnable (valid Lua, coherent narrow-phase overlap test)", "prog": false}
+        {
+          "text": "Implements a spatial hash/grid for the broad phase rather than checking all pairs",
+          "prog": true
+        },
+        {
+          "text": "Projectiles query only nearby cells, not every enemy (avoids O(n^2))",
+          "prog": true
+        },
+        {
+          "text": "Uses object pooling / instance reuse instead of allocating and collecting every frame",
+          "prog": true
+        },
+        {
+          "text": "Movement and timers are frame-independent (multiplied by dt)",
+          "prog": true
+        },
+        {
+          "text": "Uses L\u00d6VE idioms correctly (love.update(dt), tables as entities)",
+          "prog": true
+        },
+        {
+          "text": "No nested all-pairs loop over every entity against every other entity",
+          "prog": false
+        },
+        {
+          "text": "Code is correct and runnable (valid Lua, coherent narrow-phase overlap test)",
+          "prog": false
+        }
       ]
     },
     {
       "id": 9,
       "name": "camera-lerp-framerate-trap",
-      "prompt": "I'm writing a smooth camera follow in Godot 4 and it feels different on different machines — buttery smooth on my desktop but sluggish and slow on my laptop. Here's my code:\n\n```gdscript\nfunc _process(delta):\n    position = position.lerp(target.global_position, 0.1)\n```\n\nWhat's wrong and how do I fix it properly?",
+      "prompt": "I'm writing a smooth camera follow in Godot 4 and it feels different on different machines \u2014 buttery smooth on my desktop but sluggish and slow on my laptop. Here's my code:\n\n```gdscript\nfunc _process(delta):\n    position = position.lerp(target.global_position, 0.1)\n```\n\nWhat's wrong and how do I fix it properly?",
       "files": [],
-      "targets": ["non-negotiable #1 frame independence", "lerp-per-frame antipattern", "game-loop-and-time"],
+      "targets": [
+        "non-negotiable #1 frame independence",
+        "lerp-per-frame antipattern",
+        "game-loop-and-time"
+      ],
       "assertions": [
-        {"text": "Correctly diagnoses that lerp(a, b, 0.1) per frame is framerate-dependent — higher FPS means the camera catches up faster", "prog": false},
-        {"text": "Does NOT suggest the naive fix of multiplying the lerp weight by delta (e.g. 0.1 * delta) — that is mathematically wrong and produces different convergence", "prog": false},
-        {"text": "Provides the correct framerate-independent formula: lerp(a, b, 1.0 - pow(decay, delta)) where decay is the fraction remaining per second, or equivalent exponential decay", "prog": false},
-        {"text": "Explains WHY the exponential form is correct (lerp each frame compounds multiplicatively, so the right delta correction is an exponent, not a multiplication)", "prog": false},
-        {"text": "Either uses the exponential decay formula in _process OR recommends moving to _physics_process (fixed timestep) as an alternative that sidesteps the issue", "prog": false}
+        {
+          "text": "Correctly diagnoses that lerp(a, b, 0.1) per frame is framerate-dependent \u2014 higher FPS means the camera catches up faster",
+          "prog": false
+        },
+        {
+          "text": "Does NOT suggest the naive fix of multiplying the lerp weight by delta (e.g. 0.1 * delta) \u2014 that is mathematically wrong and produces different convergence",
+          "prog": false
+        },
+        {
+          "text": "Provides the correct framerate-independent formula: lerp(a, b, 1.0 - pow(decay, delta)) where decay is the fraction remaining per second, or equivalent exponential decay",
+          "prog": false
+        },
+        {
+          "text": "Explains WHY the exponential form is correct (lerp each frame compounds multiplicatively, so the right delta correction is an exponent, not a multiplication)",
+          "prog": false
+        },
+        {
+          "text": "Either uses the exponential decay formula in _process OR recommends moving to _physics_process (fixed timestep) as an alternative that sidesteps the issue",
+          "prog": false
+        }
       ]
     },
     {
       "id": 10,
       "name": "rigidbody-avatar-trap",
-      "prompt": "I'm making a 2D platformer in Godot 4. I'm using RigidBody2D with apply_central_impulse for jumping, but the movement feels slippery and unpredictable — I can't get reliable ground detection and the character slides everywhere. Here's my setup:\n\n```gdscript\nextends RigidBody2D\n\nfunc _physics_process(delta):\n    if Input.is_action_pressed(\"ui_right\"):\n        apply_central_force(Vector2(800, 0))\n    if Input.is_action_just_pressed(\"ui_accept\"):\n        apply_central_impulse(Vector2(0, -500))\n```\n\nHow do I fix the slippery feel?",
+      "prompt": "I'm making a 2D platformer in Godot 4. I'm using RigidBody2D with apply_central_impulse for jumping, but the movement feels slippery and unpredictable \u2014 I can't get reliable ground detection and the character slides everywhere. Here's my setup:\n\n```gdscript\nextends RigidBody2D\n\nfunc _physics_process(delta):\n    if Input.is_action_pressed(\"ui_right\"):\n        apply_central_force(Vector2(800, 0))\n    if Input.is_action_just_pressed(\"ui_accept\"):\n        apply_central_impulse(Vector2(0, -500))\n```\n\nHow do I fix the slippery feel?",
       "files": [],
-      "targets": ["collision-and-physics kinematic-vs-rigidbody", "non-negotiable #4 juice", "godot idioms"],
+      "targets": [
+        "collision-and-physics kinematic-vs-rigidbody",
+        "non-negotiable #4 juice",
+        "godot idioms"
+      ],
       "assertions": [
-        {"text": "Identifies the root cause as using RigidBody2D (physics simulation) instead of a kinematic controller", "prog": false},
-        {"text": "Recommends switching the architecture to CharacterBody2D + move_and_slide rather than just tuning RigidBody parameters", "prog": false},
-        {"text": "Explains why RigidBody is wrong for precise avatar control (fighting the physics engine, forces-based motion is hard to author, non-deterministic feel)", "prog": false},
-        {"text": "Does NOT primarily suggest tuning RigidBody properties (linear_damp, angular_damp, physics material, mass) as the main fix", "prog": false},
-        {"text": "Mentions at least one feel improvement beyond the architecture switch (coyote time, jump buffer, asymmetric gravity, or Input Map)", "prog": false}
+        {
+          "text": "Identifies the root cause as using RigidBody2D (physics simulation) instead of a kinematic controller",
+          "prog": false
+        },
+        {
+          "text": "Recommends switching the architecture to CharacterBody2D + move_and_slide rather than just tuning RigidBody parameters",
+          "prog": false
+        },
+        {
+          "text": "Explains why RigidBody is wrong for precise avatar control (fighting the physics engine, forces-based motion is hard to author, non-deterministic feel)",
+          "prog": false
+        },
+        {
+          "text": "Does NOT primarily suggest tuning RigidBody properties (linear_damp, angular_damp, physics material, mass) as the main fix",
+          "prog": false
+        },
+        {
+          "text": "Mentions at least one feel improvement beyond the architecture switch (coyote time, jump buffer, asymmetric gravity, or Input Map)",
+          "prog": false
+        }
       ]
     },
     {
@@ -183,27 +461,65 @@
       "name": "ecs-small-game-trap",
       "prompt": "I'm starting a new 2D roguelike with about 20 enemy types. I keep reading that ECS (Entity-Component-System) is the professional approach for game development. Should I build my game on an ECS architecture? I don't want to paint myself into a corner.",
       "files": [],
-      "targets": ["non-negotiable #3 decouple / composition", "architecture", "scope"],
+      "targets": [
+        "non-negotiable #3 decouple / composition",
+        "architecture",
+        "scope"
+      ],
       "assertions": [
-        {"text": "Does NOT blindly recommend a full ECS framework for a 20-enemy-type roguelike", "prog": false},
-        {"text": "Explains when ECS actually earns its overhead (10k+ entities with cache-sensitive simulation, e.g. factory sims, colony builders, custom physics) — not a 20-enemy roguelike", "prog": false},
-        {"text": "Recommends an appropriate level of composition for this scale: Godot nodes as components, plain data tables, or simple component bags — without a heavy ECS framework", "prog": false},
-        {"text": "Names real costs of full ECS frameworks at small scale: cognitive overhead, tooling complexity, debugging difficulty, integration friction with engine features", "prog": false},
-        {"text": "Does NOT imply that using Godot/Unity node composition is an architectural mistake or inferior to ECS for this scope", "prog": false}
+        {
+          "text": "Does NOT blindly recommend a full ECS framework for a 20-enemy-type roguelike",
+          "prog": false
+        },
+        {
+          "text": "Explains when ECS actually earns its overhead (10k+ entities with cache-sensitive simulation, e.g. factory sims, colony builders, custom physics) \u2014 not a 20-enemy roguelike",
+          "prog": false
+        },
+        {
+          "text": "Recommends an appropriate level of composition for this scale: Godot nodes as components, plain data tables, or simple component bags \u2014 without a heavy ECS framework",
+          "prog": false
+        },
+        {
+          "text": "Names real costs of full ECS frameworks at small scale: cognitive overhead, tooling complexity, debugging difficulty, integration friction with engine features",
+          "prog": false
+        },
+        {
+          "text": "Does NOT imply that using Godot/Unity node composition is an architectural mistake or inferior to ECS for this scope",
+          "prog": false
+        }
       ]
     },
     {
       "id": 12,
       "name": "hitstop-priority-trap",
-      "prompt": "I've added particle explosion effects, four different hit sound variations, and screen shake to my attacks in my 2D action game. The attacks still feel weak and unsatisfying — enemies just take damage numbers but there's no sense of impact. I've spent weeks on visual effects. What am I still missing?",
+      "prompt": "I've added particle explosion effects, four different hit sound variations, and screen shake to my attacks in my 2D action game. The attacks still feel weak and unsatisfying \u2014 enemies just take damage numbers but there's no sense of impact. I've spent weeks on visual effects. What am I still missing?",
       "files": [],
-      "targets": ["non-negotiable #4 juice", "game-feel hitstop priority", "game-feel toolkit"],
+      "targets": [
+        "non-negotiable #4 juice",
+        "game-feel hitstop priority",
+        "game-feel toolkit"
+      ],
       "assertions": [
-        {"text": "Identifies hitstop/hitlag (brief freeze on impact) as the most likely missing element, given that particles and sound are already present", "prog": false},
-        {"text": "Explains WHY hitstop is the highest-ROI impact technique: it's what makes the brain register a hit as 'landed' — a brief freeze sells force in a way no amount of particles can", "prog": false},
-        {"text": "Does NOT primarily recommend adding more particles, more sounds, or stronger screenshake as the main fix", "prog": false},
-        {"text": "Gives concrete hitstop implementation guidance (2–8 frames / 30–130 ms, Time.timeScale = 0 or skipping sim steps, scale with hit weight)", "prog": false},
-        {"text": "Explains the stacking principle: hitstop + flash + screenshake + sound together create impact where any single element alone is underwhelming", "prog": false}
+        {
+          "text": "Identifies hitstop/hitlag (brief freeze on impact) as the most likely missing element, given that particles and sound are already present",
+          "prog": false
+        },
+        {
+          "text": "Explains WHY hitstop is the highest-ROI impact technique: it's what makes the brain register a hit as 'landed' \u2014 a brief freeze sells force in a way no amount of particles can",
+          "prog": false
+        },
+        {
+          "text": "Does NOT primarily recommend adding more particles, more sounds, or stronger screenshake as the main fix",
+          "prog": false
+        },
+        {
+          "text": "Gives concrete hitstop implementation guidance (2\u20138 frames / 30\u2013130 ms, Time.timeScale = 0 or skipping sim steps, scale with hit weight)",
+          "prog": false
+        },
+        {
+          "text": "Explains the stacking principle: hitstop + flash + screenshake + sound together create impact where any single element alone is underwhelming",
+          "prog": false
+        }
       ]
     },
     {
@@ -211,135 +527,340 @@
       "name": "godot-autoload-overuse",
       "prompt": "I'm organizing my Godot 4 project and I've set up these autoloads (singletons): GameManager, UIManager, AudioManager, EnemyManager, PlayerManager, InventoryManager, SaveManager, and EventBus. Everything is wired through these. Is this a solid architecture for a solo indie game?",
       "files": [],
-      "targets": ["non-negotiable #3 decouple", "godot idioms", "architecture"],
+      "targets": [
+        "non-negotiable #3 decouple",
+        "godot idioms",
+        "architecture"
+      ],
       "assertions": [
-        {"text": "Identifies this pattern as autoload overuse / too many global singletons for a solo indie game", "prog": false},
-        {"text": "Explains specific problems: hidden dependencies between systems, initialization order fragility, singletons that accumulate unrelated state, difficulty isolating and testing scenes", "prog": false},
-        {"text": "Recommends EventBus (or 1–2 utilities like AudioManager or SaveManager) as the only well-justified autoloads — not a manager for every system", "prog": false},
-        {"text": "Recommends moving most logic into scenes/nodes that own their state, using signals to communicate upward and across", "prog": false},
-        {"text": "Does NOT validate all 8 autoloads as a good or neutral pattern", "prog": false}
+        {
+          "text": "Identifies this pattern as autoload overuse / too many global singletons for a solo indie game",
+          "prog": false
+        },
+        {
+          "text": "Explains specific problems: hidden dependencies between systems, initialization order fragility, singletons that accumulate unrelated state, difficulty isolating and testing scenes",
+          "prog": false
+        },
+        {
+          "text": "Recommends EventBus (or 1\u20132 utilities like AudioManager or SaveManager) as the only well-justified autoloads \u2014 not a manager for every system",
+          "prog": false
+        },
+        {
+          "text": "Recommends moving most logic into scenes/nodes that own their state, using signals to communicate upward and across",
+          "prog": false
+        },
+        {
+          "text": "Does NOT validate all 8 autoloads as a good or neutral pattern",
+          "prog": false
+        }
       ]
     },
     {
       "id": 14,
       "name": "pixel-perfect-setup",
-      "prompt": "I'm making a pixel art game in Godot 4, inspired by games like Stardew Valley and the original Legend of Zelda. When I run my game, all my sprites look blurry — the pixel edges are soft instead of crisp. How do I fix this and set up the project correctly for pixel art?",
+      "prompt": "I'm making a pixel art game in Godot 4, inspired by games like Stardew Valley and the original Legend of Zelda. When I run my game, all my sprites look blurry \u2014 the pixel edges are soft instead of crisp. How do I fix this and set up the project correctly for pixel art?",
       "files": [],
-      "targets": ["pixel-art-and-retro rendering setup", "pixel-perfect filter + integer scaling"],
+      "targets": [
+        "pixel-art-and-retro rendering setup",
+        "pixel-perfect filter + integer scaling"
+      ],
       "assertions": [
-        {"text": "Instructs the user to change the texture filter to Nearest (no filter / point sampling) — specifically via Project Settings → Rendering → Textures → Canvas Textures → Default Texture Filter → Nearest (or equivalent), NOT bilinear/linear", "prog": false},
-        {"text": "Addresses viewport scaling: set Stretch Mode to 'canvas_items' (or 'viewport') with a small base resolution (e.g. 320×180) so the game upscales at an integer factor — NOT just making the window larger without fixing the filter", "prog": false},
-        {"text": "Explains WHY blurring happens: the default bilinear filter interpolates between adjacent pixels when scaling, which smooths pixel edges; Nearest-neighbor takes the closest pixel instead", "prog": false},
-        {"text": "Mentions that individual sprite textures may also need their import filter set to Nearest if they were imported before the project default was changed", "prog": false},
-        {"text": "Does NOT recommend using a fractional scale factor (e.g. 1.5× or 2.7×) — integer scaling is required to keep all pixels the same on-screen size", "prog": false},
-        {"text": "Optionally mentions snapping the camera position to integers each frame to prevent sub-pixel shimmer during scrolling", "prog": false}
+        {
+          "text": "Instructs the user to change the texture filter to Nearest (no filter / point sampling) \u2014 specifically via Project Settings \u2192 Rendering \u2192 Textures \u2192 Canvas Textures \u2192 Default Texture Filter \u2192 Nearest (or equivalent), NOT bilinear/linear",
+          "prog": false
+        },
+        {
+          "text": "Addresses viewport scaling: set Stretch Mode to 'canvas_items' (or 'viewport') with a small base resolution (e.g. 320\u00d7180) so the game upscales at an integer factor \u2014 NOT just making the window larger without fixing the filter",
+          "prog": false
+        },
+        {
+          "text": "Explains WHY blurring happens: the default bilinear filter interpolates between adjacent pixels when scaling, which smooths pixel edges; Nearest-neighbor takes the closest pixel instead",
+          "prog": false
+        },
+        {
+          "text": "Mentions that individual sprite textures may also need their import filter set to Nearest if they were imported before the project default was changed",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend using a fractional scale factor (e.g. 1.5\u00d7 or 2.7\u00d7) \u2014 integer scaling is required to keep all pixels the same on-screen size",
+          "prog": false
+        },
+        {
+          "text": "Optionally mentions snapping the camera position to integers each frame to prevent sub-pixel shimmer during scrolling",
+          "prog": false
+        }
       ]
     },
     {
       "id": 15,
       "name": "zelda-topdown-grid",
-      "prompt": "I'm building a top-down action RPG in Godot 4 — like the original Legend of Zelda. How should I handle the grid-based world, player movement, and collision? I want it to feel like the classic game where movement is 4-directional and the world is tile-based.",
+      "prompt": "I'm building a top-down action RPG in Godot 4 \u2014 like the original Legend of Zelda. How should I handle the grid-based world, player movement, and collision? I want it to feel like the classic game where movement is 4-directional and the world is tile-based.",
       "files": [],
-      "targets": ["pixel-art-and-retro top-down movement", "TileMap", "grid-locked vs free", "4-directional animation"],
+      "targets": [
+        "pixel-art-and-retro top-down movement",
+        "TileMap",
+        "grid-locked vs free",
+        "4-directional animation"
+      ],
       "assertions": [
-        {"text": "Uses CharacterBody2D (kinematic) for the player, NOT RigidBody2D", "prog": false},
-        {"text": "Recommends or describes a TileMap node for the tile-based world (with collision shapes on wall/obstacle tiles via TileSet)", "prog": false},
-        {"text": "Explains or implements 4-directional movement (cardinal directions only) — preferring one axis over the other when diagonal input is given, matching classic Zelda behavior", "prog": false},
-        {"text": "Addresses how to drive the animation from the facing/velocity direction (last non-zero direction) so the sprite keeps facing the last direction when standing still", "prog": false},
-        {"text": "For grid-locked movement: describes animating the visual position with a tween while the logical grid position updates instantly (so collision logic is tile-coordinate based but movement looks smooth)", "prog": false},
-        {"text": "Mentions collision/physics layers to separate player, enemies, and environment tiles", "prog": false},
-        {"text": "Does NOT suggest a 3D approach or overcomplicate the architecture beyond what a classic top-down 2D game needs", "prog": false}
+        {
+          "text": "Uses CharacterBody2D (kinematic) for the player, NOT RigidBody2D",
+          "prog": false
+        },
+        {
+          "text": "Recommends or describes a TileMap node for the tile-based world (with collision shapes on wall/obstacle tiles via TileSet)",
+          "prog": false
+        },
+        {
+          "text": "Explains or implements 4-directional movement (cardinal directions only) \u2014 preferring one axis over the other when diagonal input is given, matching classic Zelda behavior",
+          "prog": false
+        },
+        {
+          "text": "Addresses how to drive the animation from the facing/velocity direction (last non-zero direction) so the sprite keeps facing the last direction when standing still",
+          "prog": false
+        },
+        {
+          "text": "For grid-locked movement: describes animating the visual position with a tween while the logical grid position updates instantly (so collision logic is tile-coordinate based but movement looks smooth)",
+          "prog": false
+        },
+        {
+          "text": "Mentions collision/physics layers to separate player, enemies, and environment tiles",
+          "prog": false
+        },
+        {
+          "text": "Does NOT suggest a 3D approach or overcomplicate the architecture beyond what a classic top-down 2D game needs",
+          "prog": false
+        }
       ]
     },
     {
       "id": 16,
       "name": "3d-character-controller",
-      "prompt": "I'm making a 3D platformer in Godot 4 — think Super Mario 64 style. How do I build a character controller that actually feels tight and responsive? My previous attempt using RigidBody3D was floaty and the physics felt like I was fighting the engine.",
+      "prompt": "I'm making a 3D platformer in Godot 4 \u2014 think Super Mario 64 style. How do I build a character controller that actually feels tight and responsive? My previous attempt using RigidBody3D was floaty and the physics felt like I was fighting the engine.",
       "files": [],
-      "targets": ["3d-games CharacterBody3D", "non-negotiable #1", "camera-relative movement", "3D platformer feel"],
+      "targets": [
+        "3d-games CharacterBody3D",
+        "non-negotiable #1",
+        "camera-relative movement",
+        "3D platformer feel"
+      ],
       "assertions": [
-        {"text": "Recommends switching from RigidBody3D to CharacterBody3D + move_and_slide() — explains WHY RigidBody is wrong for avatar control (fighting the physics engine, forces-based = hard to author, non-deterministic feel)", "prog": false},
-        {"text": "Puts physics in _physics_process (fixed timestep, NOT _process)", "prog": false},
-        {"text": "Applies gravity manually using velocity.y -= gravity * delta (or get_gravity()), NOT relying on the physics engine to apply it", "prog": false},
-        {"text": "Implements camera-relative horizontal movement: rotates the raw input vector by the camera pivot's Y rotation (basis) so the player moves relative to where the camera is facing", "prog": false},
-        {"text": "Uses acceleration and deceleration (move_toward) on horizontal velocity rather than snapping instantly to max speed", "prog": false},
-        {"text": "Exposes feel constants as @export tunables (speed, jump_velocity, acceleration, etc.)", "prog": false},
-        {"text": "Suggests at least one platformer feel technique for 3D (coyote time, jump buffer, variable jump height, or asymmetric fall gravity)", "prog": false}
+        {
+          "text": "Recommends switching from RigidBody3D to CharacterBody3D + move_and_slide() \u2014 explains WHY RigidBody is wrong for avatar control (fighting the physics engine, forces-based = hard to author, non-deterministic feel)",
+          "prog": false
+        },
+        {
+          "text": "Puts physics in _physics_process (fixed timestep, NOT _process)",
+          "prog": false
+        },
+        {
+          "text": "Applies gravity manually using velocity.y -= gravity * delta (or get_gravity()), NOT relying on the physics engine to apply it",
+          "prog": false
+        },
+        {
+          "text": "Implements camera-relative horizontal movement: rotates the raw input vector by the camera pivot's Y rotation (basis) so the player moves relative to where the camera is facing",
+          "prog": false
+        },
+        {
+          "text": "Uses acceleration and deceleration (move_toward) on horizontal velocity rather than snapping instantly to max speed",
+          "prog": false
+        },
+        {
+          "text": "Exposes feel constants as @export tunables (speed, jump_velocity, acceleration, etc.)",
+          "prog": false
+        },
+        {
+          "text": "Suggests at least one platformer feel technique for 3D (coyote time, jump buffer, variable jump height, or asymmetric fall gravity)",
+          "prog": false
+        }
       ]
     },
     {
       "id": 17,
       "name": "3d-camera-springarm",
-      "prompt": "I'm building a third-person 3D game in Godot 4. My camera keeps clipping through walls — when I walk near a wall or into a corner, the camera goes inside the geometry. Also, how should I handle the camera rotation so it orbits around the player properly with mouse input?",
+      "prompt": "I'm building a third-person 3D game in Godot 4. My camera keeps clipping through walls \u2014 when I walk near a wall or into a corner, the camera goes inside the geometry. Also, how should I handle the camera rotation so it orbits around the player properly with mouse input?",
       "files": [],
-      "targets": ["3d-games third-person camera", "SpringArm3D", "camera-relative movement", "wall clipping"],
+      "targets": [
+        "3d-games third-person camera",
+        "SpringArm3D",
+        "camera-relative movement",
+        "wall clipping"
+      ],
       "assertions": [
-        {"text": "Recommends SpringArm3D as the solution to wall clipping — explains that it auto-shortens when geometry is between the camera and pivot, eliminating clip without manual raycasting", "prog": false},
-        {"text": "Describes the correct node hierarchy: Player → CameraPivot (Node3D) → SpringArm3D → Camera3D — NOT Camera3D as a direct child of the player", "prog": false},
-        {"text": "Rotates the CameraPivot (not the Camera3D directly) based on mouse motion — horizontal mouse → CameraPivot.rotate_y(), vertical mouse → CameraPivot.rotation.x with clamping", "prog": false},
-        {"text": "Clamps vertical (pitch) rotation to prevent gimbal flip (e.g. -60° to 80°)", "prog": false},
-        {"text": "Notes that SpringArm3D's collision mask should include the environment/world layer (so walls shorten the arm) but NOT the player or enemy layers (so the arm doesn't shorten due to nearby actors)", "prog": false},
-        {"text": "Does NOT suggest manually raycasting from pivot to camera and repositioning the camera as the primary solution — SpringArm3D handles this", "prog": false},
-        {"text": "Does NOT suggest parenting Camera3D directly to the CharacterBody3D as a good approach — that produces a fixed angle with no clip protection", "prog": false}
+        {
+          "text": "Recommends SpringArm3D as the solution to wall clipping \u2014 explains that it auto-shortens when geometry is between the camera and pivot, eliminating clip without manual raycasting",
+          "prog": false
+        },
+        {
+          "text": "Describes the correct node hierarchy: Player \u2192 CameraPivot (Node3D) \u2192 SpringArm3D \u2192 Camera3D \u2014 NOT Camera3D as a direct child of the player",
+          "prog": false
+        },
+        {
+          "text": "Rotates the CameraPivot (not the Camera3D directly) based on mouse motion \u2014 horizontal mouse \u2192 CameraPivot.rotate_y(), vertical mouse \u2192 CameraPivot.rotation.x with clamping",
+          "prog": false
+        },
+        {
+          "text": "Clamps vertical (pitch) rotation to prevent gimbal flip (e.g. -60\u00b0 to 80\u00b0)",
+          "prog": false
+        },
+        {
+          "text": "Notes that SpringArm3D's collision mask should include the environment/world layer (so walls shorten the arm) but NOT the player or enemy layers (so the arm doesn't shorten due to nearby actors)",
+          "prog": false
+        },
+        {
+          "text": "Does NOT suggest manually raycasting from pivot to camera and repositioning the camera as the primary solution \u2014 SpringArm3D handles this",
+          "prog": false
+        },
+        {
+          "text": "Does NOT suggest parenting Camera3D directly to the CharacterBody3D as a good approach \u2014 that produces a fixed angle with no clip protection",
+          "prog": false
+        }
       ]
     },
     {
       "id": 18,
       "name": "status-effects-design",
-      "prompt": "I'm building a JRPG in Godot 4. I need to implement status effects — things like Poison, Paralysis, Burn, and Berserk. How should I structure this system? I want to be able to stack some effects, have them tick each turn, and easily add new ones without touching existing code.",
+      "prompt": "I'm building a JRPG in Godot 4. I need to implement status effects \u2014 things like Poison, Paralysis, Burn, and Berserk. How should I structure this system? I want to be able to stack some effects, have them tick each turn, and easily add new ones without touching existing code.",
       "files": [],
-      "targets": ["rpg-systems status effects", "data-driven component pattern", "non-negotiable #3 decouple"],
+      "targets": [
+        "rpg-systems status effects",
+        "data-driven component pattern",
+        "non-negotiable #3 decouple"
+      ],
       "assertions": [
-        {"text": "Recommends a data-driven or component-based approach where each effect is a Resource/class with defined methods (enter/tick/exit or apply/remove) rather than a hardcoded if-elif chain in the combat loop", "prog": false},
-        {"text": "Defines a clear effect contract — each status effect knows what it does on application, each tick, and on removal — so new effects are authored as new data/classes, not by modifying existing combat code", "prog": false},
-        {"text": "Addresses stacking policy as per-effect configuration: some effects replace (paralysis), some stack additively (poison instances), some cap at N — this decision belongs in the effect data, not hardcoded in a central manager", "prog": false},
-        {"text": "Separates effect definition (what the effect does, its duration) from effect instance state (who has it, remaining ticks) — the same StatusEffectData resource/class can be shared; per-entity state is tracked separately", "prog": false},
-        {"text": "Implements the tick loop by iterating the entity's active_effects list and calling each effect's tick method — NOT a giant if/elif chain checking named effects by string or enum", "prog": false},
-        {"text": "Does NOT implement the system as a collection of boolean flags on the entity (is_poisoned: bool, is_paralyzed: bool, is_burned: bool) — this pattern cannot be extended without modifying the entity class for every new effect", "prog": false}
+        {
+          "text": "Recommends a data-driven or component-based approach where each effect is a Resource/class with defined methods (enter/tick/exit or apply/remove) rather than a hardcoded if-elif chain in the combat loop",
+          "prog": false
+        },
+        {
+          "text": "Defines a clear effect contract \u2014 each status effect knows what it does on application, each tick, and on removal \u2014 so new effects are authored as new data/classes, not by modifying existing combat code",
+          "prog": false
+        },
+        {
+          "text": "Addresses stacking policy as per-effect configuration: some effects replace (paralysis), some stack additively (poison instances), some cap at N \u2014 this decision belongs in the effect data, not hardcoded in a central manager",
+          "prog": false
+        },
+        {
+          "text": "Separates effect definition (what the effect does, its duration) from effect instance state (who has it, remaining ticks) \u2014 the same StatusEffectData resource/class can be shared; per-entity state is tracked separately",
+          "prog": false
+        },
+        {
+          "text": "Implements the tick loop by iterating the entity's active_effects list and calling each effect's tick method \u2014 NOT a giant if/elif chain checking named effects by string or enum",
+          "prog": false
+        },
+        {
+          "text": "Does NOT implement the system as a collection of boolean flags on the entity (is_poisoned: bool, is_paralyzed: bool, is_burned: bool) \u2014 this pattern cannot be extended without modifying the entity class for every new effect",
+          "prog": false
+        }
       ]
     },
     {
       "id": 19,
       "name": "inventory-equipment-data",
-      "prompt": "I'm designing an inventory and equipment system for an action-RPG in Godot 4 — like Zelda or a roguelike. Players can pick up items, equip weapons and armor, and see their stats change. How should I architect this so it's data-driven and easy to extend with new items?",
+      "prompt": "I'm designing an inventory and equipment system for an action-RPG in Godot 4 \u2014 like Zelda or a roguelike. Players can pick up items, equip weapons and armor, and see their stats change. How should I architect this so it's data-driven and easy to extend with new items?",
       "files": [],
-      "targets": ["rpg-systems inventory equipment", "data-driven resources", "stat modifiers", "non-negotiable #3 decouple"],
+      "targets": [
+        "rpg-systems inventory equipment",
+        "data-driven resources",
+        "stat modifiers",
+        "non-negotiable #3 decouple"
+      ],
       "assertions": [
-        {"text": "Represents items as data resources (Godot Resource subclass or equivalent ScriptableObject pattern) — item definitions are authored as data assets, not hardcoded classes per item type", "prog": false},
-        {"text": "Separates item definition (ItemData: name, icon, stats, slot type) from item instance (a runtime wrapper holding the ItemData reference plus quantity, durability, or enchantments)", "prog": false},
-        {"text": "Equipment slots are typed (dict keyed by an enum or typed array of EquipmentSlot) — not a list of booleans or untyped strings. Equipping an item checks slot compatibility and swaps correctly.", "prog": false},
-        {"text": "Stat modifiers use an additive+multiplicative pattern (base_stat * (1 + sum_of_additive_bonuses) * product_of_multipliers) or a modifier list rather than recomputing from scratch with custom logic per item", "prog": false},
-        {"text": "Emits a signal/event on equip and unequip so the HUD and stat display update reactively — the inventory does NOT reach directly into HUD nodes to update labels", "prog": false},
-        {"text": "Does NOT hardcode item effects as if/elif chains by item name or ID (e.g. 'if item.name == Sword: damage += 5') — item stat contributions come from the item's data", "prog": false}
+        {
+          "text": "Represents items as data resources (Godot Resource subclass or equivalent ScriptableObject pattern) \u2014 item definitions are authored as data assets, not hardcoded classes per item type",
+          "prog": false
+        },
+        {
+          "text": "Separates item definition (ItemData: name, icon, stats, slot type) from item instance (a runtime wrapper holding the ItemData reference plus quantity, durability, or enchantments)",
+          "prog": false
+        },
+        {
+          "text": "Equipment slots are typed (dict keyed by an enum or typed array of EquipmentSlot) \u2014 not a list of booleans or untyped strings. Equipping an item checks slot compatibility and swaps correctly.",
+          "prog": false
+        },
+        {
+          "text": "Stat modifiers use an additive+multiplicative pattern (base_stat * (1 + sum_of_additive_bonuses) * product_of_multipliers) or a modifier list rather than recomputing from scratch with custom logic per item",
+          "prog": false
+        },
+        {
+          "text": "Emits a signal/event on equip and unequip so the HUD and stat display update reactively \u2014 the inventory does NOT reach directly into HUD nodes to update labels",
+          "prog": false
+        },
+        {
+          "text": "Does NOT hardcode item effects as if/elif chains by item name or ID (e.g. 'if item.name == Sword: damage += 5') \u2014 item stat contributions come from the item's data",
+          "prog": false
+        }
       ]
     },
     {
       "id": 20,
       "name": "audio-bus-hierarchy",
-      "prompt": "My game needs working volume sliders for Music, SFX, and a Master volume — and players should be able to mute each category independently. How do I set this up properly in Godot 4, and what else should I know about organizing game audio?",
+      "prompt": "My game needs working volume sliders for Music, SFX, and a Master volume \u2014 and players should be able to mute each category independently. How do I set this up properly in Godot 4, and what else should I know about organizing game audio?",
       "files": [],
-      "targets": ["audio-architecture bus hierarchy", "AudioServer", "volume control", "godot idioms"],
+      "targets": [
+        "audio-architecture bus hierarchy",
+        "AudioServer",
+        "volume control",
+        "godot idioms"
+      ],
       "assertions": [
-        {"text": "Instructs setting up an Audio Bus Layout with multiple named buses (Master, Music, SFX at minimum) — NOT routing all sounds through the single default Master bus", "prog": false},
-        {"text": "Explains that AudioStreamPlayer/2D/3D nodes connect to the appropriate bus via the 'bus' property — so music players go to the Music bus, SFX players to the SFX bus, etc.", "prog": false},
-        {"text": "Volume sliders call AudioServer.set_bus_volume_db(bus_index, linear_to_db(value)) — NOT setting volume_db on individual AudioStreamPlayer nodes, which would require tracking every player instance", "prog": false},
-        {"text": "Uses linear_to_db() (or the equivalent dB conversion) when converting slider values to bus volume — a direct linear mapping produces perceptually wrong volume response", "prog": false},
-        {"text": "Muting a category uses AudioServer.set_bus_mute(bus_index, true/false) — enabling per-category mute independently of volume", "prog": false},
-        {"text": "Does NOT recommend a single AudioManager that plays all sounds from one shared AudioStreamPlayer — this prevents per-category volume and mute control and can only play one sound at a time", "prog": false}
+        {
+          "text": "Instructs setting up an Audio Bus Layout with multiple named buses (Master, Music, SFX at minimum) \u2014 NOT routing all sounds through the single default Master bus",
+          "prog": false
+        },
+        {
+          "text": "Explains that AudioStreamPlayer/2D/3D nodes connect to the appropriate bus via the 'bus' property \u2014 so music players go to the Music bus, SFX players to the SFX bus, etc.",
+          "prog": false
+        },
+        {
+          "text": "Volume sliders call AudioServer.set_bus_volume_db(bus_index, linear_to_db(value)) \u2014 NOT setting volume_db on individual AudioStreamPlayer nodes, which would require tracking every player instance",
+          "prog": false
+        },
+        {
+          "text": "Uses linear_to_db() (or the equivalent dB conversion) when converting slider values to bus volume \u2014 a direct linear mapping produces perceptually wrong volume response",
+          "prog": false
+        },
+        {
+          "text": "Muting a category uses AudioServer.set_bus_mute(bus_index, true/false) \u2014 enabling per-category mute independently of volume",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend a single AudioManager that plays all sounds from one shared AudioStreamPlayer \u2014 this prevents per-category volume and mute control and can only play one sound at a time",
+          "prog": false
+        }
       ]
     },
     {
       "id": 21,
       "name": "adaptive-music",
-      "prompt": "I want my game's music to react to gameplay — peaceful ambient music when exploring, tense music during combat, and a dramatic sting when the boss appears. How do I implement adaptive or dynamic music in Godot 4?",
+      "prompt": "I want my game's music to react to gameplay \u2014 peaceful ambient music when exploring, tense music during combat, and a dramatic sting when the boss appears. How do I implement adaptive or dynamic music in Godot 4?",
       "files": [],
-      "targets": ["audio-architecture adaptive music", "stem-based layering", "state machine music"],
+      "targets": [
+        "audio-architecture adaptive music",
+        "stem-based layering",
+        "state machine music"
+      ],
       "assertions": [
-        {"text": "Recommends a stem/layer approach: multiple AudioStreamPlayers all looping synchronized stems (e.g. exploration_base, exploration_melody, combat_drums, combat_strings) with volume faded in/out per state — NOT stopping one track and starting another, which causes silence gaps and sync loss", "prog": false},
-        {"text": "Synchronizes stems by matching playback_position: when adding a new stem, set its playback_position to match a currently playing stem before calling play(), so all stems stay in sync", "prog": false},
-        {"text": "Uses a state machine (e.g. Exploration / Combat / BossFight) to drive which stems are audible — state transitions tween the volume of the relevant stems in/out", "prog": false},
-        {"text": "Transitions between states by tweening stem volumes (fade in combat drums, fade out ambient melody) rather than abruptly cutting or crossfading between two separate non-synchronized tracks", "prog": false},
-        {"text": "Does NOT implement adaptive music as simply calling stop() on one AudioStreamPlayer and play() on a different one — this causes an audible silence gap and the new track starts from the beginning rather than the correct beat", "prog": false}
+        {
+          "text": "Recommends a stem/layer approach: multiple AudioStreamPlayers all looping synchronized stems (e.g. exploration_base, exploration_melody, combat_drums, combat_strings) with volume faded in/out per state \u2014 NOT stopping one track and starting another, which causes silence gaps and sync loss",
+          "prog": false
+        },
+        {
+          "text": "Synchronizes stems by matching playback_position: when adding a new stem, set its playback_position to match a currently playing stem before calling play(), so all stems stay in sync",
+          "prog": false
+        },
+        {
+          "text": "Uses a state machine (e.g. Exploration / Combat / BossFight) to drive which stems are audible \u2014 state transitions tween the volume of the relevant stems in/out",
+          "prog": false
+        },
+        {
+          "text": "Transitions between states by tweening stem volumes (fade in combat drums, fade out ambient melody) rather than abruptly cutting or crossfading between two separate non-synchronized tracks",
+          "prog": false
+        },
+        {
+          "text": "Does NOT implement adaptive music as simply calling stop() on one AudioStreamPlayer and play() on a different one \u2014 this causes an audible silence gap and the new track starts from the beginning rather than the correct beat",
+          "prog": false
+        }
       ]
     },
     {
@@ -347,28 +868,71 @@
       "name": "sprite-hit-flash-outline",
       "prompt": "I'm making a 2D game in Godot 4. I need two visual effects: (1) a white flash on my sprites when they take damage, so players can clearly see a hit registered, and (2) a colored outline/glow around interactable objects so players know they can interact with them. How do I write these shaders in Godot?",
       "files": [],
-      "targets": ["shaders canvas_item", "hit flash", "sprite outline", "shader uniforms"],
+      "targets": [
+        "shaders canvas_item",
+        "hit flash",
+        "sprite outline",
+        "shader uniforms"
+      ],
       "assertions": [
-        {"text": "Both effects use shader_type canvas_item (not spatial or sky) — 2D sprite effects require the canvas_item shader type in Godot", "prog": false},
-        {"text": "Hit flash: the fragment shader replaces the visible pixel color with white (or a mix toward white) while preserving the original texture's alpha — so only non-transparent pixels flash, not the whole bounding box", "prog": false},
-        {"text": "Hit flash is controlled by a shader uniform (e.g. flash_amount: float 0.0–1.0 or flash_active: bool) set from GDScript via set_shader_parameter(), then reset after a short duration via a tween or timer", "prog": false},
-        {"text": "Outline: samples the texture at offset UV positions in N/S/E/W (or 8) directions; where the current pixel is transparent but an adjacent sample is opaque, renders the outline color — this is the UV-offset expansion approach, not a post-process on the whole screen", "prog": false},
-        {"text": "Outline color and size are exposed as shader uniforms so they're tunable from the Inspector without editing the shader source", "prog": false},
-        {"text": "Does NOT recommend a post-process effect applied to the entire screen for per-sprite hit flash or outline — these are per-sprite ShaderMaterial effects", "prog": false}
+        {
+          "text": "Both effects use shader_type canvas_item (not spatial or sky) \u2014 2D sprite effects require the canvas_item shader type in Godot",
+          "prog": false
+        },
+        {
+          "text": "Hit flash: the fragment shader replaces the visible pixel color with white (or a mix toward white) while preserving the original texture's alpha \u2014 so only non-transparent pixels flash, not the whole bounding box",
+          "prog": false
+        },
+        {
+          "text": "Hit flash is controlled by a shader uniform (e.g. flash_amount: float 0.0\u20131.0 or flash_active: bool) set from GDScript via set_shader_parameter(), then reset after a short duration via a tween or timer",
+          "prog": false
+        },
+        {
+          "text": "Outline: samples the texture at offset UV positions in N/S/E/W (or 8) directions; where the current pixel is transparent but an adjacent sample is opaque, renders the outline color \u2014 this is the UV-offset expansion approach, not a post-process on the whole screen",
+          "prog": false
+        },
+        {
+          "text": "Outline color and size are exposed as shader uniforms so they're tunable from the Inspector without editing the shader source",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend a post-process effect applied to the entire screen for per-sprite hit flash or outline \u2014 these are per-sprite ShaderMaterial effects",
+          "prog": false
+        }
       ]
     },
     {
       "id": 23,
       "name": "dissolve-shader",
-      "prompt": "I want a dissolve effect for when enemies die in my 2D game in Godot 4 — the sprite should disintegrate over about half a second, starting from random-looking parts of the sprite rather than fading out uniformly. How do I make this?",
+      "prompt": "I want a dissolve effect for when enemies die in my 2D game in Godot 4 \u2014 the sprite should disintegrate over about half a second, starting from random-looking parts of the sprite rather than fading out uniformly. How do I make this?",
       "files": [],
-      "targets": ["shaders dissolve", "noise texture", "canvas_item shader", "discard"],
+      "targets": [
+        "shaders dissolve",
+        "noise texture",
+        "canvas_item shader",
+        "discard"
+      ],
       "assertions": [
-        {"text": "Uses a noise texture (NoiseTexture2D resource) sampled in the fragment shader to determine which pixels dissolve first — pixels with noise value below a threshold disappear, producing a non-uniform, organic dissolution pattern", "prog": false},
-        {"text": "The dissolve threshold is a shader uniform (e.g. dissolve_amount: float, 0.0 = fully visible → 1.0 = fully dissolved) that is animated from GDScript via a tween on the shader parameter", "prog": false},
-        {"text": "Uses 'discard' in the fragment function to remove dissolved pixels — NOT setting the alpha channel to 0.0, because discarding is required for correct rendering order with other transparent objects in Godot's canvas_item pipeline", "prog": false},
-        {"text": "Optionally adds an edge effect: pixels near the dissolve threshold boundary receive a bright or emissive color (e.g. orange/fire glow) so the dissolve has a burning/energized edge rather than just a hard cutoff", "prog": false},
-        {"text": "The dissolve animation is driven from GDScript as a Tween on the shader parameter, with queue_free() called when the tween completes — NOT a separate animated texture or sprite-sheet approach", "prog": false}
+        {
+          "text": "Uses a noise texture (NoiseTexture2D resource) sampled in the fragment shader to determine which pixels dissolve first \u2014 pixels with noise value below a threshold disappear, producing a non-uniform, organic dissolution pattern",
+          "prog": false
+        },
+        {
+          "text": "The dissolve threshold is a shader uniform (e.g. dissolve_amount: float, 0.0 = fully visible \u2192 1.0 = fully dissolved) that is animated from GDScript via a tween on the shader parameter",
+          "prog": false
+        },
+        {
+          "text": "Uses 'discard' in the fragment function to remove dissolved pixels \u2014 NOT setting the alpha channel to 0.0, because discarding is required for correct rendering order with other transparent objects in Godot's canvas_item pipeline",
+          "prog": false
+        },
+        {
+          "text": "Optionally adds an edge effect: pixels near the dissolve threshold boundary receive a bright or emissive color (e.g. orange/fire glow) so the dissolve has a burning/energized edge rather than just a hard cutoff",
+          "prog": false
+        },
+        {
+          "text": "The dissolve animation is driven from GDScript as a Tween on the shader parameter, with queue_free() called when the tween completes \u2014 NOT a separate animated texture or sprite-sheet approach",
+          "prog": false
+        }
       ]
     },
     {
@@ -376,14 +940,37 @@
       "name": "multiplayer-scope-trap",
       "prompt": "I'm making a 2D co-op action RPG in Godot 4. My solo game is done and plays great. Should I add online multiplayer? How hard is it really, and what approach should I take?",
       "files": [],
-      "targets": ["multiplayer-netcode scope trap", "authoritative server", "effort estimate", "local coop first"],
+      "targets": [
+        "multiplayer-netcode scope trap",
+        "authoritative server",
+        "effort estimate",
+        "local coop first"
+      ],
       "assertions": [
-        {"text": "Leads with an honest scope warning: adding online multiplayer to a finished solo game typically adds 30–100%+ more development time — it is NOT a 'just sync the state' addition, even for a finished game", "prog": false},
-        {"text": "Clearly distinguishes local co-op (same machine, shared input, nearly trivial to add) from online multiplayer (latency, packet loss, desync, game state synchronization — fundamentally different problems requiring architectural changes)", "prog": false},
-        {"text": "Recommends starting with local co-op / split-screen as the first step toward co-op — ship that, then evaluate online — rather than jumping straight to online networking", "prog": false},
-        {"text": "If online is pursued: recommends an authoritative server architecture (one machine owns the true game state; clients send inputs and receive updates) rather than naive peer-to-peer state sync, which is vulnerable to cheating and desync", "prog": false},
-        {"text": "Names Godot's built-in MultiplayerAPI and at least one relay/backend service or third-party library (Nakama, Photon, or similar) — explains that direct P2P connections usually require a relay server for NAT traversal", "prog": false},
-        {"text": "Does NOT say 'just sync position and health' as if networking is a simple add-on — acknowledges latency, cheating prevention, disconnect/reconnect handling, and desync as real problems requiring real design", "prog": false}
+        {
+          "text": "Leads with an honest scope warning: adding online multiplayer to a finished solo game typically adds 30\u2013100%+ more development time \u2014 it is NOT a 'just sync the state' addition, even for a finished game",
+          "prog": false
+        },
+        {
+          "text": "Clearly distinguishes local co-op (same machine, shared input, nearly trivial to add) from online multiplayer (latency, packet loss, desync, game state synchronization \u2014 fundamentally different problems requiring architectural changes)",
+          "prog": false
+        },
+        {
+          "text": "Recommends starting with local co-op / split-screen as the first step toward co-op \u2014 ship that, then evaluate online \u2014 rather than jumping straight to online networking",
+          "prog": false
+        },
+        {
+          "text": "If online is pursued: recommends an authoritative server architecture (one machine owns the true game state; clients send inputs and receive updates) rather than naive peer-to-peer state sync, which is vulnerable to cheating and desync",
+          "prog": false
+        },
+        {
+          "text": "Names Godot's built-in MultiplayerAPI and at least one relay/backend service or third-party library (Nakama, Photon, or similar) \u2014 explains that direct P2P connections usually require a relay server for NAT traversal",
+          "prog": false
+        },
+        {
+          "text": "Does NOT say 'just sync position and health' as if networking is a simple add-on \u2014 acknowledges latency, cheating prevention, disconnect/reconnect handling, and desync as real problems requiring real design",
+          "prog": false
+        }
       ]
     },
     {
@@ -391,29 +978,75 @@
       "name": "rollback-netcode",
       "prompt": "I'm building a 2D fighting game in Godot 4. Everyone says rollback netcode is the gold standard for fighting games. What is it, how does it work, and should I implement it myself?",
       "files": [],
-      "targets": ["multiplayer-netcode rollback vs delay-based", "GGPO", "determinism requirement", "use existing library"],
+      "targets": [
+        "multiplayer-netcode rollback vs delay-based",
+        "GGPO",
+        "determinism requirement",
+        "use existing library"
+      ],
       "assertions": [
-        {"text": "Correctly explains rollback: each client predicts the opponent's input (typically last known), simulates forward, and when the true input arrives, rolls back the game state to the divergence frame and re-simulates forward from there — corrections are invisible if latency is low", "prog": false},
-        {"text": "Distinguishes rollback from delay-based netcode: delay-based adds input delay so both clients always have each other's inputs before simulating (simpler, but feels bad at variable latency); rollback hides latency through speculation and correction, feeling much better in practice", "prog": false},
-        {"text": "States the hard requirement: the game simulation must be fully deterministic — same inputs always produce exactly the same outputs, with seeded RNG, no random behavior outside of seeded generators, and no floating-point platform divergence", "prog": false},
-        {"text": "Names GGPO or the Godot Rollback Netcode addon (by Snopek / GDRollback) as the existing library to use — strongly recommends against implementing rollback from scratch, which is expert-level work", "prog": false},
-        {"text": "Scopes rollback to where it is appropriate: low-player-count, fast-paced, latency-sensitive games (fighting games, beat-em-ups, some RTS) — NOT for MMOs, large-world games, or games with many synchronized objects", "prog": false},
-        {"text": "Does NOT recommend rollback as the universal correct choice for all multiplayer games — it is the right choice specifically for fighting games; other game types have better-suited approaches", "prog": false}
+        {
+          "text": "Correctly explains rollback: each client predicts the opponent's input (typically last known), simulates forward, and when the true input arrives, rolls back the game state to the divergence frame and re-simulates forward from there \u2014 corrections are invisible if latency is low",
+          "prog": false
+        },
+        {
+          "text": "Distinguishes rollback from delay-based netcode: delay-based adds input delay so both clients always have each other's inputs before simulating (simpler, but feels bad at variable latency); rollback hides latency through speculation and correction, feeling much better in practice",
+          "prog": false
+        },
+        {
+          "text": "States the hard requirement: the game simulation must be fully deterministic \u2014 same inputs always produce exactly the same outputs, with seeded RNG, no random behavior outside of seeded generators, and no floating-point platform divergence",
+          "prog": false
+        },
+        {
+          "text": "Names GGPO or the Godot Rollback Netcode addon (by Snopek / GDRollback) as the existing library to use \u2014 strongly recommends against implementing rollback from scratch, which is expert-level work",
+          "prog": false
+        },
+        {
+          "text": "Scopes rollback to where it is appropriate: low-player-count, fast-paced, latency-sensitive games (fighting games, beat-em-ups, some RTS) \u2014 NOT for MMOs, large-world games, or games with many synchronized objects",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend rollback as the universal correct choice for all multiplayer games \u2014 it is the right choice specifically for fighting games; other game types have better-suited approaches",
+          "prog": false
+        }
       ]
     },
     {
       "id": 26,
       "name": "roguelike-run-save",
-      "prompt": "I'm making a roguelike in Godot 4. I need players to be able to save mid-run and quit, then resume later — but death must be permanent and players start over from scratch. I also want meta-progression: permanent upgrades that persist between runs (like unlocked characters and bonus starting items). How do I structure this?",
+      "prompt": "I'm making a roguelike in Godot 4. I need players to be able to save mid-run and quit, then resume later \u2014 but death must be permanent and players start over from scratch. I also want meta-progression: permanent upgrades that persist between runs (like unlocked characters and bonus starting items). How do I structure this?",
       "files": [],
-      "targets": ["save-and-progression run save", "meta-progression", "dual save file pattern", "serialize logical state not nodes"],
+      "targets": [
+        "save-and-progression run save",
+        "meta-progression",
+        "dual save file pattern",
+        "serialize logical state not nodes"
+      ],
       "assertions": [
-        {"text": "Separates two distinct save files: a run save (volatile — deleted on death or run completion) and a meta save (permanent — persists across all runs, tracks unlocks, currency, best stats)", "prog": false},
-        {"text": "The run save serializes logical game state — floor number, inventory as item IDs + quantities, current stats, dungeon seed, explored flags — NOT engine objects, scene trees, or node hierarchies", "prog": false},
-        {"text": "Includes a version field in the save file from day one, so future content additions can migrate existing saves rather than breaking them", "prog": false},
-        {"text": "Describes the run lifecycle: on game start check for an existing run save → prompt to resume or start new. On death: delete the run save, tally results into the meta save. On run completion: same meta-update then delete run save.", "prog": false},
-        {"text": "The meta save is minimal and persistent: unlocked characters/items, earned permanent currency, best-run records — NOT a snapshot of the current run state", "prog": false},
-        {"text": "Does NOT recommend saving the entire scene tree, node hierarchy, or engine objects — only the logical data model that can be used to reconstruct the game state from scratch", "prog": false}
+        {
+          "text": "Separates two distinct save files: a run save (volatile \u2014 deleted on death or run completion) and a meta save (permanent \u2014 persists across all runs, tracks unlocks, currency, best stats)",
+          "prog": false
+        },
+        {
+          "text": "The run save serializes logical game state \u2014 floor number, inventory as item IDs + quantities, current stats, dungeon seed, explored flags \u2014 NOT engine objects, scene trees, or node hierarchies",
+          "prog": false
+        },
+        {
+          "text": "Includes a version field in the save file from day one, so future content additions can migrate existing saves rather than breaking them",
+          "prog": false
+        },
+        {
+          "text": "Describes the run lifecycle: on game start check for an existing run save \u2192 prompt to resume or start new. On death: delete the run save, tally results into the meta save. On run completion: same meta-update then delete run save.",
+          "prog": false
+        },
+        {
+          "text": "The meta save is minimal and persistent: unlocked characters/items, earned permanent currency, best-run records \u2014 NOT a snapshot of the current run state",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend saving the entire scene tree, node hierarchy, or engine objects \u2014 only the logical data model that can be used to reconstruct the game state from scratch",
+          "prog": false
+        }
       ]
     },
     {
@@ -421,14 +1054,666 @@
       "name": "save-format-versioning",
       "prompt": "I've shipped my roguelike and players have save files from v1.0. In my next update I'm adding a new 'Stamina' stat and reorganizing how items are stored in the save file. How do I update my save format without corrupting or discarding everyone's existing saves?",
       "files": [],
-      "targets": ["save-and-progression format versioning", "migration chain", "backwards compatibility"],
+      "targets": [
+        "save-and-progression format versioning",
+        "migration chain",
+        "backwards compatibility"
+      ],
       "assertions": [
-        {"text": "Centers the solution on a version field in the save file — every save file has an integer version number, and the load function checks it to determine what migrations to run", "prog": false},
-        {"text": "Implements a migration chain: load the file, read version, run migrations in order (migrate_v1_to_v2, migrate_v2_to_v3, etc.) until reaching the current version — each migration transforms the old structure to the new one", "prog": false},
-        {"text": "For the new Stamina stat: the migration sets a sensible default value (not null, not 0 if 0 would be unplayable) for any save that doesn't have it yet", "prog": false},
-        {"text": "For the reorganized item storage: the migration reads the old item format and writes the new format field-by-field — it does not simply discard or ignore items that don't match the new schema", "prog": false},
-        {"text": "Recommends backing up the original save file before writing the migrated version (copy to a .bak file), so players can recover if migration has a bug", "prog": false},
-        {"text": "Does NOT recommend deleting old saves or requiring players to start over as the primary solution, and does NOT recommend checking for field presence (hasattr / has()) as a substitute for proper versioned migrations — that approach becomes unmaintainable after multiple updates", "prog": false}
+        {
+          "text": "Centers the solution on a version field in the save file \u2014 every save file has an integer version number, and the load function checks it to determine what migrations to run",
+          "prog": false
+        },
+        {
+          "text": "Implements a migration chain: load the file, read version, run migrations in order (migrate_v1_to_v2, migrate_v2_to_v3, etc.) until reaching the current version \u2014 each migration transforms the old structure to the new one",
+          "prog": false
+        },
+        {
+          "text": "For the new Stamina stat: the migration sets a sensible default value (not null, not 0 if 0 would be unplayable) for any save that doesn't have it yet",
+          "prog": false
+        },
+        {
+          "text": "For the reorganized item storage: the migration reads the old item format and writes the new format field-by-field \u2014 it does not simply discard or ignore items that don't match the new schema",
+          "prog": false
+        },
+        {
+          "text": "Recommends backing up the original save file before writing the migrated version (copy to a .bak file), so players can recover if migration has a bug",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend deleting old saves or requiring players to start over as the primary solution, and does NOT recommend checking for field presence (hasattr / has()) as a substitute for proper versioned migrations \u2014 that approach becomes unmaintainable after multiple updates",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "name": "signal-driven-hud",
+      "prompt": "My Godot platformer has a player that loses HP when hit. In my player script I wrote:\n\n```gdscript\nfunc take_damage(amount):\n    hp -= amount\n    get_node(\"/root/HUD/HealthBar\").value = hp\n```\n\nIs this the right approach? How should I structure the HUD update?",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Identifies the direct node reference as tightly coupled and explains why it's a problem (HUD path changes break it; player knows about UI implementation)",
+          "prog": false
+        },
+        {
+          "text": "Recommends emitting a signal from the player (e.g. health_changed) instead of calling into the HUD directly",
+          "prog": false
+        },
+        {
+          "text": "Shows the HUD connecting to the player signal and updating the bar in response \u2014 NOT the player calling any HUD method",
+          "prog": false
+        },
+        {
+          "text": "Recommends tweening the health bar value (e.g. Tween.tween_property) rather than setting it instantly \u2014 instant snaps look cheap and mask hits",
+          "prog": false
+        },
+        {
+          "text": "Places the HUD in a CanvasLayer so it is immune to camera movement and zoom",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend using get_node with a hardcoded absolute path (/root/HUD/...) as the solution \u2014 that is the antipattern being fixed",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "name": "scene-transition-typewriter",
+      "prompt": "In my Godot RPG: (1) When I change scenes it cuts instantly \u2014 how do I add a fade-to-black transition? (2) My NPC dialogue appears all at once \u2014 how do I add a typewriter effect that reveals text character by character, with the player able to skip it?",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Scene transition uses a CanvasLayer autoload (or equivalent high-layer node) with a ColorRect overlay that tweens alpha 0\u21921 before changing scene, then 1\u21920 after",
+          "prog": false
+        },
+        {
+          "text": "The fade CanvasLayer has a high layer number (e.g. 128) so it renders above all game content",
+          "prog": false
+        },
+        {
+          "text": "Typewriter effect uses a Timer node that fires repeatedly, appending one character to the label's text per tick \u2014 NOT a sleep loop or await chain for each character",
+          "prog": false
+        },
+        {
+          "text": "Uses RichTextLabel instead of Label to support BBCode formatting (bold, color, wave animation) in dialogue",
+          "prog": false
+        },
+        {
+          "text": "Punctuation characters (period, comma, exclamation) cause a longer pause than regular characters during typewriter reveal",
+          "prog": false
+        },
+        {
+          "text": "Skip input (e.g. ui_accept press while typing) immediately shows the full text rather than waiting for the timer to finish all characters",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "name": "wall-jump-slide",
+      "prompt": "I'm making a metroidvania in Godot 4. My CharacterBody2D can jump and move left/right. How do I add wall sliding (slower fall when pressing into a wall) and wall jumping (jump away from the wall)?",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Wall slide uses a reduced gravity constant (not the normal fall gravity) applied when the player is on a wall AND pressing toward it AND falling (velocity.y > 0)",
+          "prog": false
+        },
+        {
+          "text": "Uses get_wall_normal() to determine which direction to jump \u2014 the wall jump horizontal velocity is wall_normal.x * some speed, NOT a hardcoded direction",
+          "prog": false
+        },
+        {
+          "text": "Saves the wall normal while touching the wall so it's available after the player leaves the wall surface (wall_cling_timer grace window, mirroring coyote time logic)",
+          "prog": false
+        },
+        {
+          "text": "Wall jump sets velocity directly (velocity.x = ...; velocity.y = ...) rather than using apply_force or add_force \u2014 forces fight the controller and feel sludgy",
+          "prog": false
+        },
+        {
+          "text": "Uses is_on_wall_only() (not is_on_wall()) to avoid triggering wall jump when the player is standing on a floor that also has a wall component",
+          "prog": false
+        },
+        {
+          "text": "Does NOT use apply_force, apply_impulse, or RigidBody2D physics for the wall jump \u2014 the character is a CharacterBody2D with direct velocity control",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "name": "moving-platform-one-way",
+      "prompt": "My Godot 4 platformer needs two things: (1) One-way platforms the player can jump up through and drop down through (by pressing down+jump). (2) A moving platform that carries the player without the player sliding off.",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "One-way platforms use CollisionShape2D with one_way_collision = true on the platform body (not a custom collision mask hack or area sensor)",
+          "prog": false
+        },
+        {
+          "text": "Drop-through mechanic temporarily disables the player's collision mask for the platform layer (e.g. set_collision_mask_value) for a short duration (~0.15\u20130.2s) rather than disabling the platform itself",
+          "prog": false
+        },
+        {
+          "text": "Moving platform uses AnimatableBody2D (not StaticBody2D or RigidBody2D) \u2014 StaticBody2D does not report platform velocity, which breaks get_platform_velocity()",
+          "prog": false
+        },
+        {
+          "text": "Player code calls get_platform_velocity() and adds it to velocity when is_on_floor() is true \u2014 this is what makes the player ride with the platform instead of sliding off",
+          "prog": false
+        },
+        {
+          "text": "Moving platform uses move_and_collide() (not move_and_slide or position assignment) so it physically pushes the CharacterBody2D player rather than passing through",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend parenting the player to the platform as the solution \u2014 this causes coordinate-space issues and breaks when the player jumps off",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "name": "branching-dialogue-data",
+      "prompt": "I'm building an RPG in Godot with lots of NPC dialogue. Some conversations have choices that branch the story, and some lines should only appear if the player has done something (e.g. already talked to another NPC). How should I structure the dialogue data? I want it to be easy to edit and expandable.",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Recommends a data-driven approach \u2014 dialogue lives in Resource files, JSON, or an external tool (Dialogic/Ink), NOT hardcoded as strings or arrays in GDScript",
+          "prog": false
+        },
+        {
+          "text": "Each dialogue line has an id, speaker, text, and a next_id reference (not an index integer) \u2014 navigating by named id rather than array index makes the graph maintainable as it grows",
+          "prog": false
+        },
+        {
+          "text": "Choice branches each have their own next_id pointing to the target line \u2014 the branching is expressed as data (which id to jump to), not as code (if/elif blocks)",
+          "prog": false
+        },
+        {
+          "text": "Conditions on lines or choices are stored as a string expression evaluated at runtime (e.g. via Godot's Expression class or an equivalent) against a central game-state object \u2014 NOT as boolean variables queried in the dialogue runner code",
+          "prog": false
+        },
+        {
+          "text": "Recommends or mentions Dialogic 2 or Ink (with godot-ink) as suitable tools for complex branching \u2014 does not recommend rolling a custom system unless the game's needs are simple",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend a flat string array with index arithmetic (e.g. dialogue[0], dialogue[1]) as the branching mechanism \u2014 that becomes unmaintainable past 3 choices",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "name": "hitscan-vs-projectile",
+      "prompt": "I'm making a top-down shooter in Godot. I have two weapon types: a sniper rifle that should hit instantly at long range, and a slow rocket that players can dodge. Should I implement these differently? I was going to just spawn a bullet scene for both.",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Correctly identifies that the sniper rifle should use hitscan (a raycast that resolves immediately the same frame) \u2014 spawning a fast projectile scene for instant-feel weapons is wasteful and can miss targets between frames",
+          "prog": false
+        },
+        {
+          "text": "Correctly identifies that the rocket should use a spawned projectile node (moves over time, can be dodged, has travel time) \u2014 hitscan would remove all dodge opportunity",
+          "prog": false
+        },
+        {
+          "text": "Shows hitscan using PhysicsRayQueryParameters2D (or 3D equivalent) and direct_space_state.intersect_ray() \u2014 NOT a moving invisible bullet node at extreme speed",
+          "prog": false
+        },
+        {
+          "text": "Warns that spawning bullet scenes for high fire-rate weapons (machine guns, etc.) is expensive and recommends either hitscan or a bullet pool for those cases",
+          "prog": false
+        },
+        {
+          "text": "Bullet pool or object pool is mentioned for any spawned projectile to avoid per-shot instantiation cost",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend spawning a projectile scene at extreme speed as the hitscan solution \u2014 an invisible fast-moving node can miss collision between frames at high speed",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "name": "weapon-firing-modes",
+      "prompt": "I want to implement a weapon system in Godot with three firing modes: semi-auto (one shot per trigger press), burst (3 shots then cooldown), and full-auto (hold to fire). There's also a reload mechanic. How should I structure this?",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Uses an enum state machine with states like IDLE, FIRING, RELOADING (and optionally EMPTY) \u2014 NOT nested if/elif blocks checking multiple boolean flags simultaneously",
+          "prog": false
+        },
+        {
+          "text": "Each state has its own tick function or match branch that handles input and transitions \u2014 input checking is inside the state, not in a flat _process function",
+          "prog": false
+        },
+        {
+          "text": "Semi-auto uses is_action_just_pressed (not is_action_pressed) so each trigger pull fires exactly one shot regardless of how long held",
+          "prog": false
+        },
+        {
+          "text": "Full-auto uses is_action_pressed and a fire_timer cooldown between shots based on fire_rate (rounds per second)",
+          "prog": false
+        },
+        {
+          "text": "Weapon configuration (magazine_size, fire_rate, reload_time, burst_count) lives in a WeaponData Resource (or ScriptableObject equivalent) \u2014 NOT hardcoded in the weapon script",
+          "prog": false
+        },
+        {
+          "text": "Burst mode tracks a burst_count variable and transitions back to IDLE after firing the specified number of shots, not after a time delay",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "name": "boss-phase-fsm",
+      "prompt": "I'm designing a boss fight in Godot with 3 phases. Phase 1 (full HP): slow attacks. Phase 2 (below 60% HP): adds a new fast attack. Phase 3 (below 25% HP): becomes enraged, arena changes. How do I structure this cleanly? My current code is getting messy with nested if statements.",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Uses a phase Resource (or equivalent data class) with a health_threshold field \u2014 phase transitions trigger when HP drops below the threshold, not checked inline in attack logic",
+          "prog": false
+        },
+        {
+          "text": "Attack patterns are stored as data (Array of AttackData resources or equivalent) attached to each phase \u2014 the boss controller reads available attacks from the current phase, not from hardcoded lists",
+          "prog": false
+        },
+        {
+          "text": "Attack selection uses weighted random (or at minimum random choice from available attacks with distance/cooldown filtering) \u2014 NOT always the same attack in sequence",
+          "prog": false
+        },
+        {
+          "text": "Every attack has a telegraph phase before it becomes active: a windup animation or warning indicator fires for 0.5\u20131.5 seconds before the hitbox or damage is activated",
+          "prog": false
+        },
+        {
+          "text": "Phase transitions emit signals or call methods to trigger arena changes (spawn hazards, change music stem) \u2014 the controller separates phase-transition effects from attack logic",
+          "prog": false
+        },
+        {
+          "text": "Boss is invincible (or has damage mitigation) during its own attack animation active frames \u2014 players cannot trivially spam damage during the boss's own attacks",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "name": "camera-room-zones",
+      "prompt": "I'm making a 2D metroidvania in Godot. I want the camera to be locked to each room \u2014 when the player walks through a door, the camera smoothly transitions to show the new room rather than following the player freely. How do I implement this?",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Uses Area2D nodes (one per room) that detect when the player enters and trigger a camera bound update",
+          "prog": false
+        },
+        {
+          "text": "Sets Camera2D limit_left, limit_right, limit_top, limit_bottom to the room's bounds \u2014 the built-in limit system automatically clamps the camera to the room without extra math",
+          "prog": false
+        },
+        {
+          "text": "Smoothly tweens the camera limits (or the camera position) rather than hard-setting them instantly \u2014 instant cuts feel like a glitch",
+          "prog": false
+        },
+        {
+          "text": "Room bounds are derived from the Area2D's CollisionShape2D size/position \u2014 NOT hardcoded pixel coordinates for each room",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend disabling Camera2D smoothing and manually setting global_position every frame as the primary room-lock approach \u2014 limit_* is the correct tool",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend parenting the Camera2D to the room node as a way to lock it \u2014 that would require re-parenting on every room change and loses smooth following",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "name": "cone-of-vision-stealth",
+      "prompt": "I'm building a stealth game in Godot. Guards should detect the player if the player is within a 90-degree cone in front of the guard AND has line of sight (no walls in between). Detection should not be instant \u2014 it should fill up over time. How do I implement this?",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Detection pipeline runs cheapest check first: (1) distance check, (2) angle/FOV check using dot product against the guard's facing direction, (3) raycast for line of sight \u2014 raycast only fires if both distance and angle pass",
+          "prog": false
+        },
+        {
+          "text": "FOV check uses dot product (to_player.normalized().dot(facing_direction) > cos(half_fov_radians)) \u2014 NOT atan2 or angle() which are slower and less readable for this purpose",
+          "prog": false
+        },
+        {
+          "text": "Detection is gradual: a detection_level float increases over time while the player is in the cone (e.g. +=  detection_rate * delta) and decreases when out of sight \u2014 NOT a single boolean is_seen",
+          "prog": false
+        },
+        {
+          "text": "State machine has at least PATROL, SUSPICIOUS, and ALERT states \u2014 SUSPICIOUS triggers when detection_level crosses a low threshold, ALERT when it reaches 1.0",
+          "prog": false
+        },
+        {
+          "text": "The raycast uses a specific collision mask that only hits walls/obstacles \u2014 NOT all physics bodies, which would make the guard unable to see through other guards or items",
+          "prog": false
+        },
+        {
+          "text": "Does NOT check every frame with an unconditional raycast from guard to player \u2014 the distance and angle pre-checks are essential before the expensive raycast",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "name": "alert-state-machine",
+      "prompt": "My stealth game guard currently just has is_alerted: bool. When alerted the guard chases the player; when not alerted it patrols waypoints. I need the guard to also have a 'suspicious' state (heard a noise, moves to investigate) and a 'searching' state (lost sight of player, searches the area). How do I restructure this?",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Replaces the boolean flag with an enum or string state variable with at least PATROL, SUSPICIOUS, ALERT, and SEARCH states",
+          "prog": false
+        },
+        {
+          "text": "Uses a state machine pattern: each state has its own tick function (or match branch), and transitions happen through a dedicated _enter_state or _transition method \u2014 NOT scattered if/elif checks throughout _physics_process",
+          "prog": false
+        },
+        {
+          "text": "SUSPICIOUS state moves the guard toward the last known position or sound source, plays a look-around animation, and transitions to ALERT if the player is spotted or SEARCH if suspicion fades",
+          "prog": false
+        },
+        {
+          "text": "SEARCH state generates a set of search positions around the last known player position and visits them \u2014 NOT a timer that simply waits and returns immediately to PATROL",
+          "prog": false
+        },
+        {
+          "text": "Guards return to the nearest waypoint when resuming PATROL \u2014 NOT always restarting from waypoint index 0, which would be an obvious tell players could exploit",
+          "prog": false
+        },
+        {
+          "text": "last_known_position is stored per-guard (not a global variable) so different guards can have different last known positions and search independently",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "name": "minimap-implementation",
+      "prompt": "I'm building a top-down RPG in Godot and want to add a minimap in the corner of the screen showing the player's position and nearby enemies. What's the best approach?",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Presents two approaches: (1) SubViewport with a separate zoomed-out Camera2D that shares the main World2D \u2014 shows everything automatically; (2) icon overlay that manually computes entity positions relative to the player \u2014 simpler but requires explicit tracking of each entity type",
+          "prog": false
+        },
+        {
+          "text": "For the SubViewport approach: explicitly states that the SubViewport must share the same World2D as the main viewport so that the same nodes appear in both renders",
+          "prog": false
+        },
+        {
+          "text": "Minimap is displayed in a CanvasLayer in the HUD \u2014 NOT placed in the game world, which would make it move with the camera",
+          "prog": false
+        },
+        {
+          "text": "For the icon approach: entity positions are converted to minimap coordinates by computing position relative to player, dividing by a world_radius scale factor, then mapping to the minimap rect \u2014 NOT by directly using world coordinates",
+          "prog": false
+        },
+        {
+          "text": "Mentions using a circular clip mask (via shader or TextureRect with a circular texture mask) to make the minimap round rather than a hard square",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend rendering the minimap by duplicating all game nodes into a separate scene \u2014 that would require manual sync and is far more complex than a shared World2D viewport",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "name": "bullet-hell-patterns",
+      "prompt": "I'm making a bullet hell game in Godot. My boss needs to fire three different attack patterns: (1) a ring of 12 bullets in all directions, (2) a spiral that slowly rotates, (3) bullets aimed directly at the player. I want these to be reusable and composable. How should I structure this?",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Bullet pool is mandatory and presented as the first architectural decision \u2014 pre-allocates bullets at game start (e.g. 800 bullets) and recycles them instead of instantiate/queue_free per shot",
+          "prog": false
+        },
+        {
+          "text": "Pattern math uses polar coordinates (angle + direction vector via Vector2.from_angle() or equivalent) \u2014 NOT hardcoded x/y offsets, which break when the pattern rotates",
+          "prog": false
+        },
+        {
+          "text": "Circle pattern evenly distributes bullets using TAU / bullet_count as the angular step between each bullet",
+          "prog": false
+        },
+        {
+          "text": "Spiral pattern advances a cumulative angle variable each salvo (not each bullet) \u2014 the angle accumulates across fire ticks to produce the rotation effect",
+          "prog": false
+        },
+        {
+          "text": "Pattern configuration lives in a Resource (BulletPatternData or equivalent ScriptableObject) with fields like bullet_count, fire_rate, spread_angle \u2014 NOT hardcoded values inside the boss script",
+          "prog": false
+        },
+        {
+          "text": "PatternEmitter nodes (one per pattern) are separate child nodes of the boss \u2014 composing a complex attack means enabling multiple emitters simultaneously, not writing one monolithic fire() function",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "name": "fog-of-war",
+      "prompt": "I'm making a top-down RPG in Godot and want fog of war: areas the player hasn't visited should be completely black, areas they've visited but can't currently see should be darkened, and the area immediately around the player should be fully visible. How do I implement this?",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Uses a grid-based approach where each cell has one of three states: UNSEEN (fully black), REVEALED (darkened \u2014 visited but not currently visible), and VISIBLE (fully clear around the player)",
+          "prog": false
+        },
+        {
+          "text": "Each frame: all currently VISIBLE cells are first set to REVEALED, then cells within the player's vision radius are set to VISIBLE \u2014 this produces the correct three-state behavior",
+          "prog": false
+        },
+        {
+          "text": "The fog grid is stored as a flat array (PackedByteArray or equivalent) indexed by (row * width + col) \u2014 NOT a 2D array of Vector2 objects or Dictionary, which are slower and more memory-heavy",
+          "prog": false
+        },
+        {
+          "text": "Fog is rendered by drawing colored rectangles over each cell in _draw() (using CanvasItem.draw_rect or a TileMap layer) \u2014 NOT by placing individual ColorRect nodes for every cell, which would be thousands of nodes",
+          "prog": false
+        },
+        {
+          "text": "queue_redraw() is called to update the fog visual \u2014 and ideally only when the player moves to a new cell, not unconditionally every frame",
+          "prog": false
+        },
+        {
+          "text": "Mentions that the fog grid should be serialized to the save file (e.g. PackedByteArray.hex_encode()) so exploration progress persists between sessions",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "name": "dialogue-tool-choice",
+      "prompt": "I'm building a narrative-heavy RPG in Godot with hundreds of lines of dialogue, complex branching, story variables that affect which lines appear, and multiple endings. Should I use Dialogic 2, write my own dialogue system, or use something else?",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Recommends Ink (with the godot-ink addon) as the strongest choice for complex branching narrative with variables, conditions, and multiple endings \u2014 Ink is designed exactly for this use case",
+          "prog": false
+        },
+        {
+          "text": "Explains what Ink provides: a dedicated narrative scripting language, knots/stitches for organization, variables and conditions native to the language, compiled to JSON",
+          "prog": false
+        },
+        {
+          "text": "Positions Dialogic 2 as better suited for cutscene-heavy games with moderate branching and a visual timeline editor workflow \u2014 not the best fit for deeply branching narrative",
+          "prog": false
+        },
+        {
+          "text": "Explicitly advises against hand-rolling a custom dialogue system for hundreds of lines with complex branching \u2014 the maintenance burden becomes enormous",
+          "prog": false
+        },
+        {
+          "text": "Mentions that Ink variables can sync bidirectionally with Godot (reading/writing Ink variables from GDScript) to integrate story state with game systems",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend a flat string array or a simple Resource graph as the primary solution for hundreds of lines with complex branching and multiple endings",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "name": "lock-on-camera",
+      "prompt": "I'm making a 3D action game in Godot. When the player presses a button, the camera should lock on to the nearest enemy and track both the player and the enemy. The player should be able to cycle through targets. When the enemy dies, lock-on should release.",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Target acquisition uses both distance and FOV angle checks \u2014 NOT just nearest enemy globally, which could lock onto enemies behind the player",
+          "prog": false
+        },
+        {
+          "text": "Camera position during lock-on is interpolated toward a point between the player and the target (midpoint or offset toward target) \u2014 NOT just looking at the target from the fixed follow position",
+          "prog": false
+        },
+        {
+          "text": "Checks is_instance_valid(target) each frame to detect if the locked-on enemy has been freed/deleted, and releases lock-on automatically when it has",
+          "prog": false
+        },
+        {
+          "text": "Target cycling uses the same candidate list sorted by distance \u2014 cycling forward increments an index into the sorted array",
+          "prog": false
+        },
+        {
+          "text": "A UI indicator (sprite or marker) is displayed above the locked-on target \u2014 in 3D this requires projecting the 3D world position to 2D screen position",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend using Camera3D.look_at(target.position) directly as the lock-on camera behavior \u2014 that produces instant snapping; lerp or tween toward the desired orientation is required",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "name": "boss-telegraph",
+      "prompt": "Players keep saying my boss attacks feel unfair and 'come out of nowhere.' The boss has 4 attacks and I'm using match state: to handle them. What design patterns should I use to make the attacks feel telegraphed and fair?",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Identifies the core problem: attacks have no telegraph phase \u2014 there is no windup animation or warning indicator before damage activates, so players have no time to react",
+          "prog": false
+        },
+        {
+          "text": "Recommends a three-phase structure for every attack: telegraph (warning, 0.5\u20131.5 seconds), active (damage frames), recovery (boss is vulnerable)",
+          "prog": false
+        },
+        {
+          "text": "Concrete telegraph implementation: play a windup animation AND show a danger indicator at the impact location (radial warning ring, directional arrow, color change) before damage activates",
+          "prog": false
+        },
+        {
+          "text": "Boss is invincible or has heavy damage reduction during the telegraph and active frames \u2014 vulnerable during recovery \u2014 so players must learn patterns rather than just tanking",
+          "prog": false
+        },
+        {
+          "text": "Recommends extracting each attack into AttackData (or equivalent) with telegraph_duration as a configurable field \u2014 NOT a hardcoded await timer buried in a match branch",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend reducing damage or HP as the primary solution to 'feels unfair' \u2014 those are band-aids; the real fix is readable attack telegraphing so players can learn and react",
+          "prog": false
+        }
+      ]
+    },
+    {
+      "id": 45,
+      "name": "homing-bullet-pool",
+      "prompt": "My bullet hell game boss fires 200 bullets at once and my FPS drops to 15. How do I fix this? Also, I want some bullets to slowly home toward the player after being fired.",
+      "files": [],
+      "targets": [
+        "godot"
+      ],
+      "assertions": [
+        {
+          "text": "Identifies instantiate() / queue_free() per bullet as the primary performance culprit \u2014 allocating 200 nodes at once triggers GC and node tree overhead",
+          "prog": false
+        },
+        {
+          "text": "Solution is a pre-allocated bullet pool: instantiate all bullets at game start, hide unused ones, show and init them when fired, return them to the pool when done (hide + disable physics)",
+          "prog": false
+        },
+        {
+          "text": "Homing is implemented by rotating the bullet's velocity vector toward the player each frame by a maximum turn angle (homing_strength * delta radians) \u2014 NOT by setting velocity to (player_pos - bullet_pos).normalized() * speed, which produces instant lock-on",
+          "prog": false
+        },
+        {
+          "text": "The turn rate cap is explicitly mentioned as the key tuning knob \u2014 too high makes the bullet uncatchable; a moderate value gives players a chance to outmaneuver homing bullets",
+          "prog": false
+        },
+        {
+          "text": "Bullet collision uses Area2D signals (body_entered or area_entered) \u2014 NOT a manual distance check loop over all active bullets each frame, which would be O(n) per frame",
+          "prog": false
+        },
+        {
+          "text": "Does NOT recommend reducing bullet count as the primary performance fix \u2014 pooling eliminates the allocation cost so 200 pooled bullets is fine; reducing count is a game design change, not a performance fix",
+          "prog": false
+        }
       ]
     }
   ]
