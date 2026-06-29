@@ -8,6 +8,8 @@ Also covers **RPG systems** (status effects with per-effect StackPolicy, stat mo
 
 Also covers **UI/HUD** (signal-driven HUDs with UpdateResource pattern — game logic never touches HUD nodes directly), **advanced platformer mechanics** (wall jump with wall detection + grace period, one-way moving platforms via `set_collision_mask_value`, scene transitions with typewriter text and fades), **dialogue and narrative systems** (DialogueLineData Resource, branching via option arrays, tool selection: Ink + godot-ink for complex branching vs Dialogic for cutscene-heavy games), **weapons and shooting** (hitscan via `intersect_ray` vs projectile node tradeoffs, multiple firing modes as data-driven WeaponData Resources), **boss fights** (phase-based FSM with mandatory telegraph → active → recovery attack structure, AttackData Resource, invincibility during telegraph/active frames, boss invincibility as a skill loop not a difficulty setting), **camera systems** (room-zone camera transitions using Camera2D `limit_*` properties tweened via Area2D triggers, 3D lock-on camera with FOV + distance check via dot product + `is_instance_valid` guard), **stealth AI** (cone-of-vision detection as a 3-step pipeline: distance check → dot product angle check → raycast wall check; 5-state alert FSM with PATROL/SUSPICIOUS/ALERT/SEARCH/RETURNING), **fog of war and minimap** (PackedByteArray grid with UNSEEN/REVEALED/VISIBLE states, SubViewport-based minimap with shared World2D), and **bullet hell patterns** (BulletPool autoload pre-allocated at game start, BulletPatternData Resources, `Vector2.from_angle()` for polar coordinates, spiral patterns that accumulate angle each fire).
 
+Also covers **behavior trees** (BTNode/Sequence/Selector/Decorator composites with Blackboard shared state, LimboAI/Beehave addon integration), **animation trees** (AnimationTree with BlendSpace1D/2D for locomotion and aiming, layered upper/lower body animation via AnimationNodeBlendTree + bone masks, call tracks for animation events), **inverse kinematics** (SkeletonIK3D with FABRIK for foot placement and hand grab, RayCast3D ground detection, lerp-based weight blending), **LOD and scene streaming** (GeometryInstance3D LOD distances, MultiMeshInstance3D GPU instancing, async chunk loading with ResourceLoader.load_threaded_request, hysteresis radii to prevent thrashing), **noise-based terrain and WFC** (FastNoiseLite two-noise biome system with elevation + moisture, SurfaceTool mesh generation, texture splatting via vertex color shader, domain warping, Wave Function Collapse adjacency rule propagation), **combo systems** (timestamped input buffer ring array, ComboStepData Resource, cancel windows via AnimationPlayer call tracks, per-frame hitbox control), **open world architecture** (ChunkManager autoload with async load queue, entity persistence, interest management, origin shifting for float precision), **vehicle physics** (VehicleBody3D + VehicleWheel3D, center of mass configuration, torque curve, surface friction via per-wheel RayCast3D), **ability systems** (AbilityData Resource + AbilityComponent pipeline: cost → cast → channel → fire → cooldown; interrupt vs cancel; tag-based gating for Silence/Stun), **GOAP and Utility AI** (Utility AI with normalized scoring and score noise, UtilityAgent tick interval, GOAP world state dict + A\* planner, BT+Utility and BT+GOAP hybrid patterns), **accessibility** (colorblind post-process shader using Daltonize/LMS matrices for protanopia/deuteranopia/tritanopia, SubtitleManager autoload with speaker color coding and sound-effect captions, control remapping), **localization** (TranslationServer CSV workflow, tr() + format() named placeholders — never concatenation, CJK fonts, RTL layout, tr_n() plural forms, string overflow via containers + autowrap), and **analytics and playtesting instrumentation** (TelemetryManager autoload with JSONL storage and buffered flush, TELEMETRY_ENABLED build flag, event-driven death heatmap and path recording, four-feature playtest build: session log + screenshot shortcut + in-game feedback button + build version display).
+
 ## Installation
 
 ```bash
@@ -20,7 +22,7 @@ Or manually:
 cp -r jakes-skills/game-development ~/.claude/skills/game-development
 ```
 
-Once installed, the skill applies automatically when the user wants to build or improve a game in Godot, Unity, LÖVE, PyGame, Bevy, or Phaser — including character controllers, collision, enemy AI, procedural generation, game feel, engine selection, pixel art rendering, top-down movement, JRPG turn-based combat, 3D character controllers, third-person cameras, scoping a project, RPG systems (status effects, inventory, stat modifiers), audio architecture (bus hierarchy, adaptive music), shaders and visual effects, multiplayer and netcode, save systems and meta-progression, UI/HUD design, advanced platformer mechanics (wall jump, moving platforms, scene transitions), dialogue and narrative systems, weapons and shooting mechanics, boss fight architecture, camera systems (room zones, lock-on), stealth AI (cone of vision, alert FSM), fog of war and minimap, or bullet hell patterns.
+Once installed, the skill applies automatically when the user wants to build or improve a game in Godot, Unity, LÖVE, PyGame, Bevy, or Phaser — including character controllers, collision, enemy AI, procedural generation, game feel, engine selection, pixel art rendering, top-down movement, JRPG turn-based combat, 3D character controllers, third-person cameras, scoping a project, RPG systems (status effects, inventory, stat modifiers), audio architecture (bus hierarchy, adaptive music), shaders and visual effects, multiplayer and netcode, save systems and meta-progression, UI/HUD design, advanced platformer mechanics (wall jump, moving platforms, scene transitions), dialogue and narrative systems, weapons and shooting mechanics, boss fight architecture, camera systems (room zones, lock-on), stealth AI (cone of vision, alert FSM), fog of war and minimap, bullet hell patterns, behavior trees (LimboAI, Beehave), animation trees and inverse kinematics, LOD and scene streaming, noise-based terrain and Wave Function Collapse, combo systems, open world architecture and origin shifting, vehicle physics (VehicleBody3D), ability systems (GAS-lite), GOAP and Utility AI, colorblind accessibility modes, subtitles and closed captions, localization and internationalization, or analytics and playtest instrumentation.
 
 ---
 
@@ -317,17 +319,27 @@ The base model knows game development concepts. The skill gives the agent the *s
 - **Camera systems: limits, not lerp.** Room zone transitions tween `Camera2D.limit_left/right/top/bottom` (not camera position) triggered by CameraZone Area2D signals, keeping the camera physically constrained to the room. 3D lock-on uses FOV angle check (dot product) + distance to avoid locking enemies behind the player, lerps to the player–target midpoint, guards with `is_instance_valid()`, and cycles via a sorted candidate list index.
 - **Bullet hell: pooled, pattern-as-data.** Bullet pool pre-allocated at game start (800+ bullets), BulletPatternData Resource drives all pattern parameters. Circle patterns use `TAU / bullet_count` step with `Vector2.from_angle()`. Spiral patterns accumulate `_spiral_angle` across fire calls — the angle is never reset. Base model instantiates bullets per-fire and produces drift-prone spiral implementations.
 - **Weapons: hitscan vs projectile is a design choice, not a tech choice.** Hitscan (`intersect_ray`) is instant and zero-latency — correct for sniper rifles and shotguns. Projectile nodes (Area2D + velocity) are dodgeable — correct for bullet-hell and skill shots. Recommends both patterns and names the tradeoff. Multiple firing modes use a WeaponData Resource with an enum-driven pattern, cooldown as a float timer.
+- **Behavior trees: tick architecture, not concept description.** BT requests get the complete implementation: BTNode base class with Status enum (SUCCESS/FAILURE/RUNNING), BTSequence (AND logic) and BTSelector (OR logic) composites, Blackboard shared state Dictionary, and Decorator nodes for conditions. Recommends LimboAI or Beehave for production use. Base model describes BT concepts without implementing the tick/return architecture.
+- **AnimationTree: set() API, not play().** Locomotion and aiming requests use AnimationTree with BlendSpace1D/2D — never `animation_player.play()`, which cannot blend. Upper-body aiming uses AnimationNodeBlendTree with an Add2 node and bone mask so the upper body overlays locomotion. Base model reaches for `play()` for all animation requests.
+- **Inverse kinematics: SkeletonIK3D with FABRIK.** Foot placement and hand grab requests use SkeletonIK3D with FABRIK algorithm, per-foot RayCast3D ground detection, lerp-based weight blending (not start/stop toggle), and pelvis height adjustment. Base model does not know SkeletonIK3D.
+- **LOD and streaming: three-layer approach.** Performance requests for large scenes combine GeometryInstance3D LOD distances, MultiMeshInstance3D GPU instancing for repeated objects, and shadow culling — not just "add LOD." Async chunk loading uses ResourceLoader.load_threaded_request() with hysteresis radii (UNLOAD_RADIUS > LOAD_RADIUS) to prevent thrashing.
+- **Noise terrain: two maps, not one.** Biome terrain generation uses separate elevation and moisture FastNoiseLite instances — biome identity is the intersection of both thresholds. SurfaceTool mesh generation with vertex colors drives a GLSL texture splatting shader. Domain warping produces more natural-looking transitions. Base model uses a single noise map.
+- **Ability systems: data vs runtime separation, mandatory.** Ability requests get AbilityData Resource (schema, shared across all actors) separate from AbilityComponent runtime (cooldowns, cast state — per-actor). Cooldown in the Resource is the single most common mistake; the skill enforces it belongs in the component. Full pipeline: cost check → cast → channel → fire → finish.
+- **Utility AI: normalized, noisy, interval-based.** All action scores normalized to [0, 1] (un-normalized scores always produce the same winner). Score noise `randf_range(0, 0.05)` breaks ties and prevents mechanical identical behavior. `decision_interval` of 0.25s prevents per-frame evaluation. Base model produces unnormalized scores with no noise.
+- **Localization: format() not concatenation, enforced.** Any dynamic translated string uses `tr("KEY").format({"item": name})` with named placeholders. String `+` concatenation with `tr()` is flagged as the critical mistake — word order differs between languages. `tr_n()` for plural forms. CJK font fallback required for Japanese/Chinese/Korean builds.
+- **Colorblind accessibility: Daltonize post-process, not per-asset.** Colorblind mode requests use a full-screen post-process shader on a CanvasLayer with Daltonize algorithm and LMS color space matrices — covering protanopia, deuteranopia, and tritanopia with a correction_strength parameter. No per-asset changes required.
+- **Telemetry: event-driven JSONL with build flag stripping.** Analytics requests use discrete events (not per-frame sampling), buffered writes to JSONL files, a TELEMETRY_ENABLED build constant, and a minimum viable event set: session, level, death, ability, economy. Base model samples state every frame and stores everything in a memory array.
 
 ---
 
 ## Benchmark: skill vs. base model
 
-Evaluated across 46 scenarios covering the core game-development failure modes — including pixel art rendering, 3D game development, RPG systems, audio architecture, shaders, multiplayer netcode, save systems, UI/HUD, advanced platformer mechanics, dialogue systems, weapons, boss fights, camera systems, stealth AI, fog of war/minimap, and bullet hell patterns. Evals are LLM-graded against specific, objective assertions; executor and grader are separate calls to prevent self-grading inflation.
+Evaluated across 72 scenarios covering the core game-development failure modes — including pixel art rendering, 3D game development, RPG systems, audio architecture, shaders, multiplayer netcode, save systems, UI/HUD, advanced platformer mechanics, dialogue systems, weapons, boss fights, camera systems, stealth AI, fog of war/minimap, bullet hell patterns, behavior trees, animation trees, inverse kinematics, LOD and scene streaming, noise-based terrain and WFC, combo systems, open world architecture, vehicle physics, ability systems, GOAP and Utility AI, accessibility, localization, and analytics. Evals are LLM-graded against specific, objective assertions; executor and grader are separate calls to prevent self-grading inflation.
 
 ```
-with_skill:    100%   (285/285 expectations)
-without_skill:  71.9%  (205/285 expectations)
-delta:         +28.1pp
+with_skill:    100%   (428/428 expectations)
+without_skill:  56.5%  (242/428 expectations)
+delta:         +43.5pp
 ```
 
 ![Benchmark: skill vs. base model per eval](benchmark_comparison.png)
@@ -382,6 +394,32 @@ delta:         +28.1pp
 | signal-driven-hud | 4/6 (67%) | **6/6 (100%)** | +33pp |
 | cone-of-vision-stealth | 5/6 (83%) | **6/6 (100%)** | +17pp |
 | homing-bullet-pool | 6/6 (100%) | 6/6 (100%) | +0pp |
+| behavior-tree-npc-ai | 1/6 (17%) | **6/6 (100%)** | +83pp |
+| selector-vs-sequence | 2/5 (40%) | **5/5 (100%)** | +60pp |
+| animationtree-locomotion | 1/5 (20%) | **5/5 (100%)** | +80pp |
+| upper-body-aim-layer | 0/5 (0%) | **5/5 (100%)** | +100pp |
+| ik-foot-placement | 0/5 (0%) | **5/5 (100%)** | +100pp |
+| ik-hand-grab | 0/5 (0%) | **5/5 (100%)** | +100pp |
+| lod-performance | 0/5 (0%) | **5/5 (100%)** | +100pp |
+| chunk-world-loading | 1/5 (20%) | **5/5 (100%)** | +80pp |
+| noise-biome-terrain | 0/5 (0%) | **5/5 (100%)** | +100pp |
+| wave-function-collapse | 1/6 (17%) | **6/6 (100%)** | +83pp |
+| combo-input-buffer | 2/5 (40%) | **5/5 (100%)** | +60pp |
+| attack-cancel | 1/5 (20%) | **5/5 (100%)** | +80pp |
+| open-world-chunk-design | 0/5 (0%) | **5/5 (100%)** | +100pp |
+| float-precision-origin-shift | 4/6 (67%) | **6/6 (100%)** | +33pp |
+| car-handling-godot | 2/5 (40%) | **5/5 (100%)** | +60pp |
+| surface-friction-driving | 2/6 (33%) | **6/6 (100%)** | +67pp |
+| ability-pipeline | 2/6 (33%) | **6/6 (100%)** | +67pp |
+| ability-tags-blocking | 0/6 (0%) | **6/6 (100%)** | +100pp |
+| utility-ai-enemy | 0/6 (0%) | **6/6 (100%)** | +100pp |
+| bt-fsm-goap-choice | 4/6 (67%) | **6/6 (100%)** | +33pp |
+| colorblind-modes | 3/6 (50%) | **6/6 (100%)** | +50pp |
+| subtitle-system | 2/6 (33%) | **6/6 (100%)** | +67pp |
+| godot-localization | 3/6 (50%) | **6/6 (100%)** | +50pp |
+| string-overflow-i18n | 3/6 (50%) | **6/6 (100%)** | +50pp |
+| gameplay-telemetry | 1/6 (17%) | **6/6 (100%)** | +83pp |
+| playtest-instrumentation | 2/5 (40%) | **5/5 (100%)** | +60pp |
 
 ### Where the skill makes the biggest difference
 
@@ -407,6 +445,17 @@ delta:         +28.1pp
 | wall-jump-slide | 50% base | Wall-slide uses `is_on_wall_only()` with capped fall speed; wall-jump requires `last_wall_direction` and jump-grace window (can't be pressed continuously); base model produces instant snap wall-jump with no grace period |
 | bullet-hell-patterns | 50% base | BulletPool autoload pre-allocated at game start; BulletPatternData Resource; `Vector2.from_angle()` for polar coordinates; spiral accumulates `_spiral_angle` each fire call (not reset) |
 | dialogue-tool-choice | 50% base | Names Ink + godot-ink for complex branching (flags, variables, conditions) vs Dialogic for cutscene-heavy games; base model recommends Dialogic generically without distinguishing use cases |
+| behavior-tree-npc-ai | 17% base | Shows BTNode/Sequence/Selector composites with Status enum and Blackboard; base model describes BT concepts without implementing the tick/return architecture |
+| animationtree-locomotion | 20% base | Uses AnimationTree BlendSpace1D with set() API; base model uses animation_player.play() which cannot blend locomotion states |
+| upper-body-aim-layer | 0% base | AnimationNodeBlendTree with Add2 + bone mask for layered upper-body aim; base model has no knowledge of bone-masked layering |
+| ik-foot-placement | 0% base | SkeletonIK3D with FABRIK, per-foot RayCast3D, lerp weight, and pelvis height adjustment; base model does not know SkeletonIK3D or FABRIK |
+| lod-performance | 0% base | GeometryInstance3D LOD distances + MultiMeshInstance3D GPU instancing + shadow culling combined; base model treats LOD as a single mesh setting |
+| noise-biome-terrain | 0% base | Two-noise biome system (elevation × moisture), SurfaceTool mesh generation, vertex color texture splatting shader, domain warping; base model uses a single noise map without biome table |
+| open-world-chunk-design | 0% base | Full async pipeline with hysteresis radii, entity persistence, interest management, and origin shifting; base model uses synchronous load() |
+| ability-tags-blocking | 0% base | Reference-counted tag Dictionary with blocked_by/required_tags gates; base model uses per-ability boolean flags |
+| utility-ai-enemy | 0% base | Normalized [0,1] scores, score_noise, decision_interval, and can_use() gates; base model produces unnormalized scores evaluated every frame |
+| gameplay-telemetry | 17% base | Event-driven JSONL with buffered flush and TELEMETRY_ENABLED build flag; base model samples state per-frame and stores all events in memory |
+| surface-friction-driving | 33% base | Per-wheel RayCast3D + friction table Dictionary + lerp transition + engine force multiplier; base model uses group tags without lerp or engine adjustment |
 
 ### Evals where the base model already performs well (regression guards)
 
@@ -424,6 +473,8 @@ delta:         +28.1pp
 | roguelike-run-save | Base model uses dual-file pattern and version field when prompted with roguelike context |
 | save-format-versioning | Base model implements migration chain pattern when explicitly asked about format migration |
 | homing-bullet-pool | Base model identifies the BulletPool pattern and rotation-based homing (not velocity snap) when the problem is framed explicitly as a performance question |
+| float-precision-origin-shift | Base model correctly identifies float precision as the root cause and implements basic origin shifting (67% base) |
+| bt-fsm-goap-choice | Base model correctly categorizes FSM/BT/Utility/GOAP use cases even without the AI design framework (67% base) |
 
 ---
 
@@ -477,6 +528,32 @@ delta:         +28.1pp
 | 43 | `lock-on-camera` | Camera: lock-on with FOV + distance via dot product, lerp to midpoint, `is_instance_valid()`, cycle index |
 | 44 | `boss-telegraph` | Boss fights: mandatory 3-phase attacks, AttackData.telegraph_duration, invincibility during telegraph/active |
 | 45 | `homing-bullet-pool` | Weapons: BulletPool pre-allocation, rotation-based homing (clamp turn angle × delta), Area2D collision signals |
+| 46 | `behavior-tree-npc-ai` | BT: BTNode/Sequence/Selector composites, Blackboard, LimboAI/Beehave, composable subtrees vs FSM |
+| 47 | `selector-vs-sequence` | BT: AND (Sequence) vs OR (Selector) logic, RUNNING status and tick-across-frames, failure propagation |
+| 48 | `animationtree-locomotion` | AnimationTree: BlendSpace1D, set() parameters API, no animation_player.play() for locomotion |
+| 49 | `upper-body-aim-layer` | AnimationTree: AnimationNodeBlendTree, Add2 with bone mask, BlendSpace2D for aim |
+| 50 | `ik-foot-placement` | IK: SkeletonIK3D, FABRIK, RayCast3D per foot, lerp weight, pelvis height adjustment |
+| 51 | `ik-hand-grab` | IK: SkeletonIK3D hand grab, Marker3D target, Area3D proximity, lerp weight |
+| 52 | `lod-performance` | LOD: GeometryInstance3D distances, MultiMeshInstance3D GPU instancing, shadow culling |
+| 53 | `chunk-world-loading` | Streaming: load_threaded_request(), LOAD/UNLOAD_RADIUS hysteresis, ChunkManager autoload, entity persistence |
+| 54 | `noise-biome-terrain` | Terrain: two FastNoiseLite maps, biome table, SurfaceTool + vertex colors, texture splatting shader, domain warping |
+| 55 | `wave-function-collapse` | WFC: entropy-based collapse, adjacency rule propagation, contradiction handling, WFC vs BSP |
+| 56 | `combo-input-buffer` | Combos: timestamped buffer array, consume_buffered(), ComboStepData Resource, animation window gates |
+| 57 | `attack-cancel` | Combos: cancel windows via AnimationPlayer call tracks, cancel vs interrupt distinction, hitbox disable on cancel |
+| 58 | `open-world-chunk-design` | Open world: async loading, hysteresis radii, entity persistence, interest management, origin shifting |
+| 59 | `float-precision-origin-shift` | Open world: float precision loss at distance, origin shift implementation, world_offset coordinate conversion |
+| 60 | `car-handling-godot` | Vehicles: VehicleBody3D + VehicleWheel3D, center_of_mass_mode CUSTOM, torque curve, speed-dependent steering |
+| 61 | `surface-friction-driving` | Vehicles: per-wheel RayCast3D surface detection, wheel_friction_slip lerp, engine force multiplier |
+| 62 | `ability-pipeline` | Abilities: AbilityData Resource vs AbilityComponent runtime, cost→cast→channel→fire pipeline, interrupt + mana refund |
+| 63 | `ability-tags-blocking` | Abilities: reference-counted tag Dictionary, blocked_by + required_tags, add/remove tag, stun interrupt |
+| 64 | `utility-ai-enemy` | Utility AI: normalized [0,1] scores, score_noise, decision_interval, can_use() prerequisite, export weights |
+| 65 | `bt-fsm-goap-choice` | AI design: FSM→BT→Utility→GOAP progression, BT+Utility hybrid, when GOAP is justified |
+| 66 | `colorblind-modes` | Accessibility: Daltonize/LMS post-process shader, protanopia/deuteranopia/tritanopia, correction_strength |
+| 67 | `subtitle-system` | Accessibility: SubtitleManager autoload, CanvasLayer layer, BBCode speaker color, sound effect captions |
+| 68 | `godot-localization` | i18n: tr() + format() named placeholders, no concatenation, tr_n() plurals, auto_translate_mode, CJK fonts |
+| 69 | `string-overflow-i18n` | i18n: containers + EXPAND_FILL fix, autowrap_mode, ScrollContainer, pseudolocalization, RTL layout |
+| 70 | `gameplay-telemetry` | Analytics: event-driven JSONL telemetry, TelemetryManager autoload, buffered flush, TELEMETRY_ENABLED flag |
+| 71 | `playtest-instrumentation` | Analytics: four-feature playtest build (session log, screenshot, feedback button, version label), post-playtest workflow |
 
 ---
 
