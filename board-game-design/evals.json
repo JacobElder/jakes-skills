@@ -1,0 +1,625 @@
+{
+  "skill_name": "board-game-design",
+  "notes": "Assertions are behavioral checks on whether the skill's convictions/workflow show up. On Claude.ai (no subagents) these are graded by inspection; the Claude Code handoff prompt runs them with subagent graders + with/without-skill baselines.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "vague-idea-experience-first",
+      "prompt": "I want to make a board game about running a ramen shop. You source ingredients, deal with rushes, and try to build a reputation. I'm thinking it's a worker placement game. Help me design it.",
+      "expected_output": "Resists jumping to components/worker-placement mechanics. Pushes back on mechanic-first framing: pins down the EXPERIENCE (fantasy + central decision) and interrogates the CORE LOOP before committing to worker placement. Only then discusses mechanics, likely reading the worker-placement reference.",
+      "assertions": [
+        {
+          "text": "Names the intended player experience/fantasy and the central recurring decision before discussing mechanics",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Explicitly interrogates or foregrounds the core gameplay loop (the repeated action and why it's interesting in isolation)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Treats 'it's a worker placement game' as a hypothesis to validate against the experience, not a given \u2014 i.e. does not just start designing worker-placement spaces",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Gives worker-placement-specific design guidance (e.g. worker-to-space ratio / contention, blocking model) rather than generic 'make it balanced' advice",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "runaway-leader-shows-disagreement",
+      "prompt": "In my civ-building engine game one player always snowballs into an unbeatable lead by the midpoint and the last 40 minutes are boring. How do I fix the runaway leader problem?",
+      "expected_output": "Diagnoses the snowball as a design issue, offers concrete structural fixes (shared-market denial, interval scoring, a hard clock, hidden scores, more OPTIONS for trailing players). Crucially, presents catch-up/rubber-band mechanics as GENUINELY CONTESTED rather than the obvious fix \u2014 surfaces the camp that sees them as punishing skill.",
+      "assertions": [
+        {
+          "text": "Presents catch-up/rubber-band mechanics as a contested design choice, not the settled correct answer (acknowledges the camp that views them as punishing skilled play)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Offers structural alternatives beyond explicit catch-up (e.g. interval scoring, a shorter clock, hidden VP, shared-market denial, or giving trailing players more options rather than points)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Frames the snowball as a design hole to fix in the system, not as players playing wrong",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "digital-build-engine-separation",
+      "prompt": "I'm a developer and I want to build my card game as a web app first, then maybe make a physical version later. It's a 2-4 player deck-builder. Where do I start technically?",
+      "expected_output": "Pushes the pure rules-engine / presentation separation as the first architectural decision. Recommends boardgame.io for turn-based. Explains the payoffs (testability, free simulation, free bots, hidden info via playerView, and that the rules engine seeds the eventual physical rulebook). Likely points at the boardgame.io template asset.",
+      "assertions": [
+        {
+          "text": "Recommends separating a pure rules engine (state-transition function) from presentation/UI as the first/foundational decision",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends boardgame.io (or equivalent pure-function turn-based framework) for the turn-based implementation",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Connects the digital architecture to the later physical transition (the rules engine as the seed of the rulebook, or re-surfacing the engine's invisible work)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Mentions at least one concrete free benefit of the separation (headless simulation, bots as playtesters, or hidden-information handling)",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "balance-sim-scope-discipline",
+      "prompt": "I built a Python model of my whole game and ran 50,000 Monte Carlo games with random agents. It says all four factions win about 25% of the time. Does that prove my game is balanced?",
+      "expected_output": "Says no \u2014 and explains the scope boundary precisely: simulation with non-adaptive (random) agents tells you about mechanical behavior in isolation, not whole-game balance against adaptive humans. Equal win rates vs random bots can hide strategies humans would find. Recommends the result as a filter/flashlight, then human (especially blind) playtesting for the real verdict. Should not endorse the sim as proof.",
+      "assertions": [
+        {
+          "text": "Answers that the simulation does NOT prove the game is balanced",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Explains the reason in terms of non-adaptive/random agents vs. adaptive strategic human players (sim can't model the meta or strategic adaptation)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Directs the user to human playtesting (ideally blind playtesting) as the thing that actually answers whole-game balance and fun",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Treats simulation as useful for isolated subsystem questions / a filter, rather than dismissing it entirely OR over-trusting it",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "push-your-luck-levers-and-math",
+      "prompt": "I'm designing a press-your-luck dice game for two players and it feels swingy and the optimal play seems to just be 'always stop after two rolls'. How do I make the push decision more interesting?",
+      "expected_output": "Identifies the 'solved/dominant stopping point' as the core problem. Gives push-your-luck-specific levers: make optimal push depth state-dependent (board/opponent/score-dependent) so it shifts per player, tune the bust-probability curve to steepen, consider shared-fate/leave-timing, use input-randomness framing. Frames the EV/variance math and that the design target is a non-obvious, context-shifting stopping point. May reference balance_sim.py's push analyzer.",
+      "assertions": [
+        {
+          "text": "Diagnoses the fixed/obvious optimal stopping point as the central design problem (a 'solved' decision)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends making the optimal stopping depth state-dependent (depends on score/board/opponents) so it shifts per player and per situation",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Engages with the EV / bust-probability / variance structure of the decision (not just 'add more dice')",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Gives push-your-luck-specific craft (e.g. steepening bust curve, shared-fate/leave-timing, mitigation tools) rather than generic advice",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 5,
+      "name": "physical-transition-invisible-work",
+      "prompt": "My digital engine-building game plays great in the browser but when I made a paper prototype it was a nightmare \u2014 people kept forgetting their per-turn bonuses and the scoring took forever. What went wrong?",
+      "expected_output": "Names the core physical-transition issue: the computer was silently doing invisible work (passive per-turn triggers, scoring) that humans forget/find tedious. Recommends converting push triggers to pull triggers (resolve on action, not upkeep), reducing scoring categories / using a score track, iconography, and self-evident table state. Frames this as the expected, characteristic failure of digital\u2192physical, not a fluke.",
+      "assertions": [
+        {
+          "text": "Identifies that the computer was doing invisible bookkeeping (passive triggers, scoring, upkeep) that humans must now do manually",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends converting passive/'each turn' (push) triggers into action-resolved (pull) triggers to stop missed-trigger problems",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Addresses the scoring tedium specifically (e.g. fewer scoring categories, a visible score track, or simplification)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Frames this as the characteristic digital->physical transition problem rather than a one-off bug",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 6,
+      "name": "artifact-exercise-balance-sim",
+      "prompt": "In my dice game you roll 6 six-sided dice and each 5 or 6 is a hit. I want hitting 'at least 3 hits' to happen a bit less than half the time so it feels rewarding but not reliable. Is my current setup close, and how should I think about tuning it?",
+      "expected_output": "Treats this as exactly the kind of isolated subsystem question simulation/EV math answers (and that balance_sim.py is built for). Computes or estimates P(>=3 hits) for 6d6 at p=1/3 per die (binomial; the true value is ~0.32), reports it against the 'a bit less than half' target, and discusses the tuning levers (number of dice, success threshold) with their effect on mean AND variance/distribution. Should reference the binomial/Monte Carlo approach (or balance_sim.py) and keep the scope caveat (this is a clean subsystem question, unlike whole-game balance).",
+      "assertions": [
+        {
+          "text": "Recognizes this as an isolated subsystem probability question appropriate for EV/Monte Carlo math (the kind balance_sim.py handles), not a whole-game-balance question",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Computes or closely estimates P(>=3 hits) for 6 dice at per-die p=1/3 (~0.30-0.34) rather than hand-waving",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Identifies the concrete tuning levers (dice count and/or success threshold) and how they move the probability",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Considers the distribution/variance, not only the mean (or offers to run the simulation / points at balance_sim.py)",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 7,
+      "name": "weight-scaling-dont-over-engineer",
+      "prompt": "I want to make a silly 15-minute party game for 6+ people where you slap the table when you see a match. My friend says I need to add resource management and multiple paths to victory so it has 'real strategy.' Is he right?",
+      "expected_output": "Pushes back on the friend: heavier is not better, it's a targeting decision, and bolting euro machinery onto a fast social party game would wreck it. Matches advice to the game's target fun (fellowship/sensation/submission, not challenge) and audience. Should NOT dump the heavy design pipeline on this \u2014 should scale advice down, focus on what party games need (low downtime at high counts, fast teach, social energy, simultaneous play), and treat the filler as a legitimate, complete design goal.",
+      "assertions": [
+        {
+          "text": "Disagrees with adding resource management / multiple victory paths; frames weight as a targeting decision, not a quality ladder (heavier != better)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Matches advice to the party/filler context and its target fun (fellowship/sensation/social energy), rather than imposing strategic-euro depth",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Scales the response DOWN \u2014 does not dump the full heavy design pipeline; focuses on party-relevant concerns (high-count downtime, fast teach, simultaneous play)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Treats the 15-minute filler as a legitimate complete design goal, not an inferior one",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 8,
+      "name": "combine-mechanics-shared-currency",
+      "prompt": "I'm fusing a deck-builder with an area-control map game. Players build a deck AND fight over regions on a board. Right now it feels like two separate games stapled together and turns drag. How do I make it cohere?",
+      "expected_output": "Diagnoses the 'two stapled games / second attention sink' anti-pattern and prescribes fusing the mechanics around a SHARED currency or tension: the deck should be HOW you act on the map (cards drive placement/combat/movement), so improving the deck and contesting the map are the same decision rather than two budgets. Cites real fusions (e.g. Clank!, Tyrants of the Underdark, Trains, Dune Imperium-style) where the deck IS the engine of board action. Addresses the turn-drag as a symptom of two separate decision systems competing for attention.",
+      "assertions": [
+        {
+          "text": "Identifies the 'two separate games stapled together / second attention sink' as the core problem",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Prescribes fusing around a shared currency/tension \u2014 e.g. the deck should drive the board actions so the two systems are one decision, not two budgets",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Connects the turn-drag/downtime symptom to the two-competing-systems diagnosis",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Grounds the advice in at least one real deckbuilder+board fusion (e.g. Clank!, Tyrants of the Underdark, Dune: Imperium, Trains) rather than abstract advice",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 9,
+      "name": "adaptation-pushback-not-dogma",
+      "prompt": "I hear you on avoiding catch-up mechanics, but my game is explicitly for hardcore competitive players who play the same group for a whole season, and a snowbally leader genuinely kills their enjoyment by game 3. I DO want a comeback mechanic. Help me add one well.",
+      "expected_output": "Adapts to the user's stated context rather than dogmatically repeating 'catch-up mechanics are contested / avoid them.' Acknowledges that for THIS audience and format the choice is reasonable, then gives genuinely useful craft on adding a comeback mechanic WELL (e.g. bounded/soft rubber-banding, opportunity-not-handout designs, hidden scores, scaling that rewards trailing players with options, tying the comeband to skill expression so it doesn't punish good play arbitrarily). Should engage the request, not relitigate whether they should want it.",
+      "assertions": [
+        {
+          "text": "Adapts to the user's context (hardcore, season-long, fixed group) rather than re-arguing that they shouldn't want a catch-up mechanic",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Actually helps add a comeback mechanic well \u2014 gives specific design craft (bounded/soft rubber-banding, opportunity-over-handout, skill-preserving designs), not a refusal or a lecture",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Retains useful nuance (e.g. how to avoid punishing skilled play, or how to keep the comeback from feeling arbitrary) without using nuance as a way to dodge the request",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Does NOT dogmatically repeat the conviction as a reason to not help",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 10,
+      "name": "negative-out-of-scope-redirect",
+      "prompt": "I'm building a fast-paced real-time 2D platformer video game in Godot and I need help designing the level layouts and the jump physics feel. Where do I start?",
+      "expected_output": "Recognizes this is a real-time action VIDEO game (platformer level design + jump-feel/game-feel), which is OUTSIDE this board-game-design skill's scope. Should NOT impose the board-game design pipeline (experience->core loop->mechanic family->state machine->boardgame.io). Either redirects to video-game/level-design resources (the user's separate indie-game-dev skill covers Godot) or answers the platformer question on its own terms \u2014 but does not force board-game frameworks, mechanic-family selection, or boardgame.io onto a real-time platformer.",
+      "assertions": [
+        {
+          "text": "Does NOT apply the board-game design pipeline / mechanic-family selection / boardgame.io to this real-time platformer",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recognizes the request is real-time action video-game design, outside board-game-design scope",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Redirects appropriately (e.g. to indie-game-dev / Godot platformer resources) or answers the platformer question on its own terms rather than forcing board-game concepts",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 11,
+      "name": "flat-but-balanced-aesthetics-layer",
+      "prompt": "My euro game is well balanced \u2014 playtesters agree no strategy dominates and win rates are even \u2014 but everyone says it's 'fine' and nobody asks to play again. I can't figure out what's wrong because the numbers all look good.",
+      "expected_output": "Diagnoses this as an experience/aesthetics problem, not a balance problem: a mechanically sound game that evokes nothing (the systems-designer trap). Directs attention to the felt-experience layer \u2014 target aesthetic / kind of fun, theme integration depth, the session's emotional arc (does it build? are there memorable moments?), and possibly the on-ramp / lack of expression or tension \u2014 rather than recommending more balancing. Should explicitly separate 'balanced' from 'fun/compelling' and look at aesthetics, arc, and theme integration.",
+      "assertions": [
+        {
+          "text": "Explicitly distinguishes 'balanced' from 'fun/compelling' and identifies that the problem is NOT a balance problem",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Points to the experience/aesthetics layer \u2014 target kind of fun, theme integration, and/or the session's emotional arc and memorable moments",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Does NOT prescribe more balancing/simulation as the fix",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Offers concrete diagnostic moves (e.g. 'ask testers what the story of the game was', check for an arc/climax, check theme integration or player expression) rather than generic 'add more theme'",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 12,
+      "name": "scaling-and-solo-coverage",
+      "prompt": "My worker-placement game is great at 4 players but feels broken at 2 (no tension, nobody blocks anyone) and I keep getting asked for a solo mode. How should I approach both?",
+      "expected_output": "For the 2-player problem: identifies that low player count drops contention (the worker-to-space ratio that's tight at 4 is loose at 2) and that interactive multiplayer games often degrade at 2; offers concrete fixes (neutral 'third player'/dummy worker that blocks spaces, dedicated 2p rules, removing spaces at low counts). For solo: picks among the solo archetypes (beat-your-score vs Automa/scripted bot vs co-op), and for an Automa stresses simulating opponent PRESSURE with low upkeep (card-driven, not honest-both-sides play), plus notes digital can offer a real AI opponent off the rules engine. Treats player count as changing dynamics, not just arithmetic.",
+      "assertions": [
+        {
+          "text": "Diagnoses the 2-player failure as reduced contention (worker-to-space ratio loosens) / the general two-player problem for interactive games, not a vague 'needs balancing'",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Offers concrete low-count fixes (neutral/dummy third player to block spaces, dedicated 2p rules, or removing spaces per player)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Addresses solo via an explicit archetype choice (Automa/scripted bot vs beat-your-score vs co-op) and, for an Automa, stresses low-upkeep pressure-simulation over honest both-sides play",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Treats player count as changing the game's dynamics (downtime/contention/tension), not merely its arithmetic",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 13,
+      "name": "deliverable-state-machine-spec",
+      "prompt": "I've settled on my design: a 3-player game where you collect 3 resource types, spend them to build cards into a tableau, and first to 12 victory points wins. I want to start coding it. Can you help me write up the formal rules as a spec I can implement?",
+      "expected_output": "Produces a state-machine specification in the Phase-4 shape: components/tokens, the game state to track, the legal moves from a state, the turn/phase structure, and the end condition + scoring. Frames this spec as simultaneously the digital data model AND the skeleton of the rulebook (the pure (state, move) -> state engine). Should be concrete and implementable, and ideally note the rules-engine/presentation separation and that legal moves seed both the bot enumeration and the rulebook's 'on your turn you may...'.",
+      "assertions": [
+        {
+          "text": "Specifies the game as a state machine: components, tracked state, legal moves, turn/phase structure, and end/scoring (not just prose advice)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Frames the spec as both the digital data model and the seed of the rulebook (or invokes the pure (state, move) -> state engine / rules-engine separation)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "The legal-move set is concrete enough to implement and is presented as the basis for both validation and the rulebook's 'on your turn' section",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 14,
+      "name": "deliverable-rulebook-writing",
+      "prompt": "My game is done and playtested. Can you help me write the rulebook? It's a tile-laying game where players build a shared map and score for enclosed regions.",
+      "expected_output": "Gives rulebook craft (not just prose): structure (overview/goal first, then components, setup, turn structure, end & scoring, edge cases/FAQ, reference card), teach in order of play not codebase order, lead with the GOAL, include a worked example of a turn/scoring, use iconography, and \u2014 critically \u2014 recommends BLIND testing the rulebook (hand it to strangers, every question is a rulebook bug). May produce a structured draft. Should treat the rulebook as a real deliverable, not an afterthought.",
+      "assertions": [
+        {
+          "text": "Recommends a clear rulebook structure that leads with the goal/overview before mechanics (teach in play-order, not codebase-order)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Includes concrete craft: a worked example of a turn or scoring, iconography, and/or a player-aid/reference card",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends blind-testing the rulebook (strangers, no designer present; every question is a rulebook bug) as the validation step",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 15,
+      "name": "family-worker-placement-contention",
+      "prompt": "I'm designing a worker placement game. How many action spaces should I have, and how do I keep it tense without players just feeling blocked and frustrated?",
+      "expected_output": "Engages worker-placement-specific craft from the reference: the worker-to-space ratio as the contention dial (and that it must scale with player count), hard vs soft blocking (soft blocking reduces feel-bad), the dominant-opening-spot trap, and turn-order/first-player advantage as a structural issue. Should connect 'frustration' to hard blocking + high contention and offer soft-blocking / compensation / always-available basic actions as fixes. Not generic advice.",
+      "assertions": [
+        {
+          "text": "Identifies the worker-to-space ratio (contention) as the key tuning dial and notes it must scale with player count",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Distinguishes hard vs soft blocking and recommends soft blocking / compensation / basic always-available actions to reduce the feel-bad of being blocked",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Warns about the dominant-opening-spot trap and/or structural first-player advantage in placement order",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 16,
+      "name": "family-drafting-double-optimization",
+      "prompt": "I want a drafting game for up to 8 players that doesn't bog down. Should I use a face-up market everyone picks from in turn, or packs that players pass around? And what makes drafting decisions interesting beyond 'take the best card'?",
+      "expected_output": "Recommends pick-and-pass (booster) drafting for high player counts BECAUSE it's simultaneous = near-zero downtime, vs the open-market draft which is sequential and adds downtime \u2014 directly answering the 'doesn't bog down at 8 players' constraint. Explains the 'double optimization' (value to me minus value to whom I'm passing/denying) and signaling/replacement-value as what makes drafting deep beyond 'take the best card'. Reflects the drafting reference, not generic advice.",
+      "assertions": [
+        {
+          "text": "Recommends pick-and-pass/booster drafting for the high player count specifically because simultaneous picking minimizes downtime (vs sequential open-market drafting)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Explains the 'double optimization' / denial / passing dynamic (value to me vs value to the player I feed) as the source of interesting drafting decisions",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Adds depth concepts like signaling, replacement value, or the wheel rather than just 'take the best card'",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 17,
+      "name": "family-area-control-kingmaking",
+      "prompt": "My area-control war game has a problem: when one player falls behind, they basically decide who wins by choosing who to attack, and it feels terrible. How do I design around this?",
+      "expected_output": "Names this as kingmaking and as a DESIGN failure, not a player failure. Offers area-control-specific fixes from the reference: simultaneous/hidden order resolution (so attacks aren't spiteful targeting), graduated scoring (losing a region by one still pays, so attacks are about points not spite), limiting purely-destructive late actions, and ensuring trailing players have self-interested optimization. May contrast combat vs influence/majority sub-families. Not generic.",
+      "assertions": [
+        {
+          "text": "Identifies the behavior as kingmaking and frames it as a design failure to fix in the system, not a player behavior to scold",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends simultaneous/hidden commitment resolution and/or graduated scoring (so losing by one still pays) to defuse spiteful targeting",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Offers area-control-specific structure (limiting destructive late actions, giving trailing players self-interested goals, or the influence-vs-combat sub-family choice) rather than generic catch-up advice",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 18,
+      "name": "family-campaign-content-budget",
+      "prompt": "I'm designing a 12-session campaign game. I love the idea of branching where player choices lock out other content, but I'm a solo designer with limited time. How should I think about the structure?",
+      "expected_output": "Surfaces the ratchet-vs-branch tradeoff: branching multiplies content/authoring cost (estimate nodes x variants; branching can 3-5x the load) and the balancing surface, which is brutal for a solo designer. Recommends mostly-ratchet with branching reserved for the few choices that are genuinely meaningful and affordable. Discusses the unlock graph as data, pacing (one new thing per session, no dead zones), and balancing each scenario against the carried/escalating party power (moving-target balance), not in isolation. Reflects the campaign/legacy reference.",
+      "assertions": [
+        {
+          "text": "Surfaces the ratchet-vs-branch tradeoff and warns that branching multiplies content/authoring cost and balancing surface (a serious problem for a solo designer)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recommends reserving branching for the few genuinely meaningful/affordable choices and defaulting to a ratchet/shared spine otherwise",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Addresses pacing (the unlock graph / one-new-thing-per-session / no dead zones) and/or balancing scenarios against escalating carried party power rather than in isolation",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 19,
+      "name": "nuance-suppression-resist",
+      "prompt": "I know catch-up mechanics are contested, just give me the best comeback mechanic, no caveats. Which one is actually correct?",
+      "expected_output": "Does NOT declare one mechanic as simply correct, but DOES still help \u2014 briefly names the key tradeoff (opportunity vs handout, soft vs hard banding) and then gives concretely useful options rather than either (a) refusing or lecturing, or (b) pretending the question is settled. The nuance is there but doesn't block the help.",
+      "assertions": [
+        {
+          "text": "Does NOT declare a single comeback mechanic as the definitively correct answer while suppressing all tradeoffs",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Still provides genuinely useful options (e.g. bounded rubber-banding, opportunity-over-handout, hidden scores, more options for trailing players) rather than refusing to answer",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Surfaces the key tradeoff briefly (e.g. punishing skill vs. keeping tension) without using it to dodge the question entirely",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 20,
+      "name": "pure-abstract-no-forced-theme",
+      "prompt": "I want to design a two-player abstract strategy game with perfect information \u2014 no luck, no hidden state, pure positional play. I don't have a theme and don't want one. What are the key design considerations?",
+      "expected_output": "Does NOT force theme onto the design. Engages with abstract-strategy-specific craft: perfect-information branching factor and decision complexity, draws/first-player-advantage (Pie Rule, Swap rule, komi), pattern of play and emergence, win-condition elegance, and the commitment-to-abstraction from conviction 7. Should treat 'committed abstract' as a legitimate and complete design choice.",
+      "assertions": [
+        {
+          "text": "Does NOT pressure the user to add theme or frame themelessness as a weakness",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Treats the committed abstract as a legitimate design choice (conviction 7 equivalent for abstracts)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Addresses abstract-specific design concerns: first-player-advantage mitigations (Pie Rule, Swap, komi), draw-prevention, or decision-complexity / branching factor",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Discusses win-condition elegance and/or the emergence of complex patterns from simple rules",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 21,
+      "name": "negative-scope-rpg-narrative",
+      "prompt": "I'm writing a tabletop RPG campaign and I need help crafting the branching narrative arcs, NPC motivations, and how player choices affect the world state across sessions.",
+      "expected_output": "Recognizes this is RPG narrative writing / TTRPG campaign design \u2014 NOT board game design. Should NOT apply board-game-design pipeline (state machine, boardgame.io, mechanic families, worker placement, etc.). Either redirects honestly (this is GM/narrative craft) or helps on its own terms without force-fitting board-game frameworks.",
+      "assertions": [
+        {
+          "text": "Does NOT apply the board-game-design pipeline (state machine, mechanic family selection, boardgame.io) to this TTRPG narrative design request",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Recognizes the request is TTRPG/RPG campaign narrative writing, outside board-game-design scope",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Either redirects honestly (this is GM craft / narrative design) or engages the question on TTRPG terms rather than forcing board-game frameworks",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": []
+    },
+    {
+      "id": 22,
+      "name": "artifact-run-balance-sim-dice",
+      "prompt": "I'm designing a dice-pool mechanic. Players roll 4 six-sided dice and score a hit on each die showing 5 or 6 (per-die p = 1/3). I want 'at least 2 hits' to feel achievable but not guaranteed \u2014 roughly 40% of the time. Using the balance_sim.py bundled with this skill, write the trial_fn, simulate it, and tell me whether my current setup is on target. Also show me the key tuning levers.",
+      "expected_output": "Writes a trial_fn using balance_sim.py's simulate() for 4d6 at p=1/3 per die; computes or estimates P(>=2 hits) \u2248 0.407 (closed-form binomial(4, 1/3)); confirms this is very close to the 40% target; names the tuning levers (raise/lower dice count, change success threshold, change per-die probability); keeps the scope caveat \u2014 this is an isolated subsystem answer, not a claim the whole game is balanced.",
+      "assertions": [
+        {
+          "text": "Writes a trial_fn (or equivalent snippet) using balance_sim.py's simulate() that models 4d6 with per-die p = 1/3",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "States P(>=2 hits) in the range 0.38\u20130.44 (true closed-form value \u2248 0.407; sim may vary \u00b12%)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Confirms the setup is close to the 40% target and names at least two concrete tuning levers (e.g. dice count, success threshold, per-die p)",
+          "passed": null,
+          "evidence": ""
+        },
+        {
+          "text": "Maintains scope discipline: notes this is an isolated subsystem answer, not a claim the whole game is balanced or fun",
+          "passed": null,
+          "evidence": ""
+        }
+      ],
+      "files": [
+        "scripts/balance_sim.py"
+      ]
+    }
+  ]
+}

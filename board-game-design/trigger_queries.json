@@ -1,0 +1,43 @@
+{
+  "skill_name": "board-game-design",
+  "notes": "Trigger set for the description-optimization step (run_loop.py / improve_description.py). should_trigger queries deliberately AVOID the words 'board game' and 'design' where possible — the description claims the skill fires on described game ideas, so test that. should_not_trigger are near-misses chosen to be genuinely tempting (games, mechanics, rules) but out of scope (real-time video games, RPG narrative, gambling odds, playing existing games, non-game uses). Hold out a test split when selecting best_description.",
+  "should_trigger": [
+    "a game where you draft flowers and build up a tableau over several rounds",
+    "how do I stop one player snowballing into an unbeatable lead by the midpoint",
+    "I want players to repeatedly decide whether to push their luck for more loot or bank it",
+    "a deck-builder about running a coffee shop, where you buy better equipment cards",
+    "my worker-placement game feels great at 4 players but dead at 2, no one blocks anyone",
+    "what makes a card-drafting decision interesting beyond just taking the best card",
+    "I'm fusing a deckbuilder with an area-control map and it feels like two stapled games",
+    "how should I structure a 12-session campaign where choices unlock different content",
+    "my euro is perfectly balanced but everyone says it's 'fine' and nobody replays it",
+    "help me write the rulebook for my tile-laying game about building a medieval town",
+    "I want to build my turn-based card game as a web app first, then maybe print it",
+    "is 6d6 hitting on 5+ a good way to make 'at least 3 successes' happen about a third of the time",
+    "how many action spaces should my game have so it's tense but not pure frustration",
+    "I need a solo mode / AI opponent for my engine-building game",
+    "press-your-luck dice game where the optimal play seems to just be 'always stop at two'",
+    "a negotiation game for 5 where players trade resources to complete contracts",
+    "design an abstract two-player strategy game with no luck and simple rules but deep play",
+    "my players keep forgetting their per-turn bonuses when we moved from the app to paper",
+    "what mechanics would create the feeling of frantically managing a kitchen during a rush",
+    "I want a quick 20-minute filler card game that's mostly about set collection"
+  ],
+  "should_not_trigger": [
+    "help me design the level layouts and jump physics for my 2D platformer in Godot",
+    "what are the odds of making a flush draw on the turn in Texas Hold'em",
+    "write the branching narrative and character backstories for my tabletop RPG campaign",
+    "balance the weapon damage and enemy spawn rates in my real-time roguelike shooter",
+    "what's a good strategy to win at Settlers of Catan",
+    "explain the rules of bridge to me",
+    "design a jigsaw puzzle / crossword for my newsletter",
+    "build me a Tetris clone in JavaScript",
+    "I'm running a Dungeons & Dragons session tonight, give me an encounter",
+    "recommend a board game for my family game night",
+    "how do escape room puzzles get designed",
+    "create a quiz game show format for a corporate event",
+    "what's the best opening move in chess",
+    "design a loyalty-points rewards program for my retail app",
+    "help me design a UX flow for a mobile checkout screen"
+  ]
+}

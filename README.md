@@ -10,6 +10,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 |---|---|---|
 | [agent-based-modeling](#agent-based-modeling) | Agent-based simulation methodology (ODD, Mesa/NetLogo, verification, calibration) | +29.8pp (57/57 with skill, 40/57 base) |
 | [applied-behavioral-design](#applied-behavioral-design) | Applied behavioral science diagnosis and intervention design (ideas42 workflow) | +32.5pp (83/83 with skill, 56/83 base) |
+| [board-game-design](#board-game-design) | Tabletop board and card game design: mechanics, balance, digital prototyping with boardgame.io, and rulebook writing | +3.7pp (82/82 with skill, 79/82 base); skill closes specific gaps on digital-first architecture and balance_sim.py tool use |
 | [boglehead](#boglehead) | Personal investing | +24pp on original 10 scenarios |
 | [causal-inference](#causal-inference) | Causal reasoning & experiment design | +19pp across 13 scenarios |
 | [clustering](#clustering) | Cluster analysis: method selection, validation, mixed-type data | +17.9pp (95/95 with skill, 78/95 base) |
@@ -57,6 +58,18 @@ Apply ideas42-style applied behavioral science to problems where people aren't d
 **Gap:** +32.5pp — 83/83 with skill (100%) vs. 56/83 base (67.5%). Largest gains on premature solutioning (+100pp), incentive skepticism (+100pp), and single-bias-guard (+100pp — generates competing hypotheses with evidence specs rather than naming one bias).
 
 → [applied-behavioral-design/](applied-behavioral-design/)
+
+---
+
+## board-game-design
+
+Design tabletop board and card games across every major mechanic family — worker placement, deck-building, engine-building, area control, push-your-luck, drafting, campaign/legacy, euro, cooperative, and abstract — with directional confidence on the questions that have a right answer and explicit acknowledgment of the ones that don't. Covers the full design pipeline from experience-first framing through mechanic selection, digital prototyping with boardgame.io, balance simulation with the bundled `scripts/balance_sim.py` Monte Carlo harness, solo/scaling solutions, and rulebook writing. The digital-first through-line is a first-class citizen: model rules as a pure `(state, move) → state` function, then derive the physical game from the formal specification.
+
+**Why it matters:** The base model knows board game design vocabulary but gives milquetoast advice — "make it balanced, add variety, keep it fun." The skill provides the directional conviction the craft demands: design the core loop first (not theme, not components); dominant strategies are design holes, not player failures; downtime kills games more reliably than complexity; put randomness at the *start* of a decision not the end. It also names which questions are genuinely contested (catch-up mechanics, player elimination, luck) and holds both positions instead of collapsing to fake consensus. Bundled tools — `scripts/balance_sim.py` (stdlib-only Monte Carlo) and `assets/boardgame_io_template/game.js` (boardgame.io 0.50.2) — give the agent real instruments rather than improvised code.
+
+**Gap:** +3.7pp overall — 82/82 with skill (100%) vs. 79/82 base (96.3%). The base model is already strong in this domain (well-represented training data). The skill closes specific gaps the base model misses: framing rules-engine/UI separation as the *first* architectural decision (+25pp on digital-build-engine-separation), and correctly connecting subsystem balance questions to the bundled `balance_sim.py` tool rather than improvising numpy equivalents (+25pp on both artifact evals). Routing accuracy 35/35 (20 TP, 15 TN, 0 FP, 0 FN) — including the deliberately tricky near-misses ("recommend a board game for family night," "best strategy to win at Catan," "best opening move in chess") which all correctly return NO.
+
+→ [board-game-design/](board-game-design/)
 
 ---
 
