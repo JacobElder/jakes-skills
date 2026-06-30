@@ -10,6 +10,8 @@ Also covers **UI/HUD** (signal-driven HUDs with UpdateResource pattern — game 
 
 Also covers **behavior trees** (BTNode/Sequence/Selector/Decorator composites with Blackboard shared state, LimboAI/Beehave addon integration), **animation trees** (AnimationTree with BlendSpace1D/2D for locomotion and aiming, layered upper/lower body animation via AnimationNodeBlendTree + bone masks, call tracks for animation events), **inverse kinematics** (SkeletonIK3D with FABRIK for foot placement and hand grab, RayCast3D ground detection, lerp-based weight blending), **LOD and scene streaming** (GeometryInstance3D LOD distances, MultiMeshInstance3D GPU instancing, async chunk loading with ResourceLoader.load_threaded_request, hysteresis radii to prevent thrashing), **noise-based terrain and WFC** (FastNoiseLite two-noise biome system with elevation + moisture, SurfaceTool mesh generation, texture splatting via vertex color shader, domain warping, Wave Function Collapse adjacency rule propagation), **combo systems** (timestamped input buffer ring array, ComboStepData Resource, cancel windows via AnimationPlayer call tracks, per-frame hitbox control), **open world architecture** (ChunkManager autoload with async load queue, entity persistence, interest management, origin shifting for float precision), **vehicle physics** (VehicleBody3D + VehicleWheel3D, center of mass configuration, torque curve, surface friction via per-wheel RayCast3D), **ability systems** (AbilityData Resource + AbilityComponent pipeline: cost → cast → channel → fire → cooldown; interrupt vs cancel; tag-based gating for Silence/Stun), **GOAP and Utility AI** (Utility AI with normalized scoring and score noise, UtilityAgent tick interval, GOAP world state dict + A\* planner, BT+Utility and BT+GOAP hybrid patterns), **accessibility** (colorblind post-process shader using Daltonize/LMS matrices for protanopia/deuteranopia/tritanopia, SubtitleManager autoload with speaker color coding and sound-effect captions, control remapping), **localization** (TranslationServer CSV workflow, tr() + format() named placeholders — never concatenation, CJK fonts, RTL layout, tr_n() plural forms, string overflow via containers + autowrap), and **analytics and playtesting instrumentation** (TelemetryManager autoload with JSONL storage and buffered flush, TELEMETRY_ENABLED build flag, event-driven death heatmap and path recording, four-feature playtest build: session log + screenshot shortcut + in-game feedback button + build version display).
 
+Also covers **lighting and global illumination** (LightmapGI vs VoxelGI vs SDFGI decision table by scene type, full 6-step LightmapGI setup including the most-missed step: LightmapGIProbe placement for dynamic objects), **profiling and optimization** (5-step workflow for diagnosing GPU vs CPU bottlenecks via Process Time vs Frame Time, Debug Draw Overdraw, Profiler flame chart sorted by Self time, per-frame allocation patterns and cache fixes, MultiMeshInstance3D draw call reduction), **mobile and touch input** (virtual thumbstick with dynamic origin and dead zone re-mapping, multi-touch finger index tracking, adaptive UI with canvas_items stretch, safe area insets via `DisplayServer.get_display_safe_area()`), and **cutscenes and cinematics** (AnimationPlayer as time sequencer with property/call/audio tracks, camera handoff via `make_current()`, skippable cutscene two-press confirm state machine, `get_tree().paused` + `PROCESS_MODE_ALWAYS` for input capture, shared cleanup path for skip and normal completion).
+
 ## Installation
 
 ```bash
@@ -22,7 +24,7 @@ Or manually:
 cp -r jakes-skills/game-development ~/.claude/skills/game-development
 ```
 
-Once installed, the skill applies automatically when the user wants to build or improve a game in Godot, Unity, LÖVE, PyGame, Bevy, or Phaser — including character controllers, collision, enemy AI, procedural generation, game feel, engine selection, pixel art rendering, top-down movement, JRPG turn-based combat, 3D character controllers, third-person cameras, scoping a project, RPG systems (status effects, inventory, stat modifiers), audio architecture (bus hierarchy, adaptive music), shaders and visual effects, multiplayer and netcode, save systems and meta-progression, UI/HUD design, advanced platformer mechanics (wall jump, moving platforms, scene transitions), dialogue and narrative systems, weapons and shooting mechanics, boss fight architecture, camera systems (room zones, lock-on), stealth AI (cone of vision, alert FSM), fog of war and minimap, bullet hell patterns, behavior trees (LimboAI, Beehave), animation trees and inverse kinematics, LOD and scene streaming, noise-based terrain and Wave Function Collapse, combo systems, open world architecture and origin shifting, vehicle physics (VehicleBody3D), ability systems (GAS-lite), GOAP and Utility AI, colorblind accessibility modes, subtitles and closed captions, localization and internationalization, or analytics and playtest instrumentation.
+Once installed, the skill applies automatically when the user wants to build or improve a game in Godot, Unity, LÖVE, PyGame, Bevy, or Phaser — including character controllers, collision, enemy AI, procedural generation, game feel, engine selection, pixel art rendering, top-down movement, JRPG turn-based combat, 3D character controllers, third-person cameras, scoping a project, RPG systems (status effects, inventory, stat modifiers), audio architecture (bus hierarchy, adaptive music), shaders and visual effects, multiplayer and netcode, save systems and meta-progression, UI/HUD design, advanced platformer mechanics (wall jump, moving platforms, scene transitions), dialogue and narrative systems, weapons and shooting mechanics, boss fight architecture, camera systems (room zones, lock-on), stealth AI (cone of vision, alert FSM), fog of war and minimap, bullet hell patterns, behavior trees (LimboAI, Beehave), animation trees and inverse kinematics, LOD and scene streaming, noise-based terrain and Wave Function Collapse, combo systems, open world architecture and origin shifting, vehicle physics (VehicleBody3D), ability systems (GAS-lite), GOAP and Utility AI, colorblind accessibility modes, subtitles and closed captions, localization and internationalization, analytics and playtest instrumentation, baked global illumination (LightmapGI, VoxelGI, SDFGI), performance profiling (GPU vs CPU, overdraw, draw call reduction), mobile touch input (virtual joystick, safe area, adaptive UI scaling), or cutscenes and cinematics (AnimationPlayer sequencing, camera handoff, skippable cutscenes).
 
 ---
 
@@ -334,12 +336,12 @@ The base model knows game development concepts. The skill gives the agent the *s
 
 ## Benchmark: skill vs. base model
 
-Evaluated across 72 scenarios covering the core game-development failure modes — including pixel art rendering, 3D game development, RPG systems, audio architecture, shaders, multiplayer netcode, save systems, UI/HUD, advanced platformer mechanics, dialogue systems, weapons, boss fights, camera systems, stealth AI, fog of war/minimap, bullet hell patterns, behavior trees, animation trees, inverse kinematics, LOD and scene streaming, noise-based terrain and WFC, combo systems, open world architecture, vehicle physics, ability systems, GOAP and Utility AI, accessibility, localization, and analytics. Evals are LLM-graded against specific, objective assertions; executor and grader are separate calls to prevent self-grading inflation.
+Evaluated across 80 scenarios covering the core game-development failure modes — including pixel art rendering, 3D game development, RPG systems, audio architecture, shaders, multiplayer netcode, save systems, UI/HUD, advanced platformer mechanics, dialogue systems, weapons, boss fights, camera systems, stealth AI, fog of war/minimap, bullet hell patterns, behavior trees, animation trees, inverse kinematics, LOD and scene streaming, noise-based terrain and WFC, combo systems, open world architecture, vehicle physics, ability systems, GOAP and Utility AI, accessibility, localization, analytics, lighting and global illumination, profiling and optimization, mobile touch input, and cutscenes and cinematics. Evals are LLM-graded against specific, objective assertions; executor and grader are separate calls to prevent self-grading inflation.
 
 ```
-with_skill:    100%   (428/428 expectations)
-without_skill:  56.5%  (242/428 expectations)
-delta:         +43.5pp
+with_skill:    100%   (479/479 expectations)
+without_skill:  53.7%  (257/479 expectations)
+delta:         +46.3pp
 ```
 
 ![Benchmark: skill vs. base model per eval](benchmark_comparison.png)
@@ -420,6 +422,14 @@ delta:         +43.5pp
 | string-overflow-i18n | 3/6 (50%) | **6/6 (100%)** | +50pp |
 | gameplay-telemetry | 1/6 (17%) | **6/6 (100%)** | +83pp |
 | playtest-instrumentation | 2/5 (40%) | **5/5 (100%)** | +60pp |
+| godot-gi-choice | 2/6 (33%) | **6/6 (100%)** | +67pp |
+| lightmap-baking | 3/8 (38%) | **8/8 (100%)** | +63pp |
+| profiler-workflow | 1/6 (17%) | **6/6 (100%)** | +83pp |
+| draw-call-optimization | 1/6 (17%) | **6/6 (100%)** | +83pp |
+| touch-virtual-joystick | 1/6 (17%) | **6/6 (100%)** | +83pp |
+| mobile-ui-scaling | 2/6 (33%) | **6/6 (100%)** | +67pp |
+| animationplayer-cutscene | 5/7 (71%) | **7/7 (100%)** | +29pp |
+| cutscene-skip-system | 1/6 (17%) | **6/6 (100%)** | +83pp |
 
 ### Where the skill makes the biggest difference
 
@@ -456,6 +466,13 @@ delta:         +43.5pp
 | utility-ai-enemy | 0% base | Normalized [0,1] scores, score_noise, decision_interval, and can_use() gates; base model produces unnormalized scores evaluated every frame |
 | gameplay-telemetry | 17% base | Event-driven JSONL with buffered flush and TELEMETRY_ENABLED build flag; base model samples state per-frame and stores all events in memory |
 | surface-friction-driving | 33% base | Per-wheel RayCast3D + friction table Dictionary + lerp transition + engine force multiplier; base model uses group tags without lerp or engine adjustment |
+| profiler-workflow | 17% base | GPU vs CPU distinction via Process Time vs Frame Time; Profiler sorted by Self (not Total); per-frame allocation cache pattern; base model gives generic "use the profiler" advice |
+| draw-call-optimization | 17% base | Debugger Monitor targets (≤200 mobile / ≤1000 low-end / ≤5000 high-end); MultiMeshInstance3D code example; base model names instancing without concrete targets or code |
+| touch-virtual-joystick | 17% base | Dynamic origin, finger index tracking, dead zone re-mapping (magnitude − dz) / (1 − dz); base model uses fixed joystick origin and hard snap at dead zone |
+| cutscene-skip-system | 17% base | Two-press confirm state machine; get_tree().paused + PROCESS_MODE_ALWAYS; shared cleanup path; _fire_end_events() for skipped call tracks; base model uses single-press with duplicated cleanup |
+| godot-gi-choice | 33% base | LightmapGIProbe as most-missed step; cannot combine LightmapGI + VoxelGI on same geometry; decision table by scene type; base model omits dynamic object handling |
+| mobile-ui-scaling | 33% base | DisplayServer.get_display_safe_area() applied to MarginContainer; minimum touch target size; font scaling via Theme; base model covers stretch mode but omits safe area and touch targets |
+| lightmap-baking | 38% base | Full 6-step LightmapGI workflow; LightmapGIProbe every 4–6m for dynamic objects; UV2 bleeding diagnosis; base model covers bake button but skips LightmapGIProbe and gi_mode settings |
 
 ### Evals where the base model already performs well (regression guards)
 
@@ -554,6 +571,14 @@ delta:         +43.5pp
 | 69 | `string-overflow-i18n` | i18n: containers + EXPAND_FILL fix, autowrap_mode, ScrollContainer, pseudolocalization, RTL layout |
 | 70 | `gameplay-telemetry` | Analytics: event-driven JSONL telemetry, TelemetryManager autoload, buffered flush, TELEMETRY_ENABLED flag |
 | 71 | `playtest-instrumentation` | Analytics: four-feature playtest build (session log, screenshot, feedback button, version label), post-playtest workflow |
+| 72 | `godot-gi-choice` | Lighting: LightmapGI vs VoxelGI vs SDFGI decision table; LightmapGIProbe as most-missed step for dynamic objects |
+| 73 | `lightmap-baking` | Lighting: full 6-step LightmapGI setup — UV2, gi_mode, LightmapGI node, LightmapGIProbe placement, light bake mode, bake |
+| 74 | `profiler-workflow` | Profiling: GPU vs CPU via Process/Frame Time, Debug Draw Overdraw, Profiler Self-time, per-frame allocation cache fix |
+| 75 | `draw-call-optimization` | Profiling: draw call targets, MultiMeshInstance3D for 1,000 meshes → 1 draw call, VisibilityNotifier3D culling |
+| 76 | `touch-virtual-joystick` | Mobile: dynamic-origin virtual joystick, multi-touch finger index, dead zone re-mapping, limit_length() clamp |
+| 77 | `mobile-ui-scaling` | Mobile: canvas_items+expand, anchor presets, DisplayServer.get_display_safe_area() → MarginContainer, touch target size |
+| 78 | `animationplayer-cutscene` | Cinematics: AnimationPlayer property + call tracks, make_current() camera handoff, get_tree().paused, fade transition |
+| 79 | `cutscene-skip-system` | Cinematics: two-press IDLE→PENDING→CONFIRMED state machine, shared cleanup path, _fire_end_events() for skipped tracks |
 
 ---
 
