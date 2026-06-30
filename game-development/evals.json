@@ -2917,6 +2917,216 @@
           "text": "Supports marking individual cutscenes as non-skippable (e.g., a skippable parameter on the play() method)"
         }
       ]
+    },
+    {
+      "id": 80,
+      "name": "visual-shader-editor",
+      "prompt": "My team has an artist who wants to create shaders for our Godot 4 game but is not comfortable writing GLSL. Should we use the visual shader editor or code-based ShaderMaterial? What are the tradeoffs, and how do we set it up so the artist can work independently?",
+      "targets": [
+        "godot"
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "prog": false,
+          "text": "States visual shader editor and code shader produce identical bytecode with the same runtime performance \u2014 the visual editor is an authoring tool, not a different shader type"
+        },
+        {
+          "prog": false,
+          "text": "Recommends visual shader editor for artists who don't write GLSL, with real-time preview and node-based blending/color operations"
+        },
+        {
+          "prog": false,
+          "text": "Recommends code shader when #ifdef compile-time branching (quality tiers) or #include shared function libraries are needed"
+        },
+        {
+          "prog": false,
+          "text": "Explains set_shader_parameter() works identically for visual and code shaders to modify uniforms at runtime from GDScript"
+        },
+        {
+          "prog": false,
+          "text": "Recommends saving the ShaderMaterial as a .tres resource file (not inline on the MeshInstance) so artist edits propagate across all scenes using the material"
+        },
+        {
+          "prog": false,
+          "text": "Mentions the Expression node as a way to write raw GLSL inline within the visual shader graph for math-heavy operations"
+        }
+      ]
+    },
+    {
+      "id": 81,
+      "name": "shader-graph-to-code",
+      "prompt": "My artist built a shader in Godot 4's visual shader editor. I need to modify it programmatically at runtime and also understand how the visual nodes map to actual GLSL. How do I read the graph as code, and how do I change shader values from GDScript?",
+      "targets": [
+        "godot"
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "prog": false,
+          "text": "Maps FragmentOutput node to the void fragment() shader function body where its inputs become ALBEDO, ALPHA, NORMAL_MAP assignments"
+        },
+        {
+          "prog": false,
+          "text": "Maps Texture2D sampler node to texture(sampler_uniform, UV) GLSL call returning a vec4"
+        },
+        {
+          "prog": false,
+          "text": "Maps the Time node to the built-in TIME float and the UV node to the built-in UV vec2"
+        },
+        {
+          "prog": false,
+          "text": "Maps ColorUniform and FloatUniform nodes to uniform vec4 and uniform float declarations in the generated GLSL"
+        },
+        {
+          "prog": false,
+          "text": "Explains set_shader_parameter() is used to modify uniform values at runtime, working the same for visual or code shaders"
+        },
+        {
+          "prog": false,
+          "text": "Describes the Expression node as a way to write a raw GLSL block with named input ports and one output port inside the visual graph"
+        },
+        {
+          "prog": false,
+          "text": "States that Convert to Text (visual to code) is a one-way operation \u2014 the shader cannot be converted back to visual after conversion"
+        }
+      ]
+    },
+    {
+      "id": 82,
+      "name": "collision-layer-architecture",
+      "prompt": "How do I design the collision layer and mask setup for a 2D action game in Godot 4? I have: a player, enemies, player bullets, enemy bullets, environment/walls, and pickup items. What layers do I assign, and what are the mask rules?",
+      "targets": [
+        "godot"
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "prog": false,
+          "text": "Clearly distinguishes collision_layer (the layers a body occupies \u2014 what it IS) from collision_mask (the layers a body detects \u2014 what it can interact with)"
+        },
+        {
+          "prog": false,
+          "text": "Assigns all six object types (player, enemies, player bullets, enemy bullets, environment, pickups) to distinct dedicated layers"
+        },
+        {
+          "prog": false,
+          "text": "Shows player bullets with a mask that excludes the player who fired them (player bullets only hit world and enemies)"
+        },
+        {
+          "prog": false,
+          "text": "Shows enemy bullets with a mask that excludes enemies (enemy bullets only hit world and player)"
+        },
+        {
+          "prog": false,
+          "text": "Recommends naming layers in Project Settings \u2192 Layer Names \u2192 2D Physics before assigning any values"
+        },
+        {
+          "prog": false,
+          "text": "Shows set_collision_layer_value() / set_collision_mask_value() or bit-shift syntax for assigning layers in GDScript code"
+        }
+      ]
+    },
+    {
+      "id": 83,
+      "name": "hitbox-hurtbox-layers",
+      "prompt": "What's the cleanest way to implement hitboxes and hurtboxes in Godot 4 so that player attacks don't accidentally hit the player themselves, enemy attacks don't hit other enemies, I can control exactly which frames deal damage, and the player has invincibility frames after getting hit?",
+      "targets": [
+        "godot"
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "prog": false,
+          "text": "Defines hitbox (the Area2D that deals damage) and hurtbox (the Area2D that receives damage) as separate child nodes from the CharacterBody, each with their own CollisionShape2D"
+        },
+        {
+          "prog": false,
+          "text": "Assigns hitboxes and hurtboxes to dedicated layers separate from the CharacterBody physics layer so friendly-fire exclusion is encoded in the layer/mask system"
+        },
+        {
+          "prog": false,
+          "text": "The hurtbox connects to area_entered signal and pulls the damage value from the hitbox (hitbox exposes get_damage()); the hitbox does not push damage to the hurtbox"
+        },
+        {
+          "prog": false,
+          "text": "The hitbox CollisionShape2D starts disabled by default and is enabled only during the attack animation window (via AnimationPlayer call track or equivalent)"
+        },
+        {
+          "prog": false,
+          "text": "Uses CollisionShape2D.disabled (not Area2D.monitoring) to toggle the hitbox/hurtbox active state \u2014 disabling the shape prevents stale contact registration"
+        },
+        {
+          "prog": false,
+          "text": "Implements i-frames by disabling the hurtbox CollisionShape2D for a duration so the player is physically unable to receive damage"
+        }
+      ]
+    },
+    {
+      "id": 84,
+      "name": "signals-vs-direct-calls",
+      "prompt": "In Godot 4, when should I use signals vs direct method calls vs autoloads for cross-system communication? I'm building an inventory system that needs to update the HUD and notify the quest system whenever an item is added or removed.",
+      "targets": [
+        "godot"
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "prog": false,
+          "text": "States the directional rule: signals flow upward and sideways (child notifying parent or sibling systems); method calls flow downward (parent controlling its own child nodes)"
+        },
+        {
+          "prog": false,
+          "text": "Shows the Inventory emitting typed signals (item_added, item_count_changed) without holding any reference to the HUD or QuestSystem"
+        },
+        {
+          "prog": false,
+          "text": "Shows the scene root (Level node that owns all three systems) as the correct node to wire up connect() calls between Inventory, HUD, and QuestSystem in _ready()"
+        },
+        {
+          "prog": false,
+          "text": "Explains autoload event bus as the solution when Inventory and HUD are in different scenes and cannot share a common parent for wiring"
+        },
+        {
+          "prog": false,
+          "text": "Clarifies that direct method calls are correct when a parent controls its own child nodes (intentional, local coupling)"
+        },
+        {
+          "prog": false,
+          "text": "Recommends typed signal parameters so the editor type-checks connections at edit time rather than failing silently at runtime"
+        }
+      ]
+    },
+    {
+      "id": 85,
+      "name": "cross-system-communication",
+      "prompt": "When my player dies in my Godot 4 game, four things need to happen: the HUD lives counter decrements, the camera shakes, all enemies reset to their start positions, and a death jingle plays. What's the cleanest architecture for this, and why?",
+      "targets": [
+        "godot"
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "prog": false,
+          "text": "Player emits a player_died signal and does NOT hold direct references to HUD, CameraController, EnemyManager, or AudioManager"
+        },
+        {
+          "prog": false,
+          "text": "The scene root (Level) connects the player_died signal and dispatches to each of the four systems \u2014 it is the only node permitted to know about all systems"
+        },
+        {
+          "prog": false,
+          "text": "HUD lives counter is updated via the signal connection (not by the player calling HUD methods directly)"
+        },
+        {
+          "prog": false,
+          "text": "AudioManager is an autoload singleton for the death jingle because audio needs to play across scene boundaries without a scene-local reference"
+        },
+        {
+          "prog": false,
+          "text": "Explains why get_node() path-based coupling (/root/Level/HUD) is wrong \u2014 it breaks on scene rename/restructure and makes the player aware of scene topology"
+        }
+      ]
     }
   ]
 }
