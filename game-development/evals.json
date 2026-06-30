@@ -3127,6 +3127,146 @@
           "text": "Explains why get_node() path-based coupling (/root/Level/HUD) is wrong \u2014 it breaks on scene rename/restructure and makes the player aware of scene topology"
         }
       ]
+    },
+    {
+      "id": 86,
+      "name": "navigation-agent-3d",
+      "prompt": "I want enemies in my 3D Godot 4 game to chase the player around obstacles using pathfinding. How do I set up NavigationAgent3D correctly, and what are the common mistakes that cause enemies to get stuck or walk through walls?",
+      "targets": [
+        "godot"
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "prog": false,
+          "text": "Names NavigationRegion3D with a NavigationMesh resource as the required walkable-surface definition node"
+        },
+        {
+          "prog": false,
+          "text": "Uses set_target_position() to tell the agent where to go \u2014 explicitly avoids or warns against navigate_to() which does not exist in Godot 4"
+        },
+        {
+          "prog": false,
+          "text": "Uses get_next_path_position() every physics frame to get the next waypoint and moves toward that (not the final destination directly)"
+        },
+        {
+          "prog": false,
+          "text": "Enables avoidance_enabled on NavigationAgent3D and connects the velocity_computed signal to apply the avoidance-adjusted velocity, preventing enemies from stacking"
+        },
+        {
+          "prog": false,
+          "text": "Connects the navigation_finished signal and stops or transitions the enemy on arrival"
+        },
+        {
+          "prog": false,
+          "text": "Names agent_height and agent_radius on the NavigationMesh as properties that must match the character to block paths under low ceilings and clear walls correctly"
+        }
+      ]
+    },
+    {
+      "id": 87,
+      "name": "navmesh-baking",
+      "prompt": "My 3D Godot 4 game has procedurally generated terrain. How do I bake a NavigationMesh at runtime after the terrain is ready, handle the async bake so agents don't path before it finishes, and deal with dynamic obstacles that can open or close paths?",
+      "targets": [
+        "godot"
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "prog": false,
+          "text": "Calls bake_navigation_mesh(true) for async/threaded baking on large terrain instead of the synchronous form"
+        },
+        {
+          "prog": false,
+          "text": "Connects bake_finished signal and waits for it before activating agents or calling set_target_position()"
+        },
+        {
+          "prog": false,
+          "text": "Explains geometry_parsed_geometry_type or geometry_source_geometry_mode for controlling which scene geometry is included in the bake"
+        },
+        {
+          "prog": false,
+          "text": "Shows how to restrict the bake to a local AABB or use source groups to limit baking to relevant terrain chunks in open worlds"
+        },
+        {
+          "prog": false,
+          "text": "Distinguishes NavigationObstacle3D avoidance_enabled (real-time steering, no rebake) from permanent surface changes (rebake required)"
+        },
+        {
+          "prog": false,
+          "text": "Explains is_target_reachable() or equivalent check to detect when a path cannot be found and trigger a fallback behavior"
+        }
+      ]
+    },
+    {
+      "id": 88,
+      "name": "2d-lighting-setup",
+      "prompt": "I want to add dynamic 2D lighting to my top-down Godot 4 game \u2014 players holding torches, glowing doors, and areas of darkness that the player illuminates as they move. How do I set this up correctly?",
+      "targets": [
+        "godot"
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "prog": false,
+          "text": "States that CanvasModulate is required to darken the scene and that without it lights have no visible effect (scene defaults to fully lit white ambient)"
+        },
+        {
+          "prog": false,
+          "text": "Configures PointLight2D with texture, texture_scale, energy, and color for the torch effect"
+        },
+        {
+          "prog": false,
+          "text": "Shows shadow_enabled and shadow_filter (PCF5 or equivalent) on PointLight2D for soft shadow casting"
+        },
+        {
+          "prog": false,
+          "text": "Explains LightOccluder2D + OccluderPolygon2D for wall shadow casting, including how to set up per-tile occlusion in TileMap"
+        },
+        {
+          "prog": false,
+          "text": "Explains Light2D.item_cull_mask for keeping UI CanvasLayer fully lit while game world is darkened"
+        },
+        {
+          "prog": false,
+          "text": "States that WorldEnvironment and 3D GI nodes (LightmapGI, SDFGI) have no effect on 2D sprite lighting \u2014 2D uses a separate canvas pipeline"
+        }
+      ]
+    },
+    {
+      "id": 89,
+      "name": "2d-normal-maps",
+      "prompt": "I added a PointLight2D to my Godot 4 game and assigned a normal map to my Sprite2D, but the sprites still look completely flat \u2014 the light doesn't create any depth. What's wrong and how do I fix it?",
+      "targets": [
+        "godot"
+      ],
+      "files": [],
+      "assertions": [
+        {
+          "prog": false,
+          "text": "Identifies the import type being wrong as the most common cause: normal map texture must be imported as 'Normal Map' type in the Import panel, not as Color/sRGB"
+        },
+        {
+          "prog": false,
+          "text": "Explains how to fix it in the Import panel: select the texture, change import type to Normal Map, re-import"
+        },
+        {
+          "prog": false,
+          "text": "Names Sprite2D.normal_map as the property to assign the normal texture (not a separate material property)"
+        },
+        {
+          "prog": false,
+          "text": "Explains PointLight2D.range_height: at 0 the light is coplanar (side-shading only); set to 64\u2013128 for top-down depth shading"
+        },
+        {
+          "prog": false,
+          "text": "Names at least one external tool for generating normal maps from pixel art sprites (Laigter, Sprite Illuminator, AwesomeBump, etc.)"
+        },
+        {
+          "prog": false,
+          "text": "Addresses the AnimatedSprite2D limitation (normal map is per-frame, not a single property) or provides an alternative approach"
+        }
+      ]
     }
   ]
 }
