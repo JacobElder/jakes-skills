@@ -1,0 +1,1421 @@
+{
+  "skill_name": "representation-learning",
+  "notes": "Each eval carries the harness-required fields (id, prompt, expectations) plus a full rubric (category, skills_tested, difficulty, expected_reasoning, excellent_answer, failure_modes, scoring_rubric). 'expectations' are the machine-gradable assertions a grader subagent checks. 'ground_truth' is present where a verifiable numeric/closed-form answer exists. Difficulty: Easy/Medium/Hard/Expert. 'must_not' lists negative assertions that should FAIL a response if present; these are also folded into 'expectations'. Category 'calibration' tests proportionate response depth (over-engineering guard).",
+  "evals": [
+    {
+      "id": 1,
+      "category": "knowledge",
+      "skills_tested": [
+        "foundations",
+        "embeddings"
+      ],
+      "difficulty": "Easy",
+      "prompt": "What is the difference between word2vec embeddings and BERT embeddings? Which one should I use?",
+      "expected_reasoning": "Recognize this is partly a category error. Static (one vector per type) vs contextual (one vector per token-in-context). The 'which is better' framing should be reframed to task needs (sense disambiguation/context vs cheap type-level lexicon), and for sentence similarity neither raw option is ideal \u2014 a sentence-embedding model is.",
+      "expected_output": "A correct distinction plus a reframing of the premise and a task-dependent recommendation.",
+      "excellent_answer": "States static-vs-contextual precisely; flags that ranking them is usually a category error; notes word2vec can't disambiguate polysemy; notes raw BERT is anisotropic and not similarity-ready; recommends a purpose-built sentence-embedding model (SBERT/SimCSE/E5) for retrieval/similarity; gives the cheap-lexicon case for static.",
+      "failure_modes": [
+        "Declaring BERT simply 'better'",
+        "Recommending mean-pooled raw BERT for similarity without mentioning anisotropy",
+        "Missing the static-vs-contextual core distinction",
+        "Treating both as interchangeable sentence encoders"
+      ],
+      "scoring_rubric": "2 pts: correct static-vs-contextual distinction. 2 pts: reframes the 'which is better' premise. 2 pts: flags raw-BERT anisotropy OR recommends a sentence-embedding model for similarity. 1 pt: gives a task-dependent recommendation. 7 total.",
+      "expectations": [
+        "Distinguishes static (one vector per word type) from contextual (per token in context)",
+        "Notes word2vec cannot disambiguate word senses",
+        "Does NOT claim BERT embeddings are unconditionally better",
+        "Recommends a sentence-embedding model (e.g., SBERT/SimCSE) for similarity/retrieval rather than raw mean-pooled BERT"
+      ]
+    },
+    {
+      "id": 2,
+      "category": "knowledge",
+      "skills_tested": [
+        "generative-latent"
+      ],
+      "difficulty": "Easy",
+      "prompt": "What is the reparameterization trick in a VAE and why is it needed?",
+      "expected_reasoning": "Sampling z ~ q(z|x) is not differentiable w.r.t. the encoder parameters; rewrite z = mu + sigma * epsilon with epsilon ~ N(0,I) so the randomness is in epsilon and gradients flow through mu and sigma.",
+      "expected_output": "Correct statement of z = mu + sigma \u2299 epsilon and the differentiability rationale.",
+      "excellent_answer": "Gives the formula, explains that it moves stochasticity to an input-independent epsilon so backprop can pass through mu and sigma, and connects it to making the ELBO trainable end-to-end.",
+      "failure_modes": [
+        "Confusing it with the KL term",
+        "Saying it 'reduces variance' as the primary purpose (that's a secondary effect)",
+        "Not explaining the differentiability problem it solves"
+      ],
+      "scoring_rubric": "3 pts: correct formula. 3 pts: differentiability/backprop rationale. 1 pt: links to end-to-end ELBO training. 7 total.",
+      "ground_truth": "z = mu + sigma \u2299 epsilon, epsilon ~ N(0, I).",
+      "expectations": [
+        "States z = mu + sigma * epsilon with epsilon from N(0,I)",
+        "Explains that direct sampling is non-differentiable and the trick enables backpropagation through encoder parameters"
+      ]
+    },
+    {
+      "id": 3,
+      "category": "knowledge",
+      "skills_tested": [
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Medium",
+      "prompt": "Name the main approximate-nearest-neighbor index families used in vector databases and what each trades off.",
+      "expected_reasoning": "HNSW (graph), IVF (cluster/coarse quantization), PQ (compression), often IVF-PQ combined; ScaNN for MIPS. Each trades recall vs latency vs memory.",
+      "expected_output": "HNSW, IVF, PQ (and combos) with their trade-offs.",
+      "excellent_answer": "Describes HNSW (high recall/latency, more memory; ef_search knob), IVF (nprobe controls recall/speed), PQ (memory compression at recall cost), notes IVF-PQ is common, and mentions that MIPS needs a MIPS-aware index. Mentions evaluating recall@k vs exact.",
+      "failure_modes": [
+        "Listing only one method",
+        "Confusing PQ (compression) with IVF (partitioning)",
+        "Not mentioning the recall/latency/memory trade-offs"
+      ],
+      "scoring_rubric": "1 pt each for HNSW, IVF, PQ correctly characterized (3). 2 pts: trade-off framing. 1 pt: MIPS-awareness or recall-vs-exact eval. 6 total.",
+      "expectations": [
+        "Mentions HNSW and IVF and PQ (or IVF-PQ)",
+        "Characterizes the recall/latency/memory trade-off",
+        "Does not conflate PQ with IVF"
+      ]
+    },
+    {
+      "id": 4,
+      "category": "knowledge",
+      "skills_tested": [
+        "interpretability"
+      ],
+      "difficulty": "Medium",
+      "prompt": "What is superposition in neural networks, and what does it imply for interpretability?",
+      "expected_reasoning": "Models represent more features than dimensions via near-orthogonal directions; features that rarely co-occur share dimensions. Implies polysemantic neurons and that the unit of analysis is a direction, not a neuron; motivates SAEs.",
+      "expected_output": "Definition + polysemanticity + directions-not-neurons + SAE motivation.",
+      "excellent_answer": "Defines superposition (more features than dims, near-orthogonal directions, low interference for rare co-occurrence), explains polysemantic neurons follow, states the natural unit is a direction, and connects to why SAEs exist and why reading single neurons misleads.",
+      "failure_modes": [
+        "Describing it as just 'distributed representations' without the more-features-than-dimensions point",
+        "Missing polysemanticity",
+        "Not connecting to SAEs or directions"
+      ],
+      "scoring_rubric": "3 pts: more-features-than-dimensions / near-orthogonal directions. 2 pts: polysemantic neurons. 2 pts: SAE/direction connection. 7 total.",
+      "expectations": [
+        "States that models encode more features than they have dimensions using near-orthogonal directions",
+        "Notes neurons become polysemantic",
+        "Connects superposition to sparse autoencoders or to analyzing directions rather than neurons"
+      ]
+    },
+    {
+      "id": 5,
+      "category": "conceptual",
+      "skills_tested": [
+        "foundations"
+      ],
+      "difficulty": "Medium",
+      "prompt": "My colleague says 'a good embedding captures the true meaning of the text.' Push on that claim \u2014 is it well-defined?",
+      "expected_reasoning": "Quality is task- and metric-relative; there is no objective 'true meaning' embedding. The right reframing is 'good for what task, measured how.' Touch on the three jobs (compression/similarity/transfer) needing different geometries.",
+      "expected_output": "A reframing that 'good representation' is undefined without a downstream use and metric.",
+      "excellent_answer": "Argues there is no task-independent 'meaning' vector; the same vector can be great for retrieval and poor for linear classification; ties quality to a downstream use and a metric; notes embeddings inherit objective/data choices (not neutral); avoids the mystical framing.",
+      "failure_modes": [
+        "Agreeing that embeddings capture objective meaning",
+        "Not introducing task/metric-relativity",
+        "Treating 'meaning' as a measurable intrinsic property"
+      ],
+      "scoring_rubric": "3 pts: quality is task/metric-relative. 2 pts: same vector differs across tasks/geometries. 2 pts: embeddings are not neutral / depend on objective+data. 7 total.",
+      "expectations": [
+        "Argues embedding quality is defined relative to a downstream task and metric",
+        "Rejects the idea of a single objective 'true meaning' embedding",
+        "Notes a representation good for one use can be bad for another",
+        "Does NOT agree that an embedding captures an objective 'true meaning'"
+      ],
+      "must_not": [
+        "Does NOT agree that an embedding captures an objective 'true meaning'"
+      ]
+    },
+    {
+      "id": 6,
+      "category": "conceptual",
+      "skills_tested": [
+        "ssl-contrastive"
+      ],
+      "difficulty": "Hard",
+      "prompt": "Explain, at a mechanistic level, why BYOL doesn't collapse to a constant even though it has no negative pairs.",
+      "expected_reasoning": "Without negatives, the trivial solution is constant output. BYOL avoids it via an asymmetry: an online network with a predictor head + stop-gradient on an EMA target network. The stop-gradient and predictor break the symmetry that would otherwise let gradients drive everything to a constant; the EMA target provides a stable, slowly-moving regression target.",
+      "expected_output": "Identifies stop-gradient + predictor (+ EMA target) as the anti-collapse mechanism.",
+      "excellent_answer": "Names the predictor head and stop-gradient as load-bearing (SimSiam shows stop-gradient alone suffices), explains the EMA target's role, frames collapse as the trivial minimizer that the asymmetry avoids, and resists the myth that negatives are required to prevent collapse.",
+      "failure_modes": [
+        "Claiming BYOL secretly uses negatives",
+        "Hand-waving 'the architecture prevents it' without naming stop-gradient/predictor",
+        "Missing the EMA target's role"
+      ],
+      "scoring_rubric": "3 pts: stop-gradient + predictor identified as anti-collapse. 2 pts: EMA target role. 2 pts: frames collapse as the trivial solution being avoided by asymmetry. 7 total.",
+      "expectations": [
+        "Identifies stop-gradient and the predictor head as the collapse-prevention mechanism",
+        "Mentions the EMA/momentum target network",
+        "Does not claim BYOL uses negative pairs"
+      ]
+    },
+    {
+      "id": 7,
+      "category": "conceptual",
+      "skills_tested": [
+        "transformers-llms",
+        "interpretability"
+      ],
+      "difficulty": "Hard",
+      "prompt": "What is the 'residual stream' in a transformer and why is it the right object to think about when reasoning about its representations?",
+      "expected_reasoning": "Per-token vector that every layer reads from and writes to additively; attention routes information between positions, MLPs compute per-token features, both add into the stream. Fixed width \u2192 bottleneck \u2192 superposition. Right object because it is the shared bus the whole model communicates through.",
+      "expected_output": "Residual stream as additive shared bus; attention=routing, MLP=compute; bottleneck \u2192 superposition.",
+      "excellent_answer": "Describes read-compute-write additivity, attention as content-based routing/gathering across positions, MLPs as per-token computation/knowledge, the fixed-width bottleneck causing superposition, and why this beats thinking layer-by-layer in isolation.",
+      "failure_modes": [
+        "Describing layers as replacing rather than adding to the representation",
+        "Conflating attention's role (routing) with MLP's (computation)",
+        "Not linking the bottleneck to superposition"
+      ],
+      "scoring_rubric": "2 pts: additive read/write shared stream. 2 pts: attention=routing vs MLP=compute. 2 pts: width bottleneck \u2192 superposition. 1 pt: why it's the right frame. 7 total.",
+      "expectations": [
+        "Describes the residual stream as a per-token vector that layers read from and write to additively",
+        "Distinguishes attention (moves info between positions) from MLPs (per-token computation)",
+        "Connects the fixed-width residual stream to superposition"
+      ]
+    },
+    {
+      "id": 8,
+      "category": "conceptual",
+      "skills_tested": [
+        "evaluation",
+        "interpretability"
+      ],
+      "difficulty": "Hard",
+      "prompt": "A linear probe recovers part-of-speech from a model's layer-6 activations at 97% accuracy. A teammate concludes the model 'uses POS internally.' Is that conclusion warranted?",
+      "expected_reasoning": "No. Probe accuracy = decodability, not use. Need (a) a control task / selectivity to rule out probe memorization, and (b) an intervention (amnesic probing/INLP or activation patching) to establish causal use. 97% alone could reflect a powerful probe or linearly-present-but-unused info.",
+      "expected_output": "Distinguishes decodability from use; prescribes selectivity + intervention.",
+      "excellent_answer": "Explicitly separates 'present/decodable' from 'used'; demands a control task and selectivity (Hewitt & Liang) for the presence claim; demands amnesic probing/INLP or activation patching for the causal-use claim; notes a linear (not MLP) probe matters.",
+      "failure_modes": [
+        "Accepting the conclusion",
+        "Suggesting only a bigger/better probe",
+        "Not mentioning any causal/intervention method"
+      ],
+      "scoring_rubric": "3 pts: decodability \u2260 use. 2 pts: control task/selectivity for presence. 2 pts: intervention (amnesic/patching) for use. 7 total.",
+      "expectations": [
+        "States that probe accuracy measures decodability/accessibility, not whether the model uses the feature",
+        "Recommends a control task / selectivity to validate the presence claim",
+        "Recommends an intervention method (amnesic probing/INLP or activation patching) to test causal use",
+        "Does NOT accept the 'model uses POS internally' conclusion from probe accuracy alone"
+      ],
+      "must_not": [
+        "Does NOT accept the 'model uses POS internally' conclusion from probe accuracy alone"
+      ]
+    },
+    {
+      "id": 9,
+      "category": "comparison",
+      "skills_tested": [
+        "ssl-contrastive",
+        "transformers-llms"
+      ],
+      "difficulty": "Hard",
+      "prompt": "Compare contrastive learning and masked language modeling as representation-learning objectives. When does each give you embeddings you can use directly for cosine similarity?",
+      "expected_reasoning": "Contrastive optimizes embedding geometry (alignment+uniformity on a hypersphere) \u2192 directly usable for cosine/kNN/linear-probe. Masked modeling predicts content \u2192 rich features for fine-tuning but geometry not shaped for similarity; raw embeddings anisotropic. Hence contrastive fine-tuning (SBERT/SimCSE) bridges them.",
+      "expected_output": "Contrastive = metric-ready; masked = fine-tune-ready; bridge via contrastive fine-tuning.",
+      "excellent_answer": "Names alignment+uniformity for contrastive; notes masked-model embeddings are anisotropic/not similarity-ready; says contrastive is better off-the-shelf for retrieval and masked is strong after fine-tuning; explains SBERT/SimCSE as the bridge; avoids declaring one universally better.",
+      "failure_modes": [
+        "Saying one is simply better",
+        "Claiming raw MLM embeddings are good for cosine similarity",
+        "Missing the geometry-vs-content-prediction distinction"
+      ],
+      "scoring_rubric": "3 pts: geometry (contrastive) vs content-prediction (masked) distinction. 2 pts: contrastive usable off-the-shelf, masked needs fine-tuning. 2 pts: contrastive fine-tuning as the bridge. 7 total.",
+      "expectations": [
+        "States contrastive objectives shape embedding geometry for similarity (alignment/uniformity)",
+        "States masked-modeling embeddings are not directly metric-meaningful and shine after fine-tuning",
+        "Mentions contrastive fine-tuning (SBERT/SimCSE) to make masked-model embeddings cosine-ready",
+        "Does not declare one objective unconditionally superior"
+      ]
+    },
+    {
+      "id": 10,
+      "category": "comparison",
+      "skills_tested": [
+        "geometry-similarity-metric"
+      ],
+      "difficulty": "Medium",
+      "prompt": "When should I use cosine similarity vs Euclidean distance vs dot product for comparing embeddings? Give me a decision rule.",
+      "expected_reasoning": "On L2-normalized vectors cosine and Euclidean give identical rankings, so the real choice is whether to normalize = whether magnitude is signal. Dot product (MIPS) keeps magnitude; Euclidean for genuinely metric spaces. Decisive rule: match inference metric to the training objective's metric.",
+      "expected_output": "The normalize-or-not framing + match-the-training-metric rule, with the cosine/Euclidean identity.",
+      "excellent_answer": "States ||a-b||^2 = 2 - 2cos for unit vectors (identical ranking), so cosine-vs-Euclidean is a non-question once normalized; the decision is normalization = is magnitude signal; dot product when norm encodes confidence/frequency/popularity; match to training objective; mentions MIPS is not a metric.",
+      "failure_modes": [
+        "Saying 'just use cosine' with no reasoning",
+        "Treating cosine and Euclidean as fundamentally different on normalized vectors",
+        "Not mentioning matching the training objective"
+      ],
+      "scoring_rubric": "3 pts: cosine=Euclidean on normalized vectors (identical ranking). 2 pts: choice is whether magnitude is signal (dot product keeps it). 2 pts: match inference metric to training objective. 7 total.",
+      "ground_truth": "For unit-norm a,b: ||a-b||^2 = ||a||^2 + ||b||^2 - 2 a.b = 2 - 2 cos(a,b). Monotone in cos, so identical NN ranking.",
+      "expectations": [
+        "States that for L2-normalized vectors cosine and Euclidean produce identical nearest-neighbor rankings",
+        "Frames the real decision as whether to normalize / whether magnitude carries signal",
+        "Recommends matching the inference-time metric to the training objective's metric",
+        "Notes dot product (MIPS) preserves magnitude information"
+      ]
+    },
+    {
+      "id": 11,
+      "category": "comparison",
+      "skills_tested": [
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Medium",
+      "prompt": "Matrix factorization vs a deep neural recommender \u2014 which should I reach for, and what does the evidence say?",
+      "expected_reasoning": "MF is a bilinear representation model and a strong, hard-to-beat baseline; the Dacrema et al. 2019 audit found many neural recsys papers failed to beat tuned MF/kNN. Neural earns its keep on side info, sequences, cold start. Start with tuned MF as the baseline.",
+      "expected_output": "MF-first as baseline; neural for specific structure; cite the reproducibility critique.",
+      "excellent_answer": "Frames MF as a representation method (user/item embeddings, bilinear score), cites the reproducibility crisis, says tuned MF/iALS/BPR or item-kNN is the baseline to beat, and explains where neural genuinely helps (sequences, graphs, features, cold start) rather than 'neural is more powerful.'",
+      "failure_modes": [
+        "Assuming neural is better by default",
+        "Not knowing the reproducibility critique",
+        "Missing cold-start/side-info as the real neural advantage"
+      ],
+      "scoring_rubric": "3 pts: tuned MF as strong baseline / reproducibility critique. 2 pts: MF as a representation (embedding) method. 2 pts: where neural actually helps. 7 total.",
+      "expectations": [
+        "States a well-tuned matrix-factorization / kNN baseline is hard to beat and often beats neural recommenders",
+        "References the reproducibility concern (many neural recsys papers don't beat tuned baselines)",
+        "Identifies side information, sequences, or cold start as where neural methods genuinely help",
+        "Does NOT assume neural recommenders are better than matrix factorization by default"
+      ],
+      "must_not": [
+        "Does NOT assume neural recommenders are better than matrix factorization by default"
+      ]
+    },
+    {
+      "id": 12,
+      "category": "comparison",
+      "skills_tested": [
+        "generative-latent",
+        "foundations"
+      ],
+      "difficulty": "Hard",
+      "prompt": "Embeddings vs latent variables \u2014 are these the same thing? When would you prefer a latent-variable model over an embedding?",
+      "expected_reasoning": "Embeddings are deterministic point estimates with no generative semantics; LVMs posit a distribution over latents with a generative story (prior, posterior, likelihood). Prefer LVM for uncertainty, interpretable factors, generation, principled missingness. VAEs blur the line.",
+      "expected_output": "Point estimate vs distribution+generative story; criteria for choosing LVM.",
+      "excellent_answer": "Draws the deterministic-vs-distributional distinction, notes plain AE latents have no generative semantics while VAE/FA/IRT/topic models do, lists when to choose LVM (uncertainty, factors, generation, missingness), and notes VAEs sit at the boundary.",
+      "failure_modes": [
+        "Treating them as synonyms",
+        "Saying embeddings are 'just lower-dim latents' without the generative/distributional point",
+        "Not giving selection criteria"
+      ],
+      "scoring_rubric": "3 pts: deterministic point estimate vs distributional generative latent. 2 pts: criteria to prefer LVM. 2 pts: VAE as the boundary case / examples (FA, IRT, topic models). 7 total.",
+      "expectations": [
+        "Distinguishes deterministic point embeddings from distributional latent-variable models with a generative story",
+        "Gives criteria for preferring an LVM (uncertainty, interpretable factors, generation, or missingness)",
+        "Notes VAEs blur the boundary"
+      ]
+    },
+    {
+      "id": 13,
+      "category": "comparison",
+      "skills_tested": [
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Medium",
+      "prompt": "Bi-encoder vs cross-encoder for search relevance \u2014 explain the trade-off and the standard way to use both.",
+      "expected_reasoning": "Bi-encoder encodes query and doc independently \u2192 indexable, scalable, less accurate (no interaction). Cross-encoder scores the pair jointly \u2192 accurate, not indexable, O(N) per query. Standard: bi-encoder retrieve top-k, cross-encoder rerank. ColBERT late interaction is the middle ground.",
+      "expected_output": "The accuracy-vs-scalability trade-off + retrieve-then-rerank pattern.",
+      "excellent_answer": "Explains independent vs joint encoding, why bi-encoders are indexable and cross-encoders are not, the retrieve-then-rerank production pattern, and mentions late interaction (ColBERT) as the middle ground.",
+      "failure_modes": [
+        "Recommending a cross-encoder for first-stage retrieval at scale",
+        "Not knowing the retrieve-then-rerank pattern",
+        "Confusing which one is indexable"
+      ],
+      "scoring_rubric": "3 pts: independent (indexable) vs joint (accurate, not indexable). 2 pts: retrieve-then-rerank pattern. 2 pts: late interaction/ColBERT as middle ground. 7 total.",
+      "expectations": [
+        "Explains bi-encoders encode query and document independently and are indexable/scalable",
+        "Explains cross-encoders score the pair jointly, are more accurate but not indexable",
+        "Recommends bi-encoder retrieval followed by cross-encoder reranking"
+      ]
+    },
+    {
+      "id": 14,
+      "category": "reasoning",
+      "skills_tested": [
+        "geometry-similarity-metric",
+        "evaluation"
+      ],
+      "difficulty": "Hard",
+      "prompt": "I embedded 50k product descriptions with mean-pooled bert-base-uncased. Almost every pair has cosine similarity between 0.85 and 0.99, so the rankings are useless. Walk me through what's happening and how to fix it, in order of effort.",
+      "expected_reasoning": "Diagnose anisotropy/representation degeneration: contextual LM embeddings live in a narrow cone, so cosines are compressed and high. Fixes in order: mean-center/standardize \u2192 whitening \u2192 switch to a contrastively fine-tuned sentence model (SimCSE/SBERT/E5), which is the real fix.",
+      "expected_output": "Anisotropy diagnosis + ordered fixes ending in a sentence-embedding model.",
+      "excellent_answer": "Names anisotropy/degeneration with the cone intuition, explains why cosines compress, gives the effort-ordered remedies (centering, whitening, then a purpose-built sentence model as the proper fix), and notes mean-pooled raw BERT is a known anti-pattern for STS.",
+      "failure_modes": [
+        "Suggesting it's a bug in their code",
+        "Recommending a different distance metric as the fix (won't help an anisotropic cone)",
+        "Not mentioning a sentence-embedding model"
+      ],
+      "scoring_rubric": "3 pts: anisotropy/degeneration diagnosis. 2 pts: whitening/centering as quick fixes. 2 pts: sentence-embedding model as the real fix. 7 total.",
+      "expectations": [
+        "Diagnoses anisotropy / representation degeneration (embeddings in a narrow cone)",
+        "Explains this inflates and compresses cosine similarities",
+        "Recommends whitening or mean-centering as a quick fix",
+        "Recommends switching to a contrastively-trained sentence-embedding model as the proper fix",
+        "Does NOT propose switching the distance metric (e.g., to Euclidean/dot) as the fix for compressed cosines"
+      ],
+      "must_not": [
+        "Does NOT propose switching the distance metric (e.g., to Euclidean/dot) as the fix for compressed cosines"
+      ]
+    },
+    {
+      "id": 15,
+      "category": "reasoning",
+      "skills_tested": [
+        "ssl-contrastive",
+        "evaluation"
+      ],
+      "difficulty": "Expert",
+      "prompt": "I'm training a SimCLR-style image encoder. Loss drops nicely to near zero in a few hundred steps, but linear-probe accuracy on a held-out labeled set is at chance. What are the most likely causes, and how would you confirm each?",
+      "expected_reasoning": "Near-zero loss + chance probe \u2248 collapse or a trivial shortcut. Candidates: complete collapse (constant output) \u2014 check embedding variance/singular values; a data shortcut leaking the positive (e.g., the augmentation pipeline lets the model match on a trivial cue like border/color histogram); too-weak augmentations making the task trivial; batch too small / too few negatives; temperature mis-set. Confirm via singular-value spectrum, embedding std, nearest-neighbor sanity, and ablating augmentations.",
+      "expected_output": "Collapse/shortcut hypotheses with concrete confirmations.",
+      "excellent_answer": "Leads with collapse (complete and dimensional) and checks the singular-value spectrum / per-dim variance; raises shortcut features from weak or leaky augmentations; raises insufficient negatives / temperature; gives a concrete diagnostic for each; distinguishes 'loss solved trivially' from 'learned nothing useful.'",
+      "failure_modes": [
+        "Only suggesting 'train longer' or 'tune LR'",
+        "Not mentioning representation collapse",
+        "No concrete diagnostic to confirm a hypothesis"
+      ],
+      "scoring_rubric": "3 pts: collapse (complete/dimensional) as primary hypothesis with a diagnostic. 2 pts: augmentation shortcut/strength. 1 pt: negatives/temperature. 1 pt: concrete confirmation methods. 7 total.",
+      "expectations": [
+        "Identifies representation collapse as a leading cause of near-zero loss with chance probe accuracy",
+        "Proposes checking the singular-value spectrum or embedding variance to confirm collapse",
+        "Raises augmentation issues (too weak, or leaking a shortcut) as a candidate",
+        "Gives a concrete diagnostic for at least two distinct hypotheses",
+        "Does NOT attribute the failure solely to learning rate or training duration without considering collapse or a shortcut"
+      ],
+      "must_not": [
+        "Does NOT attribute the failure solely to learning rate or training duration without considering collapse or a shortcut"
+      ]
+    },
+    {
+      "id": 16,
+      "category": "reasoning",
+      "skills_tested": [
+        "transformers-llms",
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Hard",
+      "prompt": "I'm extracting sentence embeddings from a decoder-only LLM by taking the last token's final-layer hidden state. Retrieval quality is mediocre. Give me the three highest-leverage things to change and why.",
+      "expected_reasoning": "Decoder last-layer is objective-specialized (next-token) and anisotropic; last-token pooling is lossy. Highest leverage: (1) use a model contrastively fine-tuned for embeddings (or fine-tune with a contrastive objective) instead of raw LM; (2) reconsider pooling/layer (try a different layer; mean or weighted pooling; many embedding LLMs use last-token but with an embedding-specific objective and instructions); (3) normalize + match metric, and consider instruction-tuned embedding prompts. Don't expect a raw generative LM to be a good retriever.",
+      "expected_output": "Use a purpose-built/contrastively-tuned embedder; revisit pooling/layer; normalize/match metric.",
+      "excellent_answer": "Explains why raw decoder last-layer is poor for retrieval (objective specialization + anisotropy), prioritizes a contrastively trained embedding model, addresses pooling/layer choice, and metric/normalization; avoids treating a generative LM as a retriever out of the box.",
+      "failure_modes": [
+        "Suggesting only prompt tweaks",
+        "Not mentioning contrastive/embedding-specific training",
+        "Assuming last-layer last-token is fine"
+      ],
+      "scoring_rubric": "3 pts: use a contrastively-tuned/embedding-specific model. 2 pts: pooling/layer reconsideration. 2 pts: normalization/metric matching. 7 total.",
+      "expectations": [
+        "Recommends using or training a contrastive/embedding-specific model rather than a raw generative LM",
+        "Questions the pooling and/or layer choice",
+        "Addresses normalization and metric matching",
+        "Explains that final-layer features are specialized for next-token prediction",
+        "Does NOT claim raw final-layer last-token hidden states are fine for retrieval"
+      ],
+      "must_not": [
+        "Does NOT claim raw final-layer last-token hidden states are fine for retrieval"
+      ]
+    },
+    {
+      "id": 17,
+      "category": "application",
+      "skills_tested": [
+        "embeddings-retrieval-recsys",
+        "evaluation"
+      ],
+      "difficulty": "Hard",
+      "prompt": "We're building RAG over 2M internal support tickets (lots of product codes, error IDs, and abbreviations). Our dense-embedding retriever underperforms on exactly the queries that mention specific error codes. Diagnose and propose an architecture.",
+      "expected_reasoning": "Dense retrieval is weak on exact/rare tokens (error codes, IDs) and OOD jargon \u2014 BM25 wins there. Propose hybrid (BM25 + dense, RRF), possibly learned-sparse (SPLADE), plus a cross-encoder reranker; consider domain fine-tuning the embedder; evaluate recall@k per query-type.",
+      "expected_output": "Hybrid retrieval (lexical + dense) + rerank; per-segment eval.",
+      "excellent_answer": "Diagnoses the dense-on-exact-match weakness, prescribes hybrid (BM25 + dense via RRF) or SPLADE, adds a cross-encoder reranker, suggests domain-adapting the embedder, and insists on evaluating the error-code query slice separately (recall@k) rather than aggregate.",
+      "failure_modes": [
+        "Recommending a bigger embedding model as the fix",
+        "Not mentioning lexical/BM25 or hybrid",
+        "Aggregate-only evaluation that hides the failing slice"
+      ],
+      "scoring_rubric": "3 pts: dense-weak-on-exact diagnosis + hybrid/lexical fix. 2 pts: reranking and/or domain fine-tuning. 2 pts: per-slice evaluation. 7 total.",
+      "expectations": [
+        "Identifies that dense retrieval underperforms on exact-match/rare tokens like error codes",
+        "Proposes hybrid lexical+dense retrieval (BM25 + dense, or SPLADE)",
+        "Adds a reranking stage or domain fine-tuning",
+        "Recommends evaluating the error-code query segment separately"
+      ]
+    },
+    {
+      "id": 18,
+      "category": "application",
+      "skills_tested": [
+        "embeddings-retrieval-recsys",
+        "foundations"
+      ],
+      "difficulty": "Medium",
+      "prompt": "Startup with a brand-new marketplace: tons of new items added daily, sparse interactions. A consultant proposed pure collaborative filtering. Good idea?",
+      "expected_reasoning": "Pure CF can't embed cold-start items/users with no interactions. Need content/side-feature embeddings (two-tower) and/or hybrid; exploration (bandits). CF can layer in as interaction data accrues.",
+      "expected_output": "Flag cold start; recommend content-based / two-tower hybrid.",
+      "excellent_answer": "Names the cold-start problem precisely (no interaction row to embed), recommends a content/two-tower model so new items get representations from features, suggests hybrid as data grows, and mentions exploration. Avoids endorsing pure CF.",
+      "failure_modes": [
+        "Endorsing pure CF",
+        "Not naming cold start",
+        "No content/feature-based remedy"
+      ],
+      "scoring_rubric": "3 pts: cold-start diagnosis (CF can't embed new items). 2 pts: content/two-tower remedy. 2 pts: hybrid/exploration as data accrues. 7 total.",
+      "expectations": [
+        "Identifies the cold-start problem (CF cannot represent items/users with no interactions)",
+        "Recommends content-based / two-tower / feature-based embeddings for new items",
+        "Suggests a hybrid approach as interaction data accumulates",
+        "Does not endorse pure collaborative filtering for this setting",
+        "Does NOT endorse pure collaborative filtering for this cold-start setting"
+      ],
+      "must_not": [
+        "Does NOT endorse pure collaborative filtering for this cold-start setting"
+      ]
+    },
+    {
+      "id": 19,
+      "category": "application",
+      "skills_tested": [
+        "generative-latent",
+        "evaluation"
+      ],
+      "difficulty": "Hard",
+      "prompt": "We need a low-dimensional, smoothly-interpolatable latent for molecules so we can do gradient-based optimization in latent space. Plain autoencoder, VAE, or something else? Justify.",
+      "expected_reasoning": "Plain AE latent is not smooth/regularized \u2014 interpolation/optimization unreliable, no generative semantics. VAE gives a prior-regularized, continuous, samplable latent suited to interpolation/optimization (cf. ChemVAE). For discrete graph structure, consider VQ-VAE or graph-VAE; watch posterior collapse. Validate latent smoothness empirically.",
+      "expected_output": "VAE (regularized smooth latent) over plain AE, with caveats.",
+      "excellent_answer": "Chooses a VAE for the smooth, prior-regularized, samplable latent that supports interpolation/optimization; explains why a plain AE latent is unsuitable; flags posterior collapse risk and decoder strength; mentions graph/VQ variants for discrete structure; proposes validating latent-space smoothness.",
+      "failure_modes": [
+        "Recommending a plain AE for latent-space optimization",
+        "Not mentioning the KL/prior regularization as the reason VAE works here",
+        "Ignoring posterior collapse"
+      ],
+      "scoring_rubric": "3 pts: VAE for smooth regularized latent vs unsuitable plain AE. 2 pts: prior/KL is why the latent is usable. 2 pts: posterior collapse caveat or graph/VQ variant. 7 total.",
+      "expectations": [
+        "Recommends a VAE over a plain autoencoder for a smooth/optimizable latent",
+        "Explains the prior/KL regularization is what makes the latent smooth and samplable",
+        "Notes a plain AE latent has no generative semantics and is unreliable for interpolation",
+        "Flags posterior collapse or decoder-strength as a risk"
+      ]
+    },
+    {
+      "id": 20,
+      "category": "application",
+      "skills_tested": [
+        "transformers-llms",
+        "interpretability"
+      ],
+      "difficulty": "Hard",
+      "prompt": "Product wants to reduce an LLM assistant's sycophancy without a full fine-tune. As a representation-learning person, what concrete options would you propose and how would you validate they work?",
+      "expected_reasoning": "Representation/activation engineering: find a sycophancy direction (contrastive prompt pairs or an SAE feature), steer the residual stream against it (activation addition). Validate causally (does steering change behavior on held-out probes) and check capability regressions. Mention concept erasure (LEACE) as an alternative. Note limits (direction transfer, capability hit).",
+      "expected_output": "Steering vector / representation engineering + causal validation + caveats.",
+      "excellent_answer": "Proposes finding a direction (contrastive activations or SAE feature) and steering, frames steering as both intervention and causal test, prescribes held-out behavioral eval plus capability-regression checks, mentions erasure (LEACE/INLP) as an alternative, and is honest about limits.",
+      "failure_modes": [
+        "Only suggesting prompt engineering",
+        "Treating a steering direction as guaranteed to generalize",
+        "No capability-regression / validation plan"
+      ],
+      "scoring_rubric": "3 pts: steering vector/representation engineering proposal. 2 pts: causal validation + capability-regression checks. 2 pts: alternative (erasure) and honest limits. 7 total.",
+      "expectations": [
+        "Proposes activation steering / representation engineering (a direction added to the residual stream)",
+        "Describes finding the direction via contrastive activations or an SAE feature",
+        "Specifies validation: held-out behavioral test plus capability-regression check",
+        "Acknowledges limits (direction may not transfer; possible capability degradation)"
+      ]
+    },
+    {
+      "id": 21,
+      "category": "application",
+      "skills_tested": [
+        "foundations",
+        "evaluation"
+      ],
+      "difficulty": "Medium",
+      "prompt": "We have 4,000 labeled examples and a pretrained image encoder. Boss wants to fine-tune the whole encoder. What would you try first and why?",
+      "expected_reasoning": "With only 4k labels, full fine-tuning risks overfitting and destroying good pretrained features. Try frozen encoder + linear probe (or kNN) first \u2014 cheap, tests whether features already separate the task; then partial/LoRA fine-tuning if needed. Linear probe vs fine-tune measure different things.",
+      "expected_output": "Frozen + linear probe first; escalate only if needed.",
+      "excellent_answer": "Recommends frozen features + linear probe/kNN as the cheap first test, explains overfitting/feature-destruction risk of full fine-tune on 4k examples, escalates to partial/LoRA fine-tune, and notes probe vs fine-tune answer different questions.",
+      "failure_modes": [
+        "Endorsing full fine-tune on 4k examples without caveats",
+        "Not mentioning linear probing as the cheap first step",
+        "No escalation path"
+      ],
+      "scoring_rubric": "3 pts: frozen + linear probe first. 2 pts: overfitting risk of full fine-tune on small data. 2 pts: escalation (partial/LoRA). 7 total.",
+      "expectations": [
+        "Recommends trying a frozen encoder with a linear probe (or kNN) first",
+        "Warns that full fine-tuning on ~4k examples risks overfitting / damaging pretrained features",
+        "Provides an escalation path (partial or parameter-efficient fine-tuning)",
+        "Does NOT endorse full fine-tuning on ~4k examples without caveats"
+      ],
+      "must_not": [
+        "Does NOT endorse full fine-tuning on ~4k examples without caveats"
+      ]
+    },
+    {
+      "id": 22,
+      "category": "design",
+      "skills_tested": [
+        "ssl-contrastive",
+        "geometry-similarity-metric",
+        "evaluation"
+      ],
+      "difficulty": "Expert",
+      "prompt": "Design a representation-learning pipeline for a fashion visual-search feature: shoppers upload a photo and we return visually similar catalog items. Specify objective, data/augmentations, eval, and serving. Call out the decisions that matter most.",
+      "expected_reasoning": "Metric/contrastive learning to shape a cosine-ready space; positives from same-item different-views / catalog-photo pairs; mind augmentation choice (color is signal in fashion \u2014 don't aggressively color-jitter); hard-negative mining; ArcFace or InfoNCE; eval with recall@k/nDCG on held-out query-catalog pairs; serve with ANN (HNSW) + normalization; consider cross-encoder rerank for top-k; watch anisotropy/collapse.",
+      "expected_output": "A coherent contrastive/metric pipeline with fashion-specific augmentation caution, retrieval eval, and ANN serving.",
+      "excellent_answer": "Picks a contrastive/metric objective for a cosine-ready space; defines positives/negatives sensibly; flags that color/pattern are signal so augmentations must preserve them; includes hard-negative mining; specifies recall@k/nDCG eval against exact NN; serves via normalized embeddings + HNSW with optional rerank; calls out the highest-leverage decisions (augmentation design, negative mining, eval slice).",
+      "failure_modes": [
+        "Generic 'train a CNN classifier' with no metric objective",
+        "Color-jitter augmentation that destroys fashion-relevant signal",
+        "No retrieval-specific eval",
+        "No ANN serving plan"
+      ],
+      "scoring_rubric": "2 pts: contrastive/metric objective for a cosine-ready space. 2 pts: domain-aware augmentation (color/pattern preserved) + hard negatives. 2 pts: retrieval eval (recall@k/nDCG). 1 pt: ANN serving + normalization. 7 total.",
+      "expectations": [
+        "Specifies a contrastive or metric-learning objective producing a cosine-ready space",
+        "Designs augmentations carefully (notes color/pattern is signal in fashion, so don't destroy it)",
+        "Includes hard-negative mining or in-batch negatives",
+        "Specifies retrieval evaluation (recall@k / nDCG) against held-out pairs",
+        "Specifies ANN serving (e.g., HNSW) with L2-normalized embeddings"
+      ]
+    },
+    {
+      "id": 23,
+      "category": "design",
+      "skills_tested": [
+        "frontier-and-relationships",
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Expert",
+      "prompt": "Design a representation for a fraud-detection system over a transaction graph (accounts, devices, merchants, transfers). New accounts appear constantly. What representation approach and why?",
+      "expected_reasoning": "Need inductive node representations (new accounts constantly) \u2192 GraphSAGE/GAT (message passing from features), not transductive node2vec/DeepWalk. Combine structural + node features; watch oversmoothing (limit depth); possibly temporal/dynamic GNN. Evaluate on held-out time slice (no leakage). Consider class imbalance.",
+      "expected_output": "Inductive GNN (GraphSAGE/GAT) with feature message passing, oversmoothing caution, temporal eval.",
+      "excellent_answer": "Chooses an inductive GNN because new nodes appear (transductive shallow methods can't embed them), uses node features in message passing, limits depth to avoid oversmoothing, considers temporal/dynamic structure and leakage-free temporal splits, and addresses imbalance.",
+      "failure_modes": [
+        "Recommending node2vec/DeepWalk despite constant new nodes (transductive)",
+        "Ignoring oversmoothing",
+        "Random (not temporal) splits causing leakage"
+      ],
+      "scoring_rubric": "3 pts: inductive GNN (GraphSAGE/GAT) chosen for new-node setting. 2 pts: oversmoothing caution + feature use. 2 pts: temporal leakage-free eval. 7 total.",
+      "expectations": [
+        "Chooses an inductive GNN (GraphSAGE/GAT) because new nodes appear constantly",
+        "Explains transductive methods (node2vec/DeepWalk) can't embed unseen nodes",
+        "Mentions oversmoothing as a risk with deep GNNs",
+        "Recommends a temporal / leakage-free evaluation split"
+      ]
+    },
+    {
+      "id": 24,
+      "category": "design",
+      "skills_tested": [
+        "transformers-llms",
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Hard",
+      "prompt": "Design a reward model for RLHF on a coding assistant, and list the representation-level pitfalls you'd guard against from day one.",
+      "expected_reasoning": "Bradley-Terry head on a (code-pretrained) transformer over pairwise preferences. Pitfalls: miscalibration; length/format bias; distribution shift as policy moves; reward overoptimization/Goodhart; reward hacking via gaps. Mitigations: KL penalty to reference, RM ensembles, on-policy RM updates, calibration checks, diverse preference data; consider DPO to avoid a separate RM.",
+      "expected_output": "BT reward model + the representation pathologies (overoptimization, bias, miscalibration) + mitigations.",
+      "excellent_answer": "Specifies the Bradley-Terry objective and a code-capable backbone; frames the RM as a learned representation of 'what the preference data rewards'; enumerates overoptimization/Goodhart, length/format bias, miscalibration, distribution shift; gives mitigations (KL, ensembles, on-policy updates); mentions DPO as an RM-free alternative.",
+      "failure_modes": [
+        "Treating the RM scalar as 'what humans want'",
+        "Not mentioning reward overoptimization/Goodhart",
+        "No mitigation plan"
+      ],
+      "scoring_rubric": "2 pts: Bradley-Terry/pairwise design. 3 pts: names overoptimization/Goodhart + at least one bias (length/format) + miscalibration. 2 pts: mitigations (KL/ensembles/on-policy or DPO). 7 total.",
+      "expectations": [
+        "Specifies a Bradley-Terry / pairwise-preference reward model",
+        "Frames the reward model as a proxy representation, not literally 'what humans want'",
+        "Names reward overoptimization / Goodhart and at least one systematic bias (e.g., length)",
+        "Proposes mitigations (KL penalty, ensembles, on-policy updates, or DPO)"
+      ]
+    },
+    {
+      "id": 25,
+      "category": "debugging",
+      "skills_tested": [
+        "generative-latent"
+      ],
+      "difficulty": "Hard",
+      "prompt": "My text VAE produces fluent samples, but when I traverse the latent space the outputs barely change, and the KL term is essentially zero throughout training. What's wrong and how do I fix it?",
+      "expected_reasoning": "Classic posterior collapse \u2014 KL ~ 0 means q(z|x) -> prior, latent uninformative, the powerful autoregressive decoder reconstructs without z. Fixes: KL annealing/warm-up, free bits, weaken decoder, skip/z-injection, delta-VAE.",
+      "expected_output": "Posterior collapse diagnosis + standard remedies.",
+      "excellent_answer": "Names posterior collapse, explains KL~0 means the latent is ignored and the autoregressive decoder does the work, and lists concrete fixes (KL annealing, free bits, weaker decoder, z-injection). Notes it's a known VAE+strong-decoder pathology, not a bug.",
+      "failure_modes": [
+        "Concluding the VAE 'learned nothing' / is broken",
+        "Suggesting only more training",
+        "Not naming posterior collapse"
+      ],
+      "scoring_rubric": "3 pts: posterior collapse diagnosis (KL~0, decoder ignores z). 2 pts: powerful-decoder explanation. 2 pts: concrete fixes (annealing/free bits/weaker decoder). 7 total.",
+      "expectations": [
+        "Diagnoses posterior collapse (KL near zero, latent ignored by the decoder)",
+        "Explains a powerful autoregressive decoder reconstructs without using z",
+        "Lists concrete fixes such as KL annealing/warm-up, free bits, or weakening the decoder",
+        "Does NOT conclude the VAE is broken or 'learned nothing'"
+      ],
+      "must_not": [
+        "Does NOT conclude the VAE is broken or 'learned nothing'"
+      ]
+    },
+    {
+      "id": 26,
+      "category": "debugging",
+      "skills_tested": [
+        "evaluation",
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Hard",
+      "prompt": "Our new embedding model scored amazingly on our retrieval benchmark (recall@10 jumped from 0.71 to 0.94), but production retrieval quality didn't improve at all. What would you investigate?",
+      "expected_reasoning": "Suspect evaluation leakage/contamination: benchmark overlap with training data (the model saw the benchmark or near-duplicates), train/test near-duplicates, or the benchmark not matching the production query distribution. Also check ANN recall vs exact, metric mismatch. Investigate data provenance and rebuild a clean, distribution-matched eval.",
+      "expected_output": "Leakage/contamination + distribution-mismatch hypotheses with checks.",
+      "excellent_answer": "Leads with benchmark contamination/leakage (training saw benchmark or near-dupes), checks de-duplication across splits, questions whether the benchmark reflects production queries, checks ANN-vs-exact recall and metric match, and prescribes a clean held-out, distribution-matched eval.",
+      "failure_modes": [
+        "Trusting the benchmark jump at face value",
+        "Not considering leakage/contamination",
+        "No plan to build a clean eval"
+      ],
+      "scoring_rubric": "3 pts: leakage/contamination as primary hypothesis. 2 pts: benchmark-vs-production distribution mismatch. 2 pts: concrete checks (dedupe, provenance, clean eval). 7 total.",
+      "expectations": [
+        "Suspects benchmark leakage/contamination or train-test near-duplicates",
+        "Questions whether the benchmark matches the production query distribution",
+        "Proposes building a clean, de-duplicated, distribution-matched evaluation",
+        "Considers ANN-vs-exact recall or metric mismatch as secondary causes",
+        "Does NOT accept the benchmark improvement at face value as real quality gain"
+      ],
+      "must_not": [
+        "Does NOT accept the benchmark improvement at face value as real quality gain"
+      ]
+    },
+    {
+      "id": 27,
+      "category": "debugging",
+      "skills_tested": [
+        "geometry-similarity-metric",
+        "evaluation"
+      ],
+      "difficulty": "Medium",
+      "prompt": "A teammate clustered our user embeddings, ran UMAP, saw five tight well-separated blobs, and concluded we have five clean user segments with the big blob being our core users. How much should we trust this?",
+      "expected_reasoning": "UMAP/t-SNE cluster sizes, inter-cluster distances, and density are largely artifacts of n_neighbors/min_dist/perplexity \u2014 not trustworthy. Blob 'tightness' and 'bigness' don't mean what they think. Validate with clustering in the original space (and stability), metrics, multiple hyperparameters; treat UMAP as hypothesis-generation for local structure only.",
+      "expected_output": "Don't trust UMAP geometry; validate in original space.",
+      "excellent_answer": "Explains UMAP/t-SNE distort cluster size/separation/density and depend on hyperparameters, that 'big blob = core users' is unjustified from the projection, and prescribes validating clusters in the original space with stability across seeds/hyperparameters and proper metrics.",
+      "failure_modes": [
+        "Accepting the five-segment conclusion",
+        "Not mentioning the projection-artifact problem",
+        "No original-space validation"
+      ],
+      "scoring_rubric": "3 pts: UMAP/t-SNE geometry (sizes/distances/density) is artifactual. 2 pts: the specific 'big blob/tight blobs' claims are unjustified. 2 pts: validate in original space across hyperparameters. 7 total.",
+      "expectations": [
+        "States UMAP/t-SNE cluster sizes, distances, and density are largely artifacts of hyperparameters",
+        "Says the 'five clean segments' / 'big blob = core users' conclusion is not justified by the projection",
+        "Recommends validating clusters in the original embedding space across multiple settings",
+        "Does NOT accept the five-segment / 'big blob = core users' conclusion from the UMAP plot"
+      ],
+      "must_not": [
+        "Does NOT accept the five-segment / 'big blob = core users' conclusion from the UMAP plot"
+      ]
+    },
+    {
+      "id": 28,
+      "category": "debugging",
+      "skills_tested": [
+        "ssl-contrastive",
+        "evaluation"
+      ],
+      "difficulty": "Expert",
+      "prompt": "Our self-supervised audio encoder gets 80% linear-probe accuracy, but the singular values of the embedding matrix drop off a cliff after ~20 dimensions out of 512. Is this a problem? What is it, and does it matter for our use case (we serve nearest-neighbor retrieval)?",
+      "expected_reasoning": "This is dimensional collapse: embeddings occupy a ~20-dim subspace of 512. Not 'broken' (probe still works) but it wastes capacity, can hurt retrieval discrimination and robustness, and signals the objective under-uses dimensions. For NN retrieval it can degrade fine-grained discrimination and make the effective space cramped. Mitigate via VICReg covariance term, whitening, or revisiting augmentations/temperature.",
+      "expected_output": "Dimensional collapse identification + whether it matters for retrieval + mitigations.",
+      "excellent_answer": "Names dimensional collapse precisely (subspace occupancy via the singular spectrum), distinguishes it from complete collapse, explains it can still probe well yet hurt retrieval discrimination/robustness, and gives mitigations (VICReg covariance, whitening, augmentation/temperature). Judges relevance to the NN-retrieval use case.",
+      "failure_modes": [
+        "Saying it's fine because the probe works",
+        "Calling it complete collapse",
+        "No mitigation or relevance judgment for retrieval"
+      ],
+      "scoring_rubric": "3 pts: dimensional collapse identified via singular spectrum (vs complete collapse). 2 pts: probe-ok-but-retrieval-affected judgment. 2 pts: mitigations (VICReg/whitening/augmentation). 7 total.",
+      "expectations": [
+        "Identifies dimensional collapse (embeddings occupying a low-dimensional subspace)",
+        "Distinguishes it from complete collapse and notes probe accuracy can still be decent",
+        "Judges that it can hurt nearest-neighbor retrieval discrimination",
+        "Suggests mitigations such as a decorrelation/covariance term (VICReg), whitening, or augmentation/temperature changes",
+        "Does NOT conclude the embedding is fine merely because linear-probe accuracy is high",
+        "Does NOT label this complete collapse"
+      ],
+      "must_not": [
+        "Does NOT conclude the embedding is fine merely because linear-probe accuracy is high",
+        "Does NOT label this complete collapse"
+      ]
+    },
+    {
+      "id": 29,
+      "category": "debugging",
+      "skills_tested": [
+        "frontier-and-relationships",
+        "geometry-similarity-metric"
+      ],
+      "difficulty": "Hard",
+      "prompt": "We're using CLIP to retrieve product images from text queries. Within-modality similarity (text-text, image-image) looks great, but text-to-image cosine scores are all low and weirdly compressed, even for correct matches. Bug?",
+      "expected_reasoning": "Not a bug \u2014 the modality gap: CLIP image and text embeddings occupy separate cones, so cross-modal cosines are systematically lower than within-modality, even for true pairs. Rankings can still be valid; absolute thresholds set on within-modality scores won't transfer. Mitigate by calibrating thresholds per direction, gap-closing transforms, or fine-tuning.",
+      "expected_output": "Modality-gap explanation; rankings vs absolute thresholds; mitigations.",
+      "excellent_answer": "Names the modality gap (separate cones for image vs text), explains why cross-modal cosines are low/compressed even for matches, notes rankings can still be meaningful while absolute thresholds don't transfer across modalities, and suggests per-direction calibration / gap mitigation / fine-tuning.",
+      "failure_modes": [
+        "Calling it a bug",
+        "Expecting cross-modal cosines to be on the same scale as within-modality",
+        "Setting a single global threshold across modalities"
+      ],
+      "scoring_rubric": "3 pts: modality gap identified (separate cones). 2 pts: rankings-can-be-fine vs absolute-thresholds-don't-transfer. 2 pts: mitigation (calibration/gap-closing/fine-tune). 7 total.",
+      "expectations": [
+        "Identifies the modality gap (image and text embeddings occupy separate regions/cones)",
+        "Explains cross-modal cosine scores are systematically lower/compressed even for correct matches",
+        "Notes rankings may still be valid while absolute thresholds don't transfer across modalities",
+        "Is not satisfied with 'it's a bug'",
+        "Does NOT conclude it is a bug",
+        "Does NOT expect cross-modal cosine scores to be on the same scale as within-modality scores"
+      ],
+      "must_not": [
+        "Does NOT conclude it is a bug",
+        "Does NOT expect cross-modal cosine scores to be on the same scale as within-modality scores"
+      ]
+    },
+    {
+      "id": 30,
+      "category": "adversarial",
+      "skills_tested": [
+        "geometry-similarity-metric"
+      ],
+      "difficulty": "Hard",
+      "prompt": "Cosine similarity ignores vector magnitude and only cares about direction, while Euclidean distance uses magnitude, so they fundamentally measure different things and you should pick based on whether magnitude matters. True?",
+      "expected_reasoning": "Half-right but the framing hides the key fact: on L2-normalized vectors cosine and Euclidean give identical rankings. The real lever is normalization. The statement is true only for un-normalized vectors; the trap is implying cosine and Euclidean are inherently different even after normalization.",
+      "expected_output": "Correct the subtle error: the distinction collapses under normalization.",
+      "excellent_answer": "Affirms the magnitude point but corrects the implication: once you L2-normalize, cosine and Euclidean rank identically (||a-b||^2 = 2 - 2cos), so the operative decision is whether to normalize, not 'cosine vs Euclidean.' Distinguishes dot product (keeps magnitude) as the real magnitude-sensitive choice.",
+      "failure_modes": [
+        "Fully agreeing without the normalization correction",
+        "Not stating the identity on normalized vectors",
+        "Conflating Euclidean-on-raw with the magnitude question that dot product actually answers"
+      ],
+      "scoring_rubric": "3 pts: corrects to 'identical under normalization.' 2 pts: states the identity. 2 pts: dot product as the genuine magnitude-sensitive option. 7 total.",
+      "ground_truth": "Unit vectors: ||a-b||^2 = 2 - 2 cos(a,b); cosine and Euclidean give identical rankings.",
+      "expectations": [
+        "Corrects the framing: on L2-normalized vectors cosine and Euclidean produce identical rankings",
+        "Identifies normalization as the real decision",
+        "Does not simply agree that cosine and Euclidean fundamentally differ regardless of normalization",
+        "Does NOT simply agree that cosine and Euclidean fundamentally differ regardless of normalization"
+      ],
+      "must_not": [
+        "Does NOT simply agree that cosine and Euclidean fundamentally differ regardless of normalization"
+      ]
+    },
+    {
+      "id": 31,
+      "category": "adversarial",
+      "skills_tested": [
+        "embeddings-retrieval-recsys",
+        "foundations"
+      ],
+      "difficulty": "Medium",
+      "prompt": "word2vec proves that embeddings learn real semantic structure because king - man + woman = queen. Walk me through why this is such strong evidence.",
+      "expected_reasoning": "The premise overstates a brittle, cherry-picked result. Analogy arithmetic works on selected examples, the standard implementation excludes the query words from the candidate set (which inflates apparent success), and it fails on many analogies (Linzen 2016). It's suggestive of linear structure, not 'proof.'",
+      "expected_output": "Push back on the overclaim; explain the brittleness and the excluded-words caveat.",
+      "excellent_answer": "Declines the overclaim, explains analogies are cherry-picked and brittle, notes the standard eval excludes the input words from the answer candidates (a methodological inflation), cites that many analogies fail, and reframes it as weak/suggestive evidence of approximate linear structure rather than proof of 'real semantics.'",
+      "failure_modes": [
+        "Endorsing the analogy as strong proof",
+        "Not knowing the excluded-words methodological detail",
+        "Treating the cartoon as robust"
+      ],
+      "scoring_rubric": "3 pts: rejects the overclaim, notes brittleness/cherry-picking. 2 pts: excluded-input-words caveat. 2 pts: reframes as suggestive of linear structure, not proof. 7 total.",
+      "expectations": [
+        "Pushes back on treating the king-man+woman example as strong proof",
+        "Notes analogy arithmetic is brittle/cherry-picked and often fails",
+        "Mentions the standard evaluation excludes the query words from the candidate answers",
+        "Does NOT endorse the king-man+woman analogy as strong proof that word2vec understands meaning"
+      ],
+      "must_not": [
+        "Does NOT endorse the king-man+woman analogy as strong proof that word2vec understands meaning"
+      ]
+    },
+    {
+      "id": 32,
+      "category": "adversarial",
+      "skills_tested": [
+        "interpretability",
+        "evaluation"
+      ],
+      "difficulty": "Expert",
+      "prompt": "We trained a sparse autoencoder on our model's activations, it reconstructs them with 92% variance explained, and we found a clean 'deception' feature. So we've found the model's deception mechanism, right?",
+      "expected_reasoning": "Multiple traps. (1) Reconstruction fidelity (92% variance) does not prove faithfulness \u2014 the SAE basis may not be the model's computational units. (2) Finding a feature that activates on 'deception'-looking inputs is decodability/correlation, not a demonstrated mechanism. (3) Feature splitting means feature identity depends on dictionary width. Need causal validation (clamp/steer the feature and measure behavior; activation patching) and skepticism about labeling.",
+      "expected_output": "Reject the overclaim; reconstruction \u2260 faithfulness; need causal tests; feature-splitting caveat.",
+      "excellent_answer": "Separates reconstruction from faithfulness, warns that an interpretable-looking feature is a hypothesis not a mechanism, raises feature splitting / width dependence, and demands causal validation (steering/clamping the feature, activation patching) plus careful labeling before claiming a 'deception mechanism.'",
+      "failure_modes": [
+        "Accepting that a clean feature = the mechanism",
+        "Treating 92% variance as faithfulness",
+        "No causal validation; ignoring feature splitting"
+      ],
+      "scoring_rubric": "3 pts: reconstruction \u2260 faithfulness / feature is a hypothesis not a mechanism. 2 pts: causal validation required (steer/patch). 2 pts: feature-splitting/width-dependence or labeling skepticism. 7 total.",
+      "expectations": [
+        "States reconstruction fidelity does not equal faithfulness to the model's computation",
+        "Treats the interpretable feature as a hypothesis, not a demonstrated mechanism",
+        "Demands causal validation (steering/clamping the feature or activation patching)",
+        "Raises feature splitting / dependence on dictionary width or labeling skepticism",
+        "Does NOT accept that a clean interpretable feature equals the model's mechanism",
+        "Does NOT treat 92% variance explained (reconstruction) as faithfulness"
+      ],
+      "must_not": [
+        "Does NOT accept that a clean interpretable feature equals the model's mechanism",
+        "Does NOT treat 92% variance explained (reconstruction) as faithfulness"
+      ]
+    },
+    {
+      "id": 33,
+      "category": "adversarial",
+      "skills_tested": [
+        "generative-latent",
+        "evaluation"
+      ],
+      "difficulty": "Hard",
+      "prompt": "We used a beta-VAE and got nicely disentangled factors on our dataset with one good run. Disentanglement basically solves interpretable representation learning for us, agreed?",
+      "expected_reasoning": "No. Locatello et al. 2019: unsupervised disentanglement is impossible without inductive biases/supervision, and results are dominated by seed/hyperparameters; one good run is weak evidence and unsupervised model selection is unreliable. Need a metric, variance across seeds, and a supervision/bias story.",
+      "expected_output": "Invoke the impossibility result; demand seed variance + metric + supervision.",
+      "excellent_answer": "Cites the impossibility/identifiability result, explains one-good-seed is not evidence given seed dominance, requires reporting variance across seeds and a disentanglement metric (and its limits), and notes unsupervised model selection can't reliably pick disentangled models. Declines the overclaim.",
+      "failure_modes": [
+        "Agreeing disentanglement is solved",
+        "Not knowing the impossibility result",
+        "Accepting single-run evidence"
+      ],
+      "scoring_rubric": "3 pts: impossibility-without-bias result. 2 pts: seed/hyperparameter dominance \u2192 one run is weak. 2 pts: needs metric + variance + supervision story. 7 total.",
+      "expectations": [
+        "Invokes that unsupervised disentanglement is impossible without inductive biases/supervision (Locatello et al.)",
+        "States results are dominated by random seed/hyperparameters, so one good run is weak evidence",
+        "Requires reporting variance across seeds and a disentanglement metric with caveats",
+        "Does NOT agree that disentanglement is solved",
+        "Does NOT accept a single good run as sufficient evidence"
+      ],
+      "must_not": [
+        "Does NOT agree that disentanglement is solved",
+        "Does NOT accept a single good run as sufficient evidence"
+      ]
+    },
+    {
+      "id": 34,
+      "category": "adversarial",
+      "skills_tested": [
+        "foundations",
+        "evaluation"
+      ],
+      "difficulty": "Medium",
+      "prompt": "Higher-dimensional embeddings are strictly more expressive, so if compute allows we should always use the largest embedding dimension available. Right?",
+      "expected_reasoning": "No. Beyond the manifold's needs, extra dimensions add noise, anisotropy, storage/latency cost, and can hurt retrieval; dimension is a tuned hyperparameter. Matryoshka embeddings exist to truncate. 'Strictly more expressive' ignores generalization and the bias-variance/efficiency trade-off.",
+      "expected_output": "Reject 'bigger is always better'; dimension is tuned; mention Matryoshka.",
+      "excellent_answer": "Explains diminishing/negative returns past intrinsic dimensionality, costs (memory/latency/anisotropy), that dimension is tuned to the task, and mentions Matryoshka embeddings for truncation. Declines the 'strictly more expressive' framing.",
+      "failure_modes": [
+        "Agreeing bigger is always better",
+        "Not mentioning cost/anisotropy/generalization",
+        "No notion of tuning dimension"
+      ],
+      "scoring_rubric": "3 pts: rejects 'bigger is always better' with reasoning (noise/anisotropy/cost). 2 pts: dimension as tuned hyperparameter. 2 pts: Matryoshka or intrinsic-dimension framing. 7 total.",
+      "expectations": [
+        "Rejects 'always use the largest dimension' framing",
+        "Notes extra dimensions add noise/anisotropy/cost and can hurt performance",
+        "Treats dimension as a hyperparameter to tune (optionally mentions Matryoshka embeddings)",
+        "Does NOT agree that more dimensions is always better"
+      ],
+      "must_not": [
+        "Does NOT agree that more dimensions is always better"
+      ]
+    },
+    {
+      "id": 35,
+      "category": "triggering",
+      "skills_tested": [
+        "foundations",
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Medium",
+      "prompt": "I need to deduplicate a list of 500 company names that have typos and formatting differences (e.g., 'IBM', 'I.B.M.', 'ibm corp'). What's the best approach?",
+      "expected_reasoning": "This is mostly a string/fuzzy-matching + normalization problem, not a representation-learning problem. Edit distance, normalization, blocking, maybe a learned matcher only if scale/semantics demand it. Recognize that throwing semantic embeddings at it is overkill and may even mis-match ('Apple Inc' vs 'Apple Corps').",
+      "expected_output": "Recommend string-similarity / entity-resolution; note embeddings are usually overkill here.",
+      "excellent_answer": "Recommends normalization + edit-distance/token-based fuzzy matching / entity resolution as the right tool, explains semantic embeddings are overkill and can mis-match for this exact-identity task, and only escalates to learned representations if there's real semantic variation at scale. Demonstrates knowing when representation learning is NOT the answer.",
+      "failure_modes": [
+        "Reflexively recommending embeddings/vector search for near-exact string dedup",
+        "Not mentioning normalization/edit distance",
+        "Overengineering"
+      ],
+      "scoring_rubric": "3 pts: recommends string/fuzzy/entity-resolution as the primary tool. 2 pts: explains embeddings are overkill/risky here. 2 pts: sensible escalation criteria. 7 total.",
+      "expectations": [
+        "Recommends string-similarity / fuzzy-matching / entity-resolution methods (normalization, edit distance) as the primary approach",
+        "Notes that semantic embeddings are usually overkill or risky for near-exact name dedup",
+        "Does not reflexively jump to vector embeddings as the main solution",
+        "Does NOT reflexively recommend semantic embeddings / vector search as the primary tool"
+      ],
+      "must_not": [
+        "Does NOT reflexively recommend semantic embeddings / vector search as the primary tool"
+      ]
+    },
+    {
+      "id": 36,
+      "category": "triggering",
+      "skills_tested": [
+        "foundations"
+      ],
+      "difficulty": "Medium",
+      "prompt": "I have 800 rows of tabular customer data (age, income, tenure, plan type, 12 numeric usage features) and want to predict churn. Should I learn embeddings of the customers first?",
+      "expected_reasoning": "Probably not as step one. On small tabular data, gradient-boosted trees on the raw/engineered features are the strong baseline; learned embeddings help mainly for high-cardinality categoricals or when you'll reuse the representation. Recognize representation learning is not the default here.",
+      "expected_output": "GBT baseline first; embeddings only for high-cardinality categoricals or reuse.",
+      "excellent_answer": "Recommends a gradient-boosted-tree baseline on the tabular features first, explains learned embeddings are usually unnecessary for small tabular churn and mainly help high-cardinality categoricals or representation reuse, and avoids overengineering. Shows judgment about when rep learning is and isn't warranted.",
+      "failure_modes": [
+        "Recommending deep embeddings as the default for small tabular data",
+        "Not mentioning GBT/tree baselines",
+        "Overcomplicating"
+      ],
+      "scoring_rubric": "3 pts: GBT/tree baseline first for tabular. 2 pts: embeddings only for high-cardinality categoricals or reuse. 2 pts: avoids overengineering / clear judgment. 7 total.",
+      "expectations": [
+        "Recommends gradient-boosted trees (or similar) on the tabular features as the baseline",
+        "States learned customer embeddings are usually unnecessary here, helping mainly with high-cardinality categoricals or representation reuse",
+        "Does not default to deep representation learning for small tabular data",
+        "Does NOT default to deep learned embeddings for this small tabular problem"
+      ],
+      "must_not": [
+        "Does NOT default to deep learned embeddings for this small tabular problem"
+      ]
+    },
+    {
+      "id": 37,
+      "category": "multi-step",
+      "skills_tested": [
+        "embeddings-retrieval-recsys",
+        "transformers-llms",
+        "foundations"
+      ],
+      "difficulty": "Expert",
+      "prompt": "Sketch end-to-end how a modern 'related products you might like' system fits together, and trace how representation learning shows up at each stage: candidate generation, ranking, and learning from user feedback.",
+      "expected_reasoning": "Integrate multiple subfields: candidate generation = two-tower embeddings + ANN (retrieval); ranking = a richer model with cross features (and possibly a cross-encoder-like interaction); learning from feedback = implicit-feedback preference modeling (BPR-style pairwise / logged-feedback) feeding back into the embeddings; cold start via content features; the whole thing is a stack of learned representations with a retrieve-then-rank shape mirroring search.",
+      "expected_output": "A coherent retrieve\u2192rank\u2192learn pipeline naming the representation at each stage.",
+      "excellent_answer": "Describes two-tower candidate generation with ANN, a heavier ranker with cross/context features, preference learning from implicit feedback (pairwise/BPR or logged) updating the representations, cold-start via content embeddings, and explicitly connects the retrieve-then-rank shape to search and the feedback loop to preference modeling. Synthesizes across subfields cleanly.",
+      "failure_modes": [
+        "Describing only one stage",
+        "Not connecting feedback to preference modeling",
+        "Missing cold start or the retrieve-vs-rank distinction"
+      ],
+      "scoring_rubric": "2 pts: two-tower + ANN candidate generation. 2 pts: ranking stage with cross/context features. 2 pts: feedback as preference modeling updating representations. 1 pt: cold-start/content + retrieve-then-rank framing. 7 total.",
+      "expectations": [
+        "Describes candidate generation via two-tower embeddings + ANN retrieval",
+        "Describes a separate ranking stage with richer cross/context features",
+        "Connects learning from user feedback to preference modeling (implicit feedback / pairwise / BPR)",
+        "Mentions cold start handled via content/feature embeddings"
+      ]
+    },
+    {
+      "id": 38,
+      "category": "multi-step",
+      "skills_tested": [
+        "foundations",
+        "frontier-and-relationships",
+        "generative-latent"
+      ],
+      "difficulty": "Expert",
+      "prompt": "A psychometrician on our team says our IRT model and our deep-learning team's embeddings are 'the same idea.' Is she right? Trace the connection precisely, including where the analogy breaks.",
+      "expected_reasoning": "Largely right at the core: IRT estimates latent person-ability and item-parameter vectors from responses via a logistic model \u2014 a logistic/low-rank matrix factorization, i.e. representation learning of latent traits. Connection: both learn latent codes that explain observations; 2PL discrimination ~ item embedding direction/scale. Where it breaks: IRT is a generative LVM with uncertainty, identifiability constraints, interpretable parameters, and strong assumptions (unidimensionality, conditional independence); generic embeddings are point estimates, high-dim, uninterpretable, no calibrated uncertainty. So 'same idea' (latent representation of structured data) yes; 'same object' no.",
+      "expected_output": "Affirm the latent-representation connection (IRT ~ logistic MF), then name the LVM-vs-point-estimate breakpoints.",
+      "excellent_answer": "Maps IRT to logistic/low-rank matrix factorization and latent-trait representation learning, draws the precise correspondences (abilities/items as embeddings, discrimination as scale/direction), then names where it breaks (generative/uncertainty/identifiability/interpretability/assumptions vs deterministic high-dim uninterpretable embeddings). Genuinely cross-field synthesis.",
+      "failure_modes": [
+        "Saying they're unrelated",
+        "Saying they're identical with no breakpoints",
+        "Not identifying IRT as latent-variable/matrix-factorization"
+      ],
+      "scoring_rubric": "3 pts: IRT as latent-trait representation learning / logistic MF. 2 pts: precise correspondences. 2 pts: where the analogy breaks (LVM/uncertainty/interpretability vs point embeddings). 7 total.",
+      "expectations": [
+        "Identifies IRT as latent-variable representation learning / a logistic (low-rank) matrix factorization",
+        "Draws specific correspondences (person abilities and item parameters as embeddings)",
+        "Names where the analogy breaks (IRT is generative with uncertainty/interpretability/identifiability constraints; embeddings are high-dim deterministic point estimates)"
+      ]
+    },
+    {
+      "id": 39,
+      "category": "generalization",
+      "skills_tested": [
+        "ssl-contrastive",
+        "foundations"
+      ],
+      "difficulty": "Expert",
+      "prompt": "I work in genomics. I have millions of unlabeled DNA sequences and very few labels. I've never done deep learning. Using representation-learning principles, how should I think about getting useful representations of these sequences, and what are the domain-specific traps?",
+      "expected_reasoning": "Transfer the SSL playbook: pretrain self-supervised on abundant unlabeled sequences (masked modeling a la DNABERT/Nucleotide Transformer, or contrastive), then linear-probe/fine-tune on the few labels. Domain traps: what counts as a valid 'augmentation'/positive for DNA (reverse-complement equivalence is a real invariance; random mutations may not be label-preserving), tokenization (k-mers vs BPE), extreme sequence length, train/test leakage from homologous sequences (must split by family/organism, not randomly), and class imbalance.",
+      "expected_output": "SSL pretrain \u2192 probe/fine-tune, with DNA-specific invariances, tokenization, and homology-leakage traps.",
+      "excellent_answer": "Maps the abundant-unlabeled/scarce-label setting to SSL pretraining + linear probe/fine-tune, reasons about valid invariances (reverse-complement) and which augmentations are label-preserving, flags tokenization and length, and crucially warns about homology-based leakage (split by family/organism). Transfers principles, not just names methods.",
+      "failure_modes": [
+        "Generic 'use a neural net' with no SSL/transfer structure",
+        "Proposing label-destroying augmentations",
+        "Missing homology/leakage splitting trap"
+      ],
+      "scoring_rubric": "3 pts: SSL pretrain + probe/fine-tune mapping. 2 pts: domain-valid invariances/augmentations (e.g., reverse-complement) and which preserve labels. 2 pts: homology leakage split (and/or tokenization/length). 7 total.",
+      "expectations": [
+        "Maps the setting to self-supervised pretraining on unlabeled sequences then linear-probe/fine-tune on the few labels",
+        "Reasons about domain-valid invariances/augmentations (e.g., reverse-complement) and that some augmentations may not preserve labels",
+        "Warns about homology-based train/test leakage (split by family/organism, not randomly)"
+      ]
+    },
+    {
+      "id": 40,
+      "category": "generalization",
+      "skills_tested": [
+        "geometry-similarity-metric",
+        "evaluation"
+      ],
+      "difficulty": "Hard",
+      "prompt": "A neuroscientist asks: I recorded population activity from 200 neurons across two animals doing the same task. How can I tell if the two animals learned 'the same representation'? Use ML representation-analysis tools.",
+      "expected_reasoning": "Cross-system representation comparison: you can't compare neuron-by-neuron (different neurons), and raw distances aren't aligned. Use representation-similarity tools invariant to the right transforms: RSA (compare distance/RDM matrices), CKA (orthogonal/scale invariant), or Procrustes alignment. These are exactly the cross-model comparison tools. Caveats: invariances assumed, sampling/noise, what 'same' means.",
+      "expected_output": "RSA/CKA/Procrustes for cross-system comparison; can't go neuron-by-neuron.",
+      "excellent_answer": "Recognizes this as cross-system representational comparison, rules out per-neuron matching and raw cosine, prescribes RSA (RDM comparison, the neuroscience-native tool) and/or CKA/Procrustes, explains the invariances each assumes, and notes caveats (noise, what counts as 'same'). Cleanly transfers ML rep-comparison tools to neuroscience.",
+      "failure_modes": [
+        "Suggesting neuron-by-neuron correlation",
+        "Using raw cosine across the two unaligned spaces",
+        "Not naming RSA/CKA"
+      ],
+      "scoring_rubric": "3 pts: RSA/CKA/Procrustes for cross-system comparison. 2 pts: rules out per-neuron / raw-distance comparison. 2 pts: invariances/caveats. 7 total.",
+      "expectations": [
+        "Recommends representational-similarity tools (RSA, CKA, or Procrustes) for comparing the two systems",
+        "Explains you cannot compare neuron-by-neuron or with raw cosine across unaligned spaces",
+        "Notes the invariances these methods assume or other caveats"
+      ]
+    },
+    {
+      "id": 41,
+      "category": "advanced-research",
+      "skills_tested": [
+        "foundations",
+        "frontier-and-relationships"
+      ],
+      "difficulty": "Expert",
+      "prompt": "Someone cites the information-bottleneck theory as the explanation for why deep nets generalize, pointing to the 'compression phase' during training. How should I represent the state of that debate?",
+      "expected_reasoning": "Present it as contested. Tishby & Schwartz-Ziv (2017) claimed an SGD compression phase causing generalization; Saxe et al. (2018) showed the compression phase is largely an artifact of saturating (tanh) nonlinearities and doesn't appear with ReLU, plus MI in deterministic continuous nets is ill-defined without binning choices. IB is a useful design objective (deep variational IB) but the strong explanatory claim is not settled.",
+      "expected_output": "Frame as contested: cite both sides; separate IB-as-objective (useful) from IB-as-explanation (disputed).",
+      "excellent_answer": "Lays out both positions, names the tanh-vs-ReLU artifact critique and the MI-estimation issue, and cleanly separates 'IB as a useful objective/intuition' from 'IB as the proven mechanism of generalization,' refusing to present it as settled.",
+      "failure_modes": [
+        "Presenting IB compression as established fact",
+        "Not knowing the Saxe et al. critique",
+        "Conflating IB-as-objective with IB-as-explanation"
+      ],
+      "scoring_rubric": "3 pts: frames as contested with both sides. 2 pts: tanh-artifact / MI-estimation critique. 2 pts: separates objective from explanation. 7 total.",
+      "expectations": [
+        "Frames the information-bottleneck 'compression phase' explanation as contested, not established",
+        "References the critique that the compression phase is an artifact of saturating nonlinearities (tanh vs ReLU)",
+        "Distinguishes IB as a useful objective from IB as a proven explanation of generalization"
+      ]
+    },
+    {
+      "id": 42,
+      "category": "advanced-research",
+      "skills_tested": [
+        "frontier-and-relationships",
+        "evaluation"
+      ],
+      "difficulty": "Expert",
+      "prompt": "Make the strongest case FOR and the strongest case AGAINST the claim that sparse autoencoders give us the model's 'true features.' Then state where you land.",
+      "expected_reasoning": "For: superposition predicts an overcomplete sparse basis; SAEs recover strikingly monosemantic, human-labelable directions that can be steered (causal handle); scales to frontier models. Against: reconstruction fidelity is not faithfulness; feature splitting makes feature identity width-dependent; SAEs can miss used features and surface dataset features the model doesn't use; the sparse-linear-feature assumption may not hold for all computation; downstream usefulness vs simpler baselines is contested. Land somewhere honest: best current hypothesis-generation tool for features, not a proven decoder of the model's computation.",
+      "expected_output": "A genuine steelman both ways + a calibrated, honest conclusion.",
+      "excellent_answer": "Gives a real for-case (superposition rationale, monosemanticity, steerability, scaling) and a real against-case (faithfulness vs reconstruction, feature splitting/width dependence, missed/spurious features, contested downstream value), then lands on a calibrated position rather than hype or dismissal.",
+      "failure_modes": [
+        "One-sided hype or dismissal",
+        "Missing feature splitting or reconstruction-vs-faithfulness",
+        "No clear, calibrated landing"
+      ],
+      "scoring_rubric": "2 pts: strong for-case. 3 pts: strong against-case (faithfulness + feature splitting at least). 2 pts: calibrated honest conclusion. 7 total.",
+      "expectations": [
+        "Gives a substantive case for (superposition rationale, monosemantic steerable features, scaling)",
+        "Gives a substantive case against (reconstruction != faithfulness, feature splitting/width dependence, missed or spurious features)",
+        "Lands on a calibrated position rather than pure hype or pure dismissal"
+      ]
+    },
+    {
+      "id": 43,
+      "category": "advanced-research",
+      "skills_tested": [
+        "frontier-and-relationships",
+        "foundations"
+      ],
+      "difficulty": "Expert",
+      "prompt": "What problem is causal representation learning trying to solve that ordinary self-supervised representation learning cannot, and why is identifiability the crux?",
+      "expected_reasoning": "SSL learns correlational/predictive features that need not align with the data's true generative factors (cf. disentanglement impossibility) and can fail under distribution shift / intervention. Causal rep learning aims to recover latent variables corresponding to real causal mechanisms, enabling intervention and OOD generalization. Identifiability is the crux because, from i.i.d. data alone, infinitely many latent factorizations explain the data equally well, so without extra structure (interventions/multiple environments, temporal dynamics, auxiliary labels, sparsity) you provably cannot recover the true factors.",
+      "expected_output": "SSL's correlational limit \u2192 causal goal; identifiability as the provable-recovery question requiring extra structure.",
+      "excellent_answer": "Explains SSL's correlational, shift-fragile features and the impossibility of unsupervised disentanglement, states the causal goal (recover true mechanisms for intervention/OOD), and explains identifiability precisely (non-identifiable from i.i.d. alone; needs interventions/multi-environment/temporal/auxiliary structure). Mentions it's largely theory/synthetic so far.",
+      "failure_modes": [
+        "Treating causal rep learning as just 'better SSL'",
+        "Not explaining identifiability / non-identifiability from i.i.d.",
+        "No mention of the extra structure required"
+      ],
+      "scoring_rubric": "3 pts: SSL correlational/shift limit vs causal mechanism goal. 2 pts: identifiability = provable recovery; non-identifiable from i.i.d. alone. 2 pts: the extra structure needed (interventions/temporal/labels/sparsity). 7 total.",
+      "expectations": [
+        "Explains SSL learns correlational features that may not match true generative factors and can fail under distribution shift",
+        "States causal representation learning aims to recover latent causal mechanisms for intervention/OOD generalization",
+        "Explains identifiability: true factors are not recoverable from i.i.d. data alone without extra structure (interventions, multiple environments, temporal dynamics, or auxiliary labels)"
+      ]
+    },
+    {
+      "id": 44,
+      "category": "advanced-research",
+      "skills_tested": [
+        "ssl-contrastive",
+        "frontier-and-relationships"
+      ],
+      "difficulty": "Expert",
+      "prompt": "Across SSL methods (SimCLR, BYOL, Barlow Twins, VICReg, MAE) and beyond (VQ-VAE codebooks, deep GNNs), there's a recurring failure called 'collapse.' Argue that these are instances of one underlying phenomenon and name the distinct anti-collapse mechanism each method uses.",
+      "expected_reasoning": "Unifying claim: collapse = the representation failing to use its available capacity (degenerate solution). Instances/mechanisms: SimCLR -> negatives provide repulsion/uniformity; BYOL -> stop-gradient + predictor + EMA target; Barlow Twins -> redundancy reduction (identity cross-correlation); VICReg -> explicit variance floor + covariance decorrelation; MAE -> reconstruction target is non-degenerate (high-mask), less collapse-prone; VQ-VAE -> codebook collapse fixed by EMA updates/code resets; deep GNN -> oversmoothing fixed by limiting depth / residual connections. Synthesize as one capacity-degeneracy phenomenon with method-specific repulsion/decorrelation/asymmetry/variance mechanisms.",
+      "expected_output": "One unifying account + correct per-method anti-collapse mechanism.",
+      "excellent_answer": "States the unifying 'fails to use capacity / degenerate solution' account, then correctly attributes the specific mechanism to each method (negatives; stop-grad+predictor+EMA; redundancy reduction; variance+covariance; non-degenerate reconstruction; EMA codebook; depth-limiting/residuals), demonstrating cross-method synthesis.",
+      "failure_modes": [
+        "Listing methods without the unifying account",
+        "Misattributing a mechanism (e.g., claiming BYOL uses negatives)",
+        "Missing the GNN/VQ-VAE connections"
+      ],
+      "scoring_rubric": "2 pts: unifying capacity-degeneracy account. 4 pts: correct mechanism for >=4 methods. 1 pt: extends to VQ-VAE/GNN. 7 total.",
+      "expectations": [
+        "Articulates a unifying account of collapse (representation fails to use its available capacity / degenerate solution)",
+        "Correctly attributes the anti-collapse mechanism for at least four methods (e.g., SimCLR=negatives, BYOL=stop-gradient+predictor+EMA, Barlow Twins=redundancy reduction, VICReg=variance+covariance)",
+        "Extends the unification to VQ-VAE codebook collapse and/or GNN oversmoothing"
+      ]
+    },
+    {
+      "id": 45,
+      "category": "advanced-research",
+      "skills_tested": [
+        "geometry-similarity-metric",
+        "frontier-and-relationships"
+      ],
+      "difficulty": "Expert",
+      "prompt": "Explain the Platonic Representation Hypothesis and design an experiment that would provide evidence for or against it.",
+      "expected_reasoning": "PRH (Huh et al. 2024): as models scale and become more capable, their representations converge toward a shared statistical model of reality, even across modalities. Evidence design: take many models (varying scale/architecture/modality), embed a shared set of stimuli, measure pairwise representational alignment (mutual-kNN / CKA / RSA), and test whether alignment increases with capability/scale and whether cross-modal alignment exceeds chance. For/against: convergence trending up with scale supports; persistent divergence or alignment explained by shared data artifacts argues against. Address confounds (shared training data, the alignment metric's invariances).",
+      "expected_output": "Correct PRH statement + a concrete alignment-vs-capability experiment with confounds.",
+      "excellent_answer": "States PRH precisely (cross-model/-modal convergence with scale toward a shared representation), designs an experiment using representational-alignment metrics across many models/modalities on shared stimuli, predicts the for/against signatures (alignment rises with capability vs not), and names confounds (shared data, metric invariances). Research-grade.",
+      "failure_modes": [
+        "Vague restatement with no experiment",
+        "Using raw cosine across models instead of alignment metrics",
+        "Ignoring shared-data confound"
+      ],
+      "scoring_rubric": "3 pts: correct PRH statement. 2 pts: experiment using alignment metrics across models/modalities + capability axis. 2 pts: for/against signatures and confounds. 7 total.",
+      "expectations": [
+        "States the Platonic Representation Hypothesis (models converge to a shared representation as they scale, across modalities)",
+        "Designs an experiment measuring cross-model/cross-modal representational alignment (CKA/RSA/mutual-kNN) versus capability/scale",
+        "Identifies confounds such as shared training data or the alignment metric's invariances"
+      ]
+    },
+    {
+      "id": 46,
+      "category": "reasoning",
+      "skills_tested": [
+        "embeddings-retrieval-recsys",
+        "geometry-similarity-metric"
+      ],
+      "difficulty": "Expert",
+      "prompt": "We trained a two-tower retrieval model with an in-batch-softmax (dot-product) objective and batch size 64. At serving we L2-normalize the embeddings and use cosine in an HNSW index. Retrieval is worse than offline eval suggested. Identify every representation-level mismatch you can.",
+      "expected_reasoning": "Several: (1) Metric mismatch \u2014 trained with dot product (magnitude is signal), served with cosine (magnitude discarded) \u2192 systematic distortion. (2) Train-serve gap from popularity/sampling: in-batch softmax has a sampling bias toward popular items; needs logQ correction (sampled-softmax correction), else heads/tails skew. (3) Batch 64 = only 63 negatives \u2192 weak; serving against millions is a much harder discrimination than training implied. (4) HNSW recall < exact \u2014 ANN approximation can drop true neighbors; cosine-on-a-dot-product-model also breaks the index's metric assumption. Fixes: serve with dot product (MIPS index) or train normalized; add logQ correction; more/negatives or hard negatives; check ANN recall vs exact.",
+      "expected_output": "Enumerate metric mismatch, sampling/logQ bias, too-few-negatives, ANN recall gap.",
+      "excellent_answer": "Catches the train(dot)-vs-serve(cosine) metric mismatch as primary, the in-batch sampled-softmax popularity bias needing logQ correction, the weak-negatives/batch-size issue and the train-vs-serve candidate-set-size gap, and the HNSW-recall-vs-exact gap (plus the index-metric mismatch). Prescribes matching metric, logQ correction, negative strategy, and recall checks.",
+      "failure_modes": [
+        "Only spotting one mismatch",
+        "Missing the dot-vs-cosine train/serve issue",
+        "Not knowing in-batch softmax needs sampling correction"
+      ],
+      "scoring_rubric": "2 pts: dot-vs-cosine train/serve metric mismatch. 2 pts: in-batch sampling/logQ popularity bias. 2 pts: too-few-negatives / candidate-set-size gap. 1 pt: ANN recall-vs-exact. 7 total.",
+      "expectations": [
+        "Identifies the train-serve metric mismatch (trained with dot product, served with cosine)",
+        "Identifies the in-batch softmax sampling bias toward popular items (needs logQ / sampled-softmax correction)",
+        "Notes batch 64 gives few negatives and a train-vs-serve candidate-set-size gap",
+        "Notes HNSW/ANN recall can be below exact retrieval"
+      ]
+    },
+    {
+      "id": 47,
+      "category": "conceptual",
+      "skills_tested": [
+        "foundations",
+        "evaluation"
+      ],
+      "difficulty": "Medium",
+      "prompt": "Explain what people mean when they say a good representation makes a task 'linearly separable,' and why linear probing is the standard way to evaluate that.",
+      "expected_reasoning": "A good representation is a change of basis where classes can be split by a hyperplane (linearly accessible). Linear probing freezes features and trains only a linear classifier, so accuracy measures whether the representation already encodes the task linearly (not the probe's capacity). Hence linear (not MLP) and frozen (not fine-tuned).",
+      "expected_output": "Linear accessibility framing + why probing is linear and frozen.",
+      "excellent_answer": "Explains linear separability as the operational meaning of 'good representation,' that linear probing isolates the representation's linear accessibility by freezing features and using a linear head, and why a nonlinear/unfrozen probe would measure the wrong thing.",
+      "failure_modes": [
+        "Conflating linear probing with fine-tuning",
+        "Using an MLP probe and missing why linearity matters",
+        "Vague 'captures features' with no separability notion"
+      ],
+      "scoring_rubric": "3 pts: linear-separability / change-of-basis meaning. 2 pts: probe is frozen + linear by design. 2 pts: why nonlinear/unfrozen probes mislead. 7 total.",
+      "expectations": [
+        "Explains a good representation makes the task solvable by a linear classifier (linear accessibility)",
+        "States linear probing freezes the encoder and trains only a linear head",
+        "Explains the probe is kept linear (and frozen) so it measures the representation, not the probe's capacity"
+      ]
+    },
+    {
+      "id": 48,
+      "category": "knowledge",
+      "skills_tested": [
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Medium",
+      "prompt": "What does the Bradley-Terry model say, and where does it show up in modern ML?",
+      "expected_reasoning": "P(i beats j) = sigmoid(s_i - s_j) for learned scores s. Shows up in: RLHF reward models (pairwise human preferences), recommender ranking (BPR is the implicit-feedback cousin), sports/Elo-style rating, and connects to Thurstone/random-utility choice models.",
+      "expected_output": "The logistic pairwise-preference model + its appearances (RLHF RM, BPR, ratings).",
+      "excellent_answer": "States P(i>j)=sigma(s_i - s_j), identifies RLHF reward models as the canonical modern instance, links BPR/recsys ranking and Elo/ratings, and notes the random-utility/Thurstone lineage \u2014 i.e. preference modeling as learning a latent score representation.",
+      "failure_modes": [
+        "Wrong functional form",
+        "Only giving the sports-rating use",
+        "Not connecting to RLHF reward models"
+      ],
+      "scoring_rubric": "3 pts: correct logistic pairwise form. 2 pts: RLHF reward model instance. 2 pts: at least one more (BPR/Elo/Thurstone). 7 total.",
+      "ground_truth": "P(i > j) = sigmoid(s_i - s_j), with s a learned latent score/utility.",
+      "expectations": [
+        "States P(i beats j) = sigmoid(score_i - score_j)",
+        "Identifies RLHF reward models as a key modern instance",
+        "Mentions at least one other appearance (BPR/recommender ranking, Elo/ratings, or Thurstone/random-utility models)"
+      ]
+    },
+    {
+      "id": 49,
+      "category": "comparison",
+      "skills_tested": [
+        "frontier-and-relationships"
+      ],
+      "difficulty": "Hard",
+      "prompt": "For knowledge-graph embeddings, compare TransE, DistMult, ComplEx, and RotatE in terms of which relation patterns each can and cannot represent.",
+      "expected_reasoning": "TransE (translation h+r~t): handles composition/inversion-ish but struggles with symmetric and 1-to-N/N-to-1. DistMult (bilinear diagonal): efficient but forces symmetry (can't model asymmetric relations). ComplEx (complex bilinear): models asymmetry (fixes DistMult). RotatE (relation as rotation in complex plane): models symmetry, antisymmetry, inversion, and composition. The arc = adding inductive bias/capacity to express more relation types.",
+      "expected_output": "Correct per-model expressivity with the symmetric/asymmetric and composition patterns.",
+      "excellent_answer": "Correctly characterizes each model's representable patterns (TransE's struggles with symmetry/1-to-N; DistMult's forced symmetry; ComplEx's asymmetry; RotatE's symmetry/antisymmetry/inversion/composition), and frames the progression as adding the geometry needed to encode more relation structure.",
+      "failure_modes": [
+        "Claiming DistMult handles asymmetric relations",
+        "Mixing up which model adds which capability",
+        "No mention of symmetry/composition patterns"
+      ],
+      "scoring_rubric": "1.5 pts each for correct expressivity of TransE, DistMult, ComplEx, RotatE on the key patterns. Cap 7.",
+      "expectations": [
+        "States DistMult is restricted to symmetric relations (cannot model asymmetric)",
+        "States ComplEx adds the ability to model asymmetric relations",
+        "States RotatE models symmetry/antisymmetry/inversion/composition",
+        "Notes TransE's limitation with symmetric or 1-to-many relations"
+      ]
+    },
+    {
+      "id": 50,
+      "category": "application",
+      "skills_tested": [
+        "evaluation",
+        "foundations"
+      ],
+      "difficulty": "Hard",
+      "prompt": "Leadership wants 'a single number for embedding quality' to track on a dashboard across our embedding-model versions. Give them what they need while pushing back appropriately.",
+      "expected_reasoning": "Push back on a single number: quality is task/metric-relative. Offer instead a small panel tied to real uses: the extrinsic metric matching the primary use (e.g., recall@k / nDCG on a frozen, leakage-controlled, distribution-matched eval set) plus a couple of intrinsic diagnostics (anisotropy, effective rank/uniformity). If forced to pick one headline, make it the extrinsic retrieval metric on a fixed clean benchmark, with the diagnostics as guardrails. Stress version-comparability (same eval set, watch contamination).",
+      "expected_output": "Reject the single-number premise; provide an extrinsic headline + intrinsic guardrails + comparability cautions.",
+      "excellent_answer": "Explains why one number is misleading (task/metric-relativity), proposes a primary extrinsic metric on a clean fixed eval set as the trackable headline, adds intrinsic guardrails (anisotropy/effective rank/uniformity), and warns about eval comparability/contamination across versions. Balances pragmatism with honesty.",
+      "failure_modes": [
+        "Just handing over one intrinsic metric (e.g., cosine spread) with no caveats",
+        "Not tying the headline to the real downstream use",
+        "Ignoring eval-set comparability/contamination"
+      ],
+      "scoring_rubric": "3 pts: pushes back (quality is task/metric-relative). 2 pts: extrinsic headline on a clean fixed eval + intrinsic guardrails. 2 pts: comparability/contamination caution. 7 total.",
+      "expectations": [
+        "Pushes back on a single quality number (quality is task- and metric-relative)",
+        "Proposes a primary extrinsic metric tied to the real use (e.g., recall@k/nDCG) on a fixed, leakage-controlled eval set as the trackable headline",
+        "Adds at least one intrinsic diagnostic as a guardrail (anisotropy, effective rank, or uniformity)",
+        "Warns about cross-version eval comparability or benchmark contamination",
+        "Does NOT hand over a single quality number without pushing back"
+      ],
+      "must_not": [
+        "Does NOT hand over a single quality number without pushing back"
+      ]
+    },
+    {
+      "id": 51,
+      "category": "knowledge",
+      "skills_tested": [
+        "ssl-contrastive"
+      ],
+      "difficulty": "Medium",
+      "prompt": "Write the InfoNCE / NT-Xent loss and explain precisely how it relates to cross-entropy and to mutual information.",
+      "expected_reasoning": "InfoNCE is the cross-entropy of a softmax classifier picking the positive among 1 positive + N negatives, with similarities scaled by temperature tau. It lower-bounds the mutual information between views: I >= log(N) - L_InfoNCE (Oord et al. 2018).",
+      "expected_output": "The formula, the cross-entropy identity, and the MI lower bound with the log(N) term.",
+      "excellent_answer": "Gives L = -log[ exp(sim(q,k+)/tau) / sum_i exp(sim(q,k_i)/tau) ]; identifies it as categorical cross-entropy over the candidate set with the positive as the target class; states the bound I(views) >= log(N) - L_InfoNCE so more negatives raise the achievable bound; notes temperature tau controls hard-negative emphasis.",
+      "failure_modes": [
+        "Omitting temperature",
+        "Calling it a regression loss",
+        "Not stating the MI lower bound or getting the log(N) direction wrong",
+        "Confusing the positive/negative normalization in the denominator"
+      ],
+      "scoring_rubric": "3 pts: correct InfoNCE formula with temperature. 2 pts: cross-entropy identity over 1 positive + N negatives. 2 pts: MI lower bound I >= log(N) - L. 7 total.",
+      "ground_truth": "L_InfoNCE = -log( exp(sim(q,k+)/tau) / sum_{i=0..N} exp(sim(q,k_i)/tau) ); equals cross-entropy with the positive as target class; I(q;k+) >= log(N) - L_InfoNCE (Oord et al. 2018, CPC).",
+      "expectations": [
+        "States the InfoNCE/NT-Xent loss as -log of [exp(sim(positive)/tau) over sum of exp(sim(all candidates)/tau)]",
+        "Identifies it as cross-entropy over a (1 positive + N negatives) classification with the positive as the target class",
+        "States it lower-bounds mutual information, I >= log(N) - L_InfoNCE, so more negatives raise the bound",
+        "Mentions the temperature tau",
+        "Does NOT describe it as a regression/reconstruction loss"
+      ]
+    },
+    {
+      "id": 52,
+      "category": "knowledge",
+      "skills_tested": [
+        "geometry-similarity-metric",
+        "ssl-contrastive"
+      ],
+      "difficulty": "Hard",
+      "prompt": "Define the alignment and uniformity metrics from Wang & Isola (2020), state the direction of 'better' for each, and explain what a collapsed encoder scores on each.",
+      "expected_reasoning": "On L2-normalized embeddings: alignment = E over positive pairs of ||f(x)-f(x+)||^2 (lower better); uniformity = log E over random pairs of exp(-t ||f(x)-f(y)||^2), t=2 (lower better = more spread). A collapsed encoder maps everything to one point: alignment is perfect (0) but uniformity is maximally bad (high).",
+      "expected_output": "Both formulas, both 'lower is better', and the collapse signature (alignment 0, uniformity bad).",
+      "excellent_answer": "Gives alignment = E_{(x,x+)} ||f(x)-f(x+)||^2 and uniformity = log E_{x,y} exp(-t||f(x)-f(y)||^2) (t typically 2), both lower-is-better, on the unit sphere; explains collapse gives alignment 0 with terrible uniformity, which is exactly why tracking both separately localizes the failure a single loss number hides.",
+      "failure_modes": [
+        "Flipping the better-direction",
+        "Omitting the normalization/sphere assumption",
+        "Not giving the collapse signature",
+        "Mixing up which metric uses positive vs random pairs"
+      ],
+      "scoring_rubric": "3 pts: both formulas correct (positive pairs vs random pairs). 2 pts: both lower-is-better. 2 pts: collapse signature (alignment 0, uniformity bad). 7 total.",
+      "ground_truth": "alignment = E_{(x,x+)} ||f(x)-f(x+)||_2^2 (lower better); uniformity = log E_{x,y~iid} exp(-t ||f(x)-f(y)||_2^2), t=2 (lower better). Collapse: alignment->0, uniformity->high (worst).",
+      "expectations": [
+        "Defines alignment as the expected squared distance between positive pairs (lower is better)",
+        "Defines uniformity as log of expected exp(-t * squared distance) over random pairs (lower is better)",
+        "States both assume L2-normalized embeddings / the unit sphere",
+        "States a collapsed encoder has near-zero alignment but very poor uniformity"
+      ]
+    },
+    {
+      "id": 53,
+      "category": "application",
+      "skills_tested": [
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Medium",
+      "prompt": "We have 100M embeddings of dimension 768 in float32. Roughly how much memory is that, and how much would product quantization with m=96 subquantizers at 8 bits each use? Show the arithmetic and name the tradeoff.",
+      "expected_reasoning": "float32 768-dim = 768*4 = 3072 bytes/vector; 100M * 3072 B = 3.072e11 B ~= 307 GB (~286 GiB). PQ with m=96 subquantizers at 8 bits = 96 bytes/vector (one byte-code per subquantizer); 100M * 96 B = 9.6e9 B ~= 9.6 GB. Compression ~32x (3072/96). Tradeoff: PQ stores approximate (lossy) codes -> reduced recall/accuracy; distances computed via lookup tables (ADC).",
+      "expected_output": "307 GB raw, ~9.6 GB PQ, 32x compression, plus the lossy-recall tradeoff.",
+      "excellent_answer": "Computes 3072 bytes/vector and ~307 GB raw; 96 bytes/vector and ~9.6 GB with PQ; states 32x compression = 3072/96; names the tradeoff (PQ is lossy quantization -> lower recall, mitigated by reranking exact on top-k or using IVF-PQ); notes distance is approximate via lookup tables.",
+      "failure_modes": [
+        "Arithmetic errors (e.g., wrong bytes/vector)",
+        "Claiming PQ is lossless",
+        "Confusing m (subquantizers) with bits",
+        "Not stating the recall tradeoff"
+      ],
+      "scoring_rubric": "2 pts: 3072 bytes/vec and ~307 GB raw. 2 pts: 96 bytes/vec and ~9.6 GB PQ. 1 pt: ~32x compression. 2 pts: lossy/recall tradeoff. 7 total.",
+      "ground_truth": "float32: 768*4=3072 B/vec; 100e6*3072=3.072e11 B ~= 307 GB (286 GiB). PQ m=96,b=8: 96 B/vec; 100e6*96=9.6e9 B ~= 9.6 GB. Ratio 3072/96 = 32x. PQ is lossy (approximate distances).",
+      "expectations": [
+        "Computes raw size as 768*4 = 3072 bytes per vector and ~300-310 GB total",
+        "Computes PQ size as 96 bytes per vector and roughly 9-10 GB total",
+        "States the compression ratio is about 32x",
+        "Notes PQ is lossy / approximate and trades recall for memory (mitigated by reranking or IVF-PQ)",
+        "Does NOT claim product quantization is lossless"
+      ]
+    },
+    {
+      "id": 54,
+      "category": "calibration",
+      "skills_tested": [
+        "foundations"
+      ],
+      "difficulty": "Easy",
+      "prompt": "In one sentence, what's an embedding?",
+      "expected_reasoning": "This is a trivial definitional question. The right behavior is a single crisp sentence, NOT a multi-section treatise, not a tour of the reference files, not unsolicited caveats about anisotropy or metrics. A heavy skill must stay proportionate to the question.",
+      "expected_output": "One accurate, plain sentence and nothing more.",
+      "excellent_answer": "A single sentence to the effect of: an embedding is a learned vector representation that places items in a continuous space where geometric closeness reflects similarity or other task-relevant relationships. No headers, no enumerated subtopics, no reference dump.",
+      "failure_modes": [
+        "Multi-paragraph or multi-section answer to a one-sentence question",
+        "Enumerating reference files or subfields unprompted",
+        "Piling on caveats (anisotropy, metrics, collapse) that weren't asked for",
+        "Turning a definition into a lecture"
+      ],
+      "scoring_rubric": "4 pts: gives a single correct sentence. 3 pts: stays proportionate (no headers, no reference dump, no unsolicited caveats). Deduct all 3 proportionality points if the answer exceeds ~3 sentences or adds sections. 7 total.",
+      "expectations": [
+        "Gives a correct one-sentence definition (a learned vector representation where geometric proximity encodes similarity/relationships)",
+        "Answer is proportionate: at most about one to three sentences",
+        "Does NOT add section headers or enumerate reference files / subtopics",
+        "Does NOT pile on unsolicited caveats (anisotropy, metric choice, collapse)"
+      ]
+    }
+  ]
+}

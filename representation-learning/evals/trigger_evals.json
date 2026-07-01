@@ -1,0 +1,90 @@
+[
+  {
+    "query": "My cosine similarity scores across all my sentence embeddings are all between 0.85 and 0.99 — nothing is really far away. Is this a bug in my code or expected?",
+    "should_trigger": true
+  },
+  {
+    "query": "I'm using mean-pooled BERT embeddings for semantic search but the results are terrible — totally unrelated sentences come back as similar. What am I doing wrong?",
+    "should_trigger": true
+  },
+  {
+    "query": "My VAE trains fine but when I sample random points from the latent space I just get blurry noise. The reconstruction loss is low though. What's happening?",
+    "should_trigger": true
+  },
+  {
+    "query": "Should I use cosine similarity or Euclidean distance for finding nearest neighbors in my embedding space? Which is fundamentally better?",
+    "should_trigger": true
+  },
+  {
+    "query": "I trained a SimCLR model and the linear probe accuracy is decent, but when I use the embeddings for retrieval the results are bad. Could the projection head be the problem?",
+    "should_trigger": true
+  },
+  {
+    "query": "We built a neural two-tower recommender and it's barely beating our old item-kNN baseline. Should we just keep using the neural approach since it's more modern?",
+    "should_trigger": true
+  },
+  {
+    "query": "My linear probe on BERT hidden states gets 94% accuracy at predicting part-of-speech tags. Does that mean BERT uses POS tags internally to make its predictions?",
+    "should_trigger": true
+  },
+  {
+    "query": "We're trying to build RAG and can't decide between a bi-encoder and a cross-encoder for retrieval. What are the real tradeoffs?",
+    "should_trigger": true
+  },
+  {
+    "query": "Is there a way to learn disentangled representations without any supervision? I've heard beta-VAE can do this — is that true?",
+    "should_trigger": true
+  },
+  {
+    "query": "We fine-tuned a reward model for RLHF on human preference data. Can I trust its scalar output as a reliable measure of what humans actually want?",
+    "should_trigger": true
+  },
+  {
+    "query": "I want to compare the representations learned by two different transformer models trained on different tasks. Can I just compute cosine similarity between their embeddings on the same inputs?",
+    "should_trigger": true
+  },
+  {
+    "query": "What's the best way to choose the number of components for PCA? I've heard about the elbow method and explained variance — which should I use?",
+    "should_trigger": false
+  },
+  {
+    "query": "I want to visualize my high-dimensional data. What perplexity should I use for t-SNE, and how should I interpret the cluster sizes in the output?",
+    "should_trigger": false
+  },
+  {
+    "query": "We ran a difference-in-differences analysis comparing treated and control stores after a price change. The parallel trends assumption seems to hold pre-treatment. How do I interpret the DiD coefficient?",
+    "should_trigger": false
+  },
+  {
+    "query": "My PyTorch model is throwing 'RuntimeError: Expected input batch_size (64) to match target batch_size (128)' in the CrossEntropyLoss. How do I fix it?",
+    "should_trigger": false
+  },
+  {
+    "query": "I'm building a dashboard and need to show a scatterplot of survey responses vs. satisfaction scores. What chart type should I use and how should I label the axes?",
+    "should_trigger": false
+  },
+  {
+    "query": "How do I prevent overfitting in a deep neural network? I've tried dropout but my validation loss still diverges from training loss.",
+    "should_trigger": false
+  },
+  {
+    "query": "What's the difference between UMAP and t-SNE in terms of what neighborhood size parameter controls, and which preserves global structure better?",
+    "should_trigger": false
+  },
+  {
+    "query": "I have a 50-feature tabular dataset with a binary outcome. Should I use XGBoost or a neural network, and how do I tune the hyperparameters?",
+    "should_trigger": false
+  },
+  {
+    "query": "We want to run an A/B test on our recommendation homepage. What's the right way to calculate sample size and how long should we run the experiment?",
+    "should_trigger": false
+  },
+  {
+    "query": "How do I use pandas to merge two dataframes on multiple keys and handle the case where some keys don't match?",
+    "should_trigger": false
+  },
+  {
+    "query": "I want to understand whether a new training intervention caused better student outcomes using observational data from 30 schools. I've heard about instrumental variables — is that appropriate here?",
+    "should_trigger": false
+  }
+]
