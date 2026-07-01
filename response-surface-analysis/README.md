@@ -128,13 +128,13 @@ The base model already handles: DoE/RSM disambiguation, non-commensurable refusa
 
 | File | Purpose |
 |------|---------|
-| `theory.md` | Polynomial model, geometry (LOC/LOIC/FPA), exact formulas for a1–a5 and p10/p11 |
-| `congruence-checklist.md` | Humberg–Nestler–Back C1–C6, broad vs. strict, the two fallacies, model-comparison view |
-| `workflow.md` | Step-by-step recipe and APA-style reporting template |
-| `pitfalls.md` | 12 failure modes with detection heuristics and fixes |
-| `r-implementation.md` | `RSA` package usage, model family, reading getPar output, gotchas |
-| `python-implementation.md` | Bundled `rsa_python.py` CLI and library usage, limitations |
-| `extensions.md` | Cubic RSA, multilevel/dyadic, latent-variable (errors-in-variables), control variables |
+| `references/theory.md` | Polynomial model, geometry (LOC/LOIC/FPA), exact formulas for a1–a5 and p10/p11 |
+| `references/congruence-checklist.md` | Humberg–Nestler–Back C1–C6, broad vs. strict, the two fallacies, model-comparison view |
+| `references/workflow.md` | Step-by-step recipe and APA-style reporting template |
+| `references/pitfalls.md` | 12 failure modes with detection heuristics and fixes |
+| `references/r-implementation.md` | `RSA` package usage, model family, reading getPar output, gotchas |
+| `references/python-implementation.md` | Bundled `rsa_python.py` CLI and library usage, limitations |
+| `references/extensions.md` | Cubic RSA, multilevel/dyadic, latent-variable (errors-in-variables), control variables |
 
 ## Eval suite
 

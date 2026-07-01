@@ -34,7 +34,7 @@ REF_NAMES = [
 ]
 ref_parts = []
 for name in REF_NAMES:
-    p = REPO / name
+    p = REPO / "references" / name
     if p.exists():
         ref_parts.append(f"# {name}\n{p.read_text()}")
 REFS = "\n\n---\n\n".join(ref_parts)
