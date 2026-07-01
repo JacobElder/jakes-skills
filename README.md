@@ -11,6 +11,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [agent-based-modeling](#agent-based-modeling) | Agent-based simulation methodology (ODD, Mesa/NetLogo, verification, calibration) | +29.8pp (57/57 with skill, 40/57 base) |
 | [applied-behavioral-design](#applied-behavioral-design) | Applied behavioral science diagnosis and intervention design (ideas42 workflow) | +32.5pp (83/83 with skill, 56/83 base) |
 | [board-game-design](#board-game-design) | Tabletop board and card game design: mechanics, balance, digital prototyping with boardgame.io, and rulebook writing | +3.7pp (82/82 with skill, 79/82 base); skill closes specific gaps on digital-first architecture and balance_sim.py tool use |
+| [boardgame.io](#boardgameio) | Turn-based game logic with boardgame.io 0.50.x: move API, INVALID_MOVE, phases, bots, and headless testing | +11.0pp (100/100 with skill, 89/100 base) |
 | [boglehead](#boglehead) | Personal investing | +24pp on original 10 scenarios |
 | [causal-inference](#causal-inference) | Causal reasoning & experiment design | +19pp across 13 scenarios |
 | [clustering](#clustering) | Cluster analysis: method selection, validation, mixed-type data | +17.9pp (95/95 with skill, 78/95 base) |
@@ -18,7 +19,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [eval-psychometrics](#eval-psychometrics) | Eval-suite auditing: item analysis, reliability, latent estimation, judge calibration | +40.0pp (70/70 with skill, 42/70 base) |
 | [dimensionality-reduction](#dimensionality-reduction) | PCA, EFA, t-SNE, UMAP, ICA, NMF and embedding validation | +14pp (43/43 with skill, 37/43 base); +33pp on pitfall traps |
 | [experimental-design](#experimental-design) | Experimental and quasi-experimental design (A/B, RCT, power, DiD, RD) | 9 task evals + 26 trigger evals (live benchmark not yet run) |
-| [game-development](#game-development) | Game programming: frame independence, game feel/juice, ECS, collision, enemy AI, procedural gen, engine selection | +18.5pp (92/92 with skill, 75/92 base) |
+| [game-development](#game-development) | Game programming: frame independence, game feel/juice, ECS, collision, enemy AI, procedural gen, engine selection, input remapping, grid/tactics, navigation, VFX | +50.9pp (100% with skill, 49.1% base, 623 assertions across 104 evals) |
 | [idiographic-quant](#idiographic-quant) | Person-specific / N-of-1 quantitative methods (ESM/EMA, VAR networks, single-case experiments) | +65pp (17/17 with skill, 6/17 base) |
 | [information-theory](#information-theory) | Shannon entropy, MI, KL divergence, cross-entropy/NLL/MLE, SampEn disambiguation, AIC vs BIC, rate–distortion | +14.7pp (75/75 with skill, 64/75 base) |
 | [multilevel-modeling](#multilevel-modeling) | Hierarchical / mixed-effects modeling (R & Python) | +13.8pp (80/80 with skill, 69/80 base); +80pp on singular-fit simplification, +60pp on growth curve time slopes |
@@ -28,6 +29,7 @@ Each skill ships with a `SKILL.md` (instructions loaded at runtime), curated `re
 | [preference-choice-modeling](#preference-choice-modeling) | MaxDiff and choice-based conjoint (CBC, ACBC, anchoring) | +44.8pp (29/29 with skill, 16/29 base) |
 | [psychometric-networks](#psychometric-networks) | Network approach to psychological measurement | +13.6pp (59/59 with skill, 51/59 base); 12 evals incl. causal-boundary + Granger |
 | [psychometrics](#psychometrics) | Measurement theory & scale development | +97.5pp across 8 scenarios |
+| [representation-learning](#representation-learning) | Learned representations: embeddings, SSL, contrastive learning, VAEs, probing, reward modeling | +4.7pp (204/214 with skill, 194/214 base) |
 | [response-surface-analysis](#response-surface-analysis) | Congruence RSA (Edwards-Parry polynomial regression, a1–a5) | +31.8pp (66/66 with skill, 45/66 base) |
 | [robust-statistics](#robust-statistics) | Applied statistical reasoning: estimands, fallacies, diagnostics, GLMs | +38pp overall (37/37 with skill, 23/37 base) |
 | [sequence-analysis-hmm](#sequence-analysis-hmm) | Hidden Markov Models & sequence analysis | +40pp across 10 content evals |
@@ -82,6 +84,18 @@ Apply the [Boglehead investing philosophy](https://www.bogleheads.org/) to any p
 **Gap:** +24pp on the original 10 scenarios, up to +60pp on the hardest cases (investment waterfall ordering, whole life rejection, dividend strategy debunking).
 
 → [boglehead/](boglehead/)
+
+---
+
+## boardgame.io
+
+Build, wire, and test turn-based games with boardgame.io 0.50.x. Covers the framework-specific traps that cause moves to silently do nothing, dice to return undefined, INVALID_MOVE to not reject bad moves, phases to hide moves, bots to have no moves to enumerate, and simultaneous play to never resolve. Encodes the 0.50.x move signature (single `{ G, ctx, random, events, log, playerID }` context object), Immer-by-default state mutation, the `random` plugin API (never `Math.random()` in moves), the `events` plugin (`endTurn`, `endPhase`, `endGame`), phase/turn/stage configuration, Client-vs-Server multiplayer wiring, `MCTSBot`/`RandomBot` `enumerate` functions, and headless testing via `Local()` multiplayer without a DOM.
+
+**Why it matters:** The base model conflates 0.39.x and 0.50.x APIs, uses `Math.random()` in moves (breaks deterministic replay and testing), calls `ctx.events.endTurn()` directly in the move body (silently does nothing — the events plugin fires after the move returns), and wires `Client` and `Server` in the wrong direction for multiplayer. The skill encodes the 0.50.x conventions precisely and provides the `scripts/smoke-test.js` harness for unit-testing game logic without a browser.
+
+**Gap:** +11.0pp — 100/100 with skill (100%) vs. 89/100 base (89.0%) across 30 evals. Key differentiator: the events-in-moves trap (+100pp — the base model writes `ctx.events.endTurn()` inside the move, which boardgame.io silently ignores; the correct pattern receives `events` as a plugin parameter).
+
+→ [boardgame.io/](boardgame.io/)
 
 ---
 
@@ -163,7 +177,7 @@ Build games that feel good and ship — not just games that compile. Covers the 
 
 **Why it matters:** The base model generates game code that compiles but fails silently on the basics: movement tied to frame rate, symmetric jump gravity that always feels floaty, "add particles" as the only game feel advice, class hierarchies that collapse at 200+ entities, and scope so large the project never ships. The skill enforces the five non-negotiables (frame independence, find the fun first, decouple via ECS/signals, juice as core not polish, deliberate engine selection) and applies them to Godot 4.x, Unity, LÖVE/Lua, PyGame, Bevy, and Phaser.
 
-**Gap:** +18.5pp — 92/92 with skill (100%) vs. 75/92 base (81.5%). Largest gains on scope discipline (+57pp), hitstop vs. particles priority (+40pp), rigidbody-as-floatiness root cause (+40pp), enemy flow-field pathfinding (+29pp), and full platformer feel recipe (+20pp including all four techniques).
+**Gap:** +50.9pp — 623/623 with skill (100%) vs. 306/623 base (49.1%) across 104 evals. Skill coverage has expanded across 11 iterations to include input remapping/gamepad, turn-based grid/tactics, 2D/3D navigation, particles/VFX, post-processing, custom Resources, memory management, accessibility, localization, and analytics/telemetry instrumentation.
 
 → [game-development/](game-development/)
 
@@ -274,6 +288,18 @@ Apply rigorous measurement theory to surveys, scales, questionnaires, and latent
 **Gap:** +97.5pp — the largest gap in this collection. The base model scores near zero on the trap-based eval suite.
 
 → [psychometrics/](psychometrics/)
+
+---
+
+## representation-learning
+
+Reason about learned representations — embeddings, latent spaces, self-supervised and contrastive learning, VAEs, probing, recommender systems, and reward modeling — the way a strong ML researcher does. Encodes thirteen settled positions: cosine similarity is Euclidean on L2-normalized vectors; mean-pooled BERT embeddings are anisotropic and near-useless for similarity; modern SSL is collapse avoidance; contrastive and masked-modeling objectives produce different geometries; unsupervised disentanglement is provably impossible without inductive biases; a linear probe measures decodability not causal use; VAE posterior collapse is the signature failure mode; tuned matrix-factorization baselines beat most neural recommenders; embeddings are point estimates while LVMs give distributions; t-SNE/UMAP geometry is not quantitatively trustworthy; more dimensions is not better; a reward model represents what the preference data rewards; and the backbone (not the projection head) is what you serve after contrastive SSL training.
+
+**Why it matters:** The base model knows definitions but misses the precision layer — it validates "just use cosine" without checking whether L2 normalization is appropriate for the geometry, accepts mean-pooled BERT without flagging anisotropy, treats t-SNE inter-cluster distances as real findings (artifacts), and applies linear probes as evidence of causal use rather than decodability. Five bundled diagnostic scripts with `--selftest` modes give verified implementations of CKA, effective rank, alignment-uniformity, linear probe with controls, and collapse spectrum.
+
+**Gap:** +4.7pp — 204/214 with skill (95.3%) vs. 194/214 base (90.7%). The base model is already strong in this domain; the skill closes precision gaps on VICReg collapse mitigation, logQ bias in contrastive objectives, and posterior collapse caveats.
+
+→ [representation-learning/](representation-learning/)
 
 ---
 
