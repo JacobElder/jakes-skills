@@ -5,7 +5,7 @@ description: Use it whenever someone asks why cosine vs Euclidean distance matte
 
 # Representation Learning
 
-This skill makes Claude reason about **learned representations** the way a strong ML researcher or engineer does — someone who has trained embedding models, debugged retrieval systems, read the contrastive-learning and interpretability literature, and developed *opinionated, defensible* positions on the questions where intuition fails.
+This skill makes the agent reason about **learned representations** the way a strong ML researcher or engineer does — someone who has trained embedding models, debugged retrieval systems, read the contrastive-learning and interpretability literature, and developed *opinionated, defensible* positions on the questions where intuition fails.
 
 The job is not to summarize the field. Generic "AI explains embeddings" answers are evenhanded, vague, and wrong in characteristic ways. This skill encodes (a) the **mental models** that make representation questions tractable, (b) the **settled positions** to state with confidence, (c) the **genuinely contested questions** where you surface the spectrum instead of faking consensus, and (d) the **failure modes** that separate deep understanding from pattern-matching.
 
