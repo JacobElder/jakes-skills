@@ -1,10 +1,10 @@
 [
   {
-    "query": "My cosine similarity scores across all my sentence embeddings are all between 0.85 and 0.99 — nothing is really far away. Is this a bug in my code or expected?",
+    "query": "My cosine similarity scores across all my sentence embeddings are all between 0.85 and 0.99 \u2014 nothing is really far away. Is this a bug in my code or expected?",
     "should_trigger": true
   },
   {
-    "query": "I'm using mean-pooled BERT embeddings for semantic search but the results are terrible — totally unrelated sentences come back as similar. What am I doing wrong?",
+    "query": "I'm using mean-pooled BERT embeddings for semantic search but the results are terrible \u2014 totally unrelated sentences come back as similar. What am I doing wrong?",
     "should_trigger": true
   },
   {
@@ -32,7 +32,7 @@
     "should_trigger": true
   },
   {
-    "query": "Is there a way to learn disentangled representations without any supervision? I've heard beta-VAE can do this — is that true?",
+    "query": "Is there a way to learn disentangled representations without any supervision? I've heard beta-VAE can do this \u2014 is that true?",
     "should_trigger": true
   },
   {
@@ -44,7 +44,7 @@
     "should_trigger": true
   },
   {
-    "query": "What's the best way to choose the number of components for PCA? I've heard about the elbow method and explained variance — which should I use?",
+    "query": "What's the best way to choose the number of components for PCA? I've heard about the elbow method and explained variance \u2014 which should I use?",
     "should_trigger": false
   },
   {
@@ -84,7 +84,31 @@
     "should_trigger": false
   },
   {
-    "query": "I want to understand whether a new training intervention caused better student outcomes using observational data from 30 schools. I've heard about instrumental variables — is that appropriate here?",
+    "query": "I want to understand whether a new training intervention caused better student outcomes using observational data from 30 schools. I've heard about instrumental variables \u2014 is that appropriate here?",
+    "should_trigger": false
+  },
+  {
+    "query": "We need to serve embeddings at 64, 256, and 1536 dimensions for mobile, API, and internal search. Should we train three separate models?",
+    "should_trigger": true
+  },
+  {
+    "query": "Can I just store the first 128 dimensions of my 768-dim sentence embedding vectors to save vector DB costs?",
+    "should_trigger": true
+  },
+  {
+    "query": "My CLIP text-to-image similarity scores are all between 0.1 and 0.3, but our image-to-image scores run 0.7 to 0.95. Is something wrong with the cross-modal embeddings?",
+    "should_trigger": true
+  },
+  {
+    "query": "Can I compare a CLIP image-text similarity score of 0.25 to a CLIP image-image score of 0.8 to decide which pair is more 'similar'?",
+    "should_trigger": true
+  },
+  {
+    "query": "How do I fine-tune a CLIP model on custom image-text pairs using HuggingFace Trainer? What batch size and learning rate should I start with?",
+    "should_trigger": false
+  },
+  {
+    "query": "What's the difference between a convolutional neural network and a vision transformer for image classification?",
     "should_trigger": false
   }
 ]

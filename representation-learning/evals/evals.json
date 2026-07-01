@@ -1416,6 +1416,161 @@
         "Does NOT add section headers or enumerate reference files / subtopics",
         "Does NOT pile on unsolicited caveats (anisotropy, metric choice, collapse)"
       ]
+    },
+    {
+      "id": 55,
+      "category": "application",
+      "skills_tested": [
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Hard",
+      "prompt": "We're building a mobile app with vector search. Storage is expensive on-device, so a colleague suggests training three separate embedding models at 64, 256, and 1536 dimensions for three quality tiers. Is there a better approach?",
+      "expected_reasoning": "Matryoshka Representation Learning (MRL) trains a single model so the first N dimensions are a valid embedding at any N. One training run, truncate at inference to the desired tier. The colleague's approach is 3x training cost and 3x deployment complexity for no benefit.",
+      "expected_output": "Recommend MRL; explain train once + truncate; compare to multi-model approach.",
+      "excellent_answer": "Recommends Matryoshka Representation Learning \u2014 train one model once such that any prefix of d dimensions (64, 128, 256, ...) is a valid embedding. Models like OpenAI text-embedding-3 and Cohere embed-v3 support this. Truncation at inference is a vector slice \u2014 no extra matrix multiply. Contrast: training 3 separate models is 3x cost with no advantage; each model's embedding space is independent and incomparable.",
+      "failure_modes": [
+        "Recommending PCA on a full-dim model as equivalent (it's post-hoc, requires fitting, and adds inference cost)",
+        "Missing Matryoshka entirely and accepting the 3-model approach",
+        "Claiming standard model truncation works"
+      ],
+      "scoring_rubric": "3 pts: names Matryoshka/MRL and explains the train-once-truncate property. 2 pts: notes truncation is just a vector slice at inference. 2 pts: identifies why the 3-model approach is unnecessary. 7 total.",
+      "expectations": [
+        "Recommends Matryoshka Representation Learning (MRL) or notes that models like text-embedding-3 support nested/truncatable embeddings",
+        "Explains that MRL trains a single model so any prefix of dimensions forms a valid embedding",
+        "Notes that truncation at inference is a vector slice with no separate matrix multiply or retraining",
+        "Identifies that training three separate models is unnecessary given MRL"
+      ]
+    },
+    {
+      "id": 56,
+      "category": "debugging",
+      "skills_tested": [
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Hard",
+      "prompt": "We're using a standard 768-dim BERT-based sentence embedding model. To cut vector DB costs, we plan to store only the first 128 dimensions of each vector. Our hypothesis: the first dimensions encode the most important semantic content. Is this valid?",
+      "expected_reasoning": "Standard embedding model dimensions are not ordered by importance \u2014 they are learned jointly with no nested-prefix property. Slicing the first 128 dimensions of a standard model destroys the embedding's geometry and will produce garbage similarity scores. Only Matryoshka-trained models have the prefix property. PCA is the right post-hoc approach if retraining isn't an option, but even that needs a representative corpus fit.",
+      "expected_output": "Flag the assumption as wrong; explain which models support prefix-truncation; give alternatives.",
+      "excellent_answer": "Flags the hypothesis as wrong: standard embedding dimensions have no importance ordering. The prefix property \u2014 where the first N dimensions form a self-sufficient embedding \u2014 only holds for models explicitly trained with Matryoshka/nested objectives. Truncating a standard 768-dim model to 128 dims will produce near-random similarity scores. Alternatives: (1) switch to a Matryoshka model (text-embedding-3, Cohere v3); (2) apply PCA to project to 128 dims, fitted on a representative corpus. PCA at least preserves maximum linear variance; arbitrary prefix truncation has no such guarantee.",
+      "failure_modes": [
+        "Accepting the hypothesis that first dims are most important",
+        "Missing that Matryoshka models have this property (not standard BERT)",
+        "Not offering a valid alternative"
+      ],
+      "scoring_rubric": "3 pts: correctly flags that standard model dimensions have no ordering. 2 pts: names Matryoshka as the model type that supports prefix truncation. 2 pts: offers a valid alternative (Matryoshka switch or PCA). 7 total.",
+      "expectations": [
+        "Flags that standard embedding model dimensions are NOT ordered by importance \u2014 slicing the first 128 destroys the geometry",
+        "Explains that only Matryoshka-trained models have the prefix property where any first-N-dimension prefix is a valid embedding",
+        "Names at least one alternative: switch to a Matryoshka model (e.g., text-embedding-3) or apply PCA on a representative corpus",
+        "Does NOT accept the hypothesis that truncating a standard model's first dimensions preserves semantic content"
+      ],
+      "must_not": [
+        "Does NOT accept the hypothesis that truncating a standard model's first dimensions preserves semantic content"
+      ]
+    },
+    {
+      "id": 57,
+      "category": "comparison",
+      "skills_tested": [
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Medium",
+      "prompt": "What's the practical difference between Matryoshka embeddings and applying PCA to reduce my existing 1536-dim embeddings to 128 dimensions? Both give me smaller vectors.",
+      "expected_reasoning": "MRL: trained end-to-end so any prefix is self-sufficient; truncation is a vector slice at inference, no extra computation, works on any new vector. PCA: fitted post-hoc on a corpus; reduces via a learned projection matrix; correct in expectation (preserves maximum variance) but adds a matrix multiply at inference and requires fitting. Key tradeoff: MRL requires retraining; PCA works on existing embeddings but costs inference overhead and requires a corpus.",
+      "expected_output": "Correct mechanistic distinction; correct inference cost comparison; note when each is preferable.",
+      "excellent_answer": "Matryoshka: the encoder is trained so the first N dimensions already form a metric-preserving embedding at any N \u2014 no projection needed, truncation is O(1) at inference. PCA: a post-hoc linear projection fitted on a corpus; at inference you multiply by the projection matrix (extra FLOPs + storage for the matrix). Key difference: MRL truncation requires no separate fitting step and works on any new embedding with just a slice. PCA is the right choice when you can't retrain and need to reduce an existing model. PCA's guarantee is maximum explained variance in a linear sense; Matryoshka's guarantee is that the prefix was explicitly trained to be good.",
+      "failure_modes": [
+        "Claiming they are equivalent in quality",
+        "Missing the inference-cost difference (PCA adds a matrix multiply)",
+        "Missing that PCA requires a fitting corpus"
+      ],
+      "scoring_rubric": "2 pts: MRL prefix trained into the model vs PCA as post-hoc projection. 2 pts: inference cost difference (slice vs matrix multiply). 2 pts: when each is preferred (no retraining \u2192 PCA; want zero inference overhead \u2192 MRL). 6 total.",
+      "expectations": [
+        "Explains that Matryoshka trains the encoder so any first-N-dimension prefix is already a valid embedding \u2014 truncation is a vector slice with no extra compute",
+        "Explains that PCA is a post-hoc linear projection fitted on a corpus; requires a matrix multiply at inference",
+        "Notes that PCA requires a representative fitting corpus while MRL requires retraining",
+        "Identifies when each is preferred: PCA when retraining is impossible; Matryoshka when zero inference overhead is required"
+      ]
+    },
+    {
+      "id": 58,
+      "category": "debugging",
+      "skills_tested": [
+        "frontier-and-relationships",
+        "geometry-similarity-metric"
+      ],
+      "difficulty": "Hard",
+      "prompt": "We built image search using CLIP embeddings. We set a similarity threshold of 0.8 for 'good match' based on image-to-image experiments. When we switch to text-query-to-image retrieval we almost never get results above the threshold. CLIP documentation says it supports cross-modal retrieval. What's wrong?",
+      "expected_reasoning": "The modality gap (Liang et al. 2022): in CLIP's 'shared' space, image embeddings and text embeddings occupy separate cones/regions. They are aligned in *relative* geometry (a cat image is near 'cat' relative to other texts) but absolute cross-modal cosine scores are systematically lower than within-modal scores. A threshold calibrated from image-to-image similarity cannot be applied to text-to-image similarity.",
+      "expected_output": "Name the modality gap; explain why the threshold doesn't transfer; recommend per-modality-pair calibration.",
+      "excellent_answer": "Names the modality gap (Liang et al. 2022): CLIP image and text embeddings occupy distinct cones in the shared space. Cross-modal cosine scores (text\u2192image) are systematically lower than within-modal scores (image\u2192image or text\u2192text). The model is working correctly \u2014 the threshold is wrong. Fix: calibrate a separate threshold from text-query-to-image labeled pairs. Ranking by score remains reliable; using absolute scores for thresholding requires per-modality-pair calibration.",
+      "failure_modes": [
+        "Concluding CLIP is broken or doesn't support text-to-image retrieval",
+        "Recommending re-embedding with a different model without diagnosing the threshold issue",
+        "Not naming the modality gap or the separate-cone structure"
+      ],
+      "scoring_rubric": "3 pts: names the modality gap and explains separate cones in CLIP's shared space. 2 pts: explains cross-modal cosine scores are systematically lower than within-modal. 2 pts: recommends per-modality-pair threshold calibration. 7 total.",
+      "expectations": [
+        "Names the modality gap (or explains that image and text embeddings occupy separate regions/cones in CLIP's shared space)",
+        "Explains that cross-modal cosine scores are systematically lower than within-modal scores \u2014 the threshold calibrated on image-to-image doesn't transfer",
+        "Recommends calibrating a separate threshold on text-query-to-image labeled pairs",
+        "Does NOT conclude that CLIP is broken or doesn't support cross-modal retrieval"
+      ],
+      "must_not": [
+        "Does NOT conclude that CLIP is broken or doesn't support cross-modal retrieval"
+      ]
+    },
+    {
+      "id": 59,
+      "category": "conceptual",
+      "skills_tested": [
+        "frontier-and-relationships"
+      ],
+      "difficulty": "Medium",
+      "prompt": "CLIP puts images and text in the same embedding space. Does that mean image-image, text-text, and image-text cosine similarity scores are all on the same scale? Can I compare them directly?",
+      "expected_reasoning": "No. The modality gap: CLIP encodes relative alignment, not metric uniformity across modalities. Image and text embeddings occupy separate cones \u2014 a cat image is near 'cat' relative to other text embeddings, but absolute cross-modal cosine values are not on the same scale as within-modal values. Comparing a text-to-image score of 0.25 to an image-to-image score of 0.8 is not meaningful.",
+      "expected_output": "Correct the premise; explain the modality gap and separate cones; give the practical implication.",
+      "excellent_answer": "No \u2014 CLIP encodes relative alignment, not absolute cross-modal metric consistency. Image embeddings and text embeddings occupy distinct cones in the shared space (the modality gap, Liang et al. 2022). A cat image is close to the text 'cat' relative to other texts, but the absolute cross-modal cosine value is not interpretable on the same scale as within-modal cosine values. Practical implication: ranking works (top-k text-to-image retrieval is reliable), but absolute thresholding or direct score comparisons across modality pairs requires per-pair calibration.",
+      "failure_modes": [
+        "Asserting that CLIP scores are on the same scale across modality pairs",
+        "Missing the modality gap",
+        "Not distinguishing ranking (reliable) from absolute score comparison (not reliable across modality pairs)"
+      ],
+      "scoring_rubric": "3 pts: correctly states scores are NOT on the same scale across modality pairs and names the modality gap. 2 pts: distinguishes ranking (reliable) from absolute comparison (not reliable). 2 pts: practical implication for thresholding. 7 total.",
+      "expectations": [
+        "Corrects the premise: CLIP scores are NOT on the same scale across modality pairs \u2014 the space encodes relative alignment, not absolute cross-modal metric uniformity",
+        "Explains the modality gap: image and text embeddings occupy separate cones/regions, so absolute cross-modal cosines are not comparable to within-modal scores",
+        "Distinguishes that ranking (top-k retrieval) remains reliable while absolute thresholds require per-modality-pair calibration",
+        "Does NOT assert that cosine scores are directly comparable across modality pairs"
+      ],
+      "must_not": [
+        "Does NOT assert that cosine scores are directly comparable across modality pairs"
+      ]
+    },
+    {
+      "id": 60,
+      "category": "application",
+      "skills_tested": [
+        "frontier-and-relationships",
+        "embeddings-retrieval-recsys"
+      ],
+      "difficulty": "Hard",
+      "prompt": "I want to use CLIP to compute a match score between product images and product text descriptions for e-commerce. I need an absolute score where > 0.7 means 'this image matches this description well.' Will zero-shot CLIP give me this?",
+      "expected_reasoning": "No. CLIP's contrastive objective optimizes ranking, not absolute calibration. The modality gap means cross-modal cosine scores cluster far below within-modal scores. The 0.7 threshold is arbitrary and will not generalize. The right approach: calibrate a threshold empirically on labeled match/mismatch pairs; or fine-tune CLIP on domain-specific pairs (product images + descriptions) so that the domain-specific geometry is calibrated. Zero-shot CLIP scores are useful for ranking, not for absolute match/no-match classification.",
+      "expected_output": "Flag that CLIP isn't calibrated for absolute thresholding; explain modality gap; recommend empirical calibration or fine-tuning.",
+      "excellent_answer": "Zero-shot CLIP won't give you reliable absolute scores. Two compounding problems: (1) The modality gap \u2014 cross-modal cosine scores between product images and text are systematically lower than within-modal scores, clustering in a domain-specific range that's not 0.7. (2) CLIP's training objective is contrastive ranking, not calibrated classification \u2014 there's no reason scores should be on an absolute scale. Fix: collect labeled match/mismatch pairs from your product catalog, then either (a) calibrate a threshold empirically on those labels or (b) fine-tune CLIP on your domain to improve both precision and score calibration. Fine-tuned models will produce a more reliable absolute range.",
+      "failure_modes": [
+        "Accepting that 0.7 is a reasonable zero-shot threshold",
+        "Missing the modality gap",
+        "Not recommending empirical calibration or domain fine-tuning"
+      ],
+      "scoring_rubric": "2 pts: flags that zero-shot CLIP scores are not on a reliable absolute scale for this task. 2 pts: names the modality gap as a specific reason. 2 pts: recommends empirical calibration on labeled pairs and/or domain fine-tuning. 6 total.",
+      "expectations": [
+        "Flags that zero-shot CLIP does not produce reliable absolute match scores \u2014 the threshold 0.7 is not grounded",
+        "Identifies the modality gap: cross-modal cosine scores cluster in a domain-specific range that won't be near 0.7 for most product pairs",
+        "Notes CLIP's objective is contrastive ranking, not calibrated classification",
+        "Recommends empirical threshold calibration on labeled match/mismatch pairs and/or domain fine-tuning"
+      ]
     }
   ]
 }

@@ -111,11 +111,11 @@ With the skill, the response distinguishes decodability from causal use — a cr
 
 ## Benchmark
 
-54 capability evals, 214 assertions across 13 categories. Graded by `claude-haiku-4-5-20251001`; responses from `claude-sonnet-4-6`.
+60 capability evals across 13 categories (54-eval benchmark run below; 6 additional evals for Matryoshka embeddings and CLIP modality gap added after initial benchmark). Graded by `claude-haiku-4-5-20251001`; responses from `claude-sonnet-4-6`.
 
 ![Benchmark comparison](benchmark_comparison.png)
 
-**Overall:** base model 194/214 (90.7%) → with skill 204/214 (95.3%), **+4.7pp**
+**Overall (54-eval run):** base model 194/214 (90.7%) → with skill 204/214 (95.3%), **+4.7pp**
 
 Largest gains on the categories where intuition most often fails:
 
@@ -133,5 +133,5 @@ Key differentiators (evals where the base model most consistently fails without 
 - **Posterior collapse in VAEs** — base model suggests training longer or increasing KL weight; skill identifies the signature pattern (low recon loss + garbage samples) and gives the KL-annealing / free-bits diagnosis
 - **Probe decodability vs causal use** — base model interprets 94% linear-probe accuracy as "the model uses this"; skill distinguishes decodability, selectivity, and causal evidence via INLP/activation patching
 - **In-batch softmax popularity bias in two-tower retrieval** — base model misses the logQ sampling correction; skill flags the frequency bias and gives the correction
-- **Domain-valid augmentations in SSL** — base model gives generic augmentations; skill gives domain-specific guidance (DNA reverse-complement, molecular graph perturbations, audio pitch shift)
-- **Inductive vs transductive GNNs for dynamic graphs** — base model defaults to GCN; skill specifies GraphSAGE/GAT for cold-start fraud/recsys nodes
+- **Matryoshka vs standard embedding truncation** — base model accepts truncating standard model dimensions; skill explains that prefix-truncation requires Matryoshka training and offers PCA as the post-hoc alternative
+- **CLIP modality gap** — base model accepts cross-modal cosine scores at face value; skill flags that image and text embeddings occupy separate cones so cross-modal and within-modal scores are not on the same scale
