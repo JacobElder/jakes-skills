@@ -3409,6 +3409,62 @@
       "references": [
         "memory-management.md"
       ]
+    },
+    {
+      "id": 100,
+      "scenario": "input-remapping",
+      "prompt": "How do I add input remapping to my Godot 4 game so players can rebind their controls? I need to save and load the bindings and handle conflicts.",
+      "tags": [
+        "godot",
+        "input",
+        "ux",
+        "settings"
+      ],
+      "references": [
+        "input-and-gamepad.md"
+      ]
+    },
+    {
+      "id": 101,
+      "scenario": "gamepad-support",
+      "prompt": "How do I add proper gamepad/controller support to my Godot 4 game? I need analog stick input, rumble, detecting when a controller connects, and showing the right button prompts.",
+      "tags": [
+        "godot",
+        "input",
+        "gamepad",
+        "controller"
+      ],
+      "references": [
+        "input-and-gamepad.md"
+      ]
+    },
+    {
+      "id": 102,
+      "scenario": "turn-based-initiative",
+      "prompt": "I'm building a tactics RPG in Godot 4. How do I implement a turn-based combat system with initiative ordering, action points, and a proper turn state machine?",
+      "tags": [
+        "godot",
+        "turn-based",
+        "tactics",
+        "systems"
+      ],
+      "references": [
+        "grid-and-tactics.md"
+      ]
+    },
+    {
+      "id": 103,
+      "scenario": "grid-tactics-movement",
+      "prompt": "I'm making a tactics game with grid movement in Godot 4. How do I highlight movement range, handle pathfinding through other units, do line-of-sight for attacks, and support hex grids?",
+      "tags": [
+        "godot",
+        "grid",
+        "tactics",
+        "pathfinding"
+      ],
+      "references": [
+        "grid-and-tactics.md"
+      ]
     }
   ]
 }
