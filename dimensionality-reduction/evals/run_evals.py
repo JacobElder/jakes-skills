@@ -19,10 +19,10 @@ REPO = Path(__file__).parent.parent
 SKILL_MD = (REPO / "SKILL.md").read_text()
 
 REF_FILES = {
-    "linear-projections.md":        (REPO / "linear-projections.md").read_text(),
-    "manifold-embeddings.md":       (REPO / "manifold-embeddings.md").read_text(),
-    "latent-variable-models.md":    (REPO / "latent-variable-models.md").read_text(),
-    "validation-and-diagnostics.md": (REPO / "validation-and-diagnostics.md").read_text(),
+    "linear-projections.md":        (REPO / "references" / "linear-projections.md").read_text(),
+    "manifold-embeddings.md":       (REPO / "references" / "manifold-embeddings.md").read_text(),
+    "latent-variable-models.md":    (REPO / "references" / "latent-variable-models.md").read_text(),
+    "validation-and-diagnostics.md": (REPO / "references" / "validation-and-diagnostics.md").read_text(),
 }
 
 ALL_REFS = "\n\n---\n\n".join(
