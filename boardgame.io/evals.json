@@ -1,0 +1,612 @@
+[
+  {
+    "id": 0,
+    "name": "random-api-config",
+    "prompt": "I'm building a dice game with boardgame.io. My roll move does `G.value = ctx.random.D6()` but the value is always undefined even though the move runs. What's wrong?",
+    "expected_output": "Explains that in 0.50.x `random` is a top-level member of the move context object, not a field of `ctx`, so `ctx.random` is undefined. Fix is `({ G, random }) => { G.value = random.D6(); }`. Notes the random plugin is enabled by default and there is no `randomMethod` config key to add.",
+    "assertions": [
+      {
+        "text": "States that random is accessed as a top-level context member, e.g. `random.D6()`, not `ctx.random.D6()`",
+        "passed": true,
+        "evidence": "`random` is a top-level plugin argument\" and correct usage is `random.D6()` not `ctx.random.D6()`"
+      },
+      {
+        "text": "Shows a corrected move that destructures `random` from the single context object",
+        "passed": true,
+        "evidence": "roll: ({ G, random }) => { G.value = random.D6(); }\" shows destructuring from single context"
+      },
+      {
+        "text": "Does NOT instruct the user to add a `randomMethod: 'random'` config key (no such key exists)",
+        "passed": true,
+        "evidence": "No mention of randomMethod config or any config key anywhere in response"
+      },
+      {
+        "text": "Notes that randomness is available by default / no extra config needed",
+        "passed": true,
+        "evidence": "no extra config needed, the random plugin is on by default"
+      }
+    ]
+  },
+  {
+    "id": 1,
+    "name": "invalid-move-sentinel",
+    "prompt": "In my boardgame.io tic-tac-toe, players can overwrite each other's marks. My move just does `if (G.cells[id]) return;` to block it but the board still gets corrupted. How do I properly reject an illegal move?",
+    "expected_output": "Explains that returning `undefined`/bare `return;` is a legal no-op that still commits any mutations, so it doesn't reject the move. Correct approach is to import `INVALID_MOVE` from `boardgame.io/core` and `return INVALID_MOVE`, which rejects the move and rolls back. Notes you must not `throw`.",
+    "assertions": [
+      {
+        "text": "Recommends importing INVALID_MOVE from `boardgame.io/core`",
+        "passed": true,
+        "evidence": "import { INVALID_MOVE } from 'boardgame.io/core'"
+      },
+      {
+        "text": "Shows `return INVALID_MOVE` from the move (returned, not thrown)",
+        "passed": true,
+        "evidence": "if (G.cells[id] !== null) return INVALID_MOVE; // rejects + rolls back"
+      },
+      {
+        "text": "Explains that returning undefined does not reject the move / explains why the bare return fails",
+        "passed": true,
+        "evidence": "return; returns undefined, which boardgame.io treats as a legal no-op \u2014 it commits any mutations"
+      },
+      {
+        "text": "Does NOT recommend throwing an Error to signal an invalid move",
+        "passed": true,
+        "evidence": "response never mentions throwing; uses return INVALID_MOVE only"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "phase-move-shadowing",
+    "prompt": "I added a `play` phase to my boardgame.io game with its own moves. Now when I call one of my original top-level moves during that phase I get 'disallowed move'. The move is clearly defined. Why can't I call it?",
+    "expected_output": "Explains that a phase's `moves` object replaces the global moves for that phase rather than merging, so global moves become unavailable during the phase. Fixes: re-declare the needed move inside the phase's `moves`, or omit the phase's `moves` key so it inherits the globals, or use turn config instead of a phase.",
+    "assertions": [
+      {
+        "text": "States that a phase's moves replace/shadow the global moves rather than merging",
+        "passed": true,
+        "evidence": "it **replaces** the global moves entirely \u2014 it does not merge with them"
+      },
+      {
+        "text": "Offers re-declaring the move inside the phase OR omitting the phase moves key to inherit globals",
+        "passed": true,
+        "evidence": "Options 2 and 3 offer both omitting moves to inherit globals and re-declaring moves in the phase"
+      },
+      {
+        "text": "Does NOT claim global moves are automatically available inside the phase",
+        "passed": true,
+        "evidence": "Response conditions availability on omitting the phase moves key; doesn't claim automatic availability regardless"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "endif-no-events",
+    "prompt": "I want my boardgame.io game to end when a player reaches 10 points. I put `if (G.score >= 10) ctx.events.endGame()` inside `endIf` but it's not working. How should endIf end the game?",
+    "expected_output": "Explains that `endIf` is a predicate: it should return the gameover value (e.g. `{ winner }`), and the framework ends the game. `events` is not available in `endIf` (and is a top-level arg, not `ctx.events`). If they need to end from a move, that's where `events.endGame()` belongs.",
+    "assertions": [
+      {
+        "text": "States that endIf should RETURN a value (the gameover/winner) rather than call events",
+        "passed": true,
+        "evidence": "`endIf` must return a value \u2014 it cannot call `events`; you return the gameover value, and the framework ends the game"
+      },
+      {
+        "text": "Shows endIf returning something like `{ winner: ... }` instead of calling endGame",
+        "passed": true,
+        "evidence": "return { winner: ctx.currentPlayer }; Whatever you return becomes ctx.gameover"
+      },
+      {
+        "text": "Notes events are not accessible in endIf (and/or that events is top-level, not ctx.events)",
+        "passed": true,
+        "evidence": "`events` isn't available inside `endIf`; `events` is a top-level plugin arg on the context object, not a field of `ctx`"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "simultaneous-play-stages",
+    "prompt": "In my boardgame.io game I want all players to secretly pick a card at the same time, then resolve. I set `turn: { activePlayers: { all: Stage.NULL } }` but the simultaneous turn never ends and I'm not sure where the pick move goes. What's the correct pattern?",
+    "expected_output": "Shows the full simultaneous-play pattern: `activePlayers` with `minMoves`/`maxMoves` plus a named stage under `stages` that holds the pick move, so each player's window auto-completes. Explains `Stage.NULL` just means active-with-no-stage and gives no exit condition or stage-scoped moves; a named stage with maxMoves (or events.endStage/setActivePlayers) is what ends it.",
+    "assertions": [
+      {
+        "text": "Uses named stage(s) under a `stages` object containing the move(s), not just activePlayers alone",
+        "passed": true,
+        "evidence": "`stages: { pick: { moves: { choose: ... } } }` uses named stage with moves scoped inside"
+      },
+      {
+        "text": "Includes a completion mechanism: minMoves/maxMoves on the stage/turn, or events.endStage/setActivePlayers",
+        "passed": true,
+        "evidence": "`maxMoves: 1` auto-completes stage; also mentions `events.endStage()` as alternative"
+      },
+      {
+        "text": "Imports `Stage` from `boardgame.io/core` if Stage.NULL is referenced, and explains what Stage.NULL means",
+        "passed": true,
+        "evidence": "Imports Stage, explains \"puts everyone active but in no named stage\" at the top"
+      },
+      {
+        "text": "Move functions in the stage use the single context object signature (e.g. `({ G, playerID }, ...)`)",
+        "passed": true,
+        "evidence": "Move signature: `choose: ({ G, playerID }, cardId) => { ... }`"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "immer-vs-pure",
+    "prompt": "Half the moves in my boardgame.io game work and half silently do nothing. Some moves I wrote `G.x = 1` and some I wrote `return { ...G, x: 1 }`. One move that does both throws an error about an immer producer. What's going on?",
+    "expected_output": "Explains that Immer is on by default, so BOTH mutation (`G.x = 1`, no return) and pure-return work \u2014 but a move must not do both. Mutating the draft and returning a new object triggers the Immer error 'returned a new value and modified its draft'. Fix: one style per move. There is no `immer: true` config key, and pure-mutation is the idiomatic default.",
+    "assertions": [
+      {
+        "text": "States that mutation works by default (Immer is enabled by default) \u2014 does NOT claim mutation requires enabling Immer",
+        "passed": true,
+        "evidence": "Shows mutation working without setup; discusses Immer behavior without requiring config"
+      },
+      {
+        "text": "Identifies that mutating AND returning a new object in the same move is the error",
+        "passed": true,
+        "evidence": "mutates the draft AND returns a new object\" identified as error"
+      },
+      {
+        "text": "Recommends choosing one style per move (mutate without return, or return without mutating)",
+        "passed": true,
+        "evidence": "Pick one style per move (mutate without return, or return without mutating)"
+      },
+      {
+        "text": "Does NOT tell the user to add an `immer: true` (or similar) config flag",
+        "passed": true,
+        "evidence": "No mention of immer config flag throughout response"
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "move-signature",
+    "prompt": "I wrote my boardgame.io moves like `playCard: (G, ctx, cardId) => { G.hand.push(cardId); }` and nothing happens when I call them, and `ctx` seems wrong. Are my move functions defined correctly?",
+    "expected_output": "Identifies the signature error: in 0.50.x a move receives a single context object as its first argument, so `(G, ctx, cardId)` actually binds `G` to the whole context and `ctx` to the first real argument. Correct is `({ G, ctx }, cardId) => { ... }`. Notes plugin APIs (random, events, log) and playerID are also members of that object.",
+    "assertions": [
+      {
+        "text": "Identifies that moves take a single context object first arg, not positional (G, ctx)",
+        "passed": true,
+        "evidence": "every move receives a single context object as its first argument, not separate `G` and `ctx` parameters"
+      },
+      {
+        "text": "Shows corrected signature destructuring from one object, e.g. `({ G, ctx }, cardId) => ...`",
+        "passed": true,
+        "evidence": "shows `({ G, ctx, random, events, playerID }, cardId) =>` destructuring syntax"
+      },
+      {
+        "text": "Mentions that random/events/log/playerID are members of that same context object",
+        "passed": true,
+        "evidence": "The plugins (`random`, `events`, `log`) are top-level members of that object \u2014 **not** fields on `ctx`"
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "client-server-separation",
+    "prompt": "I'm trying to make my boardgame.io game multiplayer. I passed `{ games: [MyGame], origins: [...] }` into the Client() call but it doesn't start a server. How do client and server fit together?",
+    "expected_output": "Explains that Client (browser/Node state + transport) and Server (separate Node process, authoritative) are separate imports and processes. Server config (`games`, `origins`) goes into `Server()` from `boardgame.io/server`, run on a port. The Client connects via `multiplayer: SocketIO({ server })`. Shows both minimal snippets.",
+    "assertions": [
+      {
+        "text": "States Client and Server are separate imports / separate processes",
+        "passed": true,
+        "evidence": "Client() and Server() are **separate imports, separate processes**"
+      },
+      {
+        "text": "Puts games/origins into `Server(...)` from `boardgame.io/server`, not into Client",
+        "passed": true,
+        "evidence": "Server({ games: [MyGame], origins: [Origins.LOCALHOST], })"
+      },
+      {
+        "text": "Shows the Client connecting with a multiplayer transport (e.g. SocketIO({ server }))",
+        "passed": true,
+        "evidence": "multiplayer: SocketIO({ server: 'localhost:8000' })"
+      },
+      {
+        "text": "Imports Server/Origins from `boardgame.io/server` (not a `@boardgame.io/server` scoped package)",
+        "passed": true,
+        "evidence": "import { Server, Origins } from 'boardgame.io/server'"
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "bot-enumerate-required",
+    "prompt": "I added an MCTSBot to my boardgame.io game but it never makes a move. I just constructed `new MCTSBot({ game })`. What am I missing?",
+    "expected_output": "Explains the bot needs an `enumerate` function returning the legal moves, defined as `game.ai.enumerate` and/or passed to the bot. Notes enumerate uses the positional `(G, ctx, playerID)` signature (unlike moves) and returns `[{ move, args }, ...]`. Shows a minimal enumerate.",
+    "assertions": [
+      {
+        "text": "Identifies the missing `enumerate` function as the cause",
+        "passed": true,
+        "evidence": "MCTSBot requires an enumerate function \u2014 without it, the bot has no legal moves to explore and silently does nothing"
+      },
+      {
+        "text": "Shows enumerate returning an array of `{ move, args }` objects",
+        "passed": true,
+        "evidence": "{ move: 'click', args: [i] }\" shown as the return structure for each legal move"
+      },
+      {
+        "text": "Notes enumerate's positional signature `(G, ctx, playerID)` (distinct from the move context-object signature)",
+        "passed": true,
+        "evidence": "enumerate uses the old positional (G, ctx, playerID) signature, not the { G, ctx } context-object form"
+      },
+      {
+        "text": "Wires enumerate via `ai: { enumerate }` on the game and/or the bot constructor",
+        "passed": true,
+        "evidence": "ai: { enumerate }\" on game definition and \"enumerate: game.ai.enumerate\" passed to MCTSBot constructor"
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "unit-test-pattern",
+    "prompt": "How do I write unit tests for the game logic of my boardgame.io game? Do I need jsdom or a headless browser to render the board first?",
+    "expected_output": "Explains the logic is pure reducers, so no DOM/browser is needed. Pattern: construct a headless `Client({ game })` in Node, call `client.moves.X()`, and assert on `client.getState().G` and `client.getState().ctx`. No jsdom/render. May mention InitializeGame + reducer from boardgame.io/internal for lower-level tests.",
+    "assertions": [
+      {
+        "text": "States no browser/DOM/jsdom is needed because the game is pure functions",
+        "passed": true,
+        "evidence": "you don't need jsdom or a headless browser at all. boardgame.io game logic is a pure reducer"
+      },
+      {
+        "text": "Shows constructing a Client in Node and calling client.moves.X()",
+        "passed": true,
+        "evidence": "`const client = Client({ game: MyGame, numPlayers: 2 }); client.moves.click(0);`"
+      },
+      {
+        "text": "Asserts on client.getState().G and/or .ctx (e.g. ctx.gameover)",
+        "passed": true,
+        "evidence": "`expect(client.getState().G.cells[0])` and `expect(client.getState().ctx.gameover)`"
+      },
+      {
+        "text": "Does NOT recommend mocking/rendering the DOM or using a headless browser",
+        "passed": true,
+        "evidence": "response leads with \"No, you don't need\" and recommends headless Client instead"
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "name": "events-in-moves",
+    "prompt": "Inside one of my boardgame.io moves I want to immediately end the current player's turn after they play. I tried `ctx.events.endTurn()` and it throws. How do I end the turn from a move?",
+    "expected_output": "Explains `events` is a top-level member of the move context object, not `ctx.events`. Correct: `({ G, events }) => { /* mutate */ events.endTurn(); }`. Lists the available events (endTurn, endPhase, endGame, endStage, setActivePlayers).",
+    "assertions": [
+      {
+        "text": "Corrects `ctx.events` to top-level `events` from the destructured context",
+        "passed": true,
+        "evidence": "destructure events at the top level\" shown in CORRECT example with `({ G, events }, cardId) =>`"
+      },
+      {
+        "text": "Shows `events.endTurn()` called from inside the move",
+        "passed": true,
+        "evidence": "events.endTurn()\" called inside move function in CORRECT code block"
+      },
+      {
+        "text": "Does NOT use ctx.events",
+        "passed": true,
+        "evidence": "ctx.events shown only in WRONG example explicitly marked \"// throws"
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "name": "phase-transition-explicit",
+    "prompt": "In boardgame.io, when should I use a phase's `endIf` versus calling `endPhase()` to move to the next phase? I'm not clear on the difference.",
+    "expected_output": "Distinguishes: `phase.endIf` is an automatic predicate the framework checks to decide when a phase ends (and `next` chooses the following phase); `events.endPhase()` is an imperative call from inside a move to end the phase immediately. Notes endIf returns a value (optionally `{ next }`) and does not call events.",
+    "assertions": [
+      {
+        "text": "Describes endIf as an automatic/declarative predicate the framework evaluates",
+        "passed": true,
+        "evidence": "endIf is a predicate evaluated **after every move and hook**. Use it when the phase should end based on game state"
+      },
+      {
+        "text": "Describes events.endPhase() as an imperative call made from inside a move",
+        "passed": true,
+        "evidence": "Call this from inside a move when **the move itself** is the definitive end condition\" with example `events.endPhase()` in a move"
+      },
+      {
+        "text": "Mentions `next` (string or returned `{ next }`) for choosing the following phase",
+        "passed": true,
+        "evidence": "Return `{ next: 'phaseName' }` to route to a specific phase\" shown in endIf section and comparison table"
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "name": "multiplayer-singleplayer-wiring",
+    "prompt": "What's the minimal Client setup for (a) a purely local single-player boardgame.io game and (b) two players sharing one screen? For the local case, do I even need a multiplayer transport?",
+    "expected_output": "For single-player local: just `Client({ game, numPlayers: 1 })` with no multiplayer transport. For two players on one device: `Client({ game, numPlayers: 2, multiplayer: Local() })` with `Local` from `boardgame.io/multiplayer`. Should not rely on a `singleplayer: {}` option (outdated).",
+    "assertions": [
+      {
+        "text": "Single-player uses Client without a multiplayer transport (plain Client({ game }))",
+        "passed": true,
+        "evidence": "No `multiplayer` key, no server process. The client is the authoritative reducer."
+      },
+      {
+        "text": "Local hotseat uses `multiplayer: Local()` imported from boardgame.io/multiplayer",
+        "passed": true,
+        "evidence": "import { Local } from 'boardgame.io/multiplayer'\" and \"multiplayer: Local()"
+      },
+      {
+        "text": "Does NOT invent a `singleplayer: {}` option; uses plain Client (no transport) for local single-player",
+        "passed": true,
+        "evidence": "Response omits any singleplayer option; uses plain Client({game}) for solo play"
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "name": "g-vs-ctx-storage",
+    "prompt": "I'm storing each player's score on `ctx` in my boardgame.io game (like `ctx.scores`), but the values keep disappearing between turns. Where should per-player persistent state live?",
+    "expected_output": "Explains `ctx` is framework-managed and not a place for user state; anything written there is ignored/reset. Persistent game state (scores, hands, board) belongs in `G`, set up in `setup()` and mutated by moves. Shows scores in G.",
+    "assertions": [
+      {
+        "text": "States that persistent/user state must live in G, not ctx",
+        "passed": true,
+        "evidence": "Per-player persistent state belongs on **G**, not ctx"
+      },
+      {
+        "text": "Explains ctx is framework-managed/read-only and not for custom state",
+        "passed": true,
+        "evidence": "ctx is framework-managed and reset/overwritten by boardgame.io on every turn boundary. Anything you write onto ctx is silently discarded"
+      },
+      {
+        "text": "Shows initializing the state in setup() and storing it on G",
+        "passed": true,
+        "evidence": "setup returns object with scores stored on G; moves reads/writes via G.scores"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "name": "maxmoves-endturn",
+    "prompt": "In boardgame.io I want each turn to be exactly one move. I set `turn: { moveLimit: 1 }` and also call `endTurn()` at the end of the move, but I'm getting odd behavior. Is this right?",
+    "expected_output": "Explains `moveLimit` is deprecated in favor of `minMoves`/`maxMoves`; use `turn: { minMoves: 1, maxMoves: 1 }`. With maxMoves reached, the turn auto-ends, so also calling `events.endTurn()` is redundant and can double-advance/error. Drop the manual endTurn.",
+    "assertions": [
+      {
+        "text": "Replaces moveLimit with minMoves/maxMoves (notes moveLimit is deprecated)",
+        "passed": true,
+        "evidence": "`moveLimit` is deprecated \u2014 use `turn: { maxMoves: 1 }` instead"
+      },
+      {
+        "text": "Explains the turn auto-ends at maxMoves so a manual endTurn is redundant/harmful",
+        "passed": true,
+        "evidence": "the framework auto-ends the turn after the move limit is reached. Calling `endTurn()` yourself inside the move causes a double-end"
+      },
+      {
+        "text": "Recommends removing the explicit endTurn() call",
+        "passed": true,
+        "evidence": "Remove the `moveLimit` config and remove the `endTurn()` call from your move \u2014 the framework handles it automatically"
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "name": "endif-winner-shape",
+    "prompt": "My boardgame.io endIf is `endIf: ({ G }) => hasWon(G)` returning true. The game ends but my UI can't tell who won \u2014 `ctx.gameover` is just `true`. How do I record the winner?",
+    "expected_output": "Explains whatever endIf returns becomes ctx.gameover, so returning bare `true` gives no winner info. Return an object like `{ winner: playerID }` (or `{ draw: true }`), and read it from `ctx.gameover.winner` in the UI.",
+    "assertions": [
+      {
+        "text": "Explains the endIf return value becomes ctx.gameover",
+        "passed": true,
+        "evidence": "Whatever `endIf` returns becomes `ctx.gameover`"
+      },
+      {
+        "text": "Recommends returning `{ winner: ... }` (or `{ draw: true }`) instead of bare true",
+        "passed": true,
+        "evidence": "Returning `{ winner: ctx.currentPlayer }` gives you `ctx.gameover.winner` in your UI"
+      },
+      {
+        "text": "Notes the UI reads ctx.gameover (e.g. ctx.gameover.winner)",
+        "passed": true,
+        "evidence": "Then in your board component: `ctx.gameover?.winner`"
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "name": "setup-vs-onbegin-random",
+    "prompt": "Where should I shuffle the deck and deal opening hands in my boardgame.io card game so the shuffle is part of the initial state? I currently do it inside the first move.",
+    "expected_output": "Recommends `setup({ ctx, random }) => G` for the initial shuffled deck/hands, using the top-level `random` plugin (e.g. random.Shuffle). Notes setup returns G and receives the context without G. Per-turn/per-phase dealing can use onBegin hooks, which also receive `random`.",
+    "assertions": [
+      {
+        "text": "Puts the initial shuffle/deal in setup() returning G",
+        "passed": true,
+        "evidence": "setup: ({ ctx, random }) => { ... return { deck, hands, discard: [] }; }"
+      },
+      {
+        "text": "Uses the random plugin (e.g. random.Shuffle) accessed from the context, not Math.random or ctx.random",
+        "passed": true,
+        "evidence": "random.Shuffle(arr)\" and \"destructure only { ctx, random }"
+      },
+      {
+        "text": "Correctly notes setup returns G (and/or that random is available in setup and onBegin hooks)",
+        "passed": true,
+        "evidence": "setup returns the initial G\" and \"random is available here just like in moves\" and \"turn.onBegin \u2014 random is available there too"
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "name": "secret-hidden-state",
+    "prompt": "In my online boardgame.io card game, every player can see everyone else's hand and the whole deck. I'm filtering it in my React board component but it still leaks. How do I actually hide cards from other players?",
+    "expected_output": "Explains that every client receives the full G, so UI-side filtering secures nothing \u2014 the secret data is already on the opponent's client. Fix is server-side `playerView`: PlayerView.STRIP_SECRETS strips G.secret from all clients and shows each player only their own G.players[playerID] (or a custom playerView function). Notes the convention of putting hidden state under G.secret / per-player state under G.players[id], and ideally marking deal/draw moves client:false.",
+    "assertions": [
+      {
+        "text": "Explains each client receives the full G, so filtering only in the UI/board component does not hide anything",
+        "passed": true,
+        "evidence": "Your React filter just hides the UI; the data is still in the client's state and visible in DevTools"
+      },
+      {
+        "text": "Recommends server-side `playerView` (PlayerView.STRIP_SECRETS from boardgame.io/core, or a custom playerView function)",
+        "passed": true,
+        "evidence": "import { PlayerView } from 'boardgame.io/core'\" and custom playerView function shown"
+      },
+      {
+        "text": "Describes the convention: hidden-from-all state under G.secret and/or per-player private state under G.players[playerID]",
+        "passed": true,
+        "evidence": "G.secret is stripped from every client entirely\" and \"each client only receives its own entry"
+      },
+      {
+        "text": "Does NOT claim that filtering in the React/board component alone secures the hidden state",
+        "passed": true,
+        "evidence": "Remove your React-side filtering and add playerView to the game definition. That's the only layer where hiding actually works"
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "name": "negative-side-effects",
+    "prompt": "Inside a boardgame.io move I call `fetch('/api/log')` and use `Date.now()` to timestamp the action and `Math.random()` to pick a card. Multiplayer sync and undo are behaving strangely. Why?",
+    "expected_output": "Explains moves must be pure and deterministic for replay/undo/sync to work; fetch, Date.now, and Math.random break that. Use the `random` plugin instead of Math.random; move side effects (logging/fetch) out of the move (into UI or server hooks); pass timestamps in as move arguments from the UI rather than reading the clock inside the move.",
+    "assertions": [
+      {
+        "text": "States moves must be deterministic / side-effect-free for replay, undo, and multiplayer sync",
+        "passed": true,
+        "evidence": "Moves are pure, deterministic reducers. The framework replays them on every connected client"
+      },
+      {
+        "text": "Replaces Math.random with the random plugin (random.*)",
+        "passed": true,
+        "evidence": "random.D6()\" shown in fix, replaces Math.random with deterministic random plugin"
+      },
+      {
+        "text": "Moves fetch/network side effects out of the move",
+        "passed": true,
+        "evidence": "do them in the UI, not in the move. Subscribe to state changes on the client"
+      },
+      {
+        "text": "Handles time by passing it as a move argument instead of calling Date.now() inside the move",
+        "passed": true,
+        "evidence": "pass the timestamp as a move argument from the UI layer\" with example showing client.moves.logAction(Date.now())"
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "name": "turn-order-custom-index",
+    "prompt": "I'm using a custom turn order in boardgame.io. My `first` and `next` functions return the player ID like '2', but the wrong player keeps getting the turn. What's wrong?",
+    "expected_output": "Explains that custom `first`/`next` must return an INDEX into ctx.playOrder, not a player ID. Compute the next index (e.g. from ctx.playOrderPos), and read the ID via ctx.playOrder[pos] if needed. Alternatively use TurnOrder.CUSTOM(['2','1','0']) for a fixed ID order or CUSTOM_FROM('field') to read order from G.",
+    "assertions": [
+      {
+        "text": "States that first/next must return an index into playOrder, not a player ID",
+        "passed": true,
+        "evidence": "first and next must return indices into ctx.playOrder, not player IDs"
+      },
+      {
+        "text": "Shows computing the next index (e.g. via ctx.playOrderPos) or using TurnOrder.CUSTOM/CUSTOM_FROM with the ID order",
+        "passed": true,
+        "evidence": "next index: (ctx.playOrderPos + 1) % ctx.numPlayers; TurnOrder.CUSTOM(['2', '1', '0'])"
+      },
+      {
+        "text": "Does NOT tell the user to return the player ID string from first/next",
+        "passed": true,
+        "evidence": "Wrong section shows returning '2' as incorrect; correct section shows index 0 and computed index instead"
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "name": "server-side-persistence",
+    "prompt": "How do I make my boardgame.io game state survive a server restart? Right now matches disappear whenever I restart the node process.",
+    "expected_output": "Explains the default DB is in-memory, so state is lost on restart, and that persistence is a server concern. Pass a `db` adapter to Server(): FlatFile for file-backed storage, or an external adapter package (e.g. bgio-postgres) for production. Not a client-side/localStorage concern.",
+    "assertions": [
+      {
+        "text": "Identifies the default in-memory DB as why state is lost on restart",
+        "passed": true,
+        "evidence": "By default the `Server` uses an in-memory store \u2014 state is gone on restart"
+      },
+      {
+        "text": "Recommends passing a `db` adapter to Server() (FlatFile for files, or an external package for production)",
+        "passed": true,
+        "evidence": "Pass a `db` adapter to persist it\"; shows FlatFile and BgioPostgres in Server() config"
+      },
+      {
+        "text": "Treats persistence as a server-side concern, not client-side/localStorage",
+        "passed": true,
+        "evidence": "All examples use server-side adapters; no localStorage or client-side approaches mentioned"
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "name": "lobby-credentials-flow",
+    "prompt": "Players join a match through my boardgame.io lobby with LobbyClient, but when they open the board their moves get rejected by the server. What am I missing?",
+    "expected_output": "Explains joinMatch returns playerCredentials, which must be passed to the game Client along with matchID and playerID (with the SocketIO transport). Without valid credentials/playerID the authoritative server rejects the player's moves.",
+    "assertions": [
+      {
+        "text": "Identifies that the playerCredentials returned by joinMatch must be passed to the game Client",
+        "passed": true,
+        "evidence": "playerCredentials returned by joinMatch never make it into the game Client\" \u2014 must be passed to constructor"
+      },
+      {
+        "text": "Shows passing matchID, playerID, and credentials into Client (with the SocketIO transport)",
+        "passed": true,
+        "evidence": "Code block shows Client({ matchID, playerID, credentials: playerCredentials, multiplayer: SocketIO(...) })"
+      },
+      {
+        "text": "Explains the server rejects moves from a client lacking valid credentials/playerID",
+        "passed": true,
+        "evidence": "Server authenticates every move against credentials \u2014 if missing/mismatched, all moves rejected\"; playerID \u2192 silent rejection"
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "name": "hook-return-replaces-g",
+    "prompt": "In my boardgame.io game I wrote `turn: { onBegin: ({ G }) => (G.round += 1) }` to bump a counter each turn, and now G is broken \u2014 my other state is gone and moves crash. What happened?",
+    "expected_output": "Explains that a hook returning a value replaces G with that value; the arrow body `({ G }) => (G.round += 1)` returns the number, so G becomes that number and the rest of the state is lost. Fix: use a block body that mutates and returns nothing: `onBegin: ({ G }) => { G.round += 1; }`.",
+    "assertions": [
+      {
+        "text": "Identifies that the hook's arrow body returns a value, which replaces G entirely",
+        "passed": true,
+        "evidence": "Your arrow function's body... returns the result \u2014 a number \u2014 which the framework uses to **replace `G` entirely**"
+      },
+      {
+        "text": "Shows the fix as a block body that mutates G and returns nothing",
+        "passed": true,
+        "evidence": "Fix: use a block body so the function returns `undefined`... `({ G }) => { G.round += 1; }`"
+      },
+      {
+        "text": "Does NOT attribute the bug to something unrelated (e.g. setup, Immer config, or random)",
+        "passed": true,
+        "evidence": "No attribution to setup, Immer config, or random; focuses solely on arrow-body return value"
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "name": "negative-phaser-multiplayer",
+    "prompt": "How do I add real-time multiplayer to my Phaser arcade game so two players can move their sprites at the same time?",
+    "expected_output": "Recognizes this is a Phaser, real-time, arcade scenario \u2014 not a boardgame.io turn-based use case \u2014 and does NOT apply boardgame.io moves/Client/Server patterns. Should give Phaser/real-time networking guidance (or note this is outside the turn-based boardgame.io scope) rather than boardgame.io API advice.",
+    "assertions": [
+      {
+        "text": "Does NOT recommend boardgame.io or its Client/Server/moves API for this",
+        "passed": true,
+        "evidence": "The standard approach is Socket.io + Node.js\" (not boardgame.io)"
+      },
+      {
+        "text": "Treats it as a Phaser / real-time problem (or explicitly notes boardgame.io is for turn-based games, not this)",
+        "passed": true,
+        "evidence": "Real-time multiplayer for Phaser requires a server to relay player positions"
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "name": "negative-design-question",
+    "prompt": "I'm designing a worker-placement board game and I want the spots to create interesting contention between players. How should I structure the action spaces and scoring to keep it tense?",
+    "expected_output": "Recognizes this is a game-design question (mechanics, contention, scoring), not an implementation/code question, and answers with design reasoning. Does NOT pivot into boardgame.io API specifics, move signatures, or Client/Server wiring.",
+    "assertions": [
+      {
+        "text": "Answers as a design question about mechanics/contention/scoring",
+        "passed": true,
+        "evidence": "Discusses action space structure, contention via capacity/lockout/interdependence, and three scoring patterns"
+      },
+      {
+        "text": "Does NOT introduce boardgame.io code, move signatures, or Client/Server wiring",
+        "passed": true,
+        "evidence": "Response contains only design prose; no code, moves, GameState, Client/Server, or boardgame.io APIs"
+      }
+    ]
+  }
+]
