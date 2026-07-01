@@ -3267,6 +3267,148 @@
           "text": "Addresses the AnimatedSprite2D limitation (normal map is per-frame, not a single property) or provides an alternative approach"
         }
       ]
+    },
+    {
+      "id": 90,
+      "scenario": "navigation-agent-2d",
+      "prompt": "How do I set up 2D pathfinding for an enemy that chases the player in Godot 4? I want the enemy to navigate around obstacles.",
+      "tags": [
+        "godot",
+        "navigation",
+        "ai",
+        "2d"
+      ],
+      "references": [
+        "navigation-2d.md"
+      ]
+    },
+    {
+      "id": 91,
+      "scenario": "tilemap-navigation",
+      "prompt": "I'm using a TileMap for my 2D top-down game. How do I set up navigation so enemies can path around walls defined in the TileMap? I also need to rebake when tiles change at runtime.",
+      "tags": [
+        "godot",
+        "navigation",
+        "tilemap",
+        "2d"
+      ],
+      "references": [
+        "navigation-2d.md"
+      ]
+    },
+    {
+      "id": 92,
+      "scenario": "gpu-particles-setup",
+      "prompt": "How do I make a satisfying hit-impact burst particle effect in Godot 4? I want it to trigger when an enemy takes damage and look polished.",
+      "tags": [
+        "godot",
+        "particles",
+        "vfx",
+        "juice"
+      ],
+      "references": [
+        "particles-and-vfx.md"
+      ]
+    },
+    {
+      "id": 93,
+      "scenario": "particle-pooling-vfx",
+      "prompt": "My game spawns lots of hit effects and I'm worried about performance. How should I pool particle effects and compose a full hit VFX with particles, flash, sound, and feel?",
+      "tags": [
+        "godot",
+        "particles",
+        "pooling",
+        "vfx",
+        "performance"
+      ],
+      "references": [
+        "particles-and-vfx.md"
+      ]
+    },
+    {
+      "id": 94,
+      "scenario": "fullscreen-post-process",
+      "prompt": "How do I add full-screen post-processing effects to my 2D Godot 4 game? I want a vignette and the ability to trigger chromatic aberration on hit.",
+      "tags": [
+        "godot",
+        "shaders",
+        "post-processing",
+        "2d"
+      ],
+      "references": [
+        "post-processing.md",
+        "shaders.md"
+      ]
+    },
+    {
+      "id": 95,
+      "scenario": "screen-space-shader",
+      "prompt": "I want to add CRT-style effects to my retro game in Godot 4 \u2014 scanlines, barrel distortion, and chromatic aberration. How do I write these screen-space shaders?",
+      "tags": [
+        "godot",
+        "shaders",
+        "post-processing",
+        "retro"
+      ],
+      "references": [
+        "post-processing.md"
+      ]
+    },
+    {
+      "id": 96,
+      "scenario": "custom-resource-design",
+      "prompt": "I want to use Godot 4's custom Resource system for my weapon data so designers can create new weapons without touching code. How do I set this up properly?",
+      "tags": [
+        "godot",
+        "resources",
+        "data-driven",
+        "architecture"
+      ],
+      "references": [
+        "custom-resources.md"
+      ]
+    },
+    {
+      "id": 97,
+      "scenario": "resource-loader-async",
+      "prompt": "What's the right way to load large level scenes in Godot 4 without causing a hitch? When should I use preload vs load vs ResourceLoader.load_threaded_request?",
+      "tags": [
+        "godot",
+        "resources",
+        "loading",
+        "performance"
+      ],
+      "references": [
+        "custom-resources.md"
+      ]
+    },
+    {
+      "id": 98,
+      "scenario": "orphan-node-cleanup",
+      "prompt": "My Godot 4 game's memory usage grows over time during gameplay. How do I find and fix orphan node leaks? What's the right way to clean up nodes?",
+      "tags": [
+        "godot",
+        "memory",
+        "performance",
+        "debugging"
+      ],
+      "references": [
+        "memory-management.md"
+      ]
+    },
+    {
+      "id": 99,
+      "scenario": "circular-reference-trap",
+      "prompt": "I'm building a Godot 4 observer/event system where objects subscribe to events from each other. What memory management pitfalls should I watch out for, especially circular references and signal connections?",
+      "tags": [
+        "godot",
+        "memory",
+        "signals",
+        "architecture"
+      ],
+      "references": [
+        "memory-management.md"
+      ]
     }
   ]
 }
