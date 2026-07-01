@@ -144,60 +144,60 @@ Use this to pick the right method. Each row points to where to find the code and
 
 | Situation | Method | Reference |
 |---|---|---|
-| Right-censored only | **Kaplan-Meier** for S(t), **Nelson-Aalen** for H(t) | `estimators.md` |
-| Interval-censored | **Turnbull NPMLE** | `estimators.md`, `special-censoring.md` |
-| Competing events | **Aalen-Johansen** for cause-specific CIFs (NOT 1 - KM) | `estimators.md`, `competing-risks.md` |
-| Smooth hazard estimate | **Kernel hazard smoothing** (`muhaz` in R, `bshazard`) | `estimators.md` |
-| Multi-state | **Aalen-Johansen** generalized (transition probabilities) | `multistate-frailty.md` |
+| Right-censored only | **Kaplan-Meier** for S(t), **Nelson-Aalen** for H(t) | `references/estimators.md` |
+| Interval-censored | **Turnbull NPMLE** | `references/estimators.md`, `references/special-censoring.md` |
+| Competing events | **Aalen-Johansen** for cause-specific CIFs (NOT 1 - KM) | `references/estimators.md`, `references/competing-risks.md` |
+| Smooth hazard estimate | **Kernel hazard smoothing** (`muhaz` in R, `bshazard`) | `references/estimators.md` |
+| Multi-state | **Aalen-Johansen** generalized (transition probabilities) | `references/multistate-frailty.md` |
 
 ### "I want to compare survival between groups"
 
 | Situation | Method | Reference |
 |---|---|---|
-| Standard, expect proportional hazards | **Log-rank test** | `r-recipes.md`, `python-recipes.md` |
-| Differences expected early (vanishing treatment effect) | **Gehan-Breslow** or **Tarone-Ware** | `nonproportional.md` |
-| Differences expected late (delayed treatment effect) | **Fleming-Harrington G(0,1)** or **Peto-Peto** | `nonproportional.md` |
-| Don't know shape of effect; curves may cross | **MaxCombo** (combines G(0,0), G(0,1), G(1,0), G(1,1)) | `nonproportional.md` |
-| Stratified comparison | **Stratified log-rank** | `r-recipes.md`, `python-recipes.md` |
-| Competing risks comparison | **Gray's test** (on CIFs, NOT log-rank) | `competing-risks.md` |
-| Want a single interpretable summary | **RMST difference** | `nonproportional.md` |
+| Standard, expect proportional hazards | **Log-rank test** | `references/r-recipes.md`, `references/python-recipes.md` |
+| Differences expected early (vanishing treatment effect) | **Gehan-Breslow** or **Tarone-Ware** | `references/nonproportional.md` |
+| Differences expected late (delayed treatment effect) | **Fleming-Harrington G(0,1)** or **Peto-Peto** | `references/nonproportional.md` |
+| Don't know shape of effect; curves may cross | **MaxCombo** (combines G(0,0), G(0,1), G(1,0), G(1,1)) | `references/nonproportional.md` |
+| Stratified comparison | **Stratified log-rank** | `references/r-recipes.md`, `references/python-recipes.md` |
+| Competing risks comparison | **Gray's test** (on CIFs, NOT log-rank) | `references/competing-risks.md` |
+| Want a single interpretable summary | **RMST difference** | `references/nonproportional.md` |
 
 ### "I want to model the effect of covariates"
 
 | Situation | Method | Reference |
 |---|---|---|
-| Standard, PH plausible | **Cox PH regression** | `cox-and-extensions.md` |
-| PH violated for some variable | **Stratified Cox** OR **time-varying coefficient** | `cox-and-extensions.md`, `nonproportional.md` |
-| Want absolute survival predictions / extrapolation | **Parametric AFT** (Weibull, log-normal, log-logistic, generalized gamma) | `parametric-and-aft.md` |
-| Need flexible baseline hazard, want full distribution | **Royston-Parmar flexible parametric** (`flexsurvspline`, `rstpm2`) | `parametric-and-aft.md` |
-| Many covariates, prediction-focused | **Penalized Cox** (lasso/elastic-net), **Random Survival Forest**, **GB survival** | `cox-and-extensions.md`, `python-recipes.md` |
-| Time-varying covariate (changes during follow-up) | **Cox with counting-process data** (start, stop, event) | `cox-and-extensions.md` |
-| Time-varying coefficient (effect changes over time) | **Cox with tt() / time interaction** | `cox-and-extensions.md`, `nonproportional.md` |
-| Continuous covariate with non-linear effect | **Cox with splines** (`pspline`, `rcs`) | `cox-and-extensions.md` |
-| Highly non-linear, lots of data | **Random Survival Forest**, **Gradient Boosting**, **DeepSurv / DeepHit** | `python-recipes.md` |
+| Standard, PH plausible | **Cox PH regression** | `references/cox-and-extensions.md` |
+| PH violated for some variable | **Stratified Cox** OR **time-varying coefficient** | `references/cox-and-extensions.md`, `references/nonproportional.md` |
+| Want absolute survival predictions / extrapolation | **Parametric AFT** (Weibull, log-normal, log-logistic, generalized gamma) | `references/parametric-and-aft.md` |
+| Need flexible baseline hazard, want full distribution | **Royston-Parmar flexible parametric** (`flexsurvspline`, `rstpm2`) | `references/parametric-and-aft.md` |
+| Many covariates, prediction-focused | **Penalized Cox** (lasso/elastic-net), **Random Survival Forest**, **GB survival** | `references/cox-and-extensions.md`, `references/python-recipes.md` |
+| Time-varying covariate (changes during follow-up) | **Cox with counting-process data** (start, stop, event) | `references/cox-and-extensions.md` |
+| Time-varying coefficient (effect changes over time) | **Cox with tt() / time interaction** | `references/cox-and-extensions.md`, `references/nonproportional.md` |
+| Continuous covariate with non-linear effect | **Cox with splines** (`pspline`, `rcs`) | `references/cox-and-extensions.md` |
+| Highly non-linear, lots of data | **Random Survival Forest**, **Gradient Boosting**, **DeepSurv / DeepHit** | `references/python-recipes.md` |
 
 ### "I have something more complex than one event per subject"
 
 | Situation | Method | Reference |
 |---|---|---|
-| Two+ competing causes of event | **Cause-specific Cox** (for etiology) and/or **Fine-Gray subdistribution** (for risk prediction) | `competing-risks.md` |
-| Recurrent events, common baseline hazard, total time | **Andersen-Gill** | `recurrent-events.md` |
-| Recurrent events, stratified by event number, total time | **PWP-TT** (Prentice-Williams-Peterson Total Time) | `recurrent-events.md` |
-| Recurrent events, gap-time clock resets after each event | **PWP-GT** (PWP Gap Time) | `recurrent-events.md` |
-| Recurrent events, marginal approach (event-specific risk sets) | **WLW** (Wei-Lin-Weissfeld) | `recurrent-events.md` |
-| Subject-level heterogeneity (clustering) | **Shared frailty** (Gamma or log-normal) | `multistate-frailty.md` |
-| Recurrent events + terminal event (e.g., readmissions + death) | **Joint frailty** | `multistate-frailty.md` |
-| Subjects move through multiple states | **Multi-state models** (`mstate`, `msm`) | `multistate-frailty.md` |
+| Two+ competing causes of event | **Cause-specific Cox** (for etiology) and/or **Fine-Gray subdistribution** (for risk prediction) | `references/competing-risks.md` |
+| Recurrent events, common baseline hazard, total time | **Andersen-Gill** | `references/recurrent-events.md` |
+| Recurrent events, stratified by event number, total time | **PWP-TT** (Prentice-Williams-Peterson Total Time) | `references/recurrent-events.md` |
+| Recurrent events, gap-time clock resets after each event | **PWP-GT** (PWP Gap Time) | `references/recurrent-events.md` |
+| Recurrent events, marginal approach (event-specific risk sets) | **WLW** (Wei-Lin-Weissfeld) | `references/recurrent-events.md` |
+| Subject-level heterogeneity (clustering) | **Shared frailty** (Gamma or log-normal) | `references/multistate-frailty.md` |
+| Recurrent events + terminal event (e.g., readmissions + death) | **Joint frailty** | `references/multistate-frailty.md` |
+| Subjects move through multiple states | **Multi-state models** (`mstate`, `msm`) | `references/multistate-frailty.md` |
 
 ### "Standard censoring assumptions are violated"
 
 | Situation | Method | Reference |
 |---|---|---|
-| Some events known only as "before time c" | **Left censoring** via Turnbull or parametric likelihood | `special-censoring.md` |
-| Events known only within intervals | **Interval-censored** Cox (`icenReg::ic_sp`, `ic_par`) | `special-censoring.md` |
-| Subjects observable only after some entry time | **Left truncation**: `Surv(entry, exit, event)` | `special-censoring.md` |
-| Using **age** as time scale | **Left truncation by definition** — always specify entry age | `special-censoring.md` |
-| Informative censoring suspected | Sensitivity analysis with **IPCW** or **joint models** | `pitfalls-and-diagnostics.md` |
+| Some events known only as "before time c" | **Left censoring** via Turnbull or parametric likelihood | `references/special-censoring.md` |
+| Events known only within intervals | **Interval-censored** Cox (`icenReg::ic_sp`, `ic_par`) | `references/special-censoring.md` |
+| Subjects observable only after some entry time | **Left truncation**: `Surv(entry, exit, event)` | `references/special-censoring.md` |
+| Using **age** as time scale | **Left truncation by definition** — always specify entry age | `references/special-censoring.md` |
+| Informative censoring suspected | Sensitivity analysis with **IPCW** or **joint models** | `references/pitfalls-and-diagnostics.md` |
 
 ## The workflow (apply to every analysis)
 
@@ -352,6 +352,6 @@ These show the end-to-end pattern of applying this skill — from user prompt to
 1. **Translate the user's framing into a method.** Apply the signals in "Diagnosing what the user is actually asking." The most common errors come from missing a competing risk, missing recurrence, missing left truncation, or accepting a user's framing that's reaching for the wrong tool entirely.
 2. **Pick a method from the decision tree.** Don't default to Cox without thinking through whether there are competing risks, recurrent events, or non-PH patterns the user has described.
 3. **Open the relevant reference file(s) before writing code.** Don't reconstruct package APIs from memory — function signatures, argument names, and especially the difference between similar-looking estimators (cause-specific Cox vs Fine-Gray; AG vs PWP-TT vs PWP-GT vs WLW; KM with naive censoring vs Aalen-Johansen CIF) are exactly where errors creep in.
-4. **If the user has no data and wants a demo, use `synthetic-data.md`** rather than improvising simulation code. The recipes there are matched to the methods they demonstrate.
+4. **If the user has no data and wants a demo, use `references/synthetic-data.md`** rather than improvising simulation code. The recipes there are matched to the methods they demonstrate.
 5. **Run the standard diagnostics.** For Cox, that means `cox.zph` or `check_assumptions` every single time. If diagnostics fail, escalate as described in step 4 of "The workflow."
 6. **Report results with the conventions in "Communicating results."** HRs with CIs, absolute and relative effects, time origin specified, assumption-check results disclosed.

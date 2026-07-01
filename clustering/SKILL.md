@@ -1,5 +1,5 @@
 ---
-name: cluster-analysis
+name: clustering
 description: >-
   Opinionated guide to choosing, running, validating, and interpreting clustering
   methods. Use this whenever a task involves grouping unlabeled data into clusters,
