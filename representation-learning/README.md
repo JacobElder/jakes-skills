@@ -22,6 +22,8 @@ Once installed, the skill applies automatically when the user asks which similar
 
 Also fires for questions involving word2vec/BERT/CLIP/SBERT, vector-DB/ANN search, two-tower or matrix-factorization recommenders, metric learning, disentanglement, reward modeling in RLHF, probing and interpretability, multimodal alignment, and graph or knowledge-graph embeddings.
 
+**Known trigger limitation:** the router handles technique-name and "should I use X vs Y" queries well, but inconsistently catches symptom-description queries — phrasing like "my search results are bad," "my cosine scores are all high," or "my VAE gives blurry output" without naming the underlying concept. Trigger accuracy on a 28-query eval suite: 19/28 (68%), with 92% precision on should-skip queries. If the skill isn't firing on a symptom-framed question, invoke it manually or rephrase as "how do I debug X."
+
 ---
 
 ## Example use cases
