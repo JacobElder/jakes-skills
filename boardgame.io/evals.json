@@ -575,6 +575,136 @@
   },
   {
     "id": 23,
+    "name": "typescript-skipLibCheck",
+    "prompt": "I added boardgame.io to my TypeScript project and `tsc` is reporting 'Type instantiation is excessively deep and possibly infinite' inside `node_modules/ts-toolbelt`. My game code looks correct. How do I fix these errors?",
+    "expected_output": "Identifies the errors as coming from ts-toolbelt (a boardgame.io dependency), not the user's own code. Recommends adding skipLibCheck: true to tsconfig.json. Does NOT tell the user to fix their own type annotations.",
+    "assertions": [
+      {
+        "text": "Identifies the error source as `ts-toolbelt` (a boardgame.io dependency), not the user's own game code",
+        "passed": true,
+        "evidence": "These errors come from `ts-toolbelt`'s own declaration files, not your code \u2014 boardgame.io depends on it"
+      },
+      {
+        "text": "Recommends adding `skipLibCheck: true` to tsconfig.json",
+        "passed": true,
+        "evidence": "Add `\"skipLibCheck\": true` to your `tsconfig.json` `compilerOptions`"
+      },
+      {
+        "text": "Does NOT instruct the user to fix their own type annotations or game types to resolve the error",
+        "passed": true,
+        "evidence": "Response focuses solely on skipLibCheck solution, does not suggest fixing user code or game types"
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "name": "client-false-secret-move",
+    "prompt": "In my multiplayer boardgame.io card game, the `draw` move pops a card from `G.secret.deck` and adds it to the player's hand. Everything works but the drawn card briefly flickers to `undefined` before the real card appears. Why is this happening and how do I fix it?",
+    "expected_output": "Identifies the flicker as the optimistic client executing the move without access to G.secret (which playerView hides from clients). Fix is marking the draw move client: false so it runs only on the authoritative server, disabling optimistic update for that move.",
+    "assertions": [
+      {
+        "text": "Identifies the flicker as the optimistic client running the move without access to `G.secret`",
+        "passed": true,
+        "evidence": "move runs optimistically on the local client... G.secret is stripped... G.secret.deck is undefined"
+      },
+      {
+        "text": "Recommends marking the move `client: false` so it runs only on the authoritative server",
+        "passed": true,
+        "evidence": "mark the move client: false... skip optimistic execution; wait for the server"
+      },
+      {
+        "text": "Shows the long-form move syntax with `client: false`: e.g. `draw: { move: ..., client: false }`",
+        "passed": true,
+        "evidence": "Shows long-form syntax with move function and client: false flag"
+      },
+      {
+        "text": "Does NOT claim the fix is a UI/state-management issue or that `playerView` alone resolves the flicker",
+        "passed": true,
+        "evidence": "Identifies playerView/G.secret stripping as the root cause, not a solution; recommends client: false as the fix"
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "name": "redact-move-args",
+    "prompt": "I'm using `playerView` to hide each player's hand in my boardgame.io card game. But other players can still see which card I played face-down \u2014 the card ID appears in the move history. How do I hide the move arguments too?",
+    "expected_output": "Explains that playerView filters G but does not strip move arguments from the log sent to other clients. Fix is marking the face-down move redact: true in its long-form definition so args are stripped from the log.",
+    "assertions": [
+      {
+        "text": "Explains that `playerView` filters `G` state but does not strip move arguments from the move log sent to other clients",
+        "passed": true,
+        "evidence": "playerView filters G, but the move log is a separate channel \u2014 it records what each player did, including the arguments"
+      },
+      {
+        "text": "Recommends adding `redact: true` to the long-form move definition",
+        "passed": true,
+        "evidence": "redact: true strips those args before the log is forwarded to other clients"
+      },
+      {
+        "text": "Shows the long-form move syntax with `redact: true`: e.g. `playFaceDown: { move: ..., redact: true }`",
+        "passed": true,
+        "evidence": "Shows `playFaceDown: { move: (...) => {...}, redact: true }`"
+      },
+      {
+        "text": "Does NOT claim `playerView` alone is sufficient to hide move arguments in the log",
+        "passed": true,
+        "evidence": "playerView filters G, but the move log is a separate channel"
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "name": "events-ctx-code-review",
+    "prompt": "Here's my boardgame.io move: `score: ({ G, ctx }) => { G.pts += 10; if (G.pts >= 20) ctx.events.endGame({ winner: ctx.currentPlayer }); }`. It seems to work in local singleplayer testing. Is the API correct?",
+    "expected_output": "Identifies that ctx.events does not exist in 0.50.x \u2014 events is a top-level context member, not a property of ctx. Corrects the signature to destructure events at the top level. Does not confirm the code is correct.",
+    "assertions": [
+      {
+        "text": "States that `ctx.events` does not exist in 0.50.x and the move is using the wrong API",
+        "passed": true,
+        "evidence": "`events` is a top-level plugin arg on the context object, not a field of `ctx`"
+      },
+      {
+        "text": "Shows the corrected destructuring with `events` at the top level: e.g. `({ G, ctx, events })`",
+        "passed": true,
+        "evidence": "`score: ({ G, ctx, events }) => {`"
+      },
+      {
+        "text": "Shows `events.endGame(...)` (not `ctx.events.endGame`) as the correct call",
+        "passed": true,
+        "evidence": "`events.endGame({ winner: ctx.currentPlayer })`"
+      },
+      {
+        "text": "Does NOT confirm the code is correct or say it will work reliably",
+        "passed": true,
+        "evidence": "Response confirms specific aspects (\"rest is fine\") but avoids unqualified statement that code is correct/works"
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "name": "turn-order-once-phase",
+    "prompt": "I set `turn: { order: TurnOrder.ONCE }` inside a `bidding` phase so each player gets exactly one turn, then I want to move to a `reveal` phase. But after everyone bids the game just stalls and nothing happens. What's wrong?",
+    "expected_output": "Explains that TurnOrder.ONCE ends the turn-order cycle (each player gets one turn) but does not automatically transition to a named next phase without a `next` key on the phase config. Shows how to add `next: 'reveal'` to the bidding phase.",
+    "assertions": [
+      {
+        "text": "Explains that `TurnOrder.ONCE` ends the turn-order cycle after each player goes but does not automatically advance to a named next phase without configuration",
+        "passed": true,
+        "evidence": "`TurnOrder.ONCE` ends the phase automatically after all players take a turn, but it doesn't know *where* to go. Without `next: 'reveal'`, the phase ends and the framework has nowhere to route \u2014 it stalls"
+      },
+      {
+        "text": "Shows adding `next: 'reveal'` (or equivalent) to the `bidding` phase config to specify the following phase",
+        "passed": true,
+        "evidence": "Shows code example with `next: 'reveal'` added to the `bidding` phase config"
+      },
+      {
+        "text": "Does NOT claim `TurnOrder.ONCE` alone handles the phase transition",
+        "passed": true,
+        "evidence": "Explicitly states `TurnOrder.ONCE` \"doesn't know *where* to go\" without `next` and \"doesn't automatically advance"
+      }
+    ]
+  },
+  {
+    "id": 28,
     "name": "negative-phaser-multiplayer",
     "prompt": "How do I add real-time multiplayer to my Phaser arcade game so two players can move their sprites at the same time?",
     "expected_output": "Recognizes this is a Phaser, real-time, arcade scenario \u2014 not a boardgame.io turn-based use case \u2014 and does NOT apply boardgame.io moves/Client/Server patterns. Should give Phaser/real-time networking guidance (or note this is outside the turn-based boardgame.io scope) rather than boardgame.io API advice.",
@@ -582,17 +712,17 @@
       {
         "text": "Does NOT recommend boardgame.io or its Client/Server/moves API for this",
         "passed": true,
-        "evidence": "The standard approach is Socket.io + Node.js\" (not boardgame.io)"
+        "evidence": "Real-time simultaneous movement in Phaser is outside boardgame.io's scope\"; recommends Socket.io/Colyseus instead"
       },
       {
         "text": "Treats it as a Phaser / real-time problem (or explicitly notes boardgame.io is for turn-based games, not this)",
         "passed": true,
-        "evidence": "Real-time multiplayer for Phaser requires a server to relay player positions"
+        "evidence": "it's a turn-based framework\" explicitly states why boardgame.io doesn't fit; solution is Socket.io + Phaser"
       }
     ]
   },
   {
-    "id": 24,
+    "id": 29,
     "name": "negative-design-question",
     "prompt": "I'm designing a worker-placement board game and I want the spots to create interesting contention between players. How should I structure the action spaces and scoring to keep it tense?",
     "expected_output": "Recognizes this is a game-design question (mechanics, contention, scoring), not an implementation/code question, and answers with design reasoning. Does NOT pivot into boardgame.io API specifics, move signatures, or Client/Server wiring.",
@@ -600,12 +730,12 @@
       {
         "text": "Answers as a design question about mechanics/contention/scoring",
         "passed": true,
-        "evidence": "Discusses action space structure, contention via capacity/lockout/interdependence, and three scoring patterns"
+        "evidence": "Directly addresses mechanics (hard/soft block), contention pressure formula, scoring strategies (hidden VP, tempo vs. end-game)"
       },
       {
         "text": "Does NOT introduce boardgame.io code, move signatures, or Client/Server wiring",
         "passed": true,
-        "evidence": "Response contains only design prose; no code, moves, GameState, Client/Server, or boardgame.io APIs"
+        "evidence": "No boardgame.io code, moves, Client/Server, or ctx references present; stays at design-conceptual level"
       }
     ]
   }

@@ -25,7 +25,12 @@
     "how do I let players create and join matches in my boardgame.io game",
     "my boardgame.io matches disappear when I restart the server, how do I keep them",
     "how do I let players undo their last move in my boardgame.io game",
-    "my onBegin hook in boardgame.io is wiping out my game state"
+    "my onBegin hook in boardgame.io is wiping out my game state",
+    "I'm getting 'Type instantiation is excessively deep' in node_modules/ts-toolbelt after adding boardgame.io",
+    "my draw move reads G.secret.deck but the card flickers to undefined in multiplayer boardgame.io",
+    "how do I hide move arguments from the move log in my boardgame.io card game",
+    "I used TurnOrder.ONCE in my bidding phase but the game stalls after everyone goes",
+    "my boardgame.io move uses ctx.events.endGame but it's not working, is the API right"
   ],
   "should_not_trigger": [
     "how do I add multiplayer to my Phaser game",

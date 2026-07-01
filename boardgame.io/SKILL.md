@@ -356,6 +356,7 @@ These exact messages/symptoms map to specific causes (the base model rarely conn
 | `G` becomes a number/string/garbage | A hook returned a value, replacing `G`. | Use a block body in hooks and return nothing (see `references/flow-lifecycle.md`). |
 | Move "works" locally but is rejected online | Multiplayer client missing `playerID`/`credentials`, or a `random`/secret move ran optimistically. | Pass `playerID` (+ `credentials`); mark such moves `client: false`. |
 | `No moves to undo` | `undo()` was called across a turn boundary. | Undo only reverts within the current turn. |
+| Card briefly shows as `undefined` then corrects | Secret move ran optimistically on the client, which doesn't have `G.secret`. | Mark the draw/deal move `client: false` (see Section 5). |
 
 ## Verify against the installed version
 
