@@ -188,6 +188,6 @@ for idx, row in plot_rdf.iterrows():
             ax_bot.scatter(idx, grid_y, color="#E0E0E0", s=4, alpha=0.3, zorder=1)
 
 plt.tight_layout(h_pad=0.5)
-out_path = "/Users/jacobelder/Documents/GitHub/jakes-skills/multiverse-analysis/evals/specification_curve.png"
+out_path = "/Users/jacobelder/Developer/jakes-skills/multiverse-analysis/evals/specification_curve.png"
 plt.savefig(out_path, dpi=150, bbox_inches="tight")
 print(f"\nSpecification curve saved → {out_path}")

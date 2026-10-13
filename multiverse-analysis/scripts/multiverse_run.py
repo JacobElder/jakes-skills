@@ -215,7 +215,7 @@ fig.text(
     fontsize=7, color="gray", style="italic",
 )
 
-out = "/Users/jacobelder/Documents/GitHub/jakes-skills/multiverse-analysis/scripts/multiverse_specification_curve.png"
+out = "/Users/jacobelder/Developer/jakes-skills/multiverse-analysis/scripts/multiverse_specification_curve.png"
 plt.savefig(out, dpi=160, bbox_inches="tight")
 plt.close()
 print(f"\nPlot saved → {out}")

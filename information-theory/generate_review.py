@@ -4,9 +4,9 @@
 import json
 from pathlib import Path
 
-RESULTS = Path("/Users/jacobelder/Documents/GitHub/jakes-skills/information-theory/results")
-EVALS_PATH = Path("/Users/jacobelder/Documents/GitHub/jakes-skills/information-theory/information-theory/evals/evals.json")
-OUT = Path("/Users/jacobelder/Documents/GitHub/jakes-skills/information-theory/review.html")
+RESULTS = Path("/Users/jacobelder/Developer/jakes-skills/information-theory/results")
+EVALS_PATH = Path("/Users/jacobelder/Developer/jakes-skills/information-theory/information-theory/evals/evals.json")
+OUT = Path("/Users/jacobelder/Developer/jakes-skills/information-theory/review.html")
 
 with open(EVALS_PATH) as f:
     evals_data = json.load(f)

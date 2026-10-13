@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, "/Users/jacobelder/Documents/GitHub/jakes-skills/multiverse-analysis/scripts")
+sys.path.insert(0, "/Users/jacobelder/Developer/jakes-skills/multiverse-analysis/scripts")
 from multiverse import Multiverse, specification_curve, decision_importance, permutation_test
 
 import pandas as pd
@@ -7,7 +7,7 @@ import numpy as np
 import statsmodels.formula.api as smf
 
 data = pd.read_csv(
-    "/Users/jacobelder/Documents/GitHub/jakes-skills/multiverse-analysis/evals/wellbeing_study.csv"
+    "/Users/jacobelder/Developer/jakes-skills/multiverse-analysis/evals/wellbeing_study.csv"
 )
 
 def analyze(data, c):
@@ -69,13 +69,13 @@ specification_curve(
     res,
     title="Treatment effect (standardized β) — mindfulness RCT wellbeing",
     highlight={"outliers": "none", "covariate": "none", "transformation": "raw"},
-    outfile="/Users/jacobelder/Documents/GitHub/jakes-skills/multiverse-analysis/evals/multiverse_wellbeing_curve.png",
+    outfile="/Users/jacobelder/Developer/jakes-skills/multiverse-analysis/evals/multiverse_wellbeing_curve.png",
     figsize=(11, 7),
 )
 
 # Save tidy results
 res.to_csv(
-    "/Users/jacobelder/Documents/GitHub/jakes-skills/multiverse-analysis/evals/multiverse_wellbeing_results.csv",
+    "/Users/jacobelder/Developer/jakes-skills/multiverse-analysis/evals/multiverse_wellbeing_results.csv",
     index=False,
 )
 print("\nResults saved to multiverse_wellbeing_results.csv")

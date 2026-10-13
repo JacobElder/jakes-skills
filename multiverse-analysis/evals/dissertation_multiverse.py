@@ -19,7 +19,7 @@ import numpy as np
 import pandas as pd
 import statsmodels.formula.api as smf
 
-sys.path.insert(0, "/Users/jacobelder/Documents/GitHub/jakes-skills/multiverse-analysis/scripts")
+sys.path.insert(0, "/Users/jacobelder/Developer/jakes-skills/multiverse-analysis/scripts")
 from multiverse import Multiverse, specification_curve, decision_importance, permutation_test
 
 # ── Real dataset (n=200) ──────────────────────────────────────────────────────
